@@ -128,7 +128,27 @@ class PageView(TemplateView):
                     collect_from_elements(children)
 
         collect_from_elements(elements)
-        return list(scripts)
+        return [self._manifest_static_url(url) for url in scripts]
+
+    @staticmethod
+    def _manifest_static_url(url):
+        """Route a raw ``/static/`` asset URL through the staticfiles manifest
+        so it is cache-busted (hashed) in production.
+
+        Element configs declare ``scripts`` as raw ``/static/...`` paths, which
+        bypass ManifestStaticFilesStorage — leaving them unhashed under
+        ``immutable``/1-year cache headers (edits never reach returning
+        visitors) and unable to dedupe against the ``{% static %}`` form of the
+        same file (e.g. a search element's script that is also loaded globally).
+        Non-static / external URLs pass through unchanged.
+        """
+        from django.conf import settings
+        from django.templatetags.static import static
+
+        static_url = settings.STATIC_URL or "/static/"
+        if url.startswith(static_url):
+            return static(url[len(static_url) :])
+        return url
 
     def _collect_element_css(self, elements):
         """Recursively collect unique CSS file URLs from all page elements."""
@@ -145,6 +165,20 @@ class PageView(TemplateView):
                 element_config = registry.get_element(element.element_type)
                 if element_config and element_config.css_files:
                     css_files.update(element_config.css_files)
+
+                # Variant CSS: load only the stylesheet for the variant this
+                # instance actually renders (e.g. a product_grid's chosen
+                # layout), keyed on an element.content property. Falls back to
+                # the declared default when the instance hasn't set the value.
+                if element_config and element_config.conditional_css_files:
+                    content = element.content or {}
+                    for rule in element_config.conditional_css_files:
+                        prop = rule.get("property")
+                        variant_map = rule.get("map", {})
+                        value = content.get(prop) or rule.get("default")
+                        css_file = variant_map.get(value)
+                        if css_file:
+                            css_files.add(css_file)
 
                 # Handle nested elements (containers)
                 children = element.child_elements.filter(is_active=True)
@@ -300,12 +334,24 @@ def category_view(request, category_slug=None):
         sales_channel="pos_only"
     )
 
-    # Filter by sales region (matches API behavior)
+    # Filter by sales region. How region-restricted products (not sold in the
+    # shopper's region) are handled is the merchant's choice
+    # (StockDisplaySettings.region_restricted_action): "hide" removes them;
+    # "show_unavailable" keeps them visible but marked (below), and ?ship_only=1
+    # lets the shopper hide them. Either way the stock filter (sellable_in_region)
+    # keeps genuinely out-of-stock products hidden.
     from catalog.middleware import get_region_from_request
+    from catalog.models import StockDisplaySettings
 
     region = get_region_from_request(request)
+    ship_only = request.GET.get("ship_only") == "1"
+    region_display = StockDisplaySettings.get_settings().region_restricted_action
+    hide_restricted = ship_only or region_display == "hide"
     if region:
-        products = products.available_in_region(region)
+        if hide_restricted:
+            products = products.available_in_region(region)
+        else:
+            products = products.sellable_in_region(region)
 
     # Accordion: annotate categories with product counts for display.
     # Count only storefront-visible products (same filters as the category
@@ -388,6 +434,30 @@ def category_view(request, category_slug=None):
         ("name_za", _("Name: Z to A")),
     ]
 
+    # Mark region-restricted products on the current page so cards can show a
+    # "does not ship to [destination]" notice, and decide whether to show the
+    # listing banner + show-all/only-shippable toggle. Only relevant in
+    # "show_unavailable" mode — in "hide" mode restricted products aren't shown.
+    region_restricted_ids = set()
+    ship_destination_name = ""
+    if region and region_display == "show_unavailable":
+        from catalog.middleware import get_ship_to_display
+
+        ship_destination_name = get_ship_to_display(request)[1]
+        page_ids = [p.id for p in page_obj]
+        if page_ids:
+            visible_ids = set(
+                Product.objects.filter(id__in=page_ids)
+                .visible_in_region(region)
+                .values_list("id", flat=True)
+            )
+            region_restricted_ids = set(page_ids) - visible_ids
+    # Banner shows when restricted products are visible on this page, or when the
+    # shopper has already filtered (so they can switch back to "show all").
+    region_restricted = bool(region_restricted_ids) or (
+        ship_only and region_display == "show_unavailable"
+    )
+
     context = {
         "categories": categories,
         "category": category,
@@ -398,6 +468,10 @@ def category_view(request, category_slug=None):
         "current_sort": sort_param,
         "sort_choices": sort_choices,
         "template_options": template_options,
+        "region_restricted_ids": region_restricted_ids,
+        "region_restricted": region_restricted,
+        "ship_only": ship_only,
+        "ship_destination_name": ship_destination_name,
     }
 
     # Featured: split products into hero and remaining
@@ -452,12 +526,20 @@ def products_view(request):
         sales_channel="pos_only"
     )
 
-    # Filter by sales region
+    # Filter by sales region — honours StockDisplaySettings.region_restricted_action
+    # (hide vs show-marked) and ?ship_only=1. See category_view for rationale.
     from catalog.middleware import get_region_from_request
+    from catalog.models import StockDisplaySettings
 
     region = get_region_from_request(request)
+    ship_only = request.GET.get("ship_only") == "1"
+    region_display = StockDisplaySettings.get_settings().region_restricted_action
+    hide_restricted = ship_only or region_display == "hide"
     if region:
-        products = products.available_in_region(region)
+        if hide_restricted:
+            products = products.available_in_region(region)
+        else:
+            products = products.sellable_in_region(region)
 
     # Sorting
     sort_param = request.GET.get("sort", "newest")
@@ -491,6 +573,24 @@ def products_view(request):
         ("name_za", _("Name: Z to A")),
     ]
 
+    region_restricted_ids = set()
+    ship_destination_name = ""
+    if region and region_display == "show_unavailable":
+        from catalog.middleware import get_ship_to_display
+
+        ship_destination_name = get_ship_to_display(request)[1]
+        page_ids = [p.id for p in page_obj]
+        if page_ids:
+            visible_ids = set(
+                Product.objects.filter(id__in=page_ids)
+                .visible_in_region(region)
+                .values_list("id", flat=True)
+            )
+            region_restricted_ids = set(page_ids) - visible_ids
+    region_restricted = bool(region_restricted_ids) or (
+        ship_only and region_display == "show_unavailable"
+    )
+
     context = {
         "products": page_obj,
         "page_obj": page_obj,
@@ -498,6 +598,10 @@ def products_view(request):
         "total_count": total_count,
         "current_sort": sort_param,
         "sort_choices": sort_choices,
+        "region_restricted_ids": region_restricted_ids,
+        "region_restricted": region_restricted,
+        "ship_only": ship_only,
+        "ship_destination_name": ship_destination_name,
     }
 
     translate_storefront_context(context, request)
@@ -507,7 +611,9 @@ def products_view(request):
 @allow_iframe_sameorigin
 def cart_view(request):
     """Shopping cart page view"""
-    return render(request, "page_builder/cart.html")
+    # Cart never renders product cards, so skip the product-card / quick-view
+    # JS and modal that base.html loads by default (see base.html).
+    return render(request, "page_builder/cart.html", {"suppress_product_card_assets": True})
 
 
 @allow_iframe_sameorigin
@@ -544,7 +650,9 @@ def checkout_view(request):
     if not cart or cart.total_items == 0:
         return redirect("page_builder:cart")
 
-    context = {}
+    # Checkout never renders product cards, so skip the product-card / quick-view
+    # JS and modal that base.html loads by default (see base.html).
+    context = {"suppress_product_card_assets": True}
 
     # Saved addresses for logged-in users only
     from orders.models import Address
@@ -718,15 +826,15 @@ def order_confirmation_view(request, order_number):
 
     order = get_object_or_404(Order, order_number=order_number)
 
-    # Security: only allow order owner or staff. Guest checkout never
-    # authenticates the browser, so a guest is allowed through only for the
-    # specific order number recorded in their session when it was placed.
-    if request.user.is_authenticated:
-        if order.user and order.user != request.user and not request.user.is_staff:
-            raise Http404
-    else:
-        allowed = request.session.get("guest_order_numbers", [])
-        if order_number not in allowed:
+    # Security: only staff, the order's owner, or the browser that placed a
+    # guest order (recorded in the session at checkout) may view it. One gate
+    # for authenticated and anonymous callers alike — an earlier version
+    # special-cased `order.user and ...`, which let ANY authenticated user open
+    # an ownerless guest order by number while still gating anonymous callers.
+    if not request.user.is_staff:
+        is_owner = order.user_id is not None and order.user_id == request.user.id
+        in_session = order_number in request.session.get("guest_order_numbers", [])
+        if not (is_owner or in_session):
             raise Http404
 
     # Check if user is guest and should see account creation prompt
@@ -777,17 +885,23 @@ def product_view(request, product_slug):
         status="published",
     )
 
-    # Check region availability (show product but disable purchase if unavailable)
-    from catalog.middleware import get_region_from_request
+    # "Region unavailable" is a *geo* state — the product isn't sold in this
+    # region at all — so it is based on region visibility only, using the same
+    # allowlist semantics as the storefront listings/API (visible_in_region).
+    # Stock state (out of stock / pre-order / backorder / notify-me) is a
+    # separate concern handled by the stock-status UI and the purchase gates;
+    # folding it in here made a merely out-of-stock (or pre-order/backorder)
+    # product show the misleading "not available for purchase in your region"
+    # message with no add-to-cart button.
+    from catalog.middleware import get_region_from_request, get_ship_to_display
 
     region = get_region_from_request(request)
-    region_unavailable = False
-    if region:
-        region_unavailable = (
-            not Product.objects.filter(pk=product.pk, status="published")
-            .available_in_region(region)
-            .exists()
-        )
+    region_unavailable = bool(region) and not (
+        Product.objects.filter(pk=product.pk, status="published").visible_in_region(region).exists()
+    )
+    # Destination name for the "doesn't ship to X" notice (the shopper's chosen
+    # ship-to country, else the resolved region).
+    ship_destination_name = get_ship_to_display(request)[1] if region_unavailable else ""
 
     # Configurable products get their own template with wizard UI
     if product.product_type == "configurable":
@@ -806,18 +920,69 @@ def product_view(request, product_slug):
         )
     )
 
+    # === Subscription options (storefront) ===
+    # Precompute plans + per-tier prices server-side so the buy box can render
+    # subscription pricing without any client-side money maths. Prices are
+    # formatted in the customer's active currency, matching the one-time price
+    # shown by product_price in the same buy box.
+    subscription_enabled = product.is_subscription_enabled
+    allow_one_time = product.allow_one_time_purchase
+    subscription_plans_list = []
+    subscription_pricing = {}
+
+    # Active display currency — used to format both variant and subscription
+    # prices server-side so the variant swap (JS) shows the customer's currency,
+    # not the base-currency Money string.
+    from core.currency_context import get_current_currency
+    from core.templatetags.currency_tags import money as _format_money
+
+    display_currency = get_current_currency(request)
+
+    if subscription_enabled:
+        subscription_plans_list = list(
+            product.subscription_plans.filter(is_active=True, is_public=True).prefetch_related(
+                "pricing_tiers"
+            )
+        )
+        for plan in subscription_plans_list:
+            active_tiers = [t for t in plan.pricing_tiers.all() if t.is_active]
+            has_default = any(t.is_default for t in active_tiers)
+            tier_rows = []
+            for index, tier in enumerate(active_tiers):
+                tier_rows.append(
+                    {
+                        "tier_id": str(tier.tier_id),
+                        "tier_name": tier.tier_name,
+                        "billing_display": tier.get_billing_display(),
+                        "discount_percentage": tier.discount_percentage,
+                        "price": _format_money(tier.calculate_price(product), display_currency),
+                        "is_default": tier.is_default,
+                        # Fall back to the first tier when the merchant marked
+                        # none as default so a tier is always preselected.
+                        "is_checked": tier.is_default or (not has_default and index == 0),
+                    }
+                )
+            # Attach for the template; kept in sync with subscription_pricing below.
+            plan.storefront_pricing = tier_rows
+            subscription_pricing[str(plan.plan_id)] = tier_rows
+
     # Build variant data for JavaScript
     variants_data = []
     has_attribute_mappings = False
     for variant in variants:
         # Primary image URL
         image_url = None
+        image_sources = None
+        image_asset = None
         if variant.image_asset and variant.image_asset.original_file:
-            image_url = variant.image_asset.get_display_url()
+            image_asset = variant.image_asset
         else:
             first_img = variant.images.first()
             if first_img and first_img.media_asset and first_img.media_asset.original_file:
-                image_url = first_img.media_asset.get_display_url()
+                image_asset = first_img.media_asset
+        if image_asset:
+            image_url = image_asset.get_display_url()
+            image_sources = image_asset.get_picture_sources()
 
         # Variant gallery images
         variant_images = []
@@ -826,6 +991,7 @@ def product_view(request, product_slug):
                 variant_images.append(
                     {
                         "url": vi.media_asset.get_display_url(),
+                        "image_sources": vi.media_asset.get_picture_sources(),
                         "alt": vi.alt_text or variant.name,
                     }
                 )
@@ -834,8 +1000,13 @@ def product_view(request, product_slug):
             "id": variant.id,
             "sku": variant.sku,
             "name": variant.name,
-            "price": str(variant.get_effective_price()),
+            # Formatted in the customer's active currency (charming-aware),
+            # matching the initial price shown by product_price(_range).
+            "price": _format_money(
+                product._money_in_currency(variant.get_effective_price(), display_currency)
+            ),
             "image_url": image_url,
+            "image_sources": image_sources,
             "images": variant_images,
             "in_stock": (not product.track_inventory)
             or variant.stock_status != "out_of_stock"
@@ -853,6 +1024,20 @@ def product_view(request, product_slug):
             # Use color_hex from first color attribute as swatch
             if attr_value.color_hex and not variant_info["color_swatch"]:
                 variant_info["color_swatch"] = attr_value.color_hex
+
+        # Per-tier subscription prices for this variant, so the JS can swap the
+        # displayed tier price when a variant is chosen (all formatted server-side).
+        if subscription_enabled and subscription_plans_list:
+            variant_sub_prices = {}
+            for plan in subscription_plans_list:
+                for tier in plan.pricing_tiers.all():
+                    if not tier.is_active:
+                        continue
+                    variant_sub_prices[str(tier.tier_id)] = _format_money(
+                        tier.calculate_price(product, variant), display_currency
+                    )
+            variant_info["subscription_prices"] = variant_sub_prices
+
         variants_data.append(variant_info)
 
     # Get attribute assignments for variant selection UI
@@ -1089,10 +1274,17 @@ def product_view(request, product_slug):
         "currency_code": currency_code,
         "currency_symbol": currency_symbol,
         "region_unavailable": region_unavailable,
+        "ship_destination_name": ship_destination_name,
         "has_design_editor": has_design_editor,
         "dep_satisfied": dep_satisfied,
         "blocking_dependencies": blocking_dependencies,
         "soft_recommendations": soft_recommendations,
+        # Subscription buy-box options
+        "subscription_enabled": subscription_enabled,
+        "subscription_plans": subscription_plans_list,
+        "subscription_default": product.subscription_default and allow_one_time,
+        "allow_one_time": allow_one_time,
+        "subscription_pricing": subscription_pricing,
     }
 
     translate_storefront_context(context, request)

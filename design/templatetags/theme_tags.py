@@ -607,6 +607,10 @@ def render_widget(context, placement):
     if widget.widget_type == "account":
         widget_context["menu_items"] = _get_account_menu_items(context, config)
 
+    # Add shippable countries + current selection for ship-to widgets
+    if widget.widget_type == "ship_to":
+        widget_context.update(_get_ship_to_context(context.get("request")))
+
     try:
         from django.template.loader import render_to_string
 
@@ -615,6 +619,18 @@ def render_widget(context, placement):
         if settings.DEBUG:
             return mark_safe(f"<!-- Widget error: {e} -->")
         return ""
+
+
+def _get_ship_to_context(request):
+    """Widget context for the ship-to selector (see get_ship_to_options)."""
+    from catalog.middleware import get_ship_to_options
+
+    opts = get_ship_to_options(request)
+    return {
+        "ship_to_countries": opts["countries"],
+        "current_ship_to_code": opts["current_code"],
+        "current_ship_to_name": opts["current_name"],
+    }
 
 
 def _get_account_menu_items(context, config):

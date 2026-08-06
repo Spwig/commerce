@@ -67,6 +67,14 @@ def get_user_roles(user):
     """
     from staff_roles.models import StaffRole
 
+    # Memoize the resolved queryset on the user instance so repeated calls
+    # within a single request (e.g. the admin sidebar invokes the has_category
+    # tag once per category) reuse the same evaluated queryset instead of
+    # issuing an identical role query each time.
+    cached_roles = getattr(user, "_staff_roles_cache", None)
+    if cached_roles is not None:
+        return cached_roles
+
     cache_key = f"user_roles_{user.pk}"
     role_ids = cache.get(cache_key)
 
@@ -74,9 +82,11 @@ def get_user_roles(user):
         roles = StaffRole.objects.filter(group__in=user.groups.all()).select_related("group")
         role_ids = list(roles.values_list("id", flat=True))
         cache.set(cache_key, role_ids, timeout=POS_PERM_CACHE_TIMEOUT)
-        return roles
+    else:
+        roles = StaffRole.objects.filter(id__in=role_ids).select_related("group")
 
-    return StaffRole.objects.filter(id__in=role_ids).select_related("group")
+    user._staff_roles_cache = roles
+    return roles
 
 
 def invalidate_user_cache(user):
@@ -85,6 +95,13 @@ def invalidate_user_cache(user):
     cache.delete(f"pos_perms_{user.pk}")
     cache.delete(f"admin_access_{user.pk}")
     cache.delete(f"read_only_{user.pk}")
+    # Also drop the per-instance memoized queryset so subsequent role
+    # lookups on this same user object re-read from the (now cleared)
+    # cache/DB instead of returning stale roles.
+    try:
+        del user._staff_roles_cache
+    except AttributeError:
+        pass
 
 
 def get_pos_permission(user, permission_key):
@@ -159,7 +176,14 @@ def get_user_pos_permissions_summary(user):
                 summary[key] = True
         return summary
 
-    return _get_merged_pos_permissions(user)
+    summary = {}
+    for key, flag_def in POS_PERMISSION_FLAGS.items():
+        if flag_def.get("type") == "integer":
+            summary[key] = flag_def.get("default", 0)
+        else:
+            summary[key] = flag_def.get("default", False)
+    summary.update(_get_merged_pos_permissions(user))
+    return summary
 
 
 def can_access_admin(user):

@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 {% mtrans "Read More" as default_read_more %}
 {% mtrans "View All Posts" as default_view_all %}
 <!-- Blog Post Grid Element -->
@@ -22,10 +22,13 @@
             <a href="{{ post.url|default:post.get_absolute_url }}" class="blog-card__image-link">
                 <div class="blog-card__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'16/9' }};">
                     {% if post.image or post.featured_image %}
-                    <img src="{% if post.image %}{{ post.image }}{% elif post.featured_image.file %}{{ post.featured_image.file.url }}{% endif %}"
+                    {% with picsrc=post.image|default:post.featured_image.file.url %}{% with picps=picsrc|picture_sources %}
+                    <picture class="spwig-picture">{% if picps.avif %}<source srcset="{{ picps.avif }}" type="image/avif">{% endif %}{% if picps.webp %}<source srcset="{{ picps.webp }}" type="image/webp">{% endif %}
+                    <img src="{{ picsrc }}"
                          alt="{{ post.title }}"
                          class="blog-card__image"
-                         loading="lazy">
+                         loading="lazy"></picture>
+                    {% endwith %}{% endwith %}
                     {% else %}
                     <div class="blog-card__image-placeholder">
                         <i class="fas fa-newspaper"></i>

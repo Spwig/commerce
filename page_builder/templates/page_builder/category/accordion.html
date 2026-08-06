@@ -21,10 +21,14 @@
                     <div class="cat-accordion__image-wrapper">
                         {% with cat.get_card_image_sources as img %}
                         {% if img %}
-                        <img src="{{ img.medium }}"
-                             srcset="{{ img.medium }} 600w{% if img.large %}, {{ img.large }} 1200w{% endif %}"
-                             sizes="(max-width: 768px) 100vw, 40vw"
-                             alt="{{ cat.name }}" class="cat-accordion__image" loading="lazy">
+                        <picture class="spwig-picture">
+                            {% if img.avif_medium %}<source type="image/avif" srcset="{{ img.avif_medium }} 600w{% if img.avif_large %}, {{ img.avif_large }} 1200w{% endif %}" sizes="(max-width: 768px) 100vw, 40vw">{% endif %}
+                            <source type="image/webp" srcset="{{ img.medium }} 600w{% if img.large %}, {{ img.large }} 1200w{% endif %}" sizes="(max-width: 768px) 100vw, 40vw">
+                            <img src="{{ img.medium }}"
+                                 srcset="{{ img.medium }} 600w{% if img.large %}, {{ img.large }} 1200w{% endif %}"
+                                 sizes="(max-width: 768px) 100vw, 40vw"
+                                 alt="{{ cat.name }}" class="cat-accordion__image" loading="lazy">
+                        </picture>
                         {% else %}
                         <div class="cat-accordion__placeholder">
                             <i class="fas fa-folder"></i>

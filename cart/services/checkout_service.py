@@ -623,7 +623,10 @@ class CheckoutService:
                     product=product, quantity=item.quantity, region=region, variant=item.variant
                 )
 
-                if not availability["available"]:
+                # Pre-order/backorder products are sold without on-hand stock;
+                # they are accepted here and recorded as unallocated at
+                # allocation time below.
+                if not availability["available"] and not product.can_sell_without_stock():
                     errors.append(
                         _("Insufficient stock for {product}").format(product=product.name)
                     )
@@ -644,6 +647,15 @@ class CheckoutService:
                     or _('"%(product)s" requires prior ownership of "%(required)s".')
                     % {"product": item.product.name, "required": dep.required_product.name}
                 )
+
+        # Subscription lines MUST carry a reusable payment token before the order
+        # is created — the token is captured at the checkout payment step and
+        # attached via /api/cart/items/<id>/attach-subscription-token/. Failing
+        # here (which runs inside create_order, before any payment intent is
+        # raised) guarantees a customer is never charged for a subscription that
+        # would then fail to create for lack of a token.
+        if session.cart.items.filter(is_subscription=True, payment_token__isnull=True).exists():
+            errors.append(_("A payment method is required to complete a subscription."))
 
         return len(errors) == 0, errors
 
@@ -1134,12 +1146,22 @@ class CheckoutService:
                             component_order_item.stock_allocated = True
                             component_order_item.save(update_fields=["stock_allocated"])
                         except InsufficientStockError as e:
-                            logger.error(
-                                f"Stock allocation failed for component {component_order_item.sku}: {e}"
-                            )
-                            _rollback_allocated_stock()
-                            order.delete()
-                            return False, _("Insufficient stock to complete order"), None
+                            # Pre-order/backorder component: accept it unallocated
+                            # (backordered) rather than failing the whole order.
+                            if component_order_item.product.can_sell_without_stock():
+                                component_order_item.stock_allocated = False
+                                component_order_item.save(update_fields=["stock_allocated"])
+                                logger.info(
+                                    f"Backordered component {component_order_item.sku} — "
+                                    f"no stock to allocate: {e}"
+                                )
+                            else:
+                                logger.error(
+                                    f"Stock allocation failed for component {component_order_item.sku}: {e}"
+                                )
+                                _rollback_allocated_stock()
+                                order.delete()
+                                return False, _("Insufficient stock to complete order"), None
                         except Exception as e:
                             logger.error(f"Stock allocation error for component: {e}")
                             _rollback_allocated_stock()
@@ -1169,10 +1191,23 @@ class CheckoutService:
                         parent_order_item.stock_allocated = True
                         parent_order_item.save(update_fields=["stock_allocated"])
                     except InsufficientStockError as e:
-                        logger.error(f"Stock allocation failed for {parent_order_item.sku}: {e}")
-                        _rollback_allocated_stock()
-                        order.delete()
-                        return False, _("Insufficient stock to complete order"), None
+                        # Pre-order/backorder items are expected to have no
+                        # on-hand stock. Accept the order with the item left
+                        # unallocated (backordered) — it is allocated later when
+                        # stock arrives — instead of failing the whole order.
+                        if parent_order_item.product.can_sell_without_stock():
+                            parent_order_item.stock_allocated = False
+                            parent_order_item.save(update_fields=["stock_allocated"])
+                            logger.info(
+                                f"Backordered {parent_order_item.sku} — no stock to allocate: {e}"
+                            )
+                        else:
+                            logger.error(
+                                f"Stock allocation failed for {parent_order_item.sku}: {e}"
+                            )
+                            _rollback_allocated_stock()
+                            order.delete()
+                            return False, _("Insufficient stock to complete order"), None
                     except Exception as e:
                         logger.error(f"Stock allocation error: {e}")
                         _rollback_allocated_stock()
@@ -1301,13 +1336,16 @@ class CheckoutService:
         ).update(order=order)
 
     @staticmethod
-    def _create_subscriptions(cart, order):
+    def _create_subscriptions(cart, order, payment_token=None):
         """
         Create subscriptions for any subscription items in the cart.
 
         Args:
             cart: Cart instance
             order: Order instance created from cart
+            payment_token: Optional PaymentToken to bind to subscription items
+                that don't already carry one (e.g. minted from the succeeded
+                payment). Each cart item's own payment_token takes precedence.
 
         Returns:
             List of created subscription IDs
@@ -1317,34 +1355,52 @@ class CheckoutService:
         from subscriptions.manager import SubscriptionManager
 
         logger = logging.getLogger(__name__)
+
+        # Idempotency is handled per line by SubscriptionManager.create_subscription,
+        # which returns the EXISTING subscription for a repeated
+        # (originating_order, product, plan). That is safer than an order-level
+        # early-return: it dedups the two settlement paths (sync create_order and
+        # orchestration handle_payment_success) AND still retries any line that
+        # failed on a previous attempt.
         created_subscriptions = []
+        failures = []
 
         # Process each cart item that is a subscription
         for cart_item in cart.items.filter(is_subscription=True):
-            if not cart_item.subscription_plan or not cart_item.payment_token:
-                logger.error(
-                    f"Cart item {cart_item.id} marked as subscription but missing plan or token"
+            token = cart_item.payment_token or payment_token
+
+            if not cart_item.subscription_plan or not token:
+                # The customer has already paid, so a missing plan/token must not
+                # be silently dropped. Record it loudly and stamp the order so ops
+                # can reconcile (create the subscription manually or refund).
+                logger.critical(
+                    f"Order {order.order_number}: cart item {cart_item.id} is a subscription "
+                    f"but is missing a plan or payment token; subscription NOT created."
                 )
+                failures.append(cart_item.id)
                 continue
 
             # Resolve pricing tier (stored on cart item, or fall back to plan default)
             pricing_tier = cart_item.pricing_tier or cart_item.subscription_plan.get_default_tier()
             if not pricing_tier:
-                logger.error(
-                    f"Cart item {cart_item.id} subscription plan has no pricing tiers configured"
+                logger.critical(
+                    f"Order {order.order_number}: subscription plan for cart item {cart_item.id} "
+                    f"has no pricing tiers configured; subscription NOT created."
                 )
+                failures.append(cart_item.id)
                 continue
 
             try:
                 # Create subscription using SubscriptionManager
-                manager = SubscriptionManager(cart_item.payment_token.provider_account)
+                manager = SubscriptionManager(token.provider_account)
                 subscription = manager.create_subscription(
                     user=cart.user,
                     plan=cart_item.subscription_plan,
                     pricing_tier=pricing_tier,
-                    payment_token=cart_item.payment_token,
+                    payment_token=token,
                     product=cart_item.product,
                     variant=cart_item.variant,
+                    quantity=cart_item.quantity,
                     originating_order=order,
                 )
 
@@ -1354,8 +1410,24 @@ class CheckoutService:
                 )
 
             except Exception as e:
-                logger.error(f"Failed to create subscription for cart item {cart_item.id}: {e}")
+                logger.critical(
+                    f"Order {order.order_number}: failed to create subscription for cart item "
+                    f"{cart_item.id}: {e}"
+                )
+                failures.append(cart_item.id)
                 # Continue processing other subscriptions even if one fails
+
+        if failures:
+            # Leave a reconcilable breadcrumb on the order for any gap.
+            meta = order.metadata or {}
+            meta["subscription_creation_failures"] = failures
+            order.metadata = meta
+            try:
+                order.save(update_fields=["metadata", "updated_at"])
+            except Exception:
+                logger.exception(
+                    f"Order {order.order_number}: could not persist subscription failure metadata"
+                )
 
         return created_subscriptions
 

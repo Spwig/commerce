@@ -39,76 +39,11 @@ body.change-list #content-main {
 }
 
 /* ============================================================================
-   Header
+   Header — uses the canonical .change-list-header banner from admin-base.css
+   (blue banner; h1 / .subtitle / .change-list-stats-subtitle / .stat-separator
+   and the .button.primary action button are all styled there). No local
+   override, matching the exchange_rates & payout_providers provider lists.
    ============================================================================ */
-
-.change-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--hairline-color, #e0e0e0);
-}
-
-.change-list-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--body-fg, #333);
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.change-list-header h1 i {
-  color: var(--primary, #417690);
-}
-
-.change-list-header .subtitle {
-  font-size: 14px;
-  color: var(--body-quiet-color, #666);
-  margin: 0 0 4px 0;
-}
-
-.change-list-stats-subtitle {
-  font-size: 13px;
-  color: var(--body-quiet-color, #999);
-  margin: 0;
-}
-
-.stat-separator {
-  margin: 0 6px;
-  color: var(--border-color, #ddd);
-}
-
-.change-list-header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.change-list-action-button {
-  padding: 10px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.change-list-action-button.primary {
-  background: var(--primary, #417690);
-  color: var(--body-bg, white);
-}
-
-.change-list-action-button.primary:hover {
-  background: var(--link-hover-color, #2e5368);
-}
 
 /* ============================================================================
    Toolbar
@@ -158,7 +93,7 @@ body.change-list #content-main {
 .filter-dropdown:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .bulk-actions .button {
@@ -227,7 +162,7 @@ body.change-list #content-main {
 .search-box input:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
   width: 300px;
 }
 
@@ -291,7 +226,7 @@ body.change-list #content-main {
 }
 
 .provider-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.1));
   border-color: var(--primary, #417690);
 }
 
@@ -343,7 +278,7 @@ body.change-list #content-main {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ffc107;
+  background: var(--warning-color, #ffc107);
   color: white;
   padding: 2px 6px;
   border-radius: 10px;
@@ -514,7 +449,7 @@ body.change-list #content-main {
 }
 
 .badge-interval-hourly {
-  background-color: var(--info-color, #17a2b8);
+  background-color: var(--admin-info, #17a2b8);
 }
 
 .badge-interval-daily {
@@ -522,7 +457,7 @@ body.change-list #content-main {
 }
 
 .badge-interval-weekly {
-  background-color: var(--neutral-color, #6c757d);
+  background-color: var(--close-button-bg, #6c757d);
 }
 
 .badge-interval-manual {
@@ -580,44 +515,45 @@ body.change-list #content-main {
 }
 
 .action-btn.edit-btn:hover {
-  color: #007bff;
-  border-color: #007bff;
+  color: var(--primary, #007bff);
+  border-color: var(--primary, #007bff);
 }
 
 .action-btn.sync-btn:hover {
-  color: #17a2b8;
-  border-color: #17a2b8;
+  color: var(--primary, #17a2b8);
+  border-color: var(--primary, #17a2b8);
 }
 
 .action-btn.download-btn:hover {
-  color: #28a745;
-  border-color: #28a745;
+  color: var(--success-fg, #28a745);
+  border-color: var(--success-fg, #28a745);
 }
 
 .action-btn.provider-toggle-btn.active {
-  color: #28a745;
-  border-color: #28a745;
+  color: var(--success-fg, #28a745);
+  border-color: var(--success-fg, #28a745);
 }
 
 .action-btn.provider-toggle-btn.inactive {
-  color: #6c757d;
-  border-color: #6c757d;
+  color: var(--body-quiet-color, #6c757d);
+  border-color: var(--body-quiet-color, #6c757d);
 }
 
 .action-btn.primary-btn.is-primary {
-  background: #ffc107;
-  color: white;
-  border-color: #ffc107;
+  background: var(--warning-bg, #ffc107);
+  color: var(--warning-fg, #856404);
+  border-color: var(--warning-bg, #ffc107);
 }
 
 .action-btn.primary-btn.is-primary:hover {
-  background: #e0a800;
-  border-color: #e0a800;
+  background: var(--warning-bg, #ffc107);
+  color: var(--warning-fg, #856404);
+  border-color: var(--warning-fg, #856404);
 }
 
 .action-btn.delete-btn:hover {
-  color: #dc3545;
-  border-color: #dc3545;
+  color: var(--error-fg, #dc3545);
+  border-color: var(--error-fg, #dc3545);
 }
 
 /* ============================================================================
@@ -720,7 +656,7 @@ body.change-list #content-main {
   border-left: 4px solid;
   padding: 16px 20px;
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   min-width: 300px;
   max-width: 400px;
   display: flex;
@@ -741,19 +677,19 @@ body.change-list #content-main {
 }
 
 .notification.success {
-  border-left-color: #28a745;
+  border-left-color: var(--success-fg, #28a745);
 }
 
 .notification.error {
-  border-left-color: #dc3545;
+  border-left-color: var(--error-fg, #dc3545);
 }
 
 .notification.warning {
-  border-left-color: #ffc107;
+  border-left-color: var(--warning-color, #ffc107);
 }
 
 .notification.info {
-  border-left-color: #17a2b8;
+  border-left-color: var(--admin-info, #17a2b8);
 }
 
 .notification i {
@@ -761,19 +697,19 @@ body.change-list #content-main {
 }
 
 .notification.success i {
-  color: #28a745;
+  color: var(--success-fg, #28a745);
 }
 
 .notification.error i {
-  color: #dc3545;
+  color: var(--error-fg, #dc3545);
 }
 
 .notification.warning i {
-  color: #ffc107;
+  color: var(--warning-color, #ffc107);
 }
 
 .notification.info i {
-  color: #17a2b8;
+  color: var(--admin-info, #17a2b8);
 }
 
 .notification-message {
@@ -858,11 +794,6 @@ body.change-list #content-main {
 }
 
 @media (max-width: 640px) {
-  .change-list-header {
-    flex-direction: column;
-    gap: 12px;
-  }
-
   .search-box input {
     width: 100%;
   }

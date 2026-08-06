@@ -13,6 +13,7 @@ from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from djmoney.money import Money
 
 from payment_providers.models import PaymentIntent, PaymentTransaction
 from payment_providers.providers.registry import ProviderRegistry
@@ -39,6 +40,15 @@ class RefundService:
         Returns:
             Tuple of (is_valid: bool, message: str)
         """
+        # Normalise to a Decimal. Callers pass either a Money (full-refund
+        # default is original_transaction.amount) or a bare Decimal (the
+        # allocator/POS pass `<Money>.amount`). Comparing a Money against a
+        # Decimal/int raises moneyed.MoneyComparisonError — which, caught by
+        # create_refund's broad except, silently turned every gateway refund
+        # into a generic failure. Compare like with like.
+        if isinstance(refund_amount, Money):
+            refund_amount = refund_amount.amount
+
         if refund_amount <= 0:
             return False, _("Refund amount must be greater than zero")
 
@@ -59,8 +69,10 @@ class RefundService:
             status__in=("pending", "completed"),
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
 
-        # Check if refund amount exceeds available amount
-        available_for_refund = original_transaction.amount - already_refunded
+        # Check if refund amount exceeds available amount. Use the Decimal
+        # component of the captured Money so this is a Decimal-vs-Decimal
+        # comparison (already_refunded is a Decimal aggregate).
+        available_for_refund = original_transaction.amount.amount - already_refunded
         if refund_amount > available_for_refund:
             return False, _(
                 "Refund amount ({amount}) exceeds available amount ({available})"
@@ -104,18 +116,52 @@ class RefundService:
         if original_transaction.transaction_type not in ("charge", "capture"):
             return False, None, _("Only charge transactions can be refunded")
 
-        # Default to full refund
-        refund_amount = refund_amount or original_transaction.amount
+        # Default to full refund, then normalise to a Decimal in the captured
+        # transaction's currency. Callers pass either a Money or a bare Decimal;
+        # downstream we need a Decimal for validation/comparison and provider
+        # amounts, and a Money for the stored MoneyField rows.
+        # `is None`, not truthiness: a Decimal("0") must fall through to
+        # validation (and be rejected as non-positive), not be silently
+        # promoted to a full refund.
+        if refund_amount is None:
+            refund_amount = original_transaction.amount
+        refund_currency = original_transaction.amount.currency
+        if isinstance(refund_amount, Money):
+            refund_amount = refund_amount.amount
+        refund_amount = Decimal(refund_amount)
+        refund_money = Money(refund_amount, refund_currency)
+        # settlement_amount is denominated in the ORDER currency (see
+        # PaymentTransaction.settlement_amount); use the original row's
+        # settlement currency. Cross-currency FX conversion is out of scope for
+        # this fix — single-currency stores (the common case) have tender and
+        # order currency equal, so amount and settlement coincide.
+        settlement_currency = (
+            original_transaction.settlement_amount or original_transaction.amount
+        ).currency
+        refund_settlement = Money(refund_amount, settlement_currency)
 
-        # Check if provider supports refunds
-        provider_account = original_transaction.provider_account
-        # Note: This check would need provider capability info
-        # For now, we'll attempt the refund and let the provider fail if not supported
+        # provider_account is read from the row-locked transaction inside the
+        # atomic block below (see the select_for_update note).
 
         # Generate unique refund transaction ID
         refund_transaction_id = f"rfnd_{uuid.uuid4().hex[:16]}"
 
         try:
+            # Serialize refunds against THIS capture row. Capacity is checked
+            # per capture (parent_transaction) by reading already-refunded and
+            # comparing to the captured amount; without a row lock two
+            # concurrent refunds (a double-tapped POS button, or a POS refund
+            # racing an admin refund) can both read the same remaining capacity,
+            # both pass validation, and both pay out — an over-refund. The admin
+            # path locks the Order in TenderRefundAllocator.execute; POS calls
+            # this service directly, so the lock has to live here to cover every
+            # caller. select_for_update() is held for the rest of this atomic
+            # block, across the capacity read and the refund-row insert.
+            original_transaction = PaymentTransaction.objects.select_for_update().get(
+                pk=original_transaction.pk
+            )
+            provider_account = original_transaction.provider_account
+
             # Validated INSIDE the try. Raising out of here escapes the
             # documented (success, transaction, message) contract that POS
             # unpacks, turning a refused refund into a 500.
@@ -153,8 +199,7 @@ class RefundService:
                 transaction_id=refund_transaction_id,
                 provider_account=provider_account,
                 order=original_transaction.order,
-                amount=refund_amount,
-                amount_currency=original_transaction.amount_currency,
+                amount=refund_money,
                 status="completed",
                 transaction_type="refund",
                 # Link the refund to the capture it draws against. Without this
@@ -163,7 +208,7 @@ class RefundService:
                 # refunding gift card value out through the gateway.
                 # GiftCardTenderService.refund_to_card already does this.
                 parent_transaction=original_transaction,
-                settlement_amount=refund_amount,
+                settlement_amount=refund_settlement,
                 tender_type=original_transaction.tender_type,
                 provider_transaction_id=refund_response.get("provider_refund_id", ""),
                 provider_response=PaymentIntent._json_safe(refund_response),
@@ -190,15 +235,27 @@ class RefundService:
             if original_transaction.order:
                 order = original_transaction.order
 
-                # Calculate total refunded amount
+                # Total refunded. Label the order-level field with the ORDER
+                # currency (order.amount_paid), not the tender currency. Sum()
+                # yields a Decimal; normalise defensively in case a money-aware
+                # backend returns a Money. (Cross-currency stores where a
+                # refund row's tender currency differs from the order currency
+                # need FX-aware settlement totalling — out of scope here; the
+                # single-currency common case is correct.)
+                order_currency = order.amount_paid.currency
                 total_refunded = PaymentTransaction.objects.filter(
                     order=order, transaction_type="refund", status="completed"
                 ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
+                if isinstance(total_refunded, Money):
+                    total_refunded = total_refunded.amount
 
-                order.amount_refunded = total_refunded
+                order.amount_refunded = Money(total_refunded, order_currency)
 
-                # Update payment status
-                if total_refunded >= order.amount_paid:
+                # Update payment status. Compare Decimal-to-Decimal — this line
+                # fires AFTER the provider refund has already moved money, so a
+                # Money/Decimal comparison error here would strand a real refund
+                # (provider paid out, order left showing unpaid).
+                if total_refunded >= order.amount_paid.amount:
                     order.payment_status = "refunded"
                 else:
                     order.payment_status = "partially_refunded"
@@ -265,7 +322,13 @@ class RefundService:
         Returns:
             Amount available for refund
         """
-        if transaction.status != "succeeded" or transaction.transaction_type != "charge":
+        # "completed" is the live status vocabulary ("succeeded" is not in
+        # STATUS_CHOICES); "charge" and "capture" are both refundable tender
+        # rows — mirror create_refund's guards.
+        if transaction.status != "completed" or transaction.transaction_type not in (
+            "charge",
+            "capture",
+        ):
             return Decimal("0")
 
         # Calculate already refunded amount
@@ -276,7 +339,9 @@ class RefundService:
             status="completed",
         ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
 
-        return max(Decimal("0"), transaction.amount - already_refunded)
+        # Decimal-vs-Decimal: transaction.amount is Money, already_refunded a
+        # Decimal aggregate.
+        return max(Decimal("0"), transaction.amount.amount - already_refunded)
 
     @staticmethod
     def get_refund_history(order) -> list:

@@ -620,7 +620,10 @@ def _process_provider_refund_web(order, refund_method, refund_amount, reason, cu
         original_txn = PaymentTransaction.objects.select_related("provider_account__component").get(
             order=order,
             transaction_type="charge",
-            status="succeeded",
+            # "completed" is the live vocabulary; "succeeded" is not in
+            # PaymentTransaction.STATUS_CHOICES and matched zero rows, so this
+            # lookup always missed and the web refund route was dead.
+            status="completed",
             provider_account__component__slug=provider_slug,
         )
     except PaymentTransaction.DoesNotExist:
@@ -632,7 +635,7 @@ def _process_provider_refund_web(order, refund_method, refund_amount, reason, cu
             .filter(
                 order=order,
                 transaction_type="charge",
-                status="succeeded",
+                status="completed",
                 provider_account__component__slug=provider_slug,
             )
             .order_by("-created_at")

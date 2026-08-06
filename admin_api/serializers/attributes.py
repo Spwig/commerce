@@ -72,21 +72,20 @@ class AttributeCreateSerializer(serializers.Serializer):
         return value
 
 
+class AttributeAssignmentInputSerializer(serializers.Serializer):
+    """Serializer for a single attribute assignment in the payload."""
+
+    attribute_id = serializers.IntegerField(min_value=1)
+    value_ids = serializers.ListField(child=serializers.IntegerField(min_value=1))
+    sort_order = serializers.IntegerField(default=0, min_value=0)
+
+
 class ProductAttributeAssignSerializer(serializers.Serializer):
     """Serializer for assigning attributes and their allowed values to a product."""
 
-    assignments = serializers.ListField(child=serializers.DictField())
+    assignments = AttributeAssignmentInputSerializer(many=True)
 
     def validate_assignments(self, value):
         if len(value) == 0:
             raise serializers.ValidationError(_("At least one assignment is required."))
-        for item in value:
-            if "attribute_id" not in item:
-                raise serializers.ValidationError(
-                    _("Each assignment must have an 'attribute_id' field.")
-                )
-            if "value_ids" not in item:
-                raise serializers.ValidationError(
-                    _("Each assignment must have a 'value_ids' field.")
-                )
         return value

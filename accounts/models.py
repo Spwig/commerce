@@ -243,14 +243,14 @@ class CustomerProfile(CustomFieldsMixin, DesignMixin):
     @property
     def favorite_categories(self):
         """Get customer's most purchased categories"""
-        from django.db.models import Count
+        from django.db.models import Sum
 
         from orders.models import OrderItem
 
         categories = (
             OrderItem.objects.filter(order__user=self.user, order__status="delivered")
             .values("product__category__name")
-            .annotate(count=Count("id"))
+            .annotate(count=Sum("quantity"))
             .order_by("-count")[:3]
         )
 
@@ -287,7 +287,7 @@ class CustomerProfile(CustomFieldsMixin, DesignMixin):
         try:
             wishlist = self.user.wishlist_set.first()
             return wishlist.items.count() if wishlist else 0
-        except Exception:
+        except AttributeError:
             return 0
 
     def get_customer_summary(self):
@@ -374,7 +374,7 @@ class OAuthProviderSettings(models.Model):
                 and social_app.client_id
                 and (social_app.secret or self.provider == "apple")  # Apple uses key file
             )
-        except Exception:
+        except ImportError:
             self.is_configured = False
 
         # Set default display name if not provided

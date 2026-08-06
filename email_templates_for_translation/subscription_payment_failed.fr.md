@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ Paiement échoué pour {{ plan_name }} - Action requise - {{ shop_name }}
+⚠️ Échec du paiement pour {{ plan_name }} - Action requise - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -22,7 +22,7 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ Paiement échoué
+          ⚠️ Échec du paiement
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
           Nous n'avons pas pu traiter votre paiement
@@ -37,30 +37,32 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                Informations de paiement
+                Informations sur le paiement
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Plan:</strong> {{ plan_name }}
+                <strong>Forfait :</strong> {{ plan_name }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Montant:</strong> {{ subscription_amount }}
+                <strong>Montant :</strong> {{ subscription_amount }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Méthode de paiement:</strong> {{ payment_method }}
+                <strong>Moyen de paiement :</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
-                <strong>Raison:</strong> {{ failure_reason }}
+                <strong>Raison :</strong> {{ failure_reason }}
               </mj-text>
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Veuillez mettre à jour votre méthode de paiement d'ici {{ retry_date|date:"F d, Y" }} pour éviter une interruption du service.
+                Veuillez mettre à jour votre moyen de paiement avant le {{ retry_date|date:"F d, Y" }} pour éviter une interruption du service.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Vérifiez que votre méthode de paiement dispose de fonds suffisants
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          Vérifiez que votre moyen de paiement dispose de fonds suffisants
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          Mettez à jour votre méthode de paiement si la carte est expirée
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          Mettez à jour votre moyen de paiement si la carte est expirée
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Nous allons automatiquement réessayer le paiement dans {{ retry_days }} jours
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Nous réessayerons automatiquement le paiement dans {{ retry_days }} jours
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,7 +99,7 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          Mettre à jour la méthode de paiement
+          Mettre à jour le moyen de paiement
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
@@ -131,25 +135,25 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ Paiement échoué
+⚠️ Échec du paiement
 
 Nous n'avons pas pu traiter votre paiement
 
-INFORMATIONS DE PAIEMENT:
-Plan: {{ plan_name }}
-Montant: {{ subscription_amount }}
-Méthode de paiement: {{ payment_method }}
-Raison: {{ failure_reason }}
+INFORMATIONS SUR LE PAIEMENT : 
+Forfait : {{ plan_name }}
+Montant : {{ subscription_amount }}
+Moyen de paiement : {{ payment_method }}
+Raison : {{ failure_reason }}
 
-Veuillez mettre à jour votre méthode de paiement d'ici {{ retry_date|date:"F d, Y" }} pour éviter une interruption du service.
+{% if retry_date %}Veuillez mettre à jour votre moyen de paiement avant le {{ retry_date|date:"F d, Y" }} pour éviter une interruption du service.{% endif %}
 
 Que devez-vous faire ?
-1. Vérifiez que votre méthode de paiement dispose de fonds suffisants
-2. Mettez à jour votre méthode de paiement si la carte est expirée
-3. Nous allons automatiquement réessayer le paiement dans {{ retry_days }} jours
+1. Vérifiez que votre moyen de paiement dispose de fonds suffisants
+2. Mettez à jour votre moyen de paiement si la carte est expirée
+{% if retry_days %}3. Nous réessayerons automatiquement le paiement dans {{ retry_days }} jours{% endif %}
 
-Mettre à jour la méthode de paiement: {{ update_payment_url }}
-Voir l'abonnement: {{ manage_subscription_url }}
+Mettre à jour le moyen de paiement : {{ update_payment_url }}
+Voir l'abonnement : {{ manage_subscription_url }}
 
 Besoin d'aide ? Contactez-nous à {{ support_email }}
 

@@ -22,14 +22,14 @@ La lista de verificación refleja tu configuración **en vivo**: conecta un prov
 
 ## Detener de emergencia
 
-El **Detener de emergencia** es un interruptor separado del principal. Úsalo para detener inmediatamente toda la actividad de los asistentes — por ejemplo, si algo parece mal — sin deshacer tu configuración. Límpialo para reanudar. Piensa en el interruptor principal como "¿esta característica está configurada?" y el detener de emergencia como "detener todo ahora mismo".
+El **Detener de emergencia** es un interruptor separado del principal. Úsalo para detener inmediatamente toda la actividad de los asistentes — por ejemplo, si algo parece mal — sin deshacer tu configuración. Límpialo para reanudar. Piensa en el interruptor principal como "¿esta función está configurada?" y el detener de emergencia como "detener todo ahora mismo".
 
 ## Qué pueden hacer los asistentes
 
 Dos niveles de acceso, controlados por separado:
 
 - **Lectura** (descubrimiento y navegación) es de menor riesgo. Un asistente puede encontrar tu tienda y leer los detalles del producto.
-- **Pago** (realizar compras) es de mayor riesgo y permanece cerrado para asistentes no verificados a menos que lo permitas.
+- **Paso de pago** (realizar compras) es de mayor riesgo y permanece cerrado para asistentes no verificados a menos que lo permitas.
 
 Una tienda puede ser descubrible sin ser comprable — una forma útil de comenzar.
 
@@ -39,13 +39,13 @@ Cada producto tiene una configuración **Visible para agentes de compra con IA**
 
 ## Gestionar asistentes individuales
 
-Cuando un asistente realiza su primera compra — o intenta hacerlo — Spwig lo registra bajo **Compra con IA → Identidades de Agentes**. Cada entrada muestra el hogar verificado del asistente (el directorio con el que firma) y cuántas solicitudes ha realizado. El nombre y el logotipo que presenta un asistente se muestran solo como *detalles reclamados* — trátalos como una etiqueta, no como prueba de identidad; el hogar verificado es la parte que se puede confiar.
+Cuando un asistente realiza su primera compra — o intenta hacerlo — Spwig lo registra bajo **Compra con IA → Identidades de agentes**. Cada entrada muestra el hogar verificado del asistente (el directorio con el que firma) y cuántas solicitudes ha realizado. El nombre y el logotipo que presenta un asistente se muestran solo como *detalles reclamados* — trátalos como una etiqueta, no como prueba de identidad; el hogar verificado es la parte que se puede confiar.
 
 Los nuevos asistentes comienzan **limitados**: pueden transaccionar, pero dentro de límites. Para detener uno, selecciónalo y elige **Bloquear asistentes seleccionados** — los checkouts abiertos terminan y el asistente ya no puede comprar, mientras que cualquier pago ya realizado se deja sin tocar. **Desbloquear asistentes seleccionados** lo devuelve al estado limitado (nunca directamente a ilimitado — levantar límites siempre es un paso separado y deliberado).
 
 ## Registro de actividad
 
-**Compra con IA → Eventos de Agentes** es un registro evidente de alteración de lo que hicieron los asistentes — cada solicitud verificada, cada intento bloqueado, cada cambio que hiciste. Es de solo lectura y no se puede editar ni eliminar, por lo que sirve como tu pista de evidencia si alguna vez se discute una compra realizada por un asistente.
+**Compra con IA → Eventos de agentes** es un registro evidente de alteración de lo que hicieron los asistentes — cada solicitud verificada, cada intento bloqueado, cada cambio que hiciste. Es de solo lectura y no se puede editar ni eliminar, por lo que sirve como tu pista de evidencia si alguna vez se discute una compra realizada por un asistente.
 
 ## Una nota sobre las plataformas de asistentes
 

@@ -59,6 +59,13 @@ class ElementConfig:
         # CSS dependencies for this element (external stylesheets)
         self.css_files = config_data.get("css_files", [])
 
+        # Conditional CSS: variant stylesheets loaded only when an element
+        # instance actually uses that variant, keyed on a content property.
+        # Avoids shipping every layout's CSS when only one is rendered.
+        # Shape: [{"property": "layout", "default": "grid",
+        #          "map": {"grid": "…/category-grid.css", "list": "…", …}}]
+        self.conditional_css_files = config_data.get("conditional_css_files", [])
+
         # Element Builder primitive flag - if True, element is available in element_builder
         self.element_builder_primitive = config_data.get("element_builder_primitive", False)
 
@@ -118,6 +125,7 @@ class ElementConfig:
             "translations": self.translations,
             "scripts": self.scripts,
             "css_files": self.css_files,
+            "conditional_css_files": self.conditional_css_files,
         }
 
 
@@ -149,6 +157,7 @@ class CustomElementConfig:
         self.translations = {}
         self.scripts = []  # Custom elements use underlying element scripts
         self.css_files = []  # Custom elements use underlying element CSS
+        self.conditional_css_files = []  # Custom elements have no variant CSS
 
     @property
     def template_path(self) -> str:

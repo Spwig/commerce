@@ -13,12 +13,20 @@ keywords:
   - health check
   - rollback
   - backup before upgrade
-url_patterns: []
+  - system upgrade
+  - what's new
+  - release notes
+  - changelog
+  - pre-upgrade checks
+url_patterns:
+  - /admin/management/systemmetrics/upgrade/
+  - /admin/management/systemmetrics/check-updates/
 related:
   - database-backups
   - maintenance-mode
   - installation-guide
   - system-requirements
+  - platform-updates
 published: true
 ---
 
@@ -30,7 +38,22 @@ Spwig receives regular updates with new features, performance improvements, and 
 
 1. **Create a backup** — go to **Management > System Metrics > Create Full Backup** or run the backup script from the command line. This is your safety net if anything goes wrong.
 2. **Check current version** — visible in **Management > System Metrics** or on the admin dashboard footer.
-3. **Read the release notes** — available in the admin panel under **Management > Component Updates** when a new version is detected.
+3. **Review what's changed** — open the **System Upgrade** page to read the full release notes for the new version before you install it, including any extra steps the release calls out (see below).
+
+### Reviewing what's new on the System Upgrade page
+
+When Spwig detects a newer version, **System Dashboard** shows an **Update Available** quick action. Click it — or navigate to **System Dashboard > Platform Updates** first to preview the changelog, then continue — to open the **System Upgrade** page.
+
+The page shows:
+
+- **Current Version** and **Available Version** cards, so you can confirm exactly which versions you're moving between
+- A **What's New in {version}** section — a short summary of the release, followed by the full release notes formatted with headings and bullet lists, exactly as the maintainers wrote them
+- **Pre-Upgrade Checks** — disk space, database connection, a recent backup, write permissions, and connectivity to the Spwig update server. Click **Run Pre-flight Checks**; the **Start Upgrade** button stays disabled until every check passes
+- A **Before You Upgrade** banner reminding you that a backup is created automatically, your store enters maintenance mode briefly during the upgrade, and you shouldn't close the page or navigate away while it runs
+
+Read the **Upgrade notes** in the What's New section carefully — some releases call out steps you need to take yourself after upgrading. For example, a release that adds a new image format might ask you to regenerate your product thumbnails from **Media Library > Image Processing** so images already in your library pick up the improvement; new uploads get it automatically, but your existing catalog needs a manual refresh.
+
+Once the pre-flight checks pass, click **Start Upgrade** to begin from the browser. A progress bar tracks each stage, and the page reloads automatically once the upgrade completes. This is the recommended path for most merchants — use the SSH-based script below if you need more direct control over the process.
 
 ### Running an upgrade
 
@@ -179,6 +202,7 @@ Navigate to **Management > Component Updates** to check for available component 
 ## Tips
 
 - **Upgrade regularly** — staying on the latest version ensures you have security fixes and access to new features
+- **Read the What's New section before you click Start Upgrade** — it's the fastest way to spot a required database migration, a security fix, or an **Upgrade notes** callout you need to act on afterward
 - **Always backup first** — even though the upgrade script creates an automatic backup, having your own gives extra safety
 - **Run doctor after issues** — if your store behaves unexpectedly, `./doctor.sh` is the fastest way to identify problems
 - **Schedule upgrades for low-traffic times** — maintenance mode briefly interrupts customer access, so upgrade during quiet hours

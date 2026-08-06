@@ -360,9 +360,30 @@ class LoyaltyHistoryViewSet(HeadlessAPIMixin, viewsets.ViewSet):
         if tx_type and tx_type in dict(LoyaltyTransaction.TRANSACTION_TYPES):
             transactions = transactions.filter(transaction_type=tx_type)
 
-        # Pagination
-        limit = min(int(request.query_params.get("limit", 20)), 100)
-        offset = int(request.query_params.get("offset", 0))
+        # Pagination — reject non-integer or negative values before slicing
+        try:
+            limit = int(request.query_params.get("limit", 20))
+            offset = int(request.query_params.get("offset", 0))
+        except (TypeError, ValueError):
+            return Response(
+                {
+                    "success": False,
+                    "message": _("limit and offset must be integers"),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if limit < 0 or offset < 0:
+            return Response(
+                {
+                    "success": False,
+                    "message": _("limit and offset must not be negative"),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Clamp limit to the supported positive range
+        limit = min(limit, 100)
 
         total_count = transactions.count()
         transactions = transactions[offset : offset + limit]
@@ -438,8 +459,10 @@ class LoyaltyRewardViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         return LoyaltyRewardSerializer
 
     def get_queryset(self):
-        queryset = LoyaltyReward.objects.filter(is_active=True).order_by(
-            "display_order", "-featured", "points_cost"
+        queryset = (
+            LoyaltyReward.objects.filter(is_active=True)
+            .select_related("product")
+            .order_by("display_order", "-featured", "points_cost")
         )
 
         # Filter by type
@@ -464,6 +487,9 @@ class LoyaltyRewardViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         # Exclude expired or out-of-stock rewards
         now = timezone.now()
+        queryset = queryset.filter(
+            models.Q(start_date__isnull=True) | models.Q(start_date__lte=now)
+        )
         queryset = queryset.exclude(end_date__lt=now)
         queryset = queryset.exclude(quantity_remaining=0)
 
@@ -527,6 +553,17 @@ class LoyaltyRewardViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                     "redemption": None,
                 },
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Inactive members cannot redeem, even if enrolled
+        if not member.is_active:
+            return Response(
+                {
+                    "success": False,
+                    "message": _("Your loyalty membership is not active"),
+                    "redemption": None,
+                },
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # Check eligibility
@@ -629,7 +666,7 @@ class LoyaltyRedemptionViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
             member = self.request.user.loyalty_member
             queryset = (
                 LoyaltyRedemption.objects.filter(member=member)
-                .select_related("reward")
+                .select_related("reward", "reward__product", "voucher_code")
                 .order_by("-created_at")
             )
 
@@ -707,7 +744,7 @@ class LoyaltyBadgeViewSet(HeadlessAPIMixin, viewsets.ViewSet):
 
         badges = (
             LoyaltyMemberBadge.objects.filter(member=member)
-            .select_related("badge")
+            .select_related("badge", "badge__image")
             .order_by("-earned_at")
         )
 
@@ -724,8 +761,10 @@ class LoyaltyBadgeViewSet(HeadlessAPIMixin, viewsets.ViewSet):
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def available(self, request):
         """Get all available badges"""
-        badges = LoyaltyBadge.objects.filter(is_active=True, is_visible=True).order_by(
-            "display_order", "name"
+        badges = (
+            LoyaltyBadge.objects.filter(is_active=True, is_visible=True)
+            .select_related("image")
+            .order_by("display_order", "name")
         )
 
         serializer = LoyaltyBadgeSerializer(badges, many=True)

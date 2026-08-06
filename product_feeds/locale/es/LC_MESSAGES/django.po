@@ -32,8 +32,8 @@ msgstr "Credenciales"
 
 #: admin.py:55
 msgid ""
-"Credentials are encrypted and managed through the provider wizard. To update "
-"credentials, reinstall the provider."
+"Credentials are encrypted and managed through the provider wizard. To update"
+" credentials, reinstall the provider."
 msgstr ""
 "Las credenciales se cifran y se gestionan a través del asistente del "
 "proveedor. Para actualizar las credenciales, reinstale el proveedor."
@@ -413,22 +413,26 @@ msgstr "Feed Generado"
 msgid "Full Sync"
 msgstr "Sincronización completa"
 
-#: models.py:402 templates/admin/product_feeds/feedsynclog/change_list.html:105
+#: models.py:402
+#: templates/admin/product_feeds/feedsynclog/change_list.html:105
 #: templates/admin/product_feeds/feedsynclog/partials/log_cards.html:67
 msgid "Incremental"
 msgstr "Incremental"
 
-#: models.py:403 templates/admin/product_feeds/feedsynclog/change_list.html:106
+#: models.py:403
+#: templates/admin/product_feeds/feedsynclog/change_list.html:106
 #: templates/admin/product_feeds/feedsynclog/partials/log_cards.html:69
 msgid "Manual"
 msgstr "Manual"
 
-#: models.py:404 templates/admin/product_feeds/feedsynclog/change_list.html:107
+#: models.py:404
+#: templates/admin/product_feeds/feedsynclog/change_list.html:107
 #: templates/admin/product_feeds/feedsynclog/partials/log_cards.html:71
 msgid "Scheduled"
 msgstr "Programada"
 
-#: models.py:407 templates/admin/product_feeds/feedsynclog/change_list.html:100
+#: models.py:407
+#: templates/admin/product_feeds/feedsynclog/change_list.html:100
 msgid "Sync Type"
 msgstr "Tipo de Sincronización"
 
@@ -535,6 +539,7 @@ msgid "%(counter)s feed"
 msgid_plural "%(counter)s feeds"
 msgstr[0] "%(counter)s feed"
 msgstr[1] "%(counter)s feeds"
+msgstr[2] "%(counter)s feeds"
 
 #: templates/admin/product_feeds/feedprovideraccount/change_list.html:149
 msgid "No feed accounts found"
@@ -698,8 +703,9 @@ msgstr "registro"
 #, python-format
 msgid "1 log"
 msgid_plural "%(counter)s logs"
-msgstr[0] "%(counter)s registro"
+msgstr[0] "1 registro"
 msgstr[1] "%(counter)s registros"
+msgstr[2] "%(counter)s registros"
 
 #: templates/admin/product_feeds/feedsynclog/change_list.html:158
 msgid "logs"
@@ -925,8 +931,8 @@ msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
-"No se pudo conectar al servidor de actualización. Mostrando solo proveedores "
-"instalados localmente."
+"No se pudo conectar al servidor de actualización. Mostrando solo proveedores"
+" instalados localmente."
 
 #: templates/admin/product_feeds/providers/browse.html:56
 msgid "Product Feed Marketplace"
@@ -993,11 +999,15 @@ msgid_plural ""
 "                "
 msgstr[0] ""
 "\n"
-"                    Currently: %(counter)s provider available\n"
+"                    %nuevamente: %(counter)s proveedor disponible%N\n"
 "                "
 msgstr[1] ""
 "\n"
-"                    Currently: %(counter)s providers available\n"
+"                    %nuevamente: %(counter)s proveedores disponibles%N\n"
+"                "
+msgstr[2] ""
+"\n"
+"                    %nuevamente: %(counter)s proveedores disponibles%N\n"
 "                "
 
 #: templates/admin/product_feeds/providers/browse.html:133
@@ -1087,8 +1097,8 @@ msgid ""
 "Follow these steps to connect your product feed provider and start syncing "
 "products"
 msgstr ""
-"Siga estos pasos para conectar su proveedor de feeds de productos y comenzar "
-"a sincronizar productos"
+"Siga estos pasos para conectar su proveedor de feeds de productos y comenzar"
+" a sincronizar productos"
 
 #: templates/admin/product_feeds/wizard/base.html:26
 msgid "Select Provider"
@@ -1155,13 +1165,11 @@ msgstr "Siguiente"
 #, python-format
 msgid ""
 "\n"
-"        Before entering credentials, review these setup steps for "
-"%(provider)s.\n"
+"        Before entering credentials, review these setup steps for %(provider)s.\n"
 "        "
 msgstr ""
 "\n"
-"        Antes de ingresar las credenciales, revise estos pasos de "
-"configuración para %(provider)s.\n"
+"        Antes de ingresar las credenciales, revise estos pasos de configuración para %(provider)s.\n"
 "        "
 
 #: templates/admin/product_feeds/wizard/step2_setup.html:28
@@ -1172,16 +1180,12 @@ msgstr "No están disponibles las instrucciones de configuración"
 #, python-format
 msgid ""
 "\n"
-"                    Setup instructions are not available for this version of "
-"%(provider)s.\n"
-"                    Please contact support for assistance or check for an "
-"updated version.\n"
+"                    Setup instructions are not available for this version of %(provider)s.\n"
+"                    Please contact support for assistance or check for an updated version.\n"
 "                    "
 msgstr ""
 "\n"
-"                    No están disponibles instrucciones de configuración para "
-"esta versión de %(provider)s. Por favor, contacte al soporte para obtener "
-"ayuda o verifique si hay una versión actualizada.\n"
+"                    No están disponibles instrucciones de configuración para esta versión de %(provider)s. Por favor, contacte al soporte para obtener ayuda o verifique si hay una versión actualizada.\n"
 "                    "
 
 #: templates/admin/product_feeds/wizard/step2_setup.html:49
@@ -1202,13 +1206,11 @@ msgstr "Configurar ajustes del canal"
 #, python-format
 msgid ""
 "\n"
-"        Enter your API credentials and configure feed settings for "
-"%(provider)s.\n"
+"        Enter your API credentials and configure feed settings for %(provider)s.\n"
 "        "
 msgstr ""
 "\n"
-"        Ingrese sus credenciales de API y configure la configuración del "
-"feed para %(provider)s.\n"
+"        Ingrese sus credenciales de API y configure la configuración del feed para %(provider)s.\n"
 "        "
 
 #: templates/admin/product_feeds/wizard/step3_config.html:17
@@ -1272,8 +1274,8 @@ msgstr "Semanal"
 #: templates/admin/product_feeds/wizard/step3_config.html:141
 msgid "How often to automatically sync your product feed to this provider."
 msgstr ""
-"Con qué frecuencia sincronizar automáticamente tu feed de productos con este "
-"proveedor."
+"Con qué frecuencia sincronizar automáticamente tu feed de productos con este"
+" proveedor."
 
 #: templates/admin/product_feeds/wizard/step3_config.html:158
 msgid "The format to generate your product feed in."
@@ -1285,7 +1287,8 @@ msgstr "Activar este canal"
 
 #: templates/admin/product_feeds/wizard/step3_config.html:169
 msgid "Uncheck to disable automatic syncing for this feed."
-msgstr "Desmarque para desactivar la sincronización automática para este feed."
+msgstr ""
+"Desmarque para desactivar la sincronización automática para este feed."
 
 #: templates/admin/product_feeds/wizard/step3_config.html:176
 msgid ""
@@ -1304,13 +1307,11 @@ msgstr "Probar conexión"
 #, python-format
 msgid ""
 "\n"
-"        Test the connection to %(provider)s to verify your credentials are "
-"correct.\n"
+"        Test the connection to %(provider)s to verify your credentials are correct.\n"
 "        "
 msgstr ""
 "\n"
-"        Pruebe la conexión con %(provider)s para verificar que sus "
-"credenciales sean correctas.\n"
+"        Pruebe la conexión con %(provider)s para verificar que sus credenciales sean correctas.\n"
 "        "
 
 #: templates/admin/product_feeds/wizard/step4_test.html:21

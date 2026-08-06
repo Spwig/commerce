@@ -13,7 +13,7 @@ from rest_framework import serializers
 logger = logging.getLogger(__name__)
 
 from catalog.serializers import ProductListSerializer, ProductVariantSerializer
-from subscriptions.serializers import SubscriptionPlanSerializer
+from subscriptions.serializers import PlanPricingTierSerializer, SubscriptionPlanSerializer
 from vouchers.models import AppliedVoucher
 
 from .models import (
@@ -38,6 +38,8 @@ class CartItemSerializer(serializers.ModelSerializer):
     )
     total_price = serializers.SerializerMethodField()
     savings = serializers.SerializerMethodField()
+    is_on_sale = serializers.SerializerMethodField()
+    regular_total = serializers.SerializerMethodField()
     requires_shipping = serializers.BooleanField(read_only=True)
     item_weight = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
@@ -73,6 +75,20 @@ class CartItemSerializer(serializers.ModelSerializer):
         if amount is None:
             return "0.00"
         return str(amount.amount) if hasattr(amount, "amount") else str(amount)
+
+    def get_is_on_sale(self, obj):
+        """True when the product's own discount reduces this line's price."""
+        s = obj.savings
+        return bool(s is not None and getattr(s, "amount", 0) > 0)
+
+    def get_regular_total(self, obj):
+        """Regular (pre-discount) line total to strike through, or None. savings and
+        total_price are both per-line in the cart currency."""
+        s = obj.savings
+        if s is None or getattr(s, "amount", 0) <= 0:
+            return None
+        regular = obj.total_price + s
+        return str(regular.amount) if hasattr(regular, "amount") else str(regular)
 
     def get_delivery_type(self, obj):
         """
@@ -121,6 +137,8 @@ class CartItemSerializer(serializers.ModelSerializer):
                             if hasattr(ma, "get_thumbnail")
                             else (ma.get_display_url() if hasattr(ma, "get_display_url") else "")
                         )
+                        if hasattr(ma, "get_picture_sources"):
+                            img_data["thumbnail_sources"] = ma.get_picture_sources("small")
                         img_data["url"] = ma.original_file.url if ma.original_file else ""
                     comp_images.append(img_data)
 
@@ -161,6 +179,33 @@ class CartItemSerializer(serializers.ModelSerializer):
     subscription_plan_details = SubscriptionPlanSerializer(
         source="subscription_plan", read_only=True
     )
+    pricing_tier_details = PlanPricingTierSerializer(source="pricing_tier", read_only=True)
+    subscription_billing_display = serializers.SerializerMethodField(
+        help_text=_("Human-readable billing cadence, e.g. 'Monthly' or 'Every 3 months'")
+    )
+    subscription_unit_price = serializers.SerializerMethodField(
+        help_text=_("Recurring per-cycle unit price as a decimal string (subscription lines only)")
+    )
+
+    def get_subscription_billing_display(self, obj):
+        """Interval label for subscription lines (None for one-time lines)."""
+        if obj.is_subscription and obj.pricing_tier:
+            return obj.pricing_tier.get_billing_display()
+        return None
+
+    def get_subscription_unit_price(self, obj):
+        """
+        Recurring per-cycle unit price for subscription lines.
+
+        The stored unit_price already carries the tier-discounted recurring
+        price (see CartService.add_item), so the storefront can render
+        "<price> / <interval>" from these two fields without any client-side
+        money maths.
+        """
+        if not obj.is_subscription:
+            return None
+        amount = obj.unit_price
+        return str(amount.amount) if hasattr(amount, "amount") else str(amount)
 
     # IDs are both read+write: clients send them when adding to cart, and the
     # headless SDK's CartItem type expects them on read for optimistic merge logic.
@@ -227,6 +272,8 @@ class CartItemSerializer(serializers.ModelSerializer):
             "customization_price",
             "total_price",
             "savings",
+            "is_on_sale",
+            "regular_total",
             "customizations",
             "notes",
             "requires_shipping",
@@ -237,6 +284,9 @@ class CartItemSerializer(serializers.ModelSerializer):
             "bundle_components",
             "is_subscription",
             "subscription_plan_details",
+            "pricing_tier_details",
+            "subscription_billing_display",
+            "subscription_unit_price",
             "product_id",
             "variant_id",
             "subscription_plan_id",
@@ -731,6 +781,17 @@ class AddToCartSerializer(serializers.Serializer):
         is_subscription = data.get("is_subscription", False)
 
         if is_subscription:
+            # A subscription is owned by a user account: PaymentToken.user and
+            # the CustomerSubscription owner are both required, so an anonymous
+            # shopper cannot hold one. Require authentication up front — this
+            # also closes the hole where an anonymous request could pass
+            # validation carrying an unverified payment_token_id.
+            request = self.context.get("request")
+            if not (request and request.user.is_authenticated):
+                raise serializers.ValidationError(
+                    {"is_subscription": _("Please sign in to purchase a subscription.")}
+                )
+
             if not data.get("subscription_plan_id"):
                 raise serializers.ValidationError(
                     {
@@ -739,13 +800,9 @@ class AddToCartSerializer(serializers.Serializer):
                         )
                     }
                 )
-            if not data.get("payment_token_id"):
-                raise serializers.ValidationError(
-                    {"payment_token_id": _("Payment token is required for subscription purchases")}
-                )
 
             # Validate product supports subscriptions
-            from catalog.models import Product
+            from catalog.models import SUBSCRIBABLE_PRODUCT_TYPES, Product
 
             try:
                 product = Product.objects.get(id=data["product_id"])
@@ -755,6 +812,13 @@ class AddToCartSerializer(serializers.Serializer):
             if not product.is_subscription_enabled:
                 raise serializers.ValidationError(
                     {"is_subscription": _("This product does not support subscriptions")}
+                )
+
+            # Defence in depth against the product-type gate on Product.clean():
+            # never let an unsupported type reach the recurring-billing path.
+            if product.product_type not in SUBSCRIBABLE_PRODUCT_TYPES:
+                raise serializers.ValidationError(
+                    {"is_subscription": _("This product type cannot be sold as a subscription")}
                 )
 
             # Validate plan exists, is active, and is linked to this product
@@ -776,14 +840,18 @@ class AddToCartSerializer(serializers.Serializer):
 
             data["subscription_plan"] = plan
 
-            # Validate payment token
-            from subscriptions.models import PaymentToken
+            # Payment token is OPTIONAL at add-to-cart. A shopper browsing a
+            # product has no saved card yet; the reusable PaymentToken is minted
+            # at the checkout payment step and attached via
+            # /api/cart/items/<id>/attach-subscription-token/. Only validate a
+            # token here when one is supplied (saved-card reuse).
+            payment_token_id = data.get("payment_token_id")
+            if payment_token_id:
+                from subscriptions.models import PaymentToken
 
-            request = self.context.get("request")
-            if request and request.user.is_authenticated:
                 try:
                     token = PaymentToken.objects.get(
-                        token_id=data["payment_token_id"], user=request.user, is_active=True
+                        token_id=payment_token_id, user=request.user, is_active=True
                     )
                     data["payment_token"] = token
                 except PaymentToken.DoesNotExist:

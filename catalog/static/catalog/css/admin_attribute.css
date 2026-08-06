@@ -47,12 +47,12 @@
 }
 
 .field-type .badge-button {
-  background-color: var(--success, #51cf66);
+  background-color: var(--success-fg, #51cf66);
   color: white;
 }
 
 .field-type .badge-radio {
-  background-color: var(--warning, #ffd43b);
+  background-color: var(--warning-color, #ffd43b);
   color: #333;
 }
 
@@ -69,7 +69,7 @@
 
 /* Quick Add Attribute Section */
 .quick-add-attribute-section {
-  background: var(--surface-primary, #fff);
+  background: var(--body-bg, #fff);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   margin-bottom: 20px;
@@ -215,7 +215,7 @@ fieldset .quick-add-header h3.inline-heading,
 .quick-add-form .field-box select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-alpha-20);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .quick-add-form .field-box .help {
@@ -247,7 +247,7 @@ fieldset .quick-add-header h3.inline-heading,
 }
 
 .create-attribute-btn:hover {
-  background: var(--primary-dark);
+  background: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px var(--shadow-light);
 }
@@ -292,15 +292,15 @@ fieldset .quick-add-header h3.inline-heading,
 }
 
 .quick-add-messages.success {
-  background: var(--success-alpha-10);
-  border: 1px solid var(--success);
-  color: var(--success-dark);
+  background: color-mix(in srgb, var(--success-fg) 10%, transparent);
+  border: 1px solid var(--success-fg);
+  color: var(--success-fg);
 }
 
 .quick-add-messages.error {
-  background: var(--error-alpha-10);
-  border: 1px solid var(--error);
-  color: var(--error-dark);
+  background: color-mix(in srgb, var(--error-fg) 10%, transparent);
+  border: 1px solid var(--error-fg);
+  color: var(--error-fg);
 }
 
 .quick-add-messages ul {
@@ -342,60 +342,17 @@ fieldset .quick-add-header h3.inline-heading,
   }
 }
 
-/* Dark Theme Specific */
-[data-theme='dark'] .quick-add-attribute-section {
-  background: #1e1e1e;
-  border-color: #333;
-}
-
+/* Dark-mode variant of the decorative slate header gradient. The quick-add
+   header is a deliberate slate banner (no design token maps to it), so it keeps
+   its light base gradient (above) plus this darker dark-mode variant. Everything
+   else now flows from theme tokens (--body-bg section, #fff-on-gradient h3,
+   transparent content), so the redundant [data-theme='dark'] section/h3/content
+   overrides and the entire [data-theme='light'] block — which only re-stated the
+   light defaults — have been removed. */
 [data-theme='dark'] .quick-add-header {
   background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
 }
 
 [data-theme='dark'] .quick-add-header:hover {
   background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
-}
-
-[data-theme='dark'] .quick-add-header h3,
-[data-theme='dark'] .quick-add-header h3.inline-heading,
-[data-theme='dark'] fieldset .quick-add-header h3.inline-heading {
-  color: #fff !important;
-  background: none !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: none !important;
-  border-bottom: none !important;
-}
-
-[data-theme='dark'] .quick-add-content {
-  background: #1e1e1e;
-}
-
-/* Light Theme Specific */
-[data-theme='light'] .quick-add-attribute-section {
-  background: #ffffff;
-  border-color: #e0e0e0;
-}
-
-[data-theme='light'] .quick-add-header {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
-}
-
-[data-theme='light'] .quick-add-header:hover {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
-}
-
-[data-theme='light'] .quick-add-header h3,
-[data-theme='light'] .quick-add-header h3.inline-heading,
-[data-theme='light'] fieldset .quick-add-header h3.inline-heading {
-  color: #fff !important;
-  background: none !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: none !important;
-  border-bottom: none !important;
-}
-
-[data-theme='light'] .quick-add-content {
-  background: #ffffff;
 }

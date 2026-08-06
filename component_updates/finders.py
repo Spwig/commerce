@@ -70,14 +70,17 @@ class IntegrationStaticFinder(BaseFinder):
         """Check if a file path has a static asset extension."""
         return Path(path).suffix.lower() in STATIC_EXTENSIONS
 
-    def find(self, path, all=False):
+    def find(self, path, find_all=False, **kwargs):
         """Find a requested static file in the integrations directory."""
+        # Django 5.2 renamed the ``all`` kwarg to ``find_all``; accept both so
+        # this works across the deprecation window.
+        find_all = find_all or kwargs.get("all", False)
         full_path = self.integrations_root / path
         if full_path.exists() and full_path.is_file() and self._is_static_asset(path):
-            if all:
+            if find_all:
                 return [str(full_path)]
             return str(full_path)
-        return [] if all else ""
+        return [] if find_all else ""
 
     def list(self, ignore_patterns):
         """
@@ -123,14 +126,17 @@ class ComponentStaticFinder(BaseFinder):
         self.storage = FileSystemStorage(location=str(self.static_root))
         self.storage.prefix = ""
 
-    def find(self, path, all=False):
+    def find(self, path, find_all=False, **kwargs):
         """Find a requested static file in the components static directory."""
+        # Django 5.2 renamed the ``all`` kwarg to ``find_all``; accept both so
+        # this works across the deprecation window.
+        find_all = find_all or kwargs.get("all", False)
         full_path = self.static_root / path
         if full_path.exists() and full_path.is_file():
-            if all:
+            if find_all:
                 return [str(full_path)]
             return str(full_path)
-        return [] if all else ""
+        return [] if find_all else ""
 
     def list(self, ignore_patterns):
         """

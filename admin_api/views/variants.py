@@ -8,7 +8,7 @@ import secrets
 from decimal import Decimal
 
 from django.db import IntegrityError, transaction
-from django.db.models import IntegerField, Sum
+from django.db.models import IntegerField, Prefetch, Sum
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
@@ -26,7 +26,7 @@ from admin_api.serializers.variants import (
 )
 from admin_api.services.audit_service import AuditService
 from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
-from catalog.models import Product, ProductVariant, StockItem, Warehouse
+from catalog.models import AttributeValue, Product, ProductVariant, StockItem, Warehouse
 from core.utils import get_default_currency
 
 
@@ -74,11 +74,18 @@ def variant_list(request, product_id):
 
     variants = (
         ProductVariant.objects.filter(product=product)
+        .select_related("image_asset")
         .annotate(
             _available_stock=Coalesce(
                 Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
                 0,
                 output_field=IntegerField(),
+            )
+        )
+        .prefetch_related(
+            Prefetch(
+                "selected_attributes",
+                queryset=AttributeValue.objects.select_related("attribute"),
             )
         )
         .order_by("created_at")
@@ -224,13 +231,22 @@ def create_variant(request, product_id):
     )
 
     # Re-fetch with annotations
-    variant = ProductVariant.objects.annotate(
-        _available_stock=Coalesce(
-            Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
-            0,
-            output_field=IntegerField(),
+    variant = (
+        ProductVariant.objects.annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
-    ).get(id=variant.id)
+        .prefetch_related(
+            Prefetch(
+                "selected_attributes",
+                queryset=AttributeValue.objects.select_related("attribute"),
+            )
+        )
+        .get(id=variant.id)
+    )
 
     return Response(
         {
@@ -327,6 +343,10 @@ def update_variant(request, product_id, variant_id):
         else:
             variant.price = None
             new_values["price"] = None
+    elif data.get("currency") and variant.price:
+        old_values["currency"] = str(variant.price.currency)
+        variant.price = Money(variant.price.amount, data["currency"])
+        new_values["currency"] = data["currency"]
 
     try:
         variant.save()
@@ -361,13 +381,22 @@ def update_variant(request, product_id, variant_id):
     )
 
     # Re-fetch with annotations
-    variant = ProductVariant.objects.annotate(
-        _available_stock=Coalesce(
-            Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
-            0,
-            output_field=IntegerField(),
+    variant = (
+        ProductVariant.objects.annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
-    ).get(id=variant.id)
+        .prefetch_related(
+            Prefetch(
+                "selected_attributes",
+                queryset=AttributeValue.objects.select_related("attribute"),
+            )
+        )
+        .get(id=variant.id)
+    )
 
     return Response(
         {

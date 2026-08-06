@@ -11,7 +11,7 @@ from django.contrib import admin
 from django.db.models import Count, Q, Sum
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -490,7 +490,7 @@ class AffiliateAdmin(admin.ModelAdmin):
                 url,
             )
         except Exception:
-            return format_html(
+            return mark_safe(
                 '<span class="text-muted">'
                 '<i class="fas fa-exclamation-triangle"></i> No customer profile found</span>'
             )
@@ -623,7 +623,7 @@ class AffiliateAdmin(admin.ModelAdmin):
             </div>
         </div>
         """
-        return format_html(html)
+        return mark_safe(html)
 
     affiliate_stats.short_description = _("Affiliate Statistics")
 
@@ -979,7 +979,7 @@ class LinkAdmin(admin.ModelAdmin):
             <p><strong><i class="fas fa-dollar-sign"></i> {_("Total Revenue")}:</strong> ${total_revenue:,.2f}</p>
         </div>
         """
-        return format_html(html)
+        return mark_safe(html)
 
     link_stats.short_description = _("Link Statistics")
 
@@ -1066,14 +1066,14 @@ class ClickAdmin(admin.ModelAdmin):
         html = f"""
         <div class="click-details">
             <h4><i class="fas fa-link"></i> {_("Link Information")}</h4>
-            <p><strong>{_("Affiliate")}:</strong> {obj.link.affiliate}</p>
-            <p><strong>{_("Program")}:</strong> {obj.link.program}</p>
-            <p><strong>{_("Destination")}:</strong> <a href="{obj.link.destination_url}" target="_blank">{obj.link.destination_url}</a></p>
+            <p><strong>{_("Affiliate")}:</strong> {conditional_escape(obj.link.affiliate)}</p>
+            <p><strong>{_("Program")}:</strong> {conditional_escape(obj.link.program)}</p>
+            <p><strong>{_("Destination")}:</strong> <a href="{conditional_escape(obj.link.destination_url)}" target="_blank">{conditional_escape(obj.link.destination_url)}</a></p>
 
             {commission_html}
         </div>
         """
-        return format_html(html)
+        return mark_safe(html)
 
     click_details.short_description = _("Click Details")
 
@@ -1428,13 +1428,13 @@ class PayoutAdmin(admin.ModelAdmin):
                 <div><strong>{_("Number of Commissions")}:</strong> {obj.commission_count}</div>
                 <div><strong>{_("Payout Amount")}:</strong> ${obj.amount:,.2f}</div>
                 <div><strong>{_("Calculated Total")}:</strong> ${total_amount:,.2f}</div>
-                <div><strong>{_("Payment Method")}:</strong> {obj.method}</div>
-                <div><strong>{_("Status")}:</strong> {obj.get_status_display()}</div>
-                <div><strong>{_("Reference")}:</strong> {obj.reference or _("Not set")}</div>
+                <div><strong>{_("Payment Method")}:</strong> {conditional_escape(obj.method)}</div>
+                <div><strong>{_("Status")}:</strong> {conditional_escape(obj.get_status_display())}</div>
+                <div><strong>{_("Reference")}:</strong> {conditional_escape(obj.reference or _("Not set"))}</div>
             </div>
         </div>
         """
-        return format_html(html)
+        return mark_safe(html)
 
     payout_summary.short_description = _("Summary")
 

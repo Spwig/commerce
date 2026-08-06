@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ فشل الدفع لـ {{ plan_name }} - إجراء مطلوب - {{ shop_name }}
+⚠️ فشلت الدفع لـ {{ plan_name }} - اتخاذ إجراء - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -22,10 +22,10 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ فشل الدفع
+          ⚠️ فشلت الدفع
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          لم نتمكن من معالجة دفتك
+          لم نتمكن من معالجة دفعتك
         </mj-text>
       </mj-column>
     </mj-section>
@@ -49,7 +49,7 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>وسيلة الدفع:</strong> {{ payment_method }}
+                <strong>طريقة الدفع:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                يرجى تحديث وسيلة الدفع الخاصة بك بحلول {{ retry_date|date:"F d, Y" }} لتجنب انقطاع الخدمة.
+                يرجى تحديث طريقة الدفع بحلول {{ retry_date|date:"F d, Y" }} لتجنب انقطاع الخدمة.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          ما يجب عليك فعله؟
+          ما الذي يجب عليك فعله؟
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          تأكد من أن وسيلة الدفع تحتوي على رصيد كافٍ
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          تحقق من توفر الأموال في طريقة الدفع
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          قم بتحديث وسيلة الدفع إذا انتهت صلاحية البطاقة
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          قم بتحديث طريقة الدفع إذا انتهت بطاقة الائتمان
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          سيتم إعادة المحاولة تلقائيًا في {{ retry_days }} يومًا
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          سيتم محاولة الدفع تلقائيًا في {{ retry_days }} أيام
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,7 +99,7 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          تحديث وسيلة الدفع
+          تحديث طريقة الدفع
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          تحتاج إلى مساعدة؟ تواصل معنا على {{ support_email }}
+          هل تحتاج إلى مساعدة؟ اتصل بنا على {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -131,27 +135,27 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ فشل الدفع
+⚠️ فشلت الدفع
 
-لم نتمكن من معالجة دفتك
+لم نتمكن من معالجة دفعتك
 
 معلومات الدفع:
 الخطة: {{ plan_name }}
 المبلغ: {{ subscription_amount }}
-وسيلة الدفع: {{ payment_method }}
+طريقة الدفع: {{ payment_method }}
 السبب: {{ failure_reason }}
 
-يرجى تحديث وسيلة الدفع الخاصة بك بحلول {{ retry_date|date:"F d, Y" }} لتجنب انقطاع الخدمة.
+{% if retry_date %}يرجى تحديث طريقة الدفع بحلول {{ retry_date|date:"F d, Y" }} لتجنب انقطاع الخدمة.{% endif %}
 
-ما يجب عليك فعله؟
-1. تأكد من أن وسيلة الدفع تحتوي على رصيد كافٍ
-2. قم بتحديث وسيلة الدفع إذا انتهت صلاحية البطاقة
-3. سيتم إعادة المحاولة تلقائيًا في {{ retry_days }} يومًا
+ما الذي يجب عليك فعله؟
+1. تحقق من توفر الأموال في طريقة الدفع
+2. قم بتحديث طريقة الدفع إذا انتهت بطاقة الائتمان
+{% if retry_days %}3. سيتم محاولة الدفع تلقائيًا في {{ retry_days }} أيام{% endif %}
 
-تحديث وسيلة الدفع: {{ update_payment_url }}
+تحديث طريقة الدفع: {{ update_payment_url }}
 عرض الاشتراك: {{ manage_subscription_url }}
 
-تحتاج إلى مساعدة؟ تواصل معنا على {{ support_email }}
+هل تحتاج إلى مساعدة؟ اتصل بنا على {{ support_email }}
 
 ---
-مدعم بواسطة Spwig - https://spwig.com
+مدعوم بواسطة Spwig - https://spwig.com

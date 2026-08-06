@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from core.utils import get_default_currency
+from media_library.serializers import PictureSourcesSerializer
 
 from .models import (
     AttributeValue,
@@ -37,12 +38,14 @@ class ProductImageSerializer(serializers.ModelSerializer):
     """Serializer for product images"""
 
     image = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductImage
         fields = [
             "id",
             "image",
+            "image_sources",
             "alt_text",
             "is_primary",
             "position",
@@ -54,6 +57,13 @@ class ProductImageSerializer(serializers.ModelSerializer):
         """Get image URL from MediaAsset (returns relative URL for cross-origin safety)"""
         if obj.media_asset and obj.media_asset.original_file:
             return obj.media_asset.get_display_url()
+        return None
+
+    @extend_schema_field(PictureSourcesSerializer)
+    def get_image_sources(self, obj):
+        """AVIF/WebP/fallback source set for a <picture> (null if no asset)."""
+        if obj.media_asset and obj.media_asset.original_file:
+            return obj.media_asset.get_picture_sources()
         return None
 
 
@@ -212,6 +222,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
     # Image from MediaAsset
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     # Variant gallery images
     images = serializers.SerializerMethodField()
@@ -229,6 +240,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
             "attributes_structured",
             "stock_quantity",
             "image_url",
+            "image_sources",
             "images",
             "color_swatch",
             "is_active",
@@ -259,6 +271,18 @@ class ProductVariantSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
+    @extend_schema_field(PictureSourcesSerializer)
+    def get_image_sources(self, obj):
+        """<picture> source set for the variant's primary image (medium)."""
+        asset = None
+        if obj.image_asset and obj.image_asset.original_file:
+            asset = obj.image_asset
+        else:
+            first_img = obj.images.first()
+            if first_img and first_img.media_asset and first_img.media_asset.original_file:
+                asset = first_img.media_asset
+        return asset.get_picture_sources("medium") if asset else None
+
     def get_images(self, obj) -> list:
         """Get all variant gallery images"""
         variant_images = obj.images.select_related("media_asset").order_by("position")
@@ -269,6 +293,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
                     {
                         "id": vi.id,
                         "image": vi.media_asset.get_display_url(),
+                        "image_sources": vi.media_asset.get_picture_sources(),
                         "alt_text": vi.alt_text or "",
                     }
                 )
@@ -406,6 +431,7 @@ class CategoryListSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
     full_path = extend_schema_field(serializers.CharField())(serializers.ReadOnlyField())
     image = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
@@ -415,6 +441,7 @@ class CategoryListSerializer(serializers.ModelSerializer):
             "slug",
             "icon",
             "image",
+            "image_sources",
             "parent",
             "full_path",
             "product_count",
@@ -430,6 +457,13 @@ class CategoryListSerializer(serializers.ModelSerializer):
         """Get image URL from MediaAsset"""
         return obj.get_image_url()
 
+    @extend_schema_field(PictureSourcesSerializer)
+    def get_image_sources(self, obj):
+        """<picture> source set for the category image (null if unset)."""
+        if obj.image_asset:
+            return obj.image_asset.get_picture_sources()
+        return None
+
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
     """Detailed serializer for category pages with translation support"""
@@ -439,7 +473,9 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
     full_path = extend_schema_field(serializers.CharField())(serializers.ReadOnlyField())
     effective_theme = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
     banner_image = serializers.SerializerMethodField()
+    banner_image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
@@ -450,7 +486,9 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
             "description",
             "icon",
             "image",
+            "image_sources",
             "banner_image",
+            "banner_image_sources",
             "parent",
             "full_path",
             "page_template",
@@ -475,9 +513,23 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         """Get image URL from MediaAsset"""
         return obj.get_image_url()
 
+    @extend_schema_field(PictureSourcesSerializer)
+    def get_image_sources(self, obj):
+        """<picture> source set for the category image (null if unset)."""
+        if obj.image_asset:
+            return obj.image_asset.get_picture_sources()
+        return None
+
     def get_banner_image(self, obj) -> str | None:
         """Get banner image URL from MediaAsset"""
         return obj.get_banner_url()
+
+    @extend_schema_field(PictureSourcesSerializer)
+    def get_banner_image_sources(self, obj):
+        """<picture> source set for the category banner (null if unset)."""
+        if obj.banner_asset:
+            return obj.banner_asset.get_picture_sources()
+        return None
 
     def to_representation(self, instance):
         """Apply translations for name, description, and SEO fields."""
@@ -521,6 +573,27 @@ class BrandSerializer(serializers.ModelSerializer):
         return obj.products.filter(status="published").count()
 
 
+def _ships_to_region(product, request):
+    """
+    Whether ``product`` is sold in the request's sales region (True when there's
+    no region). Mirrors ``Product.is_visible_in_region`` but reads the
+    (list-)prefetched ``region_visibility`` rows to avoid a per-product query.
+    """
+    if not request:
+        return True
+    from catalog.middleware import get_region_from_request
+
+    region = get_region_from_request(request)
+    if not region:
+        return True
+    if product.region_restriction_mode == "all":
+        return True
+    selected = any(rv.region_id == region.id for rv in product.region_visibility.all())
+    if product.region_restriction_mode == "only_in":
+        return selected
+    return not selected  # all_except
+
+
 class ProductListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for product listings"""
 
@@ -532,18 +605,31 @@ class ProductListSerializer(serializers.ModelSerializer):
         source="price.amount", max_digits=10, decimal_places=2, read_only=True
     )
     price_currency = serializers.CharField(source="price.currency.code", read_only=True)
-    compare_at_price_amount = serializers.DecimalField(
-        source="compare_at_price.amount",
-        max_digits=10,
-        decimal_places=2,
-        read_only=True,
-        allow_null=True,
-    )
+    # Sale-aware pricing. `price_amount` is the regular price; `effective_price_amount`
+    # is what the customer pays; `compare_at_price_amount` is the struck-through "was"
+    # price (the regular price) only when on sale. All derived from the canonical
+    # sale_type/sale_value mechanism — there is no compare_at_price field.
+    effective_price_amount = serializers.SerializerMethodField()
+    compare_at_price_amount = serializers.SerializerMethodField()
+    is_on_sale = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
     discount_percentage = extend_schema_field(serializers.FloatField())(serializers.ReadOnlyField())
     is_in_stock = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
     is_low_stock = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
+    ships_to_region = serializers.SerializerMethodField()
     average_rating = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.DecimalField(max_digits=10, decimal_places=2))
+    def get_effective_price_amount(self, obj):
+        """The sale-aware price the customer pays (base currency)."""
+        # Return a 2-decimal string to match the sibling DecimalField outputs
+        # (e.g. "38.00"), not a raw Decimal which JSONRenderer emits as a number.
+        return f"{obj.effective_price.amount:.2f}"
+
+    @extend_schema_field(serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True))
+    def get_compare_at_price_amount(self, obj):
+        """Regular price to strike through — only when on sale, else null."""
+        return f"{obj.price.amount:.2f}" if obj.is_on_sale else None
 
     class Meta:
         model = Product
@@ -559,16 +645,24 @@ class ProductListSerializer(serializers.ModelSerializer):
             "images",
             "price_amount",
             "price_currency",
+            "effective_price_amount",
             "compare_at_price_amount",
+            "is_on_sale",
             "discount_percentage",
             "is_in_stock",
             "is_low_stock",
+            "ships_to_region",
             "is_featured",
             "average_rating",
             "review_count",
             "views_count",
             "sales_count",
         ]
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_ships_to_region(self, obj) -> bool:
+        """Whether this product is sold in the requesting shopper's region."""
+        return _ships_to_region(obj, self.context.get("request"))
 
     def get_primary_image(self, obj) -> dict | None:
         """Get primary image or first image"""
@@ -579,6 +673,9 @@ class ProductListSerializer(serializers.ModelSerializer):
         if primary:
             return {
                 "url": primary.media_asset.get_display_url() if primary.media_asset else None,
+                "image_sources": primary.media_asset.get_picture_sources()
+                if primary.media_asset
+                else None,
                 "alt_text": primary.alt_text,
             }
         return None
@@ -595,7 +692,9 @@ class ProductListSerializer(serializers.ModelSerializer):
                         "thumbnail_url": img.media_asset.get_thumbnail("small")
                         if hasattr(img.media_asset, "get_thumbnail")
                         else img.media_asset.get_display_url(),
+                        "thumbnail_sources": img.media_asset.get_picture_sources("small"),
                         "image_url": img.media_asset.get_display_url(),
+                        "image_sources": img.media_asset.get_picture_sources(),
                         "url": img.media_asset.original_file.url
                         if img.media_asset.original_file
                         else "",
@@ -629,13 +728,13 @@ class ProductDetailSerializer(
         source="price.amount", max_digits=10, decimal_places=2, read_only=True
     )
     price_currency = serializers.CharField(source="price.currency.code", read_only=True)
-    compare_at_price_amount = serializers.DecimalField(
-        source="compare_at_price.amount",
-        max_digits=10,
-        decimal_places=2,
-        read_only=True,
-        allow_null=True,
-    )
+    # Sale-aware pricing derived from the canonical sale_type/sale_value mechanism
+    # (there is no compare_at_price field). `price_amount` is the regular price;
+    # `effective_price_amount` is what the customer pays; `compare_at_price_amount`
+    # is the struck-through "was" price, present only when on sale.
+    effective_price_amount = serializers.SerializerMethodField()
+    compare_at_price_amount = serializers.SerializerMethodField()
+    is_on_sale = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
     cost_amount = serializers.DecimalField(
         source="cost.amount", max_digits=10, decimal_places=2, read_only=True, allow_null=True
     )
@@ -643,6 +742,7 @@ class ProductDetailSerializer(
     discount_percentage = extend_schema_field(serializers.FloatField())(serializers.ReadOnlyField())
     is_in_stock = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
     is_low_stock = extend_schema_field(serializers.BooleanField())(serializers.ReadOnlyField())
+    ships_to_region = serializers.SerializerMethodField()
 
     average_rating = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
@@ -688,7 +788,9 @@ class ProductDetailSerializer(
             "specifications",
             "price_amount",
             "price_currency",
+            "effective_price_amount",
             "compare_at_price_amount",
+            "is_on_sale",
             "cost_amount",
             "discount_percentage",
             "track_inventory",
@@ -696,6 +798,7 @@ class ProductDetailSerializer(
             "allow_backorders",
             "is_in_stock",
             "is_low_stock",
+            "ships_to_region",
             "weight",
             "length",
             "width",
@@ -741,6 +844,11 @@ class ProductDetailSerializer(
             "updated_at",
         ]
 
+    @extend_schema_field(serializers.BooleanField())
+    def get_ships_to_region(self, obj) -> bool:
+        """Whether this product is sold in the requesting shopper's region."""
+        return _ships_to_region(obj, self.context.get("request"))
+
     def get_average_rating(self, obj) -> float | None:
         """Calculate average rating"""
         avg = obj.reviews.filter(is_approved=True).aggregate(Avg("rating"))["rating__avg"]
@@ -774,6 +882,18 @@ class ProductDetailSerializer(
     def get_effective_design(self, obj) -> dict | None:
         """Get effective design settings"""
         return obj.get_effective_design()
+
+    @extend_schema_field(serializers.DecimalField(max_digits=10, decimal_places=2))
+    def get_effective_price_amount(self, obj):
+        """The sale-aware price the customer pays (base currency)."""
+        # Return a 2-decimal string to match the sibling DecimalField outputs
+        # (e.g. "38.00"), not a raw Decimal which JSONRenderer emits as a number.
+        return f"{obj.effective_price.amount:.2f}"
+
+    @extend_schema_field(serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True))
+    def get_compare_at_price_amount(self, obj):
+        """Regular price to strike through — only when on sale, else null."""
+        return f"{obj.price.amount:.2f}" if obj.is_on_sale else None
 
     def get_available_attributes(self, obj) -> list:
         """

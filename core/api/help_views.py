@@ -4,7 +4,7 @@ REST API endpoints for help system
 """
 
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 
 from django.conf import settings
 from django.contrib import admin
@@ -773,7 +773,7 @@ def admin_metadata_api(request):
 
     # Build response
     response_data = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "count": len(models_metadata),
         "models": models_metadata,
     }

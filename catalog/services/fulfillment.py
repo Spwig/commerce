@@ -412,8 +412,12 @@ class FulfillmentService:
                 variant = item.get("variant")
                 quantity = item["quantity"]
 
-                # Skip non-inventory-tracked products
-                if not product.track_inventory:
+                # Products with no on-hand stock requirement (non-tracked,
+                # pre-order, or backorder) don't constrain warehouse choice:
+                # they ship with the rest of the order, or are allocated later
+                # when stock arrives. Skipping them lets a fully-backordered
+                # order still select a warehouse instead of failing outright.
+                if not product.track_inventory or product.can_sell_without_stock():
                     continue
 
                 # Check if warehouse has stock — filter by variant
@@ -459,8 +463,9 @@ class FulfillmentService:
                 variant = item.get("variant")
                 quantity = item["quantity"]
 
-                # Non-inventory-tracked products can be allocated anywhere
-                if not product.track_inventory:
+                # Products with no on-hand stock requirement (non-tracked,
+                # pre-order, or backorder) can be allocated anywhere.
+                if not product.track_inventory or product.can_sell_without_stock():
                     allocation[idx] = warehouse
                     newly_allocated.append((idx, item))
                     continue

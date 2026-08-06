@@ -16,9 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
 #: admin.py:147
 msgid "Platform Link"
@@ -28,7 +26,8 @@ msgstr "Ссылка на платформу"
 msgid "Basic Information"
 msgstr "Основная информация"
 
-#: admin.py:171 admin.py:309 templates/admin/blog/blogpost/change_form.html:293
+#: admin.py:171 admin.py:309
+#: templates/admin/blog/blogpost/change_form.html:293
 msgid "Media"
 msgstr "Медиа"
 
@@ -70,8 +69,8 @@ msgid ""
 "Use simple content for basic posts, or enable Page Builder for advanced "
 "layouts. When Page Builder is enabled, edit the linked page."
 msgstr ""
-"Используйте простой контент для базовых постов или включите Page Builder для "
-"продвинутых макетов. Когда Page Builder включен, редактируйте связанную "
+"Используйте простой контент для базовых постов или включите Page Builder для"
+" продвинутых макетов. Когда Page Builder включен, редактируйте связанную "
 "страницу."
 
 #: admin.py:322 templates/admin/blog/blogpost/change_form.html:167
@@ -114,7 +113,8 @@ msgstr "Создан новый черновик поста. Начните ре
 #: admin.py:433
 msgid "Page Builder page created. You can now edit the page layout."
 msgstr ""
-"Страница Page Builder создана. Теперь вы можете редактировать макет страницы."
+"Страница Page Builder создана. Теперь вы можете редактировать макет "
+"страницы."
 
 #: admin.py:530
 #, python-format
@@ -333,8 +333,8 @@ msgstr "Поиск по заголовку, краткому описанию и
 
 #: api_views.py:88
 msgid ""
-"Order by: published_at, view_count, reading_time_minutes, created_at (prefix "
-"with - for desc)"
+"Order by: published_at, view_count, reading_time_minutes, created_at (prefix"
+" with - for desc)"
 msgstr ""
 "Сортировать по: published_at, view_count, reading_time_minutes, created_at "
 "(добавьте перед названием '-' для сортировки по убыванию)"
@@ -354,8 +354,8 @@ msgstr ""
 "Возвращает полные детали поста блога, включая содержимое, связанные посты и "
 "поля SEO. Увеличивает счетчик просмотров. Когда `content_type` равен "
 "`page_builder`, `simple_content` равен null — макет рендерится на стороне "
-"сервера и недоступен через API. Поддерживает заголовок `Accept-Language` для "
-"переведенных полей."
+"сервера и недоступен через API. Поддерживает заголовок `Accept-Language` для"
+" переведенных полей."
 
 #: api_views.py:106
 msgid "Create blog post"
@@ -367,8 +367,8 @@ msgid ""
 "title if not provided. Tags are supplied as a list of tag slugs. Featured "
 "image is supplied as a MediaAsset primary key."
 msgstr ""
-"Создать новый пост блога. Требуется доступ для персонала. Slug автоматически "
-"генерируется из заголовка, если не предоставлен. Теги поставляются в виде "
+"Создать новый пост блога. Требуется доступ для персонала. Slug автоматически"
+" генерируется из заголовка, если не предоставлен. Теги поставляются в виде "
 "списка slug тегов. Изображение в качестве заголовка поставляется в виде "
 "первичного ключа MediaAsset."
 
@@ -406,8 +406,8 @@ msgstr "Опубликовать пост блога"
 
 #: api_views.py:191
 msgid ""
-"Immediately publish a blog post. Sets status to 'published' and published_at "
-"to now if not already set."
+"Immediately publish a blog post. Sets status to 'published' and published_at"
+" to now if not already set."
 msgstr ""
 "Немедленно опубликовать запись блога. Устанавливает статус в 'опубликовано' "
 "и published_at в текущее время, если это еще не было установлено."
@@ -562,10 +562,10 @@ msgstr "Подписаться на уведомления блога"
 
 #: api_views.py:450
 msgid ""
-"Subscribe an email address to blog notifications. Handles new subscriptions, "
-"resending verification emails, and resubscribes. If double opt-in is enabled "
-"a verification email will be sent. Rate limited to 20 requests per hour per "
-"IP."
+"Subscribe an email address to blog notifications. Handles new subscriptions,"
+" resending verification emails, and resubscribes. If double opt-in is "
+"enabled a verification email will be sent. Rate limited to 20 requests per "
+"hour per IP."
 msgstr ""
 "Подписка электронной почты на уведомления блога. Обрабатывает новые "
 "подписки, повторную отправку электронных писем с подтверждением и повторную "
@@ -587,8 +587,8 @@ msgstr "Подтвердить подписку на блог"
 
 #: api_views.py:561
 msgid ""
-"Verify an email subscription using the token sent in the verification email. "
-"The token is single-use and is cleared on successful verification."
+"Verify an email subscription using the token sent in the verification email."
+" The token is single-use and is cleared on successful verification."
 msgstr ""
 "Подтвердите подписку на электронную почту с использованием токена, "
 "отправленного в электронном письме с подтверждением. Токен одноразовый и "
@@ -608,13 +608,13 @@ msgstr "Отписаться от блога"
 
 #: api_views.py:588
 msgid ""
-"Unsubscribe an email address using the unsubscribe token. Optionally include "
-"a `reason` query parameter. The unsubscribe token remains stable and can be "
-"used for preference management."
+"Unsubscribe an email address using the unsubscribe token. Optionally include"
+" a `reason` query parameter. The unsubscribe token remains stable and can be"
+" used for preference management."
 msgstr ""
-"Отписаться от электронной почты с использованием токена отписки. Опционально "
-"можно включить параметр запроса `reason`. Токен отписки остается стабильным "
-"и может использоваться для управления предпочтениями."
+"Отписаться от электронной почты с использованием токена отписки. Опционально"
+" можно включить параметр запроса `reason`. Токен отписки остается стабильным"
+" и может использоваться для управления предпочтениями."
 
 #: api_views.py:597
 msgid "Optional unsubscribe reason"
@@ -638,8 +638,8 @@ msgid ""
 "token. PUT: Updates notification frequency, subscribed categories, and "
 "language. The unsubscribe token is used as the authentication mechanism."
 msgstr ""
-"GET: Возвращает текущие предпочтения подписки для указанного токена отписки. "
-"PUT: Обновляет частоту уведомлений, подписанные категории и язык. Токен "
+"GET: Возвращает текущие предпочтения подписки для указанного токена отписки."
+" PUT: Обновляет частоту уведомлений, подписанные категории и язык. Токен "
 "отписки используется в качестве механизма аутентификации."
 
 #: api_views.py:632
@@ -653,8 +653,8 @@ msgstr "Получить общие настройки блога"
 #: api_views.py:712
 msgid ""
 "Returns the public-facing blog configuration including posts per page, "
-"display options (reading time, view count, related posts), RSS settings, and "
-"subscription configuration."
+"display options (reading time, view count, related posts), RSS settings, and"
+" subscription configuration."
 msgstr ""
 "Возвращает настройки блога, доступные для публичного использования, включая "
 "количество постов на страницу, параметры отображения (время чтения, "
@@ -778,7 +778,8 @@ msgstr ""
 
 #: models.py:234
 msgid "Full post content with rich text formatting (primary language)"
-msgstr "Полный контент поста с форматированием богатого текста (основной язык)"
+msgstr ""
+"Полный контент поста с форматированием богатого текста (основной язык)"
 
 #: models.py:239
 msgid "Use Page Builder for custom layout instead of simple content"
@@ -1114,8 +1115,8 @@ msgstr "категор"
 msgid "1 category"
 msgid_plural "%(counter)s categories"
 msgstr[0] "1 категория"
-msgstr[1] "%(counter)s категорий"
-msgstr[2] "%(counter)s категорий"
+msgstr[1] "%(counter)s категории"
+msgstr[2] "%(counter)s категории"
 msgstr[3] "%(counter)s категорий"
 
 #: templates/admin/blog/blogcategory/change_list.html:144
@@ -1247,9 +1248,9 @@ msgstr "Отправленные письма"
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] "Пожалуйста, исправьте ошибку ниже."
-msgstr[1] "Пожалуйста, исправьте ошибки ниже."
-msgstr[2] "Пожалуйста, исправьте ошибки ниже."
-msgstr[3] "Пожалуйста, исправьте ошибки ниже"
+msgstr[1] "Пожалуйста, исправьте ошибки ниже.']} ✅ (Note: The "
+msgstr[2] "2"
+msgstr[3] "Please correct the error below."
 
 #: templates/admin/blog/blogpost/change_form.html:163
 msgid "Media & SEO"
@@ -1332,8 +1333,8 @@ msgstr "Настройки дизайна"
 
 #: templates/admin/blog/blogpost/change_form.html:543
 msgid ""
-"Choose a template layout for this blog post. For advanced customization, use "
-"the Page Builder."
+"Choose a template layout for this blog post. For advanced customization, use"
+" the Page Builder."
 msgstr ""
 "Выберите макет шаблона для этого поста блога. Для расширенной настройки "
 "используйте Page Builder."
@@ -1627,10 +1628,10 @@ msgstr "подписчик"
 #, python-format
 msgid "1 subscriber"
 msgid_plural "%(counter)s subscribers"
-msgstr[0] "1 подписчик"
-msgstr[1] "%(counter)s подписчиков"
-msgstr[2] "%(counter)s подписчиков"
-msgstr[3] "%(counter)s подписчиков"
+msgstr[0] "1 подписаннй"
+msgstr[1] "%(counter)s подписаннх"
+msgstr[2] "%(counter)s подписаннх"
+msgstr[3] "%(counter)s подписаннх"
 
 #: templates/admin/blog/blogsubscriber/change_list.html:168
 msgid "subscribers"
@@ -1670,7 +1671,8 @@ msgstr "Нет подписчиков, соответствующих вашим
 
 #: templates/admin/blog/blogtag/change_list.html:22
 msgid "Manage tags to help visitors find related content"
-msgstr "Управляйте тегами для помощи посетителям в поиске связанных материалов"
+msgstr ""
+"Управляйте тегами для помощи посетителям в поиске связанных материалов"
 
 #: templates/admin/blog/blogtag/change_list.html:26
 msgid "Add Tag"
@@ -1705,7 +1707,7 @@ msgstr "тег"
 msgid "1 tag"
 msgid_plural "%(counter)s tags"
 msgstr[0] "1 тег"
-msgstr[1] "%(counter)s тегов"
+msgstr[1] "%(counter)s тега"
 msgstr[2] "%(counter)s тегов"
 msgstr[3] "%(counter)s тегов"
 
@@ -1834,19 +1836,19 @@ msgid_plural ""
 "            "
 msgstr[0] ""
 "\n"
-"                В настоящее время доступен %(counter)s поставщик\n"
+"                В настоящее время: %(counter)s поставщик доступен\n"
 "            "
 msgstr[1] ""
 "\n"
-"                В настоящее время доступны %(counter)s поставщика\n"
+"                В настоящее время: %(counter)s поставщика доступны\n"
 "            "
 msgstr[2] ""
 "\n"
-"                В настоящее время доступны %(counter)s поставщиков\n"
+"                В настоящее время: %(counter)s поставщика доступны\n"
 "            "
 msgstr[3] ""
 "\n"
-"                Currently: %(counter)s provider available\n"
+"                В настоящее время: %(counter)s поставщиков доступны\n"
 "            "
 
 #: templates/admin/blog/social_connectors/providers/browse.html:93
@@ -2057,8 +2059,8 @@ msgstr "Выберите организацию"
 
 #: templates/admin/blog/social_connectors/wizard/select_organization.html:52
 msgid ""
-"We found the following LinkedIn Organizations you can manage. Select the one "
-"you want to connect:"
+"We found the following LinkedIn Organizations you can manage. Select the one"
+" you want to connect:"
 msgstr ""
 "Мы нашли следующие организации LinkedIn, которые вы можете управлять. "
 "Выберите ту, которую вы хотите подключить:"
@@ -2106,8 +2108,8 @@ msgstr "Выберите страницу"
 
 #: templates/admin/blog/social_connectors/wizard/select_page.html:52
 msgid ""
-"We found the following Facebook Pages you manage. Select the one you want to "
-"connect:"
+"We found the following Facebook Pages you manage. Select the one you want to"
+" connect:"
 msgstr ""
 "Мы нашли следующие страницы Facebook, которые вы управляете. Выберите ту, "
 "которую вы хотите подключить:"
@@ -2134,8 +2136,8 @@ msgstr "Выберите социальную платформу"
 
 #: templates/admin/blog/social_connectors/wizard/step1_select.html:7
 msgid ""
-"Choose the social media platform you want to connect for automatic blog post "
-"sharing."
+"Choose the social media platform you want to connect for automatic blog post"
+" sharing."
 msgstr ""
 "Выберите социальную сеть, которую вы хотите подключить для автоматической "
 "публикации постов блога."
@@ -2186,25 +2188,21 @@ msgstr "Инструкции по настройке недоступны"
 #, python-format
 msgid ""
 "\n"
-"                    Setup instructions are not available for this version of "
-"%(provider)s.\n"
-"                    Please check the provider documentation or contact "
-"support.\n"
+"                    Setup instructions are not available for this version of %(provider)s.\n"
+"                    Please check the provider documentation or contact support.\n"
 "                    "
 msgstr ""
 "\n"
-"                    Инструкции по настройке недоступны для этой версии "
-"%(provider)s. Пожалуйста, проверьте документацию провайдера или свяжитесь с "
-"поддержкой.\n"
+"                    Инструкции по настройке недоступны для этой версии %(provider)s. Пожалуйста, проверьте документацию провайдера или свяжитесь с поддержкой.\n"
 "                    "
 
 #: templates/admin/blog/social_connectors/wizard/step2_setup.html:33
 msgid ""
-"This provider uses OAuth authentication. You will be redirected to authorize "
-"access in the next step."
+"This provider uses OAuth authentication. You will be redirected to authorize"
+" access in the next step."
 msgstr ""
-"Этот провайдер использует аутентификацию OAuth. Вы будете перенаправлены для "
-"авторизации доступа в следующем шаге."
+"Этот провайдер использует аутентификацию OAuth. Вы будете перенаправлены для"
+" авторизации доступа в следующем шаге."
 
 #: templates/admin/blog/social_connectors/wizard/step2_setup.html:45
 msgid "OAuth Authentication"
@@ -2214,15 +2212,12 @@ msgstr "Аутентификация OAuth"
 #, python-format
 msgid ""
 "\n"
-"                %(provider)s uses OAuth for secure authentication. You will "
-"be redirected to authorize\n"
+"                %(provider)s uses OAuth for secure authentication. You will be redirected to authorize\n"
 "                your account, and we will securely store the access token.\n"
 "                "
 msgstr ""
 "\n"
-"                %(provider)s использует OAuth для безопасной аутентификации. "
-"Вас перенаправят для авторизации вашего аккаунта, и мы безопасно сохраним "
-"токен доступа.\n"
+"                %(provider)s использует OAuth для безопасной аутентификации. Вас перенаправят для авторизации вашего аккаунта, и мы безопасно сохраним токен доступа.\n"
 "                "
 
 #: templates/admin/blog/social_connectors/wizard/step2_setup.html:55
@@ -2314,7 +2309,8 @@ msgstr "Установить как основной аккаунт"
 
 #: templates/admin/blog/social_connectors/wizard/step3_config.html:221
 msgid "Default accounts are automatically selected for new blog posts."
-msgstr "По умолчанию аккаунты автоматически выбираются для новых постов блога."
+msgstr ""
+"По умолчанию аккаунты автоматически выбираются для новых постов блога."
 
 #: templates/admin/blog/social_connectors/wizard/step3_config.html:228
 msgid ""
@@ -2333,13 +2329,11 @@ msgstr "Проверить соединение"
 #, python-format
 msgid ""
 "\n"
-"        Test the connection to %(provider)s to verify your credentials are "
-"correct.\n"
+"        Test the connection to %(provider)s to verify your credentials are correct.\n"
 "        "
 msgstr ""
 "\n"
-"        Тестирование соединения с %(provider)s для проверки правильности "
-"ваших учетных данных.\n"
+"        Тестирование соединения с %(provider)s для проверки правильности ваших учетных данных.\n"
 "        "
 
 #: templates/admin/blog/social_connectors/wizard/step4_test.html:26
@@ -2533,10 +2527,10 @@ msgstr "Результаты поиска для \"%(query)s\""
 #, python-format
 msgid "%(count)s result found"
 msgid_plural "%(count)s results found"
-msgstr[0] "%(count)s найден результат"
-msgstr[1] "%(count)s найдены результаты"
-msgstr[2] "%(count)s найдены результаты"
-msgstr[3] "%(count)s найдены результаты"
+msgstr[0] "Найден %(count)s результат"
+msgstr[1] "Найдено %(count)s результата"
+msgstr[2] "Найдено %(count)s результатов"
+msgstr[3] "Найдено %(count)s результатов"
 
 #: templates/blog/emails/monthly_digest.html:7
 msgid "Monthly Blog Digest"
@@ -2656,17 +2650,18 @@ msgstr "Посты с тегом \"%(name)s\""
 
 #: templates/blog/unsubscribe_confirm.html:29
 #, python-format
-msgid "Are you sure you want to unsubscribe %(email)s from blog notifications?"
+msgid ""
+"Are you sure you want to unsubscribe %(email)s from blog notifications?"
 msgstr "Вы уверены, что хотите отписаться %(email)s от уведомлений блога?"
 
 #: templates/blog/unsubscribed.html:29
 #, python-format
 msgid ""
-"%(email)s has been removed from our mailing list. You will no longer receive "
-"blog notifications."
+"%(email)s has been removed from our mailing list. You will no longer receive"
+" blog notifications."
 msgstr ""
-"%(email)s удален из нашей рассылки. Вы больше не будете получать уведомления "
-"блога."
+"%(email)s удален из нашей рассылки. Вы больше не будете получать уведомления"
+" блога."
 
 #: views/wizard.py:229
 msgid "Please select a provider."

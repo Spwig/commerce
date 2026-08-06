@@ -80,14 +80,9 @@
   justify-content: center;
 }
 
-.button.primary {
-  background: var(--primary);
-  color: var(--primary-fg);
-}
-
-.button.primary:hover {
-  background: var(--primary-darken);
-}
+/* Primary buttons inherit the shared admin-base .button styling (which uses
+   --button-bg/--button-fg with !important); the old local .button.primary
+   overrides never applied and also relied on a phantom --primary-darken. */
 
 .wizard-actions {
   display: flex;

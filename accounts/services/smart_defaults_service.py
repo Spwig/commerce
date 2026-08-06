@@ -136,7 +136,7 @@ class SmartDefaultsService:
 
         try:
             prefs = CommunicationPreference.objects.get(user=user)
-            if prefs.email_marketing and prefs.email_verified:
+            if prefs.email_enabled and prefs.email_marketing and prefs.email_verified:
                 engagement_score = cls.WEIGHT_EMAIL_ENGAGEMENT
             else:
                 engagement_score = 0

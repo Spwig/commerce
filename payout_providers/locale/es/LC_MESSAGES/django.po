@@ -147,7 +147,8 @@ msgstr "Proveedor predeterminado actualizado."
 #, python-format
 msgid "Tested %(count)d provider(s): %(success)d succeeded, %(fail)d failed."
 msgstr ""
-"Probado %(count)d proveedor(es): %(success)d exitoso(s), %(fail)d fallido(s)."
+"Probado %(count)d proveedor(es): %(success)d exitoso(s), %(fail)d "
+"fallido(s)."
 
 #: admin.py:359
 msgid "You do not have permission to delete providers."
@@ -507,6 +508,7 @@ msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s proveedor"
 msgstr[1] "%(counter)s proveedores"
+msgstr[2] "%(counter)s proveedores"
 
 #: templates/admin/payout_providers/payoutprovideraccount/change_list.html:156
 #: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:11
@@ -631,8 +633,8 @@ msgstr "Explorar proveedores"
 
 #: templates/admin/payout_providers/providers/browse.html:39
 msgid ""
-"Choose a payout provider to integrate with your store. Install new providers "
-"or configure existing ones for affiliate payments."
+"Choose a payout provider to integrate with your store. Install new providers"
+" or configure existing ones for affiliate payments."
 msgstr ""
 "Elija un proveedor de pago para integrarlo con su tienda. Instale nuevos "
 "proveedores o configure los existentes para pagos de afiliados."
@@ -646,8 +648,8 @@ msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
-"No se pudo conectar al servidor de actualización. Mostrando solo proveedores "
-"instalados localmente."
+"No se pudo conectar al servidor de actualización. Mostrando solo proveedores"
+" instalados localmente."
 
 #: templates/admin/payout_providers/providers/browse.html:58
 msgid "Payout Provider Marketplace"
@@ -688,7 +690,8 @@ msgstr "Comenzando:"
 #: templates/admin/payout_providers/providers/browse.html:105
 msgid "Browse providers below and find your preferred payout method"
 msgstr ""
-"Revise los proveedores a continuación y encuentre su método de pago preferido"
+"Revise los proveedores a continuación y encuentre su método de pago "
+"preferido"
 
 #: templates/admin/payout_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
@@ -714,11 +717,15 @@ msgid_plural ""
 "                "
 msgstr[0] ""
 "\n"
-"                    Currently: %(counter)s proveedor disponible\n"
+"                    %n%C2%B7Actualmente: %(counter)s proveedor disponible%N\n"
 "                "
 msgstr[1] ""
 "\n"
-"                    Currently: %(counter)s proveedores disponibles\n"
+"                    %n%C2%B7Actualmente: %(counter)s proveedores disponibles%N\n"
+"                "
+msgstr[2] ""
+"\n"
+"                    %n%C2%B7Actualmente: %(counter)s proveedores disponibles%N\n"
 "                "
 
 #: templates/admin/payout_providers/providers/browse.html:122
@@ -788,8 +795,8 @@ msgstr "No hay proveedores disponibles"
 
 #: templates/admin/payout_providers/providers/browse.html:300
 msgid ""
-"No payout providers are currently available. Please check your update server "
-"connection or contact support."
+"No payout providers are currently available. Please check your update server"
+" connection or contact support."
 msgstr ""
 "Actualmente no hay proveedores de pago disponibles. Por favor, verifique su "
 "conexión al servidor de actualizaciones o póngase en contacto con soporte."
@@ -868,7 +875,8 @@ msgstr "Seleccionar un proveedor de pago"
 
 #: templates/admin/payout_providers/wizard/step1_select.html:7
 msgid "Choose the payout provider you want to connect for affiliate payments."
-msgstr "Elija el proveedor de pago que desea conectar para pagos de afiliados."
+msgstr ""
+"Elija el proveedor de pago que desea conectar para pagos de afiliados."
 
 #: templates/admin/payout_providers/wizard/step1_select.html:51
 msgid "Single Payouts"
@@ -907,13 +915,11 @@ msgstr "Siguiente"
 #, python-format
 msgid ""
 "\n"
-"        Before entering credentials, review these setup steps for "
-"%(provider)s.\n"
+"        Before entering credentials, review these setup steps for %(provider)s.\n"
 "        "
 msgstr ""
 "\n"
-"        Antes de ingresar las credenciales, revise estos pasos de "
-"configuración para %(provider)s.\n"
+"        Antes de ingresar las credenciales, revise estos pasos de configuración para %(provider)s.\n"
 "        "
 
 #: templates/admin/payout_providers/wizard/step2_setup.html:23
@@ -924,16 +930,12 @@ msgstr "No están disponibles las instrucciones de configuración"
 #, python-format
 msgid ""
 "\n"
-"                    Setup instructions are not available for this version of "
-"%(provider)s.\n"
-"                    Please contact support for assistance or check for an "
-"updated version.\n"
+"                    Setup instructions are not available for this version of %(provider)s.\n"
+"                    Please contact support for assistance or check for an updated version.\n"
 "                    "
 msgstr ""
 "\n"
-"                    No están disponibles instrucciones de configuración para "
-"esta versión de %(provider)s. Por favor, contacte al soporte para obtener "
-"ayuda o verifique si hay una versión actualizada.\n"
+"                    No están disponibles instrucciones de configuración para esta versión de %(provider)s. Por favor, contacte al soporte para obtener ayuda o verifique si hay una versión actualizada.\n"
 "                    "
 
 #: templates/admin/payout_providers/wizard/step2_setup.html:44
@@ -954,13 +956,11 @@ msgstr "Introducir credenciales de API"
 #, python-format
 msgid ""
 "\n"
-"        Enter your API credentials for %(provider)s. These will be securely "
-"encrypted and stored.\n"
+"        Enter your API credentials for %(provider)s. These will be securely encrypted and stored.\n"
 "        "
 msgstr ""
 "\n"
-"        Ingrese sus credenciales de API para %(provider)s. Estas se "
-"encriptarán y almacenarán de forma segura.\n"
+"        Ingrese sus credenciales de API para %(provider)s. Estas se encriptarán y almacenarán de forma segura.\n"
 "        "
 
 #: templates/admin/payout_providers/wizard/step3_credentials.html:17
@@ -1011,13 +1011,11 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        Test the connection to %(provider)s to verify your credentials are "
-"correct.\n"
+"        Test the connection to %(provider)s to verify your credentials are correct.\n"
 "        "
 msgstr ""
 "\n"
-"        Pruebe la conexión con %(provider)s para verificar que sus "
-"credenciales sean correctas.\n"
+"        Pruebe la conexión con %(provider)s para verificar que sus credenciales sean correctas.\n"
 "        "
 
 #: templates/admin/payout_providers/wizard/step4_test.html:21

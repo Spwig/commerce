@@ -17,6 +17,9 @@
 <link rel="stylesheet" href="{% static 'page_builder/css/product-base.css' %}">
 <link rel="stylesheet" href="{% static 'page_builder/css/product-dependency.css' %}">
 <link rel="stylesheet" href="{% static 'catalog/css/includes/stock_status.css' %}">
+{% if subscription_enabled %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-subscription.css' %}">
+{% endif %}
 {% if has_design_editor %}
 <link rel="stylesheet" href="{% static 'core/css/storefront-modal.css' %}">
 <link rel="stylesheet" href="{% static 'customizable_product/css/design-editor.css' %}">
@@ -62,6 +65,9 @@
 {% block extra_scripts %}
 <script src="{% static 'catalog/js/stock_status.js' %}"></script>
 <script src="{% static 'page_builder/js/product-base.js' %}" defer></script>
+{% if subscription_enabled %}
+<script src="{% static 'page_builder/js/product-subscription.js' %}" defer></script>
+{% endif %}
 {% if template_options.floating_add_to_cart %}
 <script src="{% static 'page_builder/js/product-floating-cart.js' %}" defer></script>
 {% endif %}

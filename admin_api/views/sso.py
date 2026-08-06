@@ -379,15 +379,33 @@ def sso_mobile_callback(request):
 @throttle_classes([AdminAuthThrottle])
 def sso_mobile_token(request):
     """Exchange a one-time SSO code for access/refresh tokens."""
-    code = request.data.get("code", "").strip()
-    device_id = request.data.get("device_id", "").strip()
+    code = request.data.get("code", "")
+    device_id = request.data.get("device_id", "")
     device_name = request.data.get("device_name", "")
+
+    if not isinstance(code, str) or not isinstance(device_id, str):
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("code and a valid device_id are required."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    code = code.strip()
+    device_id = device_id.strip()
 
     if (
         not code
         or not device_id
         or len(device_id) > 255
         or not re.match(r"^[a-zA-Z0-9\-_.:]+$", device_id)
+        or not isinstance(device_name, str)
+        or len(device_name) > 255
     ):
         return Response(
             {
@@ -482,7 +500,8 @@ def sso_mobile_token(request):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    if not user.is_staff:
+    _enabled, config = _get_sso_status()
+    if not user.is_staff and (config is None or config.restrict_to_staff):
         return Response(
             {
                 "success": False,
@@ -495,41 +514,45 @@ def sso_mobile_token(request):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    # Device limit check (same logic as staff_login in auth.py)
-    mobile_settings = getattr(settings, "MOBILE_API_SETTINGS", {})
-    max_devices = mobile_settings.get("MAX_DEVICES_PER_USER", 5)
+    # Check device limit from SiteSettings (configurable by merchant)
+    from core.models import SiteSettings
 
-    existing_devices = (
-        MobileAuthToken.objects.filter(
+    site_settings = SiteSettings.get_settings()
+    max_devices = site_settings.max_devices_per_user
+
+    # 0 means unlimited
+    if max_devices > 0:
+        existing_devices = (
+            MobileAuthToken.objects.filter(
+                user=user,
+                is_revoked=False,
+                token_type="refresh",
+            )
+            .values("device_id")
+            .distinct()
+            .count()
+        )
+
+        is_existing_device = MobileAuthToken.objects.filter(
             user=user,
+            device_id=device_id,
             is_revoked=False,
-            token_type="refresh",
-        )
-        .values("device_id")
-        .distinct()
-        .count()
-    )
+        ).exists()
 
-    is_existing_device = MobileAuthToken.objects.filter(
-        user=user,
-        device_id=device_id,
-        is_revoked=False,
-    ).exists()
-
-    if not is_existing_device and existing_devices >= max_devices:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": 403,
-                    "message": _(
-                        "Maximum device limit reached. Please logout from another device."
-                    ),
-                    "reference": _generate_error_reference(),
+        if not is_existing_device and existing_devices >= max_devices:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 403,
+                        "message": _(
+                            "Maximum device limit reached. Please logout from another device."
+                        ),
+                        "reference": _generate_error_reference(),
+                    },
                 },
-            },
-            status=status.HTTP_403_FORBIDDEN,
-        )
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
     # Revoke existing tokens for this device
     MobileAuthToken.revoke_all_for_device(user, device_id, reason="SSO login")
@@ -542,6 +565,7 @@ def sso_mobile_token(request):
     )
 
     # Calculate expiry in seconds
+    mobile_settings = getattr(settings, "MOBILE_API_SETTINGS", {})
     access_lifetime = mobile_settings.get("ACCESS_TOKEN_LIFETIME_MINUTES", 30)
     expires_in = access_lifetime * 60
 

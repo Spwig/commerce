@@ -157,9 +157,35 @@ class PushClient:
     def _mark_over_limit(self, response) -> None:
         from django.core.cache import cache as django_cache
 
-        retry_after = int(response.headers.get("Retry-After", 60))
+        retry_after = self._parse_retry_after(response.headers.get("Retry-After"))
         django_cache.set(self._over_limit_cache_key(), True, timeout=retry_after)
         logger.debug("Push service over tier limit; cached for %ds", retry_after)
+
+    @staticmethod
+    def _parse_retry_after(value: str | None) -> int:
+        """
+        Parse a Retry-After header into a delay in seconds.
+
+        The header may be either delay-seconds (an integer) or an HTTP-date
+        (RFC 7231). Fall back to 60 seconds when the value is missing or
+        unparseable so a spec-valid HTTP-date does not crash the caller.
+        """
+        if value is None:
+            return 60
+
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            pass
+
+        from django.utils.http import parse_http_date
+
+        try:
+            delay = int(parse_http_date(value) - time.time())
+        except ValueError:
+            return 60
+
+        return max(delay, 0)
 
     def _handle_response(self, response: httpx.Response, operation: str) -> dict[str, Any]:
         """
@@ -317,10 +343,29 @@ class PushClient:
         if not notifications:
             return PushResult(success=True, sent=0, failed=0, results=[])
 
-        if len(notifications) > 100:
-            logger.warning(f"Notification list exceeds 100, truncating from {len(notifications)}")
-            notifications = notifications[:100]
+        # The push service accepts at most 100 notifications per request. Send
+        # in chunks of 100 and aggregate the results so notifications beyond the
+        # first 100 are delivered instead of being silently discarded.
+        aggregated = PushResult(success=True, sent=0, failed=0, results=[])
+        for start in range(0, len(notifications), 100):
+            chunk = notifications[start : start + 100]
+            chunk_result = self._send_bulk_chunk(chunk, sandbox)
+            aggregated.sent += chunk_result.sent
+            aggregated.failed += chunk_result.failed
+            aggregated.results.extend(chunk_result.results)
+            if not chunk_result.success:
+                aggregated.success = False
+            if chunk_result.error and aggregated.error is None:
+                aggregated.error = chunk_result.error
 
+        return aggregated
+
+    def _send_bulk_chunk(
+        self,
+        notifications: list[dict[str, Any]],
+        sandbox: bool = False,
+    ) -> PushResult:
+        """Send a single batch of at most 100 notifications to the push service."""
         # Format for push service API
         bulk_payload = {
             "notifications": [

@@ -1186,8 +1186,12 @@ class PaymentIntent(models.Model):
         """Mark intent as requiring customer action (3DS, etc.)."""
         self.status = "requires_action"
         self.requires_action = True
-        self.action_type = action_type
-        self.action_url = action_url
+        # action_type/action_url are non-null CharField/URLField. Embedded 3DS /
+        # SCA challenges are handled client-side and carry NO redirect URL, so a
+        # provider legitimately returns url=None here — coerce to "" rather than
+        # letting a NOT NULL violation crash the whole confirm.
+        self.action_type = action_type or ""
+        self.action_url = action_url or ""
         if action_data:
             self.action_data = action_data
         self.save(

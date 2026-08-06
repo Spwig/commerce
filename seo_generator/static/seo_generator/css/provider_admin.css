@@ -4,48 +4,21 @@
  * SEO Generator Provider Admin Changelist Styles
  */
 
+/* Full-width container so the canonical .change-list-header banner (which uses
+   negative margins) bleeds to the content edges — matches the exchange_rates &
+   payout_providers provider lists. */
+#content-main .provider-admin-container,
+.main-content .provider-admin-container,
 .provider-admin-container {
-  max-width: 1200px;
+  padding: 20px;
+  max-width: none !important;
+  margin: 0 !important;
 }
 
-.change-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.change-list-header h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.change-list-header .subtitle {
-  color: var(--body-quiet-color);
-  margin: 0 0 4px 0;
-  font-size: 14px;
-}
-
-.change-list-stats-subtitle {
-  color: var(--body-quiet-color);
-  font-size: 13px;
-  margin: 0;
-}
-
-.stat-separator {
-  margin: 0 6px;
-}
-
-.change-list-action-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none;
-}
+/* Header uses the canonical .change-list-header banner from admin-base.css
+   (blue banner; h1 / .subtitle / .change-list-stats-subtitle / .stat-separator
+   and the .button.primary action button are all styled there). No local
+   override, matching the other provider lists. */
 
 /* Provider Cards Grid */
 .provider-cards-grid {
@@ -63,7 +36,7 @@
 }
 
 .provider-account-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.08));
 }
 
 .provider-account-card.primary {
@@ -81,7 +54,7 @@
   padding: 16px 16px 0;
 }
 
-.card-icon {
+.provider-admin-container .card-icon {
   width: 40px;
   height: 40px;
   border-radius: 8px;
@@ -110,8 +83,8 @@
 }
 
 .badge-primary {
-  background: var(--primary);
-  color: #fff;
+  background: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .badge-active {

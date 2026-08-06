@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db.models import Case, IntegerField, When
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from .models import CustomerMessage, MessageReadReceipt, StaffInvitation
 
@@ -91,10 +91,10 @@ class StaffInvitationAdmin(admin.ModelAdmin):
 
     def status_badge(self, obj):
         if obj.is_accepted:
-            return format_html('<span class="status-badge-success">Accepted</span>')
+            return mark_safe('<span class="status-badge-success">Accepted</span>')
         elif obj.is_expired:
-            return format_html('<span class="status-badge-error">Expired</span>')
-        return format_html('<span class="status-badge-pending">Pending</span>')
+            return mark_safe('<span class="status-badge-error">Expired</span>')
+        return mark_safe('<span class="status-badge-pending">Pending</span>')
 
     status_badge.short_description = "Status"
 

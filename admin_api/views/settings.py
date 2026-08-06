@@ -7,6 +7,7 @@ Settings and device management endpoints for the merchant mobile app.
 import secrets
 
 from django.conf import settings
+from django.db import DatabaseError
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -57,15 +58,15 @@ def get_settings(request):
 
     user = request.user
     current_token = getattr(request, "auth", None)
-    device_id = current_token.device_id if current_token else None
+    device_id = current_token.device_id if isinstance(current_token, MobileAuthToken) else None
 
     # Get store settings
     try:
         site_settings = SiteSettings.objects.first()
         store_name = site_settings.site_name if site_settings else "Store"
         store_currency = site_settings.default_currency if site_settings else get_default_currency()
-        store_timezone = site_settings.timezone if site_settings else "UTC"
-    except Exception:
+        store_timezone = site_settings.default_timezone if site_settings else "UTC"
+    except DatabaseError:
         store_name = "Store"
         store_currency = get_default_currency()
         store_timezone = "UTC"
@@ -199,7 +200,7 @@ def update_push_token(request):
     Update push notification token for current device.
     """
     current_token = getattr(request, "auth", None)
-    if not current_token:
+    if not isinstance(current_token, MobileAuthToken):
         return Response(
             {
                 "success": False,
@@ -447,7 +448,9 @@ def active_sessions(request):
     from django.utils import timezone
 
     current_token = getattr(request, "auth", None)
-    current_device_id = current_token.device_id if current_token else None
+    current_device_id = (
+        current_token.device_id if isinstance(current_token, MobileAuthToken) else None
+    )
 
     # Get unique devices with active refresh tokens
     active_tokens = MobileAuthToken.objects.filter(
@@ -505,7 +508,7 @@ def revoke_session(request, device_id):
     Revoke session for a specific device.
     """
     current_token = getattr(request, "auth", None)
-    if current_token and current_token.device_id == device_id:
+    if isinstance(current_token, MobileAuthToken) and current_token.device_id == device_id:
         return Response(
             {
                 "success": False,

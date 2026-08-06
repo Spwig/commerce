@@ -27,8 +27,11 @@ def send_new_order_push_notification(self, order_id: int):
         sent_count = PushNotificationService.send_new_order_notification(order)
         logger.info(f"Sent {sent_count} new order notifications for order {order.order_number}")
 
-    except Order.DoesNotExist:
-        logger.error(f"Order {order_id} not found for push notification")
+    except Order.DoesNotExist as e:
+        # The order may not be visible yet if the creating transaction has not
+        # committed when the worker runs. Retry so the notification is not lost.
+        logger.warning(f"Order {order_id} not found for push notification, retrying")
+        self.retry(exc=e)
     except Exception as e:
         logger.error(f"Failed to send new order notification: {e}")
         self.retry(exc=e)

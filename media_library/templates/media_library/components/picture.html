@@ -1,0 +1,7 @@
+{% comment %}
+Responsive <picture>: AVIF first, WebP second, original-format <img> fallback.
+A <source> is rendered only when its file exists (see get_picture_sources),
+so the browser never selects a 404 candidate. The inner <img> carries the
+class/dimensions so existing image CSS keeps matching through .spwig-picture
+(which is display:contents and leaves layout untouched).
+{% endcomment %}{% if sources.fallback %}<picture class="spwig-picture">{% if sources.avif %}<source srcset="{{ sources.avif }}" type="image/avif"{% if sizes %} sizes="{{ sizes }}"{% endif %}>{% endif %}{% if sources.webp %}<source srcset="{{ sources.webp }}" type="image/webp"{% if sizes %} sizes="{{ sizes }}"{% endif %}>{% endif %}<img src="{{ sources.fallback }}" alt="{{ alt }}"{% if css %} class="{{ css }}"{% endif %}{% if width %} width="{{ width }}"{% endif %}{% if height %} height="{{ height }}"{% endif %} loading="{{ loading|default:'lazy' }}"{% if fetchpriority %} fetchpriority="{{ fetchpriority }}"{% endif %}></picture>{% endif %}

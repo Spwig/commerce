@@ -24,6 +24,7 @@ url_patterns:
 related:
   - managing-subscriptions
   - subscription-discounts
+  - selling-products-as-subscriptions
 published: true
 ---
 
@@ -36,6 +37,8 @@ Navigate to **Subscriptions > Subscription Plans** in the admin sidebar. The pla
 To create a new plan, click the **+ Add Subscription Plan** button — this opens the plan creation wizard, which walks you through the setup step by step.
 
 ![Subscription plans list](/static/core/admin/img/help/subscription-plans/plan-list.webp)
+
+A plan on its own isn't purchasable — it's a template. Once you've built it here, attach it to one or more products from the product's **Subscriptions** tab (Simple, Variable, and Digital products only) so customers can actually subscribe. See [Selling Products as Subscriptions](/help/selling-products-as-subscriptions) for that step.
 
 ## Plan information
 
@@ -68,6 +71,8 @@ Each tier has these fields:
 - **Billing Interval** — The multiplier for the billing cycle. Set to `2` with Monthly to bill every 2 months.
 - **Discount Percentage** — The discount applied to the product price for this tier. Set to `0` for full price, or `20` to give 20% off. This discount stacks on top of any sale pricing on the product itself.
 - **Default Tier** — Mark one tier as the default to pre-select it for customers when they view the subscription options.
+
+The discount applies starting from the customer's very first billing cycle, not just on renewals — a tier with a 20% discount charges 20% off from day one (or from the first charge after a trial, if the plan has one).
 
 ### Example: tiered plan with three options
 

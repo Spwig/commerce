@@ -1,144 +1,157 @@
 ---
-title: Thiết Kế & Chủ Đề
+title: Thiết kế & Chủ đề
 ---
 
-Hệ thống Thiết Kế & Chủ đề cho phép bạn kiểm soát kiểu dáng và cảm giác của toàn bộ cửa hàng trực tuyến — từ màu sắc và phông chữ đến các tiêu đề, chân trang và bố cục trang. Truy cập **Cài đặt > Thiết Kế & Chủ đề** để mở bảng điều khiển Thiết Kế.
+Hệ thống Thiết kế & Chủ đề cho phép bạn kiểm soát giao diện và phong cách tổng thể của cửa hàng của bạn — từ màu sắc và kiểu chữ đến tiêu đề, chân trang và bố cục trang. Truy cập **Cài đặt > Thiết kế & Chủ đề** để mở bảng điều khiển Thiết kế.
 
 ![Bảng điều khiển thiết kế](/static/core/admin/img/help/design-themes/theme-dashboard.webp)
 
-## Bảng điều khiển Thiết Kế
+## Bảng điều khiển Thiết kế
 
-Bảng điều khiển cung cấp tổng quan về tình trạng thiết kế cửa hàng của bạn:
+Bảng điều khiển cung cấp cái nhìn tổng quan về trạng thái thiết kế của cửa hàng của bạn:
 
-- **Chủ đề đang hoạt động** — Hiển thị chủ đề hiện đang được áp dụng, kèm hình ảnh xem trước và các nút truy cập nhanh
-- **Thống kê Thiết Kế** — Số lượng chủ đề đã cài đặt, tiêu đề tùy chỉnh, chân trang tùy chỉnh và các menu
-- **Thẻ phần** — Chuyển đến Chủ đề, Trình tạo Tiêu đề, Trình tạo Chân trang, Menu hoặc Thông báo
+- **Chủ đề Đang hoạt động** — Hiển thị chủ đề nào đang được áp dụng, với hình ảnh minh họa và nút truy cập nhanh
+- **Thống kê Thiết kế** — Số lượng chủ đề đã cài đặt, tiêu đề tùy chỉnh, chân trang tùy chỉnh và danh mục
+- **Thẻ Khu vực** — Chuyển đến Chủ đề, Người xây dựng Tiêu đề, Người xây dựng Chân trang, Danh mục, hoặc Thông báo
 
 ## Chủ đề
 
-### Xem Chủ đề
+### Xem trước Chủ đề
 
-Nhấp vào thẻ phần **Chủ đề** để xem tất cả các chủ đề đã cài đặt. Mỗi thẻ chủ đề hiển thị:
-- Tên chủ đề và hình ảnh xem trước
+Nhấp vào thẻ **Chủ đề** để xem tất cả các chủ đề đã cài đặt. Mỗi thẻ chủ đề hiển thị:
+- Tên chủ đề và hình ảnh minh họa
 - Tác giả và phiên bản
-- Trạng thái đang hoạt động/tạm dừng
+- Trạng thái hoạt động/tạm dừng
 
-### Kích hoạt Chủ đề
+### Kích hoạt Một Chủ đề
 
 1. Nhấp vào **Kích hoạt** trên chủ đề bạn muốn sử dụng
-2. Chủ đề được áp dụng ngay lập tức cho cửa hàng trực tuyến của bạn
-3. Chỉ có một chủ đề có thể hoạt động tại một thời điểm
+2. Chủ đề được áp dụng ngay lập tức cho cửa hàng của bạn
+3. Chỉ có một chủ đề có thể hoạt động cùng lúc
 
 ### Tùy chỉnh Chủ đề
 
-Mỗi chủ đề hỗ trợ một bộ **thiết kế token** — các giá trị có thể cấu hình kiểm soát kiểu dáng mà không cần chỉnh sửa mã.
+Mỗi chủ đề hỗ trợ một tập các **token thiết kế** — các giá trị có thể cấu hình kiểm soát giao diện mà không cần chỉnh sửa mã.
 
 Nhấp vào **Tùy chỉnh** trên chủ đề đang hoạt động của bạn để truy cập trình chỉnh sửa token. Các danh mục token có sẵn bao gồm:
 
-| Danh mục | Điều gì Nó Kiểm soát |
+| Danh mục | Điều mà nó kiểm soát |
 |----------|-----------------|
-| **Màu sắc** | Màu sắc chính, phụ, nhấn, nền, màu chữ |
-| **Chữ viết** | Gia đình phông chữ, kích thước, độ đậm, khoảng cách dòng |
-| **Khoảng cách** | Lề, khoảng cách, khoảng cách giữa các phần tử |
-| **Viền** | Độ rộng viền, bán kính, màu sắc |
-| **Bóng đổ** | Bóng đổ hộp cho các thẻ, nút, hộp thoại |
-| **Nút** | Kiểu nút, kích thước, hiệu ứng khi di chuột |
-| **Bố cục** | Độ rộng hộp chứa, khoảng cách lưới, điểm chuyển đổi |
+| **Màu sắc** | Màu chính, màu phụ, màu nhấn, màu nền, màu chữ |
+| **Kiểu chữ** | Các phông chữ, kích thước, trọng số, chiều cao dòng |
+| **Khoảng cách** | Khoảng cách, lề, khoảng cách giữa các phần tử |
+| **Đường viền** | Độ rộng đường viền, bán kính, màu sắc |
+| **Bóng** | Bóng cho thẻ, nút, hộp thoại |
+| **Nút** | Các kiểu nút, kích thước, hiệu ứng khi di chuột |
+| **Bố cục** | Kích thước container, khoảng cách lưới, điểm chuyển đổi |
 
-Các thay đổi được xem trước theo thời gian thực trước khi bạn lưu.
+Các thay đổi được xem trước theo thời gian thực trước khi bạn lưu lại.
 
-## Trình tạo Tiêu đề
+## Người xây dựng Tiêu đề
 
-Trình tạo Tiêu đề cho phép bạn thiết kế tiêu đề cửa hàng của mình bằng giao diện kéo và thả.
+Người xây dựng Tiêu đề cho phép bạn thiết kế tiêu đề cửa hàng của bạn bằng giao diện kéo và thả.
 
 ### Tạo Tiêu đề
 
-1. Truy cập **Thiết kế > Trình tạo Tiêu đề**
-2. Nhấp **Tạo Tiêu đề** hoặc chỉnh sửa một tiêu đề hiện có
-3. Trình tạo có ba hàng: **Thanh trên cùng**, **Tiêu đề chính**, và **Thanh dưới cùng**
-4. Kéo các widget từ hộp công cụ vào bất kỳ hàng nào
+1. Truy cập **Thiết kế > Người xây dựng Tiêu đề**
+2. Nhấp vào **Tạo Tiêu đề** hoặc chỉnh sửa một cái đã có
+3. Người xây dựng có ba hàng: **Thanh Trên**, **Tiêu đề Chính**, và **Thanh Dưới**
+4. Kéo các tiện ích từ hộp công cụ vào bất kỳ hàng nào
 
-### Các Widget Tiêu đề Có sẵn
+### Các tiện ích Tiêu đề Có sẵn
 
 - **Logo** — Logo cửa hàng của bạn với kích thước và liên kết có thể cấu hình
-- **Menu điều hướng** — Menu thả xuống từ các menu bạn đã xác định
-- **Thanh tìm kiếm** — Tìm kiếm sản phẩm với kết quả tức thì
-- **Biểu tượng giỏ hàng** — Giỏ hàng nhỏ với nhãn số lượng mục
-- **Biểu tượng tài khoản** — Danh sách thả xuống đăng nhập/tài khoản
-- **Chọn ngôn ngữ** — Chuyển đổi ngôn ngữ cho các cửa hàng đa ngôn ngữ
-- **Chọn tiền tệ** — Chuyển đổi tiền tệ cho các cửa hàng đa tiền tệ
-- **HTML tùy chỉnh** — Thêm bất kỳ nội dung tùy chỉnh nào
-- **Biểu tượng mạng xã hội** — Liên kết đến hồ sơ mạng xã hội của bạn
-- **Thanh thông báo** — Thông điệp khuyến mãi và ưu đãi
+- **Menu Điều hướng** — Menu thả xuống từ các danh mục đã xác định của bạn
+- **Thanh Tìm kiếm** — Tìm kiếm sản phẩm với kết quả tức thì
+- **Biểu tượng Giỏ hàng** — Giỏ hàng nhỏ với thẻ đếm số lượng mặt hàng
+- **Biểu tượng Tài khoản** — Dropdown đăng nhập/tài khoản
+- **Trình chọn Ngôn ngữ** — Trình chuyển đổi ngôn ngữ cho các cửa hàng đa ngôn ngữ
+- **Trình chọn Tiền tệ** — Trình chuyển đổi tiền tệ cho các cửa hàng đa tiền tệ
+- **Trình chọn Giao hàng** — Cho phép người mua chọn quốc gia giao hàng, thay đổi khu vực bán hàng (và tiền tệ, cho cửa hàng đa tiền tệ). Xem hướng dẫn **Khả năng Truy cập Khu vực** để biết chi tiết
+- **HTML Tùy chỉnh** — Thêm nội dung tùy chỉnh bất kỳ
+- **Biểu tượng Mạng xã hội** — Liên kết đến các trang mạng xã hội của bạn
+- **Thanh Thông báo** — Thông báo và ưu đãi quảng cáo
 
 ### Cài đặt Tiêu đề
 
-Mỗi mẫu tiêu đề có cài đặt toàn cục:
-- **Tiêu đề dính** — Tiêu đề vẫn hiển thị khi cuộn
-- **Chế độ trong suốt** — Tô lên hình ảnh chính
-- **Điểm chuyển đổi di động** — Khi chuyển sang bố cục di động
+Mỗi mẫu tiêu đề có các cài đặt chung:
+- **Tiêu đề Dính** — Tiêu đề luôn hiển thị khi cuộn
+- **Chế độ Trong suốt** — Giao diện lên hình ảnh chính
+- **Điểm chuyển đổi Điện thoại** — Khi nào chuyển sang bố cục di động
 
-## Trình tạo Chân trang
+## Người xây dựng Chân trang
 
-Trình tạo Chân trang hoạt động tương tự như Trình tạo Tiêu đề.
+Người xây dựng Chân trang hoạt động tương tự như Người xây dựng Tiêu đề.
 
 ### Tạo Chân trang
 
-1. Truy cập **Thiết kế > Trình tạo Chân trang**
-2. Nhấp **Tạo Chân trang** hoặc chỉnh sửa một chân trang hiện có
-3. Trình tạo hỗ trợ nhiều cột và hàng
-4. Kéo các widget vào vị trí
+1. Truy cập **Thiết kế > Người xây dựng Chân trang**
+2. Nhấp vào **Tạo Chân trang** hoặc chỉnh sửa một cái đã có
+3. Người xây dựng hỗ trợ nhiều cột và hàng
+4. Kéo các tiện ích vào vị trí
 
-### Các Widget Chân trang Có sẵn
+### Các tiện ích Chân trang Có sẵn
 
-- **Menu điều hướng** — Liên kết điều hướng chân trang
-- **Đăng ký bản tin** — Biểu mẫu đăng ký email
-- **Biểu tượng mạng xã hội** — Liên kết mạng xã hội
-- **HTML tùy chỉnh** — Nội dung tùy chỉnh, nhãn, chứng nhận
-- **Biểu tượng thanh toán** — Hiển thị các phương thức thanh toán được chấp nhận
+- **Menu Điều hướng** — Các liên kết điều hướng trong chân trang
+- **Đăng ký Bản tin** — Biểu mẫu đăng ký email
+- **Biểu tượng Mạng xã hội** — Liên kết mạng xã hội
+- **HTML Tùy chỉnh** — Nội dung tùy chỉnh, biểu tượng, chứng nhận
+- **Biểu tượng Thanh toán** — Hiển thị các phương thức thanh toán được chấp nhận
 - **Bản quyền** — Văn bản bản quyền động với năm
-- **Logo** — Biến thể logo chân trang
+- **Logo** — Phiên bản logo trong chân trang
 
-## Menu điều hướng
+## Danh mục Điều hướng
 
-Các menu xác định các liên kết điều hướng trong tiêu đề và chân trang của bạn.
+Các danh mục xác định các liên kết điều hướng trong tiêu đề và chân trang của bạn.
 
-### Tạo Menu
+### Tạo Một Danh mục
 
-1. Truy cập **Thiết kế > Menu**
-2. Nhấp **Thêm Menu**
-3. Đặt tên cho menu (ví dụ: "Menu chính")
-4. Thêm các mục menu:
-   - **Liên kết trang** — Liên kết đến trang tạo trang
-   - **Liên kết danh mục** — Liên kết đến danh mục sản phẩm
-   - **Liên kết tùy chỉnh** — Bất kỳ URL bên ngoài hoặc bên trong nào
-   - **Danh sách thả xuống** — Các mục phụ được lồng ghép
-5. Kéo các mục để sắp xếp lại chúng
-6. Lưu và gán menu đến widget tiêu đề hoặc chân trang
+1. 
+
+Chuyển đến **Thiết kế > Menu**
+2.
+
+Nhấp **Thêm Menu**
+3.
+
+Đặt tên cho menu (ví dụ: "Đường dẫn chính")
+4.
+
+Thêm các mục trong menu:
+   - **Liên kết Trang** — Liên kết đến một trang được xây dựng bằng trang builder
+   - **Liên kết Danh mục** — Liên kết đến một danh mục sản phẩm
+   - **URL Tùy chỉnh** — Bất kỳ URL nào bên trong hoặc bên ngoài
+   - **Dropdown** — Các mục con lồng nhau
+5.
+
+Kéo các mục để sắp xếp lại
+6.
+
+Lưu và gán menu cho một widget thanh đầu hoặc chân trang
 
 ## Thông báo
 
-Tạo các bảng quảng cáo khuyến mãi xuất hiện ở đầu cửa hàng trực tuyến của bạn.
+Tạo các banner quảng bá xuất hiện ở đầu cửa hàng của bạn.
 
 ### Tạo Thông báo
 
-1. Truy cập **Thiết kế > Thông báo** (hoặc sử dụng thẻ phần Bảng điều khiển)
+1. Chuyển đến **Thiết kế > Thông báo** (hoặc sử dụng thẻ Dashboard)
 2. Nhấp **Thêm Thông báo**
 3. Cấu hình:
-   - **Thông báo** — Văn bản thông báo (hỗ trợ bản dịch)
-   - **Liên kết** — URL tùy chọn khi được nhấp vào
-   - **Kiểu dáng** — Màu nền, màu chữ, biểu tượng
+   - **Thông điệp** — Nội dung thông báo (hỗ trợ dịch thuật)
+   - **Liên kết** — URL tùy chọn khi nhấp vào
+   - **Phong cách** — Màu nền, màu chữ, biểu tượng
    - **Lịch trình** — Ngày bắt đầu và kết thúc
-   - **Có thể đóng** — Liệu khách hàng có thể đóng nó không
+   - **Tắt được** — Khách hàng có thể đóng nó hay không
 4. Lưu và kích hoạt
 
-Nhiều thông báo có thể hoạt động cùng lúc — chúng tự động luân chuyển.
+Nhiều thông báo có thể hoạt động đồng thời — chúng xoay tự động.
 
 ## Mẹo
 
-- Bắt đầu với trình tùy chỉnh của chủ đề đang hoạt động để phù hợp với màu sắc thương hiệu của bạn trước khi xây dựng tiêu đề và chân trang.
-- Sử dụng tính năng **xem trước** trong trình tạo Tiêu đề và Chân trang để xem các thay đổi trước khi xuất bản.
-- Tạo các tiêu đề riêng biệt cho máy tính để bàn và di động nếu bạn cần bố cục rất khác nhau.
-- Giữ cho điều hướng đơn giản — 5-7 mục điều hướng cấp cao là lý tưởng cho tính dễ sử dụng.
-- Sử dụng thông báo cho các khuyến mãi có thời hạn thay vì thông điệp vĩnh viễn.
-- Trình chỉnh sửa token chủ đề hỗ trợ xem trước theo thời gian thực — thử nghiệm tự do và lưu khi hài lòng.
+- Bắt đầu với trình tùy chỉnh của giao diện hiện tại để khớp với màu sắc thương hiệu trước khi xây dựng thanh đầu và chân trang.
+- Sử dụng tính năng **xem trước** trong trình xây dựng Thanh đầu và Chân trang để xem thay đổi trước khi xuất bản.
+- Tạo các thanh đầu riêng cho máy tính và điện thoại di động nếu bạn cần bố trí rất khác nhau.
+- Giữ cho việc điều hướng đơn giản — 5-7 mục cấp một là lý tưởng cho tính dễ sử dụng.
+- Sử dụng thông báo cho các chương trình khuyến mãi có thời hạn thay vì các thông điệp vĩnh viễn.
+- Trình chỉnh sửa token giao diện hỗ trợ xem trước thời gian thực — hãy thử nghiệm tự do và lưu khi đã hài lòng.

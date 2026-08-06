@@ -27,7 +27,7 @@
   padding: 30px;
   margin: -20px -20px 30px -20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-light);
 }
 
 .stock-adjustment-header h1 {
@@ -45,16 +45,16 @@
   font-size: 14px;
 }
 
-.form-card {
+.stock-adjustment-container .form-card {
   background: var(--body-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
-.form-card h2 {
+.stock-adjustment-container .form-card h2 {
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
@@ -63,11 +63,11 @@
   padding-bottom: 12px;
 }
 
-.form-row {
+.stock-adjustment-container .form-row {
   margin-bottom: 20px;
 }
 
-.form-row label {
+.stock-adjustment-container .form-row label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
@@ -75,8 +75,8 @@
   font-size: 14px;
 }
 
-.form-row input[type='number'],
-.form-row textarea {
+.stock-adjustment-container .form-row input[type='number'],
+.stock-adjustment-container .form-row textarea {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
@@ -88,14 +88,14 @@
   box-sizing: border-box;
 }
 
-.form-row input:focus,
-.form-row textarea:focus {
+.stock-adjustment-container .form-row input:focus,
+.stock-adjustment-container .form-row textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
-.form-row .helptext {
+.stock-adjustment-container .form-row .helptext {
   display: block;
   margin-top: 6px;
   font-size: 12px;
@@ -175,7 +175,7 @@
   font-size: 12px;
 }
 
-.submit-row {
+.stock-adjustment-container .submit-row {
   display: flex;
   gap: 12px;
   padding-top: 20px;
@@ -183,8 +183,8 @@
   margin-top: 20px;
 }
 
-.submit-row button,
-.submit-row a {
+.stock-adjustment-container .submit-row button,
+.stock-adjustment-container .submit-row a {
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 14px;
@@ -195,24 +195,24 @@
   display: inline-block;
 }
 
-.submit-row button[type='submit'] {
+.stock-adjustment-container .submit-row button[type='submit'] {
   background: var(--primary);
   color: var(--primary-fg);
   border: none;
 }
 
-.submit-row button[type='submit']:hover {
+.stock-adjustment-container .submit-row button[type='submit']:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px var(--shadow-light);
   opacity: 0.9;
 }
 
-.submit-row a.cancel {
+.stock-adjustment-container .submit-row a.cancel {
   background: var(--close-button-bg);
   color: var(--body-fg);
   border: 1px solid var(--border-color);
 }
 
-.submit-row a.cancel:hover {
+.stock-adjustment-container .submit-row a.cancel:hover {
   background: var(--darkened-bg);
 }

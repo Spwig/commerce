@@ -6,7 +6,7 @@
      data-priority="{{ zone.priority }}"
      data-is-active="{{ zone.is_active|yesno:'true,false' }}">
     <!-- Checkbox for bulk select -->
-    <div class="zone-checkbox">
+    <div class="list-row-card-checkbox">
         <input type="checkbox" class="zone-select" value="{{ zone.id }}" id="zone-{{ zone.id }}">
     </div>
 
@@ -108,17 +108,17 @@
         <div class="zone-badges">
             <!-- Active/Inactive Badge -->
             {% if zone.is_active %}
-                <span class="badge badge-status badge-active">
+                <span class="list-row-card-badge list-row-card-badge-success">
                     <i class="fas fa-check-circle"></i> {% trans "Active" %}
                 </span>
             {% else %}
-                <span class="badge badge-status badge-inactive">
+                <span class="list-row-card-badge">
                     <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
                 </span>
             {% endif %}
 
             <!-- Created Date -->
-            <span class="badge badge-date">
+            <span class="list-row-card-badge">
                 <i class="fas fa-calendar"></i> {{ zone.created_at|date:"M d, Y" }}
             </span>
         </div>

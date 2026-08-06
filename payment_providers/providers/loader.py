@@ -6,10 +6,12 @@ Handles loading and validating payment provider component packages.
 
 import json
 import logging
+from importlib import metadata
 from pathlib import Path
 from typing import Any
 
 from packaging import version
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
 
 logger = logging.getLogger(__name__)
 
@@ -146,9 +148,32 @@ def check_dependencies(manifest: dict[str, Any]) -> list[str]:
         try:
             # Try to import the package
             importlib.import_module(dep_name)
-            # TODO: Could add version checking here
         except ImportError:
             missing.append(f"{dep_name} {dep_version}")
+            continue
+
+        if not dep_version:
+            # No version requirement specified, import success is enough
+            continue
+
+        try:
+            specifier = SpecifierSet(dep_version)
+        except InvalidSpecifier:
+            logger.error(f"Invalid version specifier for {dep_name}: {dep_version}")
+            continue
+
+        if not specifier:
+            # Empty specifier set imposes no constraint
+            continue
+
+        try:
+            installed_version = metadata.version(dep_name)
+        except metadata.PackageNotFoundError:
+            missing.append(f"{dep_name} {dep_version}")
+            continue
+
+        if not specifier.contains(installed_version, prereleases=True):
+            missing.append(f"{dep_name} {dep_version} (installed: {installed_version})")
 
     if missing:
         logger.warning(f"Missing dependencies: {', '.join(missing)}")

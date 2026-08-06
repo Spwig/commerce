@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 # Import enhanced admin configurations (these auto-register via decorators)
@@ -837,9 +838,9 @@ class ComponentValidationReportAdmin(admin.ModelAdmin):
 
         errors_html = '<ul style="margin: 0; padding-left: 20px;">'
         for error in obj.errors:
-            errors_html += f'<li style="color: #dc3545;">{error}</li>'
+            errors_html += f'<li style="color: #dc3545;">{conditional_escape(error)}</li>'
         errors_html += "</ul>"
-        return format_html(errors_html)
+        return mark_safe(errors_html)
 
     @admin.display(description=_("Warnings"))
     def warnings_display(self, obj):
@@ -849,9 +850,9 @@ class ComponentValidationReportAdmin(admin.ModelAdmin):
 
         warnings_html = '<ul style="margin: 0; padding-left: 20px;">'
         for warning in obj.warnings:
-            warnings_html += f'<li style="color: #ffc107;">{warning}</li>'
+            warnings_html += f'<li style="color: #ffc107;">{conditional_escape(warning)}</li>'
         warnings_html += "</ul>"
-        return format_html(warnings_html)
+        return mark_safe(warnings_html)
 
 
 # Theme System Admin Classes

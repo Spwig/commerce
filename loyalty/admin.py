@@ -15,7 +15,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import path, reverse
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.widgets import IconPickerWidget
@@ -205,7 +206,7 @@ class LoyaltyMemberAdmin(admin.ModelAdmin):
     def tier_badge(self, obj):
         """Display tier with colored badge"""
         if not obj.current_tier:
-            return format_html('<span style="color: var(--body-quiet-color);">—</span>')
+            return mark_safe('<span style="color: var(--body-quiet-color);">—</span>')
 
         return format_html(
             '<span class="badge" style="background: {}; color: white; padding: 4px 8px; border-radius: 4px;">'
@@ -1843,7 +1844,7 @@ class LoyaltySegmentAdmin(admin.ModelAdmin):
     def last_calculated_display(self, obj):
         """Display last calculated timestamp"""
         if not obj.last_calculated_at:
-            return format_html('<em style="color: var(--body-quiet-color);">Never</em>')
+            return mark_safe('<em style="color: var(--body-quiet-color);">Never</em>')
         return obj.last_calculated_at.strftime("%Y-%m-%d %H:%M")
 
     last_calculated_display.short_description = _("Last Calculated")
@@ -1851,10 +1852,10 @@ class LoyaltySegmentAdmin(admin.ModelAdmin):
     def segment_preview(self, obj):
         """Show preview of segment members"""
         if obj.criteria_type == "manual":
-            return format_html("<em>Manual segment - members added manually</em>")
+            return mark_safe("<em>Manual segment - members added manually</em>")
 
         if not obj.criteria_config:
-            return format_html('<em style="color: var(--body-fg-error);">No rules configured</em>')
+            return mark_safe('<em style="color: var(--body-fg-error);">No rules configured</em>')
 
         try:
             from loyalty.services.segment_evaluator import SegmentEvaluator
@@ -1863,7 +1864,7 @@ class LoyaltySegmentAdmin(admin.ModelAdmin):
             qualifying_members = evaluator.get_segment_members(obj)[:10]  # Preview first 10
 
             if not qualifying_members:
-                return format_html("<em>No members currently qualify</em>")
+                return mark_safe("<em>No members currently qualify</em>")
 
             html = '<div style="margin-top: 10px;">'
             html += f"<strong>Sample Members ({obj.member_count} total):</strong><ul>"
@@ -1871,14 +1872,14 @@ class LoyaltySegmentAdmin(admin.ModelAdmin):
             for member in qualifying_members:
                 name = member.customer.get_full_name() or member.customer.email
                 tier = member.current_tier.name if member.current_tier else "No Tier"
-                html += f"<li>{name} ({tier})</li>"
+                html += f"<li>{conditional_escape(name)} ({conditional_escape(tier)})</li>"
 
             if obj.member_count > 10:
                 html += f"<li><em>...and {obj.member_count - 10} more</em></li>"
 
             html += "</ul></div>"
 
-            return format_html(html)
+            return mark_safe(html)
 
         except Exception as e:
             return format_html('<em style="color: var(--body-fg-error);">Error: {}</em>', str(e))

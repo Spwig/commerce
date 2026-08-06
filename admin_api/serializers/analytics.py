@@ -39,6 +39,7 @@ class OrderStatusBreakdownSerializer(serializers.Serializer):
 class DashboardAnalyticsSerializer(serializers.Serializer):
     """Complete dashboard analytics response."""
 
+    custom_range = SalesKPISerializer(required=False)
     today = SalesKPISerializer()
     last_7_days = SalesKPISerializer()
     last_30_days = SalesKPISerializer()
@@ -59,14 +60,32 @@ class QuickStatsSerializer(serializers.Serializer):
     currency = serializers.CharField()
 
 
+class SalesComparisonDailyItemSerializer(serializers.Serializer):
+    """Single day data point in a sales-comparison breakdown."""
+
+    date = serializers.DateField()
+    revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
+    order_count = serializers.IntegerField()
+
+
+class SalesComparisonDailyBreakdownSerializer(serializers.Serializer):
+    """Current and previous period daily breakdown arrays for chart rendering."""
+
+    current = SalesComparisonDailyItemSerializer(many=True)
+    previous = SalesComparisonDailyItemSerializer(many=True)
+
+
 class SalesComparisonSerializer(serializers.Serializer):
     """Sales comparison with previous period."""
 
     current_value = serializers.DecimalField(max_digits=12, decimal_places=2)
     previous_value = serializers.DecimalField(max_digits=12, decimal_places=2)
+    current_order_count = serializers.IntegerField()
+    previous_order_count = serializers.IntegerField()
     change_percentage = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
     trend = serializers.ChoiceField(choices=["up", "down", "stable"])
     currency = serializers.CharField()
+    daily_breakdown = SalesComparisonDailyBreakdownSerializer()
 
 
 class DailyStatsItemSerializer(serializers.Serializer):

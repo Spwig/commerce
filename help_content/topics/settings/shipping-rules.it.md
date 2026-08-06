@@ -2,19 +2,19 @@
 title: Regole di spedizione
 ---
 
-Le regole di spedizione applicano aggiustamenti condizionali ai costi di spedizione in base al contenuto del carrello, agli attributi del cliente e alle aree di consegna - offri automaticamente la spedizione gratuita per ordini superiori a $50, aggiungi sovrapprezzi per aree remote o applica sconti per clienti VIP. Le regole utilizzano un'esecuzione basata sulla priorità (priorità più alta prima) con flag opzionali per fermare ulteriori elaborazioni. Ogni regola valuta diverse condizioni (valore del carrello, peso, aree, prodotti, gruppi di clienti) ed esegue uno dei 6 tipi di aggiustamento quando tutte le condizioni corrispondono.
+Le regole di spedizione applicano modifiche ai costi di consegna in base al contenuto del carrello, alle caratteristiche del cliente e alle aree di consegna: offri automaticamente la spedizione gratuita sopra i $50, aggiungi sovrapprezzi per aree remote o sconti per i clienti VIP. Le regole utilizzano l'esecuzione basata sulla priorità (priorità maggiore per prima) con flag opzionali per evitare ulteriori elaborazioni. Ogni regola valuta più condizioni (valore del carrello, peso, zone, prodotti, gruppi clienti) ed esegue uno dei 6 tipi di modifica quando tutte le condizioni sono soddisfatte.
 
-Utilizza le regole di spedizione quando hai bisogno di costi di spedizione dinamici che cambiano in base al contesto dell'ordine, non solo a tassi fissi definiti nei metodi di spedizione.
+Utilizza le regole di spedizione quando hai bisogno di costi di spedizione dinamici che cambiano in base al contesto dell'ordine, non solo tassi fissi dai metodi di spedizione.
 
 ## Tipi di regole di spedizione
 
-Le regole di spedizione applicano 6 tipi di aggiustamenti ai costi:
+Le regole di spedizione applicano 6 tipi di modifiche al costo:
 
 ### Sconto percentuale
 
 **Cosa fa**: Riduce il costo di spedizione in percentuale (es. 25% di sconto).
 
-**Formula**: `new_cost = base_cost × (1 - percent/100)`
+**Formula**: `nuovo_costo = costo_base × (1 - percento/100)`
 
 **Esempio**:
 ```
@@ -23,10 +23,10 @@ Sconto: 25%
 Risultato: $15
 ```
 
-**Utilizzo**:
-- Sconto per clienti VIP (20% di sconto su tutti i costi di spedizione)
-- Promozioni stagionali (15% di sconto su spedizioni in dicembre)
-- Sconto per ordini di grandi quantità (10% di sconto su spedizioni per 5+ articoli)
+**Casi d'uso**:
+- Sconto per clienti VIP (20% di sconto su tutta la spedizione)
+- Promozioni stagionali (15% di sconto sulla spedizione in dicembre)
+- Sconto per ordini di grandi quantità (10% di sconto sulla spedizione per 5+ articoli)
 
 ---
 
@@ -34,7 +34,7 @@ Risultato: $15
 
 **Cosa fa**: Sottrae un importo fisso dal costo di spedizione.
 
-**Formula**: `new_cost = base_cost - amount` (minimo $0)
+**Formula**: `nuovo_costo = costo_base - importo` (minimo $0)
 
 **Esempio**:
 ```
@@ -43,30 +43,30 @@ Sconto: $5
 Risultato: $10
 ```
 
-**Utilizzo**:
-- Bonus per clienti nuovi ($5 di sconto sulla spedizione del primo ordine)
-- Premio per l'iscrizione alla newsletter ($3 di sconto sulla spedizione)
+**Casi d'uso**:
+- Bonus per primo ordine ($5 di sconto sulla spedizione per il primo ordine)
+- Ricompensa per la registrazione alla newsletter ($3 di sconto sulla spedizione)
 - Beneficio del programma fedeltà ($10 di sconto sulla spedizione al mese)
 
 ---
 
 ### Costo fisso
 
-**Cosa fa**: Sovrascrive il costo di spedizione a un importo specifico.
+**Cosa fa**: Sostituisce il costo di spedizione con un importo specifico.
 
-**Formula**: `new_cost = fixed_amount`
+**Formula**: `nuovo_costo = importo_fisso`
 
 **Esempio**:
 ```
 Costo base: $25
-Impostare a: $9.99
+Impostare su: $9.99
 Risultato: $9.99
 ```
 
-**Utilizzo**:
-- Vendita lampo (spedizione a $5 per tutti gli ordini di oggi)
-- Spedizione specifica per categoria (libri sempre a $3.99 di spedizione)
-- Promozioni basate sul tempo (spedizione limitata a $9.99 questa settimana)
+**Casi d'uso**:
+- Vendita a prezzo fisso (spedizione fissa a $5 per tutti gli ordini di oggi)
+- Spedizione specifica per categoria (la spedizione per i libri è sempre $3.99)
+- Promozioni basate sul tempo (spedizione massima a $9.99 questa settimana)
 
 ---
 
@@ -74,17 +74,17 @@ Risultato: $9.99
 
 **Cosa fa**: Imposta il costo di spedizione a $0.
 
-**Formula**: `new_cost = $0`
+**Formula**: `nuovo_costo = $0`
 
 **Esempio**:
 ```
 Costo base: $18
-Applicazione della regola
+La regola si applica
 Risultato: $0
 ```
 
-**Utilizzo**:
-- Spedizione gratuita per ordini superiori a $50
+**Casi d'uso**:
+- Spedizione gratuita sopra i $50
 - Spedizione gratuita per prodotti specifici (articoli promozionali)
 - Spedizione gratuita per clienti VIP
 - Spedizione gratuita per ordini con 3+ articoli
@@ -95,7 +95,7 @@ Risultato: $0
 
 **Cosa fa**: Aggiunge un importo fisso al costo di spedizione.
 
-**Formula**: `new_cost = base_cost + amount`
+**Formula**: `nuovo_costo = costo_base + importo`
 
 **Esempio**:
 ```
@@ -104,11 +104,11 @@ Sovrapprezzo: $5
 Risultato: $17
 ```
 
-**Utilizzo**:
-- Tariffa di consegna per aree remote
+**Casi d'uso**:
+- Tariffa per consegna in aree remote
 - Gestione di articoli di grandi dimensioni
 - Sovrapprezzo per consegna di sabato
-- Tariffa per imballaggio di articoli fragili
+- Tariffa imballaggio per articoli fragili
 
 ---
 
@@ -116,7 +116,7 @@ Risultato: $17
 
 **Cosa fa**: Aumenta il costo di spedizione in percentuale.
 
-**Formula**: `new_cost = base_cost × (1 + percent/100)`
+**Formula**: `nuovo_costo = costo_base × (1 + percento/100)`
 
 **Esempio**:
 ```
@@ -125,24 +125,24 @@ Sovrapprezzo: 15%
 Risultato: $23
 ```
 
-**Utilizzo**:
-- Sovrapprezzo per periodo di alta stagione (20% durante le festività)
-- Premio per consegna espressa (sovrapprezzo del 50%)
-- Sovrapprezzo per carburante (variabile in base ai tassi correnti)
+**Casi d'uso**:
+- Sovrapprezzo stagionale (20% durante le vacanze)
+- Premio per consegna espressa (50% di sovrapprezzo)
+- Tariffa carburante (variabile in base ai tassi correnti)
 
 ---
 
-## Condizioni delle regole
+## Condizioni della regola
 
-Le regole valutano **TUTTE le condizioni devono passare** per applicare la regola:
+Le regole valutano **tutte le condizioni devono essere soddisfatte** per applicare la regola:
 
 ### Validità temporale
 
-- **Data di inizio**: La regola è attiva solo dopo questa data
-- **Data di fine**: La regola è attiva solo prima di questa data
-- **Utilizzo**: Promozioni stagionali, offerte a tempo limitato
+- **Data iniziale**: La regola è attiva solo dopo questa data
+- **Data finale**: La regola è attiva solo prima di questa data
+- **Caso d'uso**: Promozioni stagionali, offerte a tempo
 
-**Esempio**: Spedizione gratuita solo nel weekend di Black Friday
+**Esempio**: Spedizione gratuita nel fine settimana del Black Friday solo
 ```
 Inizio: 2026-11-27 00:00
 Fine: 2026-11-30 23:59
@@ -150,13 +150,13 @@ Fine: 2026-11-30 23:59
 
 ---
 
-### Intervallo del valore del carrello
+### Intervallo valore carrello
 
-- **Valore minimo del carrello**: Il sottototale del carrello deve essere ≥ importo
-- **Valore massimo del carrello**: Il sottototale del carrello deve essere ≤ importo
-- **Utilizzo**: Soglie per spedizione gratuita, sconti a scaglioni
+- **Valore minimo carrello**: Il totale del carrello deve essere ≥ importo
+- **Valore massimo carrello**: Il totale del carrello deve essere ≤ importo
+- **Caso d'uso**: Soglie di spedizione gratuita, sconti a scaglie
 
-**Esempio**: Spedizione gratuita per ordini da $50 a $200
+**Esempio**: Spedizione gratuita per ordini tra $50 e $200
 ```
 Min: $50
 Max: $200
@@ -164,11 +164,11 @@ Max: $200
 
 ---
 
-### Intervallo del peso del carrello
+### Intervallo peso carrello
 
 - **Peso minimo**: Il peso totale del carrello deve essere ≥ importo
 - **Peso massimo**: Il peso totale del carrello deve essere ≤ importo
-- **Utilizzo**: Sconti per spedizioni leggere, sovrapprezzi per articoli pesanti
+- **Caso d'uso**: Sconti per spedizioni leggere, sovrapprezzi per articoli pesanti
 
 **Esempio**: Sovrapprezzo di $5 per ordini superiori a 20kg
 ```
@@ -178,198 +178,190 @@ Peso massimo: null (illimitato)
 
 ---
 
-### Intervallo del numero di articoli
+### Intervallo numero articoli
 
-- **Minimo numero di articoli**: Il carrello deve contenere ≥ quantità di articoli
-- **Massimo numero di articoli**: Il carrello deve contenere ≤ quantità di articoli
-- **Utilizzo**: Sconti per ordini di grandi quantità, tariffe per singoli articoli
+
+- **Min Item Count**: Il carrello deve contenere ≥ quantità di articoli
+- **Max Item Count**: Il carrello deve contenere ≤ quantità di articoli
+- **Use Case**: Sconti per ordini multipli, tariffe per singolo articolo
 
 **Esempio**: Spedizione gratuita per 5+ articoli
 ```
-Minimo articoli: 5
-Massimo articoli: null
+Min Items: 5
+Max Items: null
 ```
 
----
 
-### Zona di spedizione
+### Zona di Spedizione
 
-- **Zona**: La regola si applica solo se l'indirizzo del cliente corrisponde a almeno una zona selezionata
+- **Zone**: La regola si applica solo se l'indirizzo del cliente corrisponde a almeno una zona selezionata
 - **Selezione vuota**: La regola si applica a TUTTE le zone
-- **Utilizzo**: Sconti o sovrapprezzi specifici per zona
+- **Use Case**: Ritenute o sconti specifici per zona
 
-**Esempio**: Spedizione gratuita solo per la zona domestica
+**Esempio**: Spedizione gratuita solo per la zona Interna
 ```
-Zona: ["Domestic USA"]
+Zone: ["Interni USA"]
 ```
 
----
 
-### Metodo di spedizione
+### Metodo di Spedizione
 
-- **Metodi**: La regola si applica solo a metodi di spedizione specifici
+- **Metodi**: La regola si applica solo a metodi specifici di spedizione
 - **Selezione vuota**: La regola si applica a TUTTI i metodi
-- **Utilizzo**: Promozioni specifiche per metodo
+- **Use Case**: Promozioni specifiche per metodo
 
-**Esempio**: 25% di sconto su Spedizione Espressa
+**Esempio**: Sconto del 25% per la spedizione espressa
 ```
-Metodi: ["Express Delivery"]
-```
-
----
-
-### Requisiti del prodotto
-
-**Prodotti richiesti**: Il carrello deve contenere almeno uno di questi prodotti
-
-**Categorie richieste**: Il carrello deve contenere almeno un prodotto da queste categorie
-
-**Utilizzo**: Spedizione gratuita specifica per prodotto, pacchetti promozionali
-
-**Esempio**: Spedizione gratuita quando il carrello contiene "Promotion Item A"
-```
-Prodotti richiesti: [ID prodotto 123]
+Metodi: ["Consegna Espressa"]
 ```
 
----
 
-### Esclusioni del prodotto
+### Requisiti dei Prodotti
 
-**Prodotti esclusi**: La regola non si applica se il carrello contiene uno di questi prodotti
+**Richiede Prodotti**: Il carrello deve contenere almeno uno di questi prodotti
 
-**Categorie escluse**: La regola non si applica se il carrello contiene prodotti da queste categorie
+**Richiede Categorie**: Il carrello deve contenere almeno un prodotto da queste categorie
 
-**Utilizzo**: Escludere articoli pesanti o di grandi dimensioni dalla spedizione gratuita
+**Use Case**: Spedizione gratuita specifica per prodotto, pacchetti promozionali
 
-**Esempio**: Spedizione gratuita tranne per la categoria arredamento
+**Esempio**: Spedizione gratuita quando il carrello include "Prodotto Promozionale A"
 ```
-Categorie escluse: [Arredamento]
-```
-
----
-
-### Gruppo di clienti
-
-- **Gruppi di clienti**: La regola si applica solo ai clienti nei gruppi selezionati (VIP, Grossista, ecc.)
-- **Selezione vuota**: La regola si applica a TUTTI i gruppi di clienti
-- **Utilizzo**: Benefici VIP, sconti per grossisti
-
-**Esempio**: Sconto del 15% sulla spedizione per membri VIP
-```
-Gruppi di clienti: ["VIP"]
+Richiede Prodotti: [ID Prodotto 123]
 ```
 
----
 
-### Cliente primo ordine
+### Esclusioni dei Prodotti
 
-- **Cliente primo ordine**: Toggle per limitare la regola ai clienti senza ordini precedenti
-- **Utilizzo**: Offerte di benvenuto per nuovi clienti
+**Esclude Prodotti**: La regola non si applica se il carrello include uno di questi prodotti
 
-**Esempio**: $5 di sconto sulla spedizione per primo ordine
+**Esclude Categorie**: La regola non si applica se il carrello include prodotti da queste categorie
+
+**Use Case**: Escludere articoli pesanti/o di grandi dimensioni dalla spedizione gratuita
+
+**Esempio**: Spedizione gratuita tranne per la categoria Mobili
 ```
-Cliente primo ordine: Sì
+Escludi Categorie: [Mobili]
 ```
 
----
 
-## Priorità e esecuzione delle regole
+### Gruppo Cliente
 
-Le regole vengono eseguite in **ordine di priorità** (numero più alto = esecuzione più precoce):
+- **Gruppi Cliente**: La regola si applica solo ai clienti appartenenti ai gruppi selezionati (VIP, Fornitori, ecc.)
+- **Selezione vuota**: La regola si applica a TUTTI i gruppi clienti
+- **Use Case**: Benefici per i clienti VIP, sconti per fornitori
 
-### Meccanica delle priorità
-
-**Esempio di esecuzione**:
+**Esempio**: Sconto del 15% per la spedizione per i membri VIP
 ```
-Regola A (Priorità 100): Spedizione gratuita se carrello > $50
-Regola B (Priorità 50): Sconto del 10% su tutti i costi di spedizione
-Regola C (Priorità 1): Sovrapprezzo di $2 per aree remote
+Gruppi Cliente: ["VIP"]
+```
 
-Carrello: $60, zona remota
-Costo base di spedizione: $15
 
-Passo 1: Valutazione della Regola A (Priorità 100)
-  Carrello > $50? SÌ
-  Applicare: Impostare costo a $0
+### Cliente per la Prima Volta
+
+- **Cliente per la Prima Volta**: Attiva per limitare la regola ai clienti senza ordini precedenti
+- **Use Case**: Offerte di benvenuto per nuovi clienti
+
+**Esempio**: Sconto di $5 per la spedizione per il primo ordine
+```
+Cliente per la Prima Volta: Sì
+```
+
+
+## Priorità e Esecuzione delle Regole
+
+Le regole vengono eseguite in **ordine di priorità** (numero maggiore = esecuzione più precoce):
+
+### Meccanica della Priorità
+
+**Esempio di Esecuzione**:
+```
+Regola A (Priorità 100): Spedizione gratuita se il carrello > $50
+Regola B (Priorità 50): Sconto del 10% su tutta la spedizione
+Regola C (Priorità 1): Aggiungi un sovrapprezzo di $2 per le zone remote
+
+Carrello: $60, Zona remota
+Costo base della spedizione: $15
+
+Passo 1: Valuta la Regola A (Priorità 100)
+  Il carrello > $50? SÌ
+  Applica: Imposta il costo a $0
   Costo ora: $0
 
-Passo 2: Valutazione della Regola B (Priorità 50)
-  Applicare sconto del 10% a $0
-  Costo ora: $0 (ancora gratuito)
+Passo 2: Valuta la Regola B (Priorità 50)
+  Applica lo sconto del 10% su $0
+  Costo ora: $0 (sempre gratuito)
 
-Passo 3: Valutazione della Regola C (Priorità 1)
-  Aggiungere $2 di sovrapprezzo a $0
+Passo 3: Valuta la Regola C (Priorità 1)
+  Aggiungi un sovrapprezzo di $2 a $0
   Costo ora: $2
 
 Costo finale: $2
 ```
 
-**Flag per fermare ulteriori regole**:
+**Flag per Fermare le Ulteriori Regole**:
 
 Se la Regola A ha `stop_further_rules = True`:
 ```
-Regola A (Priorità 100, stop_further_rules=True): Spedizione gratuita se carrello > $50
-Regola B (Priorità 50): Sconto del 10%
-Regola C (Priorità 1): Sovrapprezzo di $2 per aree remote
+Regola A (Priorità 100, stop_further_rules=True): Spedizione gratuita se il carrello > $50
+Regola B (Priorità 50): Sconto del 10% su tutta la spedizione
+Regola C (Priorità 1): Aggiungi un sovrapprezzo di $2 per le zone remote
 
 Carrello: $60
-Costo base: $15
+Base: $15
 
-Passo 1: Applicazione della Regola A, imposta costo a $0
+Passo 1: La Regola A si applica, imposta il costo a $0
         stop_further_rules = True → FERMA
 
 Costo finale: $0 (Le regole B e C non vengono mai eseguite)
 ```
 
----
 
-## Creazione di regole di spedizione
+## Creazione di Regole di Spedizione
 
-**Flusso di lavoro passo-passo**:
+**Workflow Passo Passo**:
 
-1. **Navigare alle regole**
-   - Impostazioni > Spedizione > Regole di spedizione
-   - Fare clic su "Aggiungi regola di spedizione"
+1. **Vai alle Regole**
+   - Impostazioni > Spedizione > Regole di Spedizione
+   - Clicca "Aggiungi Regola di Spedizione"
 
-2. **Configurazione di base**
-   - **Nome**: Identificatore interno (es. "Spedizione gratuita per ordini superiori a $50")
-   - **Descrizione**: Note opzionali (non mostrate ai clienti)
-   - **Attiva**: Toggle per abilitare/disabilitare
-   - **Priorità**: Impostare l'ordine di esecuzione (100 per alta priorità, 1 per bassa)
+2. **Configurazione Base**
+   - **Nome**: Identificativo interno (es. "Spedizione Gratuita Oltre $50")
+   - **Descrizione**: Note opzionali (non visibili ai clienti)
+   - **Attivo**: Attiva/disattiva
+   - **Priorità**: Imposta l'ordine di esecuzione (100 per alta priorità, 1 per bassa)
 
-3. **Scegliere il tipo di regola**
-   - Selezionare il tipo di aggiustamento (sconto %, sconto fisso, costo fisso, gratuito, sovrapprezzo %, sovrapprezzo fisso)
-   - Inserire l'importo o la percentuale
+3. **Scegli il Tipo di Regola**
+   - Seleziona il tipo di modifica (sconto %, sconto fisso, costo fisso, gratuito, sovrapprezzo %, sovrapprezzo fisso)
+   - Inserisci importo o percentuale
 
-4. **Impostare il flag di arresto** (Opzionale)
-   - Selezionare "Ferma ulteriori regole" se questa regola deve impedire l'esecuzione di regole a priorità inferiore
-   - Utilizzare per regole finali/assolute (es. la spedizione gratuita non dovrebbe avere sovrapprezzi aggiunti dopo)
+4. **Imposta il Flag per Fermare** (Opzionale)
+   - Seleziona "Ferma Ulteriori Regole" se questa regola deve impedire l'esecuzione di regole a bassa priorità
+   - Utilizza per regole finali/assolute (es. la spedizione gratuita non dovrebbe avere sovrapprezzi aggiunti dopo)
 
-5. **Definire le condizioni** (Opzionale - lasciare vuoto per "applica sempre")
-   - Validità temporale: date di inizio/fine
-   - Valore del carrello: min/max
-   - Peso del carrello: min/max
-   - Numero di articoli: min/max
-   - Zone: selezionare le zone applicabili
-   - Metodi: selezionare i metodi applicabili
-   - Prodotti: richiesti o esclusi
-   - Cliente: gruppi o solo primo ordine
+5. **Definisci le condizioni** (Opzionale - lasciare vuoto per "applica sempre")
+  - Validità nel tempo: Date di inizio/fine
+  - Valore del carrello: Minimo/Massimo
+  - Peso del carrello: Minimo/Massimo
+  - Numero di articoli: Minimo/Massimo
+  - Zone: Seleziona le zone applicabili
+  - Metodi: Seleziona i metodi applicabili
+  - Prodotti: Richiesti o esclusi
+  - Clienti: Gruppi o solo per i nuovi
 
-6. **Salvare la regola**
-   - Fare clic su Salva
-   - La regola diventa attiva immediatamente (se l'opzione attiva è Yes)
+6. **Salva la regola**
+  - Clicca Salva
+  - La regola diventa attiva immediatamente (se l'interruttore Attiva è su Sì)
 
----
 
-## Scenario comuni per regole di spedizione
+## Scenari comuni per le regole di spedizione
 
-### Scenario 1: Spedizione gratuita per ordini superiori a $50
+### Scenario 1: Spedizione gratuita sopra i $50
 
-**Obiettivo**: Offrire spedizione gratuita quando il sottototale del carrello ≥ $50.
+**Obiettivo**: Offrire spedizione gratuita quando il totale del carrello ≥ $50.
 
 **Configurazione**:
 ```
-Nome: Spedizione gratuita per ordini superiori a $50
+Nome: Spedizione gratuita sopra i $50
 Tipo: Spedizione gratuita
 Priorità: 100
 Condizioni:
@@ -377,16 +369,15 @@ Condizioni:
 Ferma ulteriori regole: Sì
 ```
 
----
 
-### Scenario 2: Sovrapprezzo per aree remote
+### Scenario 2: Aggiunta di un sovrapprezzo per le aree remote
 
-**Obiettivo**: Aggiungere un sovrapprezzo di $10 per consegne in aree remote.
+**Obiettivo**: Aggiungere un sovrapprezzo di $10 per le consegne nelle aree remote.
 
 **Configurazione**:
 ```
-Nome: Sovrapprezzo per aree remote
-Tipo: Sovrapprezzo (fisso)
+Nome: Aggiunta di un sovrapprezzo per le aree remote
+Tipo: Sovrapprezzo (Fisso)
 Importo: $10
 Priorità: 50
 Condizioni:
@@ -394,32 +385,30 @@ Condizioni:
 Ferma ulteriori regole: No
 ```
 
----
 
-### Scenario 3: Sconto del 20% per clienti VIP
+### Scenario 3: Sconto del 20% per i clienti VIP
 
-**Obiettivo**: I clienti VIP ottengono il 20% di sconto su tutti i costi di spedizione.
+**Obiettivo**: I clienti VIP ricevono uno sconto del 20% su tutte le spedizioni.
 
 **Configurazione**:
 ```
-Nome: Sconto sulla spedizione per clienti VIP
-Tipo: Sconto (percentuale)
+Nome: Sconto per la spedizione VIP
+Tipo: Sconto (Percentuale)
 Percentuale: 20
 Priorità: 75
 Condizioni:
-  Gruppi di clienti: ["VIP"]
+  Gruppi clienti: ["VIP"]
 Ferma ulteriori regole: No
 ```
 
----
 
-### Scenario 4: Tariffa fissa per dicembre
+### Scenario 4: Tariffa fissa per le vacanze
 
-**Obiettivo**: Limitare tutti i costi di spedizione a $9.99 durante il mese di dicembre.
+**Obiettivo**: Tutte le spedizioni sono limitate a $9.99 durante dicembre.
 
 **Configurazione**:
 ```
-Nome: Promozione tariffa fissa per dicembre
+Nome: Promozione tariffa fissa dicembre
 Tipo: Costo fisso
 Importo: $9.99
 Priorità: 100
@@ -429,16 +418,15 @@ Condizioni:
 Ferma ulteriori regole: Sì
 ```
 
----
 
-### Scenario 5: Sovrapprezzo per articoli pesanti
+### Scenario 5: Aggiunta di un sovrapprezzo per articoli pesanti
 
-**Obiettivo**: Aggiungere una tariffa di $15 per ordini superiori a 25kg.
+**Obiettivo**: Aggiungere un costo aggiuntivo di $15 per gli ordini superiori a 25kg.
 
 **Configurazione**:
 ```
-Nome: Sovrapprezzo per ordini pesanti
-Tipo: Sovrapprezzo (fisso)
+Nome: Aggiunta di un sovrapprezzo per ordini pesanti
+Tipo: Sovrapprezzo (Fisso)
 Importo: $15
 Priorità: 50
 Condizioni:
@@ -446,31 +434,29 @@ Condizioni:
 Ferma ulteriori regole: No
 ```
 
----
 
-### Scenario 6: Spedizione gratuita per primo ordine
+### Scenario 6: Spedizione gratuita per il primo ordine
 
-**Obiettivo**: I nuovi clienti ottengono spedizione gratuita per il primo ordine.
+**Obiettivo**: I clienti nuovi ricevono la spedizione gratuita sul primo ordine.
 
 **Configurazione**:
 ```
-Nome: Spedizione gratuita per primo ordine
+Nome: Spedizione gratuita per il primo ordine
 Tipo: Spedizione gratuita
 Priorità: 100
 Condizioni:
-  Cliente primo ordine: Sì
+  Cliente nuovo: Sì
 Ferma ulteriori regole: Sì
 ```
 
----
 
-### Scenario 7: Spedizione gratuita per categoria promozionale
+### Scenario 7: Spedizione gratuita per categorie specifiche
 
-**Obiettivo**: Spedizione gratuita per ordini che contengono articoli della categoria promozionale.
+**Obiettivo**: Spedizione gratuita per gli ordini che includono articoli di categoria promozionale.
 
 **Configurazione**:
 ```
-Nome: Spedizione gratuita per categoria promozionale
+Nome: Spedizione gratuita per le categorie promozionali
 Tipo: Spedizione gratuita
 Priorità: 90
 Condizioni:
@@ -478,13 +464,12 @@ Condizioni:
 Ferma ulteriori regole: Sì
 ```
 
----
 
-### Scenario 8: Escludere l'arredamento dalla spedizione gratuita
+### Scenario 8: Escludere i mobili dalla spedizione gratuita
 
-**Obiettivo**: Spedizione gratuita per ordini superiori a $50, tranne se il carrello contiene arredamento.
+**Obiettivo**: Spedizione gratuita sopra i $50, tranne se il carrello include mobili.
 
-**Soluzione**: Due regole
+Soluzione: Due regole
 
 **Regola 1**:
 ```
@@ -493,159 +478,160 @@ Tipo: Spedizione gratuita
 Priorità: 50
 Condizioni:
   Valore minimo del carrello: $50
-  Categorie escluse: ["Arredamento"]
+  Categorie escluse: ["Mobili"]
 Ferma ulteriori regole: No
 ```
 
 **Regola 2**:
 ```
-Nome: Sconto di $5 per ordini di arredamento
-Tipo: Sconto (fisso)
+Nome: Sconto di $5 per gli ordini di mobili
+Tipo: Sconto (Fisso)
 Importo: $5
 Priorità: 40
 Condizioni:
-  Categorie richieste: ["Arredamento"]
+  Categorie richieste: ["Mobili"]
   Valore minimo del carrello: $50
 Ferma ulteriori regole: No
 ```
 
----
 
-## Strategie per la combinazione delle regole
+## Strategie per il combinare le regole
 
-### Strategia 1: Sovrapposizione degli sconti
+### Strategia 1: Sconti sovrapposti
 
-**Permettere a più sconti di sovrapporsi**:
+**Consenti a più sconti di sovrapporsi**:
 ```
-Regola A (Priorità 100): 10% di sconto per VIP → stop_further_rules=No
-Regola B (Priorità 50): 15% di sconto per ordini >$100 → stop_further_rules=No
+Regola A (Priorità 100): 10% di sconto per i VIP → stop_further_rules=No
+Regola B (Priorità 50): 15% di sconto sugli ordini >$100 → stop_further_rules=No
 
 Cliente VIP con ordine di $120:
-Costo base: $15
+Base: $15
 Dopo la Regola A: $13.50 (10% di sconto)
 Dopo la Regola B: $11.48 (15% di sconto su $13.50)
 ```
+
 
 ### Strategia 2: Regole esclusive
 
 **Solo una regola si applica** (priorità più alta):
 ```
-Regola A (Priorità 100): Spedizione gratuita >$50 → stop_further_rules=Yes
-Regola B (Priorità 50): 20% di sconto su tutti i costi di spedizione → stop_further_rules=Yes
+Regola A (Priorità 100): Spedizione gratuita >$50 → stop_further_rules=Sì
+Regola B (Priorità 50): 20% di sconto su tutte le spedizioni → stop_further_rules=Sì
 
 Carrello > $50:
-Regola A si applica → Spedizione gratuita → FERMA
-Regola B mai eseguita
+La Regola A si applica → Spedizione gratuita → FERMA
+La Regola B non viene mai eseguita
 ```
 
-### Strategia 3: Sovrapprezzi condizionali
 
-**Sconti prima, sovrapprezzi dopo**:
+### Strategia 3: Sovrapprezzi condizionati
+
+**Sconti per primi, sovrapprezzi per ultimi**:
 ```
 Regola A (Priorità 100): Spedizione gratuita >$75
-Regola B (Priorità 75): Sconto del 15% per clienti VIP
+Regola B (Priorità 75): Sconto del 15% per i clienti VIP
 Regola C (Priorità 50): Sconto del 10% generale
-Regola D (Priorità 25): Sovrapprezzo di $5 per aree remote
-Regola E (Priorità 1): Sovrapprezzo del 10% per carburante
+Regola D (Priorità 25): Sovrapprezzo di $5 per le aree remote
+Regola E (Priorità 1): Sovrapprezzo del 10% per il carburante
 
 Ordine: $80, zona remota, cliente VIP
-Costo base: $20
-A: $80 > $75 → Spedizione gratuita ($0)
+Base: $20
+A: $80 > $75 → Gratuita ($0)
 B: VIP → 15% di sconto su $0 = $0
 C: 10% di sconto su $0 = $0
-D: Zona remota +$5 = $5
+D: Remota +$5 = $5
 E: Carburante +10% di $5 = $5.50
-
-Risultato finale: $5.50 (non gratuito a causa dei sovrapprezzi)
 ```
 
-**Per prevenire questo, utilizzare stop_further_rules=Yes**:
-```
-Regola A (Priorità 100, stop=Yes): Spedizione gratuita >$75
 
-Stesso ordine:
-A: $80 > $75 → Spedizione gratuita ($0) → FERMA
-Risultato finale: $0 (veramente gratuito)
+Oggetto: 5,50 $ (non gratuito a causa di sovrapprezzi)
+```
+
+**Per prevenire ciò, utilizzare stop_further_rules=Si**:
+```
+Regola A (Priorità 100, stop=Si): Spedizione gratuita >75$
+
+Stessa ordinazione:
+A: 80 $ > 75 $ → Gratuita ($0) → FERMA
+Oggetto: 0 $ (veramente gratuito)
 ```
 
 ---
 
-## Test delle regole di spedizione
+## Verifica delle regole di spedizione
 
-**Prima di andare online**:
+**Prima di andare in produzione**:
 
-1. **Creare carrelli di test**
-   - Carrello A: $25 (sotto soglia)
-   - Carrello B: $55 (sopra soglia)
-   - Carrello C: $200 + zona remota
-   - Carrello D: cliente VIP
+1. **Crea carrelli di prova**
+   - Carrello A: 25 $ (sotto soglia)
+   - Carrello B: 55 $ (sopra soglia)
+   - Carrello C: 200 $ + zona remota
+   - Carrello D: Cliente VIP
 
-2. **Testare ogni regola**
-   - Procedere al checkout
-   - Verificare che venga visualizzato il costo di spedizione corretto
-   - Controllare l'ordine di esecuzione delle regole
+2. **Test di ogni regola**
+   - Procedi all'acquisto
+   - Verifica che venga visualizzato l'importo corretto per la spedizione
+   - Controlla l'ordine di esecuzione delle regole
 
-3. **Testare la risoluzione delle priorità**
-   - Più regole che corrispondono
-   - Verificare che venga eseguita prima la priorità più alta
-   - Controllare il comportamento di stop_further_rules
+3. **Test della risoluzione della priorità**
+   - Più regole che si applicano
+   - Verifica che venga eseguita per prima la priorità più alta
+   - Controlla il comportamento di stop_further_rules
 
-4. **Testare i casi limite**
+4. **Test dei casi limite**
    - Valore del carrello esattamente alla soglia
-   - Più condizioni che corrispondono
-   - Regole conflittuali
+   - Più condizioni che si applicano
+   - Regole in conflitto
 
 ---
 
 ## Risoluzione dei problemi
 
-**Problema 1: Regola non applicabile**
+**Problema 1: La regola non viene applicata**
 
-**Causa**:
-- La regola non è attiva
-- Una o più condizioni non sono soddisfatte
-- Una regola a priorità più alta ha impostato stop_further_rules=Yes
-- Validità temporale fuori dalla data corrente
+**Cause**:
+- La regola è disattivata
+- Una o più condizioni non soddisfatte
+- Una regola con priorità più alta ha impostato stop_further_rules=Si
+- La validità del tempo è al di fuori della data corrente
 
-**Soluzione**: Rivedere tutte le condizioni, controllare la priorità, verificare lo stato attivo.
+**Soluzione**: Verifica tutte le condizioni, controlla la priorità, verifica lo stato attivo.
 
 ---
 
-**Problema 2: Importo di sconto inaspettato**
+**Problema 2: Importo scontato non previsto**
 
-**Causa**:
+**Cause**:
 - Più regole che si sovrappongono
 - Percentuale applicata a un costo già scontato
 - Priorità della regola errata
 
-**Soluzione**: Controllare l'ordine di priorità, rivedere i flag stop_further_rules, tracciare manualmente l'esecuzione.
+**Soluzione**: Controlla l'ordine delle priorità, verifica i flag stop_further_rules, esegui manualmente il tracciamento dell'esecuzione.
 
 ---
 
-**Problema 3: Spedizione gratuita non funzionante**
+**Problema 3: La spedizione gratuita non funziona**
 
-**Causa**:
-- Una regola a priorità inferiore aggiunge un costo dopo la regola di spedizione gratuita
-- Il carrello non soddisfa il valore minimo della soglia
+**Cause**:
+- Una regola con priorità inferiore che aggiunge costi dopo la regola della spedizione gratuita
+- Il carrello non soddisfa il valore minimo richiesto
 - Prodotti esclusi nel carrello
 
-**Soluzione**: Utilizzare stop_further_rules=Yes sulla regola di spedizione gratuita, verificare le condizioni, controllare le esclusioni.
+**Soluzione**: Utilizza stop_further_rules=Si sulla regola della spedizione gratuita, verifica le condizioni, controlla le esclusioni.
 
 ---
 
-## Consigli
+## Suggerimenti
 
-- **Utilizzare una priorità alta per la spedizione gratuita** - Priorità 100 assicura che venga eseguita prima di altri aggiustamenti
-- **Impostare stop_further_rules per le regole assolute** - La spedizione gratuita dovrebbe fermare ulteriori elaborazioni
-- **Testare le combinazioni di regole** - Più regole possono interagire in modo inaspettato
-- **Utilizzare nomi descrittivi** - "Sconto del 20% per VIP (Priorità 75)" è meglio di "Regola 3"
-- **Documentare la logica complessa** - Aggiungere note nel campo descrizione
-- **Iniziare con regole semplici** - Aggiungere complessità gradualmente
-- **Monitorare le prestazioni delle regole** - Controllare se le regole vengono utilizzate o causano confusione
-- **Evitare troppe regole** - Troppa regole rallentano il checkout, utilizzare un massimo di 5-10
-- **Utilizzare le zone per la geografia** - Meglio di molte regole simili per paese
-- **Combinare con i metodi** - Le regole + metodi funzionano insieme per prezzi sofisticati
-- **Impostare finestre temporali chiare** - Includere sempre la data di fine per le promozioni
-- **Testare i casi limite** - Esattamente $50, esattamente 5 articoli, ecc.
-
-Ricorda: Preservare tutto il formattazione markdown, percorsi delle immagini, blocchi di codice e termini tecnici esattamente come mostrato nelle regole di conservazione.
+- **Utilizza una priorità elevata per la spedizione gratuita** - Priorità 100 assicura che venga eseguita prima di altri aggiustamenti
+- **Imposta stop_further_rules per regole assolute** - La spedizione gratuita dovrebbe fermare ulteriori elaborazioni
+- **Testa le combinazioni di regole** - Più regole possono interagire in modo imprevisto
+- **Usa nomi descrittivi** - "Sconto VIP 20% (Priorità 75)" è meglio di "Regola 3"
+- **Documenta la logica complessa** - Aggiungi note nel campo descrizione
+- **Inizia con regole semplici** - Aggiungi complessità gradualmente
+- **Monitora le prestazioni delle regole** - Controlla se le regole vengono utilizzate o causano confusione
+- **Evita troppe regole** - Troppi regole rallentano l'acquisto, usa massimo 5-10
+- **Usa le aree per la geografia** - Meglio di molte regole simili per paese
+- **Combina con metodi** - Le regole + I metodi funzionano insieme per prezzi complessi
+- **Imposta finestre temporali chiare** - Includi sempre le date di fine per le promozioni
+- **Testa i casi limite** - Esattamente 50 $, esattamente 5 articoli, ecc.

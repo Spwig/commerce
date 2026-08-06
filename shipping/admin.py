@@ -8,7 +8,7 @@ from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import path, reverse
 from django.utils import timezone
-from django.utils.html import format_html, format_html_join
+from django.utils.html import conditional_escape, format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -118,7 +118,7 @@ class ShippingCountryAdmin(admin.ModelAdmin):
     def priority_badge(self, obj):
         """Display priority as badge"""
         if obj.priority == 0:
-            return format_html('<span class="priority-badge highest">P0 - HIGHEST</span>')
+            return mark_safe('<span class="priority-badge highest">P0 - HIGHEST</span>')
         elif obj.priority <= 5:
             return format_html('<span class="priority-badge high">P{}</span>', obj.priority)
         elif obj.priority <= 10:
@@ -132,8 +132,8 @@ class ShippingCountryAdmin(admin.ModelAdmin):
     def is_active_badge(self, obj):
         """Display active status as badge"""
         if obj.is_active:
-            return format_html('<span class="shipping-badge-active">ACTIVE</span>')
-        return format_html('<span class="shipping-badge-inactive">INACTIVE</span>')
+            return mark_safe('<span class="shipping-badge-active">ACTIVE</span>')
+        return mark_safe('<span class="shipping-badge-inactive">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 
@@ -312,27 +312,27 @@ class CarrierPresetAdmin(admin.ModelAdmin):
                 obj.country_of_operation.flag,
                 obj.country_of_operation.code,
             )
-        return format_html('<span class="quiet" title="International">INT</span>')
+        return mark_safe('<span class="quiet" title="International">INT</span>')
 
     country_badge.short_description = _("Country")
 
     def is_default_badge(self, obj):
         if obj.is_default:
-            return format_html('<span class="status-badge default">DEFAULT</span>')
+            return mark_safe('<span class="status-badge default">DEFAULT</span>')
         return "-"
 
     is_default_badge.short_description = _("Default")
 
     def is_active_badge(self, obj):
         if obj.is_active:
-            return format_html('<span class="status-badge active">ACTIVE</span>')
-        return format_html('<span class="status-badge inactive">INACTIVE</span>')
+            return mark_safe('<span class="status-badge active">ACTIVE</span>')
+        return mark_safe('<span class="status-badge inactive">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 
     def is_system_badge(self, obj):
         if obj.is_system:
-            return format_html('<span class="status-badge system">SYSTEM</span>')
+            return mark_safe('<span class="status-badge system">SYSTEM</span>')
         return "-"
 
     is_system_badge.short_description = _("Type")
@@ -636,7 +636,7 @@ class ShippingPackageAdmin(admin.ModelAdmin):
         total = product_count + variant_count
 
         if total == 0:
-            return format_html('<span class="shipping-text-quiet">0</span>')
+            return mark_safe('<span class="shipping-text-quiet">0</span>')
 
         return format_html(
             '<span class="shipping-usage-count">{}</span> <span class="shipping-usage-breakdown">({}P + {}V)</span>',
@@ -771,14 +771,14 @@ class ProviderAccountAdmin(admin.ModelAdmin):
 
     def is_active_badge(self, obj):
         if obj.is_active:
-            return format_html('<span class="shipping-badge-active">ACTIVE</span>')
-        return format_html('<span class="shipping-badge-inactive">INACTIVE</span>')
+            return mark_safe('<span class="shipping-badge-active">ACTIVE</span>')
+        return mark_safe('<span class="shipping-badge-inactive">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 
     def is_default_badge(self, obj):
         if obj.is_default:
-            return format_html('<span class="shipping-badge-default">DEFAULT</span>')
+            return mark_safe('<span class="shipping-badge-default">DEFAULT</span>')
         return "-"
 
     is_default_badge.short_description = _("Default")
@@ -1749,7 +1749,7 @@ class ShippingZoneAdmin(admin.ModelAdmin):
     def priority_badge(self, obj):
         """Display priority as a badge"""
         if obj.priority == 0:
-            return format_html('<span class="priority-badge highest">P0 - HIGHEST</span>')
+            return mark_safe('<span class="priority-badge highest">P0 - HIGHEST</span>')
         elif obj.priority <= 5:
             return format_html('<span class="priority-badge high">P{}</span>', obj.priority)
         elif obj.priority <= 10:
@@ -1777,7 +1777,7 @@ class ShippingZoneAdmin(admin.ModelAdmin):
             )
             html += '<div class="country-list">'
             for country_code in obj.countries:
-                html += f'<span class="country-badge">{country_code}</span>'
+                html += f'<span class="country-badge">{conditional_escape(country_code)}</span>'
             html += "</div></div>"
         else:
             html += '<div class="coverage-section"><em>' + str(_("All countries")) + "</em></div>"
@@ -1790,8 +1790,8 @@ class ShippingZoneAdmin(admin.ModelAdmin):
                 + "</strong><br/>"
             )
             for country, states in obj.states.items():
-                html += f'<div class="state-group"><strong>{country}:</strong> '
-                html += ", ".join(states)
+                html += f'<div class="state-group"><strong>{conditional_escape(country)}:</strong> '
+                html += ", ".join(conditional_escape(s) for s in states)
                 html += "</div>"
             html += "</div>"
 
@@ -1804,11 +1804,11 @@ class ShippingZoneAdmin(admin.ModelAdmin):
             )
             html += '<ul class="postal-patterns">'
             for pattern in obj.postal_code_patterns:
-                html += f"<li><code>{pattern}</code></li>"
+                html += f"<li><code>{conditional_escape(pattern)}</code></li>"
             html += "</ul></div>"
 
         html += "</div>"
-        return format_html(html)
+        return mark_safe(html)
 
     coverage_details_display.short_description = _("Coverage Details")
 
@@ -1825,8 +1825,8 @@ class ShippingZoneAdmin(admin.ModelAdmin):
 
     def is_active_badge(self, obj):
         if obj.is_active:
-            return format_html('<span class="status-badge active">ACTIVE</span>')
-        return format_html('<span class="status-badge inactive">INACTIVE</span>')
+            return mark_safe('<span class="status-badge active">ACTIVE</span>')
+        return mark_safe('<span class="status-badge inactive">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
     is_active_badge.admin_order_field = "is_active"
@@ -1985,7 +1985,7 @@ class ShippingRateTableAdmin(admin.ModelAdmin):
         """Count of tiers in this table"""
         count = obj.tiers.count()
         if count == 0:
-            return format_html('<span class="shipping-text-danger">&#9888; 0 tiers</span>')
+            return mark_safe('<span class="shipping-text-danger">&#9888; 0 tiers</span>')
         return format_html('<span class="shipping-text-success">{} tiers</span>', count)
 
     tier_count.short_description = _("Tiers")
@@ -2197,7 +2197,7 @@ class ShippingPromotionAdmin(admin.ModelAdmin):
         if not parts:
             return _("No time restrictions")
 
-        return format_html("<br>".join(parts))
+        return mark_safe("<br>".join(parts))
 
     time_validity_display.short_description = _("Time Validity")
 
@@ -2265,7 +2265,7 @@ class ShippingPromotionAdmin(admin.ModelAdmin):
             conditions.append(f"Active until: {obj.end_date}")
 
         if not conditions:
-            return format_html(
+            return mark_safe(
                 '<span class="shipping-text-muted">No conditions (rule applies to all)</span>'
             )
 
@@ -2482,23 +2482,23 @@ class LocationAdmin(admin.ModelAdmin):
     def accepts_pickup_badge(self, obj):
         """Display pickup acceptance status."""
         if not obj.is_active:
-            return format_html('<span class="shipping-text-muted">Inactive</span>')
+            return mark_safe('<span class="shipping-text-muted">Inactive</span>')
         if obj.accepts_pickup:
-            return format_html('<span class="shipping-text-success">&#10003; Pickup</span>')
-        return format_html('<span class="shipping-text-danger">&#10007; No Pickup</span>')
+            return mark_safe('<span class="shipping-text-success">&#10003; Pickup</span>')
+        return mark_safe('<span class="shipping-text-danger">&#10007; No Pickup</span>')
 
     accepts_pickup_badge.short_description = _("Pickup")
 
     def accepts_delivery_badge(self, obj):
         """Display delivery dispatch acceptance status."""
         if not obj.is_active:
-            return format_html('<span class="shipping-text-muted">Inactive</span>')
+            return mark_safe('<span class="shipping-text-muted">Inactive</span>')
         if obj.accepts_delivery_dispatch:
             radius = f" ({obj.delivery_radius}km)" if obj.delivery_radius else ""
             return format_html(
                 '<span class="shipping-text-success">&#10003; Delivery{}</span>', radius
             )
-        return format_html('<span class="shipping-text-danger">&#10007; No Delivery</span>')
+        return mark_safe('<span class="shipping-text-danger">&#10007; No Delivery</span>')
 
     accepts_delivery_badge.short_description = _("Delivery")
 
@@ -2511,15 +2511,15 @@ class LocationAdmin(admin.ModelAdmin):
                 lat,
                 lon,
             )
-        return format_html('<span class="shipping-text-warning">&#9888; No Coords</span>')
+        return mark_safe('<span class="shipping-text-warning">&#9888; No Coords</span>')
 
     coordinates_badge.short_description = _("Coords")
 
     def is_active_badge(self, obj):
         """Display active status as badge."""
         if obj.is_active:
-            return format_html('<span class="shipping-badge-active">ACTIVE</span>')
-        return format_html('<span class="shipping-badge-error">INACTIVE</span>')
+            return mark_safe('<span class="shipping-badge-active">ACTIVE</span>')
+        return mark_safe('<span class="shipping-badge-error">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 

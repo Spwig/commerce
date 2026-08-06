@@ -558,6 +558,7 @@ class Widget(models.Model):
         ("account", _("Account Menu")),
         ("language", _("Language Selector")),
         ("currency", _("Currency Selector")),
+        ("ship_to", _("Ship-To Selector")),
         ("social", _("Social Media Links")),
         ("newsletter", _("Newsletter Signup")),
         ("contact", _("Contact Information")),
@@ -682,10 +683,20 @@ class Widget(models.Model):
         return f"design/widgets/{self.widget_type}.html"
 
     def get_css_url(self):
-        """Get the CSS URL for this widget"""
-        from django.conf import settings
+        """Get the CSS URL for this widget.
 
-        return f"{settings.STATIC_URL}design/css/widgets/{self.widget_type}.css"
+        Routes through the staticfiles storage so the returned URL is
+        cache-busted (hashed) in production. Raw ``STATIC_URL`` string
+        concatenation bypasses the manifest, which both breaks long-term
+        caching (``immutable`` responses never invalidate on change) and
+        produces a URL that never matches the ``{% static %}`` form of the
+        same file — causing e.g. the cart widget CSS to download twice.
+        ``NonStrictManifestStorage`` falls back to the unhashed name for
+        widget types with no CSS file, so this is safe for every type.
+        """
+        from django.templatetags.static import static
+
+        return static(f"design/css/widgets/{self.widget_type}.css")
 
     def get_js_url(self):
         """Get the JavaScript URL for this widget (if any)"""
@@ -768,7 +779,7 @@ class WidgetPlacement(models.Model):
         ordering = ["zone", "order"]
         constraints = [
             models.CheckConstraint(
-                check=(
+                condition=(
                     models.Q(header__isnull=False, footer__isnull=True)
                     | models.Q(header__isnull=True, footer__isnull=False)
                 ),

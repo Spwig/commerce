@@ -305,6 +305,12 @@ class CartService:
         if not product.track_inventory:
             return True, ""
 
+        # Pre-order and backorder products are sold without on-hand stock, so
+        # they bypass the quantity check entirely (no reservation is taken —
+        # order placement records them as unallocated / backordered).
+        if product.can_sell_without_stock():
+            return True, ""
+
         from catalog.services import fulfillment_service
 
         # Get region from user if available
@@ -1249,6 +1255,19 @@ class CartService:
             unit_price = variant.get_effective_price()
         else:
             unit_price = product.get_effective_price()
+
+        # Subscription lines carry the plan tier's "Subscribe & Save" discount
+        # from the very first cycle, so the checkout order matches every renewal
+        # (the fallback billing engine prices renewals via the same tier
+        # discount). We apply discount_percentage to the currency-correct
+        # effective price rather than PlanPricingTier.calculate_price(), which
+        # returns the product's base currency and would break a multi-currency
+        # cart total.
+        if is_subscription and pricing_tier and pricing_tier.discount_percentage:
+            from djmoney.money import Money
+
+            multiplier = Decimal("1.00") - (pricing_tier.discount_percentage / Decimal("100"))
+            unit_price = Money(unit_price.amount * multiplier, unit_price.currency)
 
         # Handle bundle products - split into components
         if product.product_type == "bundle":

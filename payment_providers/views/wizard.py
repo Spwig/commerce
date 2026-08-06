@@ -337,11 +337,16 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
                 messages.error(request, error)
             return self.get(request)
 
-        # Store credentials and config in session
+        # Store credentials and config in session. Any prior connection test was
+        # run against the previous credentials, so invalidate it: otherwise a
+        # stale connection_test_passed=True would let step 5 save these new,
+        # untested credentials as connection_status="connected".
         self.update_wizard_data(
             credentials=credentials,
             display_name=display_name,
             checkout_mode=checkout_mode,
+            test_result=None,
+            connection_test_passed=False,
         )
 
         return redirect("payment_providers:wizard_step4")
@@ -446,7 +451,9 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                 "success": False,
                 "error_message": str(e),
             }
-            self.update_wizard_data(test_result=test_result)
+            # A failed re-test must clear any previously stored success flag,
+            # otherwise step 5 keeps accepting the stale connection_test_passed.
+            self.update_wizard_data(test_result=test_result, connection_test_passed=False)
 
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return JsonResponse(test_result, status=500)
@@ -515,20 +522,58 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
         """Save provider account"""
         wizard_data = self.get_wizard_data()
 
+        # Enforce completion of every prior step before persisting an account
+        # marked connection_status="connected". A staff user can POST straight
+        # here after credentials are stored but without a passing connection
+        # test; without this guard we would create a "connected" account for an
+        # untested provider. Mirror the GET guard and send them back to the
+        # earliest incomplete step.
+        if not wizard_data.get("component_id"):
+            messages.warning(request, _("Please select a provider first."))
+            return redirect("payment_providers:wizard_step1")
+        if not all(
+            [
+                wizard_data.get("credentials"),
+                wizard_data.get("display_name"),
+                wizard_data.get("checkout_mode"),
+            ]
+        ):
+            messages.warning(request, _("Please enter provider credentials first."))
+            return redirect("payment_providers:wizard_step3")
+        if not wizard_data.get("connection_test_passed"):
+            messages.warning(request, _("Please complete the connection test first."))
+            return redirect("payment_providers:wizard_step4")
+
         # Get configuration from POST
         is_active = request.POST.get("is_active") == "on"
         is_default = request.POST.get("is_default") == "on"
-        sort_order = int(request.POST.get("sort_order", 0))
+        try:
+            sort_order = int(request.POST.get("sort_order") or 0)
+        except (TypeError, ValueError):
+            sort_order = 0
 
-        # Load settings_schema to check field types
+        # Load settings_schema to check field types. This must succeed before we
+        # read POST data: an empty schema makes multiselect fields collapse to a
+        # single value (request.POST.get instead of getlist), corrupting settings.
         settings_schema = {}
         try:
             component = ComponentRegistry.objects.get(id=wizard_data["component_id"])
             component_path = INTEGRATIONS_DIR / "payment_provider" / component.slug / "current"
             manifest = load_provider_manifest(component_path) if component_path.exists() else None
             settings_schema = manifest.get("settings_schema", {}) if manifest else {}
+        except ComponentRegistry.DoesNotExist:
+            messages.error(request, _("Provider not found."))
+            return redirect("payment_providers:wizard_step1")
         except Exception:
-            pass  # Will use empty schema, settings will be collected as strings
+            logger.exception(
+                "Failed to load provider manifest for component %s",
+                wizard_data.get("component_id"),
+            )
+            messages.error(
+                request,
+                _("Could not load the provider configuration. Please try again."),
+            )
+            return redirect("payment_providers:wizard_step5")
 
         # Collect advanced settings
         settings = {}
@@ -554,11 +599,9 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
             # Encrypt credentials before storing
             credentials_encrypted = encrypt_credentials(credentials)
 
-            # If setting as default, remove default from others
-            if is_default:
-                PaymentProviderAccount.objects.filter(is_default=True).update(is_default=False)
-
             # Create provider account
+            # PaymentProviderAccount.save() clears the default flag from the
+            # owning user's other accounts, so no manual reset is needed here.
             provider_account = PaymentProviderAccount.objects.create(
                 component=component,
                 user=request.user,

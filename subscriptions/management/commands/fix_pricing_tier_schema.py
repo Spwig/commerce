@@ -2,7 +2,7 @@
 Management command to fix the PlanPricingTier schema by removing old price fields.
 """
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
 
@@ -31,6 +31,7 @@ class Command(BaseCommand):
                     """)
                     self.stdout.write(self.style.SUCCESS(f"  ✓ Dropped column: {column}"))
                 except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"  ! Column {column}: {e}"))
+                    self.stderr.write(self.style.ERROR(f"  ! Column {column}: {e}"))
+                    raise CommandError(f"Failed to drop column {column}: {e}") from e
 
         self.stdout.write(self.style.SUCCESS("\n✅ Schema fixed successfully!"))

@@ -15,8 +15,123 @@ import factory
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.text import slugify
+from djmoney.money import Money
 
 User = get_user_model()
+
+
+# ============================================================
+# Subscription test providers (fallback billing engine)
+# ============================================================
+#
+# ``subscriptions.provider_base.get_provider`` maps a PaymentProviderAccount to
+# a registered subscription provider via its ``component.slug``. No real test
+# provider ships, and ``get_provider`` would otherwise try to import the live
+# Stripe component. We register two deterministic *fallback* fakes here so
+# ``SubscriptionManager.process_billing_cycle`` exercises the internal billing
+# engine — that path only runs when ``capabilities["native_subscriptions"]`` is
+# False, which ``FallbackSubscriptionProvider`` guarantees.
+from subscriptions.provider_base import (  # noqa: E402
+    FallbackSubscriptionProvider,
+    register_provider,
+)
+
+# Component slugs a PaymentProviderAccount must carry for the fakes to resolve.
+FAKE_SUBSCRIPTION_PROVIDER_SLUG = "fake-fallback-subscription-provider"
+FAKE_DECLINING_PROVIDER_SLUG = "fake-declining-subscription-provider"
+
+
+@register_provider(FAKE_SUBSCRIPTION_PROVIDER_SLUG)
+class FakeSubscriptionProvider(FallbackSubscriptionProvider):
+    """Deterministic fallback provider whose token charges always succeed."""
+
+    def __init__(self, gateway):
+        # Skip credential decryption — a test fake needs no real config.
+        self.gateway = gateway
+        self.config = {}
+
+    def create_customer(self, user, email, metadata=None):
+        return {
+            "customer_id": f"cus_fake_{getattr(user, 'id', 'anon')}",
+            "metadata": metadata or {},
+        }
+
+    def create_payment_token(self, customer_id, payment_method_data):
+        return {"token_id": "pm_fake_token", "payment_method_type": "card"}
+
+    def delete_payment_token(self, token_id):
+        return True
+
+    def charge_payment_token(self, token_id, amount, currency, description, metadata=None):
+        return {
+            "status": "succeeded",
+            "transaction_id": f"txn_fake_{token_id}",
+            "amount": amount,
+            "currency": currency,
+        }
+
+
+@register_provider(FAKE_DECLINING_PROVIDER_SLUG)
+class FakeDecliningSubscriptionProvider(FakeSubscriptionProvider):
+    """Fallback provider whose token charges always decline (card_declined)."""
+
+    def charge_payment_token(self, token_id, amount, currency, description, metadata=None):
+        return {
+            "status": "failed",
+            "error_message": "card_declined",
+            "error_code": "card_declined",
+        }
+
+
+FAKE_SETUP_PROVIDER_SLUG = "fake-setup-subscription-provider"
+
+
+@register_provider(FAKE_SETUP_PROVIDER_SLUG)
+class FakeSetupSubscriptionProvider(FakeSubscriptionProvider):
+    """Fake provider that ALSO supports provider-agnostic reusable-method setup
+    (declares the ``reusable_setup`` capability and implements ``begin_setup``)."""
+
+    @property
+    def capabilities(self):
+        caps = dict(super().capabilities)
+        caps["reusable_setup"] = True
+        return caps
+
+    def begin_setup(self, user, options=None):
+        return {
+            "client_secret": "seti_fake_secret",
+            "customer_id": (options or {}).get("customer_id", ""),
+        }
+
+
+FAKE_NATIVE_PROVIDER_SLUG = "fake-native-subscription-provider"
+
+
+@register_provider(FAKE_NATIVE_PROVIDER_SLUG)
+class FakeNativeSubscriptionProvider(FakeSubscriptionProvider):
+    """Fake NATIVE-capable provider. Used to prove storefront subscriptions are
+    created in FALLBACK mode (no native provider subscription, no cycle-1 double
+    charge) even when the provider CAN manage subscriptions natively."""
+
+    @property
+    def capabilities(self):
+        caps = dict(super().capabilities)
+        caps["native_subscriptions"] = True
+        caps["reusable_setup"] = True
+        return caps
+
+    def create_subscription(
+        self, customer_id, plan_id, payment_token_id, trial_end=None, metadata=None
+    ):
+        # If a storefront subscription ever hit this, provider_subscription_id
+        # would be set — tests assert it stays empty, proving fallback mode.
+        return {
+            "subscription_id": "sub_native_fake",
+            "status": "active",
+            "current_period_start": None,
+            "current_period_end": None,
+            "next_billing_date": None,
+        }
 
 
 # ============================================================
@@ -84,6 +199,29 @@ class ProductFactory(factory.django.DjangoModelFactory):
         )
         expensive = factory.Trait(price=Decimal("150.00"), weight=Decimal("3.0"))
         heavy = factory.Trait(weight=Decimal("8.0"))
+        # Enable recurring billing. Attaches a SubscriptionPlan via the M2M
+        # post-generation hook below (unless the test passes its own plans).
+        subscribable = factory.Trait(is_subscription_enabled=True)
+
+    @factory.post_generation
+    def subscription_plans(self, create, extracted, **kwargs):
+        """Attach SubscriptionPlan(s) to the ``subscription_plans`` M2M.
+
+        Pass an explicit list (``ProductFactory(subscription_plans=[plan])``)
+        or rely on the ``subscribable`` trait to auto-create and attach one.
+        Only runs for the create strategy — ``.build()`` never touches the DB.
+        """
+        if not create:
+            return
+        if extracted:
+            for plan in extracted:
+                self.subscription_plans.add(plan)
+        elif self.is_subscription_enabled:
+            # Defined later in this module; import lazily so the reference
+            # resolves at call time rather than at class-definition time.
+            from tests.factories import SubscriptionPlanFactory
+
+            self.subscription_plans.add(SubscriptionPlanFactory())
 
 
 class SalesRegionFactory(factory.django.DjangoModelFactory):
@@ -383,6 +521,20 @@ class CartItemFactory(factory.django.DjangoModelFactory):
     quantity = 1
     unit_price = factory.LazyAttribute(lambda o: o.product.price)
     unit_price_currency = "USD"
+
+    class Params:
+        # Marks the line as a subscription and wires a plan + matching tier.
+        # Tests that need a specific plan/tier/token should pass them
+        # explicitly (they override these trait defaults). Leaves
+        # ``payment_token`` unset so the "missing token" path can be exercised.
+        subscription = factory.Trait(
+            is_subscription=True,
+            subscription_plan=factory.SubFactory("tests.factories.SubscriptionPlanFactory"),
+            pricing_tier=factory.SubFactory(
+                "tests.factories.PlanPricingTierFactory",
+                plan=factory.SelfAttribute("..subscription_plan"),
+            ),
+        )
 
 
 # ============================================================
@@ -1452,6 +1604,41 @@ class PaymentProviderAccountFactory(factory.django.DjangoModelFactory):
     class Params:
         hosted = factory.Trait(checkout_mode="hosted")
         integrated = factory.Trait(checkout_mode="integrated")
+        # Swap the component so its slug maps to a registered fallback
+        # subscription provider — makes ``is_subscription_supported`` True and
+        # ``get_provider`` return the fake defined at the top of this module.
+        subscribable = factory.Trait(
+            component=factory.SubFactory(
+                ComponentRegistryFactory,
+                slug=FAKE_SUBSCRIPTION_PROVIDER_SLUG,
+                name="Fake Fallback Subscription Provider",
+            ),
+        )
+        declining = factory.Trait(
+            component=factory.SubFactory(
+                ComponentRegistryFactory,
+                slug=FAKE_DECLINING_PROVIDER_SLUG,
+                name="Fake Declining Subscription Provider",
+            ),
+        )
+        # Maps to the fake provider that supports reusable-method setup
+        # (begin_setup + reusable_setup capability) — for begin-setup endpoint tests.
+        setup_capable = factory.Trait(
+            component=factory.SubFactory(
+                ComponentRegistryFactory,
+                slug=FAKE_SETUP_PROVIDER_SLUG,
+                name="Fake Setup-Capable Subscription Provider",
+            ),
+        )
+        # Maps to the NATIVE-capable fake provider — for proving storefront
+        # subscriptions are created in fallback mode (no native double-charge).
+        native_capable = factory.Trait(
+            component=factory.SubFactory(
+                ComponentRegistryFactory,
+                slug=FAKE_NATIVE_PROVIDER_SLUG,
+                name="Fake Native-Capable Subscription Provider",
+            ),
+        )
 
 
 # ============================================================
@@ -1747,3 +1934,118 @@ class BusinessRuleFactory(factory.django.DjangoModelFactory):
     priority = factory.Sequence(lambda n: n)
     conditions = factory.LazyFunction(lambda: {"country_in": ["US", "CA"]})
     actions = factory.LazyFunction(lambda: {"set_currency": "USD"})
+
+
+# ============================================================
+# Subscriptions
+# ============================================================
+
+
+class SubscriptionPlanFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "subscriptions.SubscriptionPlan"
+        django_get_or_create = ("slug",)
+
+    name = factory.Sequence(lambda n: f"Test Plan {n}")
+    slug = factory.LazyAttribute(lambda o: slugify(o.name))
+    description = "A test subscription plan"
+    pricing_model = "tiered"
+    trial_period_days = 0
+    is_active = True
+    is_public = True
+
+    class Params:
+        with_trial = factory.Trait(trial_period_days=14)
+        inactive = factory.Trait(is_active=False, is_public=False)
+
+
+class PlanPricingTierFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "subscriptions.PlanPricingTier"
+
+    plan = factory.SubFactory(SubscriptionPlanFactory)
+    tier_name = factory.Sequence(lambda n: f"Tier {n}")
+    billing_cycle = "monthly"
+    billing_interval = 1
+    discount_percentage = Decimal("0.00")
+    is_default = True
+    is_active = True
+
+    class Params:
+        annual = factory.Trait(billing_cycle="annual")
+        quarterly = factory.Trait(billing_cycle="quarterly")
+        # "Subscribe & Save" first-cycle discount.
+        discounted = factory.Trait(discount_percentage=Decimal("20.00"))
+
+
+class PaymentTokenFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "subscriptions.PaymentToken"
+
+    user = factory.SubFactory(UserFactory)
+    # Default to a subscribable provider account so tokens resolve to the fake
+    # fallback provider (native_subscriptions=False) out of the box.
+    provider_account = factory.SubFactory(PaymentProviderAccountFactory, subscribable=True)
+    gateway_customer_id = factory.Sequence(lambda n: f"cus_fake_{n}")
+    gateway_token_id = factory.Sequence(lambda n: f"pm_fake_{n}")
+    payment_method_type = "card"
+    card_brand = "visa"
+    card_last4 = "4242"
+    card_exp_month = 12
+    card_exp_year = factory.LazyFunction(lambda: timezone.now().year + 5)
+    is_active = True
+    is_verified = True
+
+
+class CustomerSubscriptionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "subscriptions.CustomerSubscription"
+
+    user = factory.SubFactory(UserFactory)
+    plan = factory.SubFactory(SubscriptionPlanFactory)
+    pricing_tier = factory.SubFactory(PlanPricingTierFactory, plan=factory.SelfAttribute("..plan"))
+    product = factory.SubFactory(ProductFactory)
+    payment_token = factory.SubFactory(PaymentTokenFactory, user=factory.SelfAttribute("..user"))
+    # Keep the subscription's provider account identical to the token's, so the
+    # SubscriptionManager built from either resolves the same fake provider.
+    payment_provider_account = factory.LazyAttribute(lambda o: o.payment_token.provider_account)
+    provider_mode = "fallback"
+    status = "active"
+    billing_cycle_count = 0
+    current_period_start = factory.LazyFunction(timezone.now)
+    current_period_end = factory.LazyAttribute(
+        lambda o: o.current_period_start + timedelta(days=30)
+    )
+    next_billing_date = factory.LazyAttribute(lambda o: o.current_period_end)
+
+    class Params:
+        # Past due-date + expired current period → the fallback billing engine
+        # treats it as due and charges the next cycle.
+        due = factory.Trait(
+            current_period_start=factory.LazyFunction(lambda: timezone.now() - timedelta(days=31)),
+            current_period_end=factory.LazyFunction(lambda: timezone.now() - timedelta(days=1)),
+            next_billing_date=factory.LazyFunction(lambda: timezone.now() - timedelta(days=1)),
+        )
+        trialing = factory.Trait(
+            status="trial",
+            trial_end_date=factory.LazyFunction(lambda: timezone.now() + timedelta(days=14)),
+        )
+
+
+class BillingCycleLogFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = "subscriptions.BillingCycleLog"
+
+    subscription = factory.SubFactory(CustomerSubscriptionFactory)
+    cycle_number = factory.Sequence(lambda n: n + 1)
+    billing_date = factory.LazyFunction(timezone.now)
+    base_amount = factory.LazyFunction(lambda: Money(Decimal("25.00"), "USD"))
+    total_amount = factory.LazyFunction(lambda: Money(Decimal("25.00"), "USD"))
+    status = "successful"
+
+    class Params:
+        failed = factory.Trait(
+            status="failed",
+            error_code="card_declined",
+            error_message="Your card was declined.",
+        )

@@ -36,9 +36,16 @@ class AdminCategoryListSerializer(serializers.ModelSerializer):
         return obj.parent.name if obj.parent else None
 
     def get_image_url(self, obj):
-        if obj.image_asset:
-            return obj.image_asset.get_thumbnail("medium") or obj.image_asset.get_display_url()
-        return None
+        asset = obj.image_asset
+        if not asset:
+            return None
+        # Read from the medium thumbnails prefetched by the list view to avoid an
+        # N+1 query per imaged category (get_thumbnail() would hit the DB per row).
+        thumbnails = getattr(asset, "medium_thumbnails", None)
+        if thumbnails:
+            thumbnail = thumbnails[0]
+            return thumbnail.webp_file.url if thumbnail.webp_file else thumbnail.file.url
+        return asset.get_display_url()
 
 
 class AdminCategoryDetailSerializer(serializers.ModelSerializer):

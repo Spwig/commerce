@@ -195,9 +195,11 @@ def _add_event_context(context, subscription, event):
 
     elif event.event_type == SubscriptionEventType.PAYMENT_FAILED:
         context["failure_reason"] = event.error_message or "Payment could not be processed"
-        grace_days = subscription.plan.grace_period_days or 3
+        # A grace period of 0 means immediate suspension — there is no retry, so
+        # don't invent a three-day window or a retry date the workflow won't honour.
+        grace_days = subscription.plan.grace_period_days
         context["retry_days"] = grace_days
-        if subscription.next_billing_date:
+        if grace_days and subscription.next_billing_date:
             context["retry_date"] = subscription.next_billing_date + timedelta(days=grace_days)
 
     elif event.event_type == SubscriptionEventType.CANCELED:

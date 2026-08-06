@@ -2,7 +2,7 @@
 title: Zahlungseinstellungen
 ---
 
-Zahlungsdienstanbieter verbinden Ihr Geschäft mit Zahlungstoren, damit Sie Kreditkarten, digitale Geldbörsen und andere Zahlungsmethoden am Kasse akzeptieren können. Spwig unterstützt mehrere Anbieter gleichzeitig und bietet Ihren Kunden flexible Zahlungsoptionen.
+Zahlungsdienstanbieter verbinden Ihr Geschäft mit Zahlungstoren, damit Sie Kreditkarten, digitale Wallets und andere Zahlungsmethoden am Kasse akzeptieren können. Spwig unterstützt mehrere Anbieter gleichzeitig und bietet Ihren Kunden flexible Zahlungsoptionen.
 
 ![Zahlungsdienstanbieter](/static/core/admin/img/help/payment-setup/payment-dashboard.webp)
 
@@ -27,7 +27,7 @@ Wählen Sie aus den verfügbaren Zahlungsdienstanbietern. Jede Karte zeigt die u
 ### Schritt 2: Einrichtungsanweisungen
 
 Überprüfen Sie den anbieterbezogenen Einrichtungsführer. Dies umfasst:
-- Wie Sie ein Konto bei dem Anbieter erstellen (falls Sie noch keines haben)
+- Wie Sie ein Konto bei dem Anbieter erstellen (falls Sie keines haben)
 - Wo Sie Ihre API-Anmeldeinformationen im Dashboard des Anbieters finden
 - Jegliche Voraussetzungen (z. B. Geschäftsverifikation)
 
@@ -48,7 +48,7 @@ Geben Sie Ihre API-Anmeldeinformationen ein:
 
 Klicken Sie auf **Verbindung testen**, um zu überprüfen, ob Ihre Anmeldeinformationen gültig sind. Der Assistent prüft:
 - API-Schlüssel-Authentifizierung
-- Kontopermissions
+- Kontoberechtigungen
 - Zugänglichkeit des Webhook-Endpunkts
 
 ### Schritt 5: Konfigurieren und Speichern
@@ -65,7 +65,7 @@ Navigieren Sie zu **Einstellungen > Zahlungs-Dashboard**, um einen Überblick ü
 
 ### Aktionen erforderlich
 
-Warnkarten oben weisen auf Probleme hin, die Aufmerksamkeit erfordern:
+Warnkarten oben weisen Probleme auf, die Aufmerksamkeit erfordern:
 - **Fehlgeschlagene Transaktionen** — Zahlungen, die nicht verarbeitet werden konnten
 - **Ausstehende Erfassungen** — Genehmigte Zahlungen, die auf Erfassung warten
 - **Verbindungsfehler** — Anbieter mit Verbindungsproblemen
@@ -79,7 +79,7 @@ Warnkarten oben weisen auf Probleme hin, die Aufmerksamkeit erfordern:
 ### Transaktionsaufschlüsselung
 
 - **Statusverteilung** — Anzahl der abgeschlossenen, ausstehenden, fehlgeschlagenen und erstatteten Transaktionen
-- **Zahlungsmethodenmischung** — Welche Zahlungsmethoden Kunden am häufigsten verwenden (Kreditkarte, PayPal, digitale Geldbörsen)
+- **Zahlungsmethodenmischung** — Welche Zahlungsmethoden Kunden am häufigsten verwenden (Kreditkarte, PayPal, digitale Wallets)
 
 ## Verwaltung von Zahlungsmethoden
 
@@ -97,7 +97,7 @@ Dies ist nützlich, wenn eine Zahlungsmethode in einem Gebiet beliebt ist, aber 
 Webhooks halten Ihren Store in Echtzeit mit dem Zahlungsdiensteanbieter synchron.
 
 Sie verarbeiten Ereignisse wie:
-- Zahlung erfolgreich oder fehlgeschlagen
+- Zahlung abgeschlossen oder fehlgeschlagen
 - Erstattungen verarbeitet
 - Streitigkeiten und Rückbuchungen geöffnet
 - Abonnementverlängerungen
@@ -119,7 +119,7 @@ Wenn ein Webhook nicht verarbeitet werden kann, wird er als Fehler protokolliert
 
 Sie können mehrere Zahlungsdiensteanbieter gleichzeitig verbinden:
 
-- **Standardanbieter** — Der Anbieter, der standardmäßig am Kasse ausgewählt ist. Markieren Sie einen Anbieter als Standard in seiner Konfiguration.
+- **Standardanbieter** — Der Anbieter, der standardmäßig am Kasse ausgewählt wird. Markieren Sie einen Anbieter als Standard in seiner Konfiguration.
 - **Sortierreihenfolge** — Steuert die Anzeigereihenfolge am Kasse. Kunden sehen alle aktiven Anbieter und können ihren bevorzugten auswählen.
 - **Ausfallsicherung** — Wenn ein Anbieter Ausfallzeiten hat, können Kunden dennoch mit einem alternativen Anbieter zahlen.
 
@@ -130,4 +130,4 @@ Sie können mehrere Zahlungsdiensteanbieter gleichzeitig verbinden:
 - Aktivieren Sie **mehrere Anbieter**, damit Kunden bei Problemen mit einem Anbieter eine Backup-Zahlungsoption haben.
 - Setzen Sie eine **niedrige Sortierreihenfolge** für Ihren bevorzugten Anbieter, damit er am Kasse zuerst angezeigt wird.
 - Überprüfen Sie die Zahlungs-Dashboard wöchentlich, um fehlgeschlagene Transaktionen und Verbindungsprobleme frühzeitig zu erkennen.
-- Halten Sie Ihre API-Anmeldeinformationen sicher — sie werden im Datenbank verschlüsselt gespeichert, sollten aber niemals geteilt werden.
+- Bewahren Sie Ihre API-Anmeldeinformationen sicher auf — sie werden zwar im Datenbank verschlüsselt gespeichert, sollten aber niemals geteilt werden.

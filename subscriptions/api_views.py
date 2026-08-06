@@ -4,7 +4,10 @@ Following rules.md API standards with drf-spectacular documentation.
 """
 
 import logging
+from decimal import Decimal
 
+from django.db.models import DecimalField, Q, Sum
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import (
     OpenApiParameter,
@@ -37,6 +40,23 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _build_client_setup_bundle(provider_account) -> dict:
+    """
+    Manifest-driven client bundle for reusable-method setup:
+    ``{provider_key, handler_url, sdk_dependencies}``.
+
+    NO gateway is named here — the shared builder reads the provider component's
+    manifest (``frontend.checkout_handler`` / ``frontend.sdk_dependencies``) and
+    resolves ``{{VAR}}`` SDK templates from the account's credentials (e.g.
+    PayPal's ``client-id={{CLIENT_ID}}``), exactly like the charge flow. The
+    client dispatches on ``provider_key`` through the same
+    ``window.PaymentHandlers`` registry it already uses for charging.
+    """
+    from payment_providers.services.frontend_bundle import build_client_bundle
+
+    return build_client_bundle(provider_account)
 
 
 @extend_schema_view(
@@ -76,9 +96,11 @@ class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         """Filter plans based on user permissions"""
         if self.request.user.is_staff:
-            return SubscriptionPlan.objects.all()
+            return SubscriptionPlan.objects.prefetch_related("pricing_tiers").all()
 
-        return SubscriptionPlan.objects.filter(is_active=True, is_public=True)
+        return SubscriptionPlan.objects.filter(is_active=True, is_public=True).prefetch_related(
+            "pricing_tiers"
+        )
 
 
 @extend_schema_view(
@@ -185,6 +207,69 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             logger.exception(f"Failed to create payment token: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        tags=["Subscriptions"],
+        summary=_("Begin reusable payment-method setup"),
+        description=_(
+            "Provider-agnostic start of capturing a reusable (off-session) payment method "
+            "for subscriptions. Given a provider_account_id, returns the manifest-driven client "
+            "bundle {supported, provider_key, handler_url, sdk_dependencies, client_params} for "
+            "whichever gateway the merchant configured, so the storefront renders that provider's "
+            "setup UI via the shared window.PaymentHandlers registry — no gateway-specific code. "
+            "Returns {supported: false} when the provider has not shipped a setup handler, so the "
+            "storefront can fall back to the shopper's saved tokens."
+        ),
+    )
+    @action(detail=False, methods=["post"], url_path="begin-setup")
+    def begin_setup(self, request):
+        """Provider-agnostic begin-setup for a reusable payment method."""
+        provider_account_id = request.data.get("provider_account_id")
+        if not provider_account_id:
+            return Response(
+                {"error": "provider_account_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            provider_account = PaymentProviderAccount.objects.select_related("component").get(
+                id=provider_account_id, is_active=True
+            )
+        except (PaymentProviderAccount.DoesNotExist, ValueError, TypeError):
+            return Response(
+                {"error": "Payment provider not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        from .provider_base import is_subscription_supported
+
+        slug = provider_account.component.slug if provider_account.component else ""
+
+        # A provider that isn't subscription-capable, or hasn't shipped a setup
+        # handler, degrades gracefully — the storefront falls back to saved
+        # tokens. No gateway is ever named here.
+        if not is_subscription_supported(provider_account):
+            return Response({"supported": False, "provider_key": slug})
+
+        manager = SubscriptionManager(provider_account)
+        if not manager.supports_reusable_setup():
+            return Response({"supported": False, "provider_key": slug})
+
+        try:
+            client_params = manager.begin_customer_setup(request.user)
+        except NotImplementedError:
+            return Response({"supported": False, "provider_key": slug})
+        except Exception as e:
+            logger.exception("begin_setup failed for provider %s", slug)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        bundle = _build_client_setup_bundle(provider_account)
+        return Response(
+            {
+                "supported": True,
+                "provider_account_id": str(provider_account.id),
+                "client_params": client_params,
+                **bundle,
+            }
+        )
+
     def perform_destroy(self, instance):
         """Delete payment token - check for active subscriptions first"""
         # Check if token is used by active subscriptions
@@ -249,7 +334,6 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         **Optional Fields**:
         - `product_id`: Link subscription to specific product
         - `variant_id`: Link subscription to specific product variant
-        - `trial_override_days`: Override plan's default trial period
 
         **Use Case**: Subscribe user to a plan during checkout or from pricing page.
 
@@ -279,8 +363,22 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Filter subscriptions to current user"""
-        queryset = CustomerSubscription.objects.filter(user=self.request.user).select_related(
-            "plan", "payment_provider_account", "payment_token", "product", "variant"
+        queryset = (
+            CustomerSubscription.objects.filter(user=self.request.user)
+            .select_related(
+                "plan", "payment_provider_account", "payment_token", "product", "variant"
+            )
+            .prefetch_related("plan__pricing_tiers")
+            .annotate(
+                total_paid_amount=Coalesce(
+                    Sum(
+                        "billing_logs__total_amount",
+                        filter=Q(billing_logs__status="successful"),
+                    ),
+                    Decimal("0.00"),
+                    output_field=DecimalField(max_digits=12, decimal_places=2),
+                )
+            )
         )
 
         # Filter by status if provided
@@ -328,7 +426,6 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
                 product=product,
                 variant=variant,
                 quantity=serializer.validated_data.get("quantity", 1),
-                trial_override_days=serializer.validated_data.get("trial_override_days"),
             )
 
             output_serializer = CustomerSubscriptionSerializer(subscription)

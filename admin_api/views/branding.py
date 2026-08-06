@@ -124,7 +124,6 @@ def branding_settings_get(request):
 
     **Updatable fields:**
     - store_name: Store display name
-    - primary_color: Brand color hex code
     - invoice_footer_text: Custom invoice footer
     - packing_slip_footer_text: Custom packing slip footer
     - tax_id: Business tax ID / VAT number
@@ -173,7 +172,6 @@ def branding_settings_update(request):
     # Map API field names to model field names
     field_mapping = {
         "store_name": "site_name",
-        "primary_color": "primary_color",
         "invoice_footer_text": "invoice_footer_text",
         "packing_slip_footer_text": "packing_slip_footer_text",
         "tax_id": "tax_id",

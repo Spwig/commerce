@@ -40,7 +40,10 @@ def update_product_sales_counts(order):
         # Atomic F() update for each product
         from catalog.models import Product
 
-        for product_id, quantity in product_quantities.items():
+        # Acquire product row locks in a deterministic global order (sorted by
+        # product_id) so concurrent multi-product orders can't deadlock.
+        for product_id in sorted(product_quantities):
+            quantity = product_quantities[product_id]
             Product.objects.filter(pk=product_id).update(sales_count=F("sales_count") + quantity)
 
         # Mark idempotency flag

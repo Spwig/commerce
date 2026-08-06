@@ -53,7 +53,7 @@
 .filter-dropdown:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
 .selected-count {
@@ -139,7 +139,7 @@
 
 .method-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .method-card.selected {
@@ -178,7 +178,7 @@
   color: white;
   font-size: 24px;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 /* Method Type Color Coding */
@@ -365,13 +365,13 @@
 }
 
 .status-badge.status-active {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-bg);
+  color: var(--success-fg);
 }
 
 .status-badge.status-inactive {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--darkened-bg);
+  color: var(--body-quiet-color);
 }
 
 .method-meta {
@@ -410,17 +410,17 @@
   background: var(--primary);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-light);
 }
 
 .edit-btn:hover {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: var(--button-bg);
+  border-color: var(--button-bg);
 }
 
 .delete-btn:hover {
-  background: #ef4444;
-  border-color: #ef4444;
+  background: var(--delete-button-bg);
+  border-color: var(--delete-button-bg);
 }
 
 /* Empty State */
@@ -480,7 +480,7 @@
   padding: 30px 50px;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px var(--shadow-dark);
 }
 
 .loading-spinner i {
@@ -510,27 +510,27 @@
 .notification {
   padding: 15px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-light);
   min-width: 300px;
   animation: slideInRight 0.3s ease;
 }
 
 .notification.success {
-  background: #d1fae5;
-  color: #065f46;
-  border-left: 4px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border-left: 4px solid var(--success-fg);
 }
 
 .notification.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border-left: 4px solid #ef4444;
+  background: var(--error-bg);
+  color: var(--error-fg);
+  border-left: 4px solid var(--error-fg);
 }
 
 .notification.warning {
-  background: #fef3c7;
-  color: #92400e;
-  border-left: 4px solid #f59e0b;
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border-left: 4px solid var(--warning-fg);
 }
 
 @keyframes slideInRight {

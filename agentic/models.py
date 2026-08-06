@@ -151,7 +151,7 @@ class AgentKey(models.Model):
             # say, an AP2 key that claims ES256 but carries an Ed25519 curve.
             models.CheckConstraint(
                 name="agentic_agentkey_crypto_policy",
-                check=(
+                condition=(
                     models.Q(purpose="transport", kty="OKP", alg="EdDSA", crv="Ed25519")
                     | models.Q(purpose="ap2_mandate", kty="EC", alg="ES256", crv="P-256")
                 ),

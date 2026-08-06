@@ -19,11 +19,16 @@ keywords:
   - auto update
   - lock component
   - security update
+  - what's new
+  - release notes
+  - changelog
 url_patterns:
   - /admin/component_updates/componentregistry/
+  - /admin/component_updates/platformupdate/
   - /admin/management/systemmetrics/check-updates/
 related:
   - platform-settings
+  - upgrades-maintenance
 published: true
 ---
 
@@ -33,7 +38,7 @@ Your Spwig installation is built from a collection of components — themes, wid
 
 ## Understanding the component registry
 
-Navigate to **Extensions > Component Registry** to see every component installed on your store. Each row shows:
+Navigate to **System Dashboard > Component Updates** to see every component installed on your store. Each row shows:
 
 - **Name** — the component's display name
 - **Type** — what kind of component it is (theme, widget, integration, etc.)
@@ -78,7 +83,7 @@ To change a component's channel, click on its name to open the detail view, then
 
 Spwig checks for updates automatically at the interval configured in your update server settings (default: every 24 hours). To check immediately:
 
-1. Navigate to **Extensions > Component Registry**
+1. Navigate to **System Dashboard > Component Updates**
 2. Click the **Check for Updates** button at the top of the page
 3. The system contacts the Spwig update server and refreshes the update status for all components
 4. Components with available updates are highlighted, and the **Updates Available** count updates
@@ -89,7 +94,7 @@ You can also trigger an update check for individual components using the **Check
 
 ### Updating a single component
 
-1. Navigate to **Extensions > Component Registry**
+1. Navigate to **System Dashboard > Component Updates**
 2. Find the component you want to update — components with available updates show an update indicator next to their version
 3. Click the **Install Update** button on that component's row
 4. Confirm the update when prompted
@@ -118,9 +123,20 @@ If any stage fails, the system automatically attempts to restore the previous ve
 
 ## Platform-level updates
 
-In addition to individual components, Spwig can receive platform-level updates that update the core store engine. These updates go through a more thorough process including database migrations and a brief maintenance window.
+In addition to individual components, Spwig can receive platform-level updates that update the core store engine itself. These updates go through a more thorough process including database migrations and a brief maintenance window.
 
-Platform update history is visible in the **Platform Updates** section of the registry. Each entry shows the version transition (e.g., `v1.3.2 → v1.3.3`), the status, and the duration of the update process.
+Navigate to **System Dashboard > Platform Updates** to view and manage platform-level updates separately from individual components.
+
+### Reviewing what's new before you install
+
+Click **Check for Updates** to see if a new platform version is available. When one is found, the **Update Available** card shows the version change (e.g. `v1.7.0 → v1.7.1`), the **Package Size**, **Est. Time**, and update **Channel** — and a **What's New** preview so you can see what changed before you decide to install:
+
+- A short summary line describing the release
+- A bulleted list of the top changes in that version (up to five, with a note if there are more)
+
+If the update changes your database schema, a **Requires database migration** notice appears with an estimated time. Security releases show a **Security update** badge recommending you install right away. Read the What's New preview before installing — it's the fastest way to see whether a release needs any extra attention, such as steps called out for after the upgrade completes.
+
+Platform update history is visible further down the page. Each entry shows the version transition (e.g., `v1.3.2 → v1.3.3`), the status, and the duration of the update process.
 
 Security updates are flagged separately and, if **Auto Install Security Updates** is enabled in your update server configuration, install automatically without requiring manual action.
 
@@ -181,5 +197,6 @@ With auto-update enabled, the system installs updates during the next scheduled 
 - Always update on the **Stable** channel for themes and payment providers — these are the most customer-facing components and stability matters most
 - Lock a component before making custom modifications to it, and record the reason clearly so future team members know not to update it
 - Check the **Release Notes** on the component's version entry before installing a major version bump — breaking changes are flagged there
+- Before installing a platform update, read the **What's New** preview on the **Platform Updates** page — for a full look at the release notes, including any extra steps you may need to take, continue to the **System Upgrade** page
 - After an update, browse to the affected area of your store to confirm everything looks and works as expected before declaring the update complete
 - If auto-update is enabled on a component, monitor the **Update Logs** periodically to ensure automatic updates are completing successfully

@@ -87,6 +87,11 @@ def process_due_subscriptions():
             # Process billing cycle
             billing_log = manager.process_billing_cycle(subscription)
 
+            # None means the subscription was no longer due (already billed by
+            # another worker) and nothing was charged — skip it.
+            if billing_log is None:
+                continue
+
             if billing_log.status == "successful":
                 success_count += 1
                 _emit_fallback_event(
@@ -178,6 +183,13 @@ def retry_billing_cycle(billing_log_id: int):
                 "subscription_id": str(subscription.subscription_id),
                 "cycle_number": billing_log.cycle_number,
                 "retry": billing_log.retry_count,
+                # SAME key as the original cycle charge (NOT retry-specific): a
+                # retry after a lost response must dedup against the first attempt
+                # at the provider, never charge the cycle twice.
+                "idempotency_key": f"{subscription.subscription_id}:{billing_log.cycle_number}",
+                # Provider customer id — needed by customer-scoped off-session
+                # charges (Revolut).
+                "customer_id": subscription.payment_token.gateway_customer_id,
             },
         )
 
@@ -316,6 +328,10 @@ def process_trial_expirations():
 
                 manager = SubscriptionManager(subscription.payment_provider_account)
                 billing_log = manager.process_billing_cycle(subscription)
+
+                # None means it was no longer due (already billed elsewhere).
+                if billing_log is None:
+                    continue
 
                 if billing_log.status == "successful":
                     converted_count += 1

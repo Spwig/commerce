@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
 from staff_roles.models import StaffRole
+from staff_roles.services import invalidate_user_cache
 
 PREDEFINED_ROLES = [
     {
@@ -269,6 +270,8 @@ class Command(BaseCommand):
                     role.pos_permissions = role_def["pos_permissions"]
 
                 role.save()
+                for user in group.user_set.all():
+                    invalidate_user_cache(user)
                 updated_count += 1
                 self.stdout.write(f"  Updated: {role_def['display_name']}")
 
@@ -286,6 +289,8 @@ class Command(BaseCommand):
                     permission_categories=role_def["permission_categories"],
                     pos_permissions=role_def["pos_permissions"],
                 )
+                for user in group.user_set.all():
+                    invalidate_user_cache(user)
                 created_count += 1
                 self.stdout.write(self.style.SUCCESS(f"  Created: {role_def['display_name']}"))
 

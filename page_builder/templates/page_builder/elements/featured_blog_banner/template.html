@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 {% mtrans "Read Article" as default_button_text %}
 <!-- Featured Blog Banner Element -->
 {% with post=element_context.post %}
@@ -8,9 +8,9 @@
          style="{% base_styles element %}">
     <div class="featured-blog-banner__background">
         {% if element.content.data_source == 'static' and element.content.image %}
-        <img src="{{ element.content.image }}" alt="{{ element.content.title }}" class="featured-blog-banner__image" loading="lazy">
+        {% picture element.content.image alt=element.content.title css="featured-blog-banner__image" %}
         {% elif post.featured_image %}
-        <img src="{{ post.featured_image.file.url }}" alt="{{ post.title }}" class="featured-blog-banner__image" loading="lazy">
+        {% picture post.featured_image.file.url alt=post.title css="featured-blog-banner__image" %}
         {% endif %}
 
         {% if element.content.overlay_style|default:'gradient' != 'none' %}

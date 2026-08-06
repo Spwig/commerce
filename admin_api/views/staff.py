@@ -63,7 +63,7 @@ def generate_error_reference():
 @throttle_classes([AdminAPIThrottle])
 def staff_list(request):
     """List all staff members."""
-    queryset = User.objects.filter(is_staff=True)
+    queryset = User.objects.filter(is_staff=True).prefetch_related("groups__staff_role")
 
     # Search filter
     search = request.query_params.get("search", "").strip()
@@ -152,6 +152,7 @@ def staff_list(request):
         403: OpenApiResponse(description=PERMISSION_DENIED),
         409: ErrorResponseSerializer,
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
+        502: ErrorResponseSerializer,
     },
 )
 @api_view(["POST"])
@@ -250,6 +251,20 @@ def staff_invite(request):
         )
     except Exception as e:
         logger.warning(f"Failed to queue invitation email for {email}: {e}")
+        # Without a delivered token the invitation record is unusable, so
+        # remove it and report the delivery failure instead of a false 201.
+        invitation.delete()
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "DELIVERY_FAILED",
+                    "message": _("The invitation could not be sent. Please try again later."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_502_BAD_GATEWAY,
+        )
 
     AuditService.log(
         user=request.user,
@@ -356,6 +371,18 @@ def staff_update(request, staff_id):
 
             group_ids = serializer.validated_data["group_ids"]
             roles = StaffRole.objects.filter(id__in=group_ids)
+            if roles.count() != len(group_ids):
+                return Response(
+                    {
+                        "success": False,
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": _("One or more role IDs are invalid."),
+                            "reference": generate_error_reference(),
+                        },
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             old_groups = list(staff_user.groups.values_list("id", flat=True))
             staff_user.groups.set([r.group for r in roles])
             old_values["group_ids"] = old_groups

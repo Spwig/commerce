@@ -14,8 +14,11 @@ them, a bug in either rail shows up here as non-zero drift the next night,
 with an exit code a beat task can alarm on — instead of surfacing months later
 as a customer insisting their balance is wrong.
 
-Read-only by default. ``--fix`` re-stamps the stored balance from the ledger,
-under ``select_for_update``, and is idempotent — a second run finds no drift.
+Each wallet is read under ``select_for_update`` so its stored balance and
+ledger are compared against a consistent snapshot — an unlocked scan can race a
+concurrent capture and either fabricate or mask drift. ``--fix`` re-stamps the
+stored balance from the ledger within that same lock and is idempotent — a
+second run finds no drift.
 
 Two conditions are REPORTED but never auto-fixed:
 
@@ -91,36 +94,36 @@ class Command(BaseCommand):
         fix = options["fix"]
         drifted, unfixable, clean = [], [], 0
 
-        for wallet in CustomerWallet.objects.iterator():
-            derived, problems = ledger_balance(wallet)
+        # Stream ids without a lock, then lock each wallet individually. Both
+        # the stored balance and the ledger must be read inside one lock so the
+        # comparison sees a consistent snapshot: an unlocked read can catch a
+        # capture mid-commit and either fabricate drift OR mask real drift (a
+        # concurrent row nudging the ledger to match a stale stored balance),
+        # so the clean verdict is only trustworthy under the same lock.
+        for wallet_id in CustomerWallet.objects.values_list("pk", flat=True).iterator():
+            with transaction.atomic():
+                wallet = CustomerWallet.objects.select_for_update().get(pk=wallet_id)
+                derived, problems = ledger_balance(wallet)
 
-            if problems:
-                unfixable.append((wallet, problems))
-                continue
+                if problems:
+                    unfixable.append((wallet, problems))
+                    continue
 
-            stored = wallet.available_balance.amount
-            if derived == stored:
-                clean += 1
-                continue
+                stored = wallet.available_balance.amount
+                if derived == stored:
+                    clean += 1
+                    continue
 
-            drifted.append((wallet, stored, derived))
-            self.stderr.write(
-                f"DRIFT wallet={wallet.pk} customer={wallet.customer_id} "
-                f"stored={stored} ledger={derived} delta={stored - derived}"
-            )
+                drifted.append((wallet, stored, derived))
+                self.stderr.write(
+                    f"DRIFT wallet={wallet.pk} customer={wallet.customer_id} "
+                    f"stored={stored} ledger={derived} delta={stored - derived}"
+                )
 
-            if fix:
-                with transaction.atomic():
-                    locked = CustomerWallet.objects.select_for_update().get(pk=wallet.pk)
-                    # Re-derive under the lock — a capture may have landed
-                    # between the scan and the fix.
-                    fresh, fresh_problems = ledger_balance(locked)
-                    if fresh_problems or fresh is None:
-                        unfixable.append((locked, fresh_problems))
-                        continue
-                    locked.available_balance = fresh
-                    locked.save(update_fields=["available_balance", "updated_at"])
-                    self.stdout.write(f"FIXED wallet={locked.pk} -> {fresh}")
+                if fix:
+                    wallet.available_balance = derived
+                    wallet.save(update_fields=["available_balance", "updated_at"])
+                    self.stdout.write(f"FIXED wallet={wallet.pk} -> {derived}")
 
         for wallet, problems in unfixable:
             for problem in problems:

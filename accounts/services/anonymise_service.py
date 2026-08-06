@@ -76,6 +76,20 @@ def anonymise_customer(user, performed_by=None, forfeit_balance=False):
         wallet = CustomerWallet.objects.select_for_update().filter(customer=user).first()
 
         if wallet is not None:
+            # Pending credit is money owed to the customer that has not yet
+            # become spendable (e.g. inside a refund window). The forfeit path
+            # below is a ledger debit against available_balance and has no way
+            # to zero pending, so a wallet holding pending credit must have it
+            # resolved — matured to available then forfeited, or reversed —
+            # before erasure. Freezing it here would strand that liability.
+            pending = wallet.pending_balance
+            if pending.amount > 0:
+                raise WalletHoldsBalance(
+                    f"Wallet holds {pending} in pending credit the store may "
+                    f"still owe this customer. Resolve it (let it mature and "
+                    f"forfeit, or reverse it) before erasing."
+                )
+
             balance = wallet.available_balance
             if balance.amount > 0:
                 if not forfeit_balance:

@@ -330,6 +330,14 @@ class OrderVoucherApplicationForm(forms.Form):
         if voucher.max_uses_total and voucher.current_uses >= voucher.max_uses_total:
             raise ValidationError(_("This voucher has reached its usage limit"))
 
+        # Reject a voucher issued in a different currency. Vouchers are only
+        # redeemable against the currency they were issued in (see
+        # VoucherCode.currency) — there is no cross-currency conversion.
+        # Accepting one would apply its numeric discount in the order currency,
+        # and the min_order_value comparison below would raise ValueError.
+        if self.order and voucher.currency != str(self.order.subtotal.currency):
+            raise ValidationError(_("This voucher cannot be used in this currency"))
+
         # Check minimum order value
         if voucher.min_order_value:
             if self.order and self.order.subtotal < voucher.min_order_value:
@@ -346,11 +354,17 @@ class OrderVoucherApplicationForm(forms.Form):
         # this form re-implemented a subset inline and never called the model,
         # so those rules went unenforced when staff applied a voucher.
         #
-        # Caveat: no `context` is passed, so VoucherRestriction rules are still
-        # not evaluated here — same limitation as the order-apply util.
+        # A `context` is passed so VoucherRestriction rules (shipping country,
+        # payment method, time, user group, email domain) are evaluated here;
+        # without it can_be_used_by_customer silently skips those restrictions.
         if self.order:
+            context = {
+                "shipping_country": self.order.shipping_country,
+                "payment_method": self.order.payment_method_type,
+                "user": self.order.user,
+            }
             can_use, message = voucher.can_be_used_by_customer(
-                self.order.user, order_total=self.order.subtotal
+                self.order.user, order_total=self.order.subtotal, context=context
             )
             if not can_use:
                 raise ValidationError(message)

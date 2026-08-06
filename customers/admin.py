@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import CustomerProfile
@@ -301,7 +302,7 @@ class EnhancedCustomerProfileAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
                 _("Affiliate"),
                 affiliate.get_status_display(),
             )
-        return format_html('<span class="muted-dash">—</span>')
+        return mark_safe('<span class="muted-dash">—</span>')
 
     affiliate_status_display.short_description = _("Affiliate Status")
 
@@ -873,7 +874,7 @@ class CustomerMetricsAdmin(admin.ModelAdmin):
     def cohort_month_display(self, obj):
         """Display cohort month with link to cohort dashboard"""
         if not obj.cohort_month:
-            return format_html('<span class="muted-dash">—</span>')
+            return mark_safe('<span class="muted-dash">—</span>')
 
         return format_html(
             '<a href="{}?cohort_month={}" class="cohort-month-link">'

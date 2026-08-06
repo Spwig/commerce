@@ -34,7 +34,7 @@ def send_return_request_confirmation(return_request):
                 or return_request.user.username,
                 "order_number": order.order_number,
                 "return_reason": return_request.get_reason_display(),
-                "items_count": len(return_request.items_json),
+                "items_count": len(return_request.items_json) if return_request.items_json else 0,
                 "return_status": return_request.get_status_display(),
             },
             language=get_order_email_language(order),
@@ -285,6 +285,8 @@ def send_order_status_update(order, old_status):
     """
     try:
         from django.contrib.sites.models import Site
+        from django.urls import reverse
+        from django.utils import translation
 
         from email_system.services.email_sender import EmailSendingService
         from email_system.utils.language import get_order_email_language
@@ -297,6 +299,13 @@ def send_order_status_update(order, old_status):
 
         status_display_map = dict(order.STATUS_CHOICES)
 
+        email_language = get_order_email_language(order)
+        with translation.override(email_language):
+            order_path = reverse(
+                "page_builder:order_confirmation",
+                kwargs={"order_number": order.order_number},
+            )
+
         EmailSendingService.send_template_email(
             to_email=order.email,
             template_type="order_status_update",
@@ -305,9 +314,9 @@ def send_order_status_update(order, old_status):
                 "order_number": order.order_number,
                 "old_status_display": str(status_display_map.get(old_status, old_status)),
                 "new_status_display": str(status_display_map.get(order.status, order.status)),
-                "order_url": f"{site_url}/orders/{order.order_number}/",
+                "order_url": f"{site_url}{order_path}",
             },
-            language=get_order_email_language(order),
+            language=email_language,
             enable_tracking=True,
         )
         logger.info(

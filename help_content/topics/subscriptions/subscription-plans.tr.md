@@ -2,133 +2,119 @@
 title: Abonelik Planları
 ---
 
-Abonelik planları, ürünleriniz için tekrar eden faturalandırma sunmanıza olanak tanır — tüketim ürünlerleri, hizmetler, özelleştirilmiş kutular veya müşterilerin tekrar tekrar satın aldığı herhangi bir ürün için idealdir. Bu kılavuz, planları oluşturma ve yapılandırma, fiyatlandırma katmanlarını ayarlama, deneme dönemleri ekleme ve isteğe bağlı eklentiler eklemeyi açıklar.
+Abonelik planları, ürünleriniz için tekrarlayan faturalandırma sunmanıza olanak tanır. Bu, tüketicilerin tekrar tekrar satın aldıkları, tüketilebilir ürünler, hizmetler, derlenmiş kutular veya herhangi bir ürün için idealdir. Bu rehber, planları oluşturmak ve yapılandırmak, fiyatlandırma seviyelerini ayarlamak, deneme dönemlerini kurmak ve isteğe bağlı ekstra ürünler eklemek hakkında açıklar.
 
-## Başlangıç
+## Başlarken
 
-**Abonelikler > Abonelik Planları** menüsünü admin yan çubuğundan seçin. Plan listesi, tüm planlarınıza ait fiyatlandırma modelini, aktif aboneyi sayısını ve görünür durumunu gösterir.
+Yönetim yan panelinde **Abonelikler > Abonelik Planları**'na gidin. Plan listesi, fiyatlandırma modeliniz, aktif abone sayısı ve erişilebilirlik durumu ile birlikte tüm planlarınızı gösterir.
 
-Yeni bir plan oluşturmak için **+ Abonelik Planı Ekle** butonuna tıklayın — bu, plan oluşturma asistanını açar ve kurulumu adım adım size rehberlik eder.
+Yeni bir plan oluşturmak için **+ Yeni Abonelik Planı Ekle** butonuna tıklayın — bu, adım adım kurulumu içeren bir plan oluşturma sihirbazı açar.
 
 ![Abonelik planları listesi](/static/core/admin/img/help/subscription-plans/plan-list.webp)
 
-## Plan bilgisi
+Bir plan, kendi başına satın alınamaz — bir şablondur. Burada oluşturduktan sonra, müşterilerin gerçekten abone olabilmesi için ürünün **Abonelikler** sekmesinden (Sadece, Değişken ve Dijital ürünler) bir veya daha fazla ürüne abone olmaları için bunu ekleyin. Bu adımı yapmak için [Ürünleri Abonelik Olarak Satma](/help/selling-products-as-subscriptions) sayfasına bakın.
+
+## Plan Bilgisi
 
 İlk bölüm, planınızın temel kimliğini yakalar.
 
-- **Plan Adı** — Müşterilerin abone olurken gördüğü ad. Diğer mağaza dilleri için çeviri eklemek için dünya simgesine tıklayın.
-- **Slug** — Adından otomatik olarak oluşturulan URL dostu bir tanımlayıcı (örneğin, `premium-plan`). İçeride ve entegrasyonlarda kullanılır.
-- **Açıklama** — Planın ne içerdiğini açıklayan isteğe bağlı metin. Çevirilere destek sağlar.
+- **Plan Adı** — Abonelik alırken müşterilerin gördüğü isim. Diğer mağaza dilleri için çeviri eklemek için dünya ikonuna tıklayın.
+- **Slug** — Adından otomatik olarak üretilen URL'ye uygun bir tanımlayıcı (örn. `premium-plan`). İç ve entegrasyonlarda kullanılır.
+- **Açıklama** — Planın ne içerdiğini tanımlayan isteğe bağlı metin. Çevirilere izin verir.
 
-## Fiyatlandırma modeli
+## Fiyatlandırma Modeli
 
 Bu plan için fiyatlandırma nasıl yapılandırılacağını seçin:
 
-| Fiyatlandırma Modeli | En Uygun Kullanım Alanı |
-|----------------------|------------------------|
-| **Katmanlı Fiyatlandırma** | Aylık, çeyreklik ve yıllık taahhüt seçeneklerini sunmak ve daha uzun süreler için indirimler sunmak |
-| **Miktar Temelli** | Kişilik veya kullanıcı başına fiyatlandırma, toplam miktar miktarı ile ölçeklendirilir (örneğin, ekip lisansları) |
-| **Düz Fiyat** | Değişmeyen tek bir fiyat |
+| Fiyatlandırma Modeli | En Uygun Olan |
+|---------------------|----------------|
+| **Seviyeli Fiyatlandırma** | Uzun vade için indirimlerle aylık, çeyreklik ve yıllık taahhüt seçenekleri sunar |
+| **Miktar Bazlı** | Toplamın miktarla ölçeklendiği (örn. ekip lisansları) koltuk veya kullanıcı bazlı fiyatlandırma |
+| **Düz Fiyat** | Herhangi bir değişiklik olmayan tek bir sabit fiyat |
 
-**Miktar Temelli** planlar için **Minimum Miktar** (gereken minimum koltuk sayısı) ve isteğe bağlı olarak **Maksimum Miktar** (aboneyin satın alabileceği maksimum koltuk sayısını sınırlamak için) ayarlayın.
+**Miktar Bazlı** planlar için, **Minimum Miktar**'ı (gereken en az koltuk sayısı) ve isteğe bağlı olarak bir **Maksimum Miktar** belirleyin, abone olabilecekleri koltuk sayısını sınırlayın.
 
-## Fiyatlandırma katmanları
+## Fiyatlandırma Seviyeleri
 
-Fiyatlandırma katmanları, bu plana abone olan müşterilere sunulan faturalandırma sıklığı ve indirim seçeneklerini tanımlar. Ana formun altındaki **Fiyatlandırma Katmanları** bölümünden ekleyin.
+Fiyatlandırma seviyeleri, bu plan üzerindeki müşterilerin faturalandırma sıklığı ve indirim seçeneklerini tanımlar. Ana formun hemen altında **Fiyatlandırma Seviyeleri** bölümünde ekleyin.
 
-Her katman şu alanlara sahiptir:
+Her seviye şu alanı içerir:
 
-- **Katman Adı** — Müşterilere gösterilen etiket (örneğin, `Aylık`, `Yıllık — %20 İndirim`). Çevirilere destek sağlar.
-- **Faturalandırma Döngüsü** — Müşterinin ne sıklıkta faturalandırıldığı: Günlük, Haftalık, Aylık, Çeyreklik, Yarı-Yıllık veya Yıllık.
-- **Faturalandırma Aralığı** — Faturalandırma döngüsünün katlayıcısı. Aylık olarak `2` ayda bir faturalandırmak için `2` olarak ayarlayın.
-- **İndirim Yüzdesi** — Bu katman için ürün fiyatına uygulanan indirim. `0` olarak ayarlayarak tam fiyat, `20` olarak ayarlayarak %20 indirim yapın. Bu indirim, ürünün kendisindeki herhangi bir satış fiyatına eklenir.
-- **Varsayılan Katman** — Müşterilerin abonelik seçeneklerini görüntülediğinde öntanımlı olarak seçili olan bir katman olarak işaretleyin.
+- **Seviye Adı** — Müşterilere gösterilen etiket (örn. `Aylık`, `Yıllık — %20 Kazanın`). Çevirilere izin verir.
+- **Faturalandırma Döngüsü** — Müşterinin ne sıklıkla faturalandırıldığını belirler: Günlük, Haftalık, Aylık, Çeyreklik, Yarıyıllık veya Yıllık.
+- **Faturalandırma Aralığı** — Faturalandırma döngüsünün çarpanı. Aylık olarak 2'ye ayarlanırsa, 2 ayda bir faturalandırılır.
+- **İndirim Yüzdesi** — Bu seviye için ürün fiyatına uygulanan indirim. Tam fiyata `0` olarak ayarlayın, ya da %20 indirim için `20` olarak ayarlayın. Bu indirim, ürünün kendisindeki herhangi bir satış fiyatına ek olarak biriktirilir.
+- **Varsayılan Seviye** — Abone olma seçeneklerini görüntülediklerinde müşteriler için önceden seçili olacak şekilde bir seviyeyi vurgulayın.
 
-### Örnek: üç seçeneği olan katmanlı plan
+İndirim, sadece yeniden imzalamalarda değil, müşteriye ait ilk faturalandırma döngüsünden itibaren geçerlidir — %20 indirimli bir seviye, ilk faturalandırma döngüsünden itibaren %20 indirimli olur (planın bir deneme dönemi varsa, deneme sonrası ilk faturalandırma döngüsünden itibaren).
+
+### Örnek: Üç seçenekli seviyeli plan
 
 "Kahve Kulübü" abonelik planı için:
 
-| Katman Adı | Faturalandırma Döngüsü | İndirim |
-|------------|------------------------|--------|
-| Aylık | Aylık | 0% |
-| Çeyreklik — %10 İndirim | Çeyreklik | 10% |
-| Yıllık — %20 İndirim | Yıllık | 20% |
+| Seviye Adı | Faturalandırma Döngüsü | İndirim |
+|------------|------------------------|---------|
+| Aylık | Aylık | %0 |
+| Çeyreklik — %10 Kazanın | Çeyreklik | %10 |
+| Yıllık — %20 Kazanın | Yıllık | %20 |
 
 ## Deneme Dönemi
 
-Deneme dönemi, müşterilerin ilk tam ödeme öncesi aboneliklerini denemelerine olanak tanır. Bu, **Deneme Dönemi** bölümünde yapılandırılabilir:
+Bir deneme dönemi, müşterilerin ilk tam faturalandırma öncesi aboneliklerini denemelerini sağlar. Bunu **Deneme Dönemi** bölümünde yapılandırın:
 
-- **Deneme Dönemi (Gün)** — Ücretsiz deneme gün sayısı. `0` olarak ayarlayarak denemeleri devre dışı bırakın. Maksimum 365 gün.
-- **Deneme Fiyatı** — Deneme sırasında uygulanan indirilmiş fiyat (örneğin, ilk ay için $1). Tamamen ücretsiz bir deneme için boş bırakın.
+- **Deneme Dönemi (Gün)** — Ücretsiz deneme günü sayısı. Deneme'yi devre dışı kılmak için `0` olarak ayarlayın. Maksimum 365 gündür.
+- **Deneme Fiyatı** — Deneme süresince isteğe bağlı olarak azaltılmış fiyat (örn. ilk ay için $1). Tamamen ücretsiz bir deneme için boş bırakın.
 
 ## İptal Politikası
 
-Müşterilerin aboneliklerini nasıl iptal edebileceğini **İptal Politikası** bölümünde kontrol edin:
+**İptal Politikası** bölümünde, müşterilerin aboneliklerini nasıl iptal edebileceğini kontrol edin.
 
 | Politika | Açıklama |
-|----------|----------|
-| **Her Zaman İptal Et** | Müşteriler herhangi bir zaman anında hemen iptal edebilir |
-| **Ödeme Dönemi Sonunda İptal Et** | İptal, ödenen dönemin sonunda etkin olur — müşteriler, sona erene kadar erişime devam eder |
-| **Minimum Taahhüt Gereklidir** | Müşteriler, iptal etmeden önce minimum sayıda faturalandırma döngüsünü tamamlamak zorundadır |
+|--------|-------------|
+| **Her Zaman İptal** | Müşteriler her zaman anında iptal edilebilir |
+| **Dönem Sonunda İptal** | İptal, ödemeli dönemin sonunda geçerli olur — müşteriler, süresi dolana kadar erişime devam eder |
+| **Minimum Taahhüt Gerekli** | İptal etmeden önce müşteri, minimum sayıda faturalandırma döngüsü tamamlamalıdır |
 
 Ek ayarlar:
 
-- **Minimum Commitment (Cycles)** — Taahhüt politikasını kullanırken, gerekli fatura döngü sayısını belirleyin (örneğin, 3 aylık minimum için `3`).
+- **Minimum Taahhüt (Döngü)** — Taahhüt politikası kullanırken, faturalandırma döngüsünün (örneğin, 3 aylık minimum için `3`) minimum sayısını ayarlayın.
+- **İzinli Süre (Gün)** — bir ödeme hatası sonrasında, abonelik devre dışı bırakılmadan önce devam eden erişim günleri. Hemen devre dışı etmek için `0` olarak ayarlayın.
+- **Yeniden Aktivasyon Periyodu (Gün)** - Abonelikten çıkışın ardından, müşteriye yeni bir abonelik oluşturmadan önce yeniden aktif hale getirebileceği günler.
 
-- **Grace Period (Days)** — Abonelik askıya alınmadan önce bir ödemede başarısızlık yaşanması durumunda devam eden erişim gün sayısı.
+## Plan değişikliği davranışı
 
-`0` olarak ayarlayarak hemen askıya alma.
+Müşteriler planlar arası yukarı veya aşağı geçiş yaparken, değişimin ne zaman geçerli olacağını kontrol edebilirsiniz:
 
-- **Reactivation Period (Days)** — İptal sonrası, müşteri aboneliğini baştan abone olmadan yeniden etkinleştirebileceği gün sayısı.
-
-## Plan değişiklik davranışı
-
-Müşteriler planlar arasında yükseltme veya düşürme yaparsa, değişikliğin ne zaman etkinleşeceğini kontrol edebilirsiniz:
-
-- **Upgrade Behavior** — **Immediate** (şimdilik prorated miktarı tahsil et) veya **At Renewal** (bir sonraki fatura tarihinde geçiş yap) olarak ayarlayın.
-
-- **Downgrade Behavior** — **Immediate** (bir sonraki faturaya kredi uygula) veya **At Renewal** (bir sonraki fatura tarihinde geçiş yap) olarak ayarlayın.
+- **Yükseltme Davranışı** — **Ani** (şimdi kademeli miktar tahsil edin) veya **Yenileme Sırasında** (bir sonraki faturalandırma tarihinde değiştirin) olarak ayarlayın.
+- **Aşağılama Davranışı** — **Ani** (bir sonraki faturaya kredi uygulayın) veya **Yenileme Sırasında** (bir sonraki faturalandırma tarihinde değiştirin) olarak ayarlayın.
 
 ## Sınırlar ve kısıtlamalar
 
-- **Maximum Billing Cycles** — Abonelik otomatik olarak sona ermeden önceki toplam fatura döngü sayısı. Sınırsız tekrarlı fatura için boş bırakın. Taksit planları veya zaman sınırlı abonelikler için kullanışlıdır.
-
-- **Setup Fee** — Abonelik ilk oluşturulduğunda toplanan tek seferlik ücret (örneğin, onboarding veya etkinleştirme ücreti). Kurulum ücreti olmaması için `0.00` olarak ayarlayın.
+- **Maksimum Faturalandırma Döngüsü** — abonelik otomatik olarak bitemeden önceki toplam faturalandırma döngüsü sayısı. Yeniden tekrarlayan faturalandırma için boş bırakın. Taksit planları veya zaman sınırlı abonelikler için yararlıdır.
+- **Kurulum Ücreti** — abonelik ilk oluşturulduğunda toplanan tek seferlik bir ücret (örneğin, danışmanlık veya aktifleştirme ücreti). Kurulum ücreti olmayacaksa `0.00` olarak ayarlayın.
 
 ## Plan eklentileri
 
-Eklentiler, abonelerin planlarına ekleyebilecekleri isteğe bağlı ekstra öğelerdir. Onları **Plan Eklentileri** bölümünde ekleyin:
+Eklentiler, abonelerin planlarına ekleyebilecekleri isteğe bağlı ekstra unsurlardır. **Plan Eklentileri** bölümünde ekleyin:
 
-- **Add-on Name** — Müşterilere gösterilen isim. Çevirileri destekler.
-
-- **Description** — Eklenti ne sağlar.
-
-- **Price** — Eklentinin maliyeti.
-
-- **Billing Frequency** — Eklentinin **Per Billing Cycle** (tekrar eden) olarak ücretlendirilip ücretlendirilmediğini veya abonelik başlangıcında **One-Time** olarak ücretlendirilip ücretlendirilmediğini belirtir.
-
-- **Allow Quantity** — Müşterilerin eklentinin birden fazla birimini satın almasına izin vermek için etkinleştirin.
-
-- **Required** — Tüm yeni aboneliklerde eklentinin otomatik olarak dahil edilmesi için işaretleyin. Gerekli eklentiler müşteri tarafından kaldırılamaz.
+- **Eklenti Adı** — müşteriye gösterilen isim. Çevirilere uygun.
+- **Açıklama** — eklentinin sağladığı şey.
+- **Fiyat** — eklentinin maliyeti.
+- **Faturalandırma Sıklığı** — eklentinin **Faturalandırma Döngüsüne Göre** (tekrarlayan) veya **Bir Kere** (abonelik başlangıcında) faturalandırılıp edilmediğini belirtin.
+- **Miktarı Kabul Et** — müşterilerin eklentinin birden fazla birimini satın almasına izin vermek için etkinleştirin.
+- **Zorunlu** — tüm yeni abonelere otomatik olarak eklentiyi dahil etmek için bu alanı işaretleyin. Zorunlu eklentiler, müşteri tarafından kaldırılamaz.
 
 ## Görünürlük ve durum
 
-- **Active** — Yeni aboneliklerin oluşturulmasını önlemek için işaretini kaldırın. Mevcut abonelikler etkilenmez.
-
-- **Public** — Müşteri odaklı sayfalardan planı gizlemek için işaretini kaldırın (mevcut abonelerin üzerinde kaldığı iç veya eski planlar için faydalıdır).
-
-- **Sort Order** — Abonelik seçim sayfalarında görüntü sırasını kontrol eder. Düşük numaralar önce görünür.
+- **Aktif** — bir planı yeni abonelikler için devre dışı kılmak için işareti kaldırın. Mevcut abonelikler etkilenmez.
+- **Kamuya Açık** — planı müşteriye açık sayfalardan saklamak için işareti kaldırın (mevcut abonelerin devam ettiği içi veya eski planlar için yararlıdır).
+- **Sıralama Sırası** — abonelik seçim sayfalarında görüntüleme sırasını kontrol eder. Düşük sayılar önce gelir.
 
 ## İpuçları
 
-- **Deneme süresi** kullanarak tereddütleri azaltın — kısa bir 7 günlük ücretsiz deneme, abonelik ürünlerinde dönüşüm oranlarını önemli ölçüde artırabilir.
-
-- Artan indirimlerle **üç fiyatlandırma katmanı** (aylık, çeyreklik, yıllık) oluşturun, yıllık taahhütleri teşvik edin ve nakit akışınızı iyileştirin.
-
-- Hizmet tabanlı abonelikler için **Cancellation Policy** (İptal Politikası)’ni **Cancel at Period End** (Dönem Sonunda İptal Et) olarak ayarlayın, böylece müşteriler ödemeleri süresince erişimini korur — bu adil gibi görünür ve iade taleplerini azaltır.
-
-- Ödeme başarısızlıklarında **Grace Period**’ı 3–7 gün olarak tutun. Bu, müşterilere erişimi kaybetmeden önce ödeme yöntemlerini güncellemeleri için zaman sağlar.
-
-- Eklentilerde **Required** bayrağını az kullanın — sadece gerçekten zorunlu olan şeylere (örneğin, bir hizmet anlaşması) uygulayın, fiyat artışını artırmak için değil.
-
-- Aboneliği olmayan planları silmek yerine devre dışı bırakın — bu, önce abone olan müşteriler için tarihsel veriyi korur.
+- **Deneme süresi** kullanarak tereddütü azaltın — hatta 7 günlük ücretsiz deneme bile, abonelik ürünlerinde dönüşüm oranlarını significantly artırabilir.
+- **Üç fiyat seviyesi** oluşturun (aylık, çeyreklik, yıllık) ve yıllık taahhütleri teşvik etmek ve nakit akışınızı artırmak için artan indirimlerle.
+- Hizmet temelli abonelikler için **İptal Politikası** 'nı **Dönem Sonunda İptal** olarak ayarlayın, böylece müşterileri ödeme dönemlerine kadar erişimlerini korursun — bu adil hissi verir ve iade oranlarını azaltır.
+- **İzinli Süre** 'yi 3-7 gün olarak ayarlayın, ödeme hataları için. Bu, erişimden uzaklaşmadan önce müşteriye ödeme yöntemini güncellemesi için zaman tanır.
+- **Zorunlu** bandını eklentilerde seyrek kullanın — sadece gerçek manasında zorunlu olanlar (örneğin, bir hizmet sözleşmesi) için kullanın, fiyatları artırmak için bir yolla değil.
+- Aboneliği olmayan planları silmek yerine devre dışı bırakın — bu, daha önce abone olan müşteriler için tarihsel verileri korur.

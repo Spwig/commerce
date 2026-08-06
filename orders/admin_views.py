@@ -26,8 +26,8 @@ def filter_return_requests(request):
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
 
-    queryset = ReturnRequest.objects.select_related("order", "user", "return_shipment").order_by(
-        "-created_at"
+    queryset = ReturnRequest.objects.select_related("order", "user", "refund").order_by(
+        "-requested_at"
     )
 
     # Search filter
@@ -38,7 +38,7 @@ def filter_return_requests(request):
             | Q(user__first_name__icontains=search)
             | Q(user__last_name__icontains=search)
             | Q(user__email__icontains=search)
-            | Q(tracking_number__icontains=search)
+            | Q(return_tracking_number__icontains=search)
         )
 
     # Status filter

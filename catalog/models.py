@@ -265,13 +265,15 @@ class Category(CustomFieldsMixin, DesignMixin):
             poster = asset.poster_image.url if asset.poster_image else None
             return {"medium": poster, "large": None} if poster else None
         # Both presets in one query; missing mediums degrade to the original
-        thumbs = {
-            t.size_preset: (t.webp_file.url if t.webp_file else t.file.url)
-            for t in asset.thumbnails.filter(size_preset__in=("medium", "large"))
-        }
+        rows = list(asset.thumbnails.filter(size_preset__in=("medium", "large")))
+        webp = {t.size_preset: (t.webp_file.url if t.webp_file else t.file.url) for t in rows}
+        avif = {t.size_preset: t.avif_file.url for t in rows if t.avif_file}
         return {
-            "medium": thumbs.get("medium") or asset.get_display_url(),
-            "large": thumbs.get("large"),
+            "medium": webp.get("medium") or asset.get_display_url(),
+            "large": webp.get("large"),
+            # AVIF renditions for a type="image/avif" <source> (None until backfilled)
+            "avif_medium": avif.get("medium"),
+            "avif_large": avif.get("large"),
         }
 
     def get_banner_url(self):
@@ -428,6 +430,8 @@ class ProductQuerySet(models.QuerySet):
         """
         return self.with_regional_stock(region).filter(
             Q(track_inventory=False)  # Non-inventory products always available
+            | Q(allow_backorders=True)  # Backorderable — sold without on-hand stock
+            | Q(is_preorder=True)  # Pre-order — sold before stock exists
             | Q(regional_stock__gt=0)  # Or has stock in region
         )
 
@@ -460,11 +464,126 @@ class ProductQuerySet(models.QuerySet):
         """
         return self.filter(status="published")
 
+    def on_sale(self):
+        """
+        Products with an active discount right now: the canonical
+        sale_type/sale_value sale within its optional date window, and only when
+        it actually reduces the price (a fixed_price sale must be below `price`).
+        Mirrors ``has_discount`` / ``effective_price``. There is no sale_price or
+        compare_at_price field.
+        """
+        from django.utils import timezone
+
+        now = timezone.now()
+        within_window = (
+            models.Q(sale_start_date__isnull=True) | models.Q(sale_start_date__lte=now)
+        ) & (models.Q(sale_end_date__isnull=True) | models.Q(sale_end_date__gte=now))
+        reduces_price = (
+            models.Q(sale_type__in=["amount_off", "percentage_off"]) & models.Q(sale_value__gt=0)
+        ) | (
+            models.Q(sale_type="fixed_price")
+            & models.Q(sale_value__gt=0)
+            & models.Q(sale_value__lt=models.F("price"))
+        )
+        return self.filter(within_window & reduces_price)
+
+    def with_effective_price(self):
+        """
+        Annotate ``effective_price_amount`` (the sale-aware price the customer is
+        shown, in the product's base currency) so it can be filtered and sorted in
+        SQL. Mirrors ``get_effective_price``: fixed_price -> sale_value;
+        percentage_off -> price*(1 - value/100); amount_off -> max(price - value, 0);
+        otherwise the regular price. The sale only applies within its optional date
+        window with a positive sale_value, AND — for a variable product — only when
+        its active variants inherit the parent price (a variant with its own price
+        is not sale-adjusted, so the displayed price is the regular one). This keeps
+        the annotation equal to what ``product_price_display`` / ``_search_products``
+        render, so price filters can't include/exclude a product by a price it never
+        shows.
+        """
+        from decimal import Decimal
+
+        from django.db.models import Case, DecimalField, Exists, F, OuterRef, Value, When
+        from django.db.models.functions import Greatest
+        from django.utils import timezone
+
+        now = timezone.now()
+        active_variants = ProductVariant.objects.filter(product=OuterRef("pk"), is_active=True)
+        # A variable product only displays the parent sale when it has active
+        # variants and none of them carry a custom (non-inheriting) price.
+        variant_sale_ok = models.Q(product_type="variable") & (
+            Exists(active_variants) & ~Exists(active_variants.filter(price__isnull=False))
+        )
+        display_sale = (
+            ~models.Q(sale_type="none")
+            & models.Q(sale_value__gt=0)
+            & (models.Q(sale_start_date__isnull=True) | models.Q(sale_start_date__lte=now))
+            & (models.Q(sale_end_date__isnull=True) | models.Q(sale_end_date__gte=now))
+            & (~models.Q(product_type="variable") | variant_sale_ok)
+        )
+        return self.annotate(
+            effective_price_amount=Case(
+                When(display_sale & models.Q(sale_type="fixed_price"), then=F("sale_value")),
+                When(
+                    display_sale & models.Q(sale_type="percentage_off"),
+                    then=F("price")
+                    * (Value(Decimal("1")) - F("sale_value") / Value(Decimal("100"))),
+                ),
+                When(
+                    display_sale & models.Q(sale_type="amount_off"),
+                    then=Greatest(F("price") - F("sale_value"), Value(Decimal("0.00"))),
+                ),
+                default=F("price"),
+                output_field=DecimalField(max_digits=12, decimal_places=2),
+            )
+        )
+
+    def visible_in_region(self, region):
+        """
+        Filter to products whose region-visibility rules permit this region.
+
+        Pure geo/visibility check with **no** stock component. The selected
+        regions are the product's ``ProductRegionVisibility`` rows;
+        ``region_restriction_mode`` decides how they're read:
+
+        - ``all`` — visible everywhere (rows ignored).
+        - ``only_in`` — visible only in regions that have a row (allowlist).
+        - ``all_except`` — visible everywhere except regions with a row (blocklist).
+
+        Use this to decide "is this product sold in this region?" independently
+        of whether it currently has stock.
+
+        Args:
+            region: SalesRegion instance
+
+        Returns:
+            QuerySet of region-visible products
+        """
+        from catalog.models import ProductRegionVisibility
+
+        # Products that list this region (membership), regardless of mode.
+        selected_here = ProductRegionVisibility.objects.filter(region=region).values("product_id")
+        return self.filter(
+            Q(region_restriction_mode="all")
+            | Q(region_restriction_mode="only_in", pk__in=selected_here)
+            | (Q(region_restriction_mode="all_except") & ~Q(pk__in=selected_here))
+        )
+
     def available_in_region(self, region):
         """
-        Filter products visible and available in a specific region.
+        Filter products visible **and** available in a specific region.
 
-        Combines visibility rules and stock availability.
+        Combines the region-visibility allowlist (``visible_in_region``) with
+        stock availability. A visible product is considered available when it
+        has regional stock, doesn't track inventory, or can be sold without
+        stock (pre-order / backorder).
+
+        Backorder eligibility here uses the product-level ``allow_backorders``
+        field only — the category/site-wide cascade in
+        ``Product.can_sell_without_stock()`` can't be expressed as an ORM
+        filter, so a product relying purely on a site-wide backorder default
+        is not surfaced by this bulk query (it is still individually
+        purchasable via the cascade-aware gates).
 
         Args:
             region: SalesRegion instance
@@ -472,23 +591,30 @@ class ProductQuerySet(models.QuerySet):
         Returns:
             QuerySet of available products
         """
-        # Get products with no visibility rules (visible everywhere)
-        from catalog.models import ProductRegionVisibility
+        return self.visible_in_region(region).sellable_in_region(region)
 
-        products_without_rules = self.exclude(
-            id__in=ProductRegionVisibility.objects.values_list("product_id", flat=True)
-        )
+    def sellable_in_region(self, region):
+        """
+        Filter to products sellable in a region on stock grounds alone —
+        regional stock, no inventory tracking, or sellable without stock
+        (pre-order / backorder). **Ignores region visibility.**
 
-        # Get products with explicit visibility=True for this region
-        products_with_visibility = self.filter(
-            region_visibility__region=region, region_visibility__is_visible=True
-        )
+        This is the stock half of ``available_in_region``. The storefront's
+        default "show all, mark region-restricted" listing uses it so an
+        out-of-stock product stays hidden while a product that is merely
+        restricted from the shopper's destination is still shown (and marked)
+        rather than silently disappearing.
 
-        # Combine and filter by stock
-        visible_products = (products_without_rules | products_with_visibility).distinct()
+        Args:
+            region: SalesRegion instance
 
-        return visible_products.filter(
+        Returns:
+            QuerySet of stock-sellable products (regardless of visibility)
+        """
+        return self.filter(
             Q(track_inventory=False)  # Not tracking inventory
+            | Q(allow_backorders=True)  # Backorderable — sold without on-hand stock
+            | Q(is_preorder=True)  # Pre-order — sold before stock exists
             | Q(  # Has stock in region
                 stock_items__warehouse__region=region,
                 stock_items__warehouse__is_active=True,
@@ -538,6 +664,17 @@ class ProductManager(models.Manager):
     def with_deleted(self):
         """Return all products including deleted"""
         return ProductQuerySet(self.model, using=self._db)
+
+
+# Product types that can be sold as a subscription. Kept deliberately narrow:
+# renewals re-fulfil through a per-cycle Order (see
+# subscriptions.manager.SubscriptionManager._create_renewal_order), which works
+# for standard/physical goods (simple, variable) and access/licence goods
+# (digital). Types whose fulfilment cannot be reconstructed from the
+# subscription alone (gift_card, booking, bundle, customizable, configurable)
+# are gated off — enabling a subscription on them would charge every cycle but
+# deliver nothing after the first.
+SUBSCRIBABLE_PRODUCT_TYPES = frozenset({"simple", "variable", "digital"})
 
 
 class Product(CustomFieldsMixin, DesignMixin):
@@ -1116,6 +1253,26 @@ class Product(CustomFieldsMixin, DesignMixin):
             "The product remains available as a configurator option or bundle component."
         ),
     )
+
+    # Region availability: which sales regions this product is sold in. The
+    # selected regions are the ProductRegionVisibility rows; this mode says
+    # whether that list is an allowlist or a blocklist.
+    REGION_RESTRICTION_MODES = [
+        ("all", _("Available in all regions")),
+        ("only_in", _("Only in selected regions")),
+        ("all_except", _("All regions except selected")),
+    ]
+    region_restriction_mode = models.CharField(
+        max_length=12,
+        choices=REGION_RESTRICTION_MODES,
+        default="all",
+        db_index=True,
+        verbose_name=_("Region availability"),
+        help_text=_(
+            "Where this product is sold. Choose the regions in 'Region availability' "
+            "below; 'Only in' shows it there exclusively, 'All except' hides it there."
+        ),
+    )
     # Agentic commerce visibility and condition. `agent_visible` defaults True
     # so enabling agentic commerce doesn't require bulk-editing the catalog; a
     # merchant opts individual products OUT. `condition` maps to the UCP/ACP
@@ -1336,8 +1493,17 @@ class Product(CustomFieldsMixin, DesignMixin):
         else:
             self.is_digital = False
 
-        # Booking products use slot-based capacity, not stock inventory
-        if self.product_type == "booking":
+        # Neither of these types has physical stock, so neither may be
+        # stock-gated:
+        #   * A plain digital product is delivered as a download/licence.
+        #   * A booking product uses slot-based capacity, not stock inventory.
+        # For both, the admin hides the Inventory fieldset and the
+        # StockItemInline (see admin_product_form.js and get_inlines), so a
+        # merchant can never create a StockItem to satisfy a stock check.
+        # Leaving track_inventory=True (the field default) therefore made every
+        # add-to-cart fail with "Insufficient stock" — the same failure the
+        # gift_card branch above fixes for gift cards.
+        if self.product_type in ("digital", "booking"):
             self.track_inventory = False
 
         # requires_shipping was a @property returning
@@ -1522,18 +1688,40 @@ class Product(CustomFieldsMixin, DesignMixin):
         )
 
     def is_visible_in_region(self, region):
-        """Check if product should be visible in a region"""
-        # If no visibility records exist, product is visible everywhere
-        visibility_rules = self.region_visibility.filter(region=region)
-        if not visibility_rules.exists():
+        """Check if this product is sold in a region (see visible_in_region)."""
+        if self.region_restriction_mode == "all":
             return True
-        return visibility_rules.filter(is_visible=True).exists()
+        selected = self.region_visibility.filter(region=region).exists()
+        if self.region_restriction_mode == "only_in":
+            return selected
+        return not selected  # all_except
 
     @property
     def is_in_stock(self):
+        # Display/notification signal, read in bulk on product grids, so it
+        # stays cheap: it uses the raw ``allow_backorders`` field and does NOT
+        # run the category/site cascade. The authoritative purchase gates call
+        # ``can_sell_without_stock()`` instead, which is cascade-aware.
         if not self.track_inventory:
             return True
-        return self.available_stock > 0 or self.allow_backorders
+        return self.available_stock > 0 or self.allow_backorders or self.is_preorder
+
+    def can_sell_without_stock(self):
+        """
+        Whether this product may be sold with no on-hand stock — i.e. it is a
+        pre-order, or backorders are enabled at the product, category, or
+        site-wide level.
+
+        This is the single source of truth for "purchasable at zero stock" used
+        by every purchase gate (add-to-cart, checkout validation, order-placement
+        allocation) so the "Pre-Order"/"Backorder" badge the customer sees and
+        the gate that lets them buy always agree. Unlike the ``is_in_stock``
+        display property it consults ``get_effective_allow_backorders()``, so it
+        is cascade-aware; call it on single products, not across a grid.
+        """
+        if not self.track_inventory:
+            return True
+        return self.is_preorder or self.get_effective_allow_backorders()
 
     @property
     def is_low_stock(self):
@@ -2001,6 +2189,49 @@ class Product(CustomFieldsMixin, DesignMixin):
 
         return Money(converted_amount, currency_code)
 
+    def _money_in_currency(self, money, currency_code: str):
+        """
+        Convert an arbitrary Money to the display currency, mirroring
+        ``get_price_in_currency`` (multi-currency gate + exchange conversion +
+        price charming). Used for variant price-range endpoints.
+        """
+        from djmoney.money import Money
+
+        from core.models import SiteSettings
+        from exchange_rates.services.exchange_service import ExchangeRateService
+
+        settings = SiteSettings.get_settings()
+        if not settings.enable_multi_currency or currency_code == str(money.currency):
+            return money
+
+        converted = ExchangeRateService().convert(money.amount, str(money.currency), currency_code)
+        converted = self._apply_price_charming(converted, currency_code)
+        return Money(converted, currency_code)
+
+    def get_variant_price_range(self, currency_code: str | None = None):
+        """
+        Return ``(min, max)`` effective price across this product's active
+        variants, as Money in ``currency_code`` (base currency if None).
+
+        Returns None for non-variable products or when no variant resolves to a
+        price — callers then fall back to the single product price. Endpoints use
+        each variant's sale-aware ``get_effective_price()``; since currency
+        conversion is a linear scale, converting the base-currency min and max
+        preserves ordering.
+        """
+        if self.product_type != "variable":
+            return None
+        prices = [v.get_effective_price() for v in self.variants.filter(is_active=True)]
+        prices = [p for p in prices if p is not None]
+        if not prices:
+            return None
+        low = min(prices, key=lambda m: m.amount)
+        high = max(prices, key=lambda m: m.amount)
+        if currency_code:
+            low = self._money_in_currency(low, currency_code)
+            high = self._money_in_currency(high, currency_code)
+        return (low, high)
+
     def get_effective_price(self):
         """
         Get the effective price (sale price if active, otherwise regular price).
@@ -2129,6 +2360,21 @@ class Product(CustomFieldsMixin, DesignMixin):
                         "issued in the currency the customer paid in, and can only "
                         "be spent in that currency. To sell in another currency, "
                         "create a separate gift card product priced in it."
+                    )
+                }
+            )
+
+        # Only product types whose recurring fulfilment we can honour may be
+        # sold as subscriptions. A subscription re-charges every cycle and
+        # re-fulfils through a renewal Order; for types we cannot re-fulfil that
+        # would take the customer's money and deliver nothing after cycle 1.
+        if self.is_subscription_enabled and self.product_type not in SUBSCRIBABLE_PRODUCT_TYPES:
+            raise ValidationError(
+                {
+                    "is_subscription_enabled": _(
+                        "Subscriptions are only available for simple, variable, and "
+                        "digital products. This product type cannot be sold as a "
+                        "subscription."
                     )
                 }
             )
@@ -6652,6 +6898,23 @@ class StockDisplaySettings(models.Model):
         _("allow backorders"),
         default=False,
         help_text=_("Allow customers to order products that are out of stock"),
+    )
+
+    # Region-restricted products (products not sold in the shopper's region)
+    REGION_RESTRICTED_ACTIONS = [
+        ("hide", _("Hide from listings")),
+        ("show_unavailable", _("Show, marked as unavailable")),
+    ]
+    region_restricted_action = models.CharField(
+        _("region-restricted display"),
+        max_length=20,
+        choices=REGION_RESTRICTED_ACTIONS,
+        default="show_unavailable",
+        help_text=_(
+            "What to do on storefront listings with products that aren't sold in "
+            "the shopper's region: hide them, or show them marked \"Does not ship "
+            'to [region]" (with a filter to hide them).'
+        ),
     )
 
     # Timestamps

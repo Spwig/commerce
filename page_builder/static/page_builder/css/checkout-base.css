@@ -419,6 +419,11 @@
   color: var(--theme-color-text-muted, #6b7280);
 }
 
+.review-item__subscription {
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  color: var(--theme-color-primary, #2563eb);
+}
+
 .review-item__price {
   font-weight: var(--theme-font-weight-semibold, 600);
   white-space: nowrap;
@@ -525,6 +530,63 @@
 
 .checkout-summary__item-qty {
   color: var(--theme-color-text-muted, #6b7280);
+}
+
+/* Subscription cadence line under a summary item, e.g. "$18.00 / month" */
+.checkout-summary__item-subscription {
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  color: var(--theme-color-primary, #2563eb);
+}
+
+/* Subscription recurring-billing notice + consent (payment step) */
+.checkout-subscription-notice {
+  margin: var(--theme-space-3, 0.75rem) 0;
+  padding: var(--theme-space-3, 0.75rem);
+  border: 1px solid var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-md, 0.5rem);
+  background: var(--theme-color-surface-alt, #f9fafb);
+}
+
+.checkout-subscription-notice[hidden],
+.checkout-subscription-signin[hidden] {
+  display: none;
+}
+
+.checkout-subscription-notice__text {
+  display: flex;
+  align-items: baseline;
+  gap: var(--theme-space-2, 0.5rem);
+  margin: 0 0 var(--theme-space-2, 0.5rem);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text-secondary, #4b5563);
+}
+
+.checkout-subscription-notice__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--theme-space-2, 0.5rem);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text, #111827);
+  cursor: pointer;
+}
+
+/* Subscription sign-in prompt (anonymous shoppers) */
+.checkout-subscription-signin {
+  display: flex;
+  align-items: baseline;
+  gap: var(--theme-space-2, 0.5rem);
+  margin: var(--theme-space-3, 0.75rem) 0;
+  padding: var(--theme-space-3, 0.75rem);
+  border: 1px solid var(--theme-color-warning, #f59e0b);
+  border-radius: var(--theme-radius-md, 0.5rem);
+  background: var(--theme-color-warning-light, #fef3c7);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text, #111827);
+}
+
+.checkout-subscription-signin a {
+  color: var(--theme-color-primary, #2563eb);
+  font-weight: var(--theme-font-weight-medium, 500);
 }
 
 .checkout-summary__item-price {

@@ -420,8 +420,7 @@
     }
 
     if (statusBadge) {
-      statusBadge.classList.toggle('badge-active', isActive);
-      statusBadge.classList.toggle('badge-inactive', !isActive);
+      statusBadge.classList.toggle('list-row-card-badge-success', isActive);
       statusBadge.innerHTML = isActive
         ? '<i class="fas fa-check-circle"></i> Active'
         : '<i class="fas fa-times-circle"></i> Inactive';

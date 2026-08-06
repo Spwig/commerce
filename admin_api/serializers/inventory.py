@@ -5,6 +5,8 @@ Serializers for inventory dashboard, velocity, movements, reorder
 suggestions, and inventory settings endpoints.
 """
 
+import math
+
 from rest_framework import serializers
 
 # ──────────────────────────────────────────────
@@ -250,3 +252,9 @@ class InventorySettingsUpdateSerializer(serializers.Serializer):
     default_reorder_lead_days = serializers.IntegerField(min_value=1, required=False)
     safety_stock_multiplier = serializers.FloatField(min_value=0.1, required=False)
     velocity_calculation_window_days = serializers.IntegerField(min_value=7, required=False)
+
+    def validate_safety_stock_multiplier(self, value):
+        """Reject non-finite floats (NaN/Infinity) that bypass the min_value check."""
+        if not math.isfinite(value):
+            raise serializers.ValidationError("Must be a finite number.")
+        return value

@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 <!-- Blog Post Carousel Element -->
 <section class="blog-carousel blog-carousel--{{ element.content.card_style|default:'default' }}"
          data-blog-post-carousel
@@ -41,10 +41,13 @@
                     <a href="{{ post.url|default:post.get_absolute_url }}" class="blog-carousel__image-link">
                         <div class="blog-carousel__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'16/9' }};">
                             {% if post.image or post.featured_image %}
-                            <img src="{% if post.image %}{{ post.image }}{% elif post.featured_image.file %}{{ post.featured_image.file.url }}{% endif %}"
+                            {% with picsrc=post.image|default:post.featured_image.file.url %}{% with picps=picsrc|picture_sources %}
+                            <picture class="spwig-picture">{% if picps.avif %}<source srcset="{{ picps.avif }}" type="image/avif">{% endif %}{% if picps.webp %}<source srcset="{{ picps.webp }}" type="image/webp">{% endif %}
+                            <img src="{{ picsrc }}"
                                  alt="{{ post.title }}"
                                  class="blog-carousel__image"
-                                 loading="lazy">
+                                 loading="lazy"></picture>
+                            {% endwith %}{% endwith %}
                             {% else %}
                             <div class="blog-carousel__image-placeholder">
                                 <i class="fas fa-newspaper"></i>

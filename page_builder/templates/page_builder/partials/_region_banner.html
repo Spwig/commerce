@@ -1,0 +1,20 @@
+{% load i18n merchant_trans %}
+{% comment %}Ship-to region banner. Requires context: region_restricted (bool),
+   ship_only (bool), ship_destination_name (str), current_sort (optional).{% endcomment %}
+{% if region_restricted and ship_destination_name %}
+<div class="region-banner" role="status">
+    <i class="fas fa-truck region-banner__icon" aria-hidden="true"></i>
+    <span class="region-banner__text">
+        {% mtrans "Some products don't ship to" %} {{ ship_destination_name }}.
+    </span>
+    {% if ship_only %}
+    <a class="region-banner__link" href="?{% if current_sort %}sort={{ current_sort }}{% endif %}">
+        {% mtrans "Show all products" %}
+    </a>
+    {% else %}
+    <a class="region-banner__link" href="?ship_only=1{% if current_sort %}&amp;sort={{ current_sort }}{% endif %}">
+        {% mtrans "Show only items that ship here" %}
+    </a>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,4 +1,4 @@
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans currency_tags %}
 {# Related Products Partial #}
 {# Context: related_products, product (for show_related_products check) #}
 
@@ -25,12 +25,7 @@
                         <a href="{% url 'page_builder:product_detail' product_slug=related.slug %}">{{ related.name }}</a>
                     </h3>
                     <div class="product-card__price">
-                        {% if related.is_on_sale %}
-                        <span class="price price--sale">{{ related.formatted_price }}</span>
-                        <span class="price price--compare">{{ related.formatted_compare_price }}</span>
-                        {% else %}
-                        <span class="price">{{ related.formatted_price }}</span>
-                        {% endif %}
+                        {% product_price_display related current_currency.code %}
                     </div>
                 </div>
             </article>

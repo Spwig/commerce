@@ -556,13 +556,18 @@ def bulk_assign_tags(request):
     tag_slugs = serializer.validated_data["tags"]
     mode = serializer.validated_data["mode"]
 
-    # Get or create ProductTag objects for all specified slugs
-    tag_objects = []
-    for slug in tag_slugs:
-        tag, created = ProductTag.objects.get_or_create(
-            slug=slug, defaults={"name": slug.replace("-", " ").title()}
-        )
-        tag_objects.append(tag)
+    # Resolve ProductTag objects for the specified slugs. For 'remove' mode we
+    # only fetch existing tags so an unknown slug never creates an orphan tag;
+    # 'add' and 'replace' create missing tags as needed.
+    if mode == "remove":
+        tag_objects = list(ProductTag.objects.filter(slug__in=tag_slugs))
+    else:
+        tag_objects = []
+        for slug in tag_slugs:
+            tag, created = ProductTag.objects.get_or_create(
+                slug=slug, defaults={"name": slug.replace("-", " ").title()}
+            )
+            tag_objects.append(tag)
 
     succeeded = 0
     failed = 0

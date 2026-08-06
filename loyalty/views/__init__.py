@@ -1100,10 +1100,10 @@ def filter_rules(request):
 
 
 @staff_member_required
-def toggle_rule_status(request, rule_id):
+def toggle_rule_status(request, rule_id, action=None):
     """
     AJAX endpoint for activating or deactivating a rule.
-    Determines action from the URL path.
+    The action ("activate" / "deactivate") is supplied explicitly by the route.
     """
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
@@ -1114,12 +1114,10 @@ def toggle_rule_status(request, rule_id):
     try:
         rule = LoyaltyRule.objects.get(id=rule_id)
 
-        # Determine action from URL path
-        path = request.path
-        if "activate" in path:
+        if action == "activate":
             rule.is_active = True
             action_msg = _("Rule activated successfully.")
-        elif "deactivate" in path:
+        elif action == "deactivate":
             rule.is_active = False
             action_msg = _("Rule deactivated successfully.")
         else:
@@ -1285,10 +1283,10 @@ def filter_campaigns(request):
 
 
 @staff_member_required
-def toggle_campaign_status(request, campaign_id):
+def toggle_campaign_status(request, campaign_id, action=None):
     """
-    AJAX endpoint for activating or pausing a campaign.
-    Determines action from the URL path.
+    AJAX endpoint for activating or deactivating (pausing) a campaign.
+    The action ("activate" / "deactivate") is supplied explicitly by the route.
     """
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
@@ -1299,9 +1297,7 @@ def toggle_campaign_status(request, campaign_id):
     try:
         campaign = LoyaltyCampaign.objects.get(id=campaign_id)
 
-        # Determine action from URL path
-        path = request.path
-        if "activate" in path:
+        if action == "activate":
             if campaign.status in ["draft", "paused"]:
                 campaign.status = "active"
                 campaign.is_active = True
@@ -1315,14 +1311,15 @@ def toggle_campaign_status(request, campaign_id):
                     },
                     status=400,
                 )
-        elif "pause" in path:
+        elif action == "deactivate":
             if campaign.status == "active":
                 campaign.status = "paused"
+                campaign.is_active = False
                 campaign.save()
-                action_msg = _("Campaign paused successfully.")
+                action_msg = _("Campaign deactivated successfully.")
             else:
                 return JsonResponse(
-                    {"success": False, "error": _("Only active campaigns can be paused.")},
+                    {"success": False, "error": _("Only active campaigns can be deactivated.")},
                     status=400,
                 )
         else:

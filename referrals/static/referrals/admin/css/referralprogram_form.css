@@ -186,8 +186,8 @@
 .config-btn {
   width: 100%;
   padding: 10px 16px;
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   font-size: 14px;
@@ -201,7 +201,7 @@
 }
 
 .config-btn:hover {
-  background: var(--primary-fg);
+  background: var(--button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -237,12 +237,12 @@
 }
 
 .referral-modal-btn-primary {
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .referral-modal-btn-primary:hover {
-  background: var(--primary-fg);
+  background: var(--button-hover-bg);
 }
 
 .referral-modal-btn-secondary {
@@ -349,7 +349,7 @@
 }
 
 .referral-badge-danger {
-  background: var(--danger-color, #dc3545);
+  background: var(--delete-button-bg, #dc3545);
 }
 
 .referral-badge-info {
@@ -357,13 +357,15 @@
 }
 
 .referral-badge-primary {
-  background: var(--primary, #007bff);
+  background: var(--button-bg, #007bff);
 }
 
 .referral-badge-secondary {
-  background: #6c757d;
+  background: var(--close-button-bg, #6c757d);
 }
 
+/* Type-coded reward-kind badges (percent / perk) — deliberate distinct hues
+   with no semantic token equivalent; kept as-is. */
 .referral-badge-orange {
   background: #ff6b6b;
 }
@@ -389,15 +391,15 @@
 
 /* Expiry status text */
 .referral-text-muted {
-  color: #6c757d;
+  color: var(--body-quiet-color, #6c757d);
 }
 
 .referral-text-danger {
-  color: var(--danger-color, #dc3545);
+  color: var(--error-fg, #dc3545);
   font-weight: bold;
 }
 
 .referral-text-warning {
-  color: #ff6b6b;
+  color: var(--warning-fg);
   font-weight: bold;
 }

@@ -40,7 +40,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--primary);
+  color: var(--link-fg);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -49,7 +49,7 @@
 
 .back-link:hover {
   gap: 12px;
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .editor-header h1 {
@@ -63,7 +63,7 @@
 }
 
 .editor-header h1 i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 20px;
 }
 
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: var(--subtle-bg);
+  background: var(--darkened-bg);
   border: 1px solid var(--subtle-border);
   border-radius: 6px;
   color: var(--body-quiet-color);
@@ -81,7 +81,7 @@
 }
 
 .version-badge i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 11px;
 }
 
@@ -90,16 +90,16 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: color-mix(in srgb, var(--warning-fg, #ffc107) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning-fg, #ffc107) 30%, transparent);
   border-radius: 6px;
-  color: #856404;
+  color: var(--warning-fg, #856404);
   font-size: 13px;
   font-weight: 500;
 }
 
 .warning-badge i {
-  color: #ffc107;
+  color: var(--warning-color, #ffc107);
 }
 
 .header-actions {
@@ -122,7 +122,7 @@
 }
 
 .version-badge i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .btn {
@@ -141,14 +141,14 @@
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .btn-primary:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.15));
 }
 
 .btn-primary:disabled {
@@ -164,8 +164,8 @@
 }
 
 .btn-secondary:hover {
-  background-color: var(--body-quiet-color);
-  color: white;
+  background-color: var(--close-button-bg);
+  color: var(--button-fg);
 }
 
 /* Main Layout */
@@ -222,14 +222,14 @@
 }
 
 .tab-btn:hover {
-  background: rgba(var(--primary-rgb, 0, 123, 255), 0.05);
+  background: color-mix(in srgb, var(--link-fg, #007bff) 8%, transparent);
   color: var(--body-fg);
 }
 
 .tab-btn.active {
   background: var(--body-bg);
-  border-bottom-color: var(--primary);
-  color: var(--primary);
+  border-bottom-color: var(--link-fg);
+  color: var(--link-fg);
 }
 
 .tab-btn i {
@@ -255,7 +255,7 @@
 }
 
 .subject-editor label i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 12px;
 }
 
@@ -273,8 +273,8 @@
 
 .subject-editor input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 0, 123, 255), 0.1);
+  border-color: var(--link-fg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-fg, #007bff) 15%, transparent);
 }
 
 .subject-editor input:read-only {
@@ -316,7 +316,7 @@
 }
 
 .toolbar-title i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 12px;
 }
 
@@ -337,9 +337,9 @@
 }
 
 .btn-tool:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .btn-tool i {
@@ -351,6 +351,7 @@
   flex: 1;
   min-height: 300px;
   overflow: hidden;
+  /* Code editor canvas — intentionally theme-independent (dark code surface) */
   background: #1e1e1e;
 }
 
@@ -372,7 +373,7 @@
 }
 
 .variables-panel h3 i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .help-text {
@@ -411,8 +412,8 @@
 }
 
 .variable-item:hover {
-  border-color: var(--primary);
-  background: rgba(var(--primary-rgb, 0, 123, 255), 0.05);
+  border-color: var(--link-fg);
+  background: color-mix(in srgb, var(--link-fg, #007bff) 8%, transparent);
 }
 
 .variable-name {
@@ -425,14 +426,14 @@
 }
 
 .variable-name i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 12px;
 }
 
 .copy-btn {
   padding: 6px 10px;
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   font-size: 11px;
@@ -462,7 +463,7 @@
 }
 
 .variables-help h4 i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .help-item {
@@ -522,7 +523,7 @@
 }
 
 .preview-header h3 i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .preview-actions {
@@ -540,9 +541,9 @@
 }
 
 .preview-actions .btn-tool.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: var(--button-fg);
 }
 
 /* Preview Container */
@@ -551,7 +552,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f5f5;
+  background: var(--darkened-bg, #f5f5f5);
   overflow: hidden;
   position: relative;
 }
@@ -562,7 +563,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #666;
+  color: var(--body-quiet-color, #666);
 }
 
 .preview-loading i {
@@ -579,7 +580,8 @@
   width: 100%;
   height: 100%;
   border: none;
-  background: white;
+  /* Email canvas — intentionally theme-independent (emails render on a white background) */
+  background: #fff;
   transition: all 0.3s ease;
 }
 
@@ -590,9 +592,10 @@
 .preview-iframe.mobile {
   max-width: 375px;
   height: 667px;
+  /* Device bezel — intentionally dark in both themes (mimics a phone frame) */
   border: 16px solid #333;
   border-radius: 36px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px var(--shadow-dark, rgba(0, 0, 0, 0.3));
 }
 
 /* Save Status */
@@ -601,10 +604,10 @@
   bottom: 30px;
   right: 30px;
   padding: 12px 20px;
-  background: #28a745;
-  color: white;
+  background: color-mix(in srgb, var(--success-fg, #28a745) 65%, #000);
+  color: var(--button-fg, #fff);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   display: none;
   align-items: center;
   gap: 10px;
@@ -619,7 +622,7 @@
 }
 
 .save-status.error {
-  background: #dc3545;
+  background: var(--delete-button-bg, #dc3545);
 }
 
 .save-status i {
@@ -660,6 +663,7 @@
   .preview-iframe.mobile {
     max-width: 100%;
     height: 100%;
+    /* Device bezel — intentionally dark in both themes */
     border: 8px solid #333;
     border-radius: 18px;
   }
@@ -678,7 +682,7 @@
   background: linear-gradient(135deg, var(--darkened-bg) 0%, var(--body-bg) 100%);
   border-bottom: 2px solid var(--border-color);
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px var(--shadow-light, rgba(0, 0, 0, 0.05));
 }
 
 .panel-title {
@@ -691,7 +695,7 @@
 }
 
 .panel-title i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 13px;
 }
 
@@ -711,9 +715,9 @@
 }
 
 .expand-btn:hover {
-  background: var(--subtle-bg);
-  border-color: var(--primary);
-  color: var(--primary);
+  background: var(--darkened-bg);
+  border-color: var(--link-fg);
+  color: var(--link-fg);
   transform: scale(1.05);
 }
 
@@ -735,10 +739,10 @@
   width: calc(100vw - 40px);
   height: calc(100vh - 40px);
   padding: 0;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 50px var(--shadow-dark, rgba(0, 0, 0, 0.5));
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--link-fg);
 }
 
 /* Close button in expanded state */
@@ -783,6 +787,6 @@
   border: 1px solid var(--message-info-border);
   border-radius: var(--radius-md);
   font-size: 14px;
-  color: var(--info-color);
+  color: var(--body-fg);
   margin-left: var(--space-6);
 }

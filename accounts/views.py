@@ -3,6 +3,8 @@ Customer Account Views
 Handles customer-facing account management including subscriptions.
 """
 
+import logging
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,20 +15,61 @@ from subscriptions.manager import SubscriptionManager
 from subscriptions.models import BillingCycleLog, CustomerSubscription, PaymentToken
 
 
+def _subscription_price(subscription):
+    """Per-cycle billing price for a subscription as a Money, or None.
+
+    Subscription pricing lives on the pricing tier and is derived from the
+    linked product/variant price; there is no standalone price field on the
+    plan. Returns None when the product is no longer available (the FK is
+    SET_NULL) so callers can render an honest empty state rather than a
+    broken amount.
+    """
+    product = subscription.product
+    if product is None:
+        return None
+    try:
+        return subscription.pricing_tier.calculate_price(product, subscription.variant)
+    except Exception:
+        return None
+
+
+def _total_paid_money(subscription, subscription_price):
+    """Total successfully billed to date as a Money, or None.
+
+    ``CustomerSubscription.total_amount_paid()`` sums the billing logs and may
+    return either a Money (when rows exist) or a bare Decimal fallback. Coerce
+    to Money using the subscription's own currency so the template never has to
+    render a raw number.
+    """
+    from djmoney.money import Money
+
+    raw_total = subscription.total_amount_paid()
+    if isinstance(raw_total, Money):
+        return raw_total
+    if subscription_price is not None:
+        return Money(raw_total, subscription_price.currency)
+    return None
+
+
 @login_required
 def subscription_list(request):
     """
     Display list of customer's subscriptions
     """
-    subscriptions = (
+    subscriptions = list(
         CustomerSubscription.objects.filter(user=request.user)
-        .select_related("plan", "product", "variant", "payment_token")
+        .select_related("plan", "pricing_tier", "product", "variant", "payment_token")
         .order_by("-created_at")
     )
 
+    # Attach the per-cycle price (a Money value) to each subscription so the
+    # template can render it through the currency tags.
+    for sub in subscriptions:
+        sub.display_price = _subscription_price(sub)
+
     context = {
         "subscriptions": subscriptions,
-        "active_count": subscriptions.filter(status__in=["active", "trial"]).count(),
+        "active_count": sum(1 for s in subscriptions if s.status in ("active", "trial")),
     }
 
     return render(request, "accounts/subscriptions/list.html", context)
@@ -38,7 +81,9 @@ def subscription_detail(request, subscription_id):
     Display detailed subscription information with billing history
     """
     subscription = get_object_or_404(
-        CustomerSubscription.objects.select_related("plan", "product", "variant", "payment_token"),
+        CustomerSubscription.objects.select_related(
+            "plan", "pricing_tier", "product", "variant", "payment_token"
+        ),
         subscription_id=subscription_id,
         user=request.user,
     )
@@ -51,8 +96,14 @@ def subscription_detail(request, subscription_id):
     # Get available payment tokens for updating payment method
     payment_tokens = PaymentToken.objects.filter(user=request.user, is_active=True)
 
+    # Per-cycle price (Money) and total paid to date (Money) for display.
+    subscription_price = _subscription_price(subscription)
+    total_paid = _total_paid_money(subscription, subscription_price)
+
     context = {
         "subscription": subscription,
+        "subscription_price": subscription_price,
+        "total_paid": total_paid,
         "billing_logs": billing_logs,
         "payment_tokens": payment_tokens,
         "can_pause": subscription.status in ["active", "trial"],
@@ -78,16 +129,27 @@ def subscription_pause(request, subscription_id):
             return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
         try:
-            manager = SubscriptionManager(subscription.payment_gateway)
+            manager = SubscriptionManager(subscription.payment_provider_account)
             manager.pause_subscription(subscription, reason="Paused by customer")
             messages.success(request, _("Subscription paused successfully."))
-        except Exception as e:
-            messages.error(request, _("Failed to pause subscription: {}").format(str(e)))
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Failed to pause subscription %s", subscription_id
+            )
+            messages.error(
+                request,
+                _("We couldn't update your subscription. Please try again or contact support."),
+            )
 
         return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
     return render(
-        request, "accounts/subscriptions/pause_confirm.html", {"subscription": subscription}
+        request,
+        "accounts/subscriptions/pause_confirm.html",
+        {
+            "subscription": subscription,
+            "subscription_price": _subscription_price(subscription),
+        },
     )
 
 
@@ -106,16 +168,27 @@ def subscription_resume(request, subscription_id):
             return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
         try:
-            manager = SubscriptionManager(subscription.payment_gateway)
+            manager = SubscriptionManager(subscription.payment_provider_account)
             manager.resume_subscription(subscription)
             messages.success(request, _("Subscription resumed successfully."))
-        except Exception as e:
-            messages.error(request, _("Failed to resume subscription: {}").format(str(e)))
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Failed to resume subscription %s", subscription_id
+            )
+            messages.error(
+                request,
+                _("We couldn't update your subscription. Please try again or contact support."),
+            )
 
         return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
     return render(
-        request, "accounts/subscriptions/resume_confirm.html", {"subscription": subscription}
+        request,
+        "accounts/subscriptions/resume_confirm.html",
+        {
+            "subscription": subscription,
+            "subscription_price": _subscription_price(subscription),
+        },
     )
 
 
@@ -137,7 +210,7 @@ def subscription_cancel(request, subscription_id):
         reason = request.POST.get("reason", "Canceled by customer")
 
         try:
-            manager = SubscriptionManager(subscription.payment_gateway)
+            manager = SubscriptionManager(subscription.payment_provider_account)
             manager.cancel_subscription(subscription, immediately=immediately, reason=reason)
 
             if immediately:
@@ -147,13 +220,20 @@ def subscription_cancel(request, subscription_id):
                     request,
                     _("Subscription will be canceled at the end of the current billing period."),
                 )
-        except Exception as e:
-            messages.error(request, _("Failed to cancel subscription: {}").format(str(e)))
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Failed to cancel subscription %s", subscription_id
+            )
+            messages.error(
+                request,
+                _("We couldn't update your subscription. Please try again or contact support."),
+            )
 
         return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
     context = {
         "subscription": subscription,
+        "subscription_price": _subscription_price(subscription),
         "days_until_next_billing": subscription.days_until_next_billing(),
     }
 
@@ -177,29 +257,44 @@ def subscription_update_payment(request, subscription_id):
             return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
         try:
+            # Scope to the subscription's own provider account for defense in
+            # depth — the manager also rejects a mismatch, but this gives a clean
+            # error and never surfaces a token from another provider.
             payment_token = PaymentToken.objects.get(
-                token_id=payment_token_id, user=request.user, is_active=True
+                token_id=payment_token_id,
+                user=request.user,
+                is_active=True,
+                provider_account=subscription.payment_provider_account,
             )
         except PaymentToken.DoesNotExist:
             messages.error(request, _("Invalid payment method selected."))
             return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
         try:
-            manager = SubscriptionManager(subscription.payment_gateway)
+            manager = SubscriptionManager(subscription.payment_provider_account)
             manager.update_payment_method(subscription, payment_token)
             messages.success(request, _("Payment method updated successfully."))
-        except Exception as e:
-            messages.error(request, _("Failed to update payment method: {}").format(str(e)))
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Failed to update payment method for subscription %s", subscription_id
+            )
+            messages.error(
+                request,
+                _("We couldn't update your subscription. Please try again or contact support."),
+            )
 
         return redirect("accounts:subscription_detail", subscription_id=subscription_id)
 
     # Get available payment tokens
     payment_tokens = PaymentToken.objects.filter(
-        user=request.user, is_active=True, gateway=subscription.payment_gateway
+        user=request.user,
+        is_active=True,
+        provider_account=subscription.payment_provider_account,
     )
 
     context = {
         "subscription": subscription,
+        "subscription_price": _subscription_price(subscription),
         "payment_tokens": payment_tokens,
     }
 
@@ -244,7 +339,7 @@ def payment_token_delete(request, token_id):
             from subscriptions.provider_base import get_provider
 
             # Delete token at provider
-            provider = get_provider(token.gateway)
+            provider = get_provider(token.provider_account)
             provider.delete_payment_token(token.gateway_token_id)
 
             # Delete local record

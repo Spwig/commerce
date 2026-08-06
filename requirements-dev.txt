@@ -21,5 +21,11 @@ ipython==8.29.0                # Enhanced Python shell
 ipdb==0.13.13                  # IPython debugger
 django-debug-toolbar==4.4.6    # Development debugging toolbar
 
+# Linting & Formatting
+# Pinned: ruff's formatter changes between releases, so an unpinned CI
+# install drifts against local and flips ruff-format red on new releases.
+# Keep this in lockstep with the version in .github/workflows/lint.yml.
+ruff==0.16.0                   # Linter + formatter
+
 # Build Tools
 pip-licenses==5.5.1            # Third-party license extraction for THIRD_PARTY_NOTICES.txt

@@ -23,6 +23,7 @@ url_patterns:
 related:
   - store-settings
   - getting-started-overview
+  - region-availability
 published: true
 ---
 
@@ -91,6 +92,7 @@ The Header Builder lets you design your store's header using a drag-and-drop int
 - **Account Icon** — Login/account dropdown
 - **Language Selector** — Language switcher for multi-language stores
 - **Currency Selector** — Currency switcher for multi-currency stores
+- **Ship-To Selector** — Lets shoppers choose their shipping destination country, switching their sales region (and currency, for multi-currency stores). See the **Region Availability** guide for details
 - **Custom HTML** — Add any custom content
 - **Social Icons** — Links to your social media profiles
 - **Announcement Bar** — Promotional messages and offers

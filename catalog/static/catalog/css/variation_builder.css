@@ -53,13 +53,13 @@
 
 .notice-warning {
   background: var(--warning-bg, #fff9e6);
-  border-color: var(--warning-border, #ffd43b);
+  border-color: var(--warning-color, #ffd43b);
   color: var(--body-fg, #333);
 }
 
 .notice-icon {
   flex-shrink: 0;
-  color: var(--warning, #ffd43b);
+  color: var(--warning-color, #ffd43b);
 }
 
 .notice-content h3 {
@@ -166,12 +166,12 @@
 }
 
 .badge-button {
-  background: var(--success, #51cf66);
+  background: var(--success-fg, #51cf66);
   color: white;
 }
 
 .badge-radio {
-  background: var(--warning, #ffd43b);
+  background: var(--warning-color, #ffd43b);
   color: #333;
 }
 
@@ -388,7 +388,7 @@
 .radio-card:has(input[type='radio']:checked) {
   border-color: var(--primary, #417690);
   background: var(--primary-bg, #f0f5f7);
-  box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .radio-content {
@@ -472,7 +472,7 @@
   color: var(--primary, #417690);
 }
 
-.stat-label {
+.summary-stat .stat-label {
   font-size: 13px;
   color: var(--body-quiet-color, #666);
   text-transform: uppercase;
@@ -520,45 +520,24 @@
   border-top: 1px solid var(--border-color, #e0e0e0);
 }
 
-.button {
+/* Buttons reuse the shared admin-base .button / .button.secondary styling
+   (see the template markup). This scope only adds the flex layout the leading
+   SVG icon needs plus the disabled dimming admin-base doesn't provide, and
+   keeps those rules from leaking onto other pages that share this stylesheet. */
+.variation-builder-container .button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
   font-size: 14px;
-  font-weight: 500;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
   text-decoration: none;
 }
 
-.button-primary {
-  background: var(--primary, #417690);
-  color: white;
-}
-
-.button-primary:hover:not(:disabled) {
-  background: var(--primary-hover, #2d5469);
-}
-
-.button-primary:disabled {
+.variation-builder-container .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.button-secondary {
-  background: var(--body-bg, #fff);
-  color: var(--body-fg, #333);
-  border: 1px solid var(--border-color, #e0e0e0);
-}
-
-.button-secondary:hover {
-  background: var(--darkened-bg, #f8f8f8);
-}
-
-.button svg {
+.variation-builder-container .button svg {
   width: 20px;
   height: 20px;
 }
@@ -577,19 +556,13 @@
     flex-direction: column-reverse;
   }
 
-  .button {
+  .variation-builder-container .button {
     width: 100%;
     justify-content: center;
   }
 }
 
-/* Dark Theme Adjustments */
-@media (prefers-color-scheme: dark) {
-  .sku-badge {
-    background: var(--darkened-bg, #2d3338);
-  }
-
-  .notice-warning {
-    background: rgba(255, 212, 59, 0.1);
-  }
-}
+/* Dark theme is handled by the design tokens throughout (--darkened-bg and
+   --warning-bg flip via the admin data-theme toggle), so the old
+   @media (prefers-color-scheme: dark) overrides — which only re-tweaked those
+   fallbacks — are unnecessary. */

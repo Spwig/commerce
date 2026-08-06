@@ -13,10 +13,11 @@ class ImageProcessor:
     """Service for processing images - conversion, optimization, and thumbnail generation"""
 
     def __init__(self):
-        self.webp_quality = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get("WEBP_QUALITY", 85)
-        self.thumbnail_sizes = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
-            "THUMBNAIL_SIZES", {}
-        )
+        media_settings = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {})
+        self.webp_quality = media_settings.get("WEBP_QUALITY", 85)
+        self.avif_quality = media_settings.get("AVIF_QUALITY", 63)
+        self.avif_speed = media_settings.get("AVIF_SPEED", 6)
+        self.thumbnail_sizes = media_settings.get("THUMBNAIL_SIZES", {})
 
     def convert_to_webp(self, image_file, quality=None, preserve_transparency=False):
         """
@@ -61,6 +62,60 @@ class ImageProcessor:
 
         except Exception as e:
             logger.error(f"Error converting image to WebP: {e}")
+            return None
+
+    def convert_to_avif(self, image_file, quality=None, speed=None, preserve_transparency=False):
+        """
+        Convert an image to AVIF format.
+
+        AVIF is the primary next-gen rendition, typically 30-50% smaller than
+        WebP at equivalent quality. Alpha is supported natively. Encoding is
+        CPU-heavier than WebP, so callers should run this off the request path
+        (Celery), not inline during upload.
+
+        Args:
+            image_file: Django UploadedFile or File object
+            quality: AVIF quality (0-100); uses AVIF_QUALITY setting if not given
+            speed: AVIF encoder speed (0-10, higher = faster/larger); uses
+                AVIF_SPEED setting if not given
+            preserve_transparency: If True, keep the alpha channel
+
+        Returns:
+            ContentFile with AVIF image, or None on failure
+        """
+        try:
+            img = Image.open(image_file)
+            img.load()  # Force PIL to fully load image data into memory
+
+            has_transparency = img.mode in ("RGBA", "LA", "P")
+
+            if has_transparency and preserve_transparency:
+                # AVIF supports RGBA transparency natively
+                if img.mode == "P" or img.mode == "LA":
+                    img = img.convert("RGBA")
+            elif has_transparency:
+                # Flatten to RGB with white background (matches WebP behaviour)
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                if img.mode == "P":
+                    img = img.convert("RGBA")
+                background.paste(img, mask=img.split()[-1] if img.mode == "RGBA" else None)
+                img = background
+            elif img.mode not in ("RGB", "L"):
+                img = img.convert("RGB")
+
+            output = io.BytesIO()
+            img.save(
+                output,
+                format="AVIF",
+                quality=quality if quality is not None else self.avif_quality,
+                speed=speed if speed is not None else self.avif_speed,
+            )
+            output.seek(0)
+
+            return ContentFile(output.read())
+
+        except Exception as e:
+            logger.error(f"Error converting image to AVIF: {e}")
             return None
 
     def _parse_padding_color(self, padding_color):
@@ -452,3 +507,74 @@ class ImageProcessor:
         except Exception as e:
             logger.error(f"Error calculating focal point: {e}")
             return 0.5, 0.5
+
+
+def generate_avif_variants(asset, processor=None, force=False):
+    """Generate AVIF renditions for a MediaAsset and all of its thumbnails.
+
+    AVIF is the primary next-gen rendition, served ahead of WebP in a
+    <picture> element. This mirrors the existing WebP files: a full-size
+    ``avif_file`` on the asset plus one ``avif_file`` per MediaThumbnail.
+    Thumbnails are re-encoded from their already-cropped ``file`` so the crop
+    geometry never has to be reproduced here.
+
+    Idempotent: existing AVIF files are skipped unless ``force`` is True.
+    Non-images (video, 3D, SVG) are skipped. Safe to run inside a Celery task
+    or a management command. Returns the number of AVIF files written.
+    """
+    if processor is None:
+        processor = ImageProcessor()
+
+    written = 0
+
+    if not asset.is_image() or asset.mime_type == "image/svg+xml":
+        return written
+
+    # Full-size AVIF from the original (flattened to match the WebP sibling).
+    if asset.original_file and (force or not asset.avif_file):
+        try:
+            asset.original_file.seek(0)
+            content = processor.convert_to_avif(asset.original_file)
+            if content:
+                asset.avif_file.save(f"{asset.id}.avif", content, save=True)
+                written += 1
+        except Exception as e:
+            logger.warning(f"Failed to generate AVIF for asset {asset.id}: {e}")
+
+    # Per-preset AVIF from each already-cropped thumbnail file. preserve
+    # transparency so padded/transparent thumbnails (PNG) keep their alpha,
+    # matching how the WebP thumbnail was produced.
+    for thumb in asset.thumbnails.all():
+        if (thumb.avif_file and not force) or not thumb.file:
+            continue
+        try:
+            thumb.file.seek(0)
+            content = processor.convert_to_avif(thumb.file, preserve_transparency=True)
+            if content:
+                thumb.avif_file.save(f"{asset.id}_{thumb.size_preset}.avif", content, save=True)
+                written += 1
+        except Exception as e:
+            logger.warning(
+                f"Failed to generate AVIF thumbnail {thumb.size_preset} for asset {asset.id}: {e}"
+            )
+
+    return written
+
+
+def queue_avif_generation(asset):
+    """Queue async AVIF generation for an image asset if enabled.
+
+    No-op for non-images or when AUTO_AVIF is disabled. Enqueue failures are
+    swallowed so they never break the upload response — the storefront falls
+    back to WebP until AVIF exists.
+    """
+    try:
+        if not asset.is_image():
+            return
+        if not getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get("AUTO_AVIF", True):
+            return
+        from core.tasks import generate_avif_for_asset
+
+        generate_avif_for_asset.delay(str(asset.id))
+    except Exception as e:
+        logger.warning(f"Could not queue AVIF generation for {getattr(asset, 'id', '?')}: {e}")

@@ -37,7 +37,7 @@ def generate_error_reference():
 
 def _generate_unique_slug(name, exclude_id=None):
     """Generate a unique slug from a name, appending -2, -3, etc. if needed."""
-    base_slug = slugify(name)
+    base_slug = slugify(name) or "brand"
     slug = base_slug
     counter = 2
     while True:
@@ -46,7 +46,8 @@ def _generate_unique_slug(name, exclude_id=None):
             qs = qs.exclude(id=exclude_id)
         if not qs.exists():
             return slug
-        slug = f"{base_slug}-{counter}"
+        suffix = f"-{counter}"
+        slug = f"{base_slug[: 200 - len(suffix)]}{suffix}"
         counter += 1
 
 

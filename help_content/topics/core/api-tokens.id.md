@@ -2,15 +2,15 @@
 title: Token API
 ---
 
-Token API adalah kunci aman yang memungkinkan layanan eksternal dan integrasi berkomunikasi dengan toko Anda. Ketika layanan pihak ketiga atau alat memerlukan akses ke data toko Anda atau memicu tindakan, ia mengirimkan token API bersama setiap permintaan agar toko Anda dapat memverifikasi bahwa permintaan tersebut telah disetujui. Anda menciptakan dan mengelola semua token, termasuk bagian toko mana saja yang dapat diakses oleh token tersebut, dari bagian Token API di admin Anda.
+Token API adalah kunci aman yang memungkinkan layanan eksternal dan integrasi berkomunikasi dengan toko Anda. Ketika layanan pihak ketiga atau alat memerlukan akses ke data toko Anda atau memicu tindakan, ia mengirimkan token API bersama setiap permintaan agar toko Anda dapat memverifikasi bahwa permintaan tersebut sah. Anda menciptakan dan mengelola semua token, termasuk bagian toko mana saja yang dapat diakses oleh token tersebut, dari bagian Token API di admin Anda.
 
 ## Kapan Anda memerlukan token API
 
 Anda biasanya memerlukan membuat token API ketika:
 
 - Menghubungkan layanan eksternal atau alat otomatisasi yang memerlukan membaca dari atau menulis ke toko Anda
-- Menyiapkan penerima webhook yang memerlukan otentikasi terhadap panggilan masuk
-- Mengkonfigurasi Sistem Bantuan Spwig untuk instalasi Anda
+- Menyiapkan penerima webhook yang memerlukan otentikasi panggilan masuk
+- Mengonfigurasi Sistem Bantuan Spwig untuk instalasi Anda
 - Membangun integrasi khusus menggunakan API Spwig
 - Menyinkronkan data antara toko Spwig Anda dan sistem lain
 
@@ -30,9 +30,9 @@ Ketika membuat token, Anda memilih jenis yang menggambarkan tujuannya. Jenis ini
 
 ## Cakupan API: mengontrol bagian mana yang dapat diakses oleh token
 
-Setiap token juga memiliki bagian **Cakupan API** yang menentukan secara tepat bagian mana dari toko Anda yang diperbolehkan untuk dipanggil. Sebaliknya dari token memiliki akses penuh ke segala sesuatu, Anda memberikan akses satu area pada satu waktu—dan pada tingkat yang sebenarnya dibutuhkan oleh integrasi.
+Setiap token juga memiliki bagian **Cakupan API** yang menentukan secara tepat bagian mana dari toko Anda yang diperbolehkan untuk dipanggil. Sebaliknya dari token memiliki akses penuh ke segala sesuatu, Anda memberikan akses satu area pada satu waktu — dan pada tingkat yang sebenarnya dibutuhkan oleh integrasi.
 
-**Token tanpa cakupan yang dipilih tidak dapat mengakses API apa pun**, bahkan jika token tersebut secara lain aktif dan valid. Ini adalah pengaturan default untuk token baru, sehingga integrasi tidak akan berfungsi sampai Anda secara sengaja memberikan akses kepadanya.
+**Token yang tidak memiliki cakupan yang dipilih tidak dapat mengakses API apa pun**, bahkan jika token tersebut secara lain aktif dan valid. Ini adalah pengaturan default untuk token baru, sehingga integrasi tidak akan berfungsi sampai Anda secara sengaja memberikan akses kepadanya.
 
 Untuk setiap cakupan, Anda memilih salah satu dari tiga tingkat akses:
 
@@ -47,7 +47,7 @@ Cakupan dikelompokkan untuk cocok dengan area admin Anda:
 | Kelompok | Cakupan | Tersedia Baca & Tulis? | Memberi akses ke |
 |-------|-------|:---:|-------------------|
 | Analitik | **Analitik Penjualan** | Hanya Baca | Dashboard penjualan, KPI, analitik produk/pelanggan/kategori, perbandingan dan ekspor |
-| Analitik | **Analitik Web** | Hanya Baca | Analitik pengunjung dan lalu lintas: ringkasan, tren, halaman teratas, geografi dan pengarah |
+| Analitik | **Analitik Web** | Hanya Baca | Analitik pengunjung dan lalu lintas: ringkasan, tren, halaman teratas, geografi dan pengacu |
 | Katalog | **Produk** | Ya | Produk, variasi, gambar, penyesuaian stok dan penugasan atribut |
 | Katalog | **Kategori** | Ya | Kategori produk, termasuk gambar dan banner |
 | Katalog | **Merek** | Ya | Merek produk |
@@ -58,7 +58,7 @@ Cakupan dikelompokkan untuk cocok dengan area admin Anda:
 | Toko & Pengaturan | **Pengaturan Toko** | Ya | Pengaturan toko, bahasa yang tersedia dan branding (nama, warna, logo) |
 | Pengguna & Akses | **Staf & Peran** | Ya | Akun staf, undangan, peran dan katalog izin |
 
-Dua cakupan **Analitik** selalu hanya baca—data pelaporan tidak memiliki konsep "tulis", sehingga pemilih hanya menawarkan **Tidak ada akses** atau **Baca** untuk mereka.
+Dua cakupan **Analitik** selalu hanya baca — data pelaporan tidak memiliki konsep "tulis", sehingga pemilih hanya menawarkan **Tidak ada akses** atau **Baca** untuk mereka.
 
 [![Pemilih Ruang Lingkup API, dengan catatan akses di atas kelompok ruang lingkup Analitik dan Katalog](/static/core/admin/img/help/api-tokens/api-token-scope-picker.webp)]
 
@@ -74,7 +74,7 @@ Ruang lingkup token menggambarkan *batas* dari apa yang dapat dilakukan oleh tok
 - **Baca & Tulis** pada ruang lingkup hanya berfungsi jika peran staf yang menciptakannya juga memperbolehkan akses tulis ke area tersebut. Jika peran mereka hanya untuk melihat, misalnya, Produk, token yang mereka buat dengan "Produk: Baca & Tulis" tetap hanya dapat membaca — peran bertindak sebagai pintu kedua di atas ruang lingkup.
 - Jika staf yang menciptakan token dihapus atau akunnya dinonaktifkan, token segera kehilangan akses API, terlepas dari ruang lingkupnya — tidak ada lagi pengguna yang diperbolehkan untuk bertindak sebagai token tersebut.
 
-Ini berarti cara teraman untuk membatasi ruang lingkup token adalah dengan menciptakannya saat Anda masuk sebagai staf yang perannya sudah sesuai dengan akses yang ingin dimiliki oleh token tersebut.
+Ini berarti cara teraman untuk membatasi ruang lingkup token adalah dengan menciptakannya saat Anda masuk sebagai staf yang perannya sudah cocok dengan akses yang ingin dimiliki oleh token tersebut.
 
 ## Membuat Token API
 
@@ -113,13 +113,13 @@ Ketika token berakhir, permintaan yang menggunakan token tersebut akan ditolak. 
 
 ## Membatasi ke alamat IP tertentu
 
-Bidang **IP yang Diperbolehkan** menerima daftar alamat IP. Ketika daftar tidak kosong, token hanya berfungsi ketika permintaan berasal dari salah satu alamat tersebut.
+Bidang **IP yang Diperbolehkan** menerima daftar alamat IP. Ketika daftar tersebut tidak kosong, token hanya berfungsi ketika permintaan berasal dari salah satu alamat tersebut.
 
 Misalnya, jika alat analitik Anda berjalan di server `203.0.113.42`, menambahkan alamat IP tersebut berarti token tidak dapat disalahgunakan dari lokasi lain, bahkan jika token tersebut bocor.
 
 Biarkan **IP yang Diperbolehkan** kosong untuk memungkinkan permintaan dari alamat IP mana pun.
 
-**Kadaluarsa dan pembatasan IP diperiksa secara independen dari cakupan.** Token yang sudah kedaluwarsa atau tidak ada dalam daftar izin akan ditolak sebelum cakupannya bahkan dipertimbangkan, dan token dengan cakupan yang luas tetap ditolak begitu token tersebut kedaluwarsa atau dipanggil dari IP yang tidak terdaftar.
+**Kadaluarsa dan pembatasan IP diperiksa secara independen dari cakupan.** Token yang sudah kedaluarsa atau tidak ada dalam daftar izin akan ditolak sebelum cakupannya bahkan dipertimbangkan, dan token dengan cakupan yang luas tetap ditolak begitu token tersebut kedaluarsa atau dipanggil dari IP yang tidak terdaftar.
 
 ## Memanggil API dengan token
 
@@ -129,7 +129,7 @@ Integrasi mengautentikasi ke API admin Spwig dengan mengirimkan token dalam head
 Authorization: Bearer <your-token-value>
 ```
 
-Setiap endpoint API admin berada di bawah `/api/admin/...`. Pengembang yang membangun integrasi Anda memutuskan endpoint mana yang akan dipanggil — tugas Anda sebagai merchant adalah memastikan **Cakupan API** token mencakup endpoint tersebut. Jika permintaan ditolak dengan kesalahan izin, hal pertama yang perlu diperiksa adalah apakah token tersebut diberi cakupan yang benar pada tingkat akses yang benar.
+Setiap endpoint API admin berada di bawah `/api/admin/...`. Pengembang yang membangun integrasi Anda memutuskan endpoint mana yang akan dipanggil — tugas Anda sebagai merchant adalah memastikan cakupan API token memiliki cakupan yang mencakup endpoint tersebut. Jika permintaan ditolak dengan kesalahan izin, hal pertama yang perlu diperiksa adalah apakah token tersebut diberi cakupan yang benar pada tingkat akses yang benar.
 
 ### Contoh: membaca analitik lalu lintas web
 
@@ -158,7 +158,7 @@ Untuk segera menghentikan token dari bekerja tanpa menghapusnya:
 2. Hilangkan centang **Aktif**
 3. Simpan
 
-Token tetap ada dalam daftar Anda untuk referensi tetapi akan ditolak pada permintaan berikutnya. Ini berguna ketika Anda perlu sementara menangguhkan integrasi sementara menyelidiki masalah.
+Token tetap ada dalam daftar Anda untuk referensi tetapi akan ditolak pada permintaan berikutnya. Ini berguna ketika Anda perlu sementara menangguhkan integrasi saat menyelidiki masalah.
 
 Untuk menghapus token secara permanen:
 
@@ -170,13 +170,13 @@ Setelah dihapus, token tidak dapat dipulihkan. Jika integrasi masih membutuhkan 
 
 ## Contoh: mengatur integrasi Zapier
 
-**Skenario:** Anda ingin menghubungkan toko Anda ke Zapier untuk mengotomatisasi notifikasi pesanan.
+**Skenario:** Anda ingin menghubungkan toko Anda ke Zapier untuk mengotomatisasi pemberitahuan pesanan.
 
 | Field | Value |
 |-------|-------|
 | Name | `Zapier Order Automation` |
 | Token Type | External Integration |
-| Description | Digunakan oleh Zapier untuk membaca pesanan baru dan memicu notifikasi |
+| Description | Digunakan oleh Zapier untuk membaca pesanan baru dan memicu pemberitahuan |
 | API Scopes | **Orders**: Read & Write |
 | Active | Yes |
 | Expires At | *(biarkan kosong)* |
@@ -186,9 +186,9 @@ Hanya cakupan **Orders** yang diberikan, sehingga bahkan jika token ini terungka
 
 - Beri setiap token nama yang jelas dan spesifik — `Shopify Sync v2` jauh lebih berguna daripada `Token 3` ketika Anda sedang menyelesaikan masalah bulan-bulan kemudian
 - Buat satu token per integrasi — jika sebuah integrasi terancam, Anda dapat membatalkan hanya token tersebut tanpa mengganggu integrasi lainnya
-- **Berikan hanya cakupan (scope) yang benar-benar dibutuhkan oleh integrasi** — alat pelaporan hanya membutuhkan akses Baca terhadap Analitik Penjualan atau Analitik Web, bukan Baca & Tulis pada Produk atau Staf & Peran
+- **Berikan hanya cakupan (scope) yang sebenarnya dibutuhkan oleh integrasi** — alat pelaporan hanya membutuhkan akses Baca terhadap Analitik Penjualan atau Analitik Web, bukan Baca & Tulis pada Produk atau Staf & Peran
 - Periksa ringkasan **"This token can access:"** pada formulir perubahan sebelum menyerahkan token kepada pihak ketiga — ini adalah cara tercepat untuk memastikan Anda tidak memberikan akses lebih dari yang dimaksudkan
 - Ingat bahwa akses tulis juga bergantung pada peran staf yang menciptakan token tersebut — jika sebuah cakupan menunjukkan Baca & Tulis tetapi tulisan masih gagal, periksa izin peran pengguna tersebut juga
-- Tetapkan tanggal kedaluwarsa untuk token yang digunakan dalam proyek satu kali atau integrasi sementara — ini mengurangi risiko token yang terlupakan tetap aktif selamanya
+- Tetapkan tanggal kedaluwarsa untuk token yang digunakan dalam proyek satu kali atau integrasi sementara — ini mengurangi risiko token yang terlupakan tetap aktif secara permanen
 - Tinjau daftar token Anda setiap beberapa bulan dan nonaktifkan token dengan tanggal **Last Used** yang tidak terduga tua, karena mungkin termasuk integrasi yang sudah tidak berjalan lagi
 - Jika Anda mencurigai token telah terpapar, nonaktifkan segera, buat penggantinya, dan perbarui integrasi yang terkena sebelum mengaktifkan kembali akses

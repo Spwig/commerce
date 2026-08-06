@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db.models import Count, Q
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from product_feeds.models import FeedProviderAccount, FeedSyncLog, ProductFeed
@@ -117,12 +118,12 @@ class FeedProviderAccountAdmin(admin.ModelAdmin):
     def is_active_badge(self, obj):
         """Display active status badge"""
         if obj.is_active:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge active">'
                 '<i class="fas fa-check-circle"></i> ACTIVE'
                 "</span>"
             )
-        return format_html(
+        return mark_safe(
             '<span class="status-badge inactive">'
             '<i class="fas fa-times-circle"></i> INACTIVE'
             "</span>"
@@ -133,7 +134,7 @@ class FeedProviderAccountAdmin(admin.ModelAdmin):
     def is_primary_badge(self, obj):
         """Display primary provider badge"""
         if obj.is_primary:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge primary"><i class="fas fa-star"></i> PRIMARY</span>'
             )
         return "-"

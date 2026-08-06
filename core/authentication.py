@@ -14,7 +14,8 @@ first-class DRF credential for the admin API. It is intentionally narrow:
   superuser bypass.
 - It enforces scopes fail-closed against ``admin_api.scope_map.SCOPE_MAP``: an
   unmapped endpoint, or a token lacking the required scope at the required
-  access level, is denied. Read vs. write is derived from the HTTP method.
+  access level, is denied. Read vs. write is derived from the HTTP method,
+  unless the endpoint pins an override in ``admin_api.scope_map``.
 
 Session and mobile-app-token requests never reach the scope logic here — they
 present a different credential (session cookie / ``MobileAuthToken``), for
@@ -23,7 +24,6 @@ which this class returns ``None`` and lets the next authenticator handle them.
 
 from django.utils.translation import gettext_lazy as _
 from rest_framework import authentication, exceptions
-from rest_framework.permissions import SAFE_METHODS
 
 # HTTP header parsing is identical to MobileTokenAuthentication; both use the
 # "Bearer" scheme. This class is registered FIRST so a core.APIToken is matched
@@ -113,7 +113,7 @@ class APITokenAuthentication(authentication.BaseAuthentication):
 
     def _enforce_scope(self, row, request):
         """Fail-closed scope check keyed off the resolved URL name."""
-        from admin_api.scope_map import required_scope
+        from admin_api.scope_map import required_access, required_scope
 
         url_name = request.resolver_match.url_name
         scope_key = required_scope(url_name)
@@ -123,7 +123,7 @@ class APITokenAuthentication(authentication.BaseAuthentication):
                 _("API tokens are not permitted to access this endpoint.")
             )
 
-        access = "read" if request.method in SAFE_METHODS else "write"
+        access = required_access(url_name, request.method)
         if not row.has_scope(scope_key, access=access):
             raise exceptions.PermissionDenied(
                 _("This token does not have the required scope for this endpoint.")

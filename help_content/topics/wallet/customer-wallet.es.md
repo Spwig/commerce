@@ -4,7 +4,7 @@ title: Billetera del cliente
 
 La billetera del cliente es un registro de crédito de tienda que lleva un balance en curso para cada cliente. El crédito de tienda puede agregarse como resultado de reembolsos, recompensas por referidos, campañas promocionales o ajustes manuales realizados por tu equipo.
 
-> **Los saldos de la billetera se pueden utilizar en el proceso de pago.** Un cliente registrado con crédito de tienda lo ve en el paso de pago y puede aplicarlo con un solo clic. El crédito se deduce del monto final de la factura — después de impuestos y envío — y cualquier resto se cobra normalmente a su tarjeta. Si el crédito cubre completamente el pedido, no se necesita ninguna tarjeta. El crédito se reserva al aplicarlo y solo se deduce realmente una vez que se confirme el pago, por lo tanto, un proceso de pago abandonado nunca cuesta nada al cliente.
+> **Los saldos de la billetera se pueden utilizar en el proceso de pago.** Un cliente que ha iniciado sesión con crédito de tienda lo ve en el paso de pago y puede aplicarlo con un solo clic. El crédito se deduce del monto final de la factura — después de impuestos y envío — y cualquier resto se cobra normalmente a su tarjeta. Si el crédito cubre completamente el pedido, no se necesita ninguna tarjeta en absoluto. El crédito se reserva al aplicarlo y solo se deduce realmente una vez que se confirme el pago, por lo tanto, un proceso de pago abandonado nunca cuesta nada al cliente.
 
 Navega a **Clientes > Billeteras de clientes** para ver y gestionar las billeteras.
 
@@ -14,7 +14,7 @@ Cada billetera del cliente muestra cuatro figuras de saldo:
 
 | Balance | Descripción |
 |---|---|
-| **Saldo disponible** | El crédito actual y utilizable del cliente — esto será lo que se pueda utilizar en el proceso de pago una vez que esa función esté disponible |
+| **Saldo disponible** | El crédito actual y utilizable del cliente — este será el saldo que se podrá utilizar en el proceso de pago una vez que esa función esté disponible |
 | **Saldo pendiente** | Créditos que aún no están en el saldo disponible — por ejemplo, un reembolso que aún está dentro de su período de confirmación |
 | **Crédito total en la vida** | La cantidad total que ha sido creditada en esta billetera, incluyendo todos los créditos pasados |
 | **Uso total en la vida** | La cantidad total que ha sido debitada de esta billetera |
@@ -35,7 +35,7 @@ Usa el filtro **Activo** para separar las billeteras activas de las congeladas. 
 
 ## Leyendo el historial de transacciones
 
-Cada cambio en el saldo de una billetera se registra como una transacción individual. El historial de transacciones es un libro contable completo y permanente — las transacciones nunca se editan ni eliminan. Si se necesita corregir un error, se agrega una nueva transacción compensadora en su lugar.
+Cada cambio en el saldo de una billetera se registra como una transacción individual. El historial de transacciones es un libro contable completo y permanente — las transacciones nunca se editan ni eliminan. Si se necesita corregir un error, se agrega una nueva transacción compensatoria en su lugar.
 
 Cada transacción muestra:
 
@@ -64,7 +64,7 @@ Cada transacción muestra:
 - **Recompensa por referido** — crédito ganado a través del programa de referidos
 - **Promoción** — crédito otorgado como parte de una campaña de marketing
 - **Ajuste manual** — crédito agregado o retirado directamente por un miembro del personal
-- **Pago de pedido** — fondos gastados en el proceso de pago para pagar un pedido. No se usa aún — reservado para cuando el gasto en la billetera en el proceso de pago esté disponible
+- **Pago de pedido** — fondos gastados en el proceso de pago para pagar un pedido. No se usa aún — reservado para cuando el gasto en la billetera esté disponible
 
 ## Ajustes manuales de billetera
 
@@ -84,7 +84,7 @@ El saldo se conserva y la billetera puede reactivarse en cualquier momento. Mien
 
 ## Ver todas las transacciones
 
-Para una vista general de la actividad de la billetera, navega a **Clientes > Transacciones de Billetera**. Esta lista muestra todas las transacciones en todas las billeteras de los clientes, con filtros para:
+Para una vista general de la actividad de la billetera, navega a **Clientes > Transacciones de Billetera**. Esta lista muestra todas las transacciones de todas las billeteras de los clientes, con filtros para:
 
 - **Tipo de transacción** — filtra por crédito, débito, ajuste, etc.
 - **Fuente** — filtra por donde originaron las transacciones
@@ -95,8 +95,8 @@ La lista de transacciones es de solo lectura — no se pueden editar ni eliminar
 
 ## Consejos
 
-- Revisa **Crédito Vitalicio** versus **Usado Vitalicio** para entender cuán activamente un cliente utiliza su crédito de tienda — un gran saldo no utilizado puede indicar que el cliente ha olvidado que existe
+- Revisa **Crédito Vitalicio** versus **Usado Vitalicio** para entender cuán activamente un cliente utiliza su crédito del almacén — un gran saldo no utilizado puede indicar que el cliente ha olvidado que existe
 - Si un cliente reporta que su saldo parece incorrecto, revisa la historia completa de transacciones para rastrear exactamente cómo cambió el saldo con el tiempo; la columna **Saldo Después** en cada entrada facilita esto
-- Un gran saldo no gastado vale la pena un recordatorio — los clientes ven su crédito de tienda en el panel de control de la cuenta y en el paso de pago en el momento del pago, pero un breve correo electrónico que lo señale a menudo lo convierte en un pedido
+- Un gran saldo no gastado vale la pena un recordatorio — los clientes ven su crédito del almacén en el panel de control de la cuenta y en el paso de pago en el momento del pago, pero un breve correo electrónico señalándolo a menudo lo convierte en un pedido
 - Las billeteras congeladas conservan su saldo permanentemente; no hay vencimiento — si desactivas temporalmente una billetera, recuerda reactivarla cuando el problema se resuelva
 - El **ID de referencia** en cada transacción vincula de vuelta al registro original, lo que facilita verificar por qué se aplicó un crédito o débito sin tener que buscar en otro lugar

@@ -153,13 +153,13 @@
           const product = item.product || {};
           const variant = item.variant;
           const name = product.name || 'Product';
-          const imageUrl =
-            product.images && product.images.length > 0
-              ? product.images[0].thumbnail_url ||
-                product.images[0].image_url ||
-                product.images[0].url ||
-                ''
-              : '/static/img/placeholder-product-thumb.png';
+          const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+          const imageUrl = firstImage
+            ? firstImage.thumbnail_url || firstImage.image_url || firstImage.url || ''
+            : '/static/img/placeholder-product-thumb.png';
+          const imageSources = firstImage
+            ? firstImage.thumbnail_sources || firstImage.image_sources
+            : null;
           const productUrl = product.url || product.slug ? `/product/${product.slug}/` : '#';
           const variantName = variant ? variant.name || '' : '';
           const unitPrice = item.product
@@ -179,17 +179,29 @@
                                   .map(comp => {
                                     const compName = comp.product ? comp.product.name : 'Component';
                                     const compVariant = comp.variant ? comp.variant.name : '';
-                                    const compImage =
+                                    const compFirstImg =
                                       comp.product &&
                                       comp.product.images &&
                                       comp.product.images.length > 0
-                                        ? comp.product.images[0].thumbnail_url ||
-                                          comp.product.images[0].image_url ||
-                                          comp.product.images[0].url ||
-                                          ''
-                                        : '';
+                                        ? comp.product.images[0]
+                                        : null;
+                                    const compImage = compFirstImg
+                                      ? compFirstImg.thumbnail_url ||
+                                        compFirstImg.image_url ||
+                                        compFirstImg.url ||
+                                        ''
+                                      : '';
                                     const compImageHtml = compImage
-                                      ? `<img src="${this.escapeAttr(compImage)}" alt="" class="cart-item__component-image" loading="lazy">`
+                                      ? window.buildPictureMarkup(
+                                          compFirstImg.thumbnail_sources ||
+                                            compFirstImg.image_sources,
+                                          {
+                                            fallbackSrc: compImage,
+                                            className: 'cart-item__component-image',
+                                            loading: 'lazy',
+                                            alt: '',
+                                          }
+                                        )
                                       : '<div class="cart-item__component-image cart-item__component-image--placeholder"><i class="fas fa-box"></i></div>';
                                     return `
                                         <div class="cart-item__component">
@@ -208,15 +220,54 @@
             }
           }
 
+          // Subscription line: a badge + a cadence line built from the
+          // server-provided per-cycle price and billing display. Display only —
+          // the line total stays the server value.
+          let subscriptionHtml = '';
+          if (item.is_subscription) {
+            const badge =
+              (window.UI_STRINGS && window.UI_STRINGS['js.subscription']) || 'Subscription';
+            const cadence = item.subscription_billing_display || '';
+            const price =
+              item.subscription_unit_price != null
+                ? this.formatCurrency(item.subscription_unit_price)
+                : '';
+            let cadenceLine = '';
+            if (price && cadence) {
+              const tmpl =
+                (window.UI_STRINGS && window.UI_STRINGS['js.subscription_per_cycle']) ||
+                '{price} / {cadence}';
+              cadenceLine = tmpl.replace('{price}', price).replace('{cadence}', cadence);
+            } else if (price) {
+              cadenceLine = price;
+            }
+            const plan = item.subscription_plan_details;
+            const hasTrial = plan && (plan.trial_available || (plan.trial_period_days || 0) > 0);
+            const trialNote = hasTrial
+              ? (window.UI_STRINGS && window.UI_STRINGS['js.subscription_free_trial']) ||
+                'Includes a free trial'
+              : '';
+            subscriptionHtml = `
+                            <div class="cart-item__subscription">
+                                <span class="cart-item__subscription-badge"><i class="fas fa-sync-alt"></i> ${this.escapeHtml(badge)}</span>
+                                ${cadenceLine ? `<span class="cart-item__subscription-cadence">${this.escapeHtml(cadenceLine)}</span>` : ''}
+                                ${trialNote ? `<span class="cart-item__subscription-trial">${this.escapeHtml(trialNote)}</span>` : ''}
+                            </div>
+                        `;
+          }
+
           return `
                     <div class="cart-item" data-item-id="${item.id}">
-                        <img src="${this.escapeAttr(imageUrl)}"
-                             alt="${this.escapeAttr(name)}"
-                             class="cart-item__image"
-                             loading="lazy">
+                        ${window.buildPictureMarkup(imageSources, {
+                          fallbackSrc: imageUrl,
+                          alt: name,
+                          className: 'cart-item__image',
+                          loading: 'lazy',
+                        })}
                         <div class="cart-item__details">
                             <a href="${this.escapeAttr(productUrl)}" class="cart-item__name">${this.escapeHtml(name)}</a>
                             ${variantName ? `<p class="cart-item__variant">${this.escapeHtml(variantName)}</p>` : ''}
+                            ${subscriptionHtml}
                             ${componentsHtml}
                             <div class="cart-item__actions">
                                 <div class="cart-item__quantity">
@@ -244,7 +295,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="cart-item__line-total">${this.formatCurrency(lineTotal)}</div>
+                        <div class="cart-item__line-total">${this.formatCurrency(lineTotal)}${item.is_on_sale && item.regular_total ? ` <del class="cart-item__line-total-original">${this.formatCurrency(item.regular_total)}</del>` : ''}</div>
                     </div>
                 `;
         })

@@ -156,3 +156,59 @@ def _bypass_license_acceptance_middleware(monkeypatch):
             return (False, None)
 
     monkeypatch.setattr(la, "get_license_acceptance_service", lambda: _StubService())
+
+
+@pytest.fixture(scope="session")
+def test_gateway_on_disk() -> "object":
+    """Materialise the on-disk ``test_gateway`` provider from the tracked
+    ``preinstalled/`` bundle.
+
+    ``components_data/`` is gitignored (it's regenerated from the bundled
+    packages on real installs), so a fresh clone — CI's act runner, a new dev
+    checkout — has NO provider code on disk. Any test that loads the REAL
+    provider then fails: the tier2 gateway matrix, and the golden BROWSER flows
+    whose checkout renders an empty ``#payment-providers-list`` (the
+    ``continue-payment`` button never enables → 30s Playwright timeout).
+
+    Locally this is a no-op (the tree is already unpacked). In CI it extracts
+    ``preinstalled/integrations/test_gateway-<v>.zip`` into the marketplace's
+    ``…/test_gateway/v{version}/`` + ``current`` symlink layout. Files only —
+    the DB ``ComponentRegistry`` row is created by ``ComponentRegistryFactory``
+    (tier2 proves the loader needs no ``ComponentVersion`` row), so this stays
+    out of the per-test transaction entirely.
+
+    Returns the ``current/`` directory the provider loads from.
+    """
+    import json
+    import zipfile
+    from pathlib import Path
+
+    from django.conf import settings
+
+    base = (
+        Path(settings.BASE_DIR)
+        / "components_data"
+        / "integrations"
+        / "payment_provider"
+        / "test_gateway"
+    )
+    current = base / "current"
+    if (current / "provider.py").exists():
+        return current  # already unpacked (local dev)
+
+    bundle_dir = Path(settings.BASE_DIR) / "preinstalled"
+    manifest = json.loads((bundle_dir / "manifest.json").read_text())
+    entry = next(
+        c
+        for c in manifest["components"]
+        if c["type"] == "payment_provider" and c["slug"] == "test_gateway"
+    )
+    version = entry["version"]
+    version_dir = base / f"v{version}"
+    version_dir.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(bundle_dir / entry["package"]) as zf:
+        zf.extractall(version_dir)
+    if current.exists() or current.is_symlink():
+        current.unlink()
+    current.symlink_to(f"v{version}")
+    return current

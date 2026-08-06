@@ -266,6 +266,7 @@ PRESET_RATES = {
         ("US", "United States", "WV", "West Virginia", Decimal("0.0600"), "sales_tax", ""),
         ("US", "United States", "WI", "Wisconsin", Decimal("0.0500"), "sales_tax", ""),
         ("US", "United States", "WY", "Wyoming", Decimal("0.0400"), "sales_tax", ""),
+        ("PR", "Puerto Rico", "", "", Decimal("0.1150"), "sales_tax", "US territory"),
     ],
     # ==========================================
     # CANADIAN GST/HST (13 provinces/territories)
@@ -420,7 +421,6 @@ PRESET_RATES = {
         ("KG", "Kyrgyzstan", "", "", Decimal("0.1200"), "vat", ""),
         ("TJ", "Tajikistan", "", "", Decimal("0.1400"), "vat", ""),
         ("TM", "Turkmenistan", "", "", Decimal("0.1500"), "vat", ""),
-        ("PR", "Puerto Rico", "", "", Decimal("0.1150"), "sales_tax", "US territory"),
     ],
     # ==========================================
     # UK VAT (from migration 0016)
@@ -433,13 +433,18 @@ PRESET_RATES = {
 
 class Command(SeedCommand):
     seed_name = "tax_presets"
-    seed_version = 1
+    seed_version = 2
     help = "Seed tax preset groups and rates for all major regions"
 
     def seed(self) -> int:
         from cart.models import TaxPresetGroup, TaxPresetRate
 
-        created_count = 0
+        affected_count = 0
+
+        # v2: Puerto Rico moved from central_asia to us_sales_tax. Remove the
+        # stale row from previously seeded installs, since seeding below only
+        # creates or updates and never deletes.
+        TaxPresetRate.objects.filter(group__key="central_asia", country="PR").delete()
 
         for group_data in PRESET_GROUPS:
             group_key = group_data["key"]
@@ -454,11 +459,11 @@ class Command(SeedCommand):
                 },
             )
             if group_created:
-                created_count += 1
+                affected_count += 1
 
             rates = PRESET_RATES.get(group_key, [])
             for country_code, country_name, state_code, state_name, rate, tax_type, notes in rates:
-                _, rate_created = TaxPresetRate.objects.get_or_create(
+                TaxPresetRate.objects.update_or_create(
                     group=group,
                     country=country_code,
                     state=state_code,
@@ -468,9 +473,9 @@ class Command(SeedCommand):
                         "rate": rate,
                         "tax_type": tax_type,
                         "notes": notes,
+                        "is_active": True,
                     },
                 )
-                if rate_created:
-                    created_count += 1
+                affected_count += 1
 
-        return created_count
+        return affected_count

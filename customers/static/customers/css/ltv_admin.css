@@ -29,7 +29,7 @@
 
 .ltv-method-card:hover {
   border-color: var(--primary, #007cba);
-  box-shadow: 0 4px 12px rgba(0, 124, 186, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 124, 186, 0.15));
 }
 
 .ltv-method-card.selected {
@@ -72,18 +72,18 @@
 }
 
 .method-badge.recommended {
-  background: #28a745;
-  color: white;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 .method-badge.available {
-  background: var(--primary, #007cba);
-  color: white;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
 }
 
 .method-badge.unavailable {
-  background: var(--error-fg, #dc3545);
-  color: white;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 
 /* ============================================================================
@@ -133,7 +133,7 @@
 
 .info-box {
   background: var(--info-bg, #d1ecf1);
-  border: 1px solid var(--info-border, #bee5eb);
+  border: 1px solid var(--border-color);
   color: var(--info-fg, #0c5460);
   padding: 15px;
   border-radius: 4px;
@@ -149,7 +149,7 @@
 
 .warning-section {
   background: var(--warning-bg, #fff3cd);
-  border: 1px solid var(--warning-border, #ffc107);
+  border: 1px solid var(--warning-color);
 }
 
 .warning-section h2 {
@@ -179,8 +179,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: var(--primary, #007cba);
-  color: white;
+  background: var(--button-bg, #007cba);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   font-size: 14px;
@@ -192,9 +192,9 @@
 }
 
 .form-actions .button:hover {
-  background: var(--primary-hover, #005a87);
+  background: var(--button-hover-bg, #005a87);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px var(--shadow-dark, rgba(0, 0, 0, 0.15));
 }
 
 .form-actions .button:active {
@@ -207,22 +207,22 @@
 
 /* Secondary/tertiary button styling */
 .form-actions .button[type='button'] {
-  background: var(--secondary, #6c757d);
+  background: var(--close-button-bg, #6c757d);
 }
 
 .form-actions .button[type='button']:hover {
-  background: var(--secondary-hover, #545b62);
+  background: color-mix(in srgb, var(--close-button-bg) 80%, #000);
 }
 
 .form-actions a.button {
   background: transparent;
-  color: var(--primary, #007cba);
-  border: 1px solid var(--primary, #007cba);
+  color: var(--button-bg, #007cba);
+  border: 1px solid var(--button-bg, #007cba);
 }
 
 .form-actions a.button:hover {
-  background: var(--primary, #007cba);
-  color: white;
+  background: var(--button-bg, #007cba);
+  color: var(--button-fg);
   transform: translateY(-1px);
 }
 
@@ -296,7 +296,7 @@
 }
 
 .table tbody tr:hover {
-  background: var(--hover-bg, rgba(0, 124, 186, 0.05));
+  background: var(--darkened-bg);
 }
 
 .cohort-table .value-highlight {
@@ -320,8 +320,8 @@
 
 .cohort-table .btn-icon {
   padding: 5px 10px;
-  background: var(--primary, #007cba);
-  color: white;
+  background: var(--button-bg, #007cba);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -411,7 +411,7 @@
   padding: 15px 20px;
   background: var(--body-bg, #fff);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -472,9 +472,9 @@
 
 /* Deprecation notice box */
 .deprecation-notice {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #856404;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-fg);
   margin-bottom: 30px;
   padding: 15px 20px;
   border-radius: 8px;
@@ -493,7 +493,7 @@
 }
 
 .deprecation-notice a {
-  color: #007cba;
+  color: var(--link-fg);
   font-weight: 600;
   text-decoration: underline;
 }

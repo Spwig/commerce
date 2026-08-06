@@ -27,7 +27,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-primary, #3b82f6);
+  background: var(--button-bg, #3b82f6);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -91,8 +91,8 @@
 }
 
 .attr-card:hover {
-  border-color: var(--accent-primary, #3b82f6);
-  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.08);
+  border-color: var(--button-bg, #3b82f6);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--button-bg) 8%, transparent);
 }
 
 .attr-card-header {
@@ -110,8 +110,8 @@
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  background: rgba(59, 130, 246, 0.08);
-  color: var(--accent-primary, #3b82f6);
+  background: color-mix(in srgb, var(--button-bg) 8%, transparent);
+  color: var(--button-bg, #3b82f6);
   font-size: 0.8rem;
   flex-shrink: 0;
 }
@@ -153,7 +153,7 @@
 }
 
 .attr-card-remove:hover {
-  background: #ef4444;
+  background: var(--delete-button-bg);
   color: #fff;
 }
 
@@ -180,9 +180,9 @@
 }
 
 .attr-value-pill.enabled {
-  background: rgba(59, 130, 246, 0.08);
-  border-color: var(--accent-primary, #3b82f6);
-  color: var(--accent-primary, #3b82f6);
+  background: color-mix(in srgb, var(--button-bg) 8%, transparent);
+  border-color: var(--button-bg, #3b82f6);
+  color: var(--button-bg, #3b82f6);
   font-weight: 500;
 }
 
@@ -193,7 +193,7 @@
 }
 
 .attr-value-pill:hover {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow-light);
 }
 
 .attr-value-pill .pill-icon {
@@ -201,7 +201,7 @@
 }
 
 .attr-value-pill.enabled .pill-icon {
-  color: var(--accent-primary, #3b82f6);
+  color: var(--button-bg, #3b82f6);
 }
 
 .attr-value-pill.disabled .pill-icon {
@@ -226,7 +226,7 @@
 
 .attr-color-picker-wrap:hover .attr-color-dot {
   transform: scale(1.15);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--button-bg) 30%, transparent);
 }
 
 .attr-color-input {
@@ -245,15 +245,16 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border: 1.5px solid var(--border-color);
   flex-shrink: 0;
 }
 
 /* Empty color dot — no hex set yet */
 .attr-color-dot-empty {
-  background: repeating-conic-gradient(#ccc 0% 25%, #eee 0% 50%) 50% / 8px 8px;
+  background: repeating-conic-gradient(var(--border-color) 0% 25%, var(--darkened-bg) 0% 50%) 50% /
+    8px 8px;
   border-style: dashed;
-  border-color: rgba(0, 0, 0, 0.25);
+  border-color: var(--border-color);
 }
 
 /* ===== Variation Builder Banner ===== */
@@ -261,8 +262,12 @@
 .variation-builder-banner {
   margin-top: 16px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.04), rgba(139, 92, 246, 0.04));
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--button-bg) 4%, transparent),
+    color-mix(in srgb, var(--purple-accent) 4%, transparent)
+  );
+  border: 1px solid color-mix(in srgb, var(--button-bg) 15%, transparent);
   border-radius: 8px;
   display: none;
   align-items: center;
@@ -315,7 +320,7 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--shadow-dark);
 }
 
 .attr-modal-header {
@@ -368,7 +373,7 @@
 }
 
 .attr-modal-save-btn {
-  background: var(--accent-primary, #3b82f6) !important;
+  background: var(--button-bg, #3b82f6) !important;
   color: #fff !important;
   border: none !important;
 }
@@ -407,7 +412,7 @@
 }
 
 .attr-search-box input:focus {
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--button-bg, #3b82f6);
 }
 
 /* ===== Search Results ===== */
@@ -472,10 +477,10 @@
   align-items: center;
   gap: 4px;
   padding: 5px 12px;
-  border: 1px solid var(--accent-primary, #3b82f6);
+  border: 1px solid var(--button-bg, #3b82f6);
   border-radius: 6px;
   background: transparent;
-  color: var(--accent-primary, #3b82f6);
+  color: var(--button-bg, #3b82f6);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -484,7 +489,7 @@
 }
 
 .attr-search-result-add:hover {
-  background: var(--accent-primary, #3b82f6);
+  background: var(--button-bg, #3b82f6);
   color: #fff;
 }
 
@@ -523,7 +528,7 @@
 
 .attr-form-group input:focus,
 .attr-form-group select:focus {
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--button-bg, #3b82f6);
 }
 
 .attr-form-help {
@@ -560,122 +565,25 @@
 }
 
 .attr-notification.success {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background: color-mix(in srgb, var(--success-fg) 15%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .attr-notification.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: color-mix(in srgb, var(--error-fg) 15%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
-/* ========================================================================
-   Dark Mode
-   ======================================================================== */
-
-[data-theme='dark'] .attr-card {
-  border-color: #374151;
-  background: #1f2937;
-}
-
-[data-theme='dark'] .attr-card:hover {
-  border-color: #60a5fa;
-}
-
-[data-theme='dark'] .attr-card-header {
-  border-bottom-color: #374151;
-}
-
-[data-theme='dark'] .attr-card-icon {
-  background: rgba(96, 165, 250, 0.12);
-  color: #60a5fa;
-}
-
-[data-theme='dark'] .attr-card-meta {
-  background: #374151;
-  color: #9ca3af;
-}
-
-[data-theme='dark'] .attr-value-pill.enabled {
-  background: rgba(96, 165, 250, 0.12);
-  border-color: #60a5fa;
-  color: #93c5fd;
-}
-
-[data-theme='dark'] .attr-value-pill.disabled {
-  background: #374151;
-  border-color: #4b5563;
-  color: #6b7280;
-}
-
-[data-theme='dark'] .attr-color-dot {
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-[data-theme='dark'] .attr-color-dot-empty {
-  background: repeating-conic-gradient(#555 0% 25%, #444 0% 50%) 50% / 8px 8px;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-[data-theme='dark'] .attr-color-picker-wrap:hover .attr-color-dot {
-  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.4);
-}
-
-[data-theme='dark'] .variation-builder-banner {
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.06), rgba(167, 139, 250, 0.06));
-  border-color: rgba(96, 165, 250, 0.2);
-}
-
-[data-theme='dark'] .attr-modal {
-  background: #1f2937;
-}
-
-[data-theme='dark'] .attr-modal-header,
-[data-theme='dark'] .attr-modal-footer {
-  border-color: #374151;
-}
-
-[data-theme='dark'] .attr-search-box input,
-[data-theme='dark'] .attr-form-group input,
-[data-theme='dark'] .attr-form-group select {
-  background: #111827;
-  border-color: #374151;
-  color: #e5e7eb;
-}
-
-[data-theme='dark'] .attr-search-box input:focus,
-[data-theme='dark'] .attr-form-group input:focus,
-[data-theme='dark'] .attr-form-group select:focus {
-  border-color: #60a5fa;
-}
-
-[data-theme='dark'] .attr-search-result:hover {
-  background: #374151;
-}
-
-[data-theme='dark'] .attr-search-result-add {
-  border-color: #60a5fa;
-  color: #93c5fd;
-}
-
-[data-theme='dark'] .attr-search-result-add:hover {
-  background: #60a5fa;
-  color: #fff;
-}
-
-[data-theme='dark'] .attr-notification.success {
-  background: #064e3b;
-  color: #6ee7b7;
-  border-color: #065f46;
-}
-
-[data-theme='dark'] .attr-notification.error {
-  background: #7f1d1d;
-  color: #fca5a5;
-  border-color: #991b1b;
-}
+/* Dark mode is driven entirely by the design tokens now: cards, modals, inputs,
+   pills, meta chips, search results and the color-dot borders/checkerboard use
+   --hairline-color / --border-color / --darkened-bg / --body-bg / --body-fg /
+   --body-quiet-color / --button-bg (all flip via the admin data-theme toggle),
+   the accent tints use color-mix(var(--button-bg)/var(--purple-accent)), and the
+   status notifications use color-mix over --success-fg / --error-fg — every one
+   of which flips with the tokens. The hand-authored [data-theme='dark']
+   overrides are therefore redundant. */
 
 /* ========================================================================
    Responsive

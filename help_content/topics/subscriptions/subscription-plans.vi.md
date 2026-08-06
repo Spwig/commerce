@@ -1,120 +1,124 @@
 ---
-title: Kế hoạch đăng ký
+title: Các gói đăng ký
 ---
 
-Các kế hoạch đăng ký cho phép bạn cung cấp thanh toán định kỳ cho sản phẩm của mình — lý tưởng cho các sản phẩm tiêu hao, dịch vụ, hộp quà được lựa chọn kỹ lưỡng hoặc bất kỳ sản phẩm nào mà khách hàng mua lặp lại. Hướng dẫn này giải thích cách tạo và cấu hình các kế hoạch, thiết lập các cấp giá, thêm giai đoạn dùng thử và gắn các tùy chọn bổ sung (add-ons) không bắt buộc.
+Các gói đăng ký cho phép bạn cung cấp thanh toán định kỳ cho sản phẩm của bạn — lý tưởng cho hàng tiêu dùng, dịch vụ, hộp được chọn lọc, hoặc bất kỳ sản phẩm nào mà khách hàng mua lặp lại. Hướng dẫn này giải thích cách tạo và cấu hình các gói, thiết lập các cấp độ giá, thêm thời gian dùng thử và gắn các tùy chọn bổ sung tùy chọn.
 
 ## Bắt đầu
 
-Truy cập **Subscriptions > Subscription Plans** trong thanh bên quản trị. Danh sách kế hoạch hiển thị tất cả các kế hoạch của bạn với mô hình định giá, số lượng người đăng ký đang hoạt động và trạng thái hiển thị.
+Đi đến **Đăng ký > Các gói đăng ký** trong thanh điều hướng quản trị. Danh sách gói hiển thị tất cả các gói của bạn với mô hình giá, số lượng người đăng ký đang hoạt động, và trạng thái hiển thị.
 
-Để tạo kế hoạch mới, nhấp vào nút **+ Add Subscription Plan** — điều này sẽ mở ra trình hướng dẫn tạo kế hoạch, hướng dẫn bạn từng bước thiết lập.
+Để tạo một gói mới, nhấn nút **+ Thêm gói đăng ký** — điều này mở trình hướng dẫn tạo gói, giúp bạn thiết lập từng bước một.
 
-![Danh sách kế hoạch đăng ký](/static/core/admin/img/help/subscription-plans/plan-list.webp)
+![Danh sách các gói đăng ký](/static/core/admin/img/help/subscription-plans/plan-list.webp)
 
-## Thông tin kế hoạch
+Một gói riêng lẻ không thể mua được — đó là mẫu. Một khi bạn đã xây dựng nó ở đây, hãy gắn nó với một hoặc nhiều sản phẩm từ tab **Đăng ký** của sản phẩm (chỉ các sản phẩm Đơn giản, Đa dạng và Số hóa) để khách hàng thực sự có thể đăng ký. Xem [Bán sản phẩm dưới dạng đăng ký](/help/selling-products-as-subscriptions) cho bước đó.
 
-Phần đầu tiên thu thập bản sắc cốt lõi của kế hoạch của bạn.
+## Thông tin gói
 
-- **Tên kế hoạch** — Tên khách hàng nhìn thấy khi đăng ký. Nhấp vào biểu tượng quả địa cầu để thêm bản dịch cho các ngôn ngữ cửa hàng khác.
-- **Slug** — Một định danh thân thiện với URL được tạo tự động từ tên (ví dụ: `premium-plan`). Điều này được sử dụng bên trong và trong các tích hợp.
-- **Mô tả** — Văn bản tùy chọn mô tả những gì kế hoạch bao gồm. Hỗ trợ bản dịch.
+Phần đầu tiên ghi nhận bản chất cốt lõi của gói của bạn.
 
-## Mô hình định giá
+- **Tên gói** — Tên mà khách hàng nhìn thấy khi đăng ký. Nhấn vào biểu tượng quả địa cầu để thêm bản dịch cho các ngôn ngữ cửa hàng khác.
+- **Slug** — Một định danh URL được tạo tự động từ tên (ví dụ: `premium-plan`). Điều này được sử dụng bên trong và trong các tích hợp.
+- **Mô tả** — Văn bản tùy chọn mô tả những gì gói bao gồm. Hỗ trợ dịch thuật.
 
-Chọn cách cấu trúc định giá cho kế hoạch này:
+## Mô hình giá
 
-| Mô hình định giá | Phù hợp nhất với |
-|------------------|------------------|
-| **Định giá theo cấp** | Cung cấp các tùy chọn cam kết hàng tháng, quý và hàng năm với giảm giá cho các kỳ dài hơn |
-| **Theo số lượng** | Định giá theo chỗ ngồi hoặc người dùng, tổng số tăng theo số lượng (ví dụ: giấy phép nhóm) |
-| **Giá cố định** | Một giá cố định duy nhất không có sự thay đổi |
+Chọn cách cấu trúc giá cho gói này:
 
-Đối với các kế hoạch **Theo số lượng**, hãy đặt **Số lượng tối thiểu** (số chỗ ngồi tối thiểu cần thiết) và tùy chọn **Số lượng tối đa** để giới hạn số chỗ ngồi mà người đăng ký có thể mua.
+| Mô hình giá | Tốt nhất cho |
+|---------------|----------|
+| **Giá theo cấp độ** | Cung cấp các tùy chọn cam kết hàng tháng, hàng quý và hàng năm với chiết khấu cho các khoản thời gian dài hơn |
+| **Dựa trên số lượng** | Giá theo người dùng hoặc người dùng, tổng số thay đổi theo số lượng (ví dụ: giấy phép nhóm) |
+| **Giá cố định** | Một mức giá cố định duy nhất mà không có sự thay đổi |
 
-## Cấp giá
+Đối với các gói **Dựa trên số lượng**, hãy đặt **Số lượng tối thiểu** (số ghế tối thiểu cần thiết) và tùy chọn **Số lượng tối đa** để giới hạn số ghế mà người đăng ký có thể mua.
 
-Các cấp giá xác định tần suất thanh toán và các tùy chọn giảm giá có sẵn cho khách hàng trên kế hoạch này. Thêm chúng vào phần **Pricing Tiers** bên dưới biểu mẫu chính.
+## Các cấp độ giá
 
-Mỗi cấp có các trường sau:
+Các cấp độ giá xác định tần suất thanh toán và các tùy chọn chiết khấu có sẵn cho khách hàng trên gói này. Thêm chúng ở phần **Các cấp độ giá** bên dưới biểu mẫu chính.
 
-- **Tên cấp** — Nhãn hiển thị cho khách hàng (ví dụ: `Monthly`, `Annual — Save 20%`). Hỗ trợ bản dịch.
-- **Chu kỳ thanh toán** — Tần suất khách hàng được tính phí: Hàng ngày, Hàng tuần, Hàng tháng, Quý, Nửa năm hoặc Hàng năm.
-- **Khoảng thời gian thanh toán** — Hệ số nhân cho chu kỳ thanh toán. Đặt thành `2` với Monthly để tính phí mỗi 2 tháng.
-- **Tỷ lệ giảm giá** — Tỷ lệ giảm giá được áp dụng cho giá sản phẩm cho cấp này. Đặt thành `0` để tính giá đầy đủ, hoặc `20` để giảm 20%. Tỷ lệ giảm này được cộng dồn trên bất kỳ giá bán nào của sản phẩm.
-- **Cấp mặc định** — Đánh dấu một cấp là mặc định để tự động chọn nó cho khách hàng khi họ xem các tùy chọn đăng ký.
+Mỗi cấp độ có các trường sau:
 
-### Ví dụ: kế hoạch theo cấp với ba tùy chọn
+- **Tên cấp độ** — Nhãn được hiển thị cho khách hàng (ví dụ: `Hàng tháng`, `Hàng năm — Tiết kiệm 20%`). Hỗ trợ dịch thuật.
+- **Chu kỳ thanh toán** — Tần suất mà khách hàng bị tính phí: Hàng ngày, Hàng tuần, Hàng tháng, Hàng quý, Nửa năm, hoặc Hàng năm.
+- **Khoảng cách thanh toán** — Hệ số nhân cho chu kỳ thanh toán. Đặt thành `2` với Hàng tháng để tính phí mỗi 2 tháng.
+- **Phần trăm giảm giá** — Chiết khấu được áp dụng cho giá sản phẩm cho cấp độ này. Đặt thành `0` để giá đầy đủ, hoặc `20` để giảm 20%. Chiết khấu này được cộng thêm vào bất kỳ giá khuyến mãi nào trên chính sản phẩm.
+- **Cấp độ mặc định** — Đánh dấu một cấp độ là mặc định để chọn trước cho khách hàng khi họ xem các tùy chọn đăng ký.
 
-Đối với kế hoạch đăng ký "Coffee Club":
+Chiết khấu áp dụng bắt đầu từ chu kỳ thanh toán đầu tiên của khách hàng, không chỉ trên các lần gia hạn — một cấp độ có chiết khấu 20% sẽ tính 20% giảm giá từ ngày đầu tiên (hoặc từ lần thanh toán đầu tiên sau khi thử, nếu gói có một).
 
-| Tên cấp | Chu kỳ thanh toán | Giảm giá |
-|----------|------------------|----------|
-| Monthly | Monthly | 0% |
-| Quarterly — Save 10% | Quarterly | 10% |
-| Annual — Save 20% | Annual | 20% |
+### Ví dụ: gói cấp độ với ba tùy chọn
 
-## Giai đoạn dùng thử
+Đối với gói đăng ký "Coffee Club":
 
-Giai đoạn dùng thử cho phép khách hàng thử đăng ký của bạn trước khi thanh toán lần đầu. Cấu hình điều này trong phần **Trial Period**:
+| Tên cấp độ | Chu kỳ thanh toán | Giảm giá |
+|-----------|---------------|----------|
+| Hàng tháng | Hàng tháng | 0% |
+| Hàng quý — Tiết kiệm 10% | Hàng quý | 10% |
+| Hàng năm — Tiết kiệm 20% | Hàng năm | 20% |
 
-- **Trial Period (Days)** — Số ngày dùng thử miễn phí. Đặt thành `0` để tắt dùng thử. Tối đa là 365 ngày.
-- **Trial Price** — Giá giảm tùy chọn trong giai đoạn dùng thử (ví dụ: $1 cho tháng đầu tiên). Để trống để có giai đoạn dùng thử hoàn toàn miễn phí.
+## Thời gian dùng thử
 
-## Chính sách hủy
+Một thời gian dùng thử cho phép khách hàng thử nghiệm đăng ký của bạn trước khi thanh toán đầu tiên đầy đủ. Cài đặt điều này trong phần **Thời gian dùng thử**:
 
-Kiểm soát cách khách hàng có thể hủy đăng ký của họ trong phần **Cancellation Policy**:
+- **Thời gian dùng thử (ngày)** — Số ngày dùng thử miễn phí. Đặt thành `0` để vô hiệu hóa thời gian dùng thử. Giới hạn tối đa là 365 ngày.
+- **Giá trong thời gian dùng thử** — Giá giảm tùy chọn trong thời gian dùng thử (ví dụ: $1 cho tháng đầu tiên). Để trống để dùng thử hoàn toàn miễn phí.
+
+## Chính sách hủy bỏ
+
+Kiểm soát cách khách hàng có thể hủy bỏ đăng ký của họ trong phần **Chính sách hủy bỏ**:
+
+Giữ nguyên định dạng markdown, đường dẫn hình ảnh, khối mã, và các thuật ngữ kỹ thuật.
 
 | Chính sách | Mô tả |
-|------------|--------|
-| **Cancel Anytime** | Khách hàng có thể hủy ngay lập tức bất kỳ lúc nào |
-| **Cancel at Period End** | Hủy sẽ có hiệu lực vào cuối giai đoạn đã thanh toán — khách hàng vẫn giữ quyền truy cập cho đến hết hạn |
-| **Minimum Commitment Required** | Khách hàng phải hoàn thành một số lượng tối thiểu các chu kỳ thanh toán trước khi hủy |
+|--------|-------------|
+| **Hủy bất kỳ lúc nào** | Khách hàng có thể hủy ngay lập tức vào bất kỳ thời điểm nào |
+| **Hủy vào cuối kỳ** | Việc hủy sẽ có hiệu lực vào cuối kỳ thanh toán — khách hàng được truy cập cho đến khi hết hạn |
+| **Yêu cầu cam kết tối thiểu** | Khách hàng phải hoàn tất một số chu kỳ thanh toán tối thiểu trước khi hủy |
 
-Cài đặt bổ sung:
+Các cài đặt bổ sung:
 
-Giữ nguyên tất cả định dạng markdown, đường dẫn hình ảnh, khối mã và các thuật ngữ kỹ thuật.
-
-- **Cam kết tối thiểu (chu kỳ)** — Khi sử dụng chính sách cam kết, hãy đặt số chu kỳ thanh toán bắt buộc (ví dụ, `3` cho cam kết tối thiểu 3 tháng).
-- **Thời gian ân hạn (ngày)** — Số ngày tiếp tục truy cập sau khi thanh toán thất bại trước khi đăng ký bị tạm dừng.
-
-Đặt thành `0` để tạm dừng ngay lập tức.
-- **Thời gian kích hoạt lại (ngày)** — Số ngày sau khi hủy đăng ký trong đó khách hàng có thể kích hoạt lại đăng ký mà không cần đăng ký lại từ đầu.
+- **Cam kết tối thiểu (chu kỳ)** — Khi sử dụng chính sách cam kết, hãy đặt số chu kỳ thanh toán tối thiểu (ví dụ: `3` cho cam kết 3 tháng).
+- **Thời gian chờ (ngày)** — Số ngày tiếp cận sau khi thanh toán thất bại trước khi đăng ký bị tạm dừng. Đặt thành `0` để dừng ngay lập tức.
+- **Thời gian tái kích hoạt (ngày)** — Số ngày sau khi hủy trong đó khách hàng có thể kích hoạt lại đăng ký mà không cần đăng ký lại từ đầu.
 
 ## Hành vi thay đổi gói
 
-Khi khách hàng nâng cấp hoặc hạ cấp giữa các gói, bạn có thể kiểm soát thời điểm thay đổi có hiệu lực:
+Khi khách hàng nâng cấp hoặc hạ cấp giữa các gói, bạn có thể kiểm soát thời điểm thay đổi xảy ra:
 
-- **Hành vi nâng cấp** — Chọn **Ngay lập tức** (thanh toán số tiền được tính theo tỷ lệ ngay bây giờ) hoặc **Tại thời điểm gia hạn** (chuyển đổi tại ngày thanh toán tiếp theo).
-- **Hành vi hạ cấp** — Chọn **Ngay lập tức** (áp dụng số tiền hoàn lại cho hóa đơn tiếp theo) hoặc **Tại thời điểm gia hạn** (chuyển đổi tại ngày thanh toán tiếp theo).
+- **Hành vi nâng cấp** — Đặt thành **Liền mạch** (tính phí theo tỷ lệ ngay) hoặc **Vào thời điểm gia hạn** (chuyển đổi vào ngày thanh toán tiếp theo).
+- **Hành vi hạ cấp** — Đặt thành **Liền mạch** (áp dụng tiền tín dụng cho hóa đơn tiếp theo) hoặc **Vào thời điểm gia hạn** (chuyển đổi vào ngày thanh toán tiếp theo).
 
 ## Giới hạn và hạn chế
 
-- **Số chu kỳ thanh toán tối đa** — Tổng số chu kỳ thanh toán trước khi đăng ký tự động kết thúc. Để trống để có thanh toán định kỳ không giới hạn. Hữu ích cho các gói trả góp hoặc đăng ký có thời hạn.
-- **Phí thiết lập** — Một khoản phí một lần được thu khi đăng ký được tạo lần đầu (ví dụ, phí thiết lập hoặc phí kích hoạt). Đặt thành `0.00` nếu không có phí thiết lập.
+- **Số chu kỳ thanh toán tối đa** — Tổng số chu kỳ thanh toán trước khi đăng ký tự động kết thúc. Để trống để thanh toán lặp lại không giới hạn. Ích lợi cho các kế hoạch trả góp hoặc đăng ký có thời hạn.
+- **Phí thiết lập** — Một khoản phí một lần được thu khi đăng ký được tạo lần đầu (ví dụ: phí hướng dẫn hoặc kích hoạt). Đặt thành `0.00` để không có phí thiết lập.
 
-## Các tùy chọn bổ sung cho gói
+## Phụ kiện bổ sung cho gói
 
-Các tùy chọn bổ sung là các tiện ích bổ sung tùy chọn mà người đăng ký có thể thêm vào gói của họ. Thêm chúng vào phần **Tùy chọn bổ sung cho gói**:
+Phụ kiện là các tùy chọn bổ sung có thể được khách hàng gắn vào gói của họ. Thêm chúng vào phần **Phụ kiện bổ sung**:
 
-- **Tên tùy chọn bổ sung** — Tên hiển thị cho khách hàng. Hỗ trợ dịch thuật.
-- **Mô tả** — Tùy chọn bổ sung cung cấp gì.
-- **Giá** — Chi phí của tùy chọn bổ sung.
-- **Tần suất thanh toán** — Xác định tùy chọn bổ sung được tính **Theo chu kỳ thanh toán** (lặp lại) hoặc **Một lần** tại thời điểm bắt đầu đăng ký.
-- **Cho phép số lượng** — Kích hoạt để cho phép khách hàng mua nhiều đơn vị của tùy chọn bổ sung.
-- **Bắt buộc** — Chọn để tự động thêm tùy chọn bổ sung vào tất cả các đăng ký mới. Các tùy chọn bổ sung bắt buộc không thể bị khách hàng xóa.
+- **Tên phụ kiện** — Tên được hiển thị cho khách hàng. Hỗ trợ dịch thuật.
+- **Mô tả** — Phụ kiện cung cấp điều gì.
+- **Giá** — Chi phí của phụ kiện.
+- **Tần suất thanh toán** — Phụ kiện được tính **Theo chu kỳ thanh toán** (lặp lại) hoặc **Một lần** khi bắt đầu đăng ký.
+- **Cho phép số lượng** — Bật để cho phép khách hàng mua nhiều đơn vị của phụ kiện.
+- **Bắt buộc** — Chọn để bao gồm phụ kiện này trên tất cả các đăng ký mới. Các phụ kiện bắt buộc không thể bị khách hàng xóa.
 
-## Tính năng hiển thị và trạng thái
+## Tính khả kiến và trạng thái
 
-- **Hoạt động** — Tắt để ngừng kích hoạt gói, không có đăng ký mới nào có thể được tạo. Các đăng ký hiện tại không bị ảnh hưởng.
-- **Công khai** — Tắt để ẩn gói khỏi các trang dành cho khách hàng (hữu ích cho các gói nội bộ hoặc cũ mà các khách hàng hiện tại vẫn đang sử dụng).
-- **Thứ tự hiển thị** — Điều khiển thứ tự hiển thị trên các trang chọn đăng ký. Số nhỏ hơn sẽ hiển thị trước.
+- **Đang hoạt động** — Bỏ chọn để vô hiệu hóa một gói để không có đăng ký mới nào được tạo. Các đăng ký hiện tại sẽ không bị ảnh hưởng.
+- **Công khai** — Bỏ chọn để ẩn gói khỏi các trang dành cho khách hàng (dùng cho các gói nội bộ hoặc di sản mà người đăng ký hiện tại vẫn ở lại).
+- **Thứ tự sắp xếp** — Kiểm soát thứ tự hiển thị trên các trang chọn đăng ký. Số nhỏ hơn xuất hiện trước.
 
-## Một số mẹo
+## Lời khuyên
 
-- Sử dụng **giai đoạn dùng thử** để giảm bớt sự do dự — ngay cả một giai đoạn dùng thử ngắn 7 ngày cũng có thể cải thiện đáng kể tỷ lệ chuyển đổi cho sản phẩm đăng ký.
-- Thiết lập **ba cấp giá** (tháng, quý, năm) với mức giảm giá tăng dần để khuyến khích cam kết hàng năm và cải thiện dòng tiền của bạn.
-- Đối với các đăng ký dựa trên dịch vụ, hãy đặt **Chính sách hủy** thành **Hủy tại cuối kỳ** để khách hàng vẫn giữ quyền truy cập trong thời gian đã thanh toán — điều này cảm thấy công bằng và giảm thiểu việc hoàn tiền.
-- Giữ **thời gian ân hạn** ở mức 3–7 ngày cho các lần thanh toán thất bại. Điều này cho phép khách hàng thời gian để cập nhật phương thức thanh toán trước khi mất quyền truy cập.
-- Sử dụng cờ **Bắt buộc** trên các tùy chọn bổ sung một cách tiết kiệm — chỉ sử dụng nó cho những thứ thực sự bắt buộc (ví dụ, một thỏa thuận dịch vụ), chứ không phải là cách để tăng giá.
-- Tắt các gói không còn có người đăng ký thay vì xóa chúng — điều này giữ lại dữ liệu lịch sử cho bất kỳ khách hàng nào từng đăng ký trước đây.
+- Sử dụng **thời gian dùng thử** để giảm sự do dự — ngay cả một thời gian dùng thử miễn phí 7 ngày ngắn gọn cũng có thể cải thiện đáng kể tỷ lệ chuyển đổi trên các sản phẩm đăng ký.
+- Thiết lập **ba cấp độ giá** (hàng tháng, hàng quý, hàng năm) với các khoản giảm giá tăng dần để khuyến khích cam kết hàng năm và cải thiện dòng tiền của bạn.
+- Đối với các đăng ký dịch vụ, đặt **Chính sách hủy** thành **Hủy vào cuối kỳ** để khách hàng giữ quyền truy cập trong suốt kỳ thanh toán của họ — điều này sẽ cảm thấy công bằng và giảm thiểu các cuộc tranh chấp.
+- Giữ **Thời gian chờ** ở mức 3–7 ngày cho các sự cố thanh toán. Điều này cho khách hàng thời gian để cập nhật phương thức thanh toán của họ trước khi mất quyền truy cập.
+- Sử dụng cờ **Bắt buộc** trên các phụ kiện một cách hợp lý — chỉ sử dụng cho những thứ thực sự bắt buộc (ví dụ: thỏa thuận dịch vụ), không phải là cách để tăng giá.
+- Vô hiệu hóa các gói không có người đăng ký thay vì xóa chúng — điều này giữ nguyên dữ liệu lịch sử cho bất kỳ khách hàng nào từng đăng ký nào.
+
+Giữ nguyên định dạng markdown, đường dẫn hình ảnh, khối mã, và các thuật ngữ kỹ thuật.

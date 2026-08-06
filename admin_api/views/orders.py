@@ -9,7 +9,8 @@ import secrets
 
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.db.models import Prefetch, Q
+from django.db.models import IntegerField, Prefetch, Q, Sum, Value
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -32,6 +33,7 @@ from admin_api.serializers.orders import (
 )
 from admin_api.services.audit_service import AuditService
 from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
+from catalog.models import ProductImage, ProductVariantImage
 from orders.models import Order, OrderNote
 
 logger = logging.getLogger(__name__)
@@ -40,6 +42,30 @@ logger = logging.getLogger(__name__)
 def generate_error_reference():
     """Generate a unique error reference for debugging."""
     return f"ERR-{secrets.token_hex(3).upper()}"
+
+
+def order_detail_queryset():
+    """Build the queryset the detail serializer needs.
+
+    ``AdminOrderDetailSerializer`` renders each item's image, so the order
+    must arrive with items and their product/variant image relations
+    prefetched; otherwise ``_select_image`` issues a query per item. The
+    image's ``thumbnail_small`` dereferences ``media_asset``, so the
+    prefetch selects it too — otherwise serialization still adds a
+    media-asset query per chosen image. Reuse this for every response that
+    serializes a full order — including mutation responses that would
+    otherwise fetch the order bare.
+    """
+    return Order.objects.select_related("user", "carrier").prefetch_related(
+        Prefetch(
+            "items__product__images",
+            queryset=ProductImage.objects.select_related("media_asset"),
+        ),
+        Prefetch(
+            "items__variant__images",
+            queryset=ProductVariantImage.objects.select_related("media_asset"),
+        ),
+    )
 
 
 @extend_schema(
@@ -165,7 +191,17 @@ def order_list(request):
         )
 
     filters = filter_serializer.validated_data
-    queryset = Order.objects.select_related("user").prefetch_related("items")
+    queryset = (
+        Order.objects.select_related("user")
+        .prefetch_related("items")
+        .annotate(
+            item_count=Coalesce(
+                Sum("items__quantity", filter=Q(items__parent_bundle__isnull=True)),
+                Value(0),
+                output_field=IntegerField(),
+            )
+        )
+    )
 
     # Apply filters - specific status takes precedence over filter_type
     specific_status = filters.get("status", "all")
@@ -261,14 +297,7 @@ def order_detail(request, order_number):
     Get order details by order number.
     """
     try:
-        order = (
-            Order.objects.select_related("user", "carrier")
-            .prefetch_related(
-                Prefetch("items__product__images"),
-                Prefetch("items__variant__images"),
-            )
-            .get(order_number=order_number)
-        )
+        order = order_detail_queryset().get(order_number=order_number)
     except Order.DoesNotExist:
         return Response(
             {
@@ -552,7 +581,7 @@ def update_order_status(request, order_number):
         {
             "success": True,
             "message": _("Order status updated successfully."),
-            "data": AdminOrderDetailSerializer(order).data,
+            "data": AdminOrderDetailSerializer(order_detail_queryset().get(pk=order.pk)).data,
         },
         status=status.HTTP_200_OK,
     )
@@ -634,7 +663,7 @@ def update_tracking(request, order_number):
         {
             "success": True,
             "message": _("Tracking information updated successfully."),
-            "data": AdminOrderDetailSerializer(order).data,
+            "data": AdminOrderDetailSerializer(order_detail_queryset().get(pk=order.pk)).data,
         },
         status=status.HTTP_200_OK,
     )
@@ -759,7 +788,7 @@ def cancel_order(request, order_number):
         {
             "success": True,
             "message": _("Order cancelled successfully."),
-            "data": AdminOrderDetailSerializer(order).data,
+            "data": AdminOrderDetailSerializer(order_detail_queryset().get(pk=order.pk)).data,
         },
         status=status.HTTP_200_OK,
     )
@@ -952,7 +981,7 @@ def initiate_refund(request, order_number):
         {
             "success": True,
             "message": _("Refund initiated successfully."),
-            "data": AdminOrderDetailSerializer(order).data,
+            "data": AdminOrderDetailSerializer(order_detail_queryset().get(pk=order.pk)).data,
         },
         status=status.HTTP_200_OK,
     )

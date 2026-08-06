@@ -1,5 +1,5 @@
 {% extends "page_builder/category/_base.html" %}
-{% load i18n static merchant_trans currency_tags %}
+{% load i18n static merchant_trans currency_tags media_picture %}
 
 {% block template_css %}
 <link rel="stylesheet" href="{% static 'page_builder/css/category-masonry.css' %}">
@@ -21,10 +21,7 @@
                    class="cat-masonry__image-link"
                    aria-label="{{ product.name }}">
                     {% if product.primary_image_listing_url %}
-                    <img src="{{ product.primary_image_listing_url }}"
-                         alt="{{ product.name }}"
-                         class="cat-masonry__image"
-                         loading="lazy">
+                    {% picture product.primary_image size="product_listing" alt=product.name css="cat-masonry__image" %}
                     {% else %}
                     <div class="cat-masonry__placeholder">
                         <i class="fas fa-box"></i>
@@ -74,18 +71,7 @@
 
                 {# Price with multi-currency support #}
                 <div class="cat-masonry__price">
-                    {% if product.is_on_sale %}
-                    <span class="cat-masonry__price-current cat-masonry__price-current--sale">
-                        {{ product|product_price:current_currency.code }}
-                    </span>
-                    <span class="cat-masonry__price-original">
-                        {{ product|product_compare_price:current_currency.code }}
-                    </span>
-                    {% else %}
-                    <span class="cat-masonry__price-current">
-                        {{ product|product_price:current_currency.code }}
-                    </span>
-                    {% endif %}
+                    {% product_price_display product current_currency.code show_badge=False %}
                 </div>
             </div>
         </div>

@@ -172,11 +172,18 @@ class PreferenceService:
             # Determine category
             category, app = get_message_type_category(message_type)
 
+            # Track whether this channel/category combination maps to an
+            # actual preference field. Unsupported channels or combinations
+            # that change nothing must fail rather than report a phantom
+            # successful update.
+            handled = False
+
             if channel == "email":
                 if category == "marketing":
                     old_value["email_marketing"] = prefs.email_marketing
                     prefs.email_marketing = enabled
                     action = f"email_marketing.{message_type}"
+                    handled = True
                 elif category == "app_specific" and app:
                     # Capture old app preference state
                     old_value[f"app_preferences.{app}"] = prefs.app_preferences.get(app, {}).copy()
@@ -196,16 +203,29 @@ class PreferenceService:
                         prefs.app_preferences[app]["frequency"] = frequency
 
                     action = f"app.{app}.{pref_key}"
+                    handled = True
 
             elif channel == "sms":
                 if category == "transactional":
                     old_value["sms_transactional"] = prefs.sms_transactional
                     prefs.sms_transactional = enabled
                     action = f"sms_transactional.{message_type}"
+                    handled = True
                 elif category == "marketing":
                     old_value["sms_marketing"] = prefs.sms_marketing
                     prefs.sms_marketing = enabled
                     action = f"sms_marketing.{message_type}"
+                    handled = True
+
+            if not handled:
+                return {
+                    "success": False,
+                    "error": (
+                        f"Unsupported preference combination: channel '{channel}' "
+                        f"does not map to a '{category}' preference for message type "
+                        f"'{message_type}'"
+                    ),
+                }
 
             # Update consent tracking if enabling marketing
             if enabled and category in ["marketing", "app_specific"]:
@@ -213,7 +233,12 @@ class PreferenceService:
                     prefs.consent_ip = ip_address
                 if user_agent:
                     prefs.consent_user_agent = user_agent
-                prefs.consent_source = "preference_center"
+                valid_consent_sources = {
+                    choice[0] for choice in CommunicationPreference.CONSENT_SOURCE_CHOICES
+                }
+                prefs.consent_source = (
+                    source if source in valid_consent_sources else "preference_center"
+                )
 
             prefs.save()
 
@@ -242,8 +267,14 @@ class PreferenceService:
                 user_agent=user_agent,
             )
 
-            # Invalidate cache
-            cls.invalidate_cache(user.id, channel, message_type)
+            # Invalidate cache. A category-wide marketing flag
+            # (email_marketing/sms_marketing) gates every sibling message type
+            # on the channel, so invalidate the whole channel; message-specific
+            # preferences only need their own key.
+            if category == "marketing":
+                cls.invalidate_cache(user.id, channel)
+            else:
+                cls.invalidate_cache(user.id, channel, message_type)
 
             logger.info(
                 f"Updated preference for user {user.id}: {channel}/{message_type} = {enabled}"

@@ -64,7 +64,7 @@ class ProviderRegistry:
             # Query for all payment provider components that have an installed version
             provider_components = ComponentRegistry.objects.filter(
                 component_type="payment_provider"
-            ).exclude(current_version__isnull=True)
+            ).exclude(current_version="")
 
             for component in provider_components:
                 try:

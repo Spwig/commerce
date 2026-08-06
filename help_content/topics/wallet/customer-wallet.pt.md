@@ -4,9 +4,9 @@ title: Carteira do Cliente
 
 A carteira do cliente é um registro de crédito da loja que acompanha o saldo em aberto de cada cliente. O crédito da loja pode ser adicionado como resultado de devoluções, recompensas por indicações, campanhas promocionais ou ajustes manuais feitos pela sua equipe.
 
-> **Os saldos da carteira podem ser usados no checkout.** Um cliente conectado com crédito da loja vê esse valor na etapa de pagamento e pode aplicá-lo com um clique. O crédito é deduzido do valor final da conta — após impostos e entrega — e qualquer valor restante é cobrado normalmente no cartão dele. Se o crédito cobrir totalmente o pedido, nenhum cartão será necessário. O crédito é reservado quando aplicado e só é realmente deduzido após a confirmação do pagamento, então um checkout abandonado nunca custa nada ao cliente.
+> **Os saldos da carteira podem ser usados no checkout.** Um cliente conectado com crédito da loja vê esse valor na etapa de pagamento e pode aplicá-lo com um único clique. O crédito é deduzido do valor final da conta — após impostos e entrega — e qualquer valor restante é cobrado normalmente no cartão dele. Se o crédito cobrir totalmente o pedido, nenhum cartão será necessário. O crédito é reservado quando aplicado e só é realmente deduzido após a confirmação do pagamento, então um checkout abandonado nunca custa nada ao cliente.
 
-Navegue até **Clientes > Carteiras de Clientes** para visualizar e gerenciar as carteiras.
+Navegue até **Clientes > Carteiras de Clientes** para visualizar e gerenciar carteiras.
 
 ## Entendendo os saldos da carteira
 
@@ -50,18 +50,18 @@ Cada transação mostra:
 | **ID de Referência** | Um link para o registro original (por exemplo, um número de pedido ou ID de recompensa) |
 | **Criado em** | Quando a transação foi registrada |
 
-### Tipos de transações explicados
+### Tipos de transação explicados
 
 - **Crédito** — fundos adicionados à carteira (de uma devolução, promoção ou ajuste manual)
 - **Débito** — fundos removidos da carteira. Quando o gasto no checkout estiver ativo, isso significará "gasto em um pedido" — por enquanto, a única forma de ocorrer um débito é por meio de um ajuste manual
 - **Devolução** — crédito adicionado especificamente como resultado de um pedido devolvido ou cancelado
 - **Ajuste** — uma correção manual feita pela sua equipe
-- **Reversão** — uma transação que cancela uma entrada anterior
+- **Reversão** — uma transação que anula uma entrada anterior
 
-### Fontes de transações explicadas
+### Fontes de transação explicadas
 
-- **Devolução de Pedido** — crédito concedido quando um pedido foi reembolsado para a carteira
-- **Recompensa por Indicação** — crédito ganho através do programa de indicações
+- **Devolução de Pedido** — crédito concedido quando um pedido foi devolvido para a carteira
+- **Recompensa por Indicação** — crédito ganho através do programa de indicação
 - **Promoção** — crédito concedido como parte de uma campanha de marketing
 - **Ajuste Manual** — crédito adicionado ou removido diretamente por um membro da equipe
 - **Pagamento de Pedido** — fundos gastos no checkout para pagar um pedido. Ainda não em uso — reservado para quando o gasto da carteira no checkout estiver ativo
@@ -74,13 +74,13 @@ Para um crédito de boa vontade — uma reclamação de serviço, um gesto após
 
 ## Bloqueio de carteira
 
-Se você precisar impedir que um cliente use seu saldo de carteira — por exemplo, durante uma investigação de fraude — é possível desativá-la sem excluí-la ou remover o saldo.
+Se você precisar impedir que um cliente use seu saldo de carteira — por exemplo, durante uma investigação de fraude — você pode desativá-la sem excluí-la ou remover o saldo.
 
 1. Abra a visualização de detalhes da carteira do cliente
 2. Desmarque o botão de alternância **Ativo**
 3. Clique em **Salvar**
 
-O saldo é preservado e a carteira pode ser reativada a qualquer momento. Enquanto inativa, nenhuma nova credito ou débito — manual ou de outra forma — pode ser registrado na carteira.
+O saldo é preservado e a carteira pode ser reativada a qualquer momento. Enquanto inativa, nenhuma nova créditos ou débitos — manuais ou de outra forma — podem ser registrados na carteira.
 
 ## Visualizando todas as transações
 
@@ -95,8 +95,8 @@ A lista de transações é somente leitura — transações não podem ser edita
 
 ## Dicas
 
-- Verifique **Credito ao Longo da Vida** versus **Usado ao Longo da Vida** para entender quão ativamente um cliente usa seu crédito da loja — um grande saldo não usado pode indicar que o cliente esqueceu que ele existe
-- Se um cliente relatar que seu saldo parece estar errado, revise a história completa das transações para rastrear exatamente como o saldo mudou ao longo do tempo; a coluna **Saldo Após** em cada entrada torna isso fácil
-- Um grande saldo não gasto vale um empurrão — os clientes veem seu crédito da loja no painel de controle da conta e na etapa de pagamento no checkout, mas um e-mail curto apontando para ele frequentemente o converte em um pedido
+- Verifique **Credito ao longo da vida** versus **Usado ao longo da vida** para entender quão ativamente um cliente usa seu crédito da loja — um grande saldo não usado pode indicar que o cliente esqueceu que ele existe
+- Se um cliente relatar que seu saldo parece estar errado, revise a história completa das transações para rastrear exatamente como o saldo mudou ao longo do tempo; a coluna **Saldo Depois** em cada entrada torna isso fácil
+- Um grande saldo não gasto vale uma dica — os clientes veem seu crédito da loja no painel de controle da conta e na etapa de pagamento no checkout, mas um e-mail curto apontando para ele frequentemente o converte em um pedido
 - Carteiras congeladas mantêm seu saldo permanentemente; não há expiração — se você desativar temporariamente uma carteira, lembre-se de reativá-la quando o problema for resolvido
 - O **ID de Referência** em cada transação vincula-se ao registro de origem, tornando fácil verificar por que um crédito ou débito foi aplicado sem precisar procurar em outro lugar

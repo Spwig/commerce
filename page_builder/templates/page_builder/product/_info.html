@@ -23,14 +23,10 @@
     </div>
     {% endif %}
 
+    {% comment %}Canonical price block on load (incl. variable range + sale strikethrough/badge).
+       product-base.js replaces #product-price innerHTML when a variant is selected.{% endcomment %}
     <div class="product-info__price" id="product-price">
-        {% if product.is_on_sale %}
-        <span class="price price--sale">{{ product|product_price:current_currency.code }}</span>
-        <span class="price price--compare">{{ product|product_compare_price:current_currency.code }}</span>
-        <span class="price__badge">{% mtrans 'Sale' %}</span>
-        {% else %}
-        <span class="price">{{ product|product_price:current_currency.code }}</span>
-        {% endif %}
+        {% product_price_display product current_currency.code %}
     </div>
 
     {% if template_options.show_short_description and product.short_description %}
@@ -256,10 +252,19 @@
     {% if region_unavailable %}
     <!-- Region Unavailable Notice -->
     <div class="product-region-notice">
-        <i class="fas fa-globe"></i>
-        <p>{% mtrans 'This product is not available for purchase in your region.' %}</p>
+        <i class="fas fa-truck"></i>
+        <p>
+            {% if ship_destination_name %}
+                {% mtrans "This product doesn't ship to" %} {{ ship_destination_name }}.
+            {% else %}
+                {% mtrans 'This product is not available for purchase in your region.' %}
+            {% endif %}
+        </p>
     </div>
     {% else %}
+    <!-- Subscription Options -->
+    {% include "page_builder/product/_subscription_options.html" %}
+
     <!-- Quantity & Add to Cart -->
     <div class="product-actions">
         <div class="quantity-selector">

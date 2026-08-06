@@ -2,7 +2,7 @@
   "element_type": "product_grid",
   "name": "Product Grid",
   "description": "Display products in multiple layouts with dynamic or manual selection",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "category": "ecommerce",
   "icon": "fas fa-th-large",
   "author": "Spwig",
@@ -21,13 +21,19 @@
   "template_file": "template.html",
   "inherit_base": true,
   "disable_base_properties": ["text_color", "spacing"],
-  "css_files": [
-    "page_builder/css/elements/product-grid.css",
-    "page_builder/css/category-grid.css",
-    "page_builder/css/category-list.css",
-    "page_builder/css/category-carousel.css",
-    "page_builder/css/category-masonry.css",
-    "page_builder/css/category-featured.css"
+  "css_files": ["page_builder/css/elements/product-grid.css"],
+  "conditional_css_files": [
+    {
+      "property": "layout",
+      "default": "grid",
+      "map": {
+        "grid": "page_builder/css/category-grid.css",
+        "list": "page_builder/css/category-list.css",
+        "carousel": "page_builder/css/category-carousel.css",
+        "masonry": "page_builder/css/category-masonry.css",
+        "featured": "page_builder/css/category-featured.css"
+      }
+    }
   ],
   "tabs": {
     "content": {

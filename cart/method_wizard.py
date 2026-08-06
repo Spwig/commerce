@@ -224,8 +224,8 @@ class MethodWizardStep4View(TemplateView):
         if wizard_data.get("method_type") != "local_pickup":
             wizard_data.update(
                 {
-                    "min_delivery_days": int(request.POST.get("min_delivery_days", 1)),
-                    "max_delivery_days": int(request.POST.get("max_delivery_days", 5)),
+                    "min_delivery_days": int(request.POST.get("min_delivery_days") or 1),
+                    "max_delivery_days": int(request.POST.get("max_delivery_days") or 5),
                 }
             )
         else:
@@ -238,7 +238,7 @@ class MethodWizardStep4View(TemplateView):
             )
 
         # Display settings
-        wizard_data["sort_order"] = int(request.POST.get("sort_order", 0))
+        wizard_data["sort_order"] = int(request.POST.get("sort_order") or 0)
 
         # Real-time carrier options
         if wizard_data.get("method_type") == "real_time":

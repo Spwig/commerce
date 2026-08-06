@@ -12,9 +12,9 @@ Los proveedores de pago conectan tu tienda a pasarelas de pago para que puedas a
 |----------|-------------|
 | **Stripe** | Tarjetas de crédito, Apple Pay, Google Pay y 135+ monedas |
 | **PayPal** | Saldo de PayPal, tarjetas de crédito/débito y opciones de pago posterior |
-| **Airwallex** | Pagos multimoneda optimizados para el comercio transfronterizo |
+| **Airwallex** | Pagos en múltiples monedas optimizados para el comercio transfronterizo |
 | **Square** | Pagos presenciales y en línea con soporte integrado de POS |
-| **Revolut** | Pagos rápidos europeos con tipos de cambio competitivos |
+| **Revolut** | Pagos rápidos en Europa con tipos de cambio competitivos |
 
 ## Conectar un proveedor
 
@@ -40,7 +40,7 @@ Ingresa tus credenciales de API:
 | Modo | Descripción |
 |------|-------------|
 | **Anfitrión** | Los clientes se redirigen a la página de pago del proveedor (por ejemplo, Stripe Checkout). Configuración más sencilla, la conformidad con PCI es manejada por el proveedor. |
-| **Integrado** | El formulario de pago se incrusta directamente en tu página de pago. Experiencia sin interrupciones, pero requiere el SDK de JavaScript del proveedor. |
+| **Integrado** | El formulario de pago se incrusta directamente en tu página de pago. Experiencia fluida, pero requiere el SDK de JavaScript del proveedor. |
 
 - **Modo de prueba / modo en vivo** — Comienza en modo de prueba para probar, luego cambia a modo en vivo cuando estés listo
 
@@ -72,7 +72,7 @@ Las tarjetas de alerta en la parte superior resaltan problemas que requieren ate
 
 ### Análisis de ingresos
 
-- **Gráfico de ingresos** — Desglose visual del volumen de pagos a lo largo del tiempo, agrupado por día, semana o mes
+- **Gráfico de ingresos** — Desglose visual del volumen de pagos con el tiempo, agrupado por día, semana o mes
 - **Métricas de rendimiento** — Ingresos totales, tasa de éxito, valor promedio de transacción y tasa de reembolso
 - **Comparación de proveedores** — Tarjetas de rendimiento lado a lado para cada proveedor conectado
 
@@ -81,7 +81,7 @@ Las tarjetas de alerta en la parte superior resaltan problemas que requieren ate
 - **Distribución de estado** — Cuentas de transacciones completadas, pendientes, fallidas y reembolsadas
 - **Mezcla de métodos de pago** — Qué métodos de pago usan más los clientes (tarjetas de crédito, PayPal, billeteras digitales)
 
-## Administrar métodos de pago
+## Gestionar métodos de pago
 
 Cada proveedor admite diferentes métodos de pago. Puedes habilitar o deshabilitar métodos específicos por país:
 
@@ -92,12 +92,14 @@ Cada proveedor admite diferentes métodos de pago. Puedes habilitar o deshabilit
 
 Esto es útil cuando un método de pago es popular en una región pero no en otra (por ejemplo, iDEAL en los Países Bajos, Bancontact en Bélgica).
 
+## Webhooks
+
 Los webhooks mantienen tu tienda sincronizada con el proveedor de pagos en tiempo real.
 
 Manejan eventos como:
 - Pago completado o fallido
 - Reembolsos procesados
-- Disputas y cobros retroactivos abiertos
+- Disputas y cargos devueltos abiertos
 - Renovaciones de suscripciones
 
 ### Configuración Automática

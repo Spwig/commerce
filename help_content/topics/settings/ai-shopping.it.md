@@ -2,27 +2,27 @@
 title: Acquisto con AI
 ---
 
-L'Acquisto con AI permette agli assistenti di acquisto basati sull'AI di trovare i tuoi prodotti e, quando ne autorizzi l'accesso, di effettuare acquisti per conto dei clienti. È **disattivato di default** — attivarlo è una scelta deliberata, e finché non lo fai, il tuo negozio non espone nulla a questi assistenti.
+L'Acquisto con AI permette agli assistenti di acquisto basati sull'intelligenza artificiale di trovare i tuoi prodotti e, quando ne autorizzi l'accesso, di effettuare acquisti per conto dei clienti. È **disattivato di default** — attivarlo è una scelta deliberata, e finché non lo farai, il tuo negozio non espone nulla a questi assistenti.
 
 ## Attivazione
 
-Apri **Impostazioni → Acquisto con AI** e attiva **Commercio agente abilitato**. A partire da quel momento, gli assistenti che supportano il Protocollo del Commercio Universale possono scoprire il tuo negozio e leggere il tuo catalogo. Nulla cambia riguardo al tuo negozio normale.
+Apri **Impostazioni → Acquisto con AI** e attiva **Commercio agente abilitato**. A partire da quel momento, gli assistenti che supportano il Protocollo del Commercio Universale potranno scoprire il tuo negozio e leggere il tuo catalogo. Nulla cambia riguardo al tuo negozio normale.
 
 ## Dashboard di prontezza
 
 L'inizio della pagina Acquisto con AI risponde a una domanda in una singola frase: **i sistemi AI possono effettivamente acquistare dal tuo negozio in questo momento?**
 
-- **"I sistemi AI possono acquistare dal tuo negozio"** — tutto ciò necessario per un acquisto è in atto.
-- **"I sistemi AI possono navigare nel tuo negozio, ma non possono acquistare ancora"** — il tuo negozio è accessibile, ma manca qualcosa per completare l'acquisto (di solito un fornitore di pagamenti connesso).
+- **"I sistemi AI possono acquistare dal tuo negozio"** — tutto ciò necessario per un acquisto è a posto.
+- **"I sistemi AI possono navigare nel tuo negozio, ma non possono acquistare ancora"** — il tuo negozio è accessibile, ma manca qualcosa per completare un acquisto (di solito un fornitore di pagamenti connesso).
 - **"Interruzione d'emergenza attiva"** o **"Commercio agente disattivato"** — nulla viene fornito agli assistenti.
 
-Sotto la valutazione vedrai una breve checklist — fornitore di pagamenti connesso, spedizione può essere quotata, prodotti visibili agli assistenti — con un suggerimento accanto a qualsiasi elemento che richiede ancora attenzione. I contatori mostrano quanti prodotti gli assistenti possono vendere, quanti hai nascosto da loro, quanti assistenti hanno visitato e quanti hai bloccato.
+Sotto il verdetto vedrai una breve checklist — fornitore di pagamenti connesso, spedizione può essere quotata, prodotti visibili agli assistenti — con un suggerimento accanto a qualsiasi elemento che richiede ancora attenzione. I contatori mostrano quanti prodotti gli assistenti possono vendere, quanti hai nascosto da loro, quanti assistenti hanno visitato e quanti hai bloccato.
 
-La checklist riflette la tua **configurazione attiva**: collega un fornitore di pagamenti o aggiungi un metodo di spedizione e la valutazione verrà aggiornata la prossima volta che aprirai la pagina.
+La checklist riflette la tua **configurazione attiva**: collega un fornitore di pagamenti o aggiungi un metodo di spedizione e il verdetto si aggiorna la prossima volta che apri la pagina.
 
 ## Interruzione d'emergenza
 
-L'**Interruzione d'emergenza** è un interruttore separato dal principale. Usa questo per fermare immediatamente tutte le attività degli assistenti — ad esempio, se noti qualcosa di anomalo — senza dover modificare la tua configurazione. Pulisci per riprendere. Considera l'interruttore principale come "questa funzione è configurata" e l'interruzione d'emergenza come "ferma tutto immediatamente".
+L'**Interruzione d'emergenza** è un interruttore separato dal principale. Utilizzalo per fermare immediatamente tutte le attività degli assistenti — ad esempio, se noti qualcosa di anomalo — senza dover modificare la tua configurazione. Puliscilo per riprendere. Considera l'interruttore principale come "questa funzione è configurata" e l'interruzione d'emergenza come "ferma tutto immediatamente".
 
 ## Cosa possono fare gli assistenti
 
@@ -43,11 +43,11 @@ Quando un assistente effettua il primo acquisto — o tenta di farlo — Spwig l
 
 I nuovi assistenti iniziano **limitati**: possono effettuare transazioni, ma entro limiti. Per bloccarne uno, selezionalo e scegli **Blocca gli assistenti selezionati** — le checkout aperte vengono interrotte e l'assistente non può più acquistare, mentre eventuali pagamenti già effettuati rimangono intatti. **Sblocca gli assistenti selezionati** lo riporta allo stato limitato (mai direttamente a illimitato — rimuovere i limiti è sempre un passo separato e deliberato).
 
-## Registro delle attività
+## Registri delle attività
 
-**Acquisto con AI → Eventi degli agenti** è un registro a prova di manipolazione di ciò che hanno fatto gli assistenti — ogni richiesta verificata, ogni tentativo bloccato, ogni modifica che hai effettuato. È solo in lettura e non può essere modificato o eliminato, quindi costituisce la tua traccia di evidenza se un acquisto effettuato da un assistente dovesse mai essere contestato.
+**Acquisto con AI → Eventi degli agenti** è un registro a prova di manipolazione di ciò che hanno fatto gli assistenti — ogni richiesta verificata, ogni tentativo bloccato, ogni modifica che hai effettuato. È solo in lettura e non può essere modificato o eliminato, quindi rappresenta il tuo percorso delle prove se un acquisto effettuato da un assistente dovesse mai essere contestato.
 
-## Una nota sui piattaforme degli assistenti
+## Una nota sulle piattaforme degli assistenti
 
 Le aziende che gestiscono questi assistenti (e le regole per apparire in esse) sono nuove e cambiano spesso.
 

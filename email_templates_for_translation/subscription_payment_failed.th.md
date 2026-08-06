@@ -25,7 +25,7 @@ category: Subscriptions
           ⚠️ การชำระเงินล้มเหลว
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          เราไม่สามารถดำเนินการชำระเงินของคุณได้
+          เราไม่สามารถประมวลผลการชำระเงินของคุณได้
         </mj-text>
       </mj-column>
     </mj-section>
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                กรุณาอัปเดตวิธีการชำระเงินภายใน {{ retry_date|date:"F d, Y" }} เพื่อหลีกเลี่ยงการหยุดให้บริการ
+                กรุณาอัปเดตวิธีการชำระเงินของคุณภายใน {{ retry_date|date:"F d, Y" }} เพื่อหลีกเลี่ยงการตัดการให้บริการ
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          คุณควรทำอะไร?
+          คุณควรทำอย่างไร?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
           ตรวจสอบว่าวิธีการชำระเงินของคุณมีเงินเพียงพอ
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
           อัปเดตวิธีการชำระเงินหากบัตรหมดอายุ
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          เราจะลองชำระเงินอัตโนมัติภายใน {{ retry_days }} วัน
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          เราจะทำการชำระเงินซ้ำโดยอัตโนมัติใน {{ retry_days }} วัน
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -99,7 +103,7 @@ category: Subscriptions
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            ดูแผนสมาชิก
+            ดูแผนการสมัครสมาชิก
           </a>
         </mj-text>
       </mj-column>
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          ต้องการความช่วยเหลือ? ติดต่อเราที่ {{ support_email }}
+          ต้องการความช่วยเหลือหรือไม่? ติดต่อเราที่ {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -122,7 +126,7 @@ category: Subscriptions
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Powered by Spwig
+            ได้รับการพัฒนาโดย Spwig
           </a>
         </mj-text>
       </mj-column>
@@ -133,7 +137,7 @@ category: Subscriptions
 ## Text Content
 ⚠️ การชำระเงินล้มเหลว
 
-เราไม่สามารถดำเนินการชำระเงินของคุณได้
+เราไม่สามารถประมวลผลการชำระเงินของคุณได้
 
 ข้อมูลการชำระเงิน:
 แผน: {{ plan_name }}
@@ -141,17 +145,17 @@ category: Subscriptions
 วิธีการชำระเงิน: {{ payment_method }}
 เหตุผล: {{ failure_reason }}
 
-กรุณาอัปเดตวิธีการชำระเงินภายใน {{ retry_date|date:"F d, Y" }} เพื่อหลีกเลี่ยงการหยุดให้บริการ
+{% if retry_date %}กรุณาอัปเดตวิธีการชำระเงินของคุณภายใน {{ retry_date|date:"F d, Y" }} เพื่อหลีกเลี่ยงการตัดการให้บริการ.{% endif %}
 
-คุณควรทำอะไร?
+คุณควรทำอย่างไร?
 1. ตรวจสอบว่าวิธีการชำระเงินของคุณมีเงินเพียงพอ
 2. อัปเดตวิธีการชำระเงินหากบัตรหมดอายุ
-3. เราจะลองชำระเงินอัตโนมัติภายใน {{ retry_days }} วัน
+{% if retry_days %}3. เราจะทำการชำระเงินซ้ำโดยอัตโนมัติใน {{ retry_days }} วัน{% endif %}
 
 อัปเดตวิธีการชำระเงิน: {{ update_payment_url }}
-ดูแผนสมาชิก: {{ manage_subscription_url }}
+ดูแผนการสมัครสมาชิก: {{ manage_subscription_url }}
 
-ต้องการความช่วยเหลือ? ติดต่อเราที่ {{ support_email }}
+ต้องการความช่วยเหลือหรือไม่? ติดต่อเราที่ {{ support_email }}
 
 ---
-Powered by Spwig - https://spwig.com
+ได้รับการพัฒนาโดย Spwig - https://spwig.com

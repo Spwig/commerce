@@ -39,7 +39,7 @@
 }
 
 .preview-header h1 i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .preview-controls {
@@ -73,8 +73,8 @@
 
 .btn-edit-translation {
   padding: 8px 16px;
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -105,8 +105,8 @@
 }
 
 .btn-primary {
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .btn-primary:hover {
@@ -114,12 +114,12 @@
 }
 
 .btn-secondary {
-  background: var(--body-quiet-color);
-  color: var(--body-bg);
+  background: var(--close-button-bg);
+  color: var(--button-fg);
 }
 
 .btn-secondary:hover {
-  background: var(--body-fg);
+  background: color-mix(in srgb, var(--close-button-bg, #666) 80%, #000);
 }
 
 .preview-grid {
@@ -154,7 +154,7 @@
 }
 
 .preview-panel-header i {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .preview-panel-content {
@@ -167,7 +167,8 @@
   width: 100%;
   height: 600px;
   border: none;
-  background: white;
+  /* Email canvas — intentionally theme-independent (emails render on a white background) */
+  background: #fff;
 }
 
 .preview-text {
@@ -201,11 +202,11 @@
 }
 
 .error-message {
-  background: #fee;
-  border: 1px solid #fcc;
+  background: var(--message-error-bg, #fee);
+  border: 1px solid var(--error-fg, #fcc);
   border-radius: 8px;
   padding: 20px;
-  color: #c00;
+  color: var(--body-fg, #c00);
   margin-bottom: 20px;
 }
 
@@ -237,7 +238,7 @@
   width: 90%;
   max-width: 500px;
   padding: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px var(--shadow-dark, rgba(0, 0, 0, 0.3));
 }
 
 .modal-header {
@@ -285,9 +286,9 @@
 }
 
 .success-message {
-  background: #dfd;
-  border: 1px solid #9c9;
-  color: #060;
+  background: var(--message-success-bg, #dfd);
+  border: 1px solid var(--success-fg, #9c9);
+  color: var(--body-fg, #060);
   padding: 12px 16px;
   border-radius: 4px;
   margin-top: 10px;
@@ -342,7 +343,7 @@
 }
 
 .translation-field label i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 13px;
 }
 
@@ -368,8 +369,8 @@
 
 .translation-input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 0, 123, 255), 0.1);
+  border-color: var(--link-fg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-fg, #007bff) 20%, transparent);
 }
 
 .translation-code-editor {
@@ -395,9 +396,9 @@
 }
 
 .btn-copy-base:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: var(--button-fg);
 }
 
 /* Translation Notice Styles */
@@ -416,8 +417,8 @@
 }
 
 .info-notice {
-  background: var(--selected-bg);
-  border: 2px solid var(--info-color);
+  background: var(--admin-info-bg);
+  border: 2px solid var(--admin-info);
 }
 
 .notice-icon {
@@ -430,7 +431,7 @@
 }
 
 .info-notice .notice-icon {
-  color: var(--info-color);
+  color: var(--admin-info);
 }
 
 .notice-content {
@@ -457,8 +458,8 @@
 
 .btn-create-translation {
   padding: 10px 20px;
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -473,5 +474,5 @@
 .btn-create-translation:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px var(--shadow-light, rgba(0, 0, 0, 0.15));
 }

@@ -6,29 +6,9 @@
  * (identities, attributions, events, rewards)
  */
 
-/* Change list header */
-.change-list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-color, #ddd);
-}
-
-.change-list-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.change-list-header .subtitle {
-  margin: 4px 0 0;
-  color: var(--body-quiet-color, #666);
-  font-size: 0.875rem;
-}
+/* Change list header — uses the canonical .change-list-header banner from
+   admin-base.css (blue banner; h1 / .subtitle / .button.primary action button
+   all styled there). No local override, matching the admin-wide standard. */
 
 /* i18n config data island - hidden by default */
 .referrals-changelist-config {
@@ -59,7 +39,7 @@
 }
 
 .referral-badge-danger {
-  background: var(--danger-color, #dc3545);
+  background: var(--delete-button-bg, #dc3545);
 }
 
 .referral-badge-info {
@@ -67,13 +47,15 @@
 }
 
 .referral-badge-primary {
-  background: var(--primary, #007bff);
+  background: var(--button-bg, #007bff);
 }
 
 .referral-badge-secondary {
-  background: #6c757d;
+  background: var(--close-button-bg, #6c757d);
 }
 
+/* Type-coded reward-kind badges (kind=percent / kind=perk) — deliberate
+   distinct hues with no semantic token equivalent; kept as-is. */
 .referral-badge-orange {
   background: #ff6b6b;
 }
@@ -99,15 +81,15 @@
 
 /* Expiry status text */
 .referral-text-muted {
-  color: #6c757d;
+  color: var(--body-quiet-color, #6c757d);
 }
 
 .referral-text-danger {
-  color: var(--danger-color, #dc3545);
+  color: var(--error-fg, #dc3545);
   font-weight: bold;
 }
 
 .referral-text-warning {
-  color: #ff6b6b;
+  color: var(--warning-fg);
   font-weight: bold;
 }

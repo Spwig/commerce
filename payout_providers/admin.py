@@ -6,9 +6,11 @@ import json
 import logging
 
 from django.contrib import admin, messages
+from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import PayoutProviderAccount, PayoutWebhookLog
@@ -151,7 +153,7 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
         """Display default status as badge"""
         if obj.is_default:
             return format_html('<span class="badge badge-primary">{}</span>', _("Default"))
-        return format_html('<span class="badge badge-secondary">-</span>')
+        return mark_safe('<span class="badge badge-secondary">-</span>')
 
     is_default_badge.short_description = _("Default")
     is_default_badge.admin_order_field = "is_default"
@@ -210,10 +212,27 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
+    def _change_permission_denied(self, request):
+        """Return a 403 JSON response if the user lacks change permission, else None.
+
+        ``admin_view`` only guarantees an active staff user, so every mutating
+        AJAX endpoint must additionally enforce the model change permission.
+        """
+        if request.user.has_perm("payout_providers.change_payoutprovideraccount"):
+            return None
+        return JsonResponse(
+            {"success": False, "message": _("You do not have permission to modify providers.")},
+            status=403,
+        )
+
     def toggle_active_view(self, request, provider_id):
         """Toggle provider active status via AJAX"""
         if request.method != "POST":
             return JsonResponse({"success": False, "message": "POST required"}, status=405)
+
+        denied = self._change_permission_denied(request)
+        if denied:
+            return denied
 
         try:
             provider = PayoutProviderAccount.objects.get(pk=provider_id)
@@ -237,13 +256,31 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
                 {"success": False, "message": _("An unexpected error occurred.")}, status=500
             )
 
-    def set_default_view(self, request, provider_id):
-        """Set provider as default via AJAX"""
-        if request.method != "POST":
-            return JsonResponse({"success": False, "message": "POST required"}, status=405)
+    @staticmethod
+    def _set_default_atomically(provider_id):
+        """Make one account the sole default for its provider type.
 
-        try:
+        Clears any existing default and sets the target, holding a row lock on
+        every account of that provider type so concurrent set-default requests
+        (from this view or the bulk action) can't leave multiple defaults.
+        Returns the refreshed target account.
+        """
+        with transaction.atomic():
+            # Read the target to learn its provider type (unlocked read is
+            # fine; provider_type doesn't change here).
             provider = PayoutProviderAccount.objects.get(pk=provider_id)
+
+            # Lock every account of this provider type in a consistent
+            # order (by pk). This serializes concurrent set-default
+            # requests for the same type — even those targeting different
+            # rows — and the stable ordering avoids deadlocks.
+            locked = {
+                account.pk: account
+                for account in PayoutProviderAccount.objects.select_for_update()
+                .filter(provider_type=provider.provider_type)
+                .order_by("pk")
+            }
+            provider = locked[provider_id]
 
             # Clear other defaults for the same provider type
             PayoutProviderAccount.objects.filter(
@@ -253,6 +290,20 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
             # Set this one as default
             provider.is_default = True
             provider.save(update_fields=["is_default"])
+
+        return provider
+
+    def set_default_view(self, request, provider_id):
+        """Set provider as default via AJAX"""
+        if request.method != "POST":
+            return JsonResponse({"success": False, "message": "POST required"}, status=405)
+
+        denied = self._change_permission_denied(request)
+        if denied:
+            return denied
+
+        try:
+            provider = self._set_default_atomically(provider_id)
 
             return JsonResponse(
                 {
@@ -273,6 +324,10 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
         if request.method != "POST":
             return JsonResponse({"success": False, "message": "POST required"}, status=405)
 
+        denied = self._change_permission_denied(request)
+        if denied:
+            return denied
+
         try:
             provider = PayoutProviderAccount.objects.get(pk=provider_id)
             result = provider.test_connection()
@@ -286,7 +341,10 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
                 )
             else:
                 return JsonResponse(
-                    {"success": False, "message": result.get("error", _("Connection test failed"))}
+                    {
+                        "success": False,
+                        "message": result.get("message", _("Connection test failed")),
+                    }
                 )
         except PayoutProviderAccount.DoesNotExist:
             return JsonResponse({"success": False, "message": _("Provider not found")}, status=404)
@@ -311,6 +369,14 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
                     {"success": False, "message": _("Action and provider IDs required")}, status=400
                 )
 
+            # Deletes enforce their own permission below; every other action
+            # mutates provider state (or triggers external calls) and requires
+            # the model change permission.
+            if action != "delete":
+                denied = self._change_permission_denied(request)
+                if denied:
+                    return denied
+
             providers = PayoutProviderAccount.objects.filter(pk__in=provider_ids)
             count = providers.count()
 
@@ -332,10 +398,7 @@ class PayoutProviderAccountAdmin(admin.ModelAdmin):
                         status=400,
                     )
                 target_provider = providers.first()
-                PayoutProviderAccount.objects.filter(
-                    provider_type=target_provider.provider_type, is_default=True
-                ).update(is_default=False)
-                providers.update(is_default=True)
+                self._set_default_atomically(target_provider.pk)
                 message = _("Default provider updated.")
 
             elif action == "test_connection":

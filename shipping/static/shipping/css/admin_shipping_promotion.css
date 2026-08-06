@@ -101,12 +101,8 @@
   margin-bottom: 30px;
 }
 
-.rules-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
-}
+/* Card container reuses admin-base .list-row-cards. The rule card itself is
+   a bespoke 4-column grid (not the flex .list-row-card), so it stays local. */
 
 /* ==========================================================================
    Rule Card - Horizontal Layout
@@ -127,7 +123,7 @@
 
 .rule-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .rule-card.selected {
@@ -135,18 +131,7 @@
   border-color: var(--primary);
 }
 
-/* Checkbox */
-.rule-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rule-checkbox input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
+/* Checkbox reuses admin-base .list-row-card-checkbox. */
 
 /* Rule Icon and Priority */
 .rule-icon {
@@ -201,23 +186,23 @@
   padding: 2px 6px;
   font-size: 11px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .priority-value.highest {
-  color: #dc3545;
+  color: var(--error-color);
 }
 
 .priority-value.high {
-  color: #fd7e14;
+  color: var(--warning-fg);
 }
 
 .priority-value.medium {
-  color: #ffc107;
+  color: var(--warning-color);
 }
 
 .priority-value.low {
-  color: #6c757d;
+  color: var(--body-quiet-color);
 }
 
 /* ==========================================================================
@@ -360,45 +345,9 @@
   grid-column: 1 / -1;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.badge-status.badge-active {
-  background: var(--message-success-bg);
-  color: var(--success-fg);
-}
-
-.badge-status.badge-inactive {
-  background: var(--darkened-bg);
-  color: var(--body-quiet-color);
-}
-
-.badge-time.badge-valid {
-  background: var(--message-success-bg);
-  color: var(--success-fg);
-}
-
-.badge-time.badge-invalid {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-stop {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.badge-date {
-  background: var(--darkened-bg);
-  color: var(--body-quiet-color);
-}
+/* Badge pills reuse the shared .list-row-card-badge* variants from
+   admin-base.css (active/valid -> success, invalid -> warning, stop -> error,
+   date -> default). The .rule-badges wrapper keeps grid-column: 1 / -1. */
 
 /* ==========================================================================
    Rule Actions
@@ -441,8 +390,8 @@
 }
 
 .action-btn.delete-btn:hover {
-  background: #dc3545;
-  border-color: #dc3545;
+  background: var(--error-color);
+  border-color: var(--error-color);
 }
 
 .action-btn.rule-toggle-btn.active {
@@ -575,7 +524,7 @@
     gap: 15px;
   }
 
-  .rule-checkbox {
+  .list-row-card-checkbox {
     grid-column: 1;
     grid-row: 1;
   }

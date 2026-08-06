@@ -1,0 +1,43 @@
+{% load i18n static merchant_trans %}
+{% comment %}Region confirmation modal. Auto-detection has already applied the visitor's
+   region; this confirms it and lets them change it. Reuses the existing
+   store-picker modal styling (.modal--store-picker) — no new modal CSS.
+   Rendered at body level (sibling of <header>) from base.html, only when
+   region_suggestion.show. Context: region_suggestion (catalog.context_processors).{% endcomment %}
+<div id="region-suggestion-modal"
+     class="modal modal--store-picker modal--region-suggestion hidden"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="region-suggestion-title"
+     data-region-url="{% url 'set_region' %}">
+    <div class="modal__backdrop" data-region-dismiss></div>
+    <div class="modal__content card">
+        <div class="modal__header">
+            <h3 class="modal__title" id="region-suggestion-title">
+                {% mtrans "We've set your region to" %} {{ region_suggestion.current_region_name }}
+            </h3>
+            <button type="button" class="modal__close" aria-label="{% mtrans 'Close' %}" data-region-dismiss>
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal__body">
+            <p class="region-suggestion__text">
+                {% mtrans "We picked this from your location so you see the right products and prices. Not right? Choose your country." %}
+            </p>
+            <div class="region-suggestion__actions">
+                <label class="region-suggestion__label" for="region-suggestion-country">
+                    {% mtrans "Ship to" %}
+                </label>
+                <select id="region-suggestion-country" class="region-suggestion__select" data-region-select>
+                    {% for country in region_suggestion.countries %}
+                    <option value="{{ country.code }}" {% if country.code == region_suggestion.current_country_code %}selected{% endif %}>{{ country.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" class="btn btn--primary" data-region-dismiss>
+                    {% mtrans "Keep browsing" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'page_builder/js/region-suggestion.js' %}" defer></script>

@@ -106,9 +106,9 @@ class PaymentMethodFilter:
         )
 
         # Layer 1: Get active provider accounts
-        active_providers = PaymentProviderAccount.objects.filter(is_active=True).select_related(
-            "component"
-        )
+        active_providers = PaymentProviderAccount.objects.filter(
+            is_active=True, connection_status="connected"
+        ).select_related("component")
 
         # Layer 2: Check if merchant ships to customer's country.
         # Skipped for no-shipping carts (require_ships_to=False).
@@ -200,6 +200,10 @@ class PaymentMethodFilter:
         Returns:
             Dictionary: {provider_slug: [method1, method2, ...], ...}
         """
+        # Normalize once so the per-provider lookup below uses the same
+        # country code that provider selection resolved (e.g. "Australia" -> "AU").
+        customer_country = PaymentMethodFilter._normalize_country_code(customer_country)
+
         available_providers = PaymentMethodFilter.get_available_providers_for_checkout(
             customer_country=customer_country, currency=currency
         )
@@ -232,30 +236,31 @@ class PaymentMethodFilter:
         customer_country = customer_country.upper()
         currency = currency.upper()
 
-        try:
-            # Get the provider account
-            provider = PaymentProviderAccount.objects.get(
-                component__slug=provider_slug, is_active=True
-            )
+        # Nothing enforces one active account per component slug, so filter and
+        # take the first (default-preferred by the model's ordering) instead of
+        # .get(), which would raise MultipleObjectsReturned on duplicates.
+        provider = PaymentProviderAccount.objects.filter(
+            component__slug=provider_slug, is_active=True
+        ).first()
 
-            # Check merchant ships to country
-            ships_to_country = ShippingCountry.objects.filter(
-                site_id=1, country_code=customer_country, is_active=True
-            ).exists()
-
-            if not ships_to_country:
-                return False
-
-            # Check if method is enabled
-            if not provider.is_method_enabled(customer_country, method_slug):
-                return False
-
-            # Check currency support
-            return PaymentMethodFilter._supports_currency(provider, currency)
-
-        except PaymentProviderAccount.DoesNotExist:
+        if provider is None:
             logger.warning(f"Provider {provider_slug} not found or not active")
             return False
+
+        # Check merchant ships to country
+        ships_to_country = ShippingCountry.objects.filter(
+            site_id=1, country_code=customer_country, is_active=True
+        ).exists()
+
+        if not ships_to_country:
+            return False
+
+        # Check if method is enabled
+        if not provider.is_method_enabled(customer_country, method_slug):
+            return False
+
+        # Check currency support
+        return PaymentMethodFilter._supports_currency(provider, currency)
 
     @staticmethod
     def get_unsupported_countries() -> list[str]:

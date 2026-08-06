@@ -60,6 +60,8 @@
 
     <!-- 2. Base CSS (global resets, typography, utility classes) -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}" media="all">
+    <!-- Canonical price/sale block (product_price_display tag) — used across every surface -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/components/price-display.css' %}" media="all">
 
     <!-- 3. Platform Component CSS (product cards, buttons, cart, search - overrides base) -->
     <link rel="stylesheet" href="{% static 'design/platform/components.css' %}" media="all">
@@ -102,6 +104,11 @@
     {% if cookie_consent_ctx.enabled %}
     <!-- Cookie Consent Banner CSS -->
     <link rel="stylesheet" href="{% static 'core/frontend/cookie_banner.css' %}" media="all">
+    {% endif %}
+
+    {% if region_suggestion.show %}
+    <!-- Region suggestion modal reuses the store-picker modal styles -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/components/stock-display.css' %}" media="all">
     {% endif %}
 
     <!-- Additional CSS -->
@@ -147,6 +154,11 @@
         {% include 'page_builder/components/mini-cart.html' %}
     {% endif %}
 
+    <!-- Region suggestion modal (market model) -->
+    {% if region_suggestion.show %}
+        {% include 'page_builder/partials/_region_suggestion_modal.html' %}
+    {% endif %}
+
     <!-- JavaScript -->
     {% block scripts %}
         <!-- Frontend Utilities (lazy loading, cart, notifications, express checkout) -->
@@ -169,9 +181,15 @@
         <!-- Mobile Menu Toggle -->
         <script src="{% static 'design/js/mobile-menu.js' %}" defer></script>
 
-        <!-- Product Card Interactions (add-to-cart, quick-view, wishlist) -->
+        <!-- Product Card Interactions (add-to-cart, quick-view, wishlist) —
+             only on surfaces that render product cards. Pages that never do
+             (cart, checkout) set suppress_product_card_assets to skip the JS
+             and the quick-view modal below. Default is to load, so a page that
+             forgets the flag simply keeps the scripts (no breakage). -->
+        {% if not suppress_product_card_assets %}
         <script src="{% static 'page_builder/js/product-card.js' %}" defer></script>
         <script src="{% static 'page_builder/js/quick-view.js' %}" defer></script>
+        {% endif %}
 
         <!-- Notification Zone (announcement bar) — conditional -->
         {% notification_zone_assets page=page %}
@@ -198,6 +216,8 @@
     </script>
     {% endif %}
 
+    {% if not suppress_product_card_assets %}
     {% include 'page_builder/partials/quick_view_modal.html' %}
+    {% endif %}
 </body>
 </html>

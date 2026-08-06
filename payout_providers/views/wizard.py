@@ -11,7 +11,7 @@ from pathlib import Path
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.templatetags.static import static
@@ -494,17 +494,28 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                     supported_methods = manifest.get("supported_methods", [])
 
                     # Create provider account
-                    with transaction.atomic():
-                        provider_account = PayoutProviderAccount.objects.create(
-                            provider_type=component_slug,
-                            component=component,
-                            name=provider_name or component.name,
-                            credentials_encrypted=encrypted_credentials,
-                            settings=settings_data,
-                            supported_methods=supported_methods,
-                            is_active=True,
-                            is_default=is_first_provider,
-                            connection_status="connected",
+                    try:
+                        with transaction.atomic():
+                            provider_account = PayoutProviderAccount.objects.create(
+                                provider_type=component_slug,
+                                component=component,
+                                name=provider_name or component.name,
+                                credentials_encrypted=encrypted_credentials,
+                                settings=settings_data,
+                                supported_methods=supported_methods,
+                                is_active=True,
+                                is_default=is_first_provider,
+                                connection_status="connected",
+                            )
+                    except IntegrityError:
+                        # A default account for this provider type was created
+                        # concurrently; the DB constraint rejected this one.
+                        return JsonResponse(
+                            {
+                                "success": False,
+                                "error": _("A default account for this provider already exists."),
+                            },
+                            status=409,
                         )
 
                     # Clear wizard data

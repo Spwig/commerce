@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.forms import ModelForm, widgets
 from django.shortcuts import render
 from django.urls import path
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -349,7 +349,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
     def payment_methods_summary(self, obj):
         """Display payment providers status and management links"""
         from django.urls import reverse
-        from django.utils.html import format_html
+        from django.utils.html import conditional_escape, format_html
 
         try:
             from payment_providers.models import PaymentProviderAccount
@@ -391,7 +391,11 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 ).select_related("component")
                 provider_badges = []
                 for provider in active_provider_list:
-                    provider_name = provider.display_name or provider.component.name
+                    # Escape DB-sourced provider name: the parts are joined and
+                    # marked safe below, so escape here to keep that safe.
+                    provider_name = conditional_escape(
+                        provider.display_name or provider.component.name
+                    )
                     env_mode = "test" if provider.test_mode else "live"
                     env_class = "status-warning" if provider.test_mode else "status-success"
 
@@ -440,7 +444,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 </div>
             ''')
 
-            return format_html("".join(summary_parts))
+            return mark_safe("".join(summary_parts))
 
         except ImportError:
             return format_html(
@@ -465,7 +469,6 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
     def _oauth_providers_summary_old(self, obj):
         """OLD VERSION - DEPRECATED - keeping for reference"""
         from django.urls import reverse
-        from django.utils.html import format_html
 
         try:
             from accounts.models import OAuthProviderSettings
@@ -540,7 +543,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                             font-size: 13px;
                             border-left: 3px solid {status_color};
                         ">
-                            {icon} {provider.display_name}
+                            {icon} {conditional_escape(provider.display_name)}
                         </span>
                     """)
 
@@ -563,7 +566,9 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
             if enabled_not_configured.exists():
                 warning_providers = []
                 for provider in enabled_not_configured:
-                    warning_providers.append(f"<li>{provider.get_provider_display()}</li>")
+                    warning_providers.append(
+                        f"<li>{conditional_escape(provider.get_provider_display())}</li>"
+                    )
 
                 summary_parts.append(f"""
                     <div style="
@@ -699,18 +704,18 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 </div>
             ''')
 
-            return format_html("".join(summary_parts))
+            return mark_safe("".join(summary_parts))
 
         except ImportError:
-            return format_html("""
+            return mark_safe("""
                 <div style="color: #dc3545; font-weight: bold;">
                     ❌ {_('Social authentication module not available')}
                 </div>
             """)
         except Exception as e:
-            return format_html(f"""
+            return mark_safe(f"""
                 <div style="color: #dc3545;">
-                    ❌ {_("Error loading OAuth providers")}: {str(e)}
+                    ❌ {_("Error loading OAuth providers")}: {conditional_escape(str(e))}
                 </div>
             """)
 
@@ -770,7 +775,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                         <span style="background-color: {badge_color}; color: white; padding: 4px 12px;
                                      border-radius: 4px; display: inline-block; margin: 4px 4px 4px 0;
                                      font-size: 12px; font-weight: 500;">
-                            {account.component.name}: {account.from_email}{default_marker}
+                            {conditional_escape(account.component.name)}: {conditional_escape(account.from_email)}{default_marker}
                         </span>
                     """)
 
@@ -797,7 +802,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 </div>
             ''')
 
-            return format_html("".join(summary_parts))
+            return mark_safe("".join(summary_parts))
 
         except ImportError:
             return format_html('<p style="color: #dc3545;">{}</p>', _("Email system not installed"))
@@ -1536,11 +1541,11 @@ class CustomUserAdmin(BaseUserAdmin):
 
         roles = get_user_roles(obj)
         if obj.is_superuser and not roles:
-            return format_html(
+            return mark_safe(
                 '<span style="background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Owner</span>'
             )
         if not roles:
-            return format_html('<span style="color: var(--body-quiet-color);">—</span>')
+            return mark_safe('<span style="color: var(--body-quiet-color);">—</span>')
         color_map = {
             "primary": "#7c3aed",
             "success": "#22c55e",
@@ -1553,9 +1558,9 @@ class CustomUserAdmin(BaseUserAdmin):
         for role in roles:
             bg = color_map.get(role.color, "#6b7280")
             badges.append(
-                f'<span style="background: {bg}; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 4px;">{role.display_name}</span>'
+                f'<span style="background: {bg}; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 4px;">{conditional_escape(role.display_name)}</span>'
             )
-        return format_html("".join(badges))
+        return mark_safe("".join(badges))
 
     display_roles.short_description = _("Roles")
 

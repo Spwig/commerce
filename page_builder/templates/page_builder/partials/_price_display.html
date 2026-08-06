@@ -1,0 +1,2 @@
+{% load i18n merchant_trans %}
+<span class="price-display{% if on_sale %} price-display--on-sale{% endif %}"><span class="price-display__current">{{ current }}</span>{% if original %} <span class="price-display__original">{{ original }}</span>{% endif %}{% if on_sale and show_badge %} <span class="price-display__badge">{% mtrans 'Sale' %}</span>{% endif %}</span>

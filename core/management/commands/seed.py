@@ -134,6 +134,76 @@ class Command(BaseCommand):
             )
         )
 
+        # Post-conditions: verify critical first-boot invariants actually hold
+        # after seeding. Guards against a silent regression (e.g. a preinstalled
+        # manifest build dropping every theme) that leaves the store technically
+        # booted but visibly broken. Skipped on --dry-run (nothing was created).
+        if not options["dry_run"]:
+            ran_names = {s[0] for s in seeds_to_run}
+            self._verify_postconditions(ran_names)
+
+    def _verify_postconditions(self, ran_names):
+        """Assert first-boot invariants a themeless/CSS-less store would violate.
+
+        Runs after seeding so a regression surfaces loudly in the boot log
+        instead of silently shipping a store that renders on fallback CSS.
+        Intentionally non-fatal: a degraded-but-serving store beats an aborted
+        boot (`set -e` in docker-entrypoint.sh would turn a raise into a boot
+        failure over what is only a styling problem).
+        """
+        # Only meaningful once theme installation has had a chance to run.
+        if "bundled_components" not in ran_names:
+            return
+
+        self.stdout.write("Verifying post-conditions...")
+        self._verify_active_theme()
+
+    def _verify_active_theme(self):
+        """A storefront theme must be installed, active, and have compiled CSS.
+
+        Two distinct failure modes both produce the fallback-CSS symptom:
+        no active theme at all, or an active theme whose compiled_css is empty
+        (the `theme_css` tag only emits the stylesheet link when get_css_url()
+        is truthy).
+        """
+        from design.theme_utils import get_active_theme
+
+        theme = get_active_theme()
+        if theme is None:
+            self._postcondition_error(
+                "No storefront theme is installed or active.",
+                "install_bundled_components installed no theme -- the "
+                "preinstalled manifest likely contains no 'theme' components.",
+            )
+            return
+
+        if not theme.get_css_url():
+            self._postcondition_error(
+                f"Active theme '{theme.slug}' has no compiled CSS.",
+                "The theme row exists but compiled_css is empty, so the "
+                "storefront still renders on fallback CSS.",
+            )
+            return
+
+        self.stdout.write(
+            self.style.SUCCESS(f"  OK: active storefront theme '{theme.slug}' with compiled CSS")
+        )
+
+    def _postcondition_error(self, problem, cause):
+        bar = "=" * 72
+        self.stderr.write(
+            self.style.ERROR(
+                f"\n{bar}\n"
+                f"POST-CONDITION FAILED: {problem}\n"
+                f"The storefront will render with fallback CSS only.\n\n"
+                f"Cause: {cause}\n\n"
+                f"Fix:\n"
+                f"  python manage.py build_preinstalled_packages --type theme\n"
+                f"  python manage.py seed --only bundled_components\n"
+                f"{bar}\n"
+            )
+        )
+
     def _list_seeds(self):
         from core.models import SeedVersion
 

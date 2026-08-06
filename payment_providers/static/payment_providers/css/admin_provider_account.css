@@ -101,48 +101,53 @@
   border-radius: 3px;
   font-weight: bold;
   font-size: 11px;
-  color: #fff;
+  color: var(--body-fg);
 }
 
+/* Small (11px) status badges: color-mix tints + --*-fg text (AA in both
+   themes; the previous filled --message-*-bg + white was white-on-light). */
 .pp-list-badge-connected {
-  background-color: var(--message-success-bg, #28a745);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 .pp-list-badge-error {
-  background-color: var(--message-error-bg, #dc3545);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 .pp-list-badge-unknown {
-  background-color: var(--body-quiet-color, #6c757d);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 .pp-list-badge-active {
-  background-color: var(--message-success-bg, #28a745);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 .pp-list-badge-inactive {
-  background-color: var(--body-quiet-color, #6c757d);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 .pp-list-badge-default {
-  background-color: #ffc107;
-  color: #212529;
+  background-color: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 .pp-list-badge-hosted {
-  background-color: #17a2b8;
-  color: #fff;
+  background-color: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
 }
+/* Type-coded "integrated" mode badge — deliberate purple. Kept as a FILLED
+   badge with white text (readable ~6:1 in both themes); a color-mix tint of a
+   dark static hue would be dark-on-dark in the dark theme. */
 .pp-list-badge-integrated {
   background-color: #6f42c1;
   color: #fff;
 }
 .pp-list-badge-test {
-  background-color: #ffc107;
-  color: #fff;
+  background-color: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 .pp-list-badge-live {
-  background-color: var(--message-success-bg, #28a745);
-  color: #fff;
+  background-color: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 /* ====================================================================

@@ -6,7 +6,7 @@ with compound support, and loading preset tax configurations.
 """
 
 import logging
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_DOWN, ROUND_HALF_UP, Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -100,16 +100,31 @@ class TaxService:
         if not all_rates:
             return Decimal("0.00"), []
 
-        # Build per-rate taxable amounts
+        # Build taxable components (one per item line plus shipping) so that a
+        # compound rate can be based only on the non-compound taxes levied on
+        # the components it actually taxes — not on unrelated components it
+        # exempts.
+        components = []  # list of (product, base_amount, is_shipping)
+        for product, _quantity, line_total in items:
+            components.append((product, line_total, False))
+        if shipping_cost:
+            components.append((None, Decimal(str(shipping_cost)), True))
+
+        # Map each rate to its taxable base and the components it taxes.
         rate_amounts = {}  # tax_rate_id -> taxable_amount
+        rate_components = {}  # tax_rate_id -> list[int] of taxed component indices
         for rate in all_rates:
             taxable = Decimal("0.00")
-            for product, _quantity, line_total in items:
-                if rate.applies_to_product(product):
-                    taxable += line_total
-            if rate.applies_to_shipping and shipping_cost:
-                taxable += Decimal(str(shipping_cost))
+            taxed_indices = []
+            for index, (product, base_amount, is_shipping) in enumerate(components):
+                applies = (
+                    rate.applies_to_shipping if is_shipping else rate.applies_to_product(product)
+                )
+                if applies:
+                    taxable += base_amount
+                    taxed_indices.append(index)
             rate_amounts[rate.id] = taxable
+            rate_components[rate.id] = taxed_indices
 
         # Separate compound vs non-compound
         non_compound = [r for r in all_rates if not r.compound]
@@ -117,7 +132,9 @@ class TaxService:
 
         breakdown = []
         total_tax = Decimal("0.00")
-        non_compound_total = Decimal("0.00")
+        # Non-compound tax levied on each component, tracked separately so a
+        # compound rate only compounds over the components it taxes.
+        non_compound_by_component = [Decimal("0.00") for _ in components]
 
         # Phase 1: Non-compound taxes on base amounts
         for rate in non_compound:
@@ -125,16 +142,30 @@ class TaxService:
             if base <= 0:
                 continue
             amount = (base * rate.rate).quantize(TWOPLACES, rounding=ROUND_HALF_UP)
-            non_compound_total += amount
             total_tax += amount
             breakdown.append(TaxService._build_breakdown_entry(rate, amount))
+            # Allocate the *rounded* amount across the taxed components (not the
+            # raw per-component product) so a compound rate overlapping all of
+            # them recovers exactly `amount` — preserving the original rounding
+            # behaviour — while one overlapping only some gets a fair share.
+            taxed_indices = rate_components[rate.id]
+            taxed_bases = [components[index][1] for index in taxed_indices]
+            for index, share in zip(
+                taxed_indices, TaxService._allocate(amount, taxed_bases), strict=True
+            ):
+                non_compound_by_component[index] += share
 
-        # Phase 2: Compound taxes on (base + non-compound total)
+        # Phase 2: Compound taxes on (own base + non-compound taxes on the
+        # components this compound rate taxes)
         for rate in compound:
             base = rate_amounts.get(rate.id, Decimal("0.00"))
             if base <= 0:
                 continue
-            compound_base = base + non_compound_total
+            non_compound_on_taxed = sum(
+                (non_compound_by_component[index] for index in rate_components[rate.id]),
+                Decimal("0.00"),
+            )
+            compound_base = base + non_compound_on_taxed
             amount = (compound_base * rate.rate).quantize(TWOPLACES, rounding=ROUND_HALF_UP)
             total_tax += amount
             breakdown.append(TaxService._build_breakdown_entry(rate, amount))
@@ -245,6 +276,36 @@ class TaxService:
 
         logger.warning(f"Could not resolve country code for: {value}")
         return ""
+
+    @staticmethod
+    def _allocate(amount, bases):
+        """
+        Split a rounded tax ``amount`` across component ``bases`` in cents.
+
+        Uses the largest-remainder method so the returned parts sum back to
+        exactly ``amount``. This keeps compound rates rounding-consistent with
+        the previously charged total when they tax every component the
+        non-compound rate did.
+        """
+        total = sum(bases, Decimal("0.00"))
+        if total <= 0:
+            return [Decimal("0.00") for _ in bases]
+
+        allocations = []
+        remainders = []  # (fractional remainder, index)
+        running = Decimal("0.00")
+        for i, base in enumerate(bases):
+            exact = amount * base / total
+            floored = exact.quantize(TWOPLACES, rounding=ROUND_DOWN)
+            allocations.append(floored)
+            remainders.append((exact - floored, i))
+            running += floored
+
+        # Hand the leftover cents to the components with the largest remainders.
+        leftover_cents = int(((amount - running) / TWOPLACES).to_integral_value())
+        for _, i in sorted(remainders, key=lambda r: r[0], reverse=True)[:leftover_cents]:
+            allocations[i] += TWOPLACES
+        return allocations
 
     @staticmethod
     def _build_breakdown_entry(rate, amount):

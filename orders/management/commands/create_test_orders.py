@@ -7,9 +7,10 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
+from core.utils import get_default_currency
 from orders.models import Order
 
 User = get_user_model()
@@ -29,6 +30,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         count = options["count"]
         days = options["days"]
+
+        if days < 0:
+            raise CommandError("--days must be a nonnegative integer")
 
         self.stdout.write(f"Creating {count} test orders over {days} days...\n")
 
@@ -52,14 +56,13 @@ class Command(BaseCommand):
             ("pending", 5),
             ("processing", 60),
             ("shipped", 20),
-            ("delivered", 10),
-            ("completed", 5),
+            ("delivered", 15),
         ]
 
         # Sales channels/sources
         sources = [
-            ("web", 70),
-            ("mobile", 20),
+            ("direct", 70),
+            ("email", 20),
             ("social", 5),
             ("referral", 3),
             ("organic", 2),
@@ -68,8 +71,22 @@ class Command(BaseCommand):
         # Countries
         countries = ["US", "GB", "CA", "DE", "FR", "AU", "JP"]
 
+        # Use the store's configured currency, not a hardcoded one
+        currency = get_default_currency()
+
         created_count = 0
         now = timezone.now()
+
+        # Continue numbering after any existing test orders for this year so
+        # repeated runs don't collide on the unique order_number.
+        prefix = f"TEST-{now.year}"
+        last_sequence = 0
+        for existing in Order.objects.filter(order_number__startswith=prefix).values_list(
+            "order_number", flat=True
+        ):
+            suffix = existing[len(prefix) :]
+            if suffix.isdigit():
+                last_sequence = max(last_sequence, int(suffix))
 
         for i in range(count):
             # Random timestamp within the date range
@@ -104,7 +121,7 @@ class Command(BaseCommand):
             )
 
             # Generate order number
-            order_number = f"TEST-{now.year}{(i + 1):05d}"
+            order_number = f"TEST-{now.year}{(last_sequence + i + 1):05d}"
 
             # Random country
             country = random.choice(countries)
@@ -137,18 +154,20 @@ class Command(BaseCommand):
                 shipping_cost=shipping_cost,
                 discount_amount=discount_amount,
                 total_amount=total_amount,
-                subtotal_currency="USD",
-                tax_amount_currency="USD",
-                shipping_cost_currency="USD",
-                discount_amount_currency="USD",
-                total_amount_currency="USD",
+                subtotal_currency=currency,
+                tax_amount_currency=currency,
+                shipping_cost_currency=currency,
+                discount_amount_currency=currency,
+                total_amount_currency=currency,
+                base_currency=currency,
+                customer_currency=currency,
                 # Timestamps
                 created_at=timestamp,
                 updated_at=timestamp,
             )
 
-            # Set delivered date for delivered/completed orders
-            if status in ["delivered", "completed"]:
+            # Set delivered date for delivered orders
+            if status == "delivered":
                 order.delivered_at = timestamp + timedelta(days=random.randint(3, 10))
                 order.save()
 

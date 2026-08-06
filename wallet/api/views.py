@@ -14,6 +14,7 @@ from drf_spectacular.utils import (
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
@@ -123,6 +124,16 @@ class WalletTransactionViewSet(HeadlessAPIMixin, viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
+        # Pagination
+        try:
+            limit = max(1, min(int(request.query_params.get("limit", 20)), 100))
+        except (ValueError, TypeError):
+            limit = 20
+        try:
+            offset = max(int(request.query_params.get("offset", 0)), 0)
+        except (ValueError, TypeError):
+            offset = 0
+
         try:
             wallet = CustomerWallet.objects.get(customer=request.user)
         except CustomerWallet.DoesNotExist:
@@ -132,8 +143,8 @@ class WalletTransactionViewSet(HeadlessAPIMixin, viewsets.ViewSet):
                     "data": [],
                     "pagination": {
                         "total": 0,
-                        "limit": 20,
-                        "offset": 0,
+                        "limit": limit,
+                        "offset": offset,
                         "has_more": False,
                     },
                 }
@@ -156,16 +167,7 @@ class WalletTransactionViewSet(HeadlessAPIMixin, viewsets.ViewSet):
         if txn_status:
             queryset = queryset.filter(status=txn_status)
 
-        # Pagination
         total = queryset.count()
-        try:
-            limit = min(int(request.query_params.get("limit", 20)), 100)
-        except (ValueError, TypeError):
-            limit = 20
-        try:
-            offset = max(int(request.query_params.get("offset", 0)), 0)
-        except (ValueError, TypeError):
-            offset = 0
         page = queryset[offset : offset + limit]
 
         serializer = WalletTransactionListSerializer(page, many=True)
@@ -314,6 +316,19 @@ class AdminWalletViewSet(viewsets.ReadOnlyModelViewSet):
                 reference_id=data.get("reference_id", ""),
                 created_by=request.user,
             )
+        except WalletCurrencyMismatch:
+            return Response(
+                {
+                    "success": False,
+                    "error": _("Credit currency does not match the wallet currency"),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except ValueError as exc:
+            return Response(
+                {"success": False, "error": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except WalletFrozen:
             return Response(
                 {"success": False, "error": _("Wallet is frozen")},
@@ -345,6 +360,7 @@ class AdminWalletViewSet(viewsets.ReadOnlyModelViewSet):
                 source=data["source"],
                 description=data["description"],
                 reference_id=data.get("reference_id", ""),
+                created_by=request.user,
             )
         except WalletCurrencyMismatch:
             return Response(
@@ -464,6 +480,10 @@ class AdminTransactionViewSet(viewsets.ReadOnlyModelViewSet):
 
         wallet_id = self.request.query_params.get("wallet_id")
         if wallet_id:
+            try:
+                wallet_id = int(wallet_id)
+            except (ValueError, TypeError):
+                raise ValidationError({"wallet_id": _("Enter a valid integer.")})
             queryset = queryset.filter(wallet_id=wallet_id)
 
         txn_type = self.request.query_params.get("type")
@@ -488,7 +508,7 @@ class AdminTransactionViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         total = queryset.count()
         try:
-            limit = min(int(request.query_params.get("limit", 50)), 100)
+            limit = max(1, min(int(request.query_params.get("limit", 50)), 100))
         except (ValueError, TypeError):
             limit = 50
         try:

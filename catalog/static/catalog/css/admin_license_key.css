@@ -20,7 +20,7 @@
 }
 
 .copy-license-key:hover {
-  background: var(--primary-dark, #2f5a6f);
+  background: var(--primary-hover, #2f5a6f);
   transform: scale(1.05);
 }
 
@@ -108,17 +108,6 @@
   color: var(--body-quiet-color);
 }
 
-/* Dark Theme */
-@media (prefers-color-scheme: dark) {
-  .copy-license-key {
-    background: var(--primary, #5ca0c5);
-  }
-
-  .copy-license-key:hover {
-    background: var(--primary-dark, #4a8aa8);
-  }
-
-  .field-activation_list_display table tbody tr:hover {
-    background: var(--darkened-bg, #2d2d2d);
-  }
-}
+/* Dark theme is handled by the design tokens above (--primary,
+   --primary-hover, --darkened-bg flip via the admin data-theme toggle),
+   so the old @media (prefers-color-scheme: dark) overrides are unnecessary. */

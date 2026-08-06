@@ -26,7 +26,7 @@
   border: 1px solid var(--subtle-border);
   border-radius: 12px;
   padding: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.05));
 }
 
 .confirm-header {
@@ -38,12 +38,16 @@
   width: 64px;
   height: 64px;
   margin: 0 auto 20px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  background: linear-gradient(
+    135deg,
+    var(--delete-button-bg, #ff6b6b) 0%,
+    var(--delete-button-hover-bg, #ee5a6f) 100%
+  );
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--button-fg, #fff);
   font-size: 32px;
 }
 
@@ -101,8 +105,8 @@
   align-items: flex-start;
   gap: 12px;
   padding: 16px;
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: color-mix(in srgb, var(--warning-fg, #ffc107) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning-fg, #ffc107) 30%, transparent);
   border-radius: 8px;
   margin-bottom: 12px;
 }
@@ -111,19 +115,19 @@
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  background: #ffc107;
+  background: color-mix(in srgb, var(--warning-fg, #ffc107) 20%, transparent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--warning-fg, #856404);
   font-size: 14px;
   font-weight: bold;
 }
 
 .warning-message {
   flex: 1;
-  color: #856404;
+  color: var(--warning-fg, #856404);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -133,8 +137,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  background: color-mix(in srgb, var(--success-fg, #4caf50) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--success-fg, #4caf50) 30%, transparent);
   border-radius: 8px;
   margin-bottom: 24px;
 }
@@ -143,18 +147,18 @@
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  background: #4caf50;
+  background: color-mix(in srgb, var(--success-fg, #4caf50) 20%, transparent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--success-fg, #4caf50);
   font-size: 14px;
 }
 
 .safe-delete-message {
   flex: 1;
-  color: #2e7d32;
+  color: var(--success-fg, #2e7d32);
   font-size: 14px;
   font-weight: 500;
 }
@@ -167,8 +171,12 @@
 }
 
 .btn-delete-confirm {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-  color: white;
+  background: linear-gradient(
+    135deg,
+    var(--delete-button-bg, #ff6b6b) 0%,
+    var(--delete-button-hover-bg, #ee5a6f) 100%
+  );
+  color: var(--button-fg, #fff);
   border: none;
   padding: 14px 32px;
   border-radius: 8px;
@@ -183,7 +191,7 @@
 
 .btn-delete-confirm:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(238, 90, 111, 0.3);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--delete-button-bg, #ee5a6f) 40%, transparent);
 }
 
 .btn-cancel {
@@ -210,10 +218,10 @@
 
 /* Status icons */
 .icon-active {
-  color: #4caf50;
+  color: var(--success-color, #4caf50);
 }
 .icon-inactive {
-  color: #9e9e9e;
+  color: var(--body-quiet-color, #9e9e9e);
 }
 
 /* Delete confirmation tip */

@@ -14,7 +14,7 @@ Oben auf der KI-Einkauf-Seite beantwortet eine Zeile eine Frage: **Können KI-As
 
 - **„KI-Assistenten können von Ihrem Geschäft kaufen“** – alles Nötige für einen Kauf ist vorhanden.
 - **„KI-Assistenten können Ihr Geschäft durchsuchen, können aber noch nicht kaufen“** – Ihr Geschäft ist erkennbar, aber etwas fehlt, bevor ein Kauf abgeschlossen werden kann (meist ein angeschlossener Zahlungsdienstleister).
-- **„Notstopp aktiv“** oder **„Agenterbasierter Handel ist deaktiviert“** – nichts wird an Assistenzsysteme weitergegeben.
+- **„Notstopp ist aktiv“** oder **„Agenterbasierter Handel ist deaktiviert“** – nichts wird an Assistenzsysteme weitergegeben.
 
 Unter dem Ergebnis sehen Sie eine kurze Checkliste – Zahlungsdienstleister angeschlossen, Versandkosten können angezeigt werden, Produkte sind für Assistenzsysteme sichtbar – mit einem Hinweis neben allem, was noch Aufmerksamkeit benötigt. Die Zähler zeigen an, wie viele Produkte Assistenzsysteme verkaufen können, wie viele Sie ihnen verborgen haben, wie viele Assistenzsysteme besucht haben und wie viele Sie blockiert haben.
 
@@ -22,16 +22,16 @@ Die Checkliste spiegelt Ihre **Live-Konfiguration** wider: Schließen Sie einen 
 
 ## Der Notstopp
 
-Der **Notstopp** ist ein separates Schalter vom Hauptschalter. Nutzen Sie ihn, um alle Assistenzaktivitäten sofort zu stoppen – beispielsweise, wenn etwas nicht richtig aussieht – ohne Ihre Konfiguration zu ändern. Deaktivieren Sie ihn, um den Betrieb wieder aufzunehmen. Denken Sie an den Hauptschalter als „Ist diese Funktion konfiguriert?“ und an den Notstopp als „Alles sofort stoppen“.
+Der **Notstopp** ist ein separates Schalter vom Hauptschalter. Nutzen Sie ihn, um alle Aktivitäten der Assistenzsysteme sofort zu stoppen – beispielsweise, wenn etwas ungewöhnlich aussieht – ohne Ihre Konfiguration zu ändern. Deaktivieren Sie ihn, um die Aktivitäten fortzusetzen. Denken Sie an den Hauptschalter als „Ist diese Funktion konfiguriert?“ und an den Notstopp als „Alles sofort stoppen“.
 
 ## Was Assistenzsysteme tun können
 
-Zwei Zugriffsstufen, die separat gesteuert werden können:
+Zwei Zugriffsstufen, die separat kontrolliert werden:
 
 - **Lesen** (Entdeckung und Durchsuchen) ist risikoreicher. Ein Assistenzsystem kann Ihr Geschäft finden und Produktinformationen einsehen.
-- **Kasse** (tatsächlicher Kauf) ist risikoreicher und bleibt für nicht verifizierte Assistenzsysteme geschlossen, es sei denn, Sie erlauben es.
+- **Bezahlvorgang** (tatsächlich kaufen) ist risikoreicher und bleibt für nicht verifizierte Assistenzsysteme geschlossen, es sei denn, Sie erlauben es.
 
-Ein Geschäft kann entdeckbar sein, ohne käuflich zu sein – eine nützliche Methode, um zu beginnen.
+Ein Geschäft kann entdeckbar sein, ohne käuflich zu sein – eine nützliche Art, damit zu beginnen.
 
 ## Spezifische Produkte verbergen
 
@@ -39,17 +39,17 @@ Jedes Produkt hat eine Einstellung **Sichtbar für KI-Einkaufsagenten** (standar
 
 ## Einzelne Assistenzsysteme verwalten
 
-Wenn ein Assistenzsystem zum ersten Mal kauft – oder versucht, dies zu tun –, protokolliert Spwig dies unter **KI-Einkauf → Agentenidentitäten**. Jeder Eintrag zeigt den verifizierten Heimatort des Assistenzsystems (den Ordner, mit dem es sich signiert) und die Anzahl der Anfragen, die es gestellt hat. Der Name und das Logo, das ein Assistenzsystem präsentiert, werden nur als *beantragte* Details angezeigt – behandeln Sie sie als Bezeichnung, nicht als Nachweis der Identität; der verifizierte Heimatort ist der Teil, den man vertrauen kann.
+Wenn ein Assistenzsystem zum ersten Mal kauft – oder es versucht –, speichert Spwig dies unter **KI-Einkauf → Agentenidentitäten**. Jeder Eintrag zeigt den verifizierten Ursprung des Assistenzsystems (den Ordner, mit dem es sich signiert) und die Anzahl der Anfragen, die es gestellt hat. Der Name und das Logo, das ein Assistenzsystem präsentiert, werden nur als *beantragte* Details angezeigt – behandeln Sie sie als Bezeichnung, nicht als Nachweis der Identität; der verifizierte Ursprung ist der Teil, den man vertrauen kann.
 
-Neue Assistenzsysteme starten **begrenzt**: sie können Transaktionen tätigen, aber innerhalb von Grenzen. Um eines zu blockieren, wählen Sie es aus und wählen Sie **Ausgewählte Assistenzsysteme blockieren** – laufende Käufe enden und das Assistenzsystem kann nicht mehr kaufen, während bereits getätigte Zahlungen unverändert bleiben. **Ausgewählte Assistenzsysteme entblocken** bringt es in den begrenzten Zustand zurück (nie direkt auf unbegrenzt – das Entfernen von Grenzen ist immer ein separates, bewusstes Schritt).
+Neue Assistenzsysteme starten **begrenzt**: sie können Transaktionen tätigen, aber innerhalb von Grenzen. Um eines zu blockieren, wählen Sie es aus und wählen Sie **Ausgewählte Assistenzsysteme blockieren** – bestehende Bezahlvorgänge enden und das Assistenzsystem kann nicht mehr kaufen, während bereits getätigte Zahlungen unverändert bleiben. **Ausgewählte Assistenzsysteme entblocken** bringt es in den begrenzten Zustand zurück (nie direkt auf unbegrenzt – das Entfernen von Grenzen ist immer ein separates, bewusstes Schritt).
 
 ## Aktivitätsprotokoll
 
-**KI-Einkauf → Agentenereignisse** ist ein Protokoll, das Manipulationen erkennen kann, das aufzeichnet, was Assistenzsysteme getan haben – jede verifizierte Anfrage, jeder blockierte Versuch, jede von Ihnen vorgenommene Änderung. Es ist nur zum Lesen und kann nicht bearbeitet oder gelöscht werden, daher dient es als Beweis, wenn ein Kauf, den ein Assistenzsystem getätigt hat, jemals in Streit gerät.
+**KI-Einkauf → Agentenereignisse** ist ein Protokoll, das Manipulationen erkennen kann, das aufzeichnet, was Assistenzsysteme getan haben – jede verifizierte Anfrage, jeder blockierte Versuch, jede Änderung, die Sie vorgenommen haben. Es ist nur zum Lesen und kann nicht bearbeitet oder gelöscht werden, daher dient es als Beweis, wenn ein Kauf, den ein Assistenzsystem getätigt hat, jemals in Streit gerät.
 
 ## Hinweis zu den Assistenzsystem-Plattformen
 
-Die Unternehmen, die diese Assistenzsysteme betreiben (und die Regeln, um auf diesen Plattformen erscheinen zu können), sind neu und ändern sich oft.
+Die Unternehmen, die diese Assistenzsysteme betreiben (und die Regeln, um in ihnen erscheinen zu können), sind neu und ändern sich oft.
 
 Einige erfordern, dass Sie sich bewerben oder regionale Bedingungen erfüllen, bevor Ihre Produkte über sie gekauft werden können.
 

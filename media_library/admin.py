@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .forms import MediaAssetForm
@@ -468,12 +469,12 @@ class ImageSizePresetAdmin(admin.ModelAdmin):
     def preset_type(self, obj):
         """Display if this is a system preset"""
         if obj.is_system_preset:
-            return format_html(
+            return mark_safe(
                 '<span style="background: var(--primary); color: white; padding: 3px 8px; '
                 'border-radius: 3px; font-size: 11px; font-weight: 600;">'
                 '<i class="fas fa-lock"></i> System</span>'
             )
-        return format_html(
+        return mark_safe(
             '<span style="background: var(--body-quiet-color); color: white; padding: 3px 8px; '
             'border-radius: 3px; font-size: 11px; font-weight: 600;">Custom</span>'
         )

@@ -110,12 +110,8 @@
   margin-bottom: 30px;
 }
 
-.zones-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
-}
+/* Card container reuses admin-base .list-row-cards. The zone card itself is
+   a bespoke 4-column grid (not the flex .list-row-card), so it stays local. */
 
 /* ==========================================================================
    Zone Card - Horizontal Layout
@@ -135,21 +131,11 @@
 }
 
 .zone-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-light);
   border-color: var(--primary);
 }
 
-/* Zone Checkbox */
-.zone-checkbox {
-  display: flex;
-  align-items: center;
-}
-
-.zone-checkbox input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
+/* Checkbox reuses admin-base .list-row-card-checkbox. */
 
 /* Zone Icon & Priority */
 .zone-icon {
@@ -183,7 +169,7 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: white;
+  background: var(--body-bg);
   border: 2px solid var(--body-bg);
   border-radius: 50%;
   width: 32px;
@@ -193,23 +179,23 @@
   justify-content: center;
   font-weight: 700;
   font-size: 11px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .priority-value.highest {
-  color: #dc3545;
+  color: var(--error-color);
 }
 
 .priority-value.high {
-  color: #fd7e14;
+  color: var(--warning-fg);
 }
 
 .priority-value.medium {
-  color: #ffc107;
+  color: var(--warning-color);
 }
 
 .priority-value.low {
-  color: #6c757d;
+  color: var(--body-quiet-color);
 }
 
 /* Zone Info - Horizontal Layout */
@@ -359,34 +345,8 @@
   grid-column: 1 / -1;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.badge-status.badge-active {
-  background: var(--message-success-bg);
-  color: var(--success-fg);
-  border: 1px solid var(--message-success-border);
-}
-
-.badge-status.badge-inactive {
-  background: var(--darkened-bg);
-  color: var(--body-quiet-color);
-  border: 1px solid var(--border-color);
-}
-
-.badge-date {
-  background: var(--darkened-bg);
-  color: var(--body-fg);
-  border: 1px solid var(--border-color);
-}
+/* Badge pills reuse the shared .list-row-card-badge* variants from
+   admin-base.css (the .zone-badges wrapper keeps grid-column: 1 / -1). */
 
 /* Zone Actions */
 .zone-actions {
@@ -505,52 +465,8 @@
   font-weight: 600;
 }
 
-/* ==========================================================================
-   Notification Container
-   ========================================================================== */
-
-.notification-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.notification {
-  background: var(--body-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 15px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 300px;
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.notification.success {
-  border-left: 4px solid var(--success-fg);
-}
-
-.notification.error {
-  border-left: 4px solid var(--error-fg);
-}
-
-.notification.info {
-  border-left: 4px solid var(--link-fg);
-}
+/* Toast notifications are handled by the shared AdminModal.toast (self-hosting);
+   the old bespoke .notification* container was dead and has been removed. */
 
 /* ==========================================================================
    Hidden by Default (JS-toggled elements)
@@ -565,7 +481,7 @@
    ========================================================================== */
 
 @media (max-width: 1200px) {
-  .zones-grid {
+  .list-row-cards {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 }
@@ -588,7 +504,7 @@
 
 /* Medium screens - make grid single column */
 @media (max-width: 1024px) {
-  .zones-grid {
+  .list-row-cards {
     grid-template-columns: 1fr;
   }
 

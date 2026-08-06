@@ -21,7 +21,7 @@
 }
 
 /* Provider Card */
-.provider-card {
+.providers-grid .provider-card {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -32,13 +32,13 @@
   transition: all 0.2s ease;
 }
 
-.provider-card:hover {
+.providers-grid .provider-card:hover {
   border-color: var(--primary, #417690);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-light);
   transform: translateY(-2px);
 }
 
-.provider-card.selected {
+.providers-grid .provider-card.selected {
   border-color: var(--primary, #417690);
   background: var(--selected-bg, #f0f7ff);
 }
@@ -159,7 +159,7 @@
   margin-bottom: 8px;
 }
 
-.status-badge {
+.providers-grid .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -169,7 +169,7 @@
   font-weight: 500;
 }
 
-.status-badge i {
+.providers-grid .status-badge i {
   font-size: 10px;
 }
 
@@ -392,7 +392,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: color-mix(in srgb, var(--body-bg) 80%, transparent);
   display: none;
   align-items: center;
   justify-content: center;
@@ -468,7 +468,7 @@
     flex-wrap: wrap;
   }
 
-  .provider-card {
+  .providers-grid .provider-card {
     flex-wrap: wrap;
   }
 

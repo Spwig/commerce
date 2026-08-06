@@ -30,7 +30,7 @@ Al crear un token, eliges un tipo que describe su propósito. El tipo es para tu
 
 ## Ámbitos de API: controlar qué puede alcanzar un token
 
-Cada token también tiene una sección de **Ámbitos de API** que decide exactamente qué partes de tu tienda está permitido que llame. En lugar de que un token tenga acceso general a todo, otorgas acceso área por área — y al nivel que realmente necesite la integración.
+Cada token también tiene una sección de **Ámbitos de API** que decide exactamente qué partes de tu tienda está autorizado a llamar. En lugar de que un token tenga acceso general a todo, otorgas acceso área por área — y al nivel que realmente necesite la integración.
 
 **Un token sin ámbitos seleccionados no puede alcanzar ninguna API**, incluso si de otro modo está activo y válido. Esto es el valor predeterminado para un token nuevo, por lo que una integración no funcionará hasta que le otorgues explícitamente acceso.
 
@@ -46,15 +46,15 @@ Los ámbitos se agrupan para coincidir con las áreas de tu administrador:
 
 | Grupo | Ámbito | ¿Disponible Lectura y Escritura? | Concede acceso a |
 |-------|-------|:---:|-------------------|
-| Análisis | **Análisis de Ventas** | Solo lectura | Dashboards de ventas, KPIs, análisis de productos/clientes/categorías, comparaciones y exportaciones |
+| Análisis | **Análisis de Ventas** | Solo lectura | Cuadros de mando de ventas, KPI, análisis de productos/clientes/categorías, comparaciones y exportaciones |
 | Análisis | **Análisis Web** | Solo lectura | Análisis de visitantes y tráfico: visión general, tendencias, páginas más visitadas, geografía y referidos |
 | Catálogo | **Productos** | Sí | Productos, variantes, imágenes, ajustes de stock y asignación de atributos |
 | Catálogo | **Categorías** | Sí | Categorías de productos, incluyendo imágenes y banners |
 | Catálogo | **Marcas** | Sí | Marcas de productos |
 | Catálogo | **Atributos** | Sí | Definiciones de atributos de productos |
-| Catálogo | **Inventario** | Sí | Dashboards de inventario, velocidad de stock, movimientos, sugerencias de reorden y configuraciones de inventario |
+| Catálogo | **Inventario** | Sí | Cuadros de mando de inventario, velocidad de stock, movimientos, sugerencias de reposición y configuraciones de inventario |
 | Pedidos | **Pedidos** | Sí | Pedidos, notas de pedido, actualizaciones de estado/seguimiento, cancelaciones, reembolsos y documentos de pedido |
-| Clientes | **Mensajes de Cliente** | Sí | Mensajes de clientes desde formularios de contacto y notas de pedido, incluyendo actualizaciones de estado y respuestas |
+| Clientes | **Mensajes de Clientes** | Sí | Mensajes de clientes desde formularios de contacto y notas de pedido, incluyendo actualizaciones de estado y respuestas |
 | Tienda y Configuración | **Configuración de Tienda** | Sí | Configuración de tienda, idiomas disponibles y branding (nombre, colores, logotipo) |
 | Usuarios y Acceso | **Personal y Roles** | Sí | Cuentas de personal, invitaciones, roles y catálogo de permisos |
 
@@ -74,7 +74,7 @@ Los alcances de un token describen el *techo* de lo que puede hacer — pero el 
 - **Lectura y Escritura** en un alcance solo funciona si el rol del miembro del personal que lo creó también permite el acceso de escritura a esa área. Si su rol es solo de visualización, por ejemplo, en Productos, un token que creen con "Productos: Lectura y Escritura" aún solo podrá leer — el rol actúa como una segunda puerta encima del alcance.
 - Si el miembro del personal que creó un token es eliminado o su cuenta se desactiva, el token pierde inmediatamente el acceso a la API, independientemente de sus alcances — ya no hay un usuario permitido para que actúe como él.
 
-Esto significa que la manera más segura de limitar los alcances de un token es crearlo mientras estés conectado como un miembro del personal cuyo rol ya coincida con el acceso que deseas que tenga el token.
+Esto significa que la manera más segura de restringir un token es crearlo mientras estés conectado como un miembro del personal cuyo rol ya coincida con el acceso que deseas que tenga el token.
 
 ## Crear un token de API
 
@@ -97,7 +97,7 @@ Spwig muestra el valor completo del token solo una vez: inmediatamente después 
 
 Si pierdes el valor de un token, no puedes recuperarlo. Tendrás que eliminar el token antiguo y crear uno nuevo, luego actualizar la integración que lo utilizaba.
 
-**Nunca compartas valores de tokens en correos electrónicos, mensajes de chat o código fuente.** Trátalos como contraseñas.
+**Nunca compartas valores de tokens por correo electrónico, mensajes de chat o código fuente.** Trátalos como contraseñas.
 
 ## Establecer una fecha de vencimiento
 
@@ -129,11 +129,11 @@ Las integraciones se autentican en la API de administración de Spwig enviando e
 Authorization: Bearer <your-token-value>
 ```
 
-Cada punto final de la API de administración vive bajo `/api/admin/...`. El desarrollador que construye su integración decide qué puntos finales llamar — su trabajo como comerciante es asegurarse de que el **alcance de la API** del token cubra esos puntos finales. Si una solicitud se rechaza con un error de permisos, la primera cosa que debe verificar es si el token ha sido otorgado el alcance correcto en el nivel de acceso correcto.
+Cada endpoint de la API de administración vive bajo `/api/admin/...`. El desarrollador que construye su integración decide qué endpoints llamar — su trabajo como comerciante es asegurarse de que el **alcance de la API** del token cubra esos endpoints. Si una solicitud se rechaza con un error de permisos, la primera cosa que debe verificar es si el token ha sido otorgado el alcance correcto en el nivel de acceso correcto.
 
 ### Ejemplo: leer el análisis de tráfico web
 
-Spwig expone un punto final `GET /api/admin/analytics/traffic/` que devuelve el análisis de visitas y tráfico para su tienda — una visión general de las visitas y visitantes únicos, tendencias con el tiempo, páginas más populares, geografía de los visitantes y fuentes de referidos. Para permitir que una herramienta de informes o panel de control lea estos datos:
+Spwig expone un endpoint `GET /api/admin/analytics/traffic/` que devuelve el análisis de visitas y tráfico para su tienda — una visión general de las visitas y visitantes únicos, tendencias con el tiempo, páginas más populares, geografía de los visitantes y fuentes de referidos. Para permitir que una herramienta de informes o panel de control lea estos datos:
 
 1. Cree un token (o edite uno existente) para esa integración
 2. En **Alcances de la API**, establezca **Análisis web** en **Lectura**
@@ -148,7 +148,7 @@ La lista de tokens muestra:
 - **Conteo de uso** — número total de veces que se ha utilizado el token
 - **Último uso** — cuándo se utilizó el token por última vez para hacer una solicitud
 
-Estos campos le ayudan a identificar tokens no utilizados (candidatos para revocación) y detectar actividad inesperada. Un pico repentino en el conteo de uso podría indicar que un token está siendo utilizado por alguien distinto de la integración prevista.
+Estos campos le ayudan a identificar tokens no utilizados (candidatos para revocación) y detectar actividad inesperada. Un pico repentino en el conteo de uso podría indicar que el token se está utilizando por alguien distinto a la integración prevista.
 
 ## Revocar un token
 
@@ -185,10 +185,10 @@ Una vez eliminado, un token no puede recuperarse. Si la integración aún necesi
 Solo se otorga el alcance **Pedidos**, por lo tanto, incluso si este token alguna vez se expusiera, no podría acceder a productos, mensajes de clientes, cuentas de personal o cualquier otra parte de su tienda. Después de guardar, copie el valor completo del token y péguelo en la configuración de la integración de Spwig en Zapier.
 
 - Asigne a cada token un nombre claro y específico — `Shopify Sync v2` es mucho más útil que `Token 3` cuando estés solucionando problemas meses después
-- Crea un token por integración — si una integración se ve comprometida, puedes revocar solo ese token sin afectar a otros
+- Crea un token por integración — si una integración se compromete, puedes revocar solo ese token sin afectar a otros
 - **Conceda solo los alcances que una integración realmente necesite** — una herramienta de informes solo necesita acceso de Lectura a Análisis de Ventas o Análisis Web, no Lectura y Escritura en Productos o Empleados y Roles
-- Revisa la **"Este token puede acceder a:"** en el formulario de cambio antes de entregar un token a una tercera parte — es la forma más rápida de confirmar que no has concedido más de lo planeado
+- Revisa la **suma de "Este token puede acceder a:"** en el formulario de cambio antes de entregar un token a una tercera parte — es la forma más rápida de confirmar que no has concedido más de lo planeado
 - Recuerda que el acceso de escritura también depende del rol del miembro del personal que lo creó — si un alcance muestra Lectura y Escritura pero los escritos aún están fallando, verifica también los permisos del rol de ese usuario
 - Establece una fecha de vencimiento para los tokens utilizados en proyectos puntuales o integraciones temporales — esto reduce el riesgo de que tokens olvidados permanezcan activos indefinidamente
-- Revisa tu lista de tokens cada pocos meses y desactiva cualquier token con una fecha **Último Uso** que sea inesperadamente antigua, ya que podrían pertenecer a integraciones que ya no estén en funcionamiento
+- Revisa tu lista de tokens cada pocos meses y desactiva cualquier token con una fecha **Último Uso** que sea inesperadamente antigua, ya que estos pueden pertenecer a integraciones que ya no estén en funcionamiento
 - Si sospechas de que un token ha sido expuesto, desáctivalo inmediatamente, crea un reemplazo y actualiza la integración afectada antes de reactivar el acceso

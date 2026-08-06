@@ -72,11 +72,10 @@ class PreferenceAnalyticsService:
             # End of previous quarter
             end_month = start_month + 2
             if end_month == 12:
-                end = datetime(prev_year, 12, 31, 23, 59, 59, tzinfo=now.tzinfo)
+                next_quarter_start = datetime(prev_year + 1, 1, 1, tzinfo=now.tzinfo)
             else:
-                end = datetime(prev_year, end_month + 1, 1, tzinfo=now.tzinfo) - timedelta(
-                    seconds=1
-                )
+                next_quarter_start = datetime(prev_year, end_month + 1, 1, tzinfo=now.tzinfo)
+            end = next_quarter_start - timedelta(microseconds=1)
 
         elif period == "this_year":
             start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -251,28 +250,41 @@ class PreferenceAnalyticsService:
         Args:
             start_date: Start of period
             end_date: End of period
-            period: 'daily', 'weekly', or 'monthly'
+            period: 'daily', 'weekly', 'monthly', or 'auto' (choose the
+                grouping from the range duration)
 
         Returns:
             List of dicts with date and opt-in counts
         """
         from accounts.models import PreferenceChangeLog
 
-        # Determine grouping based on duration
-        duration = (end_date - start_date).days
+        if period not in {"daily", "weekly", "monthly", "auto"}:
+            raise ValueError(f"Invalid period: {period!r}")
 
-        if duration <= 7 or period == "daily":
+        # Only fall back to duration-based grouping when explicitly requested.
+        if period == "auto":
+            duration = (end_date - start_date).days
+            if duration <= 7:
+                period = "daily"
+            elif duration <= 60:
+                period = "weekly"
+            else:
+                period = "monthly"
+
+        if period == "daily":
             # Group by day
             date_format = "%Y-%m-%d"
             delta = timedelta(days=1)
-        elif duration <= 60 or period == "weekly":
+        elif period == "weekly":
             # Group by week
             date_format = "%Y-W%W"
             delta = timedelta(weeks=1)
         else:
             # Group by month
             date_format = "%Y-%m"
-            delta = timedelta(days=30)
+            # Advance one calendar month at a time (a fixed 30-day step
+            # skips year-month keys, e.g. Jan 31 + 30d jumps past February).
+            delta = None
 
         # Get opt-in events (email_marketing enabled)
         logs = PreferenceChangeLog.objects.filter(
@@ -288,7 +300,13 @@ class PreferenceAnalyticsService:
         while current <= end_date:
             key = current.strftime(date_format)
             data[key] = 0
-            current += delta
+            if delta is None:
+                # Calendar-aware month step; day=1 avoids end-of-month overflow.
+                year = current.year + current.month // 12
+                month = current.month % 12 + 1
+                current = current.replace(year=year, month=month, day=1)
+            else:
+                current += delta
 
         for log in logs:
             key = log["timestamp"].strftime(date_format)

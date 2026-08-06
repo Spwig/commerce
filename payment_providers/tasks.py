@@ -13,7 +13,12 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name="payment_providers.notify_merchant_sdk_failure")
+@shared_task(
+    name="payment_providers.notify_merchant_sdk_failure",
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    max_retries=3,
+)
 def notify_merchant_sdk_failure(
     provider_key, error_type="sdk_load_failure", page_url="", user_agent=""
 ):
@@ -24,9 +29,6 @@ def notify_merchant_sdk_failure(
     This task only runs when the rate limit allows it.
     """
     try:
-        from django.conf import settings
-        from django.contrib.sites.models import Site
-
         from core.models import SiteSettings
         from email_system.services.email_sender import EmailSendingService
 
@@ -47,11 +49,11 @@ def notify_merchant_sdk_failure(
             from payment_providers.models import PaymentProviderAccount
 
             account = (
-                PaymentProviderAccount.objects.filter(is_active=True)
+                PaymentProviderAccount.objects.filter(is_active=True, component__slug=provider_key)
                 .select_related("component")
                 .first()
             )
-            if account and account.component and account.component.slug == provider_key:
+            if account and account.component:
                 provider_name = account.display_name or account.component.name or provider_name
         except Exception:
             pass
@@ -62,8 +64,9 @@ def notify_merchant_sdk_failure(
 
         # Build admin URL
         try:
-            site = Site.objects.get_current()
-            site_url = f"https://{site.domain}" if not settings.DEBUG else f"http://{site.domain}"
+            site_url = (site_settings.site_url if site_settings else "").rstrip("/")
+            if not site_url:
+                site_url = "http://localhost:8000"
         except Exception:
             site_url = "http://localhost:8000"
 
@@ -94,4 +97,4 @@ def notify_merchant_sdk_failure(
 
     except Exception as e:
         logger.error(f"Failed to send SDK failure notification: {e}", exc_info=True)
-        return {"status": "error", "error": str(e)}
+        raise

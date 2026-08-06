@@ -152,34 +152,46 @@ class AddressService:
 
         if used_in_orders:
             # Address has been used - create new version for audit trail
-            from django.db.models import Max
-
             root_address = address.original_address or address
 
+            # Lock the whole version family so concurrent updates can't each
+            # spawn a competing active version.
+            family = list(
+                Address.objects.select_for_update().filter(
+                    Q(pk=root_address.pk) | Q(original_address=root_address)
+                )
+            )
+
+            # Always update the latest active version of the family, never a
+            # stale/superseded record the client may have supplied. Editing an
+            # already-superseded id must resolve to (and supersede) the current
+            # active version, not fork a second active branch.
+            active_versions = [a for a in family if a.is_active]
+            current = max(active_versions, key=lambda a: a.version) if active_versions else None
+            if current is None:
+                return False, _("This address has no active version to update"), None
+
             # Get the highest version number from all versions (including root)
-            max_version = Address.objects.filter(
-                Q(pk=root_address.pk) | Q(original_address=root_address)
-            ).aggregate(Max("version"))["version__max"]
+            new_version_number = max(a.version for a in family) + 1
 
-            new_version_number = (max_version or 0) + 1
-
-            # Create new version with updated data
+            # Create new version with updated data, copied from the current
+            # active version rather than the (possibly superseded) input.
             new_address = Address.objects.create(
                 user=user,
                 original_address=root_address,
                 version=new_version_number,
                 # Copy all current fields
-                address_type=address.address_type,
-                name=address.name,
-                company=address.company,
-                address1=address.address1,
-                address2=address.address2,
-                city=address.city,
-                state=address.state,
-                postal_code=address.postal_code,
-                country=address.country,
-                phone=address.phone,
-                is_default=address.is_default,
+                address_type=current.address_type,
+                name=current.name,
+                company=current.company,
+                address1=current.address1,
+                address2=current.address2,
+                city=current.city,
+                state=current.state,
+                postal_code=current.postal_code,
+                country=current.country,
+                phone=current.phone,
+                is_default=current.is_default,
                 is_active=True,
             )
 
@@ -188,11 +200,11 @@ class AddressService:
                 setattr(new_address, field, value)
             new_address.save()
 
-            # Mark old address as inactive
-            address.is_active = False
-            address.edited_at = timezone.now()
-            address.is_default = False  # New version is now the default if it was set
-            address.save(update_fields=["is_active", "edited_at", "is_default"])
+            # Mark the current active version as inactive
+            current.is_active = False
+            current.edited_at = timezone.now()
+            current.is_default = False  # New version is now the default if it was set
+            current.save(update_fields=["is_active", "edited_at", "is_default"])
 
             return True, _("Address updated (new version created for audit trail)"), new_address
 
@@ -259,6 +271,11 @@ class AddressService:
         if address.user != user:
             return False, _("You don't have permission to update this address")
 
+        # Only active addresses can be set as default (an inactive/superseded
+        # version must never become the default)
+        if not address.is_active:
+            return False, _("Cannot set an inactive address as default")
+
         # Use provided address_type or the address's current type
         target_type = address_type if address_type else address.address_type
 
@@ -292,10 +309,17 @@ class AddressService:
             Address instance or None
         """
         try:
-            return Address.objects.get(user=user, address_type=address_type, is_default=True)
+            return Address.objects.get(
+                user=user, address_type=address_type, is_default=True, is_active=True
+            )
         except Address.DoesNotExist:
-            # Try to get any default address
-            return Address.objects.filter(user=user, is_default=True).first()
+            # Fall back to a default address of a compatible type only
+            return Address.objects.filter(
+                user=user,
+                is_default=True,
+                is_active=True,
+                address_type__in=[address_type, "both"],
+            ).first()
 
     @staticmethod
     def validate_address(address_data: dict[str, Any]) -> tuple[bool, list]:
@@ -379,13 +403,31 @@ class AddressService:
         Returns:
             QuerySet of Address objects with 'order_count' annotation
         """
-        from django.db.models import Count
+        from django.db.models import Count, IntegerField, OuterRef, Q, Subquery, Value
+        from django.db.models.functions import Coalesce
+
+        from ..models import Order
+
+        # Count unique Order rows referencing this address as either shipping or
+        # billing, so an order that reuses the same address for both is counted
+        # once (matching Address.get_order_count()).
+        order_count_subquery = (
+            Order.objects.filter(
+                Q(shipping_address_ref=OuterRef("pk")) | Q(billing_address_ref=OuterRef("pk"))
+            )
+            .order_by()
+            .values(group=Value(1))
+            .annotate(count=Count("pk"))
+            .values("count")
+        )
 
         return (
             Address.objects.filter(user=user, is_active=True)
             .annotate(
-                order_count=Count("orders_as_shipping", distinct=True)
-                + Count("orders_as_billing", distinct=True)
+                order_count=Coalesce(
+                    Subquery(order_count_subquery, output_field=IntegerField()),
+                    0,
+                )
             )
             .order_by("-is_default", "-created_at")
         )

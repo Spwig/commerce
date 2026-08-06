@@ -1,4 +1,4 @@
-{% load i18n merchant_trans %}
+{% load i18n merchant_trans media_picture currency_tags %}
 {# Product Featured Layout - matches category/featured.html structure #}
 {% with featured_products=element_context.featured_products remaining_products=element_context.remaining_products %}
 
@@ -10,7 +10,7 @@
         <a href="{{ product.get_absolute_url }}" class="cat-featured-hero__link">
             <div class="cat-featured-hero__image-wrapper">
                 {% if product.primary_image_listing_url %}
-                <img src="{{ product.primary_image_listing_url }}" alt="{{ product.name }}" class="cat-featured-hero__image" loading="eager">
+                {% picture product.primary_image size="product_listing" alt=product.name css="cat-featured-hero__image" loading="eager" %}
                 {% else %}
                 <div class="cat-featured-hero__placeholder">
                     <i class="fas fa-image"></i>
@@ -22,11 +22,7 @@
                 <span class="cat-featured-hero__badge">{% mtrans 'Featured' %}</span>
                 <h3 class="cat-featured-hero__title">{{ product.name }}</h3>
                 <span class="cat-featured-hero__price">
-                    {% if product.is_on_sale %}
-                    {{ product.formatted_price }} <del>{{ product.formatted_compare_price }}</del>
-                    {% else %}
-                    {{ product.formatted_price }}
-                    {% endif %}
+                    {% product_price_display product current_currency.code %}
                 </span>
                 <span class="cat-featured-hero__btn">{% mtrans 'View Product' %} <i class="fas fa-arrow-right"></i></span>
             </div>

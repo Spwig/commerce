@@ -6,7 +6,9 @@ merchants visibility into communication preference health and engagement.
 """
 
 from datetime import timedelta
+from urllib.parse import urlencode
 
+from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import CommunicationPreference, PreferenceChangeLog
@@ -29,13 +31,16 @@ class PreferenceDashboardService:
                 email_marketing=True, email_verified=False
             ).count()
 
+            changelist_url = reverse("admin:accounts_communicationpreference_changelist")
+            query = urlencode({"email_verified__exact": 0, "email_marketing__exact": 1})
+
             return [
                 {
                     "title": "Unverified Users",
                     "count": unverified_count,
                     "icon": "fa-user-clock",
                     "color": "warning",
-                    "url": "/admin/accounts/communicationpreference/?email_verified__exact=0&email_marketing__exact=1",
+                    "url": f"{changelist_url}?{query}",
                     "description": "Users opted into marketing but email not verified",
                 }
             ]

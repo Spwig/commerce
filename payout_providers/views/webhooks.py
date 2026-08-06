@@ -74,6 +74,12 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
         logger.error(f"Invalid {provider_type} webhook payload: {e}")
         return HttpResponse("Invalid payload", status=400)
 
+    # Valid JSON that isn't an object (list/str/int/null) has no event fields to
+    # read; reject it before the extractors call .get() on a non-dict.
+    if not isinstance(payload_data, dict):
+        logger.error(f"Invalid {provider_type} webhook payload: expected a JSON object")
+        return HttpResponse("Invalid payload", status=400)
+
     # Extract headers
     headers = dict(request.headers.items())
 

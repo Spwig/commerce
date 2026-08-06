@@ -52,6 +52,7 @@ class PayoutProviderLoader:
         if not components_path.exists():
             logger.debug(f"Components path not found: {components_path}")
             cls._loaded = True
+            cls._last_loaded_at = time.time()
             return cls._providers
 
         # Iterate through provider directories
@@ -262,20 +263,14 @@ def get_default_provider_for_method(method: str):
     """
     from .models import PayoutProviderAccount
 
-    # Map methods to provider types
-    method_to_provider = {
-        "paypal": "paypal",
-        "bank_transfer": "airwallex",
-        "bank_transfer_local": "airwallex",
-        "bank_transfer_swift": "airwallex",
-    }
-
-    provider_type = method_to_provider.get(method)
-    if not provider_type:
+    if not method:
         return None
 
+    # Return the active default account that declares support for this
+    # method in its persisted supported_methods, rather than mapping
+    # methods to fixed provider types.
     return PayoutProviderAccount.objects.filter(
-        provider_type=provider_type, is_active=True, is_default=True
+        supported_methods__contains=[method], is_active=True, is_default=True
     ).first()
 
 

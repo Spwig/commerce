@@ -9,6 +9,7 @@ Tests model methods, properties, and business logic for:
 - ReturnRequest model
 """
 
+import warnings
 from decimal import Decimal
 
 import pytest
@@ -440,7 +441,13 @@ class TestRefundModel:
         refund = RefundFactory(processing=True)
         assert refund.status == "processing"
 
-        refund.complete()
+        # complete() is deprecated in favour of execute() (which also moves the
+        # money via TenderRefundAllocator). This test only asserts the status
+        # transition, so keep complete() and suppress its deprecation warning; a
+        # true execute() migration needs fundable capture fixtures.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            refund.complete()
         assert refund.status == "completed"
         assert refund.completed_at is not None
 

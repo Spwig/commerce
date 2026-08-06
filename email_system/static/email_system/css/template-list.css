@@ -32,7 +32,7 @@
 }
 
 .header-left h1 i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 24px;
 }
 
@@ -66,17 +66,16 @@
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.15));
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary);
-  opacity: 0.9;
+  background-color: var(--button-hover-bg);
 }
 
 .btn-secondary {
@@ -86,8 +85,8 @@
 }
 
 .btn-secondary:hover {
-  background-color: var(--body-quiet-color);
-  color: white;
+  background-color: var(--close-button-bg);
+  color: var(--button-fg);
 }
 
 .btn-outline {
@@ -98,7 +97,7 @@
 
 .btn-outline:hover {
   background-color: var(--darkened-bg);
-  border-color: var(--primary);
+  border-color: var(--link-fg);
 }
 
 .btn-sm {
@@ -129,7 +128,7 @@
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.1));
 }
 
 .stat-icon {
@@ -139,7 +138,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--button-fg, #fff);
   font-size: 20px;
 }
 
@@ -221,7 +220,7 @@
 }
 
 .filter-group label i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 11px;
 }
 
@@ -239,8 +238,8 @@
 .filter-group select:focus,
 .filter-group input[type='text']:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  border-color: var(--link-fg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-fg, #417690) 15%, transparent);
 }
 
 /* Language toggle checkbox styling */
@@ -267,7 +266,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--primary);
+  accent-color: var(--link-fg);
 }
 
 /* Templates List - Compact Horizontal Cards */
@@ -296,12 +295,12 @@
 }
 
 .template-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.1));
+  border-color: var(--link-fg);
 }
 
 .template-card.active {
-  border-left: 4px solid #28a745;
+  border-left: 4px solid var(--success-color, #28a745);
 }
 
 /* Icon */
@@ -309,11 +308,11 @@
   width: 50px;
   height: 50px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark, var(--primary)) 100%);
+  background: linear-gradient(135deg, var(--button-bg) 0%, var(--button-hover-bg) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--button-fg, #fff);
   font-size: 22px;
   flex-shrink: 0;
 }
@@ -341,7 +340,7 @@
 }
 
 .template-name a:hover {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .template-subject {
@@ -378,21 +377,21 @@
 }
 
 .badge-system {
-  background-color: rgba(108, 117, 125, 0.1);
-  color: #6c757d;
-  border: 1px solid rgba(108, 117, 125, 0.3);
+  background-color: color-mix(in srgb, var(--body-quiet-color, #6c757d) 12%, transparent);
+  color: var(--body-quiet-color, #6c757d);
+  border: 1px solid color-mix(in srgb, var(--body-quiet-color, #6c757d) 30%, transparent);
 }
 
 .badge-custom {
-  background-color: rgba(23, 162, 184, 0.1);
-  color: #17a2b8;
-  border: 1px solid rgba(23, 162, 184, 0.3);
+  background-color: color-mix(in srgb, var(--link-fg, #17a2b8) 12%, transparent);
+  color: var(--link-fg, #17a2b8);
+  border: 1px solid color-mix(in srgb, var(--link-fg, #17a2b8) 30%, transparent);
 }
 
 .badge-active {
-  background-color: rgba(40, 167, 69, 0.1);
-  color: #28a745;
-  border: 1px solid rgba(40, 167, 69, 0.3);
+  background-color: color-mix(in srgb, var(--success-fg, #28a745) 12%, transparent);
+  color: var(--success-fg, #28a745);
+  border: 1px solid color-mix(in srgb, var(--success-fg, #28a745) 30%, transparent);
 }
 
 /* Meta */
@@ -413,23 +412,23 @@
 }
 
 .meta-item i {
-  color: var(--primary);
+  color: var(--link-fg);
   font-size: 11px;
 }
 
 /* Highlight current admin language */
 .meta-language.language-current {
   font-weight: 600;
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .meta-language.language-current strong {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .badge-current-lang {
-  background-color: rgba(var(--primary-rgb), 0.1);
-  color: var(--primary);
+  background-color: color-mix(in srgb, var(--link-fg, #417690) 12%, transparent);
+  color: var(--link-fg);
   font-size: 9px;
   font-weight: 700;
   padding: 2px 6px;
@@ -465,27 +464,27 @@
 }
 
 .action-btn:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: var(--button-fg);
   transform: translateY(-1px);
 }
 
 .action-btn.action-delete:hover {
-  background: #dc3545;
-  border-color: #dc3545;
+  background: var(--delete-button-bg, #dc3545);
+  border-color: var(--delete-button-bg, #dc3545);
 }
 
 .action-btn.action-restore {
-  background: #28a745;
-  border-color: #28a745;
-  color: white;
+  background: color-mix(in srgb, var(--success-fg, #28a745) 65%, #000);
+  border-color: color-mix(in srgb, var(--success-fg, #28a745) 65%, #000);
+  color: var(--button-fg, #fff);
   padding: 8px 16px;
 }
 
 .action-btn.action-restore:hover {
-  background: #218838;
-  border-color: #1e7e34;
+  background: color-mix(in srgb, var(--success-fg, #218838) 50%, #000);
+  border-color: color-mix(in srgb, var(--success-fg, #1e7e34) 50%, #000);
 }
 
 .action-btn.action-restore i {
@@ -494,7 +493,7 @@
 
 .deleted-info {
   margin-top: 8px;
-  color: var(--body-color);
+  color: var(--body-quiet-color);
   opacity: 0.7;
 }
 
@@ -504,8 +503,8 @@
 
 .badge-count {
   display: inline-block;
-  background: #dc3545;
-  color: white;
+  background: var(--delete-button-bg, #dc3545);
+  color: var(--button-fg, #fff);
   font-size: 11px;
   font-weight: 600;
   padding: 2px 6px;
@@ -567,7 +566,7 @@
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--shadow-dark, rgba(0, 0, 0, 0.3));
   animation: modalSlideIn 0.3s ease;
 }
 
@@ -598,7 +597,7 @@
 }
 
 .modal-header h2 i {
-  color: #ffc107;
+  color: var(--warning-color, #ffc107);
   font-size: 22px;
 }
 
@@ -622,12 +621,12 @@
 }
 
 .btn-danger {
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--delete-button-bg, #dc3545);
+  color: var(--button-fg, #fff);
 }
 
 .btn-danger:hover {
-  background-color: #c82333;
+  background-color: var(--delete-button-hover-bg, #c82333);
 }
 
 /* Responsive Design */

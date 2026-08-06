@@ -9,19 +9,19 @@
 
 /* ==================== Status-specific Stat Card Colors ==================== */
 .stat-card.stat-card-warning {
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: color-mix(in srgb, var(--warning-fg) 30%, transparent);
 }
 
 .stat-card.stat-card-warning .icon i {
-  color: #f59e0b !important;
+  color: var(--warning-fg) !important;
 }
 
 .stat-card.stat-card-success {
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: color-mix(in srgb, var(--success-fg) 30%, transparent);
 }
 
 .stat-card.stat-card-success .icon i {
-  color: #10b981 !important;
+  color: var(--success-fg) !important;
 }
 
 .stat-card.stat-card-primary {
@@ -45,7 +45,7 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.08));
 }
 
 .chart-card.chart-card-wide {
@@ -157,21 +157,21 @@
 }
 
 .risk-badge.risk-low {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .risk-badge.risk-medium {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid #f59e0b;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
+  border: 1px solid color-mix(in srgb, var(--warning-fg) 40%, transparent);
 }
 
 .risk-badge.risk-high {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid #ef4444;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
 /* Status Badges */
@@ -185,48 +185,50 @@
 }
 
 .list-row-card-badge.status-pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid #f59e0b;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
+  border: 1px solid color-mix(in srgb, var(--warning-fg) 40%, transparent);
 }
 
 .list-row-card-badge.status-approved {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .list-row-card-badge.status-rejected {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid #ef4444;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
 .list-row-card-badge.status-expired {
-  background: rgba(108, 117, 125, 0.2);
-  color: #6c757d;
-  border: 1px solid #6c757d;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
+  border: 1px solid color-mix(in srgb, var(--body-quiet-color) 40%, transparent);
 }
 
 .list-row-card-badge.status-issued {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .list-row-card-badge.status-redeemed {
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  border: 1px solid #3b82f6;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
+  border: 1px solid color-mix(in srgb, var(--link-fg) 40%, transparent);
 }
 
 .list-row-card-badge.status-revoked {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid #ef4444;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
-/* Kind Badges */
+/* Kind Badges — type-coded reward-kind palette (credit / coupon / percent /
+   perk): deliberate distinct hues with no semantic token equivalent, kept as
+   raw colours like the trophy medals above. */
 .kind-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -268,33 +270,33 @@
 }
 
 .status-badge.status-pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid #f59e0b;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
+  border: 1px solid color-mix(in srgb, var(--warning-fg) 40%, transparent);
 }
 
 .status-badge.status-issued {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .status-badge.status-redeemed {
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  border: 1px solid #3b82f6;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
+  border: 1px solid color-mix(in srgb, var(--link-fg) 40%, transparent);
 }
 
 .status-badge.status-expired {
-  background: rgba(108, 117, 125, 0.2);
-  color: #6c757d;
-  border: 1px solid #6c757d;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
+  border: 1px solid color-mix(in srgb, var(--body-quiet-color) 40%, transparent);
 }
 
 .status-badge.status-revoked {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid #ef4444;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
 /* Recipient Badge */
@@ -349,14 +351,14 @@
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 1.25rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.08));
   transition: all 0.3s;
   display: flex;
   gap: 1rem;
 }
 
 .list-row-card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   transform: translateY(-2px);
 }
 
@@ -377,23 +379,23 @@
 
 /* Status-specific icon colors */
 .attribution-status-icon.status-pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 
 .attribution-status-icon.status-approved {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 .attribution-status-icon.status-rejected {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 
 .attribution-status-icon.status-expired {
-  background: rgba(108, 117, 125, 0.2);
-  color: #6c757d;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 /* Kind-specific icon colors */
@@ -466,18 +468,18 @@
 }
 
 .list-row-card-meta-item.expiring-soon {
-  color: #f59e0b;
+  color: var(--warning-fg);
   font-weight: 600;
 }
 
 .list-row-card-meta-item.rejection-reason,
 .list-row-card-meta-item.revocation-reason {
-  color: #ef4444;
+  color: var(--error-fg);
   font-weight: 500;
 }
 
 .warning-icon {
-  color: #f59e0b !important;
+  color: var(--warning-fg) !important;
 }
 
 .list-row-card-actions {
@@ -511,32 +513,32 @@
 }
 
 .button.success {
-  background: #10b981;
-  color: #fff;
+  background: color-mix(in srgb, var(--success-fg) 65%, #000);
+  color: var(--button-fg);
 }
 
 .button.success:hover {
-  background: #059669;
+  background: color-mix(in srgb, var(--success-fg) 55%, #000);
   transform: translateY(-1px);
 }
 
 .button.danger {
-  background: #ef4444;
-  color: #fff;
+  background: var(--delete-button-bg);
+  color: var(--button-fg);
 }
 
 .button.danger:hover {
-  background: #dc2626;
+  background: var(--delete-button-hover-bg);
   transform: translateY(-1px);
 }
 
 .button.secondary {
-  background: #6c757d;
-  color: #fff;
+  background: var(--close-button-bg);
+  color: var(--button-fg);
 }
 
 .button.secondary:hover {
-  background: #5a6268;
+  background: color-mix(in srgb, var(--close-button-bg) 85%, #000);
   transform: translateY(-1px);
 }
 
@@ -588,7 +590,7 @@
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.08));
 }
 
 .settings-form {

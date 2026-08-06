@@ -49,7 +49,7 @@ Inserisci le tue credenziali API:
 Fai clic su **Test Connessione** per verificare che le tue credenziali siano valide. Il wizard controlla:
 - Autenticazione della chiave API
 - Permessi dell'account
-- Accessibilità del punto di terminazione webhook
+- Accessibilità dell'endpoint webhook
 
 ### Passaggio 5: Configura e salva
 
@@ -74,7 +74,7 @@ Le schede di avviso in alto evidenziano problemi che richiedono attenzione:
 
 - **Grafico dei ricavi** — Riepilogo visivo del volume dei pagamenti nel tempo, raggruppato per giorno, settimana o mese
 - **Metriche di prestazioni** — Totale dei ricavi, tasso di successo, valore medio della transazione e tasso di rimborso
-- **Confronto tra fornitori** — Schede di prestazioni a confronto per ciascun fornitore connesso
+- **Confronto dei fornitori** — Schede di prestazioni a confronto per ciascun fornitore connesso
 
 ### Analisi delle transazioni
 
@@ -92,7 +92,7 @@ Ogni fornitore supporta diversi metodi di pagamento. Puoi abilitare o disabilita
 
 Questo è utile quando un metodo di pagamento è popolare in una regione ma non in un'altra (es. iDEAL nei Paesi Bassi, Bancontact in Belgio).
 
-I webhooks mantengono il tuo negozio sincronizzato con il fornitore di pagamento in tempo reale.
+I webhook mantengono sincronizzata la tua negozio con il fornitore di pagamento in tempo reale.
 
 Gestiscono eventi come:
 - Pagamento completato o fallito
@@ -117,15 +117,15 @@ Se un webhook non riesce ad essere elaborato, viene registrato come errore in mo
 
 Puoi collegare più fornitori di pagamento contemporaneamente:
 
-- **Fornitore predefinito** — Il fornitore selezionato di default al momento del checkout. Seleziona un fornitore come predefinito nella sua configurazione.
-- **Ordine di visualizzazione** — Controlla l'ordine di visualizzazione al momento del checkout. I clienti vedono tutti i fornitori attivi e possono scegliere il loro preferito.
+- **Fornitore predefinito** — Il fornitore selezionato di default al checkout. Seleziona un fornitore come predefinito nella sua configurazione.
+- **Ordine di visualizzazione** — Controlla l'ordine di visualizzazione al checkout. I clienti vedono tutti i fornitori attivi e possono scegliere il loro preferito.
 - **Failover** — Se un fornitore ha un'interruzione, i clienti possono comunque pagare utilizzando un altro fornitore.
 
 ## Consigli
 
 - Inizia con **Stripe** o **PayPal** — coprono la gamma più ampia di metodi di pagamento e regioni.
-- Utilizza **modalità sandbox/test** per elaborare transazioni di test prima di andare in produzione. Ogni fornitore ha numeri di carta di test nella sua documentazione.
+- Utilizza **modalità sandbox/test** per elaborare transazioni di test prima di andare in produzione. Ogni fornitore ha numeri di carta di test nella loro documentazione.
 - Abilita **più fornitori** in modo che i clienti abbiano un'opzione di pagamento di backup se un fornitore ha problemi.
-- Imposta un **ordine di visualizzazione basso** per il tuo fornitore preferito in modo che appaia per primo al momento del checkout.
+- Imposta un **ordine di visualizzazione basso** per il tuo fornitore preferito in modo che appaia per primo al checkout.
 - Monitora il Dashboard dei pagamenti settimanalmente per individuare transazioni fallite e problemi di connessione in anticipo.
 - Mantieni le tue credenziali API sicure — sono memorizzate crittografate nel database ma non dovrebbero mai essere condivise.

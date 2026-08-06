@@ -1,8 +1,8 @@
 {% load i18n static %}
 
-<div class="provider-card" data-provider-id="{{ provider.id }}" data-provider-slug="{{ provider.component.slug }}">
+<div class="list-row-card" data-provider-id="{{ provider.id }}" data-provider-slug="{{ provider.component.slug }}">
     <!-- Checkbox for bulk select -->
-    <div class="provider-checkbox">
+    <div class="list-row-card-checkbox">
         <input type="checkbox" class="provider-select" value="{{ provider.id }}" id="provider-{{ provider.id }}">
     </div>
 
@@ -71,14 +71,14 @@
             {% endif %}
         </div>
 
-        <div class="provider-badges">
+        <div class="list-row-card-badges">
             <!-- Active/Inactive Badge -->
             {% if provider.is_active %}
-                <span class="badge badge-status badge-active">
+                <span class="list-row-card-badge list-row-card-badge-success badge-status">
                     <i class="fas fa-check-circle"></i> {% trans "Active" %}
                 </span>
             {% else %}
-                <span class="badge badge-status badge-inactive">
+                <span class="list-row-card-badge badge-status">
                     <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
                 </span>
             {% endif %}

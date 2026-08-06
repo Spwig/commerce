@@ -47,6 +47,7 @@
   margin-top: 4px;
   font-size: 11px;
   line-height: 1.4;
+  color: var(--body-quiet-color);
 }
 
 /* SKU column - monospace font */
@@ -96,7 +97,7 @@
 
 /* Stock status indicators - color coding */
 #productvariant_set-group .stock-status-low {
-  color: var(--warning, #ffc107);
+  color: var(--warning-color, #ffc107);
 }
 
 #productvariant_set-group .stock-status-out {
@@ -104,7 +105,7 @@
 }
 
 #productvariant_set-group .stock-status-ok {
-  color: var(--success, #28a745);
+  color: var(--success-fg, #28a745);
 }
 
 /* Responsive adjustments */
@@ -115,13 +116,6 @@
   }
 }
 
-/* Dark theme adjustments */
-@media (prefers-color-scheme: dark) {
-  #productvariant_set-group .readonly {
-    background: var(--darkened-bg, #2d3338);
-  }
-
-  #productvariant_set-group .field-stock_summary small {
-    color: #999;
-  }
-}
+/* Dark theme is handled by the design tokens above (--darkened-bg,
+   --body-quiet-color, etc. flip via the admin data-theme toggle), so the
+   old @media (prefers-color-scheme: dark) overrides are unnecessary. */

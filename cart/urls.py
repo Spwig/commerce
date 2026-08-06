@@ -55,6 +55,11 @@ urlpatterns = [
         CartViewSet.as_view({"patch": "update_item", "delete": "remove_item"}),
         name="cart-item-detail",
     ),
+    path(
+        "cart/items/<int:item_id>/attach-subscription-token/",
+        CartViewSet.as_view({"post": "attach_subscription_token"}),
+        name="cart-item-attach-subscription-token",
+    ),
     path("cart/clear/", CartViewSet.as_view({"post": "clear"}), name="cart-clear"),
     path(
         "cart/apply-voucher/",

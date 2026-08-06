@@ -5,6 +5,224 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-08-05
+
+A performance, consistency, and hardening release that also lands major
+new merchant-facing capabilities — subscriptions in the built-in storefront,
+region-based product availability, and an opt-in preview of **AI Shopping**
+(agentic commerce, off by default). The Spwig admin
+gets faster and more visually consistent: a large amount of duplicated
+and dead styling has been removed, and every app now draws from one
+shared, token-driven design system — so buttons, badges, cards, colours
+and dark mode look the same across the whole admin, with less to
+download and parse. On the storefront, images move to AVIF with a
+`<picture>` element and automatic fallback, and CSS and JavaScript
+delivery is deduplicated and cache-busted through the asset manifest.
+Alongside the polish, a broad sweep of correctness and robustness fixes
+lands across cart, checkout, orders, accounts, wallet, and payments,
+and the installer and first-boot path gain further safety. Upgrading runs
+additive schema migrations plus automatic data back-fills (region
+availability and digital-product stock) — no manual migration steps are
+required. Changes to the public API are additive and backward-compatible —
+new response fields (`image_sources`, `ships_to_region`) and a new
+`POST /api/store/set-region/` endpoint — so existing integrations keep
+working unchanged.
+
+### Upgrade notes
+
+- **Regenerate media to get AVIF for your existing images.** New uploads
+  are converted to AVIF automatically, but images already in your library
+  are not reprocessed on upgrade. To serve the new format across your
+  catalogue, open **Media Library → Image Processing** and run
+  **Regenerate All Product Thumbnails** — it now produces AVIF alongside
+  WebP. Your store keeps working throughout: each image upgrades to AVIF
+  once its renditions finish, and falls back to WebP or the original until
+  then, so there is never a broken image.
+
+### Added
+
+- **Subscriptions in the built-in storefront.** Spwig's subscription
+  engine and APIs already powered subscriptions on headless storefronts;
+  the built-in storefront now sells them end to end. Product pages gain a
+  "one-time vs. Subscribe & Save" selector with per-tier pricing, free
+  trials, setup fees and cancellation terms (for simple, variable and
+  digital products); the cart and checkout show the billing cadence; and
+  customers view, pause, resume, cancel and update the payment method for
+  their subscriptions from their account. The reusable payment method is
+  captured at checkout through one provider-agnostic flow that works across
+  every bundled gateway — Stripe, PayPal, Airwallex, Square and Revolut.
+- Each recurring cycle now generates a paid order that flows through
+  normal fulfilment, so physical subscriptions re-ship and digital ones
+  re-grant access automatically every period, with renewal reminders,
+  trial-ending, payment-failed (dunning) and cancellation emails sent
+  throughout. Billing is handled uniformly for all gateways through
+  Spwig's own engine, charging the first cycle at checkout and each
+  renewal off-session from the saved payment method.
+- **AI Shopping (agentic commerce) — opt-in preview.** Spwig stores can now be
+  discovered, browsed, and — optionally — checked out by AI shopping assistants
+  over open agentic-commerce protocols (UCP, plus ACP product feeds and a
+  storefront MCP endpoint). It ships **off by default**: until a merchant turns
+  it on under **Settings → AI Shopping**, the store exposes no agent surface at
+  all. When enabled, the merchant controls which protocols are live, whether
+  unverified agents may read (browse) versus check out, the store's public
+  support/terms/privacy/returns details, and — per product — whether an item is
+  visible to agents. Each store gets its own cryptographic agent identity
+  (Ed25519 transport and ECDSA/AP2 signing keys published as a JWKS), a
+  `.well-known` discovery document, and an emergency kill switch that halts all
+  agent activity instantly. This is an early, experimental preview and is not
+  enabled on upgrade.
+- AVIF renditions are generated for media-library images and served
+  through a `<picture>` element across the storefront — the product
+  gallery main image and its swaps, and JavaScript-driven surfaces
+  (mini-cart, quick view, recommendations) — with WebP/JPEG fallback
+  for browsers that don't support AVIF.
+- Storefront catalog API serializers gain an additive `image_sources`
+  field exposing the available renditions; existing `image` fields are
+  unchanged.
+- **Region availability.** Merchants can restrict a product to — or exclude
+  it from — chosen sales regions via a **Region availability** setting
+  (all regions / only selected / all except selected). The storefront detects
+  the shopper's region and, on a first visit to a non-default region, confirms
+  it ("We've set your region to [X]") with a country picker; a region selector
+  can also be placed in the header. Region-restricted products are shown marked
+  "Does not ship to [country]" (with a filter) or hidden, per a Stock Display
+  Settings option, and switching region follows the region's default currency
+  on multi-currency stores. Additive headless/API support: `POST
+  /api/store/set-region/`, a `ships_to_region` field on the catalog product
+  API, and a `?ship_only` filter. (Server-side enforcement at checkout is a
+  planned follow-up.)
+- Variable products now show a variant price range (e.g. "$59.99 – $89.99",
+  collapsing to a single price when all variants match) on listings and the
+  product page, instead of the parent product's price.
+- Merchants can now read the platform release notes (this changelog) directly
+  from the admin upgrade page, so what's new in each version is visible in place
+  when reviewing an update.
+- The checkout-session API gains additive `amount_due` and `tendered_amount`
+  fields, and web order placement now runs through a warn-only quote-drift check
+  that flags a price/total mismatch before an order is created — groundwork
+  shared with the AI Shopping checkout flow.
+
+### Changed
+
+**Admin interface**
+
+- Every admin app now draws from one shared design system, so buttons,
+  badges, cards, list rows, tabs and forms are consistent across the
+  whole admin instead of each app styling its own.
+- Removed a large amount of duplicated and dead admin styling and moved
+  the rest onto shared design tokens — dark mode and colour are now
+  driven centrally and identical everywhere, and there is less CSS to
+  download and parse, so the admin feels snappier.
+- Improved colour contrast to meet WCAG AA for status badges,
+  indicators and buttons in both light and dark themes.
+
+**Storefront delivery**
+
+- Storefront widget CSS and page-builder element scripts now route
+  through the asset manifest, so each asset loads once, is
+  deduplicated across widgets, and is cache-busted on change.
+- Only the `product_grid` layout variant actually in use is loaded,
+  and product-card JavaScript plus the quick-view modal are skipped on
+  pages that render no product cards — less CSS/JS on the wire.
+
+### Fixed
+
+**Installer, first boot, and packaging**
+
+- Hardened the first-boot and re-run paths of the installer (v1.4.0):
+  safer re-runs, SSL handling, and upload configuration.
+- The pre-baked static manifest now self-heals when incomplete, so
+  core assets always load on a fresh install; a post-seed
+  post-condition asserts an active storefront theme.
+- Bundled themes are restored to the preinstalled manifest, and the
+  deploy step extracts the full installer package and publishes a
+  versioned copy.
+
+**Django 5.2 readiness**
+
+- Updated the component static finders to Django 5.2's `find_all`
+  signature, switched SSO JWT token claims and other paths to
+  timezone-aware `now()`, and cleared the remaining low-risk
+  deprecations.
+
+**Cart & checkout**
+
+- Pre-order and backorder products can now actually be bought. A product
+  marked pre-order, or one with backorders enabled (at the product,
+  category, or store level), was advertised as "Pre-Order"/"Backorder"
+  but was in practice unbuyable once it hit zero stock: it was hidden
+  from region listings, its product page showed a misleading "not
+  available in your region" notice with no add-to-cart button, and any
+  order that slipped through was rejected at placement. It is now
+  purchasable end to end, and such an item is recorded on the order as
+  awaiting stock so it can be fulfilled when stock arrives. A genuinely
+  out-of-stock product with neither option stays unbuyable, and
+  region-restriction rules are unchanged.
+- Fixed a crash when a guest session key is missing, validated the
+  step-4 delivery-window inputs before use, and corrected stock
+  checks to account for variant-level stock rows.
+- On-sale listings now exclude products without a usable sale price,
+  mini-cart line totals include per-unit customization charges, and
+  recommendation lists honour the requested item limit.
+- Removed per-row database queries from the cart, cart-item, wishlist,
+  and recently-viewed admin changelists and from product
+  recommendations and per-line cart images — related data is now
+  selected or prefetched in a single pass.
+
+**Orders**
+
+- Zero-amount money values format correctly instead of rendering raw;
+  order tracking honours the stored estimated delivery date; and the
+  refund relation is selected up front to avoid extra queries.
+- Made order-note concatenation, `items_json` length checks, and the
+  order timeline robust to empty and edge values, so cancelled and
+  refunded orders no longer display as completed.
+- Test-order generation now respects the store's currency and valid
+  order statuses, its source distribution, and rejects an invalid
+  `--days` argument; country-code lookups are case-insensitive.
+
+**Payments**
+
+- Gateway refunds that previously failed on a Money/Decimal comparison
+  now process correctly, the capture row is locked during a refund to
+  prevent over-refunding, and an embedded 3DS/SCA checkout crash is
+  fixed.
+
+**Catalog**
+
+- Digital products are no longer stock-gated. A **Digital**-type product
+  is delivered as a download or licence and has no physical stock, so it
+  now stays available to buy instead of silently reading as "out of stock"
+  and refusing to add to the cart — its inventory tracking stayed switched
+  on with no way for the merchant to set a stock level. Booking and
+  gift-card products already behaved this way; digital products now match.
+  Existing digital products are corrected automatically on upgrade.
+- Digital-product analytics no longer sums a non-existent field, so
+  revenue totals are correct.
+- On multi-currency stores, selecting a variant on the product page keeps the
+  price in the shopper's currency instead of reverting to the base currency.
+
+**Accounts**
+
+- Password and password-reset validation now run against the target
+  user, so per-user validators are enforced; failed-login counting
+  uses a locked read to avoid races; and duplicate-account detection
+  and export deduplication are case-insensitive.
+- Onboarding-email cancellation, OAuth-credential read failures,
+  wishlist-lookup failures, and cleanup-task failures are surfaced
+  rather than silently swallowed.
+- Corrected date-bucket boundaries in preference analytics (monthly
+  and quarterly ranges), honoured explicitly requested groupings,
+  tolerated multiple `SocialApp` rows in the social-login wizard, and
+  preserved fractional days in subscription proration.
+
+**Wallet**
+
+- `WalletService.credit` and `debit` handle currency mismatches
+  safely, negative pagination limits are rejected, and the wallet and
+  transaction changelists render customer identity without a per-row
+  lookup.
+
 ## [1.7.0] - 2026-07-21
 
 The stored-value release. Gift cards become a first-class part of the

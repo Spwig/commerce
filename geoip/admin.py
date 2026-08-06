@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.db.models import Avg, BooleanField, Case, Count, F, Q, Sum, When
 from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
@@ -87,8 +88,8 @@ class GeoLocationAdmin(admin.ModelAdmin):
 
     def is_expired_display(self, obj):
         if obj.is_expired:
-            return format_html('<span class="geoip-status-expired">❌ Expired</span>')
-        return format_html('<span class="geoip-status-valid">✓ Valid</span>')
+            return mark_safe('<span class="geoip-status-expired">❌ Expired</span>')
+        return mark_safe('<span class="geoip-status-valid">✓ Valid</span>')
 
     is_expired_display.short_description = "Status"
 
@@ -498,8 +499,8 @@ class VisitorLocationAdmin(admin.ModelAdmin):
         if corrected is None:
             corrected = obj.was_corrected
         if corrected:
-            return format_html('<span class="geoip-corrected-yes">⚠️ Corrected</span>')
-        return format_html('<span class="geoip-corrected-no">✓</span>')
+            return mark_safe('<span class="geoip-corrected-yes">⚠️ Corrected</span>')
+        return mark_safe('<span class="geoip-corrected-no">✓</span>')
 
     was_corrected_display.short_description = "Accuracy"
 

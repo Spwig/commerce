@@ -2,92 +2,69 @@
 title: Satış Bölgeleri
 ---
 
-Satış bölgeleri, mağazanız için coğrafi pazarları tanımlamanıza ve her bölgede hangi ürünlerin mevcut olacağını kontrol etmenize olanak tanır. Bu, birden fazla ülke veya bölgeye yayılmış satış yapmanız ve farklı ürün kataloğu, bölgesel para birimleri veya konum bazlı stok mevcudiyeti ihtiyacınız olduğunda yararlıdır.
+Satış bölgeleri, mağazanız için coğrafi pazarlar tanımlamanıza ve her bölgede hangi ürünlerin mevcut olduğuna dair kontrolü sağlar. Bu, birden fazla ülke veya bölge üzerinde satış yaptığınızda ve her yerde farklı ürün kataloğuna, bölgesel dövizlere veya stok erişimine ihtiyacınız olduğunda yararlıdır.
 
-## Satış Bölgesi Nedir?
+## Satış bölgesi nedir?
 
-Bir satış bölgesi, bir veya daha fazla ülkeyi içeren isimlendirilmiş bir coğrafi alan. Her bölge, bir varsayılan para birimi, bir öncelik ve bir veya daha fazla depo ile ilişkilendirilebilir. Bir müşteri mağazanızı tararken, Spwig, müşterinin konumuna göre bölgesini belirler ve uygun para birimi ve ürün görünürlük kurallarını uygular.
+Bir satış bölgesi, bir veya daha fazla ülkeden oluşan, isimlendirilmiş coğrafi bir alandır. Her bölgenin bir varsayılan döviz, bir sıralama ve bir veya daha fazla depo ile bağlantılı olabilir. Bir müşteri mağazanızı ziyaret ettiğinde, Spwig, konumuna göre bölgesini belirler ve uygun döviz ve ürün görünüm kurallarını uygular.
 
-### Yaygın Kullanım Durumları:
-- Her ülkeye özel olarak sadece yerel olarak mevcut olan ürünleri göstermek
-- Bölgeden bağımsız olarak varsayılan para birimleri atamak (örneğin, Yeni Zelanda müşterileri için NZD)
-- Her bölgede siparişleri yerine getirecek depoları kontrol etmek
-- Belirli pazarlarda henüz mevcut olmayan ürünleri gizlemek
+Sık kullanılan durumlar:
+- Her ülkenin sadece yerel olarak mevcut olan ürünleri gösterilmesi
+- Bölgesel dövizler için varsayılan dövizin atanması (örneğin, Yeni Zelanda müşterileri için NZD)
+- Her bölgenin siparişlerini nasıl karşılayacağını kontrol etme
+- Bazı pazarlarda henüz mevcut olmayan ürünleri gizleme
 
-## Satış Bölgesi Oluşturma
+## Satış bölgesi oluşturma
 
-1. **Katalog > Satış Bölgeleri**'ne gidin
-2. **+ Satış Bölgesi Ekle**'ye tıklayın
-3. Bölgedeki detayları doldurun:
+1. **Envanter > Satış Bölgeleri** sayfasına gidin. Görmüyorsanız, menü öğesini ortaya çıkarmak için **Araçlar > Mağaza Ayarları > E-Ticaret** altında **Çoklu Depo'yu Aç** seçeneğini açın — bu işlemi aslında kullanmanıza gerek yok, sadece bağlantıyı kilidi çözmek için. /admin/catalog/salesregion/ adresine doğrudan da gidebilirsiniz.
+2. **+ Satış Bölgesi Ekle** butonuna tıklayın
+3. Bölgenin detaylarını doldurun:
 
 | Alan | Açıklama | Örnek |
 |-------|-------------|---------|
-| **Bölge Adı** | Bu bölgenin görüntülenecek adı | `Asya-Pasifik` |
-| **Bölge Kodu** | Bu bölgenin kısa ve benzersiz tanımlayıcısı | `APAC` |
-| **Ülkeler** | Bu bölgede yer alan iki harfli ISO ülke kodları | `["NZ", "AU", "SG", "FJ"]` |
-| **Varsayılan Para Birimi** | Bu bölgenin varsayılan para birimi | `NZD` |
-| **Öncelik** | Daha yüksek öncelikli bölgeler önce eşleşir | `10` |
-| **Aktif** | Bu bölge şu anda aktif mi? | İşaretli |
+| **Bölge Adı** | Bu bölge için gösterim ismi | `Asya-Pasifik` |
+| **Bölge Kodu** | Kısa benzersiz tanımlayıcı | `APAC` |
+| **Ülkeler** | Bu bölgede bulunan iki harflik ISO ülke kodları | `['NZ', 'AU', 'SG', 'FJ']` |
+| **Varsayılan Döviz** | Bu bölge için iki harflik döviz kodu | `NZD` |
+| **Öncelik** | Daha yüksek öncelikli bölgeler önce eşleştirilir | `10` |
+| **Aktif** | Bu bölgenin şu anda kullanılıp kullanılmadığı | İşaretlendi |
 
 4. **Kaydet**'e tıklayın
 
-### Ülke Kodları
+### Ülke kodları
 
-Ülkeleri, iki harfli ISO kodlarının bir JSON listesi olarak girin. Örneğin:
-- Yeni Zelanda ve Avustralya: `["NZ", "AU"]`
-- Sadece Singapur: `["SG"]`
-- Tüm Avrupa: `["DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "PL"]`
+İki harflik ISO kodlarını bir JSON listesi olarak girin. Örnek:
+- Yeni Zelanda ve Avustralya: `['NZ', 'AU']`
+- Sadece Singapur: `['SG']`
+- Tüm Avrupa: `['DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'SE', 'NO', 'DK', 'FI', 'PL']`
 
 ### Öncelik
 
-Eğer bir müşterinin ülkesi birden fazla bölgeye uysa, en yüksek öncelik numarasına sahip bölge kullanılır. Daha spesifik bölgelere daha yüksek öncelik verin (örneğin, `NZ`'e 20 öncelik ve `APAC`'e 10 öncelik verin, böylece Yeni Zelanda müşterileri önce `NZ` bölgesine eşleşir).
+Eğer bir müşteri ülkesi birden fazla bölgede eşleşirse, en yüksek öncelik numarasına sahip bölge kullanılır. Daha spesifik bölgeler için daha yüksek bir öncelik ayarlayın (örneğin, `NZ` için öncelik 20 ve `APAC` için öncelik 10 olsun ki Yeni Zelanda müşterileri öncelikle NZ bölgesine eşleştirilsin).
 
-## Bölgeden Bağımlı Ürün Görünürlüğünü Kontrol Etme
+## Bölgeden ürün görünümünü kontrol etme
 
-Varsayılan olarak, her ürün tüm bölgelerde görünür. Bir ürünün belirli bölgelere sınırlanmasını istiyorsanız, **Ürün Bölgesel Görünürlüğü** kayıtlarını kullanın.
+Özünde, her ürün tüm bölgelerde görünür. Ürünü sınırlamak için **Ürünler > Tüm Ürünler** altında açın ve **Bölge erişim** alanını (Durum bölümünde) ya da belirli bölgelerde sadece izin ver veya belirli bölgeler hariç tüm bölgelerde izin ver, ardından bu alanda aşağıda ki tabloda bölgeleri seçin, ardından tabloyu doldurun.
 
-### Bir Ürünü Belirli Bölgelere Sınırlama
+Bu, ürünün erişilebilir olduğu bölgelerin dışında kalan şahsiyetlerin neye sahip olacağını da belirler — ürün, listelerden tamamen gizleniyor olabilir ya da "[bölge] 'ye sevkiyet yok" notuyla gösteriliyor olabilir. **Bölge Erişimi** rehberine bakın, bu görüntüleme ayarını ve mağaza aracında Ship-To Seçicisi'ni içeren tam adımlar için.
 
-1. **Katalog > Ürün Bölgesel Görünürlüğü**'ne gidin
-2. **+ Ürün Bölgesel Görünürlüğü Ekle**'ye tıklayın
-3. **Ürün**'ü seçin
-4. **Bölge**'yi seçin
-5. **Görünür**'ü gerekli şekilde açın veya kapatın
-6. **Kaydet**'e tıklayın
+## Bölgesel döviz
 
-Bir ürün için herhangi bir görünürlük kaydı varsa, Spwig kuralları uygular. Görünürlük kaydı olmayan ürünler her yerde görünür.
+Her bölgenin bir varsayılan döviz vardır. Mağazanız birden fazla döviz destekliyorsa (Araçlar > Çoklu Döviz), bir müşteri bölgesi değiştiğinde, bölgesinin varsayılan dövizi otomatik olarak değişir — bu, otomatik bölge istemi veya Ship-To Seçicisi ile olabilir. Tek dövizli mağazalar ya da çoklu dövizleri kasten açmayan mağazalar, bölgeye bakılmaksızın bu tek dövizi gösterir.
 
-### Yaygın Desenler
+Çoklu dövizlerde fiyatlandırma kurulumu yapmak için, **Araçlar > Döviz Kurları** altında değişim oranlarını yapılandırın. Fiyatlar otomatik olarak çevrilebilir ya da her döviz için elle ayarlanabilir.
 
-**Sadece bir bölgeye sınırla**
+## Depoları bölgelere bağlama
 
-Desteklemek istediğiniz her bölge için bir görünürlük kaydı ekleyin ve izin verilen bölgeler için **Görünür**'ü `Evet` olarak ayarlayın. Diğer bölgelerdeki müşteriler ürünleri görmeyecektir.
+Depolar, **Envanter > Depolar** altında bir depo oluştururken ya da düzenlerken bir bölgeye bağlanır. Her depo bir bölgeye aittir, bu da siparişleri karşılamak için o bölgenin stoklarını kontrol eder.
 
-**Bir bölgeden hariç tut**
-
-Hariç tutmak istediğiniz bölge için tek bir görünürlük kaydı ekleyin ve **Görünür**'ü `Hayır` olarak ayarlayın. Ürün diğer tüm bölgelerde görünür kalır.
-
-## Ürün Sayfasından Görünürlük Düzenleme
-
-Ürün düzenleme formundan doğrudan bölge görünürlüğünü da yönetebilirsiniz. Ürünün **Bölge Görünürlüğü** bölümünde, o ürün için tüm bölgeler ve görünürlik ayarlarını gösteren bir satır içi tablo bulacaksınız.
-
-## Bölgesel Para Birimi
-
-Her bölge için bir varsayılan para birimi vardır. Bu bölgeden tarayıcıya giren müşteriler, bölgenin para birimindeki fiyatları görür. Kullanılan para birimi, ödeme sırasında belirlenir.
-
-Birden fazla para biriminde fiyatlandırma yapmak için, **Ayarlar > Döviz Kurları** altında döviz kurlarını yapılandırın. Fiyatlar otomatik olarak dönüştürülebilir veya her para birimi için manuel olarak ayarlanabilir.
-
-## Depoları Bölgelere Bağlama
-
-Depolar, **Katalog > Depolar** altında bir depo oluştururken veya düzenlerken bölgelere bağlanır. Her depo bir bölgeye aittir ve bu, hangi bölgenin stoklarının siparişleri yerine getirmek için kullanıldığını kontrol eder.
-
-Depolar hakkında daha fazla bilgi için **Stok ve Depolar** yardım konusuna bakın.
+Depolama alanları hakkında daha fazla bilgi için **Envanter ve Depolar** yardım konusuna bakın.
 
 ## İpuçları
 
-- Bölgesel kodları kısa ve açıklayıcı tutun (`NZ`, `APAC`, `EU`, `US`) — bunlar içsel olarak ve günlük kayıtlarda kullanılır.
-- Daha küçük ve daha spesifik bölgeler için daha yüksek öncelik numaraları kullanın, böylece daha geniş kapsamlı bölgelerden öncelik kazanırlar.
-- Sadece bir ülkeye satış yapıyorsanız, bölgeleri yapılandırmaya gerek yoktur — Spwig, tek bir küresel katalogla iyi çalışır.
-- Bölgeden bağımlı görünürlüğü test etmek için, admin panelinde belirli bir bölgeye göre filtreleme yaparak mağazanızı ön izleleyin.
-- Ürün görünürlüğü kayıtları, ürünleri kısıtlamak istediğinizde oluşturulmalıdır. Bir ürüne görünürlük kaydı bırakmazsanız, ürün herkese açık olur.
-- Yeni bir bölge eklediğinizde, mevcut ürün kısıtlamalarının doğru olduğundan emin olmak için görünürlük kurallarınızı gözden geçirin.
+- Bölgesel kodları kısa ve tanımlayıcı tutun (NZ, APAC, EU, US) — bu kodlar iç yapılandırmalarda ve loglarda kullanılır.
+- Daha küçük, daha spesifik bölgeler için daha yüksek öncelik numaraları kullanın, böylece daha geniş kapsamlı tüm bölgelerden daha önce gelir.
+- Sadece bir ülke için satıyorsanız, hiçbir bölge ayarı yapmanıza gerek yok — Spwig, tek bir küresel katalogla iyi çalışır.
+- Ürünün **Bölge Erişilebilirliği** 'ni **Tüm Bölgelerde Mevcut** olarak ayarlamadan önce sadece onu sınırlamak istediğinizi doğrulayın — varsayılan olarak ürünler her yerde mevcut olur ve hiçbir bakım gerektmez.
+- Yeni bir Satış Bölgesi eklediğinizde her ürünün bölge kurallarını gözden geçirin, böylece sınırlamaların neye göre olduğunu doğrulayabilirsiniz.
+- Başka bir bölgeye geçmek için **Bölge Erişilebilirliği** rehberine bakarak başlığınıza Ship-To Seçici ekleyin, böylece kendi başınıza bölgeleri değiştirebilir ve sınırlı ürünleri nasıl davrandığını kontrol edebilirsiniz.

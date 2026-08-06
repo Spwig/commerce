@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Por favor, actualice su método de pago antes de {{ retry_date|date:"F d, Y" }} para evitar interrupciones en el servicio.
+                Por favor, actualice su método de pago para el {{ retry_date|date:"F d, Y" }} para evitar interrupciones en el servicio.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
           Verifique que su método de pago tenga fondos suficientes
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
           Actualice su método de pago si la tarjeta ha caducado
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
           Intentaremos automáticamente el pago en {{ retry_days }} días
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -141,12 +145,12 @@ Monto: {{ subscription_amount }}
 Método de pago: {{ payment_method }}
 Razón: {{ failure_reason }}
 
-Por favor, actualice su método de pago antes de {{ retry_date|date:"F d, Y" }} para evitar interrupciones en el servicio.
+{% if retry_date %}Por favor, actualice su método de pago para el {{ retry_date|date:"F d, Y" }} para evitar interrupciones en el servicio.{% endif %}
 
 ¿Qué debe hacer?
 1. Verifique que su método de pago tenga fondos suficientes
 2. Actualice su método de pago si la tarjeta ha caducado
-3. Intentaremos automáticamente el pago en {{ retry_days }} días
+{% if retry_days %}3. Intentaremos automáticamente el pago en {{ retry_days }} días{% endif %}
 
 Actualizar método de pago: {{ update_payment_url }}
 Ver suscripción: {{ manage_subscription_url }}

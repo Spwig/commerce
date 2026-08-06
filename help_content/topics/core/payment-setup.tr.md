@@ -2,7 +2,7 @@
 title: Ödeme Ayarları
 ---
 
-Ödeme sağlayıcıları, mağazanızı ödeme geçitlerine bağlayarak, müşterilerinizin ödeme sırasında kredi kartlarını, dijital cüzdanları ve diğer ödeme yöntemlerini kabul edebilmesini sağlar. Spwig, birden fazla sağlayıcıyı aynı anda destekleyerek müşterilerinize esnek ödeme seçenekleri sunar.
+Ödeme sağlayıcıları, mağazanızı ödeme ağ geçitlerine bağlayarak, müşterilerinizin ödeme sırasında kredi kartlarını, dijital cüzdanları ve diğer ödeme yöntemlerini kabul edebilmesini sağlar. Spwig, birden fazla sağlayıcıyı aynı anda destekleyerek müşterilerinize esnek ödeme seçenekleri sunar.
 
 ![Ödeme sağlayıcıları](/static/core/admin/img/help/payment-setup/payment-dashboard.webp)
 
@@ -11,7 +11,7 @@ title: Ödeme Ayarları
 | Sağlayıcı | Açıklama |
 |----------|-------------|
 | **Stripe** | Kredi kartları, Apple Pay, Google Pay ve 135+ döviz |
-| **PayPal** | PayPal bakiyesi, kredi/borç kartları ve Daha Sonra Öde seçenekleri |
+| **PayPal** | PayPal bakiyesi, kredi/borc kartları ve Daha Sonra Öde seçenekleri |
 | **Airwallex** | Çarşaf ticaretine yönelik optimize edilmiş çok dövizli ödemeler |
 | **Square** | Entegre POS desteğiyle yüz yüze ve çevrimiçi ödemeler |
 | **Revolut** | Rekabetçi FX oranlarıyla hızlı Avrupa ödemeleri |
@@ -57,15 +57,15 @@ Sağlayıcı ayarlarını tamamlayın:
 - **Aktif** — Sağlayıcıyı etkinleştirin veya devre dışı bırakın
 - **Varsayılan Sağlayıcı** — Ödeme sırasında ana ödeme yöntemi olarak ayarlayın
 - **Gösterilecek Ad** — Müşterilere ödeme sırasında gösterilecek ad
-- **Sıra Numarası** — Ödeme sağlayıcılarının ödeme sırasında görünme sırasını kontrol eder (daha düşük numaralar önce görünür)
+- **Sıra Numarası** — Ödeme sağlayıcılarının ödeme sırasında görünüm sırasını kontrol eder (düşük numaralar önce görünür)
 
 ## Ödeme Panosu
 
-**Ayarlar > Ödeme Panosu**'na giderek ödeme aktivitenizin genel bir görünümüne ulaşın:
+**Ayarlar > Ödeme Panosu**'na gidin ve ödeme faaliyetlerinizin genel bir görünümü alın:
 
 ### Yapılacak İşler
 
-En üstteki uyarı kartları, dikkat gerektiren sorunları vurgular:
+Üstteki uyarı kartları, dikkat gerektiren sorunları vurgular:
 - **Başarısız İşlemler** — İşlem yapılamayan ödemeler
 - **Bekleyen Yakalama** — Yakalanmayı bekleyen onaylanmış ödemeler
 - **Bağlantı Hataları** — Bağlantı sorunları olan sağlayıcılar
@@ -78,7 +78,7 @@ En üstteki uyarı kartları, dikkat gerektiren sorunları vurgular:
 
 ### İşlem Ayrıştırması
 
-- **Durum Dağılımı** — Tamamlanan, bekleyen, başarısız ve iade edilen işlem sayıları
+- **Durum Dağılımı** — Tamamlanmış, bekleyen, başarısız ve iade edilen işlem sayıları
 - **Ödeme Yöntemi Karışımı** — Müşterilerin en çok kullandığı ödeme yöntemleri (kredi kartı, PayPal, dijital cüzdanlar)
 
 ## Ödeme Yöntemlerini Yönetme
@@ -90,7 +90,7 @@ Her sağlayıcı farklı ödeme yöntemlerini destekler. Ülkeye göre belirli y
 3. Bireysel yöntemleri açıp kapatın
 4. Ülkeye göre kontrolleri kullanarak yöntemleri belirli pazarlara sınırlayın
 
-Bir ödeme yöntemi bir bölgede popüler ancak başka bir bölgede değilse bu çok yararlıdır (örneğin, Hollanda'da iDEAL, Belçika'da Bancontact).
+Bir ödeme yöntemi bir bölgede popüler ama başka bir bölgede değilse bu çok yararlıdır (örneğin, Hollanda'da iDEAL, Belçika'da Bancontact).
 
 ## Webhook'lar
 
@@ -102,7 +102,7 @@ Aşağıdaki olayları işler:
 - Dispute ve chargeback açıldı
 - Abonelik yenilenmeleri
 
-### Otomatik Kurulum
+### Otomatik Ayar
 
 Bir sağlayıcıyı bağladığınızda, Spwig otomatik olarak bir webhook uç noktasını sağlayıcıyla kaydeder. Webhook URL'si sağlayıcının yapılandırma sayfasında referans olarak görüntülenir.
 
@@ -128,6 +128,6 @@ Aynı anda birden fazla ödeme sağlayıcısını bağlayabilirsiniz:
 - Başlamak için **Stripe** veya **PayPal** kullanın — bunlar en geniş ödeme yöntemlerini ve bölgelerini kapsar.
 - **Test ortamı** kullanarak canlıya geçmeden önce test işlemleri yapın. Her sağlayıcı belgelerinde test kart numaraları vardır.
 - **Birden fazla sağlayıcıyı** etkinleştirin, böylece bir sağlayıcıda sorun yaşanırsa müşterilere alternatif ödeme seçeneği sunulur.
-- Tercih ettiğiniz sağlayıcının **düşük bir sıralama numarası** ayarlayın, böylece ödeme sırasında ilk olarak görünür.
-- Haftalık olarak **Ödeme Panelini** izleyin, başarısız işlemler ve bağlantı sorunlarını erken fark edin.
-- API kimlik bilgilerinizi güvenli tutun — veritabanında şifrelenerek saklanırlar ancak hiçbir şekilde paylaşilmemelidir.
+- Tercih ettiğiniz sağlayıcının **düşük bir sıralama numarası** ayarlayın, böylece ödeme sırasında ilk olarak görünecektir.
+- Haftada bir **Ödeme Panelini** izleyin, başarısız işlemleri ve bağlantı sorunlarını erken tespit edin.
+- API kimlik bilgilerinizi güvenli tutun — veritabanında şifrelenerek saklanırlar ancak hiçbir zaman paylaşilmemelidir.

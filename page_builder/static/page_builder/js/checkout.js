@@ -1231,6 +1231,10 @@
     },
 
     async placeOrderFree() {
+      // Subscriptions require a signed-in shopper and recurring-billing consent
+      // even on the zero-due path.
+      if (this.subscriptionGateBlocks()) return;
+
       // Fully tendered: no gateway involved. complete() creates the order,
       // attaches the holds, and _settle_if_fully_tendered marks it paid —
       // capture happens on the payment-confirmed signal.
@@ -1275,6 +1279,10 @@
     },
 
     async submitPaymentMethod() {
+      // Subscriptions require a signed-in shopper and explicit recurring-billing
+      // consent before any order/intent is created.
+      if (this.subscriptionGateBlocks()) return;
+
       // Nothing due — fully tendered OR a genuinely free order: there is no
       // provider to select and no intent to create — the step's continue
       // button becomes Place Order. Never let this fall through to
@@ -1308,6 +1316,16 @@
         // Provider chosen — collapse the list to the selection so the step
         // reads as settled; the "Change payment method" link reopens it.
         this.collapseProviderList();
+
+        // Subscriptions: capture a reusable (off-session) payment method and
+        // attach it to the subscription lines BEFORE the intent is created, so
+        // renewals have a method to charge and the server-side gate passes.
+        // Provider-agnostic — SubscriptionPaymentSetup dispatches to whatever
+        // gateway the merchant configured; no gateway is named here.
+        if (this.hasSubscriptionItems()) {
+          const ok = await this.captureSubscriptionPaymentMethod(selected.value);
+          if (!ok) return; // message already shown; don't raise an intent the server would reject
+        }
 
         // 2. Create payment intent immediately (NEW FLOW)
         await this.createPaymentIntent();
@@ -1655,21 +1673,23 @@
           .map(item => {
             const product = item.product || {};
             const name = product.name || 'Product';
-            const imageUrl =
-              product.images && product.images.length > 0
-                ? product.images[0].thumbnail_url ||
-                  product.images[0].image_url ||
-                  product.images[0].url ||
-                  ''
-                : '/static/img/placeholder-product-thumb.png';
+            const firstImage =
+              product.images && product.images.length > 0 ? product.images[0] : null;
+            const imageUrl = firstImage
+              ? firstImage.thumbnail_url || firstImage.image_url || firstImage.url || ''
+              : '/static/img/placeholder-product-thumb.png';
+            const imageSources = firstImage
+              ? firstImage.thumbnail_sources || firstImage.image_sources
+              : null;
             return `
                         <div class="review-item">
-                            ${imageUrl ? `<img src="${this.escAttr(imageUrl)}" alt="${this.escAttr(name)}" class="review-item__image">` : ''}
+                            ${imageUrl ? window.buildPictureMarkup(imageSources, { fallbackSrc: imageUrl, alt: name, className: 'review-item__image' }) : ''}
                             <div class="review-item__info">
                                 <div class="review-item__name">${this.esc(name)}</div>
                                 <div class="review-item__qty">Qty: ${item.quantity}</div>
+                                ${item.is_subscription ? `<div class="review-item__subscription">${this.esc(this.buildSubscriptionCadence(item))}</div>` : ''}
                             </div>
-                            <div class="review-item__price">${this.formatCurrency(item.total_price)}</div>
+                            <div class="review-item__price">${this.formatCurrency(item.total_price)}${item.is_on_sale && item.regular_total ? ` <del class="review-item__price-original">${this.formatCurrency(item.regular_total)}</del>` : ''}</div>
                         </div>
                     `;
           })
@@ -2183,13 +2203,14 @@
           .map(item => {
             const product = item.product || {};
             const name = product.name || 'Product';
-            const imageUrl =
-              product.images && product.images.length > 0
-                ? product.images[0].thumbnail_url ||
-                  product.images[0].image_url ||
-                  product.images[0].url ||
-                  ''
-                : '/static/img/placeholder-product-thumb.png';
+            const firstImage =
+              product.images && product.images.length > 0 ? product.images[0] : null;
+            const imageUrl = firstImage
+              ? firstImage.thumbnail_url || firstImage.image_url || firstImage.url || ''
+              : '/static/img/placeholder-product-thumb.png';
+            const imageSources = firstImage
+              ? firstImage.thumbnail_sources || firstImage.image_sources
+              : null;
 
             // Calculate unit price from total_price / quantity
             const unitPrice = item.quantity > 0 ? parseFloat(item.total_price) / item.quantity : 0;
@@ -2202,12 +2223,13 @@
 
             return `
                         <div class="checkout-summary__item">
-                            ${imageUrl ? `<img src="${this.escAttr(imageUrl)}" alt="${this.escAttr(name)}" class="checkout-summary__item-image">` : ''}
+                            ${imageUrl ? window.buildPictureMarkup(imageSources, { fallbackSrc: imageUrl, alt: name, className: 'checkout-summary__item-image' }) : ''}
                             <div class="checkout-summary__item-info">
                                 <div class="checkout-summary__item-name">${this.esc(name)}</div>
                                 <div class="checkout-summary__item-qty">${priceBreakdown}</div>
+                                ${item.is_subscription ? `<div class="checkout-summary__item-subscription">${this.esc(this.buildSubscriptionCadence(item))}</div>` : ''}
                             </div>
-                            <div class="checkout-summary__item-price">${this.formatCurrency(item.total_price)}</div>
+                            <div class="checkout-summary__item-price">${this.formatCurrency(item.total_price)}${item.is_on_sale && item.regular_total ? ` <del class="checkout-summary__item-price-original">${this.formatCurrency(item.regular_total)}</del>` : ''}</div>
                         </div>
                     `;
           })
@@ -2287,12 +2309,127 @@
         }
       }
 
+      // Reveal/hide the subscription recurring-billing notice + auth gate now
+      // that we know whether the cart holds any subscription line.
+      this.updateSubscriptionUI();
+
       // Dispatch event for mobile summary toggle
       document.dispatchEvent(
         new CustomEvent('checkout:summary-updated', {
           detail: { total: total },
         })
       );
+    },
+
+    // === Subscriptions ===
+
+    // True when any line in the cart is a subscription.
+    hasSubscriptionItems() {
+      const items = (this.cartData && this.cartData.items) || [];
+      return items.some(i => i.is_subscription);
+    },
+
+    // Provider-agnostic reusable-method capture for subscriptions. Delegates to
+    // SubscriptionPaymentSetup, which dispatches to whatever gateway the merchant
+    // configured via window.PaymentHandlers[provider_key].initializeSetup — no
+    // gateway is named here. Returns true when a token was captured + attached,
+    // false when the caller must not proceed (a clear message was shown).
+    async captureSubscriptionPaymentMethod(providerAccountId) {
+      if (!window.SubscriptionPaymentSetup) {
+        this.showAlert('Subscription setup is unavailable. Please try again.', 'error');
+        return false;
+      }
+      const items = (this.cartData && this.cartData.items) || [];
+      const itemIds = items.filter(i => i.is_subscription).map(i => i.id);
+      const container =
+        document.getElementById('embedded-payment-container') ||
+        document.getElementById('review-payment-container');
+      try {
+        const result = await window.SubscriptionPaymentSetup.capture({
+          providerAccountId,
+          itemIds,
+          container,
+        });
+        if (!result.supported) {
+          const msg =
+            (window.UI_STRINGS && window.UI_STRINGS['js.subscription_provider_unsupported']) ||
+            'This payment method can’t be used for subscriptions yet. Please choose another.';
+          this.showAlert(msg, 'error');
+          return false;
+        }
+        if (!result.success) {
+          this.showAlert(result.error || 'We could not save your payment method.', 'error');
+          return false;
+        }
+        return true;
+      } catch (err) {
+        console.error('Subscription setup error:', err);
+        this.showAlert('We could not set up recurring billing. Please try again.', 'error');
+        return false;
+      }
+    },
+
+    // Cadence line for a subscription summary/review item, e.g. "$18.00 / month".
+    // Built from server-provided fields; no client-side money maths.
+    buildSubscriptionCadence(item) {
+      const cadence = item.subscription_billing_display || '';
+      const price =
+        item.subscription_unit_price != null
+          ? this.formatCurrency(item.subscription_unit_price)
+          : '';
+      if (price && cadence) {
+        const tmpl =
+          (window.UI_STRINGS && window.UI_STRINGS['js.subscription_per_cycle']) ||
+          '{price} / {cadence}';
+        return tmpl.replace('{price}', price).replace('{cadence}', cadence);
+      }
+      return price || cadence;
+    },
+
+    // Show the recurring-billing notice + consent when subscriptions are present,
+    // and the sign-in prompt when the shopper is anonymous.
+    updateSubscriptionUI() {
+      const hasSub = this.hasSubscriptionItems();
+      const notice = document.getElementById('subscription-recurring-notice');
+      if (notice) notice.hidden = !hasSub;
+      const signin = document.getElementById('subscription-signin-notice');
+      if (signin) signin.hidden = !(hasSub && !this.config.isAuthenticated);
+    },
+
+    // Gate for placing an order that contains a subscription: the shopper must
+    // be signed in and must consent to recurring billing. Returns true (and
+    // surfaces the reason) when the order must NOT proceed.
+    subscriptionGateBlocks() {
+      if (!this.hasSubscriptionItems()) return false;
+
+      if (!this.config.isAuthenticated) {
+        const msg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.sign_in_to_subscribe']) ||
+          'Please sign in to complete your subscription.';
+        this.showAlert(msg, 'error');
+        const signin = document.getElementById('subscription-signin-notice');
+        if (signin) {
+          signin.hidden = false;
+          signin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return true;
+      }
+
+      const consent = document.getElementById('subscription-consent');
+      if (consent && !consent.checked) {
+        const msg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.subscription_consent_required']) ||
+          'Please agree to the recurring billing terms to continue.';
+        this.showAlert(msg, 'error');
+        const notice = document.getElementById('subscription-recurring-notice');
+        if (notice) {
+          notice.hidden = false;
+          notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return true;
+      }
+
+      return false;
     },
 
     // === Form Field Restoration ===

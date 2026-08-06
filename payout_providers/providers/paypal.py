@@ -276,11 +276,14 @@ class PayPalPayoutProvider(BasePayoutProvider):
         # Generate unique batch ID
         batch_id = f"spwig_payout_{uuid.uuid4().hex[:16]}"
 
-        # Build payout items
+        # Build payout items, tracking which requests were skipped so we only
+        # generate submitted results for requests that actually made the batch.
         items = []
+        skipped_flags = []
         for req in requests:
             if not req.recipient.email:
                 logger.warning(f"Payout {req.payout_id} has no email, skipping")
+                skipped_flags.append(True)
                 continue
 
             item = {
@@ -294,6 +297,7 @@ class PayPalPayoutProvider(BasePayoutProvider):
                 item["note"] = req.note[:4000]  # PayPal limit
 
             items.append(item)
+            skipped_flags.append(False)
 
         if not items:
             return BatchPayoutResult(success=False, message="No valid payout items after filtering")
@@ -314,21 +318,37 @@ class PayPalPayoutProvider(BasePayoutProvider):
             if result["status_code"] == 201:
                 data = result["data"]
                 batch_header = data.get("batch_header", {})
+                batch_reference = batch_header.get("payout_batch_id")
+
+                # Emit a submitted result only for requests that made the batch;
+                # skipped requests get an explicit failed result so they are not
+                # recorded as pending payouts.
+                results = []
+                for skipped in skipped_flags:
+                    if skipped:
+                        results.append(
+                            PayoutResult(
+                                success=False,
+                                status=PayoutStatus.FAILED,
+                                message="Recipient has no PayPal email; payout skipped",
+                            )
+                        )
+                    else:
+                        results.append(
+                            PayoutResult(
+                                success=True,
+                                provider_reference=batch_reference,
+                                status=PayoutStatus.PENDING,
+                                raw_response=data,
+                            )
+                        )
 
                 return BatchPayoutResult(
                     success=True,
-                    batch_reference=batch_header.get("payout_batch_id"),
+                    batch_reference=batch_reference,
                     message=f"Batch created with status: {batch_header.get('batch_status')}",
                     raw_response=data,
-                    results=[
-                        PayoutResult(
-                            success=True,
-                            provider_reference=batch_header.get("payout_batch_id"),
-                            status=PayoutStatus.PENDING,
-                            raw_response=data,
-                        )
-                        for _ in requests
-                    ],
+                    results=results,
                 )
             else:
                 error_data = result["data"]

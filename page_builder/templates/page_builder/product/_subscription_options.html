@@ -1,0 +1,127 @@
+{% load i18n static merchant_trans currency_tags %}
+{% comment %}
+Subscription plan / tier selector.
+Renders nothing unless the product is subscription-enabled AND has at least
+one active public plan, so it is safe to include in any buy box.
+All prices are formatted server-side (subscription_pricing / storefront_pricing);
+the JS only swaps pre-formatted strings — never money maths.
+
+NOTE: this MUST be {% comment %}, not {# #} — Django's {# #} is single-line
+only, so a multi-line {# #} leaves inner {% ... %} tags to be parsed as real
+tags (that broke every product page with a TemplateSyntaxError).
+{% endcomment %}
+{% if product.is_subscription_enabled and subscription_plans %}
+<div class="subscription-options"
+     id="subscription-options"
+     data-subscription-options
+     data-allow-one-time="{{ allow_one_time|yesno:'true,false' }}"
+     data-default-mode="{% if subscription_default %}subscription{% else %}one_time{% endif %}">
+
+    {# Purchase mode #}
+    <div class="subscription-options__modes" role="radiogroup" aria-label="{% mtrans 'Purchase options' %}">
+        {% if allow_one_time %}
+        <label class="subscription-mode">
+            <input type="radio" name="purchase-mode" value="one_time"
+                   data-subscription-mode="one_time"
+                   {% if not subscription_default %}checked{% endif %}>
+            <span class="subscription-mode__body">
+                <span class="subscription-mode__title">{% mtrans 'One-time purchase' %}</span>
+                <span class="subscription-mode__price">{% product_price_display product current_currency.code show_badge=False %}</span>
+            </span>
+        </label>
+        <label class="subscription-mode">
+            <input type="radio" name="purchase-mode" value="subscription"
+                   data-subscription-mode="subscription"
+                   {% if subscription_default %}checked{% endif %}>
+            <span class="subscription-mode__body">
+                <span class="subscription-mode__title">{% mtrans 'Subscribe & Save' %}</span>
+            </span>
+        </label>
+        {% else %}
+        {# One-time not allowed: subscription is forced. #}
+        <input type="radio" name="purchase-mode" value="subscription"
+               data-subscription-mode="subscription" checked hidden>
+        <h3 class="subscription-options__heading">{% mtrans 'Subscription' %}</h3>
+        {% endif %}
+    </div>
+
+    {# Plan chooser + per-plan tier panels (hidden when one-time is selected) #}
+    <div class="subscription-options__fields" data-subscription-fields
+         {% if allow_one_time and not subscription_default %}hidden{% endif %}>
+
+        {% if subscription_plans|length > 1 %}
+        <div class="subscription-options__plans">
+            <p class="subscription-options__label">{% mtrans 'Choose a plan' %}</p>
+            <div class="subscription-plan-list">
+                {% for plan in subscription_plans %}
+                <label class="subscription-plan">
+                    <input type="radio" name="subscription-plan" value="{{ plan.plan_id }}"
+                           data-plan-id="{{ plan.plan_id }}"
+                           {% if forloop.first %}checked{% endif %}>
+                    <span class="subscription-plan__name">{{ plan.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        {% for plan in subscription_plans %}
+        <input type="hidden" name="subscription-plan" value="{{ plan.plan_id }}"
+               data-plan-id="{{ plan.plan_id }}">
+        {% endfor %}
+        {% endif %}
+
+        {% for plan in subscription_plans %}
+        <div class="subscription-plan-panel" data-plan-panel="{{ plan.plan_id }}"
+             {% if not forloop.first %}hidden{% endif %}>
+
+            <p class="subscription-options__label">{% mtrans 'Delivery frequency' %}</p>
+            <div class="subscription-tier-list">
+                {% for tier in plan.storefront_pricing %}
+                <label class="subscription-tier">
+                    <input type="radio" name="pricing-tier" value="{{ tier.tier_id }}"
+                           data-tier-id="{{ tier.tier_id }}"
+                           data-plan-id="{{ plan.plan_id }}"
+                           {% if tier.is_default %}data-tier-default="true"{% endif %}
+                           {% if forloop.parentloop.first and tier.is_checked %}checked{% endif %}>
+                    <span class="subscription-tier__body">
+                        <span class="subscription-tier__name">{{ tier.tier_name }}</span>
+                        <span class="subscription-tier__cadence">{{ tier.billing_display }}</span>
+                    </span>
+                    <span class="subscription-tier__price" data-tier-price="{{ tier.tier_id }}">{{ tier.price }}</span>
+                    {% if tier.discount_percentage > 0 %}
+                    <span class="subscription-tier__badge">{% mtrans 'Save' %} {{ tier.discount_percentage|floatformat:0 }}%</span>
+                    {% endif %}
+                </label>
+                {% endfor %}
+            </div>
+
+            {# Per-plan meta (trial / setup fee / cancellation policy) #}
+            <div class="subscription-plan-meta" data-plan-meta="{{ plan.plan_id }}">
+                {% if plan.trial_period_days > 0 %}
+                <p class="subscription-plan-meta__item">
+                    <i class="fas fa-gift"></i>
+                    {{ plan.trial_period_days }}-{% mtrans 'day free trial' %}
+                </p>
+                {% endif %}
+                {% if plan.setup_fee.amount > 0 %}
+                <p class="subscription-plan-meta__item">
+                    <i class="fas fa-plus-circle"></i>
+                    {% mtrans 'Setup fee' %}: {{ plan.setup_fee|money:current_currency.code }}
+                </p>
+                {% endif %}
+                <p class="subscription-plan-meta__item">
+                    <i class="fas fa-info-circle"></i>
+                    {% if plan.cancellation_policy == 'anytime' %}{% mtrans 'Cancel anytime' %}
+                    {% elif plan.cancellation_policy == 'minimum_commitment' %}{% mtrans 'Minimum commitment applies' %}
+                    {% else %}{% mtrans 'Cancel at the end of your billing period' %}{% endif %}
+                </p>
+                <p class="subscription-plan-meta__note">
+                    <i class="fas fa-lock"></i>
+                    {% mtrans "You'll add a payment method at checkout." %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

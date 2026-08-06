@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ {{ plan_name }} 支付失敗 - 需要採取行動 - {{ shop_name }}
+⚠️ {{ shop_name }} 的 {{ plan_name }} 付款失敗 - 需要操作
 
 ## HTML Content
 <mjml>
@@ -22,10 +22,10 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ 支付失敗
+          ⚠️ 付款失敗
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          無法處理您的支付
+          我們無法處理您的付款
         </mj-text>
       </mj-column>
     </mj-section>
@@ -37,30 +37,32 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                支付資訊
+                付款資訊
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Plan:</strong> {{ plan_name }}
+                <strong>方案:</strong> {{ plan_name }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Amount:</strong> {{ subscription_amount }}
+                <strong>金額:</strong> {{ subscription_amount }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Payment Method:</strong> {{ payment_method }}
+                <strong>付款方式:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
-                <strong>Reason:</strong> {{ failure_reason }}
+                <strong>原因:</strong> {{ failure_reason }}
               </mj-text>
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                請在 {{ retry_date|date:"F d, Y" }} 前更新您的支付方式，以避免服務中斷。
+                請在 {{ retry_date|date:"F d, Y" }} 前更新您的付款方式，以避免服務中斷。
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          確認您的支付方式有足夠的資金
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          確認您的付款方式有足夠資金
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          如果卡片已過期，請更新您的支付方式
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          如果卡片已過期，請更新您的付款方式
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          我們將在 {{ retry_days }} 天後自動重試支付
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          我們將在 {{ retry_days }} 天內自動重試付款
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,7 +99,7 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          更新支付方式
+          更新付款方式
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          需要幫助？請聯繫我們：{{ support_email }}
+          需要幫助？請聯繫我們 at {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -122,7 +126,7 @@ category: Subscriptions
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Powered by Spwig
+            由 Spwig 提供
           </a>
         </mj-text>
       </mj-column>
@@ -131,27 +135,27 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ 支付失敗
+⚠️ 付款失敗
 
-我們無法處理您的支付
+我們無法處理您的付款
 
-支付資訊：
-Plan: {{ plan_name }}
-Amount: {{ subscription_amount }}
-Payment Method: {{ payment_method }}
-Reason: {{ failure_reason }}
+付款資訊:
+方案: {{ plan_name }}
+金額: {{ subscription_amount }}
+付款方式: {{ payment_method }}
+原因: {{ failure_reason }}
 
-請在 {{ retry_date|date:"F d, Y" }} 前更新您的支付方式，以避免服務中斷。
+{% if retry_date %}請在 {{ retry_date|date:"F d, Y" }} 前更新您的付款方式，以避免服務中斷。{% endif %}
 
 您應該做什麼？
-1. 確認您的支付方式有足夠的資金
-2. 如果卡片已過期，請更新您的支付方式
-3. 我們將在 {{ retry_days }} 天後自動重試支付
+1. 確認您的付款方式有足夠資金
+2. 如果卡片已過期，請更新您的付款方式
+{% if retry_days %}3. 我們將在 {{ retry_days }} 天內自動重試付款{% endif %}
 
-更新支付方式：{{ update_payment_url }}
-查看訂閱：{{ manage_subscription_url }}
+更新付款方式: {{ update_payment_url }}
+查看訂閱: {{ manage_subscription_url }}
 
-需要幫助？請聯繫我們：{{ support_email }}
+需要幫助？請聯繫我們 at {{ support_email }}
 
 ---
-Powered by Spwig - https://spwig.com
+由 Spwig 提供 - https://spwig.com

@@ -6,6 +6,7 @@ Automatically triggers push notifications for important events.
 
 import logging
 
+from django.db import transaction
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
@@ -22,22 +23,29 @@ def send_new_order_notification(sender, instance, created, **kwargs):
     - Payment status is 'paid' (completed checkout)
     """
     if created and instance.payment_status == "paid":
-        try:
-            from admin_api.tasks import send_new_order_push_notification
 
-            send_new_order_push_notification.delay(instance.id)
-            logger.info(f"Queued new order notification for order {instance.order_number}")
-        except Exception as e:
-            logger.error(f"Failed to queue new order notification: {e}")
+        def _queue_new_order_notification():
+            try:
+                from admin_api.tasks import send_new_order_push_notification
+
+                send_new_order_push_notification.delay(instance.id)
+                logger.info(f"Queued new order notification for order {instance.order_number}")
+            except Exception as e:
+                logger.error(f"Failed to queue new order notification: {e}")
+
+        transaction.on_commit(_queue_new_order_notification)
 
 
 @receiver(pre_save, sender="orders.Order")
-def send_order_paid_notification(sender, instance, **kwargs):
+def record_order_paid_transition(sender, instance, **kwargs):
     """
-    Send push notification when an existing order becomes paid.
+    Record when an existing order transitions from unpaid to paid.
 
-    Handles case where order was created pending and later marked as paid.
+    The transition is only flagged here; the notification is enqueued from
+    post_save once the change is committed, so a failed save or rolled-back
+    transaction never produces a spurious paid-order notification.
     """
+    instance._became_paid = False
     if instance.pk:
         try:
             from orders.models import Order
@@ -48,12 +56,31 @@ def send_order_paid_notification(sender, instance, **kwargs):
                 and old_instance.payment_status != "paid"
                 and instance.payment_status == "paid"
             ):
-                from admin_api.tasks import send_new_order_push_notification
+                instance._became_paid = True
+        except Exception as e:
+            logger.error(f"Failed to record order paid transition: {e}")
 
-                send_new_order_push_notification.delay(instance.id)
-                logger.info(f"Queued order paid notification for order {instance.order_number}")
+
+@receiver(post_save, sender="orders.Order")
+def send_order_paid_notification(sender, instance, created, **kwargs):
+    """
+    Send push notification when an existing order becomes paid.
+
+    Handles case where order was created pending and later marked as paid.
+    """
+    if created or not getattr(instance, "_became_paid", False):
+        return
+
+    def _queue_order_paid_notification():
+        try:
+            from admin_api.tasks import send_new_order_push_notification
+
+            send_new_order_push_notification.delay(instance.id)
+            logger.info(f"Queued order paid notification for order {instance.order_number}")
         except Exception as e:
             logger.error(f"Failed to queue order paid notification: {e}")
+
+    transaction.on_commit(_queue_order_paid_notification)
 
 
 @receiver(post_save, sender="catalog.StockItem")
@@ -82,19 +109,29 @@ def check_low_stock_notification(sender, instance, **kwargs):
             - Coalesce(Sum("allocated"), 0, output_field=IntegerField())
         )["available"]
 
-        # Check if at or below threshold
-        if available is not None and available <= product.low_stock_threshold:
-            # Check if we've already sent a notification recently (prevent spam)
-            from django.core.cache import cache
+        if available is None:
+            return
 
-            cache_key = f"low_stock_notified_{product.id}"
+        from django.core.cache import cache
+
+        # Persistent state flag: True once we've alerted while low, cleared on
+        # recovery. This detects the above-threshold-to-low transition and
+        # avoids both re-alerting a product that stays low and suppressing a
+        # product that recovers then drops low again.
+        cache_key = f"low_stock_notified_{product.id}"
+
+        if available <= product.low_stock_threshold:
+            # Only notify on the transition into low stock.
             if not cache.get(cache_key):
                 from admin_api.tasks import send_low_stock_push_notification
 
                 send_low_stock_push_notification.delay(product.id, available)
-                # Don't notify again for 1 hour
-                cache.set(cache_key, True, 3600)
+                cache.set(cache_key, True, None)
                 logger.info(f"Queued low stock notification for product {product.sku}")
+        else:
+            # Stock recovered above threshold: clear state so the next drop
+            # into low stock triggers a fresh notification.
+            cache.delete(cache_key)
 
     except Exception as e:
         logger.error(f"Failed to check/queue low stock notification: {e}")

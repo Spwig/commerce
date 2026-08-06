@@ -10,6 +10,7 @@ import secrets
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -156,7 +157,7 @@ class SMSVerificationService:
         Returns:
             Dict with success status
         """
-        from accounts.models import CustomerProfile
+        from accounts.models import CommunicationPreference, CustomerProfile
         from accounts.services.preference_audit_service import PreferenceAuditService
         from accounts.services.preference_service import PreferenceService
 
@@ -164,61 +165,93 @@ class SMSVerificationService:
             # Get preference
             prefs, _ = PreferenceService.get_or_create_for_user(user)
 
-            # Check if code exists
-            if not prefs.sms_verification_code:
-                return {
-                    "success": False,
-                    "error": "No verification code found. Please request a new code.",
-                }
+            # Lock the preference row for the whole attempt-limit / comparison
+            # critical section. Reading the attempt count, comparing the code,
+            # and incrementing failures must be atomic: without the lock,
+            # concurrent requests could all read the same sub-maximum count,
+            # all pass the guard, and all reach compare_digest, letting more
+            # than MAX_ATTEMPTS comparisons run before any increment lands.
+            with transaction.atomic():
+                prefs = CommunicationPreference.objects.select_for_update().get(pk=prefs.pk)
 
-            # Check TTL (15 minutes)
-            if prefs.sms_verification_sent_at:
-                time_since_sent = timezone.now() - prefs.sms_verification_sent_at
-                if time_since_sent > timedelta(minutes=cls.CODE_TTL_MINUTES):
-                    # Clear expired code
-                    prefs.sms_verification_code = ""
-                    prefs.save(update_fields=["sms_verification_code", "updated_at"])
+                # Check if code exists
+                if not prefs.sms_verification_code:
+                    return {
+                        "success": False,
+                        "error": "No verification code found. Please request a new code.",
+                    }
+
+                # Block once the attempt limit is reached and the cooldown has
+                # not elapsed, before any comparison runs, so brute force is
+                # bounded. Re-read under the lock so the guard sees committed
+                # increments from concurrent requests.
+                if prefs.sms_verification_attempts >= cls.MAX_ATTEMPTS:
+                    cooldown_elapsed = (
+                        prefs.sms_verification_sent_at is not None
+                        and timezone.now() - prefs.sms_verification_sent_at
+                        > timedelta(minutes=cls.COOLDOWN_MINUTES)
+                    )
+                    if not cooldown_elapsed:
+                        return {
+                            "success": False,
+                            "error": (
+                                f"Too many failed attempts. Please wait {cls.COOLDOWN_MINUTES} "
+                                "minutes and request a new code."
+                            ),
+                        }
+
+                # Check TTL (15 minutes)
+                if prefs.sms_verification_sent_at:
+                    time_since_sent = timezone.now() - prefs.sms_verification_sent_at
+                    if time_since_sent > timedelta(minutes=cls.CODE_TTL_MINUTES):
+                        # Clear expired code
+                        prefs.sms_verification_code = ""
+                        prefs.save(update_fields=["sms_verification_code", "updated_at"])
+
+                        return {
+                            "success": False,
+                            "error": "Verification code has expired. Please request a new code.",
+                        }
+
+                # Verify code with constant-time comparison (security best practice)
+                if not secrets.compare_digest(prefs.sms_verification_code, code):
+                    # Increment failed attempts while still holding the lock so
+                    # concurrent invalid-code requests cannot read the same
+                    # count and save the same incremented value (which would
+                    # undercount failures and permit more than the configured
+                    # maximum attempts).
+                    prefs.sms_verification_attempts += 1
+                    prefs.save(update_fields=["sms_verification_attempts", "updated_at"])
+
+                    remaining_attempts = cls.MAX_ATTEMPTS - prefs.sms_verification_attempts
+
+                    if remaining_attempts <= 0:
+                        return {
+                            "success": False,
+                            "error": f"Too many failed attempts. Please wait {cls.COOLDOWN_MINUTES} minutes and request a new code.",
+                        }
 
                     return {
                         "success": False,
-                        "error": "Verification code has expired. Please request a new code.",
+                        "error": "Invalid verification code.",
+                        "attempts_remaining": remaining_attempts,
                     }
 
-            # Verify code with constant-time comparison (security best practice)
-            if not secrets.compare_digest(prefs.sms_verification_code, code):
-                # Increment failed attempts
-                prefs.sms_verification_attempts += 1
-                prefs.save(update_fields=["sms_verification_attempts", "updated_at"])
+                # Success! Mark as verified
+                prefs.sms_verified = True
+                prefs.sms_verified_at = timezone.now()
 
-                remaining_attempts = cls.MAX_ATTEMPTS - prefs.sms_verification_attempts
+                # Clear verification code and reset attempts
+                prefs.sms_verification_code = ""
+                prefs.sms_verification_attempts = 0
 
-                if remaining_attempts <= 0:
-                    return {
-                        "success": False,
-                        "error": f"Too many failed attempts. Please wait {cls.COOLDOWN_MINUTES} minutes and request a new code.",
-                    }
+                # Update consent tracking
+                if ip_address:
+                    prefs.consent_ip = ip_address
+                if user_agent:
+                    prefs.consent_user_agent = user_agent
 
-                return {
-                    "success": False,
-                    "error": "Invalid verification code.",
-                    "attempts_remaining": remaining_attempts,
-                }
-
-            # Success! Mark as verified
-            prefs.sms_verified = True
-            prefs.sms_verified_at = timezone.now()
-
-            # Clear verification code and reset attempts
-            prefs.sms_verification_code = ""
-            prefs.sms_verification_attempts = 0
-
-            # Update consent tracking
-            if ip_address:
-                prefs.consent_ip = ip_address
-            if user_agent:
-                prefs.consent_user_agent = user_agent
-
-            prefs.save()
+                prefs.save()
 
             # Update phone number in CustomerProfile
             try:

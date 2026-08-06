@@ -107,7 +107,7 @@
 
         {% if hotfix_status.applied_hotfixes %}
         <div class="hotfix-rollback-section">
-            <button type="button" class="btn-rollback" data-action="rollback-hotfix">
+            <button type="button" class="button secondary" data-action="rollback-hotfix">
                 <i class="fas fa-undo"></i> {% trans "Rollback All Hotfixes" %}
             </button>
             <small class="hotfix-rollback-note">{% trans "Removes all hotfixes and restarts with base image code" %}</small>
@@ -168,6 +168,7 @@
 
             <div class="changelog-preview" id="changelogPreview">
                 <h4>{% trans "What's New" %}</h4>
+                <p id="releaseNotesSummary" class="changelog-summary platform-update-hidden"></p>
                 <ul id="changelogList">
                     <li>{% trans "Loading changelog..." %}</li>
                 </ul>
@@ -208,7 +209,7 @@
         <div class="rollback-warning">
             <strong>&#x26A0;&#xFE0F; {% trans "Warning:" %}</strong> {% trans "Rolling back will revert to previous application code and may cause brief service interruption (~30 seconds)." %}
         </div>
-        <button type="button" class="btn-rollback" data-action="confirm-rollback">
+        <button type="button" class="button secondary" data-action="confirm-rollback">
             <span>&#x23EA;</span>
             {% trans "Rollback to" %} v{{ rollback_info.previous_version }}
         </button>
@@ -217,17 +218,17 @@
 </div>
 
 <!-- Progress Modal -->
-<div class="update-progress-overlay" id="progressOverlay">
-    <div class="update-progress-modal">
-        <div class="update-progress-header">
-            <div class="update-progress-title">
+<div class="admin-modal-overlay" id="progressOverlay">
+    <div class="admin-modal admin-modal--md">
+        <div class="admin-modal-header">
+            <div class="admin-modal-title">
                 <span class="animate-pulse">&#x1F504;</span>
                 <span>{% trans "Updating to" %} <span id="progressVersion">v?.?.?</span></span>
             </div>
             <span class="do-not-close" id="doNotCloseLabel">{% trans "DO NOT CLOSE" %}</span>
-            <button type="button" class="btn-close-modal platform-update-hidden" id="closeProgressBtn" data-action="close-progress">{% trans "Close" %}</button>
+            <button type="button" class="button secondary platform-update-hidden" id="closeProgressBtn" data-action="close-progress">{% trans "Close" %}</button>
         </div>
-        <div class="update-progress-body">
+        <div class="admin-modal-body">
             <div class="progress-bar-container">
                 <div class="progress-bar-track">
                     <div class="progress-bar-fill" id="progressBarFill"></div>

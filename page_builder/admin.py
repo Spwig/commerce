@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TranslationAdmin
@@ -192,7 +193,7 @@ class PageAdmin(TranslatableAdminMixin, SEOGeneratorAdminMixin, admin.ModelAdmin
                 '<i class="fas fa-lock" style="font-size: 10px;"></i> {}</span>',
                 _("System"),
             )
-        return format_html('<span style="color: #6c757d;">—</span>')
+        return mark_safe('<span style="color: #6c757d;">—</span>')
 
     system_page_display.short_description = _("Type")
 
@@ -200,7 +201,7 @@ class PageAdmin(TranslatableAdminMixin, SEOGeneratorAdminMixin, admin.ModelAdmin
         count = obj.elements.count()
         if count > 0:
             return format_html('<span style="color: #17a2b8;">{} elements</span>', count)
-        return format_html('<span style="color: #dc3545;">No elements</span>')
+        return mark_safe('<span style="color: #dc3545;">No elements</span>')
 
     elements_count.short_description = "Elements"
 
@@ -646,9 +647,9 @@ class ElementAdmin(TranslationAdmin):
         if obj.show_on_desktop:
             devices.append('<i class="fas fa-desktop" title="Desktop"></i>')
         return (
-            format_html(" ".join(devices))
+            mark_safe(" ".join(devices))
             if devices
-            else format_html('<span style="color: #999;">—</span>')
+            else mark_safe('<span style="color: #999;">—</span>')
         )
 
     responsive_display.short_description = _("Devices")
@@ -663,12 +664,12 @@ class ElementAdmin(TranslationAdmin):
                 rule_count,
                 _("rule") if rule_count == 1 else _("rules"),
             )
-        return format_html('<span style="color: #999;">—</span>')
+        return mark_safe('<span style="color: #999;">—</span>')
 
     visibility_info.short_description = _("Visibility Rules")
 
     def has_link(self, obj):
-        return format_html('<i class="fas fa-link"></i>') if obj.link_url else ""
+        return mark_safe('<i class="fas fa-link"></i>') if obj.link_url else ""
 
     has_link.short_description = _("Link")
 
@@ -1027,7 +1028,6 @@ class RuleGroupAdmin(admin.ModelAdmin):
         )
 
     builder_link.short_description = _("Builder")
-    builder_link.allow_tags = True
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related("rules", "child_groups")

@@ -120,19 +120,52 @@
       hide(securityBadge);
     }
 
+    // Short user-facing summary (falls back to hidden when absent).
+    const summaryEl = document.getElementById('releaseNotesSummary');
+    if (summaryEl) {
+      if (data.release_notes) {
+        summaryEl.textContent = data.release_notes;
+        show(summaryEl);
+      } else {
+        summaryEl.textContent = '';
+        hide(summaryEl);
+      }
+    }
+
     const changelogList = document.getElementById('changelogList');
     changelogList.innerHTML = '';
 
-    if (data.changelog) {
-      const lines = data.changelog.split('\n').filter(function (l) {
-        return l.trim();
+    // The changelog is markdown. Prefer the actual change bullets; if the
+    // section has none, fall back to the first prose lines. Either way skip
+    // markdown headings so the compact list stays readable.
+    const rawLines = (data.changelog || '').split('\n').map(function (l) {
+      return l.trim();
+    });
+    const bullets = rawLines.filter(function (l) {
+      return /^[-*]\s+/.test(l);
+    });
+    let items;
+    if (bullets.length) {
+      items = bullets.map(function (l) {
+        return l.replace(/^[-*]\s+/, '');
       });
-      lines.slice(0, 5).forEach(function (line) {
+    } else {
+      items = rawLines.filter(function (l) {
+        return l && !l.startsWith('#');
+      });
+    }
+    // Strip inline markdown emphasis for the plain-text list.
+    items = items.map(function (l) {
+      return l.replace(/\*\*(.+?)\*\*/g, '$1').replace(/`([^`]+)`/g, '$1');
+    });
+
+    if (items.length) {
+      items.slice(0, 5).forEach(function (line) {
         const li = document.createElement('li');
-        li.textContent = line.replace(/^[-*]\s*/, '');
+        li.textContent = line;
         changelogList.appendChild(li);
       });
-      if (lines.length > 5) {
+      if (items.length > 5) {
         var li = document.createElement('li');
         const em = document.createElement('em');
         em.textContent = msgs.andMore;

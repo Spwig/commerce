@@ -63,9 +63,16 @@ from .services import CartService, CheckoutService, TaxService, WishlistService
         tags=["Cart"],
         summary=_("Add item to cart"),
         description=_(
-            "Add a product to cart with specified quantity. Optionally include variant ID, customizations, and notes. Validates stock availability and merges with existing cart item if same product/variant. For subscription products, include is_subscription=true with subscription_plan_id, payment_token_id, and optionally pricing_tier_id."
+            "Add a product to cart with specified quantity. Optionally include variant ID, customizations, and notes. Validates stock availability and merges with existing cart item if same product/variant. For subscription products, include is_subscription=true with subscription_plan_id and optionally pricing_tier_id (the shopper must be authenticated). No payment token is required here — the reusable payment method is captured at the checkout payment step and bound via the attach-subscription-token endpoint."
         ),
         request=AddToCartSerializer,
+    ),
+    attach_subscription_token=extend_schema(
+        tags=["Cart"],
+        summary=_("Attach payment token to a subscription cart item"),
+        description=_(
+            "Bind a saved reusable payment method (PaymentToken) to a subscription cart item before checkout. The token must belong to the authenticated user, be active, and its payment provider must support subscriptions. Called after minting the token at the checkout payment step so recurring billing has a method to charge."
+        ),
     ),
     update_item=extend_schema(
         tags=["Cart"],
@@ -235,6 +242,73 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
             return Response(
                 {"success": False, "message": str(message)}, status=status.HTTP_400_BAD_REQUEST
             )
+
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="items/(?P<item_id>[^/.]+)/attach-subscription-token",
+    )
+    def attach_subscription_token(self, request, item_id=None):
+        """Attach a saved PaymentToken to a subscription cart item.
+
+        The storefront defers card capture to the checkout payment step: the
+        client mints a reusable PaymentToken (POST /api/subscriptions/tokens/)
+        and binds it to each subscription line here, so
+        CheckoutService._create_subscriptions has a token to charge for the
+        first cycle and every renewal.
+        """
+        if not request.user.is_authenticated:
+            return Response(
+                {"success": False, "message": str(_("Authentication required."))},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        payment_token_id = request.data.get("payment_token_id")
+        if not payment_token_id:
+            return Response(
+                {"success": False, "message": str(_("payment_token_id is required."))},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        cart = self.get_cart(request)
+        cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
+
+        if not cart_item.is_subscription:
+            return Response(
+                {"success": False, "message": str(_("This item is not a subscription."))},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        from subscriptions.models import PaymentToken
+        from subscriptions.provider_base import is_subscription_supported
+
+        try:
+            token = PaymentToken.objects.get(
+                token_id=payment_token_id, user=request.user, is_active=True
+            )
+        except PaymentToken.DoesNotExist:
+            return Response(
+                {"success": False, "message": str(_("Invalid or inactive payment token."))},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # The token's provider account must support subscriptions, or renewal
+        # billing would be impossible after the sale.
+        if not is_subscription_supported(token.provider_account):
+            return Response(
+                {
+                    "success": False,
+                    "message": str(_("This payment method cannot be used for subscriptions.")),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        cart_item.payment_token = token
+        cart_item.save(update_fields=["payment_token", "updated_at"])
+
+        return Response(
+            {"success": True, "message": str(_("Payment method attached to subscription."))}
+        )
 
     @action(detail=False, methods=["patch"], url_path="items/(?P<item_id>[^/.]+)")
     def update_item(self, request, item_id=None):

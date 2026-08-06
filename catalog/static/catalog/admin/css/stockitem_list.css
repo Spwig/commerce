@@ -22,7 +22,7 @@
   padding: 20px;
   border-radius: 8px;
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .stock-summary-dashboard .summary-card .card-label {
@@ -63,17 +63,17 @@
 
 /* Stock item cards */
 .stock-item-card {
-  background: white;
+  background: var(--body-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow-light);
   transition: box-shadow 0.2s;
 }
 
 .stock-item-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px var(--shadow-light);
 }
 
 .stock-item-card .card-header {
@@ -92,7 +92,7 @@
 }
 
 .stock-item-card .product-info .sku {
-  color: #666;
+  color: var(--body-quiet-color);
   font-size: 13px;
 }
 
@@ -106,18 +106,18 @@
 }
 
 .stock-item-card .stock-status.status-ok {
-  background: #d4edda;
-  color: #155724;
+  background: var(--success-bg);
+  color: var(--success-fg);
 }
 
 .stock-item-card .stock-status.status-low {
-  background: #fff3cd;
-  color: #856404;
+  background: var(--warning-bg);
+  color: var(--warning-fg);
 }
 
 .stock-item-card .stock-status.status-out {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--error-bg);
+  color: var(--error-fg);
 }
 
 .stock-item-card .card-body {
@@ -134,7 +134,7 @@
 .stock-item-card .stock-metric .metric-label {
   font-size: 11px;
   text-transform: uppercase;
-  color: #666;
+  color: var(--body-quiet-color);
   margin-bottom: 4px;
 }
 
@@ -154,7 +154,7 @@
 
 .stock-item-card .warehouse-info {
   font-size: 13px;
-  color: #666;
+  color: var(--body-quiet-color);
 }
 
 .stock-item-card .warehouse-info i {

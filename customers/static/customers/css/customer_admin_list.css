@@ -31,13 +31,13 @@
    ============================================================================ */
 
 .customer-badge-guest {
-  background: #ffc107;
-  color: #000;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 
 .customer-badge-registered {
-  background: #28a745;
-  color: white;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 /* ============================================================================
@@ -49,28 +49,28 @@
 }
 
 .customer-badge-affiliate-pending {
-  background: #ffc107;
-  color: white;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 
 .customer-badge-affiliate-active {
-  background: #28a745;
-  color: white;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 .customer-badge-affiliate-suspended {
-  background: #dc3545;
-  color: white;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 
 .customer-badge-affiliate-rejected {
-  background: #6c757d;
-  color: white;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 .customer-badge-affiliate-default {
-  background: #6c757d;
-  color: white;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 /* ============================================================================
@@ -78,17 +78,17 @@
    ============================================================================ */
 
 .customer-value-high {
-  color: #28a745;
+  color: var(--success-fg);
   font-weight: bold;
 }
 
 .customer-value-medium {
-  color: #ffc107;
+  color: var(--warning-fg);
   font-weight: bold;
 }
 
 .customer-value-low {
-  color: #6c757d;
+  color: var(--body-quiet-color);
   font-weight: bold;
 }
 
@@ -110,11 +110,13 @@
    ============================================================================ */
 
 .ltv-badge-not-calculated {
-  background: #6c757d;
-  color: white;
+  background: var(--close-button-bg);
+  color: var(--button-fg);
   text-transform: uppercase;
 }
 
+/* Type-coded LTV-method colours (rfm / cohort / probabilistic) — deliberate
+   distinct hues, kept as filled badges with white text. */
 .ltv-badge-rfm {
   background: #17a2b8;
   color: white;
@@ -134,8 +136,8 @@
 }
 
 .ltv-badge-default {
-  background: #6c757d;
-  color: white;
+  background: var(--close-button-bg);
+  color: var(--button-fg);
   text-transform: uppercase;
 }
 
@@ -149,17 +151,17 @@
 }
 
 .ltv-value-high {
-  color: #28a745;
+  color: var(--success-fg);
   font-weight: bold;
 }
 
 .ltv-value-medium {
-  color: #ffc107;
+  color: var(--warning-fg);
   font-weight: bold;
 }
 
 .ltv-value-low {
-  color: #6c757d;
+  color: var(--body-quiet-color);
   font-weight: bold;
 }
 
@@ -168,17 +170,17 @@
    ============================================================================ */
 
 .ltv-confidence-high {
-  color: #28a745;
+  color: var(--success-fg);
   font-weight: bold;
 }
 
 .ltv-confidence-medium {
-  color: #ffc107;
+  color: var(--warning-fg);
   font-weight: bold;
 }
 
 .ltv-confidence-low {
-  color: #dc3545;
+  color: var(--error-fg);
   font-weight: bold;
 }
 
@@ -191,8 +193,8 @@
 }
 
 .cohort-month-badge {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
 }
 
 /* ============================================================================
@@ -211,15 +213,15 @@
    ============================================================================ */
 
 .recovery-recovered {
-  color: #28a745;
+  color: var(--success-fg);
 }
 
 .recovery-contacted {
-  color: #ffc107;
+  color: var(--warning-fg);
 }
 
 .recovery-not-contacted {
-  color: #dc3545;
+  color: var(--error-fg);
 }
 
 /* ============================================================================
@@ -227,7 +229,7 @@
    ============================================================================ */
 
 .muted-dash {
-  color: #6c757d;
+  color: var(--body-quiet-color);
   font-size: 11px;
 }
 
@@ -272,7 +274,7 @@
 }
 
 .behavior-summary {
-  background: #e3f2fd;
+  background: color-mix(in srgb, var(--link-fg) 8%, transparent);
   padding: 15px;
   border-radius: 5px;
 }
@@ -282,7 +284,8 @@
 }
 
 .engagement-summary {
-  background: #f3e5f5;
+  /* light purple, matching the type-coded probabilistic/very-high purple */
+  background: color-mix(in srgb, #9333ea 8%, transparent);
   padding: 15px;
   border-radius: 5px;
 }

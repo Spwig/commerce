@@ -10,6 +10,23 @@ from .services import ImageProcessor
 from .video_services import VideoProcessor
 
 
+class PictureSourcesSerializer(serializers.Serializer):
+    """Responsive image source set for a storefront <picture> element.
+
+    Mirrors ``MediaAsset.get_picture_sources()``: ``avif``/``webp`` are the
+    next-gen candidates (null when not generated yet — the client omits that
+    <source>), ``fallback`` is always a usable original-format URL for the
+    <img>. Emitted alongside — never instead of — the existing single image
+    URL field, so deployed clients keep working.
+    """
+
+    avif = serializers.CharField(allow_null=True)
+    webp = serializers.CharField(allow_null=True)
+    fallback = serializers.CharField(allow_null=True)
+    width = serializers.IntegerField(allow_null=True)
+    height = serializers.IntegerField(allow_null=True)
+
+
 class MediaFolderSerializer(serializers.ModelSerializer):
     """Serializer for media folders"""
 
@@ -710,6 +727,11 @@ class MediaAssetCreateSerializer(serializers.ModelSerializer):
             if job:
                 self._job_id = job.id
                 self._job_status = job.status
+
+            # Queue AVIF generation off the request path (WebP was done inline)
+            from media_library.services import queue_avif_generation
+
+            queue_avif_generation(asset)
 
             return asset
         except Exception as e:

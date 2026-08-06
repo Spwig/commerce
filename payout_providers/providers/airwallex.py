@@ -466,6 +466,20 @@ class AirwallexPayoutProvider(BasePayoutProvider):
             logger.warning("Missing webhook timestamp or signature headers")
             return False
 
+        # Reject stale or malformed timestamps to prevent replay attacks.
+        try:
+            signed_at = int(timestamp) / 1000
+        except (TypeError, ValueError):
+            logger.warning("Invalid webhook timestamp header")
+            return False
+
+        now = time.time()
+        tolerance = 5 * 60  # 5 minutes
+        # Reject timestamps too far in the past (replay) or in the future (clock skew/forgery).
+        if signed_at < now - tolerance or signed_at > now + tolerance:
+            logger.warning("Webhook timestamp outside allowed tolerance")
+            return False
+
         # Airwallex signature = HMAC-SHA256(timestamp + payload)
         try:
             payload_str = payload.decode("utf-8") if isinstance(payload, bytes) else payload

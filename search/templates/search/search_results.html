@@ -196,6 +196,9 @@
                                 {% if result.type == 'product' %}
                                     <span class="search-result-card__price">
                                         {{ result.currency }} {{ result.price }}
+                                        {% if result.is_on_sale and result.regular_price %}
+                                        <del class="search-result-card__price-original">{{ result.currency }} {{ result.regular_price }}</del>
+                                        {% endif %}
                                     </span>
                                     {% if result.in_stock %}
                                     <span class="search-result-card__stock search-result-card__stock--in">

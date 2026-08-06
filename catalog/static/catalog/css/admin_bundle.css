@@ -34,7 +34,7 @@
   gap: 15px;
   align-items: center;
   padding: 12px 15px;
-  background: #fff;
+  background: var(--body-bg, #fff);
   border: 1px solid var(--hairline-color, #e0e0e0);
   border-radius: 8px;
   transition: all 0.2s ease;
@@ -42,7 +42,7 @@
 
 .bundle-item-card:hover {
   border-color: var(--primary, #417690);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .bundle-item-card.empty-form {
@@ -165,7 +165,7 @@
   font-size: 13px;
   border: 1px solid var(--hairline-color, #ccc);
   border-radius: 4px;
-  background: #fff;
+  background: var(--body-bg, #fff);
 }
 
 .bundle-item-variant-select select:disabled {
@@ -174,7 +174,7 @@
 }
 
 .bundle-field-errors {
-  color: #dc3545;
+  color: var(--error-fg);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -236,15 +236,15 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: linear-gradient(135deg, #e8f4fd 0%, #f0f7ff 100%);
-  border: 1px solid #b8daff;
+  background: color-mix(in srgb, var(--blue-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue-accent) 40%, transparent);
   border-radius: 6px;
-  color: #0056b3;
+  color: var(--blue-accent);
   font-size: 13px;
 }
 
 .bundle-customer-will-choose i {
-  color: #28a745;
+  color: var(--success-fg);
   font-size: 16px;
 }
 
@@ -297,7 +297,7 @@
 .bundle-item-sort input:focus {
   border-color: var(--primary, #417690);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(65, 118, 144, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .bundle-item-optional {
@@ -384,9 +384,9 @@
 }
 
 .bundle-item-remove:hover {
-  background: #fef2f2;
-  border-color: #dc3545;
-  color: #dc3545;
+  background: color-mix(in srgb, var(--error-fg) 8%, transparent);
+  border-color: var(--error-fg);
+  color: var(--error-fg);
 }
 
 /* ============================================================================
@@ -403,7 +403,7 @@
   gap: 8px;
   padding: 10px 20px;
   background: var(--primary, #417690);
-  color: #fff;
+  color: var(--primary-fg, #fff);
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -413,7 +413,7 @@
 }
 
 .bundle-add-btn:hover {
-  background: var(--primary-fg, #205067);
+  background: var(--primary-hover, #205067);
 }
 
 .bundle-add-btn i {
@@ -472,7 +472,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.5);
+  background: color-mix(in srgb, var(--body-bg) 50%, transparent);
 }
 
 /* ============================================================================
@@ -535,29 +535,8 @@
    Dark Theme
    ============================================================================ */
 
-@media (prefers-color-scheme: dark) {
-  .bundle-item-card {
-    background: var(--body-bg, #1a1a1a);
-    border-color: var(--hairline-color, #333);
-  }
-
-  .bundle-item-card:hover {
-    border-color: var(--primary, #79aec8);
-  }
-
-  .bundle-product-placeholder {
-    background: var(--darkened-bg, #2d2d2d);
-  }
-
-  .bundle-item-quantity input,
-  .bundle-item-sort input,
-  .bundle-item-variant-select select {
-    background: var(--body-bg, #1a1a1a);
-    border-color: var(--hairline-color, #444);
-    color: var(--body-fg, #f0f0f0);
-  }
-
-  .bundle-summary {
-    background: var(--darkened-bg, #2d2d2d);
-  }
-}
+/* Dark theme is handled by the design tokens throughout — --body-bg,
+   --hairline-color, --darkened-bg and --primary all flip via the admin
+   data-theme toggle, and the form inputs inherit the global admin input
+   theming — so the old @media (prefers-color-scheme: dark) overrides (which
+   only re-tweaked token fallbacks) are unnecessary. */

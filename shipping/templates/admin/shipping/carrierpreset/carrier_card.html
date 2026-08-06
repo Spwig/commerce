@@ -1,6 +1,6 @@
 {% load i18n static %}
 
-<div class="carrier-card"
+<div class="list-row-card"
      data-carrier-id="{{ carrier.id }}"
      data-slug="{{ carrier.slug }}"
      data-name="{{ carrier.name }}"
@@ -8,7 +8,7 @@
      data-is-active="{{ carrier.is_active|yesno:'true,false' }}"
      data-is-system="{{ carrier.is_system|yesno:'true,false' }}">
     <!-- Checkbox for bulk select -->
-    <div class="carrier-checkbox">
+    <div class="list-row-card-checkbox">
         <input type="checkbox" class="carrier-select" value="{{ carrier.id }}" id="carrier-{{ carrier.id }}">
     </div>
 
@@ -74,25 +74,25 @@
             {% endwith %}
         </div>
 
-        <div class="carrier-badges">
+        <div class="list-row-card-badges">
             <!-- Active/Inactive Badge -->
             {% if carrier.is_active %}
-                <span class="badge badge-status badge-active">
+                <span class="list-row-card-badge list-row-card-badge-success badge-status">
                     <i class="fas fa-check-circle"></i> {% trans "Active" %}
                 </span>
             {% else %}
-                <span class="badge badge-status badge-inactive">
+                <span class="list-row-card-badge badge-status">
                     <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
                 </span>
             {% endif %}
 
             <!-- System/Custom Badge -->
             {% if carrier.is_system %}
-                <span class="badge badge-type badge-system">
+                <span class="list-row-card-badge list-row-card-badge-info">
                     <i class="fas fa-cog"></i> {% trans "System" %}
                 </span>
             {% else %}
-                <span class="badge badge-type badge-custom">
+                <span class="list-row-card-badge list-row-card-badge-primary">
                     <i class="fas fa-user"></i> {% trans "Custom" %}
                 </span>
             {% endif %}

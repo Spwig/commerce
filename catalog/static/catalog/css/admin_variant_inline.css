@@ -24,7 +24,7 @@
 /* Main section header - unified with no gaps */
 .variant-inline-group > fieldset.module > h2.inline-heading,
 .variant-inline-group > fieldset.module > details > summary > h2.inline-heading {
-  background: linear-gradient(135deg, var(--accent-primary, #6366f1) 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, var(--button-bg) 0%, var(--button-hover-bg) 100%);
   color: #fff;
   padding: 16px 20px;
   margin: 0;
@@ -71,7 +71,7 @@
 
 /* Individual Variant Item Cards */
 .variant-inline-item {
-  background: var(--surface-primary);
+  background: var(--body-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   margin-bottom: 16px;
@@ -81,20 +81,24 @@
 }
 
 .variant-inline-item:hover {
-  border-color: var(--accent-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: var(--button-bg);
+  box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 /* Deleting state - shown while AJAX request is in progress */
 .variant-inline-item.deleting {
   opacity: 0.5;
-  border-color: #ef4444;
-  background: #fef2f2;
+  border-color: var(--delete-button-bg);
+  background: color-mix(in srgb, var(--delete-button-bg) 8%, transparent);
   pointer-events: none;
 }
 
 .variant-inline-item.deleting summary.variant-header {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--delete-button-bg) 0%,
+    var(--delete-button-hover-bg) 100%
+  ) !important;
 }
 
 /* Fade out animation for deleted variant */
@@ -210,7 +214,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .delete-variant-btn:hover {
-  background: rgba(239, 68, 68, 0.9);
+  background: color-mix(in srgb, var(--delete-button-bg) 90%, transparent);
   color: #fff;
   transform: scale(1.05);
 }
@@ -252,7 +256,7 @@ summary.variant-header h3.inline-heading,
 .variant-section {
   margin-bottom: 30px;
   padding-bottom: 30px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--hairline-color);
 }
 
 .variant-section:last-child {
@@ -265,7 +269,7 @@ summary.variant-header h3.inline-heading,
   margin: 0 0 15px 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--body-fg);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: flex;
@@ -274,7 +278,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .variant-section h4 i {
-  color: var(--accent-primary);
+  color: var(--button-bg);
   font-size: 16px;
 }
 
@@ -303,7 +307,7 @@ summary.variant-header h3.inline-heading,
 
 .field-label label {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--body-fg);
   font-size: 13px;
 }
 
@@ -315,8 +319,8 @@ summary.variant-header h3.inline-heading,
   padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  background: var(--surface-primary);
-  color: var(--text-primary);
+  background: var(--body-bg);
+  color: var(--body-fg);
   font-size: 14px;
   transition: all 0.2s ease;
 }
@@ -325,39 +329,39 @@ summary.variant-header h3.inline-heading,
 .field-widget select:focus,
 .field-widget textarea:focus {
   outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
 .field-help {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   font-style: italic;
 }
 
 .field-errors {
-  color: var(--danger);
+  color: var(--error-fg);
   font-size: 12px;
   font-weight: 600;
 }
 
 /* Attributes Widget */
 .attributes-widget .selector {
-  background: var(--surface-primary);
+  background: var(--body-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
 }
 
 .attributes-widget .selector select {
-  background: var(--surface-primary);
-  color: var(--text-primary);
+  background: var(--body-bg);
+  color: var(--body-fg);
   border: none;
 }
 
 .attributes-widget .selector-chosen h2,
 .attributes-widget .selector-available h2 {
-  background: var(--surface-secondary);
-  color: var(--text-primary);
+  background: var(--darkened-bg);
+  color: var(--body-fg);
   padding: 8px 12px;
   font-size: 13px;
   font-weight: 600;
@@ -377,7 +381,7 @@ summary.variant-header h3.inline-heading,
 
 .color-picker-trigger {
   padding: 8px 16px;
-  background: var(--accent-primary);
+  background: var(--button-bg);
   color: white;
   border: none;
   border-radius: 4px;
@@ -391,7 +395,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .color-picker-trigger:hover {
-  background: var(--accent-hover);
+  background: var(--button-hover-bg);
   transform: translateY(-1px);
 }
 
@@ -425,7 +429,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .variant-image-card {
-  background: var(--surface-secondary);
+  background: var(--darkened-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
@@ -434,12 +438,12 @@ summary.variant-header h3.inline-heading,
 }
 
 .variant-image-card:hover {
-  border-color: var(--accent-primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--button-bg);
+  box-shadow: 0 4px 12px var(--shadow-light);
 }
 
 .image-card-header {
-  background: var(--surface-tertiary);
+  background: var(--darkened-bg);
   padding: 8px 12px;
   display: flex;
   align-items: center;
@@ -448,7 +452,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .drag-handle {
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   cursor: grab;
   font-size: 14px;
 }
@@ -458,7 +462,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .primary-badge {
-  background: var(--accent-primary);
+  background: var(--button-bg);
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
@@ -475,7 +479,7 @@ summary.variant-header h3.inline-heading,
 }
 
 .image-card-delete {
-  background: var(--danger);
+  background: var(--delete-button-bg);
   color: white;
   border: none;
   padding: 6px 8px;
@@ -486,14 +490,14 @@ summary.variant-header h3.inline-heading,
 }
 
 .image-card-delete:hover {
-  background: #dc2626;
+  background: var(--delete-button-hover-bg);
   transform: scale(1.05);
 }
 
 .image-card-preview {
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--surface-primary);
+  background: var(--body-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -517,7 +521,7 @@ summary.variant-header h3.inline-heading,
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--body-fg);
   margin-bottom: 4px;
 }
 
@@ -526,8 +530,8 @@ summary.variant-header h3.inline-heading,
   padding: 6px 8px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  background: var(--surface-primary);
-  color: var(--text-primary);
+  background: var(--body-bg);
+  color: var(--body-fg);
   font-size: 12px;
 }
 
@@ -542,7 +546,7 @@ summary.variant-header h3.inline-heading,
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   cursor: pointer;
 }
 
@@ -558,12 +562,12 @@ summary.variant-header h3.inline-heading,
   grid-column: 1 / -1;
   padding: 40px;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
 }
 
 .no-images-placeholder i {
   font-size: 48px;
-  color: var(--text-tertiary);
+  color: var(--body-quiet-color);
   margin-bottom: 15px;
   display: block;
 }
@@ -579,7 +583,7 @@ summary.variant-header h3.inline-heading,
 
 .add-variant-media-btn {
   padding: 10px 20px;
-  background: var(--accent-primary);
+  background: var(--button-bg);
   color: white;
   border: none;
   border-radius: 4px;
@@ -593,9 +597,9 @@ summary.variant-header h3.inline-heading,
 }
 
 .add-variant-media-btn:hover {
-  background: var(--accent-hover);
+  background: var(--button-hover-bg);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px var(--shadow-light);
 }
 
 .add-variant-media-btn i {
@@ -604,7 +608,7 @@ summary.variant-header h3.inline-heading,
 
 /* Readonly Fields */
 .readonly-fields {
-  background: var(--surface-secondary);
+  background: var(--darkened-bg);
   padding: 15px;
   border-radius: 6px;
 }
@@ -620,14 +624,14 @@ summary.variant-header h3.inline-heading,
 }
 
 .field-value {
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   flex: 1;
 }
 
 /* Sortable Ghost Class */
 .sortable-ghost {
   opacity: 0.5;
-  background: var(--accent-primary);
+  background: var(--button-bg);
 }
 
 /* Responsive Design */
@@ -652,74 +656,17 @@ summary.variant-header h3.inline-heading,
   }
 }
 
-/* Dark Theme Specific */
-[data-theme='dark'] .variant-inline-item {
-  background: #1e1e1e;
-  border-color: #333;
-}
-
+/* The variant-header keeps a decorative slate gradient (the base rule is the
+   light slate); this is only its dark-mode variant — no design token maps to
+   that slate. Every other surface/text override in the old dark+light blocks
+   was redundant once the base rules use the flipping admin tokens (--body-bg /
+   --darkened-bg / --border-color / --body-fg), so they have been removed. */
 [data-theme='dark'] summary.variant-header {
   background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
 }
 
 [data-theme='dark'] summary.variant-header:hover {
   background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
-}
-
-[data-theme='dark'] summary.variant-header h3,
-[data-theme='dark'] summary.variant-header h3.inline-heading {
-  background: none !important;
-}
-
-[data-theme='dark'] .variant-section h4 {
-  color: #e0e0e0;
-}
-
-[data-theme='dark'] .image-card-header {
-  background: #252526;
-}
-
-[data-theme='dark'] .variant-image-card {
-  background: #2d2d30;
-}
-
-[data-theme='dark'] .readonly-fields {
-  background: #2d2d30;
-}
-
-/* Light Theme Specific */
-[data-theme='light'] .variant-inline-item {
-  background: #ffffff;
-  border-color: #e0e0e0;
-}
-
-[data-theme='light'] summary.variant-header {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
-}
-
-[data-theme='light'] summary.variant-header:hover {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
-}
-
-[data-theme='light'] summary.variant-header h3,
-[data-theme='light'] summary.variant-header h3.inline-heading {
-  background: none !important;
-}
-
-[data-theme='light'] .variant-section h4 {
-  color: #2c3e50;
-}
-
-[data-theme='light'] .image-card-header {
-  background: #f8f9fa;
-}
-
-[data-theme='light'] .variant-image-card {
-  background: #ffffff;
-}
-
-[data-theme='light'] .readonly-fields {
-  background: #f8f9fa;
 }
 
 /* =====================================
@@ -820,7 +767,7 @@ details.variant-inline-item .variant-content {
   gap: 10px;
   margin-bottom: 20px;
   padding: 12px 16px;
-  background: var(--surface-secondary);
+  background: var(--darkened-bg);
   border-radius: 8px;
   border: 1px solid var(--border-color);
 }
@@ -835,19 +782,19 @@ details.variant-inline-item .variant-content {
   font-weight: 500;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background: var(--button-bg);
-  color: var(--text-primary);
+  background: var(--body-bg);
+  color: var(--body-fg);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .variant-collapse-btn:hover,
 .variant-expand-btn:hover {
-  background: var(--button-hover-bg);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  background: var(--darkened-bg);
+  border-color: var(--button-bg);
+  color: var(--body-fg);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .variant-collapse-btn:active,
@@ -862,7 +809,7 @@ details.variant-inline-item .variant-content {
 
 /* Collapsed state styling */
 details.variant-inline-item:not([open]) {
-  border-color: var(--border-light);
+  border-color: var(--hairline-color);
 }
 
 details.variant-inline-item:not([open]) .variant-header {
@@ -871,7 +818,7 @@ details.variant-inline-item:not([open]) .variant-header {
 
 /* Focus styles for accessibility */
 summary.variant-header:focus {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--button-bg);
   outline-offset: 2px;
 }
 
@@ -888,21 +835,6 @@ summary.variant-header:focus {
 summary.variant-header .variant-delete {
   z-index: 10;
   position: relative;
-}
-
-/* Light theme overrides for collapse controls */
-[data-theme='light'] .variant-collapse-controls {
-  background: #f8f9fa;
-}
-
-[data-theme='light'] .variant-collapse-btn,
-[data-theme='light'] .variant-expand-btn {
-  background: #ffffff;
-}
-
-[data-theme='light'] .variant-collapse-btn:hover,
-[data-theme='light'] .variant-expand-btn:hover {
-  background: #f1f3f5;
 }
 
 /* =====================================
@@ -923,7 +855,7 @@ summary.variant-header .variant-delete {
   font-size: 14px;
   font-weight: 600;
   border: 2px solid;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .stock-status-badge i {
@@ -938,21 +870,21 @@ summary.variant-header .variant-delete {
 
 /* Stock Status Variants */
 .stock-badge-in_stock {
-  background: #d1fae5;
-  border-color: #10b981;
-  color: #065f46;
+  background: var(--success-bg);
+  border-color: var(--success-fg);
+  color: var(--success-fg);
 }
 
 .stock-badge-low_stock {
-  background: #fef3c7;
-  border-color: #f59e0b;
-  color: #92400e;
+  background: var(--warning-bg);
+  border-color: var(--warning-fg);
+  color: var(--warning-fg);
 }
 
 .stock-badge-out_of_stock {
-  background: #fee2e2;
-  border-color: #ef4444;
-  color: #991b1b;
+  background: var(--error-bg);
+  border-color: var(--error-fg);
+  color: var(--error-fg);
 }
 
 /* Stock Items Table */
@@ -964,14 +896,14 @@ summary.variant-header .variant-delete {
 .variant-stock-table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--surface-primary);
+  background: var(--body-bg);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow-light);
 }
 
 .variant-stock-table thead {
-  background: var(--surface-secondary);
+  background: var(--darkened-bg);
 }
 
 .variant-stock-table th {
@@ -979,17 +911,17 @@ summary.variant-header .variant-delete {
   text-align: left;
   font-weight: 600;
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--body-fg);
   border-bottom: 2px solid var(--border-color);
 }
 
 .variant-stock-table tbody tr {
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--hairline-color);
   transition: background 0.2s ease;
 }
 
 .variant-stock-table tbody tr:hover {
-  background: var(--surface-hover);
+  background: var(--selected-bg);
 }
 
 .variant-stock-table tbody tr:last-child {
@@ -999,7 +931,7 @@ summary.variant-header .variant-delete {
 .variant-stock-table td {
   padding: 12px 16px;
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--body-fg);
 }
 
 .warehouse-name {
@@ -1010,11 +942,11 @@ summary.variant-header .variant-delete {
 }
 
 .warehouse-name i {
-  color: var(--accent-primary);
+  color: var(--button-bg);
 }
 
 .warehouse-code {
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   font-size: 12px;
   font-weight: normal;
 }
@@ -1025,8 +957,8 @@ summary.variant-header .variant-delete {
   padding: 6px 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  background: var(--surface-primary);
-  color: var(--text-primary);
+  background: var(--body-bg);
+  color: var(--body-fg);
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -1035,27 +967,27 @@ summary.variant-header .variant-delete {
 
 .stock-input:focus {
   outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
 .stock-input:hover {
-  border-color: var(--accent-primary);
+  border-color: var(--button-bg);
 }
 
 /* Stock Values */
 .stock-allocated {
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   font-weight: 500;
 }
 
 .stock-available {
-  color: var(--accent-primary);
+  color: var(--button-bg);
 }
 
 /* Stock Totals Footer */
 .stock-totals {
-  background: var(--surface-tertiary);
+  background: var(--darkened-bg);
   border-top: 2px solid var(--border-color);
   font-weight: 600;
 }
@@ -1069,12 +1001,12 @@ summary.variant-header .variant-delete {
 .no-stock-placeholder {
   text-align: center;
   padding: 40px 20px;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
 }
 
 .no-stock-placeholder i {
   font-size: 48px;
-  color: var(--text-tertiary);
+  color: var(--body-quiet-color);
   margin-bottom: 15px;
   display: block;
 }
@@ -1091,27 +1023,27 @@ summary.variant-header .variant-delete {
 /* New Variant Stock Info */
 .new-variant-stock-info {
   padding: 20px;
-  background: var(--surface-secondary);
+  background: var(--darkened-bg);
   border-radius: 8px;
   text-align: center;
 }
 
 .new-variant-stock-info .help-text {
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   font-size: 14px;
   margin: 0;
 }
 
 .new-variant-stock-info i {
   margin-right: 8px;
-  color: var(--accent-primary);
+  color: var(--button-bg);
 }
 
 /* Stock Readonly Info */
 .stock-readonly-info {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--hairline-color);
 }
 
 /* Responsive Design */
@@ -1136,57 +1068,10 @@ summary.variant-header .variant-delete {
   }
 }
 
-/* Dark Theme Overrides */
-[data-theme='dark'] .variant-stock-table {
-  background: #1e1e1e;
-}
-
-[data-theme='dark'] .variant-stock-table thead {
-  background: #2d2d30;
-}
-
-[data-theme='dark'] .stock-totals {
-  background: #252526;
-}
-
-[data-theme='dark'] .new-variant-stock-info {
-  background: #2d2d30;
-}
-
-[data-theme='dark'] .stock-badge-in_stock {
-  background: #064e3b;
-  border-color: #10b981;
-  color: #d1fae5;
-}
-
-[data-theme='dark'] .stock-badge-low_stock {
-  background: #78350f;
-  border-color: #f59e0b;
-  color: #fef3c7;
-}
-
-[data-theme='dark'] .stock-badge-out_of_stock {
-  background: #7f1d1d;
-  border-color: #ef4444;
-  color: #fee2e2;
-}
-
-/* Light Theme Overrides */
-[data-theme='light'] .variant-stock-table {
-  background: #ffffff;
-}
-
-[data-theme='light'] .variant-stock-table thead {
-  background: #f8f9fa;
-}
-
-[data-theme='light'] .stock-totals {
-  background: #f8f9fa;
-}
-
-[data-theme='light'] .new-variant-stock-info {
-  background: #f8f9fa;
-}
+/* The stock-table surfaces (--body-bg / --darkened-bg) and the stock status
+   badges (color-mix over --success-fg / --warning-fg / --error-fg) now flip via
+   the admin data-theme toggle, so the hand-authored [data-theme] overrides here
+   were redundant and have been removed. */
 
 /* =====================================
    TOOLTIP STYLES
@@ -1202,14 +1087,14 @@ summary.variant-header .variant-delete {
 
 .help-tooltip i {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   transition:
     color 0.2s ease,
     transform 0.2s ease;
 }
 
 .help-tooltip:hover i {
-  color: var(--accent-primary);
+  color: var(--button-bg);
   transform: scale(1.15);
 }
 
@@ -1245,17 +1130,9 @@ summary.variant-header .variant-delete {
   display: inline-block;
   margin-left: 8px;
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--body-quiet-color);
   font-weight: normal;
   font-style: italic;
-}
-
-[data-theme='dark'] .inherit-indicator {
-  color: #8b8fa6;
-}
-
-[data-theme='light'] .inherit-indicator {
-  color: #666;
 }
 
 /* =====================================
@@ -1284,7 +1161,7 @@ summary.variant-header .variant-delete {
 
 /* Container for all variant items - sits below the unified header */
 .variant-inline-group .variant-items-wrapper {
-  background: var(--surface-primary, #fff);
+  background: var(--body-bg, #fff);
   border: 1px solid var(--border-color, #e0e0e0);
   border-top: none;
   border-radius: 0 0 8px 8px;
@@ -1313,7 +1190,7 @@ summary.variant-header .variant-delete {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: var(--accent-primary, #6366f1);
+  background: var(--button-bg, #6366f1);
   color: #fff;
   border-radius: 6px;
   text-decoration: none;
@@ -1322,38 +1199,13 @@ summary.variant-header .variant-delete {
 }
 
 .variant-inline-group .add-row a:hover {
-  background: var(--accent-hover, #4f46e5);
+  background: var(--button-hover-bg, #4f46e5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--button-bg) 25%, transparent);
 }
 
-/* Theme Overrides for Unified Header */
-[data-theme='dark'] .variant-inline-group > fieldset.module > h2.inline-heading,
-[data-theme='dark']
-  .variant-inline-group
-  > fieldset.module
-  > details
-  > summary
-  > h2.inline-heading {
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-}
-
-[data-theme='dark'] .variant-inline-group .variant-items-wrapper {
-  background: #1e1e1e;
-  border-color: #333;
-}
-
-[data-theme='light'] .variant-inline-group > fieldset.module > h2.inline-heading,
-[data-theme='light']
-  .variant-inline-group
-  > fieldset.module
-  > details
-  > summary
-  > h2.inline-heading {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-}
-
-[data-theme='light'] .variant-inline-group .variant-items-wrapper {
-  background: #ffffff;
-  border-color: #e0e0e0;
-}
+/* The unified header gradient is now the normalised admin-blue
+   linear-gradient(var(--button-bg), var(--button-hover-bg)) on the base rule,
+   and the items-wrapper surface uses --body-bg — both flip via the admin
+   data-theme toggle, so the old indigo [data-theme] header overrides and the
+   items-wrapper surface overrides were redundant and have been removed. */

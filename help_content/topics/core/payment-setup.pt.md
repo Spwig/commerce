@@ -61,7 +61,7 @@ Finalize as configurações do fornecedor:
 
 ## Painel de Pagamento
 
-Navegue até **Configurações > Painel de Pagamento** para obter uma visão geral da atividade de pagamento:
+Navegue até **Configurações > Painel de Pagamento** para obter uma visão geral da sua atividade de pagamento:
 
 ### Ações Necessárias
 
@@ -72,14 +72,14 @@ Cartões de alerta no topo destacam problemas que precisam de atenção:
 
 ### Análise de Receita
 
-- **Gráfico de Receita** — Quebra visual de volume de pagamentos ao longo do tempo, agrupado por dia, semana ou mês
+- **Gráfico de Receita** — Quebra visual de volume de pagamento ao longo do tempo, agrupado por dia, semana ou mês
 - **Métricas de Desempenho** — Receita total, taxa de sucesso, valor médio de transação e taxa de reembolso
 - **Comparação de Fornecedores** — Cartões de desempenho lado a lado para cada fornecedor conectado
 
 ### Quebra de Transação
 
 - **Distribuição de Status** — Contagem de transações concluídas, pendentes, falhadas e reembolsadas
-- **Mix de Métodos de Pagamento** — Quais métodos de pagamento os clientes usam mais (cartões de crédito, PayPal, carteiras digitais)
+- **Mix de Métodos de Pagamento** — Quais métodos de pagamento os clientes usam com mais frequência (cartões de crédito, PayPal, carteiras digitais)
 
 ## Gerenciamento de Métodos de Pagamento
 
@@ -120,12 +120,12 @@ Se um webhook falhar no processamento, ele será registrado como um erro para qu
 Você pode conectar múltiplos provedores de pagamento simultaneamente:
 
 - **Provedor Padrão** — O provedor selecionado por padrão no checkout. Marque um provedor como padrão em sua configuração.
-- **Ordem de Classificação** — Controla a ordem de exibição no checkout. Os clientes veem todos os provedores ativos e podem escolher o preferido.
+- **Ordem de classificação** — Controla a ordem de exibição no checkout. Os clientes veem todos os provedores ativos e podem escolher o preferido.
 - **Failover** — Se um provedor tiver downtime, os clientes ainda podem pagar usando um provedor alternativo.
 
 ## Dicas
 
-- Comece com **Stripe** ou **PayPal** — eles cobrem a gama mais ampla de métodos de pagamento e regiões.
+- Comece com **Stripe** ou **PayPal** — eles cobrem a maior gama de métodos de pagamento e regiões.
 - Use o **modo de sandbox/teste** para processar transações de teste antes de ir ao ar. Cada provedor tem números de cartão de teste em sua documentação.
 - Ative **múltiplos provedores** para que os clientes tenham uma opção de pagamento alternativa, caso um provedor tenha problemas.
 - Defina uma **ordem de classificação baixa** para o provedor preferido para que ele apareça primeiro no checkout.

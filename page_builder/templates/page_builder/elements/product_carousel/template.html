@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 {% mtrans "Add to Cart" as default_add_to_cart %}
 <!-- Product Carousel Element -->
 <section class="product-carousel section" {% hover_animation_attrs element %} style="{% base_styles element %}" data-product-carousel data-added-text="{% mtrans 'Added!' %}">
@@ -35,9 +35,7 @@
 
                             <!-- Product Image -->
                             <div class="product-card__image">
-                                <img src="{{ product.image }}"
-                                     alt="{{ product.name }}"
-                                     class="product-card__img">
+                                {% picture product.image alt=product.name css="product-card__img" %}
 
                                 <!-- Hover Overlay -->
                                 <div class="product-card__overlay">

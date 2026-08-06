@@ -353,12 +353,15 @@ class SearchElement {
 
     let html = '';
 
-    // Thumbnail
+    // Thumbnail (AVIF/WebP via <picture> when sources are available)
     const thumbnail = item.thumbnail || item.logo || item.image;
     if (thumbnail && this.config.displaySettings.product_thumbnail) {
-      html += `<div class="search__results-card-image">
-                <img src="${thumbnail}" alt="" loading="lazy">
-            </div>`;
+      const pictureHtml = window.buildPictureMarkup(item.thumbnail_sources, {
+        fallbackSrc: thumbnail,
+        loading: 'lazy',
+        alt: '',
+      });
+      html += `<div class="search__results-card-image">${pictureHtml}</div>`;
     }
 
     html += '<div class="search__results-card-content">';

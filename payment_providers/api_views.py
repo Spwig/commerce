@@ -469,12 +469,12 @@ class SavedMethodListCreateView(HeadlessAPIMixin, APIView):
             token = PaymentToken.objects.create(
                 user=request.user,
                 provider_account=provider_account,
-                token_id=result.get("token_id"),
+                gateway_token_id=result.get("token_id"),
                 payment_method_type=result.get("payment_method_type", "card"),
-                last_four=result.get("last_four", ""),
-                brand=result.get("brand", ""),
-                exp_month=result.get("exp_month"),
-                exp_year=result.get("exp_year"),
+                card_last4=result.get("last_four", ""),
+                card_brand=result.get("brand", ""),
+                card_exp_month=result.get("exp_month"),
+                card_exp_year=result.get("exp_year"),
                 is_default=data.get("set_as_default", False),
             )
 

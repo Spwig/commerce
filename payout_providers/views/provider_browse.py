@@ -65,7 +65,9 @@ class ProviderBrowseView(View):
         for provider in available_from_server:
             slug = provider.get("slug")
             latest_version = provider.get("current_version") or provider.get("version")
-            manifest = provider.get("manifest", {})
+            manifest = provider.get("manifest") or {}
+            if not isinstance(manifest, dict):
+                manifest = {}
 
             # Get capabilities
             capabilities = provider.get("capabilities") or manifest.get("capabilities", {})

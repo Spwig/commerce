@@ -11,7 +11,7 @@ help: ## Show this help message
 
 test-deps: ## Install test dependencies + Playwright browsers
 	pip install -r requirements-dev.txt
-	playwright install chromium
+	playwright install chromium webkit
 
 test: ## Run all pipeline tests (unit + integration, no E2E)
 	pytest tests/ -v -m "not e2e"

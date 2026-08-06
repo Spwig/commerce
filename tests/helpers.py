@@ -2,10 +2,20 @@
 Shared test utilities for the Spwig test pipeline.
 """
 
+import os
 import re
 import time
 from contextlib import contextmanager
 from decimal import Decimal
+
+# Ceiling for Playwright waits in browser E2E. Deliberately generous: shared CI
+# runners are markedly slower than a dev machine, and the golden checkout flows
+# were previously capped *below* Playwright's 30s default (10–20s), which flaked
+# the advisory ``e2e-golden`` job red on slow runs even though every flow is
+# correct. A timeout is a ceiling, not a sleep — raising it never slows a passing
+# run, it only stops a slow-but-correct flow from being killed prematurely.
+# Override with ``SPWIG_E2E_TIMEOUT_MS`` (e.g. to tighten locally).
+E2E_TIMEOUT_MS = int(os.environ.get("SPWIG_E2E_TIMEOUT_MS", "45000"))
 
 
 def parse_money(text: str) -> Decimal:

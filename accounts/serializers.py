@@ -4,6 +4,7 @@ Serializers for accounts app API endpoints
 
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -21,7 +22,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
-        validators=[validate_password],
         style={"input_type": "password"},
     )
     password_confirm = serializers.CharField(
@@ -48,9 +48,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        """Validate that passwords match"""
+        """Validate that passwords match and pass password strength checks"""
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password_confirm": _("Passwords do not match.")})
+
+        # Validate the password against a prospective user so that
+        # UserAttributeSimilarityValidator can compare it to the submitted
+        # username, email, first name, and last name.
+        user = User(
+            username=attrs.get("username", ""),
+            email=attrs.get("email", ""),
+            first_name=attrs.get("first_name", ""),
+            last_name=attrs.get("last_name", ""),
+        )
+        try:
+            validate_password(attrs["password"], user=user)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": exc.messages})
+
         return attrs
 
     def create(self, validated_data):
@@ -126,17 +141,16 @@ class PasswordResetSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     """Serializer for password reset confirmation"""
 
-    new_password = serializers.CharField(
-        required=True, validators=[validate_password], style={"input_type": "password"}
-    )
+    new_password = serializers.CharField(required=True, style={"input_type": "password"})
     new_password_confirm = serializers.CharField(required=True, style={"input_type": "password"})
 
     def validate(self, attrs):
-        """Validate that passwords match"""
+        """Validate that passwords match and meet policy for the target user"""
         if attrs["new_password"] != attrs["new_password_confirm"]:
             raise serializers.ValidationError(
                 {"new_password_confirm": _("Passwords do not match.")}
             )
+        validate_password(attrs["new_password"], self.context.get("user"))
         return attrs
 
 

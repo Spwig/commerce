@@ -450,6 +450,70 @@ def set_currency_api(request):
     )
 
 
+@extend_schema(
+    tags=["Store"],
+    summary=_("Set ship-to region"),
+    description=_(
+        "Set the shopper's ship-to destination country for the session. The "
+        "country is resolved to its sales region, which drives product "
+        "availability and — on multi-currency stores — the display currency. The "
+        "country must be one the store ships to. Headless twin of the storefront "
+        "/api/set-region/ endpoint."
+    ),
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {"country": {"type": "string", "example": "AU"}},
+            "required": ["country"],
+        }
+    },
+    responses={
+        200: OpenApiResponse(description=_("Region set successfully")),
+        400: OpenApiResponse(description=_("Missing or non-shippable country code")),
+    },
+)
+@api_view(["POST"])
+@authentication_classes(HeadlessAPIMixin.authentication_classes)
+@permission_classes([AllowAny])
+def set_region_api(request):
+    """Set the shopper's ship-to region from a destination country."""
+    from catalog.middleware import get_region_for_country
+    from catalog.region_views import switch_currency_for_region
+    from shipping.models import ShippingCountry
+
+    country_code = (request.data.get("country") or "").upper()
+    if not country_code:
+        return Response(
+            {"success": False, "error": "Country code is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if not ShippingCountry.objects.filter(
+        site_id=1, country_code=country_code, is_active=True
+    ).exists():
+        return Response(
+            {"success": False, "error": f"We do not ship to: {country_code}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    region = get_region_for_country(country_code)
+    request.session["preferred_country"] = country_code
+    switched_currency = None
+    if region:
+        request.session["preferred_region"] = region.code
+        switched_currency = switch_currency_for_region(request, region)
+    else:
+        request.session.pop("preferred_region", None)
+
+    return Response(
+        {
+            "success": True,
+            "country": country_code,
+            "region": region.code if region else None,
+            "currency": switched_currency,
+        }
+    )
+
+
 def _format_address(settings):
     """Format address into a single string."""
     parts = []

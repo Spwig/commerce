@@ -6,7 +6,7 @@ This creates a .zip package with help topics, translations, and manifest.
 import json
 import tempfile
 import zipfile
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 from django.conf import settings
@@ -162,14 +162,14 @@ class Command(BaseCommand):
                 "author": "Spwig",
                 "component": component if not all_components else "all",
                 "min_platform_version": "1.0.0",
-                "created_at": datetime.utcnow().isoformat() + "Z",
+                "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
                 "topics_count": topics.count(),
                 "categories_count": categories.count(),
                 "languages": ["en", "es", "fr", "de", "ja", "pt", "zh-hans", "zh-hant", "ru", "ar"],
                 "changelog": [
                     {
                         "version": version,
-                        "date": datetime.utcnow().strftime("%Y-%m-%d"),
+                        "date": datetime.now(UTC).strftime("%Y-%m-%d"),
                         "changes": ["Initial help content package"],
                     }
                 ],
@@ -214,7 +214,7 @@ This package can be installed through the Spwig admin interface:
 
 ## Generated
 
-{datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")} UTC
+{datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")} UTC
 """
 
             with open(package_path / "README.md", "w", encoding="utf-8") as f:

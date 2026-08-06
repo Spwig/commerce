@@ -2,14 +2,14 @@
 title: API Tokens
 ---
 
-API tokens là các khóa an toàn cho phép các dịch vụ bên ngoài và tích hợp giao tiếp với cửa hàng của bạn. Khi một dịch vụ bên thứ ba hoặc công cụ cần truy cập dữ liệu cửa hàng của bạn hoặc kích hoạt các hành động, nó sẽ gửi một token API cùng với mỗi yêu cầu để cửa hàng của bạn có thể xác minh yêu cầu đó được ủy quyền. Bạn tạo và quản lý tất cả các token, bao gồm cả các phần cụ thể của cửa hàng mà chúng có thể truy cập, từ phần API Tokens trong bảng điều khiển quản trị của bạn.
+API tokens là các khóa an toàn cho phép các dịch vụ bên ngoài và tích hợp giao tiếp với cửa hàng của bạn. Khi một dịch vụ bên thứ ba hoặc công cụ cần truy cập dữ liệu cửa hàng của bạn hoặc kích hoạt các hành động, nó sẽ gửi một API token cùng với mỗi yêu cầu để cửa hàng của bạn có thể xác minh yêu cầu đó được ủy quyền. Bạn tạo và quản lý tất cả các token, bao gồm cả các phần cụ thể của cửa hàng mà chúng có thể truy cập, từ phần API Tokens trong bảng điều khiển quản trị của bạn.
 
-## Khi bạn cần một token API
+## Khi bạn cần một API token
 
-Bạn thường sẽ cần tạo một token API khi:
+Bạn thường sẽ cần tạo một API token khi:
 
 - Kết nối một dịch vụ bên ngoài hoặc công cụ tự động hóa cần đọc từ hoặc ghi vào cửa hàng của bạn
-- Thiết lập một máy nhận webhook cần xác thực các cuộc gọi đến
+- Thiết lập một trình nhận webhook cần xác thực các cuộc gọi đến
 - Cấu hình Hệ thống Hỗ trợ Spwig cho cài đặt của bạn
 - Xây dựng một tích hợp tùy chỉnh sử dụng API của Spwig
 - Đồng bộ dữ liệu giữa cửa hàng Spwig của bạn và hệ thống khác
@@ -18,35 +18,35 @@ Mỗi tích hợp nên có riêng một token để bạn có thể thu hồi qu
 
 ## Loại token
 
-Khi tạo một token, bạn chọn một loại mô tả mục đích của nó. Loại này dành cho tham khảo của bạn và giúp bạn theo dõi rõ hơn từng token làm gì.
+Khi tạo một token, bạn chọn một loại để mô tả mục đích của nó. Loại này dành cho tham khảo của bạn và giúp bạn theo dõi được mỗi token làm gì.
 
 | Loại | Mục đích |
 |------|---------|
 | **Hệ thống Hỗ trợ** | Được sử dụng bởi hệ thống tài liệu hỗ trợ Spwig |
 | **Tích hợp bên ngoài** | Các dịch vụ bên thứ ba, công cụ tự động hóa (ví dụ: Zapier), hoặc công cụ đồng bộ dữ liệu |
-| **Webhook** | Xác thực cho máy nhận webhook hoặc điểm cuối |
+| **Webhook** | Xác thực cho trình nhận webhook hoặc điểm cuối |
 | **Tùy chỉnh** | Bất kỳ mục đích nào không phù hợp với các danh mục trên |
 | **Đồng bộ Cài đặt** | Đồng bộ giữa các cài đặt Spwig hoặc dịch vụ Spwig bên ngoài |
 
-## Phạm vi API: kiểm soát những phần mà token có thể truy cập
+## API scopes: kiểm soát những phần mà token có thể truy cập
 
-Mỗi token cũng có một phần **Phạm vi API** quyết định chính xác những phần nào trong cửa hàng của bạn nó được phép gọi. Thay vì một token có quyền truy cập toàn diện vào mọi thứ, bạn cấp quyền truy cập từng khu vực một lần — và ở cấp độ mà tích hợp thực sự cần.
+Mỗi token cũng có một phần **API Scopes** quyết định chính xác những phần nào trong cửa hàng của bạn nó được phép gọi. Thay vì một token có quyền truy cập toàn diện vào mọi thứ, bạn cấp quyền truy cập từng khu vực một lần — và ở cấp độ mà tích hợp thực sự cần.
 
-**Một token không chọn bất kỳ phạm vi nào sẽ không thể truy cập bất kỳ API nào**, ngay cả khi nó vẫn hoạt động và hợp lệ. Đây là cài đặt mặc định cho một token mới, vì vậy tích hợp sẽ không hoạt động cho đến khi bạn cố ý cấp quyền truy cập cho nó.
+**Một token không chọn bất kỳ scope nào sẽ không thể truy cập bất kỳ API nào**, ngay cả khi nó vẫn hoạt động và hợp lệ. Đây là cài đặt mặc định cho một token mới, vì vậy tích hợp sẽ không hoạt động cho đến khi bạn cố ý cấp quyền truy cập cho nó.
 
-Đối với mỗi phạm vi, bạn chọn một trong ba cấp độ truy cập:
+Đối với mỗi scope, bạn chọn một trong ba cấp độ truy cập:
 
-| Cấp độ truy cập | Điều nó cho phép |
-|------------------|------------------|
+| Cấp độ truy cập | Điều mà nó cho phép |
+|------------------|---------------------|
 | **Không có quyền truy cập** | Token không thể gọi bất kỳ điểm cuối nào trong khu vực này |
 | **Đọc** | Token có thể truy xuất dữ liệu từ khu vực này, nhưng không thể thay đổi bất cứ thứ gì |
-| **Đọc & Viết** | Token có thể truy xuất dữ liệu và cũng có thể tạo, cập nhật hoặc xóa nó |
+| **Đọc & Ghi** | Token có thể truy xuất dữ liệu và cũng có thể tạo, cập nhật hoặc xóa nó |
 
-Các phạm vi được nhóm lại để phù hợp với các khu vực trong bảng điều khiển quản trị của bạn:
+Các scope được nhóm lại để phù hợp với các khu vực trong bảng điều khiển quản trị của bạn:
 
-| Nhóm | Phạm vi | Có quyền đọc & viết? | Cấp quyền truy cập cho |
+| Nhóm | Scope | Đọc & Ghi có sẵn? | Cấp quyền truy cập cho |
 |-------|-------|:---:|-------------------|
-| Phân tích | **Phân tích Doanh số** | Chỉ đọc | Bảng điều khiển doanh số, KPI, phân tích sản phẩm/khách hàng/danh mục, so sánh và xuất dữ liệu |
+| Phân tích | **Phân tích Doanh số** | Chỉ đọc | Bảng điều khiển doanh số, chỉ số KPI, phân tích sản phẩm/khách hàng/danh mục, so sánh và xuất dữ liệu |
 | Phân tích | **Phân tích Web** | Chỉ đọc | Phân tích người truy cập và lưu lượng: tổng quan, xu hướng, các trang hàng đầu, địa lý và nguồn truy cập |
 | Danh mục | **Sản phẩm** | Có | Sản phẩm, biến thể, hình ảnh, điều chỉnh tồn kho và gán thuộc tính |
 | Danh mục | **Danh mục** | Có | Danh mục sản phẩm, bao gồm hình ảnh và banner |
@@ -58,7 +58,7 @@ Các phạm vi được nhóm lại để phù hợp với các khu vực trong 
 | Cửa hàng & Cài đặt | **Cài đặt Cửa hàng** | Có | Cài đặt cửa hàng, ngôn ngữ có sẵn và thương hiệu (tên, màu sắc, logo) |
 | Người dùng & Truy cập | **Nhân viên & Vai trò** | Có | Tài khoản nhân viên, lời mời, vai trò và danh mục quyền |
 
-Hai phạm vi **Phân tích** luôn chỉ đọc — dữ liệu báo cáo không có khái niệm "viết", vì vậy trình chọn chỉ cung cấp **Không có quyền truy cập** hoặc **Đọc** cho chúng.
+Hai scope **Phân tích** luôn chỉ đọc — dữ liệu báo cáo không có khái niệm "ghi", vì vậy trình chọn chỉ cung cấp **Không có quyền truy cập** hoặc **Đọc** cho chúng.
 
 [![The API Scopes picker, with an access note above the Analytics and Catalog scope groups](/static/core/admin/img/help/api-tokens/api-token-scope-picker.webp)](https://example.com)
 
@@ -72,7 +72,7 @@ Các phạm vi của token mô tả *giới hạn* những gì nó có thể là
 
 - Token không bao giờ có thể hành động với quyền **superuser**, ngay cả khi nhân viên tạo token là một superuser.
 - **Read & Write** trên một phạm vi chỉ hoạt động nếu vai trò của nhân viên tạo token cũng cho phép truy cập ghi vào khu vực đó. Nếu vai trò của họ chỉ có thể xem, ví dụ như Sản phẩm, một token họ tạo với "Sản phẩm: Read & Write" vẫn chỉ có thể đọc — vai trò đóng vai trò như một cổng thứ hai trên phạm vi.
-- Nếu nhân viên tạo token bị xóa hoặc tài khoản của họ bị vô hiệu hóa, token sẽ lập tức mất quyền truy cập API, bất kể phạm vi của nó — không còn người dùng được phép để nó hành động.
+- Nếu nhân viên tạo token bị xóa hoặc tài khoản của họ bị vô hiệu hóa, token sẽ lập tức mất quyền truy cập API, bất kể phạm vi của nó — không còn có người dùng được phép để nó hành động.
 
 Điều này có nghĩa là cách an toàn nhất để giới hạn phạm vi của token là tạo nó khi đang đăng nhập dưới tư cách của một nhân viên có vai trò đã khớp với quyền truy cập mà bạn muốn token có.
 
@@ -93,7 +93,7 @@ After saving, the full token value is displayed on the detail page. **Copy it im
 
 ## Token value security
 
-Spwig chỉ hiển thị giá trị đầy đủ của token một lần: ngay sau khi bạn lưu token mới. Sau đó, danh sách chỉ hiển thị phiên bản được che đi (ví dụ: `spw_••••••••••••••••••••3f8a`).
+Spwig chỉ hiển thị giá trị đầy đủ của token một lần: ngay sau khi bạn lưu token mới. Sau đó, danh sách hiển thị chỉ phiên bản được che giấu (ví dụ: `spw_••••••••••••••••••••3f8a`).
 
 Nếu bạn mất giá trị token, bạn không thể khôi phục nó. Bạn sẽ cần xóa token cũ và tạo một token mới, sau đó cập nhật tích hợp đang sử dụng nó.
 
@@ -113,7 +113,7 @@ Khi token hết hạn, các yêu cầu sử dụng nó sẽ bị từ chối. B�
 
 ## Restricting to specific IP addresses
 
-Trường **Allowed IPs** chấp nhận danh sách các địa chỉ IP. Khi danh sách không trống, token chỉ hoạt động khi yêu cầu đến từ một trong những địa chỉ đó.
+Trường **Allowed IPs** chấp nhận danh sách địa chỉ IP. Khi danh sách không trống, token chỉ hoạt động khi yêu cầu đến từ một trong những địa chỉ đó.
 
 Ví dụ, nếu công cụ phân tích của bạn chạy trên máy chủ tại `203.0.113.42`, việc thêm địa chỉ IP này có nghĩa là token không thể bị lạm dụng từ bất kỳ vị trí nào khác, ngay cả khi nó bị rò rỉ.
 
@@ -133,13 +133,13 @@ Tất cả các điểm cuối (endpoints) của API quản trị đều nằm d
 
 ### Ví dụ: đọc dữ liệu phân tích lưu lượng truy cập web
 
-Spwig cung cấp điểm cuối `GET /api/admin/analytics/traffic/` trả về các phân tích lưu lượng truy cập và người truy cập cho cửa hàng của bạn — tổng quan về lượt truy cập và người truy cập duy nhất, xu hướng theo thời gian, các trang hàng đầu, vị trí địa lý của người truy cập và nguồn truy cập. Để cho phép công cụ báo cáo hoặc bảng điều khiển đọc dữ liệu này:
+Spwig cung cấp điểm cuối `GET /api/admin/analytics/traffic/` trả về phân tích lưu lượng truy cập và người truy cập cho cửa hàng của bạn — tổng quan về lượt truy cập và người truy cập duy nhất, xu hướng theo thời gian, các trang hàng đầu, vị trí địa lý của người truy cập và nguồn truy cập. Để cho phép công cụ báo cáo hoặc bảng điều khiển đọc dữ liệu này:
 
 1. Tạo một token (hoặc chỉnh sửa token hiện có) cho tích hợp đó
-2. Trong **Phạm vi API**, đặt **Phân tích Web** thành **Đọc**
+2. Trong **Phạm vi API**, đặt **Phân tích Web** thành **Đọc (Read)**
 3. Lưu token và cung cấp nó cho tích hợp
 
-Vì **Phân tích Web** là phạm vi chỉ đọc, không có tùy chọn **Đọc & Viết** để chọn — tích hợp chỉ có thể truy xuất dữ liệu phân tích, không bao giờ thay đổi cấu hình cửa hàng của bạn.
+Vì **Phân tích Web** là phạm vi chỉ đọc, không có tùy chọn **Đọc & Viết (Read & Write)** để chọn — tích hợp chỉ có thể truy xuất dữ liệu phân tích, không bao giờ thay đổi cấu hình cửa hàng của bạn.
 
 ## Theo dõi việc sử dụng token
 
@@ -152,10 +152,10 @@ Những trường này giúp bạn xác định các token không được sử 
 
 ## Thu hồi token
 
-Để ngay lập tức dừng hoạt động của token mà không xóa nó:
+Để ngay lập tức dừng token hoạt động mà không xóa nó:
 
 1. Nhấp vào tên token
-2. Bỏ chọn **Hoạt động**
+2. Bỏ chọn **Hoạt động (Active)**
 3. Lưu
 
 Token vẫn tồn tại trong danh sách của bạn để tham khảo nhưng sẽ bị từ chối trong mọi yêu cầu tiếp theo. Điều này hữu ích khi bạn cần tạm dừng tích hợp trong khi điều tra một vấn đề.
@@ -177,22 +177,22 @@ Sau khi xóa, token không thể phục hồi. Nếu tích hợp vẫn cần tru
 | Tên | `Zapier Order Automation` |
 | Loại token | Tích hợp bên ngoài |
 | Mô tả | Được Zapier sử dụng để đọc đơn hàng mới và kích hoạt thông báo |
-| Phạm vi API | **Đơn hàng**: Đọc & Viết |
+| Phạm vi API | **Đơn hàng (Orders)**: Đọc & Viết |
 | Hoạt động | Có |
 | Hết hạn vào | *(trống)* |
 | IP được phép | *(trống — Zapier sử dụng IP động)* |
 
-Chỉ phạm vi **Đơn hàng** được cấp, vì vậy ngay cả khi token này từng bị rò rỉ, nó cũng không thể ảnh hưởng đến sản phẩm, tin nhắn khách hàng, tài khoản nhân viên hoặc bất kỳ phần nào khác của cửa hàng của bạn. Sau khi lưu, sao chép giá trị token đầy đủ và dán vào cài đặt tích hợp Spwig của Zapier.
+Chỉ phạm vi **Đơn hàng (Orders)** được cấp, vì vậy ngay cả khi token này từng bị rò rỉ, nó cũng không thể ảnh hưởng đến sản phẩm, tin nhắn khách hàng, tài khoản nhân viên hoặc bất kỳ phần nào khác của cửa hàng của bạn. Sau khi lưu, sao chép giá trị token đầy đủ và dán vào cài đặt tích hợp Spwig của Zapier.
 
 ## Một số lưu ý
 
 Giữ nguyên toàn bộ định dạng markdown, đường dẫn hình ảnh, khối mã và các thuật ngữ kỹ thuật.
 
-- Gán cho mỗi token một tên rõ ràng và cụ thể - `Shopify Sync v2` hữu ích hơn rất nhiều so với `Token 3` khi bạn đang xử lý sự cố sau nhiều tháng
+- Gán cho mỗi token một tên rõ ràng và cụ thể - `Shopify Sync v2` hữu ích hơn nhiều so với `Token 3` khi bạn đang khắc phục sự cố sau nhiều tháng
 - Tạo một token cho mỗi tích hợp - nếu một tích hợp bị xâm nhập, bạn có thể thu hồi chỉ token đó mà không làm gián đoạn các token khác
-- **Chỉ cấp các phạm vi mà tích hợp thực sự cần** - một công cụ báo cáo chỉ cần quyền Đọc đối với Phân tích Doanh số hoặc Phân tích Web, chứ không cần quyền Đọc & Viết đối với Sản phẩm hoặc Nhân viên & Vai trò
+- **Chỉ cấp các phạm vi mà tích hợp thực sự cần** - một công cụ báo cáo chỉ cần quyền đọc trên Phân tích Doanh số hoặc Phân tích Web, chứ không cần quyền đọc và ghi trên Sản phẩm hoặc Nhân viên & Vai trò
 - Kiểm tra phần tóm tắt **"This token can access:"** trên biểu mẫu thay đổi trước khi trao token cho bên thứ ba - đây là cách nhanh nhất để xác nhận bạn không đã cấp quyền vượt quá mong muốn
-- Nhớ rằng quyền Viết cũng phụ thuộc vào vai trò của nhân viên tạo token - nếu một phạm vi hiển thị là Đọc & Viết nhưng việc Viết vẫn thất bại, hãy kiểm tra quyền của người dùng đó nữa
+- Nhớ rằng quyền ghi cũng phụ thuộc vào vai trò của nhân viên tạo token - nếu một phạm vi hiển thị là Đọc & Ghi nhưng việc ghi vẫn thất bại, hãy kiểm tra quyền của người dùng đó nữa
 - Đặt ngày hết hạn cho các token được sử dụng trong các dự án một lần hoặc tích hợp tạm thời - điều này làm giảm nguy cơ các token bị quên vẫn còn hoạt động vô thời hạn
-- Xem lại danh sách token của bạn mỗi vài tháng và ngừng hoạt động bất kỳ token nào có ngày **Last Used** (Lần cuối sử dụng) bất ngờ cũ, vì những token này có thể thuộc về các tích hợp không còn đang chạy
-- Nếu bạn nghi ngờ một token đã bị tiết lộ, hãy ngừng hoạt động nó ngay lập tức, tạo một token thay thế, và cập nhật tích hợp bị ảnh hưởng trước khi bật lại quyền truy cập
+- Xem lại danh sách token của bạn mỗi vài tháng và ngừng sử dụng bất kỳ token nào có ngày **Last Used** bất thường cũ, vì những token này có thể thuộc về các tích hợp không còn đang chạy
+- Nếu bạn nghi ngờ một token đã bị tiết lộ, hãy ngừng sử dụng nó ngay lập tức, tạo một token thay thế, và cập nhật tích hợp bị ảnh hưởng trước khi bật lại quyền truy cập

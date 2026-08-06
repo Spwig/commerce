@@ -56,7 +56,10 @@ class CartRecommendationService:
         # Products with track_inventory=False are always in stock
         # Products with track_inventory=True need positive stock
         has_stock_subquery = (
-            StockItem.objects.filter(product_id=OuterRef("pk"), variant_id__isnull=True)
+            # Aggregate all StockItem rows for the product: simple products keep
+            # stock in product-level rows (variant_id is null) while variable
+            # products keep it in variant-level rows, so include both.
+            StockItem.objects.filter(product_id=OuterRef("pk"))
             .values("product_id")
             .annotate(total_available=Sum(F("on_hand") - F("allocated")))
             .filter(total_available__gt=0)
@@ -92,9 +95,12 @@ class CartRecommendationService:
         used_product_ids: set[int] = set()
 
         # 1. Recently viewed products (max 2)
-        recently_viewed = CartRecommendationService._get_recently_viewed_products(
-            request, limit=2, exclude_ids=used_product_ids
-        )
+        recently_viewed = []
+        remaining_slots = limit - len(used_product_ids)
+        if remaining_slots > 0:
+            recently_viewed = CartRecommendationService._get_recently_viewed_products(
+                request, limit=min(2, remaining_slots), exclude_ids=used_product_ids
+            )
         if recently_viewed:
             sections.append(
                 {
@@ -106,11 +112,14 @@ class CartRecommendationService:
             used_product_ids.update(p["id"] for p in recently_viewed)
 
         # 2. Related to recently viewed (same category, max 2)
-        if recently_viewed:
+        remaining_slots = limit - len(used_product_ids)
+        if recently_viewed and remaining_slots > 0:
             # Get categories from recently viewed
             recently_viewed_ids = [p["id"] for p in recently_viewed]
             related = CartRecommendationService._get_related_to_viewed(
-                viewed_product_ids=recently_viewed_ids, exclude_ids=used_product_ids, limit=2
+                viewed_product_ids=recently_viewed_ids,
+                exclude_ids=used_product_ids,
+                limit=min(2, remaining_slots),
             )
             if related:
                 sections.append(
@@ -232,8 +241,10 @@ class CartRecommendationService:
             return []
 
         # Get related products from same categories (in stock only)
-        related = Product.objects.filter(category_id__in=category_ids, status="published").exclude(
-            id__in=exclude_ids
+        related = (
+            Product.objects.filter(category_id__in=category_ids, status="published")
+            .exclude(id__in=exclude_ids)
+            .select_related("category")
         )
         related = CartRecommendationService._filter_in_stock(related)
         related = related.order_by("-views_count")[:limit]
@@ -255,11 +266,15 @@ class CartRecommendationService:
         # Products with active sales (in stock only)
         on_sale = (
             Product.objects.filter(
-                status="published", sale_type__in=["percentage_off", "amount_off", "fixed_price"]
+                status="published",
+                sale_type__in=["percentage_off", "amount_off", "fixed_price"],
+                sale_value__isnull=False,
+                sale_value__gt=0,
             )
             .filter(Q(sale_start_date__isnull=True) | Q(sale_start_date__lte=now))
             .filter(Q(sale_end_date__isnull=True) | Q(sale_end_date__gte=now))
             .exclude(id__in=exclude_ids)
+            .select_related("category")
         )
         on_sale = CartRecommendationService._filter_in_stock(on_sale)
         on_sale = on_sale.order_by("-views_count")[:limit]
@@ -275,7 +290,11 @@ class CartRecommendationService:
         """
         exclude_ids = exclude_ids or set()
 
-        trending = Product.objects.filter(status="published").exclude(id__in=exclude_ids)
+        trending = (
+            Product.objects.filter(status="published")
+            .exclude(id__in=exclude_ids)
+            .select_related("category")
+        )
         trending = CartRecommendationService._filter_in_stock(trending)
         trending = trending.order_by("-views_count", "-sales_count")[:limit]
 
@@ -290,16 +309,20 @@ class CartRecommendationService:
         """
         exclude_ids = exclude_ids or set()
 
-        featured = Product.objects.filter(status="published", is_featured=True).exclude(
-            id__in=exclude_ids
+        featured = (
+            Product.objects.filter(status="published", is_featured=True)
+            .exclude(id__in=exclude_ids)
+            .select_related("category")
         )
         featured = CartRecommendationService._filter_in_stock(featured)
         featured = featured.order_by("-created_at")[:limit]
 
         # If not enough featured, get newest in-stock products
         if featured.count() < limit:
-            newest = Product.objects.filter(status="published").exclude(
-                id__in=exclude_ids.union(set(featured.values_list("id", flat=True)))
+            newest = (
+                Product.objects.filter(status="published")
+                .exclude(id__in=exclude_ids.union(set(featured.values_list("id", flat=True))))
+                .select_related("category")
             )
             newest = CartRecommendationService._filter_in_stock(newest)
             newest = newest.order_by("-created_at")[: limit - featured.count()]
@@ -323,10 +346,15 @@ class CartRecommendationService:
 
         # Get image URL
         image_url = None
-        if hasattr(product, "primary_image_url") and product.primary_image_url:
-            image_url = product.primary_image_url
+        image_sources = None
+        primary_image_url = getattr(product, "primary_image_url", None)
+        if primary_image_url:
+            image_url = primary_image_url
         elif hasattr(product, "get_primary_image"):
             image_url = product.get_primary_image()
+        primary_asset = getattr(product, "primary_image", None)
+        if primary_asset and hasattr(primary_asset, "get_picture_sources"):
+            image_sources = primary_asset.get_picture_sources()
 
         # Get prices
         price = product.price
@@ -355,6 +383,7 @@ class CartRecommendationService:
             "slug": product.slug,
             "url": url,
             "image_url": image_url,
+            "image_sources": image_sources,
             "price": price_amount,
             "price_formatted": _format_price(price_amount, currency),
             "on_sale": is_on_sale,

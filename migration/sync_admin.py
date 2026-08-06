@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import path, reverse
 from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import SyncConnection, SyncJob
@@ -66,8 +67,8 @@ class SyncConnectionAdmin(admin.ModelAdmin):
 
     def verified_status(self, obj):
         if obj.is_verified:
-            return format_html('<span style="color: #4caf50;">&#10004; Verified</span>')
-        return format_html('<span style="color: #999;">Not verified</span>')
+            return mark_safe('<span style="color: #4caf50;">&#10004; Verified</span>')
+        return mark_safe('<span style="color: #999;">Not verified</span>')
 
     verified_status.short_description = _("Status")
 
@@ -368,7 +369,7 @@ class SyncJobAdmin(admin.ModelAdmin):
                     reverse("admin:sync_api_rollback", args=[obj.pk]),
                 )
             )
-        return format_html(" ".join(str(b) for b in buttons)) if buttons else "-"
+        return mark_safe(" ".join(str(b) for b in buttons)) if buttons else "-"
 
     actions_column.short_description = _("Actions")
 

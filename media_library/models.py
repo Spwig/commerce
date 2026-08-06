@@ -91,6 +91,7 @@ class MediaAsset(SoftDeleteModel):
         ("image/png", "PNG"),
         ("image/gif", "GIF"),
         ("image/webp", "WebP"),
+        ("image/avif", "AVIF"),
         ("image/svg+xml", "SVG"),
         ("video/mp4", "MP4"),
         ("video/webm", "WebM"),
@@ -129,6 +130,12 @@ class MediaAsset(SoftDeleteModel):
     )
     webp_file = models.FileField(
         upload_to=media_upload_path, blank=True, null=True, help_text=_("WebP version of the image")
+    )
+    avif_file = models.FileField(
+        upload_to=media_upload_path,
+        blank=True,
+        null=True,
+        help_text=_("AVIF version of the image"),
     )
 
     # Video-specific fields
@@ -247,6 +254,79 @@ class MediaAsset(SoftDeleteModel):
             return thumbnail.file.url
         except MediaThumbnail.DoesNotExist:
             return self.get_display_url()
+
+    def get_picture_sources(self, size_preset=None):
+        """Return ``{avif, webp, fallback, width, height}`` for a <picture>.
+
+        ``avif``/``webp`` are None when that rendition isn't available yet, so
+        callers omit the matching <source>; ``fallback`` is always a usable URL
+        pointing at the original-format file. A <source> is only ever emitted
+        for a file known to exist — never guess a URL by swapping extensions,
+        because a 404 <source> renders a broken image with no fallback.
+        """
+        # Video / 3D: only a poster still image, no avif/webp candidates.
+        if self.is_video() or self.is_3d_model():
+            poster = self.poster_image.url if self.poster_image else None
+            return {
+                "avif": None,
+                "webp": None,
+                "fallback": poster,
+                "width": self.width,
+                "height": self.height,
+            }
+        # SVG is vector — serve as-is, no raster renditions.
+        if self.mime_type == "image/svg+xml":
+            return {
+                "avif": None,
+                "webp": None,
+                "fallback": self.original_file.url if self.original_file else None,
+                "width": self.width,
+                "height": self.height,
+            }
+
+        if size_preset:
+            try:
+                thumb = self.thumbnails.get(size_preset=size_preset)
+                return {
+                    "avif": thumb.avif_file.url if thumb.avif_file else None,
+                    "webp": thumb.webp_file.url if thumb.webp_file else None,
+                    "fallback": (thumb.file.url if thumb.file else None) or self.get_display_url(),
+                    "width": thumb.width,
+                    "height": thumb.height,
+                }
+            except MediaThumbnail.DoesNotExist:
+                pass  # fall through to full-size sources
+
+        return {
+            "avif": self.avif_file.url if self.avif_file else None,
+            "webp": self.webp_file.url if self.webp_file else None,
+            "fallback": self.original_file.url if self.original_file else None,
+            "width": self.width,
+            "height": self.height,
+        }
+
+    @classmethod
+    def resolve_from_url(cls, url):
+        """Best-effort resolution of a stored media URL back to its MediaAsset.
+
+        Page-builder elements store a plain image URL (no asset id); this maps
+        that URL to the owning asset so its AVIF/WebP siblings can be served in
+        a <picture>. Returns None for external or unrecognised URLs. Callers
+        should cache the derived source set — this does one DB query per miss.
+        """
+        import os
+        from urllib.parse import urlparse
+
+        if not url or not isinstance(url, str):
+            return None
+        filename = os.path.basename(urlparse(url).path)
+        if not filename:
+            return None
+        return cls.objects.filter(
+            models.Q(original_file__icontains=filename)
+            | models.Q(webp_file__icontains=filename)
+            | models.Q(avif_file__icontains=filename)
+        ).first()
 
     @property
     def thumbnail_small(self):
@@ -381,6 +461,7 @@ class MediaThumbnail(models.Model):
     # Files
     file = models.ImageField(upload_to=thumbnail_upload_path)
     webp_file = models.ImageField(upload_to=thumbnail_upload_path, blank=True, null=True)
+    avif_file = models.ImageField(upload_to=thumbnail_upload_path, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -1,4 +1,4 @@
-{% load i18n merchant_trans %}
+{% load i18n merchant_trans media_picture %}
 <article class="reviews-display__card">
     <div class="reviews-display__card-header">
         {% if element.content.show_rating|default:True %}
@@ -28,7 +28,7 @@
     {% if element.content.show_images|default:True and review.images %}
     <div class="reviews-display__images">
         {% for image in review.images %}
-        <img src="{{ image.url|default:image }}" alt="{% mtrans 'Review image' %}" class="reviews-display__image" loading="lazy">
+        {% mtrans 'Review image' as review_img_alt %}{% picture image.url|default:image alt=review_img_alt css="reviews-display__image" %}
         {% endfor %}
     </div>
     {% endif %}

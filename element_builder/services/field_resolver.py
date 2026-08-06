@@ -22,19 +22,11 @@ COMPUTED_FIELDS = {
             p.get_effective_price() if hasattr(p, "get_effective_price") else p.price
         ),
         "compare_at_price": lambda p: (
-            _format_price(p.compare_at_price) if p.compare_at_price else ""
+            _format_price(p.price) if getattr(p, "is_on_sale", False) else ""
         ),
         "discount_percentage": lambda p: _get_discount_percentage(p),
         "savings_amount": lambda p: _get_savings_amount(p),
-        "is_on_sale": lambda p: (
-            "Yes"
-            if (
-                p.compare_at_price
-                and p.compare_at_price
-                > (p.get_effective_price() if hasattr(p, "get_effective_price") else p.price)
-            )
-            else "No"
-        ),
+        "is_on_sale": lambda p: "Yes" if getattr(p, "is_on_sale", False) else "No",
         "stock_status": lambda p: _get_stock_status(p),
         "is_in_stock": lambda p: "Yes" if _is_in_stock(p) else "No",
         "available_stock": lambda p: str(_get_available_stock(p)),
@@ -221,24 +213,12 @@ def _format_price(price):
 
 
 def _get_discount_percentage(product):
-    """Calculate the discount percentage for a product."""
-    if not product.compare_at_price:
-        return ""
-
+    """Discount percentage from the canonical sale mechanism, or "" if not on sale."""
     try:
-        current_price = (
-            product.get_effective_price()
-            if hasattr(product, "get_effective_price")
-            else product.price
-        )
-        if not current_price or not product.compare_at_price:
+        if not getattr(product, "is_on_sale", False):
             return ""
-
-        if product.compare_at_price <= current_price:
-            return ""
-
-        discount = ((product.compare_at_price - current_price) / product.compare_at_price) * 100
-        return f"{int(discount)}%"
+        pct = product.discount_percentage
+        return f"{int(pct)}%" if pct else ""
     except Exception:
         return ""
 

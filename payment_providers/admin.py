@@ -166,15 +166,15 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
     def is_active_badge(self, obj):
         """Display active status badge"""
         if obj.is_active:
-            return format_html('<span class="pp-list-badge pp-list-badge-active">ACTIVE</span>')
-        return format_html('<span class="pp-list-badge pp-list-badge-inactive">INACTIVE</span>')
+            return mark_safe('<span class="pp-list-badge pp-list-badge-active">ACTIVE</span>')
+        return mark_safe('<span class="pp-list-badge pp-list-badge-inactive">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 
     def is_default_badge(self, obj):
         """Display default provider badge"""
         if obj.is_default:
-            return format_html('<span class="pp-list-badge pp-list-badge-default">DEFAULT</span>')
+            return mark_safe('<span class="pp-list-badge pp-list-badge-default">DEFAULT</span>')
         return "-"
 
     is_default_badge.short_description = _("Default")

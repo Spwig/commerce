@@ -1,9 +1,42 @@
 import logging
 
+import requests
 from django.contrib.auth.backends import ModelBackend
+from django.core.cache import cache
 from mozilla_django_oidc.utils import import_from_settings
 
 logger = logging.getLogger(__name__)
+
+# Maps our OIDC setting names to the standard discovery-document field names.
+_DISCOVERY_ENDPOINT_MAP = {
+    "OIDC_OP_AUTHORIZATION_ENDPOINT": "authorization_endpoint",
+    "OIDC_OP_TOKEN_ENDPOINT": "token_endpoint",
+    "OIDC_OP_USER_ENDPOINT": "userinfo_endpoint",
+    "OIDC_OP_JWKS_ENDPOINT": "jwks_uri",
+}
+_DISCOVERY_CACHE_TTL = 3600
+
+
+def _get_discovery_document(discovery_url):
+    """Fetch and cache the OIDC discovery document for a discovery URL."""
+    if not discovery_url:
+        return {}
+
+    cache_key = f"enterprise_sso:discovery:{discovery_url}"
+    doc = cache.get(cache_key)
+    if doc is not None:
+        return doc
+
+    try:
+        response = requests.get(discovery_url, timeout=5)
+        response.raise_for_status()
+        doc = response.json()
+    except Exception:
+        logger.exception("Failed to fetch OIDC discovery document from %s", discovery_url)
+        return {}
+
+    cache.set(cache_key, doc, _DISCOVERY_CACHE_TTL)
+    return doc
 
 
 def _get_db_setting(attr, *args):
@@ -23,7 +56,13 @@ def _get_db_setting(attr, *args):
         "OIDC_CREATE_USER": config.auto_create_users,
     }
     if attr in db_map:
-        return db_map[attr]
+        value = db_map[attr]
+        # Discovery-only configs leave the endpoint fields blank; resolve them
+        # from the discovery document so the backend gets real URLs.
+        if not value and attr in _DISCOVERY_ENDPOINT_MAP and config.oidc_discovery_url:
+            doc = _get_discovery_document(config.oidc_discovery_url)
+            value = doc.get(_DISCOVERY_ENDPOINT_MAP[attr]) or value
+        return value
     # Fall back to Django settings for anything not in our DB map
     return import_from_settings(attr, *args)
 

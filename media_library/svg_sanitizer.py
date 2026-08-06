@@ -87,6 +87,12 @@ def sanitize_svg(svg_content: bytes) -> bytes:
         tree = etree.parse(BytesIO(svg_content), parser)
         root = tree.getroot()
 
+        # Reject well-formed XML that isn't actually an SVG. Without this, any
+        # parseable XML/text file renamed .svg would be accepted and stored.
+        root_tag = root.tag.split("}")[-1] if "}" in root.tag else root.tag
+        if root_tag.lower() != "svg":
+            raise ValueError("File is not an SVG (root element is not <svg>)")
+
         # Remove dangerous elements (iterate through all elements)
         elements_to_remove = []
         for element in root.iter():

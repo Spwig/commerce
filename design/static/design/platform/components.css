@@ -721,6 +721,26 @@ a:hover {
   color: var(--theme-element-product-badge-soldout-color, var(--theme-color-text-inverse));
 }
 
+.product-card__badge--unavailable {
+  background-color: var(--theme-color-text-muted);
+  color: var(--theme-color-text-inverse);
+}
+
+/* Ship-to region: a product restricted from the shopper's destination */
+.product-card__region-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-2);
+  padding: var(--theme-space-2) 0;
+  font-size: var(--theme-font-size-sm);
+  color: var(--theme-color-text-muted);
+  line-height: 1.3;
+}
+
+.product-card__region-notice i {
+  flex-shrink: 0;
+}
+
 .product-card__badge--bundle {
   background-color: var(--theme-element-product-badge-bundle-bg, var(--theme-color-info));
   color: var(--theme-element-product-badge-bundle-color, var(--theme-color-text-inverse));
@@ -2349,4 +2369,61 @@ textarea.form-input {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ============================================================
+   Ship-to region banner (listing pages)
+   ============================================================ */
+.region-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--theme-space-2);
+  padding: var(--theme-space-3) var(--theme-space-4);
+  margin-bottom: var(--theme-space-4);
+  background-color: var(--theme-color-surface-secondary, var(--theme-color-surface));
+  border: 1px solid var(--theme-color-border);
+  border-radius: var(--theme-radius-md);
+  font-size: var(--theme-font-size-sm);
+  color: var(--theme-color-text);
+}
+
+.region-banner__icon {
+  color: var(--theme-color-text-muted);
+  flex-shrink: 0;
+}
+
+.region-banner__text {
+  flex: 1 1 auto;
+}
+
+.region-banner__link {
+  color: var(--theme-color-primary);
+  font-weight: var(--theme-font-weight-semibold);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.region-banner__link:hover {
+  opacity: 0.85;
+}
+
+/* ============================================================
+   Region suggestion modal — content layout only.
+   The modal chrome is reused from .modal--store-picker (no new modal CSS);
+   this is just the button row / text spacing inside the reused body.
+   ============================================================ */
+.region-suggestion__text {
+  margin-bottom: var(--theme-space-4);
+  color: var(--theme-color-text);
+}
+
+.region-suggestion__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--theme-space-3);
+}
+
+.region-suggestion__actions .btn {
+  flex: 1 1 auto;
 }

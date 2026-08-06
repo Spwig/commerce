@@ -4,7 +4,7 @@ This creates a structured JSON export suitable for feeding to Claude or other AI
 """
 
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 from django.conf import settings
@@ -124,7 +124,7 @@ class Command(BaseCommand):
 
         # Build bundle
         bundle = {
-            "exported_at": datetime.utcnow().isoformat() + "Z",
+            "exported_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "platform_version": getattr(settings, "PLATFORM_VERSION", "1.0.0"),
             "topics_count": len(topics),
             "categories_count": len(categories),
@@ -139,7 +139,7 @@ class Command(BaseCommand):
         """Export as single markdown document"""
         with open(output_path, "w", encoding="utf-8") as f:
             f.write("# Help Content Export\n\n")
-            f.write(f"Exported: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC\n\n")
+            f.write(f"Exported: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')} UTC\n\n")
             f.write(f"Topics: {topics_qs.count()}\n\n")
             f.write("---\n\n")
 
