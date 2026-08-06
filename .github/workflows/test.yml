@@ -58,9 +58,10 @@ jobs:
           # Data dir a level below the tmpfs mount so initdb gets a clean,
           # correctly-owned 0700 dir (tmpfs root is 1777 and initdb refuses it).
           PGDATA: /var/lib/postgresql/data/pgdata
-        # No host port published: under gitea/act the tests reach postgres by
-        # its DNS alias (DB_HOST=postgres), and publishing a fixed host port
-        # collides across concurrent jobs when the runner capacity is > 1.
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
@@ -69,8 +70,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis:7
-        # No host port published (DNS alias under act; avoids the concurrency
-        # collision described on the postgres service above).
+        # Host port published so the service is reachable at localhost:6379 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -176,6 +179,10 @@ jobs:
           POSTGRES_PASSWORD: spwig
           POSTGRES_DB: spwig_test
           PGDATA: /var/lib/postgresql/data/pgdata
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
@@ -184,6 +191,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis:7
+        # Host port published so the service is reachable at localhost:6379 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -240,6 +251,10 @@ jobs:
           POSTGRES_PASSWORD: spwig
           POSTGRES_DB: spwig_test
           PGDATA: /var/lib/postgresql/data/pgdata
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
@@ -248,6 +263,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis:7
+        # Host port published so the service is reachable at localhost:6379 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
