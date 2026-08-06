@@ -22,7 +22,9 @@
   margin: 0 auto;
 }
 
-.dashboard-header {
+/* Scoped to the analytics page: admin-base's bare .dashboard-header is a
+   full --primary banner; this page wants a lighter title/underline header. */
+.analytics-dashboard .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,13 +59,13 @@
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px var(--shadow-light);
   transition: all 0.2s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px var(--shadow-light);
   border-color: var(--primary, #417690);
 }
 
@@ -79,7 +81,7 @@
   line-height: 1;
 }
 
-.stat-label {
+.analytics-dashboard .stat-label {
   font-size: 13px;
   font-weight: 500;
   color: var(--body-quiet-color, #666);
@@ -87,7 +89,7 @@
   letter-spacing: 0.5px;
 }
 
-.stat-value {
+.analytics-dashboard .stat-value {
   font-size: 32px;
   font-weight: 700;
   color: var(--body-fg, #333);
@@ -112,13 +114,13 @@
 }
 
 .stat-trend.positive {
-  color: #28a745;
-  background: rgba(40, 167, 69, 0.1);
+  color: var(--success-fg);
+  background: color-mix(in srgb, var(--success-fg) 10%, transparent);
 }
 
 .stat-trend.negative {
-  color: #dc3545;
-  background: rgba(220, 53, 69, 0.1);
+  color: var(--error-fg);
+  background: color-mix(in srgb, var(--error-fg) 10%, transparent);
 }
 
 /* Chart Containers */
@@ -134,7 +136,7 @@
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .chart-title {
@@ -157,7 +159,7 @@
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px var(--shadow-light);
   margin-bottom: 30px;
 }
 
@@ -188,7 +190,9 @@
   background: var(--darkened-bg, #f8f9fa);
 }
 
-.status-badge {
+/* Scoped so these don't override admin-base's bare .status-badge elsewhere.
+   .completed/.failed/.in-progress are page-specific variants. */
+.analytics-dashboard .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -198,35 +202,22 @@
   font-weight: 600;
 }
 
-.status-badge.completed {
-  background: rgba(40, 167, 69, 0.1);
-  color: #28a745;
+.analytics-dashboard .status-badge.completed {
+  background: color-mix(in srgb, var(--success-fg) 10%, transparent);
+  color: var(--success-fg);
 }
 
-.status-badge.failed {
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
+.analytics-dashboard .status-badge.failed {
+  background: color-mix(in srgb, var(--error-fg) 10%, transparent);
+  color: var(--error-fg);
 }
 
-.status-badge.in-progress {
-  background: rgba(23, 162, 184, 0.1);
-  color: #17a2b8;
+.analytics-dashboard .status-badge.in-progress {
+  background: color-mix(in srgb, var(--blue-accent) 10%, transparent);
+  color: var(--blue-accent);
 }
 
-/* Dark Theme */
-@media (prefers-color-scheme: dark) {
-  .stat-card,
-  .chart-card,
-  .data-table-card {
-    background: var(--body-bg, #1e1e1e);
-    border-color: var(--border-color, #3a3a3a);
-  }
-
-  .data-table thead {
-    background: var(--darkened-bg, #2d2d2d);
-  }
-
-  .data-table tbody tr:hover {
-    background: var(--darkened-bg, #2d2d2d);
-  }
-}
+/* Dark theme is handled by the design tokens throughout (--body-bg,
+   --hairline-color, --darkened-bg flip via the admin data-theme toggle), so
+   the old @media (prefers-color-scheme: dark) overrides — which only re-tweaked
+   token fallbacks — are unnecessary. */

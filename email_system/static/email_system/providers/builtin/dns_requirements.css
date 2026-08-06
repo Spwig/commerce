@@ -26,8 +26,8 @@
 
 /* Compact Header */
 .dns-header {
-  background: linear-gradient(135deg, var(--primary), var(--button-hover-bg));
-  color: var(--primary-fg);
+  background: linear-gradient(135deg, var(--button-bg), var(--button-hover-bg));
+  color: var(--button-fg);
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -91,7 +91,7 @@
 }
 
 .validation-line.pending {
-  border-left-color: var(--info-color);
+  border-left-color: var(--admin-info);
 }
 
 .validation-icon {
@@ -110,7 +110,7 @@
   color: var(--warning-color);
 }
 .validation-icon.pending {
-  color: var(--info-color);
+  color: var(--admin-info);
 }
 
 .validation-label {
@@ -134,7 +134,7 @@
 .validation-toggle {
   background: none;
   border: none;
-  color: var(--primary);
+  color: var(--link-fg);
   cursor: pointer;
   font-size: 0.875rem;
   padding: 0.25rem 0.5rem;
@@ -179,8 +179,8 @@
 
 .record-type {
   display: inline-block;
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-fg);
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -198,7 +198,7 @@
 
 .record-hostname {
   font-weight: 600;
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 /* Copy Button */
@@ -206,8 +206,8 @@
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -223,7 +223,7 @@
 }
 
 .copy-btn.copied {
-  background: var(--success-color);
+  background: color-mix(in srgb, var(--success-fg) 65%, #000);
 }
 
 /* Tabs for DNS Registrars */
@@ -249,12 +249,12 @@
 }
 
 .registrar-tab:hover {
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 .registrar-tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--link-fg);
+  border-bottom-color: var(--link-fg);
 }
 
 .registrar-content {
@@ -291,13 +291,13 @@
   padding: 0.25rem 0.5rem;
   border-radius: 3px;
   font-size: 0.875rem;
-  color: var(--primary);
+  color: var(--link-fg);
 }
 
 /* Info Box */
 .info-box {
   background: var(--blue-subtle);
-  border-left: 4px solid var(--info-color);
+  border-left: 4px solid var(--admin-info);
   padding: 1rem;
   border-radius: 6px;
   margin: 1rem 0;
@@ -363,4 +363,16 @@
 
 .collapsible-content.show {
   display: block;
+}
+
+/* Registrar-active checkmark (moved off an inline style= attr for CSP) */
+.dns-provider-check {
+  color: var(--success-color);
+}
+
+/* DNS record-type description label (moved off an inline style= attr for CSP) */
+.dns-record-desc {
+  color: var(--body-quiet-color);
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
 }

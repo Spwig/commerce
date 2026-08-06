@@ -57,8 +57,16 @@ class SubscriptionManager:
         Returns:
             PaymentToken: Created token instance
         """
-        # Ensure customer exists at provider
-        gateway_customer_id = self._get_or_create_provider_customer(user)
+        # Some providers mint the provider customer during begin_setup (so the
+        # SDK can tokenise a method scoped to it) and the client passes that
+        # customer id back — honour it so setup and finalize agree on the same
+        # customer (e.g. Airwallex payment consents). Otherwise create/reuse one.
+        # Note: the id only ever binds the requester's own new PaymentToken to a
+        # provider customer, so a spoofed value cannot access or charge another
+        # user's data; the provider also validates the method↔customer pairing.
+        gateway_customer_id = payment_method_data.get(
+            "customer_id"
+        ) or self._get_or_create_provider_customer(user)
 
         # Create token at provider
         token_data = self.provider.create_payment_token(
@@ -83,6 +91,26 @@ class SubscriptionManager:
 
         logger.info(f"Created payment token {payment_token.token_id} for user {user.id}")
         return payment_token
+
+    def supports_reusable_setup(self) -> bool:
+        """Whether this provider can capture a reusable method at checkout."""
+        return self.provider.supports_reusable_setup()
+
+    def begin_customer_setup(self, user, options: dict[str, Any] | None = None) -> dict[str, Any]:
+        """
+        Server side of provider-agnostic reusable-method capture: ask the
+        provider for the client params its ``initializeSetup`` handler needs.
+        Returns the provider-specific ``client_params`` (or ``{}`` when no server
+        init is needed).
+
+        The provider owns customer creation. Providers that reuse a customer at
+        finalize (e.g. those whose ``create_payment_token`` needs the same
+        customer) create/persist it in ``begin_setup``; providers like Stripe use
+        a customer-less SetupIntent and attach the method to a
+        finalize-time customer, so we deliberately do NOT pre-create a customer
+        here — that would orphan an empty provider customer on every call.
+        """
+        return self.provider.begin_setup(user, dict(options or {}))
 
     def _get_or_create_provider_customer(self, user) -> str:
         """
@@ -154,10 +182,19 @@ class SubscriptionManager:
         quantity: int = 1,
         trial_override_days: int | None = None,
         originating_order=None,
+        use_native_provider: bool = False,
     ) -> CustomerSubscription:
         """
         Create a new subscription.
-        Handles both native and fallback providers transparently.
+
+        Billing runs through the platform's OWN engine (provider_mode="fallback")
+        for every provider by default: the storefront charges cycle 1 at checkout,
+        and the engine charges cycle 2+ off-session via the saved token. This is
+        the single, uniform billing path and structurally avoids the native
+        double-charge — a provider-managed subscription would bill cycle 1 again
+        on top of the checkout charge. Pass use_native_provider=True to opt a
+        subscription into provider-managed (native) billing; the storefront never
+        does.
 
         Args:
             user: Django User instance
@@ -169,6 +206,8 @@ class SubscriptionManager:
             quantity: Subscription quantity (for per-seat pricing)
             trial_override_days: Override plan's trial period
             originating_order: Optional Order instance that triggered this subscription
+            use_native_provider: Opt into provider-managed native billing (native
+                providers only). Default False → the platform fallback engine.
 
         Returns:
             CustomerSubscription: Created subscription
@@ -187,6 +226,21 @@ class SubscriptionManager:
         if not payment_token.is_active:
             raise ValueError("Payment token is not active")
 
+        # Idempotency: one subscription per order line. If this order already
+        # produced a subscription for this product+plan, return it rather than
+        # creating a duplicate (protects checkout retries and the two settlement
+        # paths — sync create_order and orchestration handle_payment_success).
+        if originating_order is not None:
+            existing = CustomerSubscription.objects.filter(
+                originating_order=originating_order, product=product, plan=plan
+            ).first()
+            if existing is not None:
+                logger.info(
+                    f"Subscription already exists for order {originating_order.pk} "
+                    f"product {product.pk} plan {plan.plan_id}; returning existing"
+                )
+                return existing
+
         # Calculate trial end date
         trial_end = self._calculate_trial_end(plan, trial_override_days)
 
@@ -196,13 +250,20 @@ class SubscriptionManager:
         current_period_end = self._calculate_next_billing_date(now, pricing_tier)
         next_billing_date = trial_end if trial_end else current_period_end
 
-        # Determine provider mode
-        provider_mode = "native" if self.is_native else "fallback"
+        # Default to the platform's fallback billing engine for EVERY provider
+        # (see docstring). Native provider-managed billing is opt-in only.
+        native = use_native_provider and self.is_native
+        provider_mode = "native" if native else "fallback"
 
-        # Create subscription at provider (if native)
+        # Create the subscription at the provider only for opt-in native billing.
         provider_subscription_id = ""
-        if self.is_native:
-            provider_key = self.provider_account.component.provider_key
+        if native:
+            # provider_key lives in the component manifest (defaults to the slug);
+            # ComponentRegistry has no such column, so resolve via the slug.
+            provider_key = (
+                getattr(self.provider_account.component, "provider_key", None)
+                or self.provider_account.component.slug
+            )
             provider_plan_id = plan.get_provider_plan_id(provider_key)
             if not provider_plan_id:
                 raise ValueError(
@@ -221,12 +282,14 @@ class SubscriptionManager:
             )
 
             provider_subscription_id = subscription_data["subscription_id"]
-            # Use provider's dates if available
-            current_period_start = subscription_data.get(
-                "current_period_start", current_period_start
+            # Use the provider's dates when present, else keep the computed ones.
+            # `or` (not .get(key, default)) so a provider that returns the key as
+            # None does not null out a NOT NULL column.
+            current_period_start = (
+                subscription_data.get("current_period_start") or current_period_start
             )
-            current_period_end = subscription_data.get("current_period_end", current_period_end)
-            next_billing_date = subscription_data.get("next_billing_date", next_billing_date)
+            current_period_end = subscription_data.get("current_period_end") or current_period_end
+            next_billing_date = subscription_data.get("next_billing_date") or next_billing_date
 
         # Create CustomerSubscription record
         subscription = CustomerSubscription.objects.create(
@@ -267,21 +330,31 @@ class SubscriptionManager:
         return None
 
     def _calculate_next_billing_date(self, from_date: datetime, pricing_tier) -> datetime:
-        """Calculate next billing date based on pricing tier cycle"""
-        interval = pricing_tier.billing_interval
+        """
+        Calculate the next billing date based on the pricing tier cycle.
 
-        if pricing_tier.billing_cycle == "daily":
-            return from_date + timedelta(days=interval)
-        elif pricing_tier.billing_cycle == "weekly":
-            return from_date + timedelta(weeks=interval)
-        elif pricing_tier.billing_cycle == "monthly":
-            return from_date + timedelta(days=30 * interval)
-        elif pricing_tier.billing_cycle == "quarterly":
-            return from_date + timedelta(days=91 * interval)
-        elif pricing_tier.billing_cycle == "semiannual":
-            return from_date + timedelta(days=182 * interval)
-        elif pricing_tier.billing_cycle == "annual":
-            return from_date + timedelta(days=365 * interval)
+        Uses calendar arithmetic (relativedelta) rather than fixed day counts so
+        a monthly subscription bills on the same day each month and the anchor
+        date does not drift earlier every cycle (the old 30/91/182/365-day
+        approximations lost ~5 days a year on monthly plans).
+        """
+        from dateutil.relativedelta import relativedelta
+
+        interval = pricing_tier.billing_interval
+        cycle = pricing_tier.billing_cycle
+
+        if cycle == "daily":
+            return from_date + relativedelta(days=interval)
+        elif cycle == "weekly":
+            return from_date + relativedelta(weeks=interval)
+        elif cycle == "monthly":
+            return from_date + relativedelta(months=interval)
+        elif cycle == "quarterly":
+            return from_date + relativedelta(months=3 * interval)
+        elif cycle == "semiannual":
+            return from_date + relativedelta(months=6 * interval)
+        elif cycle == "annual":
+            return from_date + relativedelta(years=interval)
         else:
             raise ValueError(f"Unknown billing cycle: {pricing_tier.billing_cycle}")
 
@@ -308,7 +381,7 @@ class SubscriptionManager:
             raise ValueError("Subscription is already canceled or expired")
 
         # Cancel at provider (if native)
-        if self.is_native and subscription.provider_subscription_id:
+        if subscription.provider_mode == "native" and subscription.provider_subscription_id:
             self.provider.cancel_subscription(
                 subscription_id=subscription.provider_subscription_id, immediately=immediately
             )
@@ -363,7 +436,7 @@ class SubscriptionManager:
             raise ValueError("Can only pause active or trial subscriptions")
 
         # Pause at provider (if native)
-        if self.is_native and subscription.provider_subscription_id:
+        if subscription.provider_mode == "native" and subscription.provider_subscription_id:
             self.provider.pause_subscription(subscription_id=subscription.provider_subscription_id)
 
         # Update subscription
@@ -392,7 +465,7 @@ class SubscriptionManager:
             raise ValueError("Can only resume paused subscriptions")
 
         # Resume at provider (if native)
-        if self.is_native and subscription.provider_subscription_id:
+        if subscription.provider_mode == "native" and subscription.provider_subscription_id:
             self.provider.resume_subscription(subscription_id=subscription.provider_subscription_id)
 
         # Update subscription
@@ -453,9 +526,15 @@ class SubscriptionManager:
         period_end = self._calculate_next_billing_date(now, subscription.pricing_tier)
         next_billing_date = period_end
 
-        # Native path: create new provider subscription
-        if self.is_native:
-            provider_key = self.provider_account.component.provider_key
+        # Native path: create new provider subscription (only for native-mode
+        # subscriptions; fallback-mode subs reactivate through the engine).
+        if subscription.provider_mode == "native":
+            # provider_key lives in the component manifest (defaults to the slug);
+            # ComponentRegistry has no such column, so resolve via the slug.
+            provider_key = (
+                getattr(self.provider_account.component, "provider_key", None)
+                or self.provider_account.component.slug
+            )
             provider_plan_id = subscription.plan.get_provider_plan_id(provider_key)
             if not provider_plan_id:
                 raise ValueError(
@@ -544,7 +623,7 @@ class SubscriptionManager:
             raise ValueError("Payment token is for a different provider account")
 
         # Update at provider (if native)
-        if self.is_native and subscription.provider_subscription_id:
+        if subscription.provider_mode == "native" and subscription.provider_subscription_id:
             self.provider.update_subscription(
                 subscription_id=subscription.provider_subscription_id,
                 payment_token_id=payment_token.gateway_token_id,
@@ -708,9 +787,14 @@ class SubscriptionManager:
         """Apply plan change immediately with proration handling."""
         from djmoney.money import Money
 
-        if self.is_native and subscription.provider_subscription_id:
+        if subscription.provider_mode == "native" and subscription.provider_subscription_id:
             # Native provider path (e.g., Stripe) — provider handles proration
-            provider_key = self.provider_account.component.provider_key
+            # provider_key lives in the component manifest (defaults to the slug);
+            # ComponentRegistry has no such column, so resolve via the slug.
+            provider_key = (
+                getattr(self.provider_account.component, "provider_key", None)
+                or self.provider_account.component.slug
+            )
             new_provider_plan_id = new_plan.get_provider_plan_id(provider_key)
             if not new_provider_plan_id:
                 raise ValueError(
@@ -869,17 +953,75 @@ class SubscriptionManager:
         Returns:
             BillingCycleLog: Created billing log
         """
-        if self.is_native:
-            raise ValueError("process_billing_cycle should only be called for fallback providers")
+        # Gate on the SUBSCRIPTION's mode, not the provider's capability: a
+        # native-capable provider (Stripe/PayPal) drives storefront subscriptions
+        # in fallback mode, so the engine must bill them here.
+        if subscription.provider_mode == "native":
+            raise ValueError(
+                "process_billing_cycle should only be called for fallback-mode subscriptions"
+            )
 
         from djmoney.money import Money
 
+        # Re-read the volatile fields: another scheduler (the hourly due-sweep and
+        # the daily trial-expiry sweep can both select the same subscription) may
+        # already have billed and advanced this subscription. If it is no longer
+        # due, skip rather than charging the next cycle early. Truly concurrent
+        # runs are additionally caught by the (subscription, cycle_number) unique
+        # constraint when the billing log row is created below.
+        subscription.refresh_from_db(
+            fields=["next_billing_date", "billing_cycle_count", "status", "product"]
+        )
+        from django.db import IntegrityError
+
+        now = timezone.now()
+        if subscription.next_billing_date and subscription.next_billing_date > now:
+            logger.info(
+                f"Subscription {subscription.subscription_id} is no longer due "
+                f"(next billing in the future); skipping duplicate billing."
+            )
+            # ALWAYS return without charging — never fall through to bill the
+            # next cycle early. Returns the latest log, or None if (anomalously)
+            # there is no prior log; callers treat None as "nothing billed".
+            return subscription.billing_logs.order_by("-cycle_number", "-billing_date").first()
+
+        # product FK is SET_NULL; without it the cycle cannot be priced.
+        if subscription.product is None:
+            logger.error(
+                f"Subscription {subscription.subscription_id} has no product; cannot bill. "
+                f"Marking past_due."
+            )
+            zero = Money(Decimal("0.00"), "USD")
+            try:
+                # Savepoint so a concurrent duplicate doesn't poison an outer txn.
+                with transaction.atomic():
+                    billing_log = BillingCycleLog.objects.create(
+                        subscription=subscription,
+                        cycle_number=subscription.billing_cycle_count + 1,
+                        billing_date=now,
+                        base_amount=zero,
+                        total_amount=zero,
+                        status="failed",
+                        error_message="Subscription product is no longer available",
+                    )
+            except IntegrityError:
+                return subscription.billing_logs.order_by("-cycle_number").first()
+            subscription.status = "past_due"
+            subscription.last_billing_status = "failed"
+            subscription.save(update_fields=["status", "last_billing_status", "updated_at"])
+            return billing_log
+
         cycle_number = subscription.billing_cycle_count + 1
 
-        # Calculate amount from product price + tier discount
-        base_amount = subscription.pricing_tier.calculate_price(
+        # Per-unit tier price × quantity. calculate_price returns the per-unit
+        # price; the fallback engine must multiply by quantity or a multi-seat
+        # subscription is under-charged (the checkout order already charges
+        # unit × quantity, so renewals must match).
+        quantity = subscription.quantity or 1
+        unit_price = subscription.pricing_tier.calculate_price(
             subscription.product, subscription.variant
         )
+        base_amount = Money(unit_price.amount * quantity, unit_price.currency)
 
         # Apply proration credit from downgrade if available
         proration_adjustment = Money(Decimal("0.00"), base_amount.currency)
@@ -899,16 +1041,29 @@ class SubscriptionManager:
                 charge_amount = Money(base_amount.amount - credit.amount, base_amount.currency)
                 remaining_credit = Money(Decimal("0.00"), credit.currency)
 
-        # Create billing log
-        billing_log = BillingCycleLog.objects.create(
-            subscription=subscription,
-            cycle_number=cycle_number,
-            billing_date=timezone.now(),
-            base_amount=base_amount,
-            proration_amount=proration_adjustment,
-            total_amount=charge_amount,
-            status="processing",
-        )
+        # Create billing log. The (subscription, cycle_number) unique constraint
+        # is the race guard: if another worker is billing this exact cycle
+        # concurrently, its row wins and ours raises IntegrityError BEFORE any
+        # charge — so we skip rather than double-charge.
+        try:
+            # Savepoint so the IntegrityError rolls back only this insert and
+            # leaves any surrounding transaction usable for the follow-up query.
+            with transaction.atomic():
+                billing_log = BillingCycleLog.objects.create(
+                    subscription=subscription,
+                    cycle_number=cycle_number,
+                    billing_date=timezone.now(),
+                    base_amount=base_amount,
+                    proration_amount=proration_adjustment,
+                    total_amount=charge_amount,
+                    status="processing",
+                )
+        except IntegrityError:
+            logger.info(
+                f"Concurrent billing detected for subscription "
+                f"{subscription.subscription_id} cycle {cycle_number}; skipping duplicate charge."
+            )
+            return subscription.billing_logs.filter(cycle_number=cycle_number).first()
 
         try:
             if charge_amount.amount <= 0:
@@ -930,14 +1085,27 @@ class SubscriptionManager:
                     metadata={
                         "subscription_id": str(subscription.subscription_id),
                         "cycle_number": cycle_number,
+                        # Stable per-cycle key: providers pass this through as
+                        # their idempotency key so a retry after a lost response
+                        # never charges the same cycle twice.
+                        "idempotency_key": f"{subscription.subscription_id}:{cycle_number}",
+                        # Provider customer id — needed by providers whose
+                        # off-session charge is scoped to a customer (Revolut).
+                        "customer_id": subscription.payment_token.gateway_customer_id,
                     },
                 )
+
+            # Providers may return Decimal / date objects in the raw result;
+            # make it JSON-safe before it lands in the provider_response JSONField.
+            import json as _json
+
+            provider_response_safe = _json.loads(_json.dumps(charge_result, default=str))
 
             if charge_result["status"] == "succeeded":
                 # Successful charge
                 if billing_log.status != "successful":
                     billing_log.status = "successful"
-                    billing_log.provider_response = charge_result
+                    billing_log.provider_response = provider_response_safe
                     billing_log.save()
 
                 # Clear proration credit after successful application
@@ -959,6 +1127,19 @@ class SubscriptionManager:
 
                 subscription.save()
 
+                # Recurring fulfilment: create a paid Order for this cycle so
+                # stock/shipping (physical) and licence/download grants (digital)
+                # run again. A fulfilment-order failure must never undo a
+                # successful charge, so it is isolated in its own try/except.
+                try:
+                    self._create_renewal_order(subscription, billing_log)
+                except Exception:
+                    logger.exception(
+                        f"Renewal order creation failed for subscription "
+                        f"{subscription.subscription_id} (charge succeeded); cycle "
+                        f"{cycle_number} will need manual fulfilment."
+                    )
+
                 logger.info(f"Successfully billed subscription {subscription.subscription_id}")
 
             else:
@@ -966,7 +1147,7 @@ class SubscriptionManager:
                 billing_log.status = "failed"
                 billing_log.error_message = charge_result.get("error_message", "")
                 billing_log.error_code = charge_result.get("error_code", "")
-                billing_log.provider_response = charge_result
+                billing_log.provider_response = provider_response_safe
                 billing_log.save()
 
                 # Update subscription status
@@ -991,3 +1172,140 @@ class SubscriptionManager:
             logger.exception(f"Exception billing subscription {subscription.subscription_id}")
 
         return billing_log
+
+    def _create_renewal_order(self, subscription: CustomerSubscription, billing_log):
+        """
+        Create a paid Order for a successful renewal cycle so recurring
+        fulfilment runs.
+
+        Renewals otherwise only charge the card; without an Order the
+        paid-order fulfilment receivers (stock/shipping for physical goods,
+        licence/download grants for digital goods) never fire again after the
+        first cycle, so a subscription would take the customer's money and
+        deliver nothing. This builds a one-line paid Order for the
+        subscription's product — copying the shipping/billing details from the
+        order that started the subscription — and lets the existing fulfilment
+        pipeline take over.
+
+        Idempotent: returns the existing order if this billing cycle already
+        produced one. Physical renewals enter the normal fulfilment queue (they
+        are deliberately NOT stock-allocated inline, so a stock shortfall can
+        never fail a charge that already succeeded); digital licences re-grant
+        automatically via the paid-order signal.
+        """
+        # Idempotency — one order per billing cycle.
+        if billing_log.order_id:
+            return billing_log.order
+
+        product = subscription.product
+        if product is None:
+            logger.error(
+                f"Cannot create renewal order for subscription "
+                f"{subscription.subscription_id}: product is no longer available."
+            )
+            return None
+
+        from djmoney.money import Money
+
+        from core.models import SiteSettings
+        from orders.models import Order, OrderItem
+
+        origin = subscription.originating_order
+        quantity = subscription.quantity or 1
+        # Per-unit price × quantity is the nominal line value; `charged` is what
+        # the engine actually took (line value minus any proration credit). We
+        # represent that credit as an order discount so the order is internally
+        # consistent: subtotal - discount == total_amount == amount_paid.
+        unit_price = subscription.pricing_tier.calculate_price(product, subscription.variant)
+        line_total = Money(unit_price.amount * quantity, unit_price.currency)
+        charged = billing_log.total_amount or line_total
+        discount_amt = line_total - charged
+        if discount_amt.amount < 0:
+            discount_amt = Money(Decimal("0.00"), line_total.currency)
+
+        def _copy(field, default=""):
+            return getattr(origin, field, default) if origin is not None else default
+
+        channel = "subscription" if "subscription" in dict(Order.CHANNEL_CHOICES) else "web"
+
+        order = Order.objects.create(
+            user=subscription.user,
+            email=subscription.user.email,
+            phone=_copy("phone"),
+            # Shipping address copied from the order that started the subscription.
+            shipping_name=_copy("shipping_name"),
+            shipping_address1=_copy("shipping_address1"),
+            shipping_address2=_copy("shipping_address2"),
+            shipping_city=_copy("shipping_city"),
+            shipping_state=_copy("shipping_state"),
+            shipping_postal_code=_copy("shipping_postal_code"),
+            shipping_country=_copy("shipping_country"),
+            shipping_phone=_copy("shipping_phone"),
+            billing_same_as_shipping=True,
+            billing_name=_copy("billing_name") or _copy("shipping_name"),
+            billing_address1=_copy("billing_address1"),
+            billing_address2=_copy("billing_address2"),
+            billing_city=_copy("billing_city"),
+            billing_state=_copy("billing_state"),
+            billing_postal_code=_copy("billing_postal_code"),
+            billing_country=_copy("billing_country"),
+            subtotal=line_total,
+            discount_amount=discount_amt,
+            total_amount=charged,
+            channel=channel,
+            metadata={
+                "is_subscription_renewal": True,
+                "subscription_id": str(subscription.subscription_id),
+                "subscription_cycle": billing_log.cycle_number,
+            },
+        )
+
+        # Currency bookkeeping. Subscriptions bill in the tier's own currency;
+        # mirror the single-currency default.
+        settings = SiteSettings.get_settings()
+        order.base_currency = settings.default_currency
+        order.customer_currency = str(charged.currency)
+
+        item = OrderItem.objects.create(
+            order=order,
+            product=product,
+            variant=subscription.variant,
+            product_name=product.name,
+            variant_name=subscription.variant.name if subscription.variant else "",
+            sku=subscription.variant.sku if subscription.variant else product.sku,
+            quantity=quantity,
+            unit_price=unit_price,
+            total_price=line_total,
+        )
+
+        # Link the cycle to the order for the audit trail.
+        billing_log.order = order
+        billing_log.save(update_fields=["order"])
+
+        # Set the paid state BEFORE computing base amounts, so amount_paid_base
+        # derives from the real amount_paid rather than the default 0. The engine
+        # already charged the card, so this order is genuinely paid.
+        order.payment_status = "paid"
+        order.paid_at = timezone.now()
+        order.amount_paid = charged
+        order.payment_provider = subscription.payment_provider_account
+        try:
+            order.compute_base_amounts()
+        except Exception:
+            logger.exception(f"Renewal order {order.order_number}: base-amount computation failed")
+
+        # Order-item base amounts (single-currency default: base == amount).
+        if order.base_currency == order.customer_currency:
+            item.unit_price_base = unit_price.amount
+            item.total_price_base = line_total.amount
+            item.save(update_fields=["unit_price_base", "total_price_base"])
+
+        # Full save LAST so the paid-order fulfilment receivers fire with the
+        # order item already present.
+        order.save()
+
+        logger.info(
+            f"Created renewal order {order.order_number} for subscription "
+            f"{subscription.subscription_id} cycle {billing_log.cycle_number}"
+        )
+        return order

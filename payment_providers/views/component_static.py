@@ -99,7 +99,7 @@ class ComponentStaticFileView(View):
             file_path_resolved = file_path.resolve()
             component_path_resolved = Path(component_path).resolve()
 
-            if not str(file_path_resolved).startswith(str(component_path_resolved)):
+            if not file_path_resolved.is_relative_to(component_path_resolved):
                 logger.warning(
                     f"Path escape attempt: {filename} "
                     f"resolved outside component directory for {provider_slug}"

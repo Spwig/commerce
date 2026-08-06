@@ -16,13 +16,13 @@
   border-radius: 8px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px var(--shadow-light);
   transition: all 0.2s ease;
 }
 
 #digitalasset_set-group .inline-related:hover {
   border-color: var(--primary, #417690);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px var(--shadow-light);
 }
 
 #digitalasset_set-group h3 {
@@ -70,7 +70,7 @@
 #digitalasset_set-group .field-file input[type='file']:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px var(--primary-light, rgba(65, 118, 144, 0.1));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 /* File upload current value display */
@@ -148,15 +148,15 @@
 }
 
 .license-status.license-active {
-  background: var(--success-light, #d4edda);
-  color: var(--success-dark, #155724);
-  border: 1px solid var(--success-border, #c3e6cb);
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 30%, transparent);
 }
 
 .license-status.license-pending {
-  background: var(--warning-light, #fff3cd);
-  color: var(--warning-dark, #856404);
-  border: 1px solid var(--warning-border, #ffeaa7);
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border: 1px solid color-mix(in srgb, var(--warning-fg) 30%, transparent);
 }
 
 .license-status.license-disabled {
@@ -199,7 +199,7 @@
 #digitalasset_set-group .form-row select:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px var(--primary-light, rgba(65, 118, 144, 0.1));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 /* Filename field - monospace font */
@@ -272,8 +272,8 @@
 }
 
 #digitalasset_set-group .add-row a:hover {
-  background: var(--primary-dark, #2f5a6f);
-  box-shadow: 0 2px 8px rgba(65, 118, 144, 0.3);
+  background: var(--primary-hover, #2f5a6f);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 #digitalasset_set-group .add-row a::before {
@@ -330,71 +330,13 @@
   }
 }
 
-/* ========================================================================
-   Dark Theme Support
-   ======================================================================== */
-
-@media (prefers-color-scheme: dark) {
-  #digitalasset_set-group .inline-related {
-    background: var(--body-bg, #1e1e1e);
-    border-color: var(--border-color, #3a3a3a);
-  }
-
-  #digitalasset_set-group .inline-related:hover {
-    border-color: var(--primary, #5ca0c5);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  #digitalasset_set-group .field-file input[type='file'] {
-    background: var(--darkened-bg, #2d2d2d);
-    border-color: var(--border-color, #3a3a3a);
-    color: var(--body-fg, #e0e0e0);
-  }
-
-  .digital-asset-metadata {
-    background: var(--darkened-bg, #2d2d2d);
-    border-color: var(--border-color, #3a3a3a);
-  }
-
-  .digital-asset-metadata .metadata-label {
-    color: var(--body-fg, #e0e0e0);
-  }
-
-  .digital-asset-metadata .metadata-value {
-    color: var(--body-quiet-color, #b0b0b0);
-  }
-
-  .license-status.license-active {
-    background: rgba(28, 124, 75, 0.2);
-    color: #6fd97a;
-    border-color: rgba(28, 124, 75, 0.4);
-  }
-
-  .license-status.license-pending {
-    background: rgba(255, 193, 7, 0.2);
-    color: #ffc107;
-    border-color: rgba(255, 193, 7, 0.4);
-  }
-
-  .license-status.license-disabled {
-    background: var(--darkened-bg, #2d2d2d);
-    color: var(--body-quiet-color, #888);
-    border-color: var(--border-color, #3a3a3a);
-  }
-
-  #digitalasset_set-group .readonly {
-    background: var(--darkened-bg, #2d2d2d);
-    border-color: var(--border-color, #3a3a3a);
-  }
-
-  #digitalasset_set-group .add-row a {
-    background: var(--primary, #5ca0c5);
-  }
-
-  #digitalasset_set-group .add-row a:hover {
-    background: var(--primary-dark, #4a8aa8);
-  }
-}
+/* Dark theme is handled by the design tokens throughout — surfaces/borders/
+   text use --body-bg / --darkened-bg / --border-color / --hairline-color /
+   --body-fg / --body-quiet-color / --primary, and the license-status badges
+   use --success-bg/-fg and --warning-bg/-fg with color-mix borders, all of
+   which flip via the admin data-theme toggle. The old
+   @media (prefers-color-scheme: dark) block (which also followed the OS, not
+   the admin toggle) is therefore redundant. */
 
 /* ========================================================================
    Help Text

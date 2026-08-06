@@ -439,9 +439,13 @@ class SearchAutocomplete {
 
     // Additional info based on type
     if (type === 'product') {
-      // Price
+      // Price (effective/sale price, with the regular price struck through on sale)
       if (ds.product_price) {
-        html += `<span class="autocomplete-price">${item.currency} ${item.price}</span>`;
+        html += `<span class="autocomplete-price">${item.currency} ${item.price}`;
+        if (item.is_on_sale && item.regular_price) {
+          html += `<del class="autocomplete-price-original">${item.currency} ${item.regular_price}</del>`;
+        }
+        html += '</span>';
       }
       // SKU
       if (ds.product_sku && item.sku) {

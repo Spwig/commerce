@@ -1,10 +1,13 @@
 import json
 
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
 from django.utils.html import format_html, format_html_join
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from staff_roles.categories import PERMISSION_CATEGORIES
@@ -23,8 +26,34 @@ def _is_ajax(request):
     return request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
 
+def _role_group_name(display_name):
+    """Normalize a role's display name into its Group name."""
+    return f"role_{display_name.lower().replace(' ', '_')}"
+
+
+class StaffRoleAdminForm(forms.ModelForm):
+    class Meta:
+        model = StaffRole
+        exclude = ["group", "permission_categories", "pos_permissions"]
+
+    def clean_display_name(self):
+        display_name = self.cleaned_data["display_name"]
+        # On creation the Group name is derived from the display name, so two
+        # names that normalize to the same slug (e.g. "Sales Team" and
+        # "Sales  Team") would collide. Reject the collision here instead of
+        # letting save_model crash on the StaffRole.group one-to-one constraint.
+        if self.instance.pk is None:
+            group_name = _role_group_name(display_name)
+            if Group.objects.filter(name=group_name, staff_role__isnull=False).exists():
+                raise forms.ValidationError(
+                    _("A role with a matching name already exists. Choose a different name.")
+                )
+        return display_name
+
+
 @admin.register(StaffRole)
 class StaffRoleAdmin(admin.ModelAdmin):
+    form = StaffRoleAdminForm
     list_display = [
         "display_name_with_icon",
         "description_short",
@@ -110,9 +139,9 @@ class StaffRoleAdmin(admin.ModelAdmin):
     access_badges.short_description = _("Access")
 
     def member_count_display(self, obj):
-        count = getattr(obj, "members_total", obj.member_count)
+        count = obj.members_total if hasattr(obj, "members_total") else obj.member_count
         if count == 0:
-            return format_html('<span class="role-text-quiet">0</span>')
+            return mark_safe('<span class="role-text-quiet">0</span>')
         return format_html(
             '<a href="{}?groups__id__exact={}" class="role-text-bold">{}</a>',
             reverse("admin:auth_user_changelist"),
@@ -147,10 +176,16 @@ class StaffRoleAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         # Create or get the underlying Group
         if not change:
-            # New role - create the Group
-            group_name = f"role_{obj.display_name.lower().replace(' ', '_')}"
-            group, _ = Group.objects.get_or_create(name=group_name)
-            obj.group = group
+            # New role - create a fresh Group with a guaranteed-unique name.
+            # Reusing an existing Group would break the StaffRole.group
+            # one-to-one constraint when two display names normalize alike.
+            base_name = _role_group_name(obj.display_name)
+            group_name = base_name
+            suffix = 2
+            while Group.objects.filter(name=group_name).exists():
+                group_name = f"{base_name}_{suffix}"
+                suffix += 1
+            obj.group = Group.objects.create(name=group_name)
 
         # Parse permission categories from POST data
         permission_categories = {}
@@ -270,25 +305,36 @@ class StaffRoleAdmin(admin.ModelAdmin):
 
             raise Http404
 
-        # Create new group
+        # Create new group with a guaranteed-unique name. Cloning the same
+        # source repeatedly would otherwise collide on Group.name (unique).
         base_name = f"{source.display_name} (Copy)"
-        group_name = f"role_{base_name.lower().replace(' ', '_')}"
-        group = Group.objects.create(name=group_name)
+        base_group_name = f"role_{base_name.lower().replace(' ', '_')}"
 
-        # Clone the role
-        new_role = StaffRole.objects.create(
-            group=group,
-            display_name=base_name,
-            description=source.description,
-            icon=source.icon,
-            color=source.color,
-            is_predefined=False,
-            permission_categories=source.permission_categories,
-            pos_permissions=source.pos_permissions,
-            can_access_admin=source.can_access_admin,
-            can_access_pos=source.can_access_pos,
-            sort_order=source.sort_order + 1,
-        )
+        try:
+            with transaction.atomic():
+                group_name = base_group_name
+                suffix = 1
+                while Group.objects.filter(name=group_name).exists():
+                    suffix += 1
+                    group_name = f"{base_group_name}_{suffix}"
+                group = Group.objects.create(name=group_name)
+
+                # Clone the role
+                new_role = StaffRole.objects.create(
+                    group=group,
+                    display_name=base_name,
+                    description=source.description,
+                    icon=source.icon,
+                    color=source.color,
+                    is_predefined=False,
+                    permission_categories=source.permission_categories,
+                    pos_permissions=source.pos_permissions,
+                    can_access_admin=source.can_access_admin,
+                    can_access_pos=source.can_access_pos,
+                    sort_order=source.sort_order + 1,
+                )
+        except IntegrityError:
+            return JsonResponse({"error": "Could not clone role"}, status=409)
 
         from django.contrib import messages
 

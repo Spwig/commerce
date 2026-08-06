@@ -65,9 +65,9 @@ which payment methods are offered. Field IDs match the JS in checkout.js
             <label for="billing-country">{% mtrans 'Country' %} <span class="required">*</span></label>
             <select id="billing-country" class="checkout-input" required autocomplete="billing country">
                 <option value="">{% mtrans 'Select country' %}</option>
-                {# Defensive: never render an empty country list if the view
+                {% comment %}Defensive: never render an empty country list if the view
                    didn't supply billing_countries (e.g. a stale server) —
-                   fall back to the shipping country list. #}
+                   fall back to the shipping country list.{% endcomment %}
                 {% for code, name in billing_countries|default:shipping_countries %}
                 <option value="{{ code }}"{% if default_address %}{% if code == default_address.country %} selected{% endif %}{% elif code == geo_country %} selected{% endif %}>{{ name }}</option>
                 {% endfor %}

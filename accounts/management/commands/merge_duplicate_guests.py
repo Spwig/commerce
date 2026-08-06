@@ -14,6 +14,7 @@ Usage:
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db.models import Count
+from django.db.models.functions import Lower
 
 User = get_user_model()
 
@@ -49,19 +50,24 @@ class Command(BaseCommand):
         # Find emails with multiple guest users
         if target_email:
             normalized = target_email.lower().strip()
+            if not normalized:
+                self.stderr.write(self.style.ERROR("--email requires a non-empty email address."))
+                return
             guest_groups = (
                 User.objects.filter(
                     username__startswith="guest_",
                     email__iexact=normalized,
                 )
-                .values("email")
+                .values(email_normalized=Lower("email"))
                 .annotate(count=Count("id"))
                 .filter(count__gt=1)
             )
         else:
             guest_groups = (
                 User.objects.filter(username__startswith="guest_")
-                .values("email")
+                .exclude(email__isnull=True)
+                .exclude(email="")
+                .values(email_normalized=Lower("email"))
                 .annotate(count=Count("id"))
                 .filter(count__gt=1)
                 .order_by("-count")
@@ -77,7 +83,7 @@ class Command(BaseCommand):
         total_stats = {"orders_moved": 0, "addresses_moved": 0, "users_deleted": 0}
 
         for group in guest_groups:
-            email = group["email"]
+            email = group["email_normalized"]
             count = group["count"]
 
             guests = list(

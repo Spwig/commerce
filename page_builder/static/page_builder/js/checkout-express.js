@@ -109,18 +109,21 @@
         .map(item => {
           const product = item.product || {};
           const name = product.name || 'Product';
-          const imageUrl =
-            product.images && product.images.length > 0
-              ? product.images[0].thumbnail_url || product.images[0].image_url || ''
-              : '/static/img/placeholder-product-thumb.png';
+          const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+          const imageUrl = firstImage
+            ? firstImage.thumbnail_url || firstImage.image_url || ''
+            : '/static/img/placeholder-product-thumb.png';
+          const imageSources = firstImage
+            ? firstImage.thumbnail_sources || firstImage.image_sources
+            : null;
           return `
                     <div class="express__item">
-                        ${imageUrl ? `<img src="${C.escAttr(imageUrl)}" alt="${C.escAttr(name)}" class="express__item-image">` : ''}
+                        ${imageUrl ? window.buildPictureMarkup(imageSources, { fallbackSrc: imageUrl, alt: name, className: 'express__item-image' }) : ''}
                         <div class="express__item-info">
                             <div class="express__item-name">${C.esc(name)}</div>
                             <div class="express__item-qty">x${item.quantity}</div>
                         </div>
-                        <div class="express__item-price">${C.formatCurrency(item.total_price)}</div>
+                        <div class="express__item-price">${C.formatCurrency(item.total_price)}${item.is_on_sale && item.regular_total ? ` <del class="express__item-price-original">${C.formatCurrency(item.regular_total)}</del>` : ''}</div>
                     </div>
                 `;
         })

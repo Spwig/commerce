@@ -1,24 +1,24 @@
 ---
-title: Reglas de Envío
+title: Reglas de envío
 ---
 
-Las reglas de envío aplican ajustes condicionales de costos a los métodos de envío según el contenido del carrito, atributos del cliente y zonas de entrega — ofrezca automáticamente envío gratuito por encima de $50, agregue recargos para áreas remotas o descuente el envío para clientes VIP. Las reglas usan ejecución basada en prioridad (primero las de mayor prioridad) con banderas de parada opcionales para evitar un procesamiento adicional. Cada regla evalúa múltiples condiciones (valor del carrito, peso, zonas, productos, grupos de clientes) y ejecuta uno de los 6 tipos de ajuste cuando todas las condiciones coincidan.
+Las reglas de envío aplican ajustes de costo condicionales a los métodos de envío según el contenido del carrito, atributos del cliente y zonas de entrega: ofrezca automáticamente envío gratis por encima de $50, agregue recargos para áreas remotas o descuente el envío para clientes VIP. Las reglas utilizan ejecución basada en prioridad (prioridad más alta primero) con banderas de parada opcionales para evitar más procesamiento. Cada regla evalúa múltiples condiciones (valor del carrito, peso, zonas, productos, grupos de clientes) y ejecuta uno de 6 tipos de ajuste cuando todas las condiciones coincidan.
 
-Use reglas de envío cuando necesite costos de envío dinámicos que cambien según el contexto del pedido, no solo tasas estáticas de métodos de envío.
+Use las reglas de envío cuando necesite costos de envío dinámicos que cambien según el contexto del pedido, no solo tarifas estáticas de métodos de envío.
 
-## Tipos de Reglas de Envío
+## Tipos de reglas de envío
 
 Las reglas de envío aplican 6 tipos de ajustes de costo:
 
-### Descuento por Porcentaje
+### Descuento porcentual
 
-**¿Qué hace**: Reduce el costo de envío por porcentaje (ejemplo: 25% de descuento).
+**¿Qué hace?**: Reduce el costo de envío en porcentaje (ej., 25% de descuento).
 
 **Fórmula**: `nuevo_costo = costo_base × (1 - porcentaje/100)`
 
 **Ejemplo**:
 ```
-Costo base: $20
+costo_base: $20
 Descuento: 25%
 Resultado: $15
 ```
@@ -26,151 +26,151 @@ Resultado: $15
 **Casos de uso**:
 - Descuento para clientes VIP (20% de descuento en todos los envíos)
 - Promociones estacionales (15% de descuento en envíos en diciembre)
-- Descuento por pedidos en cantidad (10% de descuento en envíos para 5+ artículos)
+- Descuento por pedido en volumen (10% de descuento en envíos para 5+ artículos)
 
 ---
 
-### Descuento Fijo
+### Descuento fijo
 
-**¿Qué hace**: Resta una cantidad fija del costo de envío.
+**¿Qué hace?**: Resta una cantidad fija del costo de envío.
 
 **Fórmula**: `nuevo_costo = costo_base - monto` (mínimo $0)
 
 **Ejemplo**:
 ```
-Costo base: $15
+costo_base: $15
 Descuento: $5
 Resultado: $10
 ```
 
 **Casos de uso**:
-- Bonificación para primeros clientes ($5 de descuento en envío del primer pedido)
-- Recompensa por registro en boletín ($3 de descuento en envío)
-- Beneficio de programa de fidelidad ($10 de descuento en envío por mes)
+- Bonificación para primer cliente ($5 de descuento en envío de primer pedido)
+- Recompensa por registro al boletín ($3 de descuento en envío)
+- Beneficio del programa de lealtad ($10 de descuento en envío por mes)
 
 ---
 
-### Costo Fijo
+### Costo fijo
 
-**¿Qué hace**: Reemplaza el costo de envío por un monto específico.
+**¿Qué hace?**: Reemplaza el costo de envío a una cantidad específica.
 
 **Fórmula**: `nuevo_costo = monto_fijo`
 
 **Ejemplo**:
 ```
-Costo base: $25
+costo_base: $25
 Establecer en: $9.99
 Resultado: $9.99
 ```
 
 **Casos de uso**:
-- Venta flash (envío plano de $5 para todos los pedidos hoy)
-- Envío específico por categoría (libros siempre con envío de $3.99)
+- Venta rápida (envío fijo de $5 para todos los pedidos de hoy)
+- Envío específico por categoría (libros siempre $3.99 de envío)
 - Promociones basadas en tiempo (envío limitado a $9.99 esta semana)
 
 ---
 
-### Envío Gratuito
+### Envío gratis
 
-**¿Qué hace**: Establece el costo de envío en $0.
+**¿Qué hace?**: Establece el costo de envío a $0.
 
 **Fórmula**: `nuevo_costo = $0`
 
 **Ejemplo**:
 ```
-Costo base: $18
-Regla se aplica
+costo_base: $18
+La regla se aplica
 Resultado: $0
 ```
 
 **Casos de uso**:
-- Envío gratuito por encima de $50
-- Envío gratuito para productos específicos (artículos promocionales)
-- Envío gratuito para clientes VIP
-- Envío gratuito en pedidos con 3+ artículos
+- Envío gratis por encima de $50
+- Envío gratis para productos específicos (artículos promocionales)
+- Envío gratis para clientes VIP
+- Envío gratis en pedidos con 3+ artículos
 
 ---
 
-### Recargo (Fijo)
+### Recargo (fijo)
 
-**¿Qué hace**: Añade una cantidad fija al costo de envío.
+**¿Qué hace?**: Añade una cantidad fija al costo de envío.
 
 **Fórmula**: `nuevo_costo = costo_base + monto`
 
 **Ejemplo**:
 ```
-Costo base: $12
+costo_base: $12
 Recargo: $5
 Resultado: $17
 ```
 
 **Casos de uso**:
-- Tarifa de entrega para áreas remotas
-- Manejo de artículos de gran tamaño
-- Recargo por entrega en sábados
+- Tarifa de entrega a áreas remotas
+- Manejo de artículo de gran tamaño
+- Recargo por entrega el sábado
 - Tarifa de empaque para artículos frágiles
 
 ---
 
-### Recargo (Porcentaje)
+### Recargo (porcentual)
 
-**¿Qué hace**: Aumenta el costo de envío por porcentaje.
+**¿Qué hace?**: Aumenta el costo de envío en porcentaje.
 
 **Fórmula**: `nuevo_costo = costo_base × (1 + porcentaje/100)`
 
 **Ejemplo**:
 ```
-Costo base: $20
+costo_base: $20
 Recargo: 15%
 Resultado: $23
 ```
 
 **Casos de uso**:
-- Recargo de temporada pico (20% durante las vacaciones)
-- Recargo premium por envío exprés (50% de recargo)
-- Recargo por combustible (variable según las tasas actuales)
+- Recargo de temporada alta (20% durante las fiestas)
+- Prima de entrega exprés (recargo del 50%)
+- Recargo por combustible (variable según tasas actuales)
 
 ---
 
-## Condiciones de la Regla
+## Condiciones de la regla
 
-Las reglas evalúan **Todas las condiciones deben pasar** para que la regla se aplique:
+Las reglas evalúan **todos los requisitos deben cumplirse** para que se aplique la regla:
 
-### Validez de Tiempo
+### Validez de tiempo
 
 - **Fecha de inicio**: La regla solo está activa después de esta fecha
-- **Fecha de fin**: La regla solo está activa antes de esta fecha
-- **Casos de uso**: Promociones estacionales, ofertas limitadas en el tiempo
+- **Fecha de finalización**: La regla solo está activa antes de esta fecha
+- **Caso de uso**: Promociones estacionales, ofertas con plazo limitado
 
-**Ejemplo**: Envío gratuito solo en el fin de semana de Black Friday
+**Ejemplo**: Envío gratis durante el fin de semana de Black Friday solo
 ```
 Inicio: 2026-11-27 00:00
-Fin: 2026-11-30 23:59
+Finalización: 2026-11-30 23:59
 ```
 
 ---
 
-### Rango de Valor del Carrito
+### Rango de valor del carrito
 
-- **Valor mínimo del carrito**: El subtotal del carrito debe ser ≥ monto
-- **Valor máximo del carrito**: El subtotal del carrito debe ser ≤ monto
-- **Casos de uso**: Umbral de envío gratuito, descuentos escalonados
+- **Valor mínimo del carrito**: El subtotal del carrito debe ser ≥ cantidad
+- **Valor máximo del carrito**: El subtotal del carrito debe ser ≤ cantidad
+- **Caso de uso**: Límites de envío gratis, descuentos por niveles
 
-**Ejemplo**: Envío gratuito para pedidos de $50 a $200
+**Ejemplo**: Envío gratis para pedidos de $50 a $200
 ```
-Mínimo: $50
-Máximo: $200
+Mín: $50
+Máx: $200
 ```
 
 ---
 
-### Rango de Peso del Carrito
+### Rango de peso del carrito
 
-- **Peso mínimo**: El peso total del carrito debe ser ≥ monto
-- **Peso máximo**: El peso total del carrito debe ser ≤ monto
-- **Casos de uso**: Descuentos para envíos ligeros, recargos por artículos pesados
+- **Peso mínimo**: El peso total del carrito debe ser ≥ cantidad
+- **Peso máximo**: El peso total del carrito debe ser ≤ cantidad
+- **Caso de uso**: Descuentos para envíos ligeros, recargos por artículos pesados
 
-**Ejemplo**: Recargo de $5 para pedidos superiores a 20kg
+**Ejemplo**: Recargo de $5 para pedidos de más de 20kg
 ```
 Peso mínimo: 20kg
 Peso máximo: null (ilimitado)
@@ -178,401 +178,387 @@ Peso máximo: null (ilimitado)
 
 ---
 
-### Rango de Cantidad de Items
+### Rango de cantidad de artículos
 
-- **Cantidad mínima de items**: El carrito debe tener ≥ cantidad de artículos
-- **Cantidad máxima de items**: El carrito debe tener ≤ cantidad de artículos
-- **Casos de uso**: Descuentos por pedidos en cantidad, tarifas por artículos únicos
+- **Mínimo de artículos**: El carrito debe tener ≥ cantidad de artículos
+- **Máximo de artículos**: El carrito debe tener ≤ cantidad de artículos
+- **Escenario de uso**: Descuentos por pedido mayor, tarifas por artículo único
 
-**Ejemplo**: Envío gratuito para 5+ artículos
+**Ejemplo**: Envío gratis para 5+ artículos
 ```
-Items mínimos: 5
-Items máximos: null
+Mínimos de artículos: 5
+Máximos de artículos: null
 ```
 
----
 
-### Zona de Envío
+### Zona de envío
 
 - **Zonas**: La regla solo se aplica si la dirección del cliente coincide con al menos una zona seleccionada
 - **Selección vacía**: La regla se aplica a TODAS las zonas
-- **Casos de uso**: Recargos o descuentos específicos de zona
+- **Escenario de uso**: Recargos o descuentos específicos de zona
 
-**Ejemplo**: Envío gratuito solo para la zona nacional
+**Ejemplo**: Envío gratis solo para la zona Nacional
 ```
-Zonas: ["Zona Nacional de EE.UU."]
+Zonas: ["Zona Nacional"]
 ```
 
----
 
-### Método de Envío
+### Método de envío
 
 - **Métodos**: La regla solo se aplica a métodos de envío específicos
 - **Selección vacía**: La regla se aplica a TODOS los métodos
-- **Casos de uso**: Promociones específicas de método
+- **Escenario de uso**: Promociones específicas del método
 
-**Ejemplo**: 25% de descuento en envío exprés
+**Ejemplo**: 25% de descuento en envío urgente
 ```
-Métodos: ["Envío Exprés"]
-```
-
----
-
-### Requisitos de Producto
-
-**Requiere productos**: El carrito debe contener al menos uno de estos productos
-
-**Requiere categorías**: El carrito debe contener al menos un producto de estas categorías
-
-**Casos de uso**: Envío gratuito específico de producto, paquetes promocionales
-
-**Ejemplo**: Envío gratuito cuando el carrito contiene "Artículo Promocional A"
-```
-Requiere productos: [ID de producto 123]
+Métodos: ["Entrega urgente"]
 ```
 
----
 
-### Exclusiones de Producto
+### Requisitos de producto
 
-**Excluye productos**: La regla no se aplica si el carrito contiene cualquiera de estos productos
+**Productos requeridos**: El carrito debe contener al menos uno de estos productos
 
-**Excluye categorías**: La regla no se aplica si el carrito contiene cualquier producto de estas categorías
+**Categorías requeridas**: El carrito debe contener al menos un producto de estas categorías
 
-**Casos de uso**: Excluir artículos pesados o de gran tamaño del envío gratuito
+**Escenario de uso**: Envío gratis específico del producto, paquetes promocionales
 
-**Ejemplo**: Envío gratuito excepto para la categoría de muebles
+**Ejemplo**: Envío gratis cuando el carrito contenga "Producto de promoción A"
 ```
-Excluye categorías: [Muebles]
+Productos requeridos: [ID de producto 123]
 ```
 
----
 
-### Grupo de Cliente
+### Exclusiones de producto
 
-- **Grupos de clientes**: La regla solo se aplica a clientes en grupos seleccionados (VIP, Mayorista, etc.)
+**Productos excluidos**: La regla no se aplica si el carrito contiene alguno de estos productos
+
+**Categorías excluidas**: La regla no se aplica si el carrito contiene productos de estas categorías
+
+**Escenario de uso**: Excluir artículos pesados/u oversized del envío gratis
+
+**Ejemplo**: Envío gratis excepto por la categoría de muebles
+```
+Categorías excluidas: [Muebles]
+```
+
+
+### Grupo de clientes
+
+- **Grupos de clientes**: La regla solo se aplica a los clientes en los grupos seleccionados (VIP, mayorista, etc.)
 - **Selección vacía**: La regla se aplica a TODOS los grupos de clientes
-- **Casos de uso**: Beneficios VIP, descuentos mayoristas
+- **Escenario de uso**: Beneficios para clientes VIP, descuentos al por mayor
 
 **Ejemplo**: Descuento del 15% en envío para miembros VIP
 ```
 Grupos de clientes: ["VIP"]
 ```
 
----
 
-### Cliente Primero
+### Cliente por primera vez
 
-- **Cliente primero**: Conmutador para restringir la regla a clientes sin pedidos anteriores
-- **Casos de uso**: Ofertas de bienvenida para nuevos clientes
+- **Cliente por primera vez**: Conmutador para restringir la regla a los clientes sin pedidos anteriores
+- **Escenario de uso**: Ofertas de bienvenida para nuevos clientes
 
-**Ejemplo**: $5 de descuento en envío para primer pedido
+**Ejemplo**: $5 de descuento en envío para el primer pedido
 ```
-Cliente primero: Sí
+Cliente por primera vez: Sí
 ```
 
----
 
-## Prioridad y Ejecución de Reglas
+## Prioridad de regla y ejecución
 
-Las reglas se ejecutan en **orden de prioridad** (número más alto = ejecución más temprana):
+Las reglas se ejecutan en orden de **prioridad** (número más alto = ejecución más temprana):
 
-### Mecánica de Prioridad
+### Mecánica de prioridad
 
 **Ejecución de ejemplo**:
 ```
-Regla A (Prioridad 100): Envío gratuito si el carrito > $50
-Regla B (Prioridad 50): 10% de descuento en todos los envíos
-Regla C (Prioridad 1): $2 de recargo para zonas remotas
+Regla A (Prioridad 100): Envío gratis si el carrito > $50
+Regla B (Prioridad 50): 10% de descuento en todo el envío
+Regla C (Prioridad 1): Recargo de $2 para zonas remotas
 
 Carrito: $60, zona remota
 Costo base de envío: $15
 
-Paso 1: Evalúa Regla A (Prioridad 100)
-  Carrito > $50? SÍ
+Paso 1: Evaluar Regla A (Prioridad 100)
+  ¿Carrito > $50? SÍ
   Aplicar: Establecer costo a $0
   Costo ahora: $0
 
-Paso 2: Evalúa Regla B (Prioridad 50)
+Paso 2: Evaluar Regla B (Prioridad 50)
   Aplicar 10% de descuento a $0
-  Costo ahora: $0 (aún gratuito)
+  Costo ahora: $0 (todavía gratis)
 
-Paso 3: Evalúa Regla C (Prioridad 1)
-  Añadir $2 de recargo a $0
+Paso 3: Evaluar Regla C (Prioridad 1)
+  Añadir recargo de $2 a $0
   Costo ahora: $2
 
 Costo final: $2
 ```
 
-**Bandera de detener reglas adicionales**:
+**Bandera de detener reglas posteriores**:
 
 Si la Regla A tiene `stop_further_rules = True`:
 ```
-Regla A (Prioridad 100, stop_further_rules=True): Envío gratuito si el carrito > $50
-Regla B (Prioridad 50): 10% de descuento
-Regla C (Prioridad 1): $2 de recargo
+Regla A (Prioridad 100, stop_further_rules=True): Envío gratis si el carrito > $50
+Regla B (Prioridad 50): 10% de descuento en todo el envío
+Regla C (Prioridad 1): Recargo de $2 para zonas remotas
 
 Carrito: $60
-Costo base: $15
+Base: $15
 
-Paso 1: Aplica Regla A, establece costo a $0
+Paso 1: Regla A se aplica, establece costo a $0
         stop_further_rules = True → DETENER
 
 Costo final: $0 (Reglas B y C nunca se ejecutan)
 ```
 
----
 
-## Crear Reglas de Envío
+## Creando reglas de envío
 
 **Flujo de trabajo paso a paso**:
 
 1. **Navegar a Reglas**
-   - Configuración > Envío > Reglas de Envío
-   - Haga clic en "Añadir Regla de Envío"
+   - Configuración > Envío > Reglas de envío
+   - Haga clic en "Añadir regla de envío"
 
-2. **Configuración Básica**
-   - **Nombre**: Identificador interno (ejemplo: "Envío Gratuito por encima de $50")
-   - **Descripción**: Notas opcionales (no se muestran a los clientes)
-   - **Activo**: Conmutador para habilitar/deshabilitar
-   - **Prioridad**: Establecer orden de ejecución (100 para alta prioridad, 1 para baja)
+2. **Configuración básica**
+   - **Nombre**: identificador interno (ej.: "Envío gratis sobre $50")
+   - **Descripción**: notas opcionales (no mostradas a los clientes)
+   - **Activo**: conmutador para habilitar/deshabilitar
+   - **Prioridad**: Establezca el orden de ejecución (100 para alta prioridad, 1 para baja)
 
-3. **Elegir Tipo de Regla**
-   - Seleccionar tipo de ajuste (descuento %, descuento fijo, costo fijo, gratuito, recargo %, recargo fijo)
-   - Ingresar monto o porcentaje
+3. **Elija el tipo de regla**
+   - Seleccione el tipo de ajuste (porcentaje de descuento, descuento fijo, costo fijo, gratis, porcentaje de recargo, recargo fijo)
+   - Ingrese monto o porcentaje
 
-4. **Establecer Bandera de Parada** (Opcional)
-   - Marcar "Detener Reglas Adicionales" si esta regla debe prevenir que las reglas de menor prioridad se ejecuten
-   - Usar para reglas finales/absolutas (ejemplo: el envío gratuito no debe tener recargos añadidos después)
+4. **Establezca la bandera de detención** (Opcional)
+   - Marque "Detener reglas posteriores" si esta regla debe evitar que reglas de menor prioridad se ejecuten
+   - Úselo para reglas finales/absolutas (ej.: el envío gratis no debe tener recargos posteriores)
 
-5. **Definir Condiciones** (Opcional - dejar vacío para "siempre aplicar")
-   - Validez de tiempo: Fechas de inicio y fin
-   - Valor del carrito: Mínimo/máximo
-   - Peso del carrito: Mínimo/máximo
-   - Cantidad de items: Mínimo/máximo
-   - Zonas: Seleccionar zonas aplicables
-   - Métodos: Seleccionar métodos aplicables
-   - Productos: Requeridos o excluidos
-   - Cliente: Grupos o solo primeros clientes
+5. **Definir condiciones** (Opcional - dejar en blanco para "aplicar siempre")
+  - Validez del tiempo: Fechas de inicio/fin
+  - Valor del carrito: Mínimo/máximo
+  - Peso del carrito: Mínimo/máximo
+  - Cantidad de artículos: Mínimo/máximo
+  - Zonas: Seleccionar zonas aplicables
+  - Métodos: Seleccionar métodos aplicables
+  - Productos: Requeridos o excluidos
+  - Clientes: Grupos o solo primeras veces
 
-6. **Guardar Regla**
-   - Haga clic en Guardar
-   - La regla se activa inmediatamente (si el conmutador de activo está en Sí)
+6. **Guardar regla**
+  - Haga clic en Guardar
+  - La regla se activa inmediatamente (si el interruptor de activo está en Sí)
 
----
 
-## Escenarios Comunes de Reglas de Envío
+## Escenarios comunes de reglas de envío
 
-### Escenario 1: Envío Gratuito por encima de $50
+### Escenario 1: Envío gratis por encima de $50
 
-**Objetivo**: Ofrecer envío gratuito cuando el subtotal del carrito sea ≥ $50.
+**Objetivo**: Ofrecer envío gratis cuando el subtotal del carrito ≥ $50.
 
 **Configuración**:
 ```
-Nombre: Envío Gratuito por encima de $50
-Tipo: Envío Gratuito
+Nombre: Envío gratis por encima de $50
+Tipo: Envío gratis
 Prioridad: 100
 Condiciones:
   Valor mínimo del carrito: $50
-Detener reglas adicionales: Sí
+Detener reglas posteriores: Sí
 ```
 
----
 
-### Escenario 2: Recargo por Zonas Remotas
+### Escenario 2: Recargo por zona remota
 
-**Objetivo**: Añadir un recargo de $10 para entregas a zonas remotas.
+**Objetivo**: Añadir un recargo de $10 para entregas en zonas remotas.
 
 **Configuración**:
 ```
-Nombre: Recargo por Zonas Remotas
+Nombre: Recargo por zona remota
 Tipo: Recargo (Fijo)
 Monto: $10
 Prioridad: 50
 Condiciones:
-  Zonas: ["Zonas Remotas"]
-Detener reglas adicionales: No
+  Zonas: ["Zonas remotas"]
+Detener reglas posteriores: No
 ```
 
----
 
-### Escenario 3: Descuento del 20% para Clientes VIP
+### Escenario 3: Descuento del 20% para clientes VIP
 
 **Objetivo**: Los clientes VIP obtienen un 20% de descuento en todos los envíos.
 
 **Configuración**:
 ```
-Nombre: Descuento de Envío para VIP
+Nombre: Descuento de envío para VIP
 Tipo: Descuento (Porcentaje)
 Porcentaje: 20
 Prioridad: 75
 Condiciones:
   Grupos de clientes: ["VIP"]
-Detener reglas adicionales: No
+Detener reglas posteriores: No
 ```
 
----
 
-### Escenario 4: Tarifa Plana de Diciembre
+### Escenario 4: Tarifa plana de Navidad
 
-**Objetivo**: Limitar todos los envíos a $9.99 durante diciembre.
+**Objetivo**: Todos los envíos con un límite de $9.99 durante diciembre.
 
 **Configuración**:
 ```
-Nombre: Promoción de Tarifa Plana de Diciembre
-Tipo: Establecer Costo
+Nombre: Promoción de tarifa plana de diciembre
+Tipo: Costo fijo
 Monto: $9.99
 Prioridad: 100
 Condiciones:
   Fecha de inicio: 2026-12-01
-  Fecha de fin: 2026-12-31
-Detener reglas adicionales: Sí
+  Fecha final: 2026-12-31
+Detener reglas posteriores: Sí
 ```
 
----
 
-### Escenario 5: Recargo por Artículos Pesados
+### Escenario 5: Recargo por artículo pesado
 
-**Objetivo**: Añadir una tarifa de $15 para pedidos superiores a 25kg.
+**Objetivo**: Añadir un cargo de $15 para pedidos de más de 25kg.
 
 **Configuración**:
 ```
-Nombre: Recargo por Pedidos Pesados
+Nombre: Recargo por pedido pesado
 Tipo: Recargo (Fijo)
 Monto: $15
 Prioridad: 50
 Condiciones:
   Peso mínimo: 25kg
-Detener reglas adicionales: No
+Detener reglas posteriores: No
 ```
 
----
 
-### Escenario 6: Envío Gratuito en Primer Pedido
+### Escenario 6: Envío gratis para primer pedido
 
-**Objetivo**: Los nuevos clientes obtienen envío gratuito en su primer pedido.
+**Objetivo**: Los clientes nuevos obtienen envío gratis en su primer pedido.
 
 **Configuración**:
 ```
-Nombre: Envío Gratuito en Primer Pedido
-Tipo: Envío Gratuito
+Nombre: Envío gratis para primer pedido
+Tipo: Envío gratis
 Prioridad: 100
 Condiciones:
-  Cliente primero: Sí
-Detener reglas adicionales: Sí
+  Cliente nuevo: Sí
+Detener reglas posteriores: Sí
 ```
 
----
 
-### Escenario 7: Envío Gratuito por Categoría
+### Escenario 7: Envío gratis específico por categoría
 
-**Objetivo**: Envío gratuito para pedidos que contengan artículos de la categoría promocional.
+**Objetivo**: Envío gratis para pedidos que contengan artículos de categoría promocional.
 
 **Configuración**:
 ```
-Nombre: Envío Gratuito para Categoría Promocional
-Tipo: Envío Gratuito
+Nombre: Envío gratis por categoría promocional
+Tipo: Envío gratis
 Prioridad: 90
 Condiciones:
-  Requiere categorías: ["Promociones"]
-Detener reglas adicionales: Sí
+  Categorías requeridas: ["Promociones"]
+Detener reglas posteriores: Sí
 ```
 
----
 
-### Escenario 8: Excluir Muebles del Envío Gratuito
+### Escenario 8: Excluir muebles del envío gratis
 
-**Objetivo**: Envío gratuito por encima de $50, excepto si el carrito contiene muebles.
+**Objetivo**: Envío gratis por encima de $50, excepto si el carrito contiene muebles.
 
 **Solución**: Dos reglas
 
 **Regla 1**:
 ```
-Nombre: Envío Gratuito General
-Tipo: Envío Gratuito
+Nombre: Envío gratis general
+Tipo: Envío gratis
 Prioridad: 50
 Condiciones:
   Valor mínimo del carrito: $50
-  Excluye categorías: ["Muebles"]
-Detener reglas adicionales: No
+  Categorías excluidas: ["Muebles"]
+Detener reglas posteriores: No
 ```
 
 **Regla 2**:
 ```
-Nombre: Descuento de $5 para Pedidos de Muebles
+Nombre: Descuento de $5 para pedidos de muebles
 Tipo: Descuento (Fijo)
 Monto: $5
 Prioridad: 40
 Condiciones:
-  Requiere categorías: ["Muebles"]
+  Categorías requeridas: ["Muebles"]
   Valor mínimo del carrito: $50
-Detener reglas adicionales: No
+Detener reglas posteriores: No
 ```
 
----
 
-## Estrategias de Combinación de Reglas
+## Estrategias de combinación de reglas
 
-### Estrategia 1: Apilamiento de Descuentos
+### Estrategia 1: Descuentos acumulables
 
-**Permitir que múltiples descuentos se apilen**:
+**Permitir que varios descuentos se acumulen**:
 ```
 Regla A (Prioridad 100): 10% de descuento para VIP → stop_further_rules=No
-Regla B (Prioridad 50): 15% de descuento para pedidos >$100 → stop_further_rules=No
+Regla B (Prioridad 50): 15% de descuento en pedidos >$100 → stop_further_rules=No
 
 Cliente VIP con pedido de $120:
-Costo base: $15
-Después de Regla A: $13.50 (10% de descuento)
-Después de Regla B: $11.48 (15% de descuento de $13.50)
+Base: $15
+Después de la Regla A: $13.50 (10% de descuento)
+Después de la Regla B: $11.48 (15% de descuento de $13.50)
 ```
 
-### Estrategia 2: Reglas Exclusivas
 
-**Solo una regla se aplica** (prioridad más alta):
+### Estrategia 2: Reglas exclusivas
+
+**Solo se aplica una regla** (prioridad más alta):
 ```
-Regla A (Prioridad 100): Envío gratuito >$50 → stop_further_rules=Yes
-Regla B (Prioridad 50): 20% de descuento en todos los envíos → stop_further_rules=Yes
+Regla A (Prioridad 100): Envío gratis >$50 → stop_further_rules=Sí
+Regla B (Prioridad 50): 20% de descuento en todos los envíos → stop_further_rules=Sí
 
 Carrito > $50:
-Regla A aplica → Envío gratuito → DETENER
-Regla B nunca se ejecuta
+La Regla A se aplica → Envío gratis → DETENER
+La Regla B nunca se ejecuta
 ```
 
-### Estrategia 3: Recargos Condicionales
+
+### Estrategia 3: Recargos condicionales
 
 **Descuentos primero, recargos al final**:
 ```
-Regla A (Prioridad 100): Envío gratuito >$75
-Regla B (Prioridad 75): 15% de descuento VIP
+Regla A (Prioridad 100): Envío gratis >$75
+Regla B (Prioridad 75): 15% de descuento para VIP
 Regla C (Prioridad 50): 10% de descuento general
-Regla D (Prioridad 25): $5 de recargo para zonas remotas
-Regla E (Prioridad 1): 10% de recargo por combustible
+Regla D (Prioridad 25): Recargo de $5 por zona remota
+Regla E (Prioridad 1): Recargo del 10% por combustible
 
 Pedido: $80, zona remota, cliente VIP
-Costo base: $20
-A: $80 > $75 → Gratuito ($0)
+Base: $20
+A: $80 > $75 → Gratis ($0)
 B: VIP → 15% de descuento de $0 = $0
 C: 10% de descuento de $0 = $0
 D: Zona remota +$5 = $5
 E: Combustible +10% de $5 = $5.50
-
-Final: $5.50 (no gratuito debido a recargos)
 ```
 
-**Para prevenir esto, use stop_further_rules=Yes**:
+Final: $5.50 (no es gratis debido a recargos)
 ```
-Regla A (Prioridad 100, stop=Yes): Envío gratuito >$75
+
+**Para evitar esto, use stop_further_rules=Si**:
+```
+Regla A (Prioridad 100, stop=Si): Envío gratis >$75
 
 Mismo pedido:
-A: $80 > $75 → Gratuito ($0) → DETENER
-Final: $0 (verdaderamente gratuito)
+A: $80 > $75 → Gratis ($0) → DETENER
+Final: $0 (verdaderamente gratis)
 ```
 
 ---
 
-## Pruebas de Reglas de Envío
+## Prueba de reglas de envío
 
-**Antes de ir en vivo**:
+**Antes de ir a producción**:
 
 1. **Crear carritos de prueba**
    - Carrito A: $25 (por debajo del umbral)
@@ -581,71 +567,69 @@ Final: $0 (verdaderamente gratuito)
    - Carrito D: Cliente VIP
 
 2. **Probar cada regla**
-   - Proceder al checkout
+   - Proceder al pago
    - Verificar que se muestre el costo de envío correcto
-   - Revisar el orden de ejecución de las reglas
+   - Comprobar el orden de ejecución de la regla
 
-3. **Probar resolución de prioridad**
-   - Múltiples reglas coincidentes
-   - Verificar que la prioridad más alta se ejecute primero
-   - Revisar el comportamiento de stop_further_rules
+3. **Probar la resolución de prioridad**
+   - Múltiples reglas que coinciden
+   - Verificar que se ejecute primero la prioridad más alta
+   - Comprobar el comportamiento de stop_further_rules
 
 4. **Probar casos límite**
    - Valor del carrito exactamente en el umbral
-   - Múltiples condiciones coincidentes
-   - Reglas conflictivas
+   - Múltiples condiciones que coinciden
+   - Reglas que se contradicen
 
 ---
 
-## Solución de Problemas
+## Solución de problemas
 
-**Problema 1: Regla no se aplica**
+**Problema 1: La regla no se aplica**
 
 **Causas**:
 - La regla está inactiva
 - Una o más condiciones no se cumplen
-- Una regla de mayor prioridad establece stop_further_rules=Yes
-- Validez de tiempo fuera de la fecha actual
+- Una regla de mayor prioridad establece stop_further_rules=Si
+- El período de validez está fuera del período actual
 
-**Solución**: Revisar todas las condiciones, verificar la prioridad, verificar el estado activo.
+**Solución**: Revise todas las condiciones, verifique la prioridad y confirme el estado activo.
 
 ---
 
-**Problema 2: Monto de descuento inesperado**
+**Problema 2: Monto del descuento inesperado**
 
 **Causas**:
-- Múltiples reglas apilándose
-- Porcentaje aplicado a un costo ya descontado
+- Múltiples reglas que se acumulan
+- Porcentaje aplicado a un costo ya con descuento
 - Prioridad de regla incorrecta
 
-**Solución**: Verificar el orden de prioridad, revisar las banderas de stop_further_rules, rastrear la ejecución manualmente.
+**Solución**: Verifique el orden de prioridad, revise las banderas de stop_further_rules y trace manualmente la ejecución.
 
 ---
 
-**Problema 3: Envío gratuito no funciona**
+**Problema 3: El envío gratis no funciona**
 
 **Causas**:
-- Una regla de menor prioridad de recargo añade costo después de la regla de envío gratuito
-- El carrito no cumple con el umbral de valor mínimo
+- Una regla de recargo de menor prioridad agrega costo después de la regla de envío gratis
+- El carrito no cumple con el valor mínimo requerido
 - Productos excluidos en el carrito
 
-**Solución**: Usar stop_further_rules=Yes en la regla de envío gratuito, verificar condiciones, revisar exclusiones.
+**Solución**: Use stop_further_rules=Si en la regla de envío gratis, verifique las condiciones y compruebe las exclusiones.
 
 ---
 
 ## Consejos
 
-- **Usar alta prioridad para envío gratuito** - Prioridad 100 asegura que se ejecute antes que otros ajustes
-- **Establecer stop_further_rules para reglas absolutas** - El envío gratuito debe detener el procesamiento adicional
-- **Probar combinaciones de reglas** - Múltiples reglas pueden interactuar de manera inesperada
-- **Usar nombres descriptivos** - "Descuento del 20% para VIP (Prioridad 75)" es mejor que "Regla 3"
-- **Documentar lógica compleja** - Añadir notas en el campo de descripción
-- **Empezar con reglas simples** - Añadir complejidad gradualmente
-- **Monitorear el rendimiento de las reglas** - Verificar si las reglas se usan o causan confusión
-- **Evitar reglas excesivas** - Demasiadas reglas ralentizan el checkout, usar máximo 5-10
-- **Usar zonas para geografía** - Mejor que múltiples reglas similares por país
-- **Combinar con métodos** - Reglas + Métodos funcionan juntos para precios sofisticados
-- **Establecer ventanas de tiempo claras** - Incluir siempre fechas de fin para promociones
-- **Probar casos límite** - Exactamente $50, exactamente 5 artículos, etc.
-
-Recuerde: Preservar todo el formato de markdown, rutas de imágenes, bloques de código y términos técnicos exactamente como se muestran en las reglas de preservación.
+- **Use alta prioridad para el envío gratis** - Prioridad 100 asegura que se ejecute antes de otros ajustes
+- **Establezca stop_further_rules para reglas absolutas** - El envío gratis debe detener el procesamiento adicional
+- **Pruebe combinaciones de reglas** - Múltiples reglas pueden interactuar de manera inesperada
+- **Use nombres descriptivos** - "Descuento VIP 20% (Prioridad 75)" es mejor que "Regla 3"
+- **Documente lógica compleja** - Agregue notas en el campo de descripción
+- **Comience con reglas simples** - Añada complejidad gradualmente
+- **Supervise el rendimiento de las reglas** - Verifique si las reglas se están usando o causando confusión
+- **Evite exceso de reglas** - Demasiadas reglas ralentizan el pago, use un máximo de 5-10
+- **Use zonas para geografía** - Mejor que múltiples reglas similares por país
+- **Combine con métodos** - Las reglas + Métodos trabajan juntos para precios sofisticados
+- **Establezca ventanas de tiempo claras** - Siempre incluya fechas de finalización para promociones
+- **Pruebe casos límite** - Exactamente $50, exactamente 5 artículos, etc.

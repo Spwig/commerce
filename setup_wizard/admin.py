@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import SetupProgress
@@ -235,7 +236,7 @@ class SetupProgressAdmin(admin.ModelAdmin):
                 )
             )
 
-        return format_html("".join(str(h) for h in items_html))
+        return mark_safe("".join(str(h) for h in items_html))
 
     def essential_items_status(self, obj):
         """Display essential setup items status"""

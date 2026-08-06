@@ -1,5 +1,5 @@
 {% extends "page_builder/base.html" %}
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans media_picture %}
 
 {% block title %}
 {% if category %}{{ category.name }} - {% endif %}{% mtrans 'Categories' %} - {{ site_settings.site_name|default:'Shop' }}
@@ -48,7 +48,7 @@
 {% with banner_url=category.get_banner_url %}
 {% if banner_url %}
 <section class="cat-banner">
-    <img src="{{ banner_url }}" alt="{{ category.name }}" class="cat-banner__image" loading="eager">
+    {% picture banner_url alt=category.name css="cat-banner__image" loading="eager" %}
     <div class="cat-banner__overlay"></div>
     <div class="cat-banner__content container">
         <h1 class="cat-banner__title">{{ category.name }}</h1>
@@ -100,7 +100,7 @@
                         {% if template_options.card_image_fallback == 'product' %}
                             {% with cat.get_card_image_thumbnail as img_url %}
                             {% if img_url %}
-                                <img src="{{ img_url }}" alt="{{ cat.name }}" class="category-card__image" loading="lazy">
+                                {% picture img_url alt=cat.name css="category-card__image" %}
                             {% else %}
                                 <div class="category-card__placeholder">
                                     <i class="fas fa-folder"></i>
@@ -110,7 +110,7 @@
                         {% else %}
                             {% with cat.get_image_thumbnail as img_url %}
                             {% if img_url %}
-                                <img src="{{ img_url }}" alt="{{ cat.name }}" class="category-card__image" loading="lazy">
+                                {% picture img_url alt=cat.name css="category-card__image" %}
                             {% else %}
                                 <div class="category-card__placeholder">
                                     <i class="fas fa-folder"></i>
@@ -183,6 +183,8 @@
             </div>
         </div>
         {% endif %}
+
+        {% include 'page_builder/partials/_region_banner.html' %}
 
         <!-- Product Display (template-specific) -->
         {% block product_display %}

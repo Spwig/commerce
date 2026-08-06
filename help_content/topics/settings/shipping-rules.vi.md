@@ -2,147 +2,147 @@
 title: Quy tắc vận chuyển
 ---
 
-Các quy tắc vận chuyển áp dụng các điều chỉnh chi phí có điều kiện cho các phương thức vận chuyển dựa trên nội dung giỏ hàng, thuộc tính khách hàng và khu vực giao hàng - tự động cung cấp vận chuyển miễn phí cho đơn hàng trên $50, thêm phụ phí cho khu vực hẻo lánh hoặc giảm giá vận chuyển cho khách hàng VIP. Các quy tắc sử dụng việc thực thi dựa trên độ ưu tiên (ưu tiên cao trước) với tùy chọn cờ dừng để ngăn xử lý tiếp theo. Mỗi quy tắc đánh giá nhiều điều kiện (giá trị giỏ hàng, trọng lượng, khu vực, sản phẩm, nhóm khách hàng) và thực thi một trong 6 loại điều chỉnh khi tất cả điều kiện khớp.
+Các quy tắc vận chuyển áp dụng các điều chỉnh chi phí dựa trên nội dung giỏ hàng, thuộc tính khách hàng và khu vực giao hàng—tự động cung cấp vận chuyển miễn phí khi hóa đơn trên $50, thêm phí cho khu vực hẻo lánh, hoặc giảm giá vận chuyển cho khách hàng VIP. Các quy tắc sử dụng trình tự ưu tiên (ưu tiên cao hơn trước) với cờ dừng tùy chọn để ngăn việc xử lý tiếp theo. Mỗi quy tắc đánh giá nhiều điều kiện (giá trị giỏ hàng, trọng lượng, khu vực, sản phẩm, nhóm khách hàng) và thực hiện một trong 6 loại điều chỉnh khi tất cả các điều kiện khớp nhau.
 
-Sử dụng quy tắc vận chuyển khi bạn cần chi phí vận chuyển động thay đổi dựa trên ngữ cảnh đơn hàng, không chỉ là tỷ lệ cố định từ phương thức vận chuyển.
+Sử dụng các quy tắc vận chuyển khi bạn cần chi phí vận chuyển động, thay đổi dựa trên bối cảnh đơn hàng, không chỉ các mức giá cố định từ phương thức vận chuyển.
 
-## Loại quy tắc vận chuyển
+## Các loại quy tắc vận chuyển
 
-Các quy tắc áp dụng 6 loại điều chỉnh chi phí:
+Các quy tắc vận chuyển áp dụng 6 loại điều chỉnh chi phí:
 
-### Giảm giá phần trăm
+### Giảm giá theo phần trăm
 
-**Chức năng**: Giảm chi phí vận chuyển theo tỷ lệ phần trăm (ví dụ: giảm 25%)
+**Nó làm gì**: Giảm chi phí vận chuyển theo phần trăm (ví dụ: 25% off).
 
 **Công thức**: `new_cost = base_cost × (1 - percent/100)`
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $20
-Giảm giá: 25%
+Chi phí cơ sở: $20
+Chiết khấu: 25%
 Kết quả: $15
 ```
 
 **Trường hợp sử dụng**:
-- Giảm giá vận chuyển cho khách hàng VIP (giảm 20% cho tất cả vận chuyển)
-- Khuyến mãi theo mùa (giảm 15% vận chuyển trong tháng 12)
-- Giảm giá vận chuyển cho đơn hàng số lượng lớn (giảm 10% vận chuyển cho 5+ mặt hàng)
+- Giảm giá cho khách hàng VIP (20% off tất cả chi phí vận chuyển)
+- Chiến dịch theo mùa (15% off vận chuyển vào tháng 12)
+- Giảm giá theo số lượng (10% off vận chuyển cho 5+ mặt hàng)
 
 ---
 
 ### Giảm giá cố định
 
-**Chức năng**: Trừ một khoản cố định khỏi chi phí vận chuyển.
+**Nó làm gì**: Trừ một khoản cố định khỏi chi phí vận chuyển.
 
 **Công thức**: `new_cost = base_cost - amount` (tối thiểu $0)
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $15
-Giảm giá: $5
+Chi phí cơ sở: $15
+Chiết khấu: $5
 Kết quả: $10
 ```
 
 **Trường hợp sử dụng**:
-- Ưu đãi cho khách hàng mới (giảm $5 phí vận chuyển cho đơn hàng đầu tiên)
-- Phần thưởng đăng ký bản tin (giảm $3 phí vận chuyển)
-- Lợi ích chương trình khách hàng thân thiết (giảm $10 phí vận chuyển mỗi tháng)
+- Thưởng cho khách hàng lần đầu ($5 off chi phí vận chuyển đơn hàng đầu tiên)
+- Phần thưởng đăng ký bản tin ($3 off vận chuyển)
+- Lợi ích chương trình trung thành ($10 off vận chuyển mỗi tháng)
 
 ---
 
-### Đặt chi phí
+### Thiết lập chi phí
 
-**Chức năng**: Ghi đè chi phí vận chuyển thành một số cụ thể.
+**Nó làm gì**: Ghi đè chi phí vận chuyển thành số tiền cụ thể.
 
 **Công thức**: `new_cost = fixed_amount`
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $25
-Đặt thành: $9.99
+Chi phí cơ sở: $25
+Thiết lập thành: $9.99
 Kết quả: $9.99
 ```
 
 **Trường hợp sử dụng**:
-- Khuyến mãi flash (phí vận chuyển cố định $5 cho tất cả đơn hàng hôm nay)
-- Vận chuyển theo danh mục cụ thể (sách luôn có phí vận chuyển $3.99)
-- Khuyến mãi theo thời gian (phí vận chuyển tối đa $9.99 trong tuần này)
+- Cuộc sale nhanh (giá cố định $5 cho tất cả đơn hàng hôm nay)
+- Vận chuyển theo danh mục (sách luôn có giá $3.99 cho vận chuyển)
+- Chiến dịch dựa trên thời gian (giá vận chuyển tối đa $9.99 trong tuần này)
 
 ---
 
 ### Vận chuyển miễn phí
 
-**Chức năng**: Đặt chi phí vận chuyển thành $0.
+**Nó làm gì**: Thiết lập chi phí vận chuyển thành $0.
 
 **Công thức**: `new_cost = $0`
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $18
+Chi phí cơ sở: $18
 Quy tắc áp dụng
 Kết quả: $0
 ```
 
 **Trường hợp sử dụng**:
-- Vận chuyển miễn phí cho đơn hàng trên $50
-- Vận chuyển miễn phí cho sản phẩm cụ thể (sản phẩm khuyến mãi)
+- Vận chuyển miễn phí khi hóa đơn trên $50
+- Vận chuyển miễn phí cho các sản phẩm cụ thể (mặt hàng khuyến mãi)
 - Vận chuyển miễn phí cho khách hàng VIP
 - Vận chuyển miễn phí cho đơn hàng có 3+ mặt hàng
 
 ---
 
-### Phụ phí (Cố định)
+### Phí phụ trội (Cố định)
 
-**Chức năng**: Thêm một khoản cố định vào chi phí vận chuyển.
+**Nó làm gì**: Thêm khoản cố định vào chi phí vận chuyển.
 
 **Công thức**: `new_cost = base_cost + amount`
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $12
-Phụ phí: $5
+Chi phí cơ sở: $12
+Phí phụ trội: $5
 Kết quả: $17
 ```
 
 **Trường hợp sử dụng**:
-- Phí giao hàng khu vực hẻo lánh
-- Phí xử lý mặt hàng cồng kềnh
-- Phụ phí giao hàng thứ Bảy
-- Phí đóng gói mặt hàng dễ vỡ
+- Phí giao hàng đến khu vực hẻo lánh
+- Phí xử lý hàng cồng kềnh
+- Phí giao hàng vào thứ Bảy
+- Phí đóng gói hàng dễ vỡ
 
 ---
 
-### Phụ phí (Phần trăm)
+### Phí phụ trội (Phần trăm)
 
-**Chức năng**: Tăng chi phí vận chuyển theo tỷ lệ phần trăm.
+**Nó làm gì**: Tăng chi phí vận chuyển theo phần trăm.
 
 **Công thức**: `new_cost = base_cost × (1 + percent/100)`
 
 **Ví dụ**:
 ```
-Chi phí cơ bản: $20
-Phụ phí: 15%
+Chi phí cơ sở: $20
+Phí phụ trội: 15%
 Kết quả: $23
 ```
 
 **Trường hợp sử dụng**:
-- Phụ phí cao điểm (20% trong dịp lễ)
-- Phụ phí giao hàng nhanh (phụ phí 50%)
-- Phụ phí nhiên liệu (biến đổi dựa trên tỷ lệ hiện tại)
+- Phí phụ trội vào mùa cao điểm (20% trong kỳ lễ)
+- Phí cao cho giao hàng nhanh (50% phụ trội)
+- Phí nhiên liệu (tùy theo giá hiện tại)
 
 ---
 
 ## Điều kiện quy tắc
 
-Các quy tắc đánh giá **Tất cả điều kiện phải được đáp ứng** để áp dụng quy tắc:
+Các quy tắc đánh giá **Tất cả các điều kiện phải đạt** để quy tắc được áp dụng:
 
-### Thời gian hiệu lực
+### Tính hợp lệ về thời gian
 
 - **Ngày bắt đầu**: Quy tắc chỉ hoạt động sau ngày này
 - **Ngày kết thúc**: Quy tắc chỉ hoạt động trước ngày này
-- **Trường hợp sử dụng**: Khuyến mãi theo mùa, ưu đãi giới hạn thời gian
+- **Trường hợp sử dụng**: Chiến dịch theo mùa, ưu đãi thời gian giới hạn
 
-**Ví dụ**: Vận chuyển miễn phí chỉ trong cuối tuần Black Friday
+**Ví dụ**: Vận chuyển miễn phí vào cuối tuần Black Friday
 ```
 Ngày bắt đầu: 2026-11-27 00:00
 Ngày kết thúc: 2026-11-30 23:59
@@ -150,13 +150,13 @@ Ngày kết thúc: 2026-11-30 23:59
 
 ---
 
-### Phạm vi giá trị giỏ hàng
+### Khoảng giá trị giỏ hàng
 
-- **Giá trị giỏ hàng tối thiểu**: Tổng giá giỏ hàng phải ≥ số tiền
-- **Giá trị giỏ hàng tối đa**: Tổng giá giỏ hàng phải ≤ số tiền
+- **Giá trị giỏ hàng tối thiểu**: Tổng giá trị giỏ hàng phải ≥ số tiền
+- **Giá trị giỏ hàng tối đa**: Tổng giá trị giỏ hàng phải ≤ số tiền
 - **Trường hợp sử dụng**: Ngưỡng vận chuyển miễn phí, giảm giá theo cấp bậc
 
-**Ví dụ**: Vận chuyển miễn phí cho đơn hàng từ $50 đến $200
+**Ví dụ**: Vận chuyển miễn phí cho đơn hàng $50-$200
 ```
 Giá trị tối thiểu: $50
 Giá trị tối đa: $200
@@ -164,13 +164,13 @@ Giá trị tối đa: $200
 
 ---
 
-### Phạm vi trọng lượng giỏ hàng
+### Khoảng trọng lượng giỏ hàng
 
-- **Trọng lượng tối thiểu**: Tổng trọng lượng giỏ hàng phải ≥ số tiền
-- **Trọng lượng tối đa**: Tổng trọng lượng giỏ hàng phải ≤ số tiền
-- **Trường hợp sử dụng**: Giảm giá cho hàng nhẹ, phụ phí cho mặt hàng nặng
+- **Trọng lượng tối thiểu**: Trọng lượng tổng giỏ hàng phải ≥ số tiền
+- **Trọng lượng tối đa**: Trọng lượng tổng giỏ hàng phải ≤ số tiền
+- **Trường hợp sử dụng**: Giảm giá vận chuyển cho hàng nhẹ, phí phụ trội cho hàng nặng
 
-**Ví dụ**: Phụ phí $5 cho đơn hàng trên 20kg
+**Ví dụ**: Phí phụ trội $5 cho đơn hàng trên 20kg
 ```
 Trọng lượng tối thiểu: 20kg
 Trọng lượng tối đa: null (không giới hạn)
@@ -178,474 +178,459 @@ Trọng lượng tối đa: null (không giới hạn)
 
 ---
 
-### Phạm vi số lượng mặt hàng
+### Khoảng số lượng mặt hàng
+
 
 - **Số lượng mặt hàng tối thiểu**: Giỏ hàng phải có ≥ số lượng mặt hàng
 - **Số lượng mặt hàng tối đa**: Giỏ hàng phải có ≤ số lượng mặt hàng
-- **Trường hợp sử dụng**: Giảm giá cho đơn hàng số lượng lớn, phí cho mặt hàng đơn lẻ
+- **Trường hợp sử dụng**: Giảm giá theo số lượng, phí cho mặt hàng duy nhất
 
-**Ví dụ**: Vận chuyển miễn phí cho 5+ mặt hàng
+**Ví dụ**: Miễn phí vận chuyển cho 5+ mặt hàng
 ```
-Số lượng mặt hàng tối thiểu: 5
-Số lượng mặt hàng tối đa: null
+Số lượng tối thiểu: 5
+Số lượng tối đa: null
 ```
 
----
 
 ### Khu vực vận chuyển
 
-- **Khu vực**: Quy tắc chỉ áp dụng nếu địa chỉ khách hàng khớp với ít nhất một khu vực đã chọn
-- **Không chọn gì**: Quy tắc áp dụng cho TẤT CẢ các khu vực
+- **Khu vực**: Quy tắc chỉ áp dụng nếu địa chỉ khách hàng khớp với ít nhất một khu vực được chọn
+- **Lựa chọn trống**: Quy tắc áp dụng cho TẤT CẢ các khu vực
 - **Trường hợp sử dụng**: Phụ phí hoặc giảm giá theo khu vực
 
-**Ví dụ**: Vận chuyển miễn phí chỉ cho khu vực Nội địa
+**Ví dụ**: Miễn phí vận chuyển cho khu vực Nội địa
 ```
-Khu vực: ["Domestic USA"]
+Khu vực: ["Khu vực Nội địa USA"]
 ```
 
----
 
 ### Phương thức vận chuyển
 
 - **Phương thức**: Quy tắc chỉ áp dụng cho các phương thức vận chuyển cụ thể
-- **Không chọn gì**: Quy tắc áp dụng cho TẤT CẢ các phương thức
-- **Trường hợp sử dụng**: Khuyến mãi theo phương thức vận chuyển
+- **Lựa chọn trống**: Quy tắc áp dụng cho TẤT CẢ các phương thức
+- **Trường hợp sử dụng**: Khuyến mãi theo phương thức
 
-**Ví dụ**: Giảm 25% cho phương thức Giao hàng Nhanh
+**Ví dụ**: Giảm 25% cho vận chuyển Giao hàng nhanh
 ```
-Phương thức: ["Express Delivery"]
+Phương thức: ["Giao hàng nhanh"]
 ```
 
----
 
 ### Yêu cầu sản phẩm
 
-**Yêu cầu sản phẩm**: Giỏ hàng phải chứa ít nhất một trong những sản phẩm này
+**Yêu cầu sản phẩm**: Giỏ hàng phải chứa ít nhất một sản phẩm trong số các sản phẩm này
 
-**Yêu cầu danh mục**: Giỏ hàng phải chứa ít nhất một sản phẩm từ những danh mục này
+**Yêu cầu danh mục**: Giỏ hàng phải chứa ít nhất một sản phẩm từ các danh mục này
 
-**Trường hợp sử dụng**: Vận chuyển miễn phí theo sản phẩm, bộ sản phẩm khuyến mãi
+**Trường hợp sử dụng**: Miễn phí vận chuyển cho sản phẩm cụ thể, bộ sản phẩm khuyến mãi
 
-**Ví dụ**: Vận chuyển miễn phí khi giỏ hàng chứa "Sản phẩm khuyến mãi A"
+**Ví dụ**: Miễn phí vận chuyển khi giỏ hàng chứa "Mặt hàng khuyến mãi A"
 ```
-Yêu cầu sản phẩm: [ID sản phẩm 123]
-```
-
----
-
-### Loại trừ sản phẩm
-
-**Loại trừ sản phẩm**: Quy tắc không áp dụng nếu giỏ hàng chứa bất kỳ sản phẩm nào trong số này
-
-**Loại trừ danh mục**: Quy tắc không áp dụng nếu giỏ hàng chứa bất kỳ sản phẩm nào từ những danh mục này
-
-**Trường hợp sử dụng**: Loại trừ các mặt hàng nặng/cồng kềnh khỏi vận chuyển miễn phí
-
-**Ví dụ**: Vận chuyển miễn phí ngoại trừ danh mục Nội thất
-```
-Loại trừ danh mục: [Nội thất]
+Yêu cầu sản phẩm: [Mã sản phẩm 123]
 ```
 
----
+
+### Loại bỏ sản phẩm
+
+**Loại bỏ sản phẩm**: Quy tắc không áp dụng nếu giỏ hàng chứa bất kỳ sản phẩm nào trong số các sản phẩm này
+
+**Loại bỏ danh mục**: Quy tắc không áp dụng nếu giỏ hàng chứa bất kỳ sản phẩm nào trong các danh mục này
+
+**Trường hợp sử dụng**: Loại bỏ các sản phẩm nặng/đa dạng kích thước khỏi phí vận chuyển miễn phí
+
+**Ví dụ**: Miễn phí vận chuyển trừ danh mục đồ nội thất
+```
+Loại bỏ danh mục: ["Đồ nội thất"]
+```
+
 
 ### Nhóm khách hàng
 
-- **Nhóm khách hàng**: Quy tắc chỉ áp dụng cho khách hàng trong các nhóm đã chọn (VIP, Bán buôn, v.v.)
-- **Không chọn gì**: Quy tắc áp dụng cho TẤT CẢ các nhóm khách hàng
-- **Trường hợp sử dụng**: Lợi ích VIP, giảm giá bán buôn
+- **Nhóm khách hàng**: Quy tắc chỉ áp dụng cho khách hàng trong các nhóm được chọn (VIP, Bán buôn, v.v.)
+- **Lựa chọn trống**: Quy tắc áp dụng cho TẤT CẢ các nhóm khách hàng
+- **Trường hợp sử dụng**: Ưu đãi cho khách hàng VIP, giảm giá bán buôn
 
 **Ví dụ**: Giảm 15% phí vận chuyển cho thành viên VIP
 ```
 Nhóm khách hàng: ["VIP"]
 ```
 
----
 
-### Khách hàng mới
+### Khách hàng lần đầu
 
-- **Khách hàng mới**: Chuyển đổi để giới hạn quy tắc chỉ áp dụng cho khách hàng không có đơn hàng trước
-- **Trường hợp sử dụng**: Ưu đãi chào mừng khách hàng mới
+- **Khách hàng lần đầu**: Bật tính năng giới hạn quy tắc cho khách hàng chưa có đơn hàng trước đây
+- **Trường hợp sử dụng**: Chương trình cảm ơn khách hàng mới
 
 **Ví dụ**: Giảm $5 phí vận chuyển cho đơn hàng đầu tiên
 ```
-Khách hàng mới: Có
+Khách hàng lần đầu: Có
 ```
 
----
 
-## Độ ưu tiên và thực thi quy tắc
+## Thứ tự ưu tiên và thực thi quy tắc
 
-Các quy tắc được thực thi theo **thứ tự ưu tiên** (số càng cao càng được thực thi trước):
+Các quy tắc được thực thi theo **thứ tự ưu tiên** (số lớn hơn = thực thi trước):
 
 ### Cơ chế ưu tiên
 
 **Ví dụ thực thi**:
 ```
-Quy tắc A (Ưu tiên 100): Vận chuyển miễn phí nếu giỏ hàng > $50
-Quy tắc B (Ưu tiên 50): Giảm 10% cho tất cả vận chuyển
-Quy tắc C (Ưu tiên 1): Phụ phí $2 cho khu vực hẻo lánh
+Quy tắc A (Ưu tiên 100): Miễn phí vận chuyển nếu giỏ hàng > $50
+Quy tắc B (Ưu tiên 50): Giảm 10% cho tất cả phí vận chuyển
+Quy tắc C (Ưu tiên 1): Phụ phí $2 cho các khu vực hẻo lánh
 
 Giỏ hàng: $60, Khu vực hẻo lánh
-Chi phí vận chuyển cơ bản: $15
+Phí vận chuyển cơ bản: $15
 
-Bước 1: Quy tắc A được đánh giá (Ưu tiên 100)
+Bước 1: Quy tắc A đánh giá (Ưu tiên 100)
   Giỏ hàng > $50? CÓ
-  Áp dụng: Đặt chi phí thành $0
+  Áp dụng: Thiết lập chi phí thành $0
   Chi phí hiện tại: $0
 
-Bước 2: Quy tắc B được đánh giá (Ưu tiên 50)
+Bước 2: Quy tắc B đánh giá (Ưu tiên 50)
   Áp dụng giảm 10% cho $0
-  Chi phí hiện tại: $0 (vẫn miễn phí)
+  Chi phí hiện tại: $0 ( vẫn miễn phí )
 
-Bước 3: Quy tắc C được đánh giá (Ưu tiên 1)
-  Thêm $2 phụ phí cho $0
+Bước 3: Quy tắc C đánh giá (Ưu tiên 1)
+  Thêm phụ phí $2 cho $0
   Chi phí hiện tại: $2
 
 Chi phí cuối cùng: $2
 ```
 
-**Cờ dừng quy tắc tiếp theo**:
+**Cờ Dừng Quy tắc Khác**:
 
 Nếu Quy tắc A có `stop_further_rules = True`:
 ```
-Quy tắc A (Ưu tiên 100, stop_further_rules=True): Vận chuyển miễn phí nếu giỏ hàng > $50
-Quy tắc B (Ưu tiên 50): Giảm 10%
-Quy tắc C (Ưu tiên 1): Phụ phí $2 cho khu vực hẻo lánh
+Quy tắc A (Ưu tiên 100, stop_further_rules=True): Miễn phí vận chuyển nếu giỏ hàng > $50
+Quy tắc B (Ưu tiên 50): Giảm 10% cho tất cả phí vận chuyển
+Quy tắc C (Ưu tiên 1): Phụ phí $2 cho các khu vực hẻo lánh
 
 Giỏ hàng: $60
-Chi phí cơ bản: $15
+Cơ bản: $15
 
-Bước 1: Quy tắc A áp dụng, đặt chi phí thành $0
+Bước 1: Quy tắc A áp dụng, thiết lập chi phí thành $0
         stop_further_rules = True → DỪNG
 
 Chi phí cuối cùng: $0 (Quy tắc B và C không bao giờ thực thi)
 ```
 
----
 
 ## Tạo quy tắc vận chuyển
 
-**Quy trình làm việc từng bước**:
+**Quy trình từng bước**:
 
-1. **Di chuyển đến Quy tắc**
+1. **Điều hướng đến Quy tắc**
    - Cài đặt > Vận chuyển > Quy tắc Vận chuyển
-   - Nhấp vào "Thêm Quy tắc Vận chuyển"
+   - Nhấn "Thêm Quy tắc Vận chuyển"
 
-2. **Cấu hình cơ bản**
-   - **Tên**: Nhận dạng nội bộ (ví dụ: "Vận chuyển miễn phí cho đơn hàng trên $50")
+2. **Cấu hình Cơ bản**
+   - **Tên**: Mã hóa nội bộ (ví dụ: "Miễn phí vận chuyển khi hơn $50")
    - **Mô tả**: Ghi chú tùy chọn (không hiển thị cho khách hàng)
-   - **Kích hoạt**: Chuyển đổi để bật/tắt
+   - **Hoạt động**: Bật/Tắt để kích hoạt/vô hiệu hóa
    - **Ưu tiên**: Thiết lập thứ tự thực thi (100 cho ưu tiên cao, 1 cho ưu tiên thấp)
 
-3. **Chọn loại quy tắc**
-   - Chọn loại điều chỉnh (giảm giá %, giảm giá cố định, đặt chi phí, miễn phí, phụ phí %, phụ phí cố định)
-   - Nhập số tiền hoặc tỷ lệ phần trăm
+3. **Chọn Loại Quy tắc**
+   - Chọn loại điều chỉnh (giảm %, giảm cố định, thiết lập chi phí, miễn phí, phụ phí %, phụ phí cố định)
+   - Nhập số tiền hoặc phần trăm
 
-4. **Đặt cờ dừng** (Tùy chọn)
-   - Chọn "Dừng quy tắc tiếp theo" nếu quy tắc này nên ngăn các quy tắc ưu tiên thấp hơn từ thực thi
-   - Sử dụng cho các quy tắc cuối cùng/uyên tắc (ví dụ: vận chuyển miễn phí không nên có phụ phí được thêm vào sau)
+4. **Thiết lập Cờ Dừng** (Tùy chọn)
+   - Chọn "Dừng Quy tắc Khác" nếu quy tắc này nên ngăn các quy tắc có ưu tiên thấp hơn thực thi
+   - Sử dụng cho các quy tắc cuối/cố định (ví dụ: miễn phí vận chuyển nên không có phụ phí được thêm sau)
 
-5. **Định nghĩa điều kiện** (Tùy chọn - để trống để "luôn áp dụng")
-   - Thời gian hiệu lực: Ngày bắt đầu/kết thúc
-   - Giá trị giỏ hàng: Tối thiểu/tối đa
-   - Trọng lượng giỏ hàng: Tối thiểu/tối đa
-   - Số lượng mặt hàng: Tối thiểu/tối đa
-   - Khu vực: Chọn khu vực áp dụng
-   - Phương thức: Chọn phương thức áp dụng
-   - Sản phẩm: Yêu cầu hoặc loại trừ
-   - Khách hàng: Nhóm hoặc chỉ dành cho khách hàng mới
+5. **Xác định điều kiện** (Tùy chọn - để trống cho 'luôn áp dụng')
+  - Tính hợp lệ theo thời gian: Ngày bắt đầu/ngày kết thúc
+  - Giá trị giỏ hàng: Giá trị tối thiểu/giá trị tối đa
+  - Trọng lượng giỏ hàng: Giá trị tối thiểu/giá trị tối đa
+  - Số lượng mặt hàng: Giá trị tối thiểu/giá trị tối đa
+  - Khu vực: Chọn các khu vực phù hợp
+  - Phương thức: Chọn các phương thức phù hợp
+  - Sản phẩm: Yêu cầu hoặc loại bỏ
+  - Khách hàng: Nhóm khách hàng hoặc chỉ khách hàng mới
 
 6. **Lưu quy tắc**
-   - Nhấp Lưu
-   - Quy tắc trở nên hoạt động ngay lập tức (nếu chuyển đổi kích hoạt là Có)
+  - Nhấp Lưu
+  - Quy tắc sẽ được kích hoạt ngay lập tức (nếu tùy chọn 'Hoạt động' là Có)
 
----
 
-## Các tình huống quy tắc vận chuyển phổ biến
+## Các tình huống quy tắc giao hàng phổ biến
 
-### Tình huống 1: Vận chuyển miễn phí cho đơn hàng trên $50
+### Tình huống 1: Giao hàng miễn phí trên $50
 
-**Mục tiêu**: Cung cấp vận chuyển miễn phí khi tổng giá giỏ hàng ≥ $50.
+**Mục tiêu**: Cung cấp giao hàng miễn phí khi tổng giá trị giỏ hàng ≥ $50.
 
 **Cấu hình**:
 ```
-Tên: Vận chuyển miễn phí cho đơn hàng trên $50
-Loại: Vận chuyển miễn phí
+Tên: Giao hàng miễn phí trên $50
+Loại: Giao hàng miễn phí
 Ưu tiên: 100
 Điều kiện:
   Giá trị giỏ hàng tối thiểu: $50
-Dừng quy tắc tiếp theo: Có
+Dừng các quy tắc khác: Có
 ```
 
----
 
-### Tình huống 2: Phụ phí khu vực hẻo lánh
+### Tình huống 2: Phí phụ trội cho khu vực hẻo lánh
 
-**Mục tiêu**: Thêm $10 phụ phí cho giao hàng đến khu vực hẻo lánh.
+**Mục tiêu**: Thêm phí $10 cho các đơn hàng đến khu vực hẻo lánh.
 
 **Cấu hình**:
 ```
-Tên: Phụ phí khu vực hẻo lánh
-Loại: Phụ phí (Cố định)
+Tên: Phí phụ trội khu vực hẻo lánh
+Loại: Phí phụ trội (Cố định)
 Số tiền: $10
 Ưu tiên: 50
 Điều kiện:
   Khu vực: ["Khu vực hẻo lánh"]
-Dừng quy tắc tiếp theo: Không
+Dừng các quy tắc khác: Không
 ```
 
----
 
 ### Tình huống 3: Giảm giá 20% cho khách hàng VIP
 
-**Mục tiêu**: Khách hàng VIP được giảm 20% cho tất cả vận chuyển.
+**Mục tiêu**: Khách hàng VIP được giảm 20% cho mọi đơn hàng giao hàng.
 
 **Cấu hình**:
 ```
-Tên: Giảm giá vận chuyển VIP
+Tên: Giảm giá giao hàng cho khách hàng VIP
 Loại: Giảm giá (Phần trăm)
-Tỷ lệ: 20
+Phần trăm: 20
 Ưu tiên: 75
 Điều kiện:
   Nhóm khách hàng: ["VIP"]
-Dừng quy tắc tiếp theo: Không
+Dừng các quy tắc khác: Không
 ```
 
----
 
-### Tình huống 4: Mức giá cố định trong tháng 12
+### Tình huống 4: Giao hàng cố định trong kỳ lễ
 
-**Mục tiêu**: Tất cả vận chuyển được giới hạn ở $9.99 trong tháng 12.
+**Mục tiêu**: Tất cả đơn hàng bị giới hạn ở $9.99 trong tháng 12.
 
 **Cấu hình**:
 ```
 Tên: Khuyến mãi giá cố định tháng 12
-Loại: Đặt chi phí
+Loại: Giá cố định
 Số tiền: $9.99
 Ưu tiên: 100
 Điều kiện:
   Ngày bắt đầu: 2026-12-01
   Ngày kết thúc: 2026-12-31
-Dừng quy tắc tiếp theo: Có
+Dừng các quy tắc khác: Có
 ```
 
----
 
-### Tình huống 5: Phụ phí cho mặt hàng nặng
+### Tình huống 5: Phí phụ trội cho hàng hóa nặng
 
-**Mục tiêu**: Thêm $15 phí cho đơn hàng trên 25kg.
+**Mục tiêu**: Thêm phí $15 cho đơn hàng trên 25kg.
 
 **Cấu hình**:
 ```
-Tên: Phụ phí đơn hàng nặng
-Loại: Phụ phí (Cố định)
+Tên: Phí phụ trội cho đơn hàng nặng
+Loại: Phí phụ trội (Cố định)
 Số tiền: $15
 Ưu tiên: 50
 Điều kiện:
   Trọng lượng tối thiểu: 25kg
-Dừng quy tắc tiếp theo: Không
+Dừng các quy tắc khác: Không
 ```
 
----
 
-### Tình huống 6: Vận chuyển miễn phí cho đơn hàng đầu tiên
+### Tình huống 6: Giao hàng miễn phí cho đơn hàng đầu tiên
 
-**Mục tiêu**: Khách hàng mới được vận chuyển miễn phí cho đơn hàng đầu tiên.
+**Mục tiêu**: Khách hàng mới được giao hàng miễn phí cho đơn hàng đầu tiên.
 
 **Cấu hình**:
 ```
-Tên: Vận chuyển miễn phí cho đơn hàng đầu tiên
-Loại: Vận chuyển miễn phí
+Tên: Giao hàng miễn phí cho đơn hàng đầu tiên
+Loại: Giao hàng miễn phí
 Ưu tiên: 100
 Điều kiện:
   Khách hàng mới: Có
-Dừng quy tắc tiếp theo: Có
+Dừng các quy tắc khác: Có
 ```
 
----
 
-### Tình huống 7: Vận chuyển miễn phí cho danh mục khuyến mãi
+### Tình huống 7: Giao hàng miễn phí theo danh mục
 
-**Mục tiêu**: Vận chuyển miễn phí cho đơn hàng chứa sản phẩm thuộc danh mục khuyến mãi.
+**Mục tiêu**: Giao hàng miễn phí cho đơn hàng chứa mặt hàng thuộc danh mục khuyến mãi.
 
 **Cấu hình**:
 ```
-Tên: Vận chuyển miễn phí danh mục khuyến mãi
-Loại: Vận chuyển miễn phí
+Tên: Giao hàng miễn phí theo danh mục khuyến mãi
+Loại: Giao hàng miễn phí
 Ưu tiên: 90
 Điều kiện:
   Yêu cầu danh mục: ["Khuyến mãi"]
-Dừng quy tắc tiếp theo: Có
+Dừng các quy tắc khác: Có
 ```
 
----
 
-### Tình huống 8: Loại trừ nội thất khỏi vận chuyển miễn phí
+### Tình huống 8: Loại bỏ đồ nội thất khỏi giao hàng miễn phí
 
-**Mục tiêu**: Vận chuyển miễn phí cho đơn hàng trên $50, ngoại trừ nếu giỏ hàng chứa nội thất.
+**Mục tiêu**: Giao hàng miễn phí trên $50, trừ khi giỏ hàng chứa đồ nội thất.
 
-**Giải pháp**: Hai quy tắc
+Giải pháp: Hai quy tắc
 
 **Quy tắc 1**:
 ```
-Tên: Vận chuyển miễn phí chung
-Loại: Vận chuyển miễn phí
+Tên: Giao hàng miễn phí tổng quát
+Loại: Giao hàng miễn phí
 Ưu tiên: 50
 Điều kiện:
   Giá trị giỏ hàng tối thiểu: $50
-  Loại trừ danh mục: ["Nội thất"]
-Dừng quy tắc tiếp theo: Không
+  Loại bỏ danh mục: ["Đồ nội thất"]
+Dừng các quy tắc khác: Không
 ```
 
 **Quy tắc 2**:
 ```
-Tên: Giảm $5 cho đơn hàng nội thất
+Tên: Giảm $5 cho đơn hàng đồ nội thất
 Loại: Giảm giá (Cố định)
 Số tiền: $5
 Ưu tiên: 40
 Điều kiện:
-  Yêu cầu danh mục: ["Nội thất"]
+  Yêu cầu danh mục: ["Đồ nội thất"]
   Giá trị giỏ hàng tối thiểu: $50
-Dừng quy tắc tiếp theo: Không
+Dừng các quy tắc khác: Không
 ```
 
----
 
 ## Chiến lược kết hợp quy tắc
 
-### Chiến lược 1: Kết hợp giảm giá
+### Chiến lược 1: Giảm giá chồng chéo
 
-**Cho phép nhiều giảm giá được kết hợp**:
+**Cho phép nhiều giảm giá được áp dụng đồng thời**:
 ```
 Quy tắc A (Ưu tiên 100): Giảm 10% cho khách hàng VIP → stop_further_rules=Không
 Quy tắc B (Ưu tiên 50): Giảm 15% cho đơn hàng >$100 → stop_further_rules=Không
 
 Khách hàng VIP với đơn hàng $120:
-Chi phí cơ bản: $15
+Cơ sở: $15
 Sau Quy tắc A: $13.50 (giảm 10%)
 Sau Quy tắc B: $11.48 (giảm 15% từ $13.50)
 ```
 
-### Chiến lược 2: Quy tắc độc quyền
 
-**Chỉ có một quy tắc áp dụng** (ưu tiên cao nhất):
+### Chiến lược 2: Quy tắc loại trừ
+
+**Chỉ có một quy tắc được áp dụng** (ưu tiên cao nhất):
 ```
-Quy tắc A (Ưu tiên 100): Vận chuyển miễn phí >$50 → stop_further_rules= Có
-Quy tắc B (Ưu tiên 50): Giảm 20% cho tất cả vận chuyển → stop_further_rules= Có
+Quy tắc A (Ưu tiên 100): Giao hàng miễn phí >$50 → stop_further_rules=Có
+Quy tắc B (Ưu tiên 50): Giảm 20% cho mọi đơn hàng giao hàng → stop_further_rules=Có
 
 Giỏ hàng > $50:
-Quy tắc A áp dụng → Vận chuyển miễn phí → DỪNG
-Quy tắc B không bao giờ thực thi
+Quy tắc A được áp dụng → Giao hàng miễn phí → DỪNG
+Quy tắc B không bao giờ được thực thi
 ```
 
-### Chiến lược 3: Phụ phí điều kiện
 
-**Giảm giá trước, phụ phí sau**:
+### Chiến lược 3: Phí phụ trội có điều kiện
+
+**Giảm giá trước, phí phụ trội sau**:
 ```
-Quy tắc A (Ưu tiên 100): Vận chuyển miễn phí >$75
+Quy tắc A (Ưu tiên 100): Giao hàng miễn phí >$75
 Quy tắc B (Ưu tiên 75): Giảm 15% cho khách hàng VIP
-Quy tắc C (Ưu tiên 50): Giảm 10% chung
-Quy tắc D (Ưu tiên 25): Phụ phí $5 cho khu vực hẻo lánh
-Quy tắc E (Ưu tiên 1): Phụ phí nhiên liệu 10%
+Quy tắc C (Ưu tiên 50): Giảm 10% cho đơn hàng tổng quát
+Quy tắc D (Ưu tiên 25): Phí phụ trội $5 cho khu vực hẻo lánh
+Quy tắc E (Ưu tiên 1): Phí phụ trội nhiên liệu 10%
 
 Đơn hàng: $80, Khu vực hẻo lánh, Khách hàng VIP
-Chi phí cơ bản: $20
+Cơ sở: $20
 A: $80 > $75 → Miễn phí ($0)
-B: VIP → Giảm 15% từ $0 = $0
+B: Khách hàng VIP → Giảm 15% từ $0 = $0
 C: Giảm 10% từ $0 = $0
 D: Khu vực hẻo lánh +$5 = $5
-E: Nhiên liệu +10% của $5 = $5.50
-
-Kết quả cuối cùng: $5.50 (không miễn phí do phụ phí)
+E: Phí nhiên liệu +10% của $5 = $5.50
 ```
 
-**Để ngăn điều này, sử dụng stop_further_rules= Có**:
+Cuối cùng: $5.50 (không miễn phí do phụ phí)
 ```
-Quy tắc A (Ưu tiên 100, stop= Có): Vận chuyển miễn phí >$75
 
-Đơn hàng cùng như trên:
+**Để ngăn điều này, sử dụng stop_further_rules=Yes**:
+```
+Quy tắc A (Ưu tiên 100, stop=Yes): Giao hàng miễn phí >$75
+
+Đơn hàng cùng lúc:
 A: $80 > $75 → Miễn phí ($0) → DỪNG
-Kết quả cuối cùng: $0 (truly miễn phí)
+Cuối cùng: $0 (thực sự miễn phí)
 ```
 
 ---
 
-## Kiểm tra quy tắc vận chuyển
+## Kiểm tra quy tắc giao hàng
 
-**Trước khi đưa vào vận hành**:
+**Trước khi triển khai**:
 
 1. **Tạo giỏ hàng kiểm tra**
-   - Giỏ hàng A: $25 (dưới ngưỡng)
-   - Giỏ hàng B: $55 (trên ngưỡng)
-   - Giỏ hàng C: $200 + Khu vực hẻo lánh
-   - Giỏ hàng D: Khách hàng VIP
+   - Giỏ A: $25 (dưới ngưỡng)
+   - Giỏ B: $55 (trên ngưỡng)
+   - Giỏ C: $200 + khu vực hẻo lánh
+   - Giỏ D: Khách hàng VIP
 
 2. **Kiểm tra từng quy tắc**
    - Tiến hành thanh toán
-   - Xác nhận chi phí vận chuyển được hiển thị đúng
-   - Kiểm tra thứ tự thực thi quy tắc
+   - Xác minh chi phí giao hàng được hiển thị chính xác
+   - Kiểm tra thứ tự thực hiện quy tắc
 
-3. **Kiểm tra giải quyết độ ưu tiên**
-   - Nhiều quy tắc khớp
-   - Xác nhận quy tắc ưu tiên cao nhất được thực thi trước
-   - Kiểm tra hành vi cờ dừng quy tắc tiếp theo
+3. **Kiểm tra giải quyết ưu tiên**
+   - Nhiều quy tắc phù hợp
+   - Xác minh quy tắc có ưu tiên cao nhất được thực hiện trước
+   - Kiểm tra hành vi của stop_further_rules
 
-4. **Kiểm tra các trường hợp biên**
-   - Giá trị giỏ hàng chính xác tại ngưỡng
-   - Nhiều điều kiện khớp
-   - Các quy tắc xung đột
+4. **Kiểm tra trường hợp biên**
+   - Giá trị giỏ hàng đúng bằng ngưỡng
+   - Nhiều điều kiện phù hợp
+   - Các quy tắc mâu thuẫn
 
 ---
 
-## Khắc phục sự cố
+## Giải quyết sự cố
 
-**Vấn đề 1: Quy tắc không áp dụng**
+**Vấn đề 1: Quy tắc không được áp dụng**
 
 **Nguyên nhân**:
-- Quy tắc không hoạt động
+- Quy tắc đang bị vô hiệu
 - Một hoặc nhiều điều kiện không được đáp ứng
-- Quy tắc ưu tiên cao hơn đã thiết lập stop_further_rules=Yes
-- Thời gian hiệu lực ngoài ngày hiện tại
+- Quy tắc có ưu tiên cao hơn đặt stop_further_rules=Yes
+- Thời gian hợp lệ nằm ngoài ngày hiện tại
 
-**Giải pháp**: Xem lại tất cả điều kiện, kiểm tra độ ưu tiên, xác nhận trạng thái hoạt động.
+**Giải pháp**: Xem xét lại tất cả các điều kiện, kiểm tra ưu tiên, xác minh trạng thái hoạt động.
 
 ---
 
-**Vấn đề 2: Số tiền giảm giá bất ngờ**
+**Vấn đề 2: Số tiền giảm giá không mong muốn**
 
 **Nguyên nhân**:
-- Nhiều quy tắc được kết hợp
-- Tỷ lệ phần trăm được áp dụng cho chi phí đã được giảm giá
-- Độ ưu tiên quy tắc không đúng
+- Nhiều quy tắc chồng chéo
+- Phần trăm được áp dụng cho giá đã được giảm
+- Ưu tiên quy tắc sai
 
-**Giải pháp**: Kiểm tra thứ tự ưu tiên, xem lại cờ stop_further_rules, theo dõi thực thi thủ công.
+**Giải pháp**: Kiểm tra thứ tự ưu tiên, xem xét cờ stop_further_rules, theo dõi quá trình thực hiện thủ công.
 
 ---
 
-**Vấn đề 3: Vận chuyển miễn phí không hoạt động**
+**Vấn đề 3: Giao hàng miễn phí không hoạt động**
 
 **Nguyên nhân**:
-- Quy tắc phụ phí ưu tiên thấp hơn thêm chi phí sau quy tắc miễn phí
-- Giá trị giỏ hàng không đạt ngưỡng tối thiểu
-- Sản phẩm bị loại trừ trong giỏ hàng
+- Quy tắc phụ phí có ưu tiên thấp hơn làm phát sinh chi phí sau khi quy tắc giao hàng miễn phí được áp dụng
+- Giỏ hàng không đáp ứng giá trị tối thiểu
+- Sản phẩm bị loại trong giỏ hàng
 
-**Giải pháp**: Sử dụng stop_further_rules=Yes trên quy tắc miễn phí, xác nhận điều kiện, kiểm tra các loại trừ.
+**Giải pháp**: Sử dụng stop_further_rules=Yes cho quy tắc giao hàng miễn phí, xác minh điều kiện, kiểm tra các sản phẩm bị loại.
 
 ---
 
-## Một số mẹo
+## Mẹo
 
-- **Sử dụng độ ưu tiên cao cho vận chuyển miễn phí** - Ưu tiên 100 đảm bảo nó được thực thi trước các điều chỉnh khác
-- **Thiết lập cờ dừng cho các quy tắc tuyệt đối** - Vận chuyển miễn phí nên dừng xử lý tiếp theo
-- **Kiểm tra sự kết hợp quy tắc** - Nhiều quy tắc có thể tương tác bất ngờ
-- **Sử dụng tên mô tả** - "Giảm giá 20% VIP (Ưu tiên 75)" tốt hơn "Quy tắc 3"
-- **Ghi chú logic phức tạp** - Thêm ghi chú trong trường mô tả
+- **Sử dụng ưu tiên cao cho giao hàng miễn phí** - Ưu tiên 100 đảm bảo nó được thực hiện trước các điều chỉnh khác
+- **Thiết lập stop_further_rules cho các quy tắc tuyệt đối** - Giao hàng miễn phí nên dừng quá trình xử lý tiếp theo
+- **Kiểm tra các tổ hợp quy tắc** - Nhiều quy tắc có thể tương tác một cách không mong muốn
+- **Sử dụng tên mô tả** - "Khách hàng VIP Giảm 20% (Ưu tiên 75)" tốt hơn so với "Quy tắc 3"
+- **Tài liệu cho logic phức tạp** - Thêm ghi chú trong trường mô tả
 - **Bắt đầu với các quy tắc đơn giản** - Thêm độ phức tạp dần dần
-- **Theo dõi hiệu suất quy tắc** - Kiểm tra xem quy tắc có được sử dụng hay gây hiểu lầm không
-- **Tránh quá nhiều quy tắc** - Quá nhiều quy tắc làm chậm quá trình thanh toán, sử dụng 5-10 tối đa
-- **Sử dụng khu vực cho địa lý** - Tốt hơn là nhiều quy tắc tương tự cho mỗi quốc gia
-- **Kết hợp với phương thức** - Quy tắc + Phương thức làm việc cùng nhau cho định giá phức tạp
-- **Thiết lập thời gian hiệu lực rõ ràng** - Luôn bao gồm ngày kết thúc cho khuyến mãi
-- **Kiểm tra các trường hợp biên** - Chính xác $50, chính xác 5 mặt hàng, v.v.
-
-Lưu ý: Bảo tồn toàn bộ định dạng markdown, đường dẫn hình ảnh, khối mã và các thuật ngữ kỹ thuật chính xác như được hiển thị trong các quy tắc bảo tồn.
+- **Theo dõi hiệu suất của quy tắc** - Kiểm tra xem các quy tắc có được sử dụng hoặc gây hiểu nhầm hay không
+- **Tránh tạo quá nhiều quy tắc** - Quá nhiều quy tắc làm chậm quá trình thanh toán, nên giới hạn ở 5-10
+- **Sử dụng khu vực cho địa lý** - Tốt hơn so với nhiều quy tắc tương tự cho mỗi quốc gia
+- **Kết hợp với phương thức** - Các quy tắc + Phương thức làm việc cùng nhau cho giá cả phức tạp
+- **Thiết lập khoảng thời gian rõ ràng** - Luôn bao gồm ngày kết thúc cho các chương trình khuyến mãi
+- **Kiểm tra các trường hợp biên** - Đúng $50, đúng 5 mặt hàng, v.v.

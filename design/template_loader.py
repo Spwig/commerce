@@ -87,25 +87,6 @@ class ThemeTemplateLoader(Loader):
         except FileNotFoundError:
             raise TemplateDoesNotExist(origin)
 
-    def load_template_source(self, template_name, template_dirs=None):
-        """
-        Load template source from theme directory
-        """
-        tried = []
-
-        for origin in self.get_template_sources(template_name):
-            try:
-                return self.get_contents(origin), origin.name
-            except TemplateDoesNotExist:
-                tried.append(origin.name)
-
-        if tried:
-            error_msg = f"Theme template {template_name} not found. Tried: {', '.join(tried)}"
-        else:
-            error_msg = f"No theme directories found for template {template_name}"
-
-        raise TemplateDoesNotExist(error_msg)
-
     def reset(self):
         """Reset the template cache when theme changes"""
         cache.delete("active_theme")

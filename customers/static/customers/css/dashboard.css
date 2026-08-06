@@ -32,7 +32,7 @@
 
 .dashboard-tab:hover {
   color: var(--primary, #007cba);
-  background: var(--hover-bg, rgba(0, 124, 186, 0.05));
+  background: var(--darkened-bg);
 }
 
 .dashboard-tab.active {
@@ -60,7 +60,7 @@
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light, rgba(0, 0, 0, 0.1));
 }
 
 .dashboard-section h2,
@@ -155,7 +155,7 @@
 }
 
 .table tbody tr:hover {
-  background: var(--hover-bg, rgba(0, 124, 186, 0.05));
+  background: var(--darkened-bg);
 }
 
 /* ============================================================================
@@ -183,8 +183,8 @@
 
 .cohort-table .btn-icon {
   padding: 5px 10px;
-  background: var(--primary, #007cba);
-  color: white;
+  background: var(--button-bg, #007cba);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -192,7 +192,7 @@
 }
 
 .cohort-table .btn-icon:hover {
-  background: var(--primary-hover, #005a87);
+  background: var(--button-hover-bg, #005a87);
 }
 
 /* ============================================================================
@@ -287,7 +287,7 @@
   padding: 15px 20px;
   background: var(--body-bg, #fff);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -382,9 +382,12 @@
 
 .heatmap-cell:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px var(--shadow-dark, rgba(0, 0, 0, 0.15));
 }
 
+/* Health-score heatmap gauge (excellent→critical) + its legend gradient below:
+   a deliberate data-visualisation scale (red→green), kept as raw colours like
+   any chart palette — not semantic status tokens. */
 .heatmap-excellent {
   background-color: #28a745;
   color: #fff;
@@ -458,7 +461,7 @@
 }
 
 .insights-panel h3 i {
-  color: #f0ad4e;
+  color: var(--warning-color);
 }
 
 .insights-list {
@@ -475,7 +478,7 @@
   background: var(--body-bg, #fff);
   border-radius: 6px;
   border-left: 4px solid var(--border-color, #dee2e6);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px var(--shadow-light, rgba(0, 0, 0, 0.05));
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -483,39 +486,39 @@
 
 .insight-card:hover {
   transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-light, rgba(0, 0, 0, 0.1));
 }
 
 .insight-card.insight-success {
-  border-left-color: #28a745;
+  border-left-color: var(--success-fg);
 }
 
 .insight-card.insight-success .insight-icon {
-  color: #28a745;
+  color: var(--success-fg);
 }
 
 .insight-card.insight-warning {
-  border-left-color: #f0ad4e;
+  border-left-color: var(--warning-color);
 }
 
 .insight-card.insight-warning .insight-icon {
-  color: #f0ad4e;
+  color: var(--warning-color);
 }
 
 .insight-card.insight-danger {
-  border-left-color: #dc3545;
+  border-left-color: var(--error-fg);
 }
 
 .insight-card.insight-danger .insight-icon {
-  color: #dc3545;
+  color: var(--error-fg);
 }
 
 .insight-card.insight-info {
-  border-left-color: #17a2b8;
+  border-left-color: var(--admin-info);
 }
 
 .insight-card.insight-info .insight-icon {
-  color: #17a2b8;
+  color: var(--admin-info);
 }
 
 .insight-icon {
@@ -574,9 +577,9 @@
 
 /* Deprecation notice box */
 .deprecation-notice {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #856404;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-fg);
   margin-bottom: 30px;
   padding: 15px 20px;
   border-radius: 8px;
@@ -595,7 +598,7 @@
 }
 
 .deprecation-notice a {
-  color: #007cba;
+  color: var(--link-fg);
   font-weight: 600;
   text-decoration: underline;
 }

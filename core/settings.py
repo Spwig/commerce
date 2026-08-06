@@ -172,6 +172,24 @@ HOSTING_INFRA_TIER = env("HOSTING_INFRA_TIER", default="")  # 'shared' or 'dedic
 # An explicit caller `expected_total` mismatch always raises regardless.
 SPWIG_ENFORCE_QUOTE_DRIFT = env.bool("SPWIG_ENFORCE_QUOTE_DRIFT", default=False)
 
+# E2E footprint-inspection endpoint (/api/e2e/inspect/…) — read-only, OFF by
+# default. Powers the standalone spwig-e2e certification suite's black-box
+# oracle against a deployed host (the dedicated e2e test box), returning the
+# same transaction Footprint an in-process test reads from the ORM. NEVER
+# enable on a real merchant install: it is off by default, requires a shared
+# secret even when on, and a test asserts it 404s in the default config. The
+# guard below refuses to boot with inspection on but no secret set, so it can
+# never come up as an unauthenticated open endpoint.
+SPWIG_E2E_INSPECTION = env.bool("SPWIG_E2E_INSPECTION", default=False)
+SPWIG_E2E_INSPECTION_TOKEN = env("SPWIG_E2E_INSPECTION_TOKEN", default="")
+if SPWIG_E2E_INSPECTION and not SPWIG_E2E_INSPECTION_TOKEN:
+    from django.core.exceptions import ImproperlyConfigured
+
+    raise ImproperlyConfigured(
+        "SPWIG_E2E_INSPECTION is enabled but SPWIG_E2E_INSPECTION_TOKEN is unset — "
+        "refusing to expose the footprint inspection endpoint without a shared secret."
+    )
+
 MIDDLEWARE = [
     "core.middleware.subpath.SubpathMiddleware",  # Handle URL subpath deployments (must be first)
     "django.middleware.security.SecurityMiddleware",
@@ -238,6 +256,7 @@ TEMPLATES = [
                 "core.context_processors.spwig_hq",  # HQ-only features flag
                 "core.context_processors.ssl_status",  # SSL warning banner
                 "core.currency_context.currency_context",  # Multi-currency support
+                "catalog.context_processors.region_suggestion",  # Region switch prompt
                 "design.template_loader.theme_context_processor",  # Theme context
                 "design.context_processors.design_settings",  # Global design settings (logo, etc.)
                 "design.context_processors.utility_assets",  # Dynamic utility loading (design app)
@@ -397,7 +416,6 @@ LANGUAGE_COOKIE_NAME = "lang"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-USE_L10N = True
 
 # Available languages for the site (built-in)
 _BUILTIN_LANGUAGES = [
@@ -610,6 +628,13 @@ COMPRESS_JS_FILTERS = ["compressor.filters.jsmin.rJSMinFilter"]
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Opt into Django 6.0's forms.URLField default scheme ('https' instead of 'http')
+# now, via the transitional setting. Project-wide: covers every URLField
+# (explicit forms, ModelForm-generated, admin) in one place — a per-field
+# assume_scheme would be whack-a-mole. Silences RemovedInDjango60Warning; becomes
+# the default (and this setting a no-op) on the 6.0 upgrade.
+FORMS_URLFIELD_ASSUME_HTTPS = True
+
 # django-modeltranslation configuration
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_TRANSLATION_REGISTRY = "translation"
@@ -728,6 +753,35 @@ REST_FRAMEWORK = {
         "agentic_checkout_pay": "15/minute",  # Completion (submits a payment credential)
     },
 }
+
+# --- Staging / cert E2E throttle relaxation ---------------------------------
+# The black-box certification suite (spwig-e2e) drives many API-heavy storefront
+# and checkout pages in a short window; a handful of guest checkouts easily
+# exceeds the production anon burst limit (60/min) mid-suite, so the later flows
+# 429. A DEDICATED cert/staging host may opt into relaxed *general* anon/user
+# rates WITHOUT changing production behaviour: the defaults above are byte-for-
+# byte untouched unless SPWIG_RELAX_API_THROTTLE is explicitly enabled.
+#
+# Only the general burst/sustained scopes are widened. Every security-critical
+# scoped limit — auth (admin_auth/pos_auth), public_write, voucher and
+# gift-card-balance enumeration, admin_sensitive, agentic_checkout_pay — stays
+# at its production value, so brute-force / enumeration protection is unchanged.
+# Fail-safe: the relaxation ALSO requires SPWIG_E2E_INSPECTION — the cert/E2E
+# sandbox marker (its endpoint is sandbox-only and never enabled in production).
+# So a stray SPWIG_RELAX_API_THROTTLE on a real install can't lower the storefront
+# rate limit unless that host is already a declared E2E sandbox. DEBUG is NOT a
+# usable guard here: the cert host is a real DEBUG=False deployment.
+if env.bool("SPWIG_RELAX_API_THROTTLE", default=False) and env.bool(
+    "SPWIG_E2E_INSPECTION", default=False
+):
+    REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update(
+        {
+            "burst": env("SPWIG_THROTTLE_BURST", default="6000/minute"),
+            "sustained": env("SPWIG_THROTTLE_SUSTAINED", default="200000/hour"),
+            "user_burst": env("SPWIG_THROTTLE_USER_BURST", default="6000/minute"),
+            "user": env("SPWIG_THROTTLE_USER", default="200000/hour"),
+        }
+    )
 
 # Mobile App Admin API Settings
 MOBILE_API_SETTINGS = {
@@ -889,12 +943,18 @@ if SANDBOX_ACTUAL_EMAIL_BACKEND != "django.core.mail.backends.console.EmailBacke
 MEDIA_LIBRARY_SETTINGS = {
     "AUTO_WEBP": True,
     "WEBP_QUALITY": 85,
+    # AVIF is generated asynchronously (Celery) alongside WebP for a smaller
+    # primary rendition. QUALITY sweet spot is lower than WebP for similar
+    # visual quality; SPEED 0-10 trades encode time for file size (6 = balanced).
+    "AUTO_AVIF": True,
+    "AVIF_QUALITY": 63,
+    "AVIF_SPEED": 6,
     # Thumbnail sizes are now managed via ImageSizePreset model in media_library
     # Run `python manage.py setup_system_presets` to create system presets
     "MAX_UPLOAD_SIZE": 100 * 1024 * 1024,  # 100MB for videos
     # SVG removed from allowed extensions due to XSS risk
     # HTML/HTM files are blocked at validation layer
-    "ALLOWED_IMAGE_EXTENSIONS": ["jpg", "jpeg", "png", "gif", "webp"],
+    "ALLOWED_IMAGE_EXTENSIONS": ["jpg", "jpeg", "png", "gif", "webp", "avif"],
     "BLOCKED_EXTENSIONS": ["html", "htm", "xhtml", "svg", "svgz"],  # Security: XSS risk
     "BLOCKED_MIME_TYPES": [
         "text/html",

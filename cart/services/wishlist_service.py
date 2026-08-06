@@ -2,7 +2,9 @@
 Wishlist Service - Business logic for wishlist operations
 """
 
-from django.db import transaction
+import uuid
+
+from django.db import IntegrityError, transaction
 from django.utils.translation import gettext_lazy as _
 
 from catalog.models import Product, ProductVariant
@@ -125,6 +127,20 @@ class WishlistService:
         """
         from .cart_service import CartService
 
+        # Reject non-integral values (e.g. JSON floats like 2.5, which
+        # int() would silently truncate) before converting.
+        if isinstance(quantity, bool):
+            return False, _("Invalid quantity")
+        if isinstance(quantity, float) and not quantity.is_integer():
+            return False, _("Invalid quantity")
+        try:
+            quantity = int(quantity)
+        except (TypeError, ValueError):
+            return False, _("Invalid quantity")
+
+        if quantity < 1:
+            return False, _("Quantity must be at least 1")
+
         success, message, cart_item = CartService.add_item(
             cart=cart,
             product_id=wishlist_item.product.id,
@@ -176,10 +192,17 @@ class WishlistService:
 
         # Generate share slug if public
         if is_public:
-            import uuid
-
-            wishlist.share_slug = str(uuid.uuid4())[:8]
-            wishlist.save(update_fields=["share_slug"])
+            for _attempt in range(5):
+                wishlist.share_slug = str(uuid.uuid4())
+                try:
+                    with transaction.atomic():
+                        wishlist.save(update_fields=["share_slug"])
+                    break
+                except IntegrityError:
+                    continue
+            else:
+                wishlist.delete()
+                return False, _("Could not create wishlist, please try again"), None
 
         return True, _("Wishlist created"), wishlist
 

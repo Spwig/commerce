@@ -12,26 +12,31 @@
   border-radius: 3px;
   font-weight: bold;
   font-size: 11px;
-  color: white;
+  color: var(--body-fg);
   white-space: nowrap;
 }
 
-/* Badge color variants */
+/* Badge colour variants — small (11px) badges use color-mix(var(--*-fg) 12%)
+   tints + --*-fg text so they meet AA in both themes. */
 .status-badge-success {
-  background-color: #28a745;
+  background-color: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 .status-badge-error {
-  background-color: #dc3545;
+  background-color: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 .status-badge-warning {
-  background-color: #ffc107;
-  color: #333;
+  background-color: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 .status-badge-info {
-  background-color: #007bff;
+  background-color: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
 }
 .status-badge-pending {
-  background-color: #6c757d;
+  background-color: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 /* Preview button */
@@ -89,14 +94,14 @@
 
 /* Stat icon variants (translation manager) */
 .stat-icon-primary {
-  background-color: var(--primary, #007bff);
+  background-color: var(--button-bg, #007bff);
 }
 .stat-icon-info {
-  background-color: #17a2b8;
+  background-color: var(--admin-info);
 }
 .stat-icon-success {
-  background-color: #28a745;
+  background-color: var(--success-color);
 }
 .stat-icon-warning {
-  background-color: #ffc107;
+  background-color: var(--warning-color);
 }

@@ -12,25 +12,13 @@ from media_library.models import MediaAsset
 from media_library.widgets import MediaLibrarySelectWidget
 
 
-class PercentageInput(forms.NumberInput):
-    """Widget that displays a decimal value as a percentage."""
-
-    def format_value(self, value):
-        if value is not None and value != "":
-            try:
-                return str((Decimal(str(value)) * 100).normalize())
-            except Exception:
-                return value
-        return value
-
-
 class TaxRateAdminForm(forms.ModelForm):
     """Admin form that lets merchants enter rate as percentage (e.g., 8.25 for 8.25%)."""
 
     rate = forms.DecimalField(
         max_digits=7,
         decimal_places=4,
-        widget=PercentageInput(attrs={"step": "0.01", "min": "0", "max": "100"}),
+        widget=forms.NumberInput(attrs={"step": "0.01", "min": "0", "max": "100"}),
         help_text=_("Enter as percentage (e.g., 8.25 for 8.25%)"),
         label=_("Rate (%)"),
     )
@@ -40,6 +28,15 @@ class TaxRateAdminForm(forms.ModelForm):
 
         model = TaxRate
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Display the stored decimal rate as a percentage. Only the initial
+        # model value is scaled here; bound submitted values are already
+        # percentages and must not be scaled again.
+        instance = getattr(self, "instance", None)
+        if instance is not None and instance.pk and instance.rate is not None:
+            self.initial["rate"] = (Decimal(str(instance.rate)) * 100).normalize()
 
     def clean_rate(self):
         """Convert percentage input to decimal for storage."""

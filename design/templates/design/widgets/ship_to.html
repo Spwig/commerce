@@ -1,0 +1,36 @@
+{% load i18n static merchant_trans %}
+<div class="widget-ship-to {{ widget.css_classes }}"
+     data-widget-id="{{ widget.id }}"
+     data-region-url="{% url 'set_region' %}"
+     data-button-style="{{ config.button_style|default:'outline' }}">
+
+    {% if config.show_label|default_if_none:True %}
+    <span class="ship-to-label">
+        <i class="fas fa-truck ship-to-icon" aria-hidden="true"></i>
+        <span class="ship-to-label-text">{% mtrans 'Ship to' %}</span>
+    </span>
+    {% endif %}
+
+    <div class="ship-to-select-wrapper">
+        <select class="ship-to-select" aria-label="{% mtrans 'Choose your shipping destination' %}">
+            {% if not current_ship_to_code %}
+            <option value="" disabled selected>{% mtrans 'Select country' %}</option>
+            {% endif %}
+            {% for country in ship_to_countries %}
+            <option value="{{ country.code }}" {% if country.code == current_ship_to_code %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+        </select>
+        <svg class="ship-to-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    {# Loading indicator #}
+    <div class="ship-to-loading" hidden>
+        <svg class="ship-to-spinner" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="30 10"/>
+        </svg>
+    </div>
+</div>
+
+<script src="{% static 'design/js/widgets/ship_to.js' %}"></script>

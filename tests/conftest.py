@@ -58,6 +58,19 @@ def configure_test_media_root(settings, temp_media_root):
 # repo-root conftest.py so it also applies to app-level test suites.
 
 
+@pytest.fixture
+def email_outbox(db):
+    """Shared email oracle — assert on EmailOutbox rows the test produced.
+
+    Spwig sends no mail through Django's backend (``mail.outbox`` stays
+    empty); order/refund/fulfilment mail is persisted as EmailOutbox rows.
+    See ``tests/email_sink.py``.
+    """
+    from tests.email_sink import EmailSink
+
+    return EmailSink()
+
+
 # ============================================================
 # Core Infrastructure (required by single-tenant architecture)
 # ============================================================

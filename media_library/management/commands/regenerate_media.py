@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
 from media_library.models import MediaAsset, MediaThumbnail
-from media_library.services import ImageProcessor
+from media_library.services import ImageProcessor, generate_avif_variants
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,16 @@ class Command(BaseCommand):
             "--thumbnails-only",
             action="store_true",
             help="Only regenerate thumbnails",
+        )
+        parser.add_argument(
+            "--avif",
+            action="store_true",
+            help="Also generate AVIF renditions (full-size + thumbnails)",
+        )
+        parser.add_argument(
+            "--avif-only",
+            action="store_true",
+            help="Only generate AVIF renditions from existing files (backfill)",
         )
         parser.add_argument(
             "--asset-ids",
@@ -43,6 +53,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.webp_only = options["webp_only"]
         self.thumbnails_only = options["thumbnails_only"]
+        self.avif = options["avif"]
+        self.avif_only = options["avif_only"]
         self.asset_ids = options.get("asset_ids")
         self.batch_size = options["batch_size"]
         self.force = options["force"]
@@ -67,11 +79,17 @@ class Command(BaseCommand):
         with tqdm(total=total, desc="Processing assets") as pbar:
             for asset in queryset.iterator(chunk_size=self.batch_size):
                 try:
-                    if not self.thumbnails_only:
-                        self.regenerate_webp(asset, processor)
+                    if self.avif_only:
+                        self.regenerate_avif(asset, processor)
+                    else:
+                        if not self.thumbnails_only:
+                            self.regenerate_webp(asset, processor)
 
-                    if not self.webp_only:
-                        self.regenerate_thumbnails(asset, processor)
+                        if not self.webp_only:
+                            self.regenerate_thumbnails(asset, processor)
+
+                        if self.avif:
+                            self.regenerate_avif(asset, processor)
 
                     processed += 1
                     pbar.set_postfix({"processed": processed, "errors": errors})
@@ -176,3 +194,13 @@ class Command(BaseCommand):
                 raise
 
         self.stdout.write(f"Generated thumbnails for: {asset.title}")
+
+    def regenerate_avif(self, asset, processor):
+        """Generate AVIF renditions (full-size + thumbnails) for an asset.
+
+        Re-encodes from existing files, so run after thumbnails exist. This is
+        the fleet backfill path for installs whose assets predate AVIF support.
+        """
+        written = generate_avif_variants(asset, processor=processor, force=self.force)
+        if written:
+            self.stdout.write(f"Generated {written} AVIF file(s) for: {asset.title}")

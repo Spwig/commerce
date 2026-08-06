@@ -289,13 +289,19 @@ class CustomerSubscriptionSerializer(serializers.ModelSerializer):
     def get_total_amount_paid(self, obj):
         """Total paid across successful billing cycles, as a decimal string.
 
-        `CustomerSubscription.total_amount_paid` returns Money when there are
-        successful billing logs and Decimal("0.00") when there are none, so
-        unwrap `.amount` where present. Coerce to Decimal so a future drift
-        in the model's return type (e.g. None, str) surfaces as a warning
-        rather than an HTTP 500 in DRF's rendering pipeline.
+        Prefers the ``total_paid_amount`` annotation added by the list/detail
+        queryset (avoiding a per-object aggregate) and falls back to the
+        ``CustomerSubscription.total_amount_paid`` method for instances that
+        weren't loaded through the annotated queryset (e.g. objects returned by
+        the manager after a create/action). The method returns Money when there
+        are successful billing logs and Decimal("0.00") when there are none, so
+        unwrap `.amount` where present. Coerce to Decimal so a future drift in
+        the return type (e.g. None, str) surfaces as a warning rather than an
+        HTTP 500 in DRF's rendering pipeline.
         """
-        value = obj.total_amount_paid()
+        value = getattr(obj, "total_paid_amount", None)
+        if value is None:
+            value = obj.total_amount_paid()
         amount = getattr(value, "amount", value)
         try:
             return f"{Decimal(amount):.2f}"
@@ -322,7 +328,6 @@ class CreateSubscriptionSerializer(serializers.Serializer):
     product_id = serializers.IntegerField(required=True)  # Required - pricing comes from product
     variant_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(required=False, default=1, min_value=1)
-    trial_override_days = serializers.IntegerField(required=False, allow_null=True, min_value=0)
 
     def validate_plan_id(self, value):
         """Validate plan exists and is active"""

@@ -17,7 +17,7 @@ category: Subscriptions
       <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="20px" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="{{ theme.color.background_secondaryondary|default:'#f9fafb' }}">
+  <mj-body background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}">
     <!-- Header -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
@@ -37,7 +37,7 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                Zahlungsinformationen
+                Zahlungsinformation
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Bitte aktualisieren Sie Ihre Zahlungsmethode bis {{ retry_date|date:"F d, Y" }} um einen Dienstunterbrechung zu vermeiden.
+                Bitte aktualisieren Sie Ihre Zahlungsmethode bis {{ retry_date|date:"F d, Y" }}, um eine Unterbrechung des Dienstes zu vermeiden.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Prüfen Sie, ob Ihre Zahlungsmethode ausreichend Mittel hat
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          Stellen Sie sicher, dass Ihre Zahlungsmethode ausreichend Mittel hat
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          Aktualisieren Sie Ihre Zahlungsmethode, wenn die Karte abgelaufen ist
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          Aktualisieren Sie Ihre Zahlungsmethode, falls die Karte abgelaufen ist
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Wir werden die Zahlung automatisch in {{ retry_days }} Tagen erneut versuchen
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Wir versuchen, die Zahlung automatisch in {{ retry_days }} Tagen erneut
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          Benötigen Sie Hilfe? Kontaktieren Sie uns unter {{ support_email }}
+          Brauchen Sie Hilfe? Kontaktieren Sie uns unter {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -135,23 +139,23 @@ category: Subscriptions
 
 Wir konnten Ihre Zahlung nicht verarbeiten
 
-ZAHLUNGSINFORMATIONEN:
+ZAHLUNGsinformation:
 Plan: {{ plan_name }}
 Betrag: {{ subscription_amount }}
 Zahlungsmethode: {{ payment_method }}
 Grund: {{ failure_reason }}
 
-Bitte aktualisieren Sie Ihre Zahlungsmethode bis {{ retry_date|date:"F d, Y" }} um eine Dienstunterbrechung zu vermeiden.
+{% if retry_date %}Bitte aktualisieren Sie Ihre Zahlungsmethode bis {{ retry_date|date:"F d, Y" }}, um eine Unterbrechung des Dienstes zu vermeiden.{% endif %}
 
 Was sollten Sie tun?
-1. Prüfen Sie, ob Ihre Zahlungsmethode ausreichend Mittel hat
-2. Aktualisieren Sie Ihre Zahlungsmethode, wenn die Karte abgelaufen ist
-3. Wir werden die Zahlung automatisch in {{ retry_days }} Tagen erneut versuchen
+1. Stellen Sie sicher, dass Ihre Zahlungsmethode ausreichend Mittel hat
+2. Aktualisieren Sie Ihre Zahlungsmethode, falls die Karte abgelaufen ist
+{% if retry_days %}3. Wir versuchen, die Zahlung automatisch in {{ retry_days }} Tagen erneut{% endif %}
 
 Zahlungsmethode aktualisieren: {{ update_payment_url }}
 Abonnement ansehen: {{ manage_subscription_url }}
 
-Benötigen Sie Hilfe? Kontaktieren Sie uns unter {{ support_email }}
+Brauchen Sie Hilfe? Kontaktieren Sie uns unter {{ support_email }}
 
 ---
 Powered by Spwig - https://spwig.com

@@ -249,6 +249,15 @@ class WalletTransaction(models.Model):
                 condition=models.Q(source="loyalty"),
                 name="wallet_txn_one_credit_per_loyalty_redemption",
             ),
+            # amount is documented as "always positive; transaction_type
+            # determines direction". Enforce it at the database so a direct
+            # WalletTransaction write cannot persist a sign that contradicts
+            # transaction_type and corrupt every balance derived from the
+            # ledger.
+            models.CheckConstraint(
+                condition=models.Q(amount__gt=0),
+                name="wallet_txn_amount_positive",
+            ),
         ]
 
     def __str__(self):

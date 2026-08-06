@@ -7,7 +7,7 @@
      data-priority="{{ rule.priority }}"
      data-is-active="{{ rule.is_active|yesno:'true,false' }}">
     <!-- Checkbox for bulk select -->
-    <div class="rule-checkbox">
+    <div class="list-row-card-checkbox">
         <input type="checkbox" class="rule-select" value="{{ rule.id }}" id="rule-{{ rule.id }}">
     </div>
 
@@ -227,11 +227,11 @@
         <div class="rule-badges">
             <!-- Active/Inactive Badge -->
             {% if rule.is_active %}
-                <span class="badge badge-status badge-active">
+                <span class="list-row-card-badge list-row-card-badge-success badge-status">
                     <i class="fas fa-check-circle"></i> {% trans "Active" %}
                 </span>
             {% else %}
-                <span class="badge badge-status badge-inactive">
+                <span class="list-row-card-badge badge-status">
                     <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
                 </span>
             {% endif %}
@@ -239,11 +239,11 @@
             <!-- Time Validity Badge -->
             {% if rule.start_date or rule.end_date %}
                 {% if rule.is_time_valid %}
-                    <span class="badge badge-time badge-valid">
+                    <span class="list-row-card-badge list-row-card-badge-success">
                         <i class="fas fa-check"></i> {% trans "Time Valid" %}
                     </span>
                 {% else %}
-                    <span class="badge badge-time badge-invalid">
+                    <span class="list-row-card-badge list-row-card-badge-warning">
                         <i class="fas fa-exclamation-triangle"></i> {% trans "Time Invalid" %}
                     </span>
                 {% endif %}
@@ -251,13 +251,13 @@
 
             <!-- Stop Further Promotions Badge -->
             {% if rule.stop_further_promotions %}
-                <span class="badge badge-stop">
+                <span class="list-row-card-badge list-row-card-badge-error">
                     <i class="fas fa-hand-paper"></i> {% trans "Stops Promotions" %}
                 </span>
             {% endif %}
 
             <!-- Created Date -->
-            <span class="badge badge-date">
+            <span class="list-row-card-badge">
                 <i class="fas fa-calendar"></i> {{ rule.created_at|date:"M d, Y" }}
             </span>
         </div>

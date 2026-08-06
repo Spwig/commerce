@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 <!-- Image Accordion Element -->
 <section class="image-accordion image-accordion--height-{{ element.content.height|default:'lg' }}{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
          data-image-accordion
@@ -30,11 +30,14 @@
             {# Background Image #}
             <div class="image-accordion__image-wrapper">
                 {% if frame.image %}
+                {% with picps=frame.image|picture_sources %}
+                <picture class="spwig-picture">{% if picps.avif %}<source srcset="{{ picps.avif }}" type="image/avif">{% endif %}{% if picps.webp %}<source srcset="{{ picps.webp }}" type="image/webp">{% endif %}
                 <img src="{{ frame.image }}"
                      alt="{{ frame.title|default:'' }}"
                      class="image-accordion__image"
                      style="object-position: {{ frame.image_position|default:'center' }};"
-                     loading="lazy">
+                     loading="lazy"></picture>
+                {% endwith %}
                 {% else %}
                 <div class="image-accordion__placeholder">
                     <i class="fas fa-image"></i>

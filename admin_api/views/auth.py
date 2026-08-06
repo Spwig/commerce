@@ -9,7 +9,9 @@ import secrets
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.encoding import force_bytes
@@ -1104,6 +1106,23 @@ def staff_password_reset_confirm(request):
                 "error": {
                     "code": 400,
                     "message": _("Invalid or expired password reset link."),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Re-run password validation now that the reset-token user is known, so
+    # user-dependent validators (e.g. UserAttributeSimilarityValidator) apply.
+    try:
+        validate_password(serializer.validated_data["new_password"], user=user)
+    except DjangoValidationError as exc:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Password reset failed."),
+                    "details": {"new_password": list(exc.messages)},
                 },
             },
             status=status.HTTP_400_BAD_REQUEST,

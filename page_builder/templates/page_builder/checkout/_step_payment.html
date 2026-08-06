@@ -23,6 +23,28 @@ its own voucher entry in its summary.
 </div>
 {% endif %}
 
+{% comment %}Subscription: sign-in prompt (anonymous shoppers) — revealed by checkout.js
+   when the cart holds a subscription line and the shopper is not signed in.{% endcomment %}
+<div class="checkout-subscription-signin" id="subscription-signin-notice" role="alert" hidden>
+    <i class="fas fa-user-lock"></i>
+    <span>{% mtrans 'You need an account to subscribe.' %}
+        <a href="{% url 'account_login' %}?next={{ request.path|urlencode }}">{% mtrans 'Sign in' %}</a>
+    </span>
+</div>
+
+{% comment %}Subscription: recurring-billing notice + required consent — revealed by
+   checkout.js when the cart holds a subscription line.{% endcomment %}
+<div class="checkout-subscription-notice" id="subscription-recurring-notice" hidden>
+    <p class="checkout-subscription-notice__text">
+        <i class="fas fa-sync-alt"></i>
+        {% mtrans 'Your order includes a subscription. By placing this order you authorise recurring charges until you cancel.' %}
+    </p>
+    <label class="checkout-subscription-notice__consent">
+        <input type="checkbox" id="subscription-consent">
+        <span>{% mtrans 'I agree to the recurring billing terms for the subscription items in my order.' %}</span>
+    </label>
+</div>
+
 <div class="payment-providers" id="payment-providers-list">
     <div class="checkout-empty-state">
         <i class="fas fa-spinner fa-spin"></i>

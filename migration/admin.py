@@ -12,7 +12,7 @@ from django.http import FileResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import path, reverse
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
 from django.utils.translation import gettext_lazy as _
 
 from .models import MigrationJob, MigrationLog, MigrationMapping, MigrationStep
@@ -228,7 +228,7 @@ class MigrationJobAdmin(admin.ModelAdmin):
     def items_summary(self, obj):
         """Display items summary"""
         if obj.total_items == 0:
-            return format_html('<span style="color: var(--body-quiet-color, #999);">No data</span>')
+            return mark_safe('<span style="color: var(--body-quiet-color, #999);">No data</span>')
 
         return format_html(
             '<div style="font-size: 12px; line-height: 1.5;">'
@@ -293,18 +293,18 @@ class MigrationJobAdmin(admin.ModelAdmin):
         # View Details - link to appropriate wizard step
         view_url = self._get_wizard_url(obj)
         buttons.append(
-            f'<a href="{view_url}" class="button migration-action-link">'
-            f'<i class="fas fa-eye"></i> {_("View")}</a>'
+            f'<a href="{conditional_escape(view_url)}" class="button migration-action-link">'
+            f'<i class="fas fa-eye"></i> {conditional_escape(_("View"))}</a>'
         )
 
         # Download Report (if completed)
         if obj.status == "completed" and obj.report_file:
             buttons.append(
-                f'<a href="{obj.report_file.url}" class="button" download>'
-                f'<i class="fas fa-download"></i> {_("Report")}</a>'
+                f'<a href="{conditional_escape(obj.report_file.url)}" class="button" download>'
+                f'<i class="fas fa-download"></i> {conditional_escape(_("Report"))}</a>'
             )
 
-        return format_html(" ".join(buttons))
+        return mark_safe(" ".join(buttons))
 
     actions_column.short_description = _("Actions")
 
@@ -2436,4 +2436,6 @@ class MigrationMappingAdmin(admin.ModelAdmin):
 
 
 # Import sync admin registrations so Django autodiscovery picks them up
+from django.utils.safestring import mark_safe
+
 from . import sync_admin  # noqa: F401, E402

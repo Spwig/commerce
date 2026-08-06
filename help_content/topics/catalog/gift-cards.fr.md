@@ -9,10 +9,10 @@ La vente de cartes cadeaux est active. Lorsqu'un client en achète une, la carte
 Quelques choses à savoir avant d'activer un produit de carte cadeau :
 
 - **Une carte cadeau est de l'argent, pas un rabais.** Elle est déduite du montant final après les taxes et les frais d'expédition, et elle ne réduit pas les impôts que vous devez. Cela est contraire à un bon de réduction, qui réduit le prix des marchandises.
-- **Les cartes sont en une seule devise.** Une carte achetée en euros ne peut être utilisée que pour un achat en euros. Si vous vendez en plusieurs devises, créez un produit de carte cadeau distinct pour chacune. Cela vous protège des fluctuations des taux de change sur un solde qui pourrait ne pas être utilisé pendant un an.
+- **Les cartes sont uniques en devise.** Une carte achetée en euros ne peut être utilisée que pour un achat en euros. Si vous vendez en plusieurs devises, créez un produit de carte cadeau distinct pour chacune. Cela vous protège des fluctuations des taux de change sur un solde qui pourrait ne pas être utilisé pendant un an.
 - **Les cartes cadeaux ne peuvent pas être rabattues.** Un bon de réduction ne s'appliquera pas à une ligne de carte cadeau, car vendre 100 £ de crédit pour 80 £ vous coûte 20 £ chaque fois.
 - **Une carte cadeau ne peut pas acheter une autre carte cadeau.** Cela ferme une voie que les gens utilisent pour blanchir des détails de carte volée.
-- **Acheter une carte cadeau n'octroie pas de points de fidélité.** Les points sont attribués lorsque la carte est utilisée pour acheter des marchandises, donc personne ne gagne deux fois sur le même argent.
+- **Acheter une carte cadeau n'octroie pas de points de fidélité.** Les points sont gagnés lorsque la carte est utilisée pour acheter des marchandises, donc personne ne gagne deux fois sur le même argent.
 
 ![Gestion des cartes cadeaux](/static/core/admin/img/help/gift-cards/gift-card-list.webp)
 
@@ -22,7 +22,7 @@ Ces paramètres contrôlent la manière dont un client choisit le montant lors d
 
 | Type | Description |
 |------|-------------|
-| **Dénominations fixes** | Les clients choisissent parmi des montants prédéfinis (ex. $25, $50, $100) |
+| **Dénominations fixes** | Les clients choisissent parmi des montants prédéfinis (ex. 25 $, 50 $, 100 $) |
 | **Montant personnalisé** | Les clients entrent tout montant compris entre un minimum et un maximum |
 | **Les deux** | Proposer des dénominations prédéfinies ainsi qu'une option de montant personnalisé |
 
@@ -57,14 +57,14 @@ C'est la seule façon de créer une carte cadeau financée pour le moment, et el
 3. Entrez la **Valeur initiale** — le solde de départ, dans le montant que vous choisissez. Contrairement à un achat client, cela n'est pas limité aux paramètres de dénomination du produit
 4. Définissez optionnellement une date **Expire à**, et laissez **Actif** coché afin que la carte puisse être réclamée
 5. Remplissez la section **Destinataire**, plus bas sur la même page :
-   - **Email du destinataire** — obligatoire ; l'endroit où l'e-mail de livraison sera envoyé
+   - **E-mail du destinataire** — obligatoire ; l'endroit où l'e-mail de livraison sera envoyé
    - **Nom du destinataire**, **Nom de l'expéditeur** et **Message personnel** — tous optionnels
    - **Date d'envoi planifiée** — optionnel ; laissez vide et envoyez quand vous êtes prêt, ou définissez une date/heure future (ex. un anniversaire)
 6. Cliquez sur **Enregistrer**
 
-Le code de réclamation est généré automatiquement et le solde de départ est défini à partir de la Valeur initiale — vous ne remplissez ni l'un ni l'autre vous-même.
+Le code de réclamation est généré automatiquement et le solde initial est défini à partir de la Valeur initiale — vous ne remplissez ni l'un ni l'autre vous-même.
 
-**Enregistrement de la carte ne l'envoie pas par courriel.** Pour l'envoyer, retournez à la liste des cartes-cadeaux, sélectionnez la case à cocher de la carte, choisissez **Envoyer les courriels des cartes-cadeaux** dans le menu déroulant Actions, puis cliquez sur **Aller**.
+**Enregistrement de la carte ne l'envoie pas par courriel.** Pour l'envoyer, retournez à la liste des cartes-cadeaux, sélectionnez la case à cocher de la carte, choisissez **Envoyer les courriels de carte-cadeaux** dans le menu déroulant Actions, puis cliquez sur **Aller**.
 
 La même action permet de renvoyer le courriel si vous avez besoin de le faire plus tard.
 
@@ -103,8 +103,8 @@ Chaque carte-cadeaux affiche :
 
 ### Actions
 
-- Cliquez sur une carte-cadeaux pour **éditer** ses détails et consulter son **historique complet des transactions**, affiché en ligne sur la même page
-- Sélectionnez une ou plusieurs cartes et utilisez le menu déroulant **Actions** pour **Envoyer les courriels des cartes-cadeaux** (envoie ou renvoie le courriel d'envoi) ou **Marquer les cartes-cadeaux sélectionnées comme inactives** (désactive — le solde est préservé mais la carte ne peut plus être réclamée)
+- Cliquez sur une carte-cadeaux pour **éditer** ses détails et consulter son **historique complet de transactions**, affiché en ligne sur la même page
+- Sélectionnez une ou plusieurs cartes et utilisez le menu déroulant **Actions** pour **Envoyer les courriels de carte-cadeaux** (envoie ou renvoie le courriel d'envoi) ou **Marquer les cartes-cadeaux sélectionnées comme inactives** (désactive — le solde est préservé mais la carte ne peut plus être réclamée)
 
 ## Réclamation aujourd'hui
 
@@ -126,8 +126,8 @@ Les destinataires peuvent également vérifier leur solde restant à tout moment
 
 Lors du remboursement de commandes ou de ventes qui ont utilisé une carte-cadeaux :
 
-- **Une carte-cadeaux achetée par le client, encore inutilisée** — la carte est désactivée et son solde est annulé, donc le crédit disparaît avec le remboursement.
-- **Une carte-cadeaux achetée par le client et partiellement utilisée** — cela nécessite votre jugement. Désactiver la carte retirerait le crédit déjà utilisé, donc le solde reste intact et est marqué pour que vous l'ajustiez manuellement.
+- **Une carte-cadeaux achetée par le client et encore inutilisée** — la carte est désactivée et son solde est annulé, donc le crédit disparaît avec le remboursement.
+- **Une carte-cadeaux achetée par le client et partiellement utilisée** — cela nécessite votre jugement. Désactiver la carte retirerait le crédit déjà utilisé, donc le solde reste intact et est marqué pour que vous l'ajustez manuellement.
 - **Une carte-cadeaux utilisée pour payer la commande remboursée** — le remboursement est d'abord retourné sur la carte, avant tout paiement par carte ou par banque. Rembourser de l'argent à une banque dont le commerçant n'a jamais réellement collecté est une erreur plus grave, et le fait de rendre la valeur là d'où elle vient ferme également une voie connue de fraude. Si la carte originale a depuis expiré ou a été désactivée, une nouvelle carte est émise au même destinataire sans date d'expiration.
 - **Remboursement total** — Créditez le montant sur le solde de la carte-cadeaux via une transaction de remboursement
 

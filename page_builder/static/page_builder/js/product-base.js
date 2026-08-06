@@ -14,22 +14,49 @@
     const selectedAttributes = {};
 
     // === Image Gallery ===
-    const mainImage = document.getElementById('main-image');
+    // `mainImage` is reassigned by setMainImage(), so it must be `let`. Zoom and
+    // lightbox read it through this binding, so they always see the current img.
+    let mainImage = document.getElementById('main-image');
     const zoomResult = document.getElementById('zoom-result');
     const zoomLens = document.getElementById('zoom-lens');
     const zoomContainer = document.getElementById('gallery-zoom');
     const thumbnails = document.querySelectorAll('.product-gallery__thumb');
+
+    // Swap the main image to a responsive <picture> (AVIF/WebP/fallback).
+    // The whole element is rebuilt so the browser re-runs source selection
+    // (setting img.src alone would leave the previous <source> winning), and
+    // `mainImage` is re-pointed at the new <img> (preserving id + data-zoom-src).
+    // `data` = {fallback, avif, webp, zoom, alt}.
+    function setMainImage(data) {
+      if (!mainImage || !data || !data.fallback) return;
+      const zoom = data.zoom || data.fallback;
+      const html = window.buildPictureMarkup(
+        { avif: data.avif || null, webp: data.webp || null, fallback: data.fallback },
+        {
+          fallbackSrc: data.fallback,
+          alt: data.alt != null ? data.alt : mainImage.alt,
+          className: mainImage.className || 'product-gallery__image',
+          extraAttrs: 'id="main-image" data-zoom-src="' + window.escapeHtmlAttr(zoom) + '"',
+        }
+      );
+      if (!html) return;
+      const target = mainImage.closest('picture') || mainImage;
+      target.insertAdjacentHTML('beforebegin', html);
+      target.remove();
+      mainImage = document.getElementById('main-image');
+    }
 
     // Thumbnail click
     thumbnails.forEach(thumb => {
       thumb.addEventListener('click', function () {
         thumbnails.forEach(t => t.classList.remove('product-gallery__thumb--active'));
         this.classList.add('product-gallery__thumb--active');
-
-        if (mainImage) {
-          mainImage.src = this.dataset.image;
-          mainImage.dataset.zoomSrc = this.dataset.zoom;
-        }
+        setMainImage({
+          fallback: this.dataset.image,
+          avif: this.dataset.avif,
+          webp: this.dataset.webp,
+          zoom: this.dataset.zoom,
+        });
       });
     });
 
@@ -301,6 +328,8 @@
       originalImages.push({
         url: thumb.dataset.image,
         zoom: thumb.dataset.zoom,
+        avif: thumb.dataset.avif,
+        webp: thumb.dataset.webp,
         thumbSrc: thumb.querySelector('img') ? thumb.querySelector('img').src : thumb.dataset.image,
       });
     });
@@ -440,11 +469,14 @@
 
       if (variantImages.length > 0) {
         // Variant has its own gallery — show those images
-        if (mainImage) {
-          mainImage.src = variantImages[0].url;
-          mainImage.dataset.zoomSrc = variantImages[0].url;
-          mainImage.alt = variantImages[0].alt || variant.name;
-        }
+        const firstSources = variantImages[0].image_sources || {};
+        setMainImage({
+          fallback: variantImages[0].url,
+          avif: firstSources.avif,
+          webp: firstSources.webp,
+          zoom: variantImages[0].url,
+          alt: variantImages[0].alt || variant.name,
+        });
 
         // Rebuild thumbnails
         if (thumbsContainer) {
@@ -455,6 +487,9 @@
               'product-gallery__thumb' + (idx === 0 ? ' product-gallery__thumb--active' : '');
             btn.dataset.image = img.url;
             btn.dataset.zoom = img.url;
+            const srcs = img.image_sources || {};
+            if (srcs.avif) btn.dataset.avif = srcs.avif;
+            if (srcs.webp) btn.dataset.webp = srcs.webp;
             btn.setAttribute('aria-label', 'View image ' + (idx + 1));
 
             const imgEl = document.createElement('img');
@@ -468,10 +503,12 @@
                 t.classList.remove('product-gallery__thumb--active');
               });
               this.classList.add('product-gallery__thumb--active');
-              if (mainImage) {
-                mainImage.src = this.dataset.image;
-                mainImage.dataset.zoomSrc = this.dataset.zoom;
-              }
+              setMainImage({
+                fallback: this.dataset.image,
+                avif: this.dataset.avif,
+                webp: this.dataset.webp,
+                zoom: this.dataset.zoom,
+              });
             });
 
             thumbsContainer.appendChild(btn);
@@ -480,12 +517,21 @@
         }
       } else if (variant.image_url && mainImage) {
         // Single variant image — just swap main image
-        mainImage.src = variant.image_url;
-        mainImage.dataset.zoomSrc = variant.image_url;
+        const vs = variant.image_sources || {};
+        setMainImage({
+          fallback: variant.image_url,
+          avif: vs.avif,
+          webp: vs.webp,
+          zoom: variant.image_url,
+        });
       } else if (originalImages.length > 0 && mainImage) {
         // No variant images — restore original product gallery
-        mainImage.src = originalImages[0].url;
-        mainImage.dataset.zoomSrc = originalImages[0].zoom;
+        setMainImage({
+          fallback: originalImages[0].url,
+          avif: originalImages[0].avif,
+          webp: originalImages[0].webp,
+          zoom: originalImages[0].zoom,
+        });
 
         if (thumbsContainer) {
           thumbsContainer.innerHTML = '';
@@ -495,6 +541,8 @@
               'product-gallery__thumb' + (idx === 0 ? ' product-gallery__thumb--active' : '');
             btn.dataset.image = img.url;
             btn.dataset.zoom = img.zoom;
+            if (img.avif) btn.dataset.avif = img.avif;
+            if (img.webp) btn.dataset.webp = img.webp;
             btn.setAttribute('aria-label', 'View image ' + (idx + 1));
 
             const imgEl = document.createElement('img');
@@ -508,10 +556,12 @@
                 t.classList.remove('product-gallery__thumb--active');
               });
               this.classList.add('product-gallery__thumb--active');
-              if (mainImage) {
-                mainImage.src = this.dataset.image;
-                mainImage.dataset.zoomSrc = this.dataset.zoom;
-              }
+              setMainImage({
+                fallback: this.dataset.image,
+                avif: this.dataset.avif,
+                webp: this.dataset.webp,
+                zoom: this.dataset.zoom,
+              });
             });
 
             thumbsContainer.appendChild(btn);
@@ -728,6 +778,21 @@
           variant_id: variantId,
           quantity: quantity,
         };
+
+        // Subscription selection (only when the subscription selector is on the
+        // page and the customer chose to subscribe). No payment token here — it
+        // is captured at checkout.
+        if (
+          window.SubscriptionOptions &&
+          typeof window.SubscriptionOptions.getSelection === 'function'
+        ) {
+          const sub = window.SubscriptionOptions.getSelection();
+          if (sub && sub.is_subscription) {
+            body.is_subscription = true;
+            body.subscription_plan_id = sub.subscription_plan_id;
+            body.pricing_tier_id = sub.pricing_tier_id;
+          }
+        }
 
         // Add bundle selections if applicable
         if (isBundle) {

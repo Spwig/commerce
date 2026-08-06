@@ -322,7 +322,9 @@ class SystemStatusService:
                         clean_date = date_str.replace(" GMT", "").replace(" UTC", "")
                         expiry = datetime.strptime(clean_date, "%b %d %H:%M:%S %Y")
                         result["expiry_date"] = expiry.isoformat()
-                        result["days_remaining"] = (expiry - datetime.utcnow()).days
+                        result["days_remaining"] = (
+                            expiry - datetime.now(UTC).replace(tzinfo=None)
+                        ).days
                         result["valid"] = result["days_remaining"] > 0
             except Exception as e:
                 result["error"] = f"Failed to parse certificate: {e}"
@@ -375,6 +377,7 @@ class SystemStatusService:
             "available": None,
             "update_available": False,
             "changelog": None,
+            "release_notes": None,
             "error": None,
         }
 
@@ -412,6 +415,7 @@ class SystemStatusService:
                     if result["update_available"]:
                         result["available"] = update_info.get("latest_version")
                         result["changelog"] = update_info.get("changelog")
+                        result["release_notes"] = update_info.get("release_notes")
                 else:
                     logger.debug("Update server not configured, skipping update check")
             except Exception as e:

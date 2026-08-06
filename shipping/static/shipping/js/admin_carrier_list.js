@@ -70,7 +70,7 @@
     const selectedType = typeFilter ? typeFilter.value : '';
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    const carrierCards = document.querySelectorAll('.carrier-card');
+    const carrierCards = document.querySelectorAll('.list-row-card');
     let visibleCount = 0;
 
     carrierCards.forEach(card => {
@@ -299,12 +299,12 @@
           : '<i class="fas fa-toggle-off"></i>';
 
         // Update badge
-        const card = button.closest('.carrier-card');
+        const card = button.closest('.list-row-card');
         const statusBadge = card.querySelector('.badge-status');
         if (statusBadge) {
           statusBadge.className = data.is_active
-            ? 'badge badge-status badge-active'
-            : 'badge badge-status badge-inactive';
+            ? 'list-row-card-badge list-row-card-badge-success badge-status'
+            : 'list-row-card-badge badge-status';
           statusBadge.innerHTML = data.is_active
             ? '<i class="fas fa-check-circle"></i> Active'
             : '<i class="fas fa-times-circle"></i> Inactive';
@@ -363,7 +363,7 @@
    * Delete carrier
    */
   async function deleteCarrier(carrierId, button) {
-    const card = button.closest('.carrier-card');
+    const card = button.closest('.list-row-card');
     const carrierName = card.querySelector('.carrier-name a').textContent;
 
     if (

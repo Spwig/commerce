@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ {{ plan_name }} के लिए भुगतान विफल - कार्रवाई आवश्यक है - {{ shop_name }}
+⚠️ भुगतान विफल रहा है {{ plan_name }} - कार्रवाही की आवश्यकता है - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -22,10 +22,10 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ भुगतान विफल
+          ⚠️ भुगतान विफल रहा है
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          हम आपके भुगतान को प्रक्रिया नहीं कर सके
+          हमने आपके भुगतान को प्रक्रिया नहीं किया
         </mj-text>
       </mj-column>
     </mj-section>
@@ -37,7 +37,7 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                भुगतान जानकारी
+                भुगतान की जानकारी
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -49,18 +49,20 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>भुगतान विधि:</strong> {{ payment_method }}
+                <strong>भुगतान के तरीके:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
-                <strong>कारण:</strong> {{ failure_reason }}
+                <strong कारण:</strong> {{ failure_reason }}
               </mj-text>
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                {{ retry_date|date:"F d, Y" }} तक अपनी भुगतान विधि को अपडेट करें ताकि सेवा बाधित न हो।
+                कृपया {{ retry_date|date:"F d, Y" }} तक अपने भुगतान विधि को अपडेट करें ताकि सेवा में बाधा न पहुंचे।
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          आप क्या करें?
+          आपके द्वारा क्या करना चाहिए?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          जांच करें कि आपकी भुगतान विधि में पर्याप्त राशि है या नहीं
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          यह सुनिश्चित करें कि आपके भुगतान विधि में पर्याप्त धन है
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          कार्ड अप्रचलित होने पर अपनी भुगतान विधि को अपडेट करें
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          यदि कार्ड अवधि से बाहर है तो अपने भुगतान विधि को अपडेट करें
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          हम {{ retry_days }} दिनों में भुगतान को स्वचालित रूप से पुनः प्रयास करेंगे
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          हम स्वचालित रूप से {{ retry_days }} दिनों में भुगतान की कोशिश करेंगे
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,11 +99,11 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          भुगतान विधि को अपडेट करें
+          भुगतान विधि अपडेट करें
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            अपनी योजना देखें
+            सदस्यता देखें
           </a>
         </mj-text>
       </mj-column>
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          सहायता की आवश्यकता है? हमसे संपर्क करें: {{ support_email }}
+          सहायता की आवश्यकता है? कृपया हमसे संपर्क करें {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -131,27 +135,27 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ भुगतान विफल
+⚠️ भुगतान विफल रहा है
 
-हम आपके भुगतान को प्रक्रिया नहीं कर सके
+हमने आपके भुगतान को प्रक्रिया नहीं किया
 
-भुगतान जानकारी:
+भुगतान की जानकारी:
 योजना: {{ plan_name }}
 राशि: {{ subscription_amount }}
-भुगतान विधि: {{ payment_method }}
+भुगतान के तरीके: {{ payment_method }}
 कारण: {{ failure_reason }}
 
-{{ retry_date|date:"F d, Y" }} तक अपनी भुगतान विधि को अपडेट करें ताकि सेवा बाधित न हो।
+{% if retry_date %}कृपया {{ retry_date|date:"F d, Y" }} तक अपने भुगतान विधि को अपडेट करें ताकि सेवा में बाधा न पहुंचे।{% endif %}
 
-आप क्या करें?
-1. जांच करें कि आपकी भुगतान विधि में पर्याप्त राशि है या नहीं
-2. कार्ड अप्रचलित होने पर अपनी भुगतान विधि को अपडेट करें
-3. हम {{ retry_days }} दिनों में भुगतान को स्वचालित रूप से पुनः प्रयास करेंगे
+आपके द्वारा क्या करना चाहिए?
+1. यह सुनिश्चित करें कि आपके भुगतान विधि में पर्याप्त धन है
+2. यदि कार्ड अवधि से बाहर है तो अपने भुगतान विधि को अपडेट करें
+{% if retry_days %}3. हम स्वचालित रूप से {{ retry_days }} दिनों में भुगतान की कोशिश करें
 
-भुगतान विधि को अपडेट करें: {{ update_payment_url }}
-अपनी योजना देखें: {{ manage_subscription_url }}
+भुगतान विधि अपडेट करें: {{ update_payment_url }}
+सदस्यता देखें: {{ manage_subscription_url }}
 
-सहायता की आवश्यकता है? हमसे संपर्क करें: {{ support_email }}
+क्या सहायता की आवश्यकता है? कृपया हमसे संपर्क करें {{ support_email }}
 
 ---
 Spwig द्वारा संचालित - https://spwig.com

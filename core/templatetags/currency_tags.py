@@ -276,6 +276,34 @@ def product_price(product, currency_code):
 
 
 @register.filter
+def product_price_range(product, currency_code):
+    """
+    Return a variable product's variant price range formatted in the given
+    currency: a single price when all variants match ("$59.99"), or a range
+    ("$59.99 – $89.99") otherwise. Non-variable products (or variable products
+    with no priced variants) fall back to the single ``product_price``.
+
+    Usage:
+        {{ product|product_price_range:current_currency.code }}
+    """
+    try:
+        price_range = product.get_variant_price_range(currency_code)
+    except Exception as e:
+        logger.error(f"Error in product_price_range filter: {e}")
+        price_range = None
+
+    if not price_range:
+        return product_price(product, currency_code)
+
+    low, high = price_range
+    code = currency_code or str(low.currency)
+    low_str = _format_money_display(low.amount, code)
+    if low.amount == high.amount:
+        return low_str
+    return f"{low_str} – {_format_money_display(high.amount, code)}"
+
+
+@register.filter
 def product_compare_price(product, currency_code):
     """
     Return product's regular (non-sale) price formatted in the given currency (plain text).
@@ -298,6 +326,56 @@ def product_compare_price(product, currency_code):
     except Exception as e:
         logger.error(f"Error in product_compare_price filter: {e}")
         return str(product.price)
+
+
+@register.inclusion_tag("page_builder/partials/_price_display.html")
+def product_price_display(product, currency_code=None, show_badge=True):
+    """
+    Canonical storefront price block. One place for the price + sale rendering
+    logic so every surface stays consistent: effective (sale) price as the
+    current price; the regular price struck through + a Sale badge when on sale;
+    and, for variable products, the sale-aware variant price range (striking a
+    single "was" price only when the range collapses to one value). Fixes both
+    the "variable products drop the sale presentation" bug and the multi-currency
+    drift from surfaces that used the base-currency ``formatted_price`` property.
+
+    NOTE: after ADDING this tag, a running dev server on this setup (NAS +
+    CachedThemeTemplateLoader) must be fully restarted (kill + ``cache.clear()``)
+    — the autoreloader will not pick up a newly-registered tag on its own.
+
+    Usage:
+        {% product_price_display product current_currency.code %}
+        {% product_price_display product current_currency.code show_badge=False %}
+    """
+    on_sale = bool(getattr(product, "is_on_sale", False))
+    is_variable = getattr(product, "product_type", None) == "variable"
+    original = None
+    if is_variable:
+        current = product_price_range(product, currency_code)
+        # Sale presentation is valid only when the displayed variant range
+        # actually reflects the parent sale — i.e. the variants INHERIT the
+        # parent price. A variant with its own price is NOT sale-adjusted by
+        # get_effective_price(), so its range is the regular price; showing a
+        # Sale badge/strikethrough there would be misleading. (Guarded by
+        # is_on_sale so the extra query only runs for on-sale variable products.)
+        if on_sale:
+            active = list(product.variants.filter(is_active=True))
+            inherits = bool(active) and all(v.price is None for v in active)
+            if inherits:
+                rng = None
+                try:
+                    rng = product.get_variant_price_range(currency_code)
+                except Exception:
+                    rng = None
+                if (not rng) or (rng[0].amount == rng[1].amount):
+                    original = product_compare_price(product, currency_code)
+            else:
+                on_sale = False
+    else:
+        current = product_price(product, currency_code)
+        if on_sale:
+            original = product_compare_price(product, currency_code)
+    return {"current": current, "original": original, "on_sale": on_sale, "show_badge": show_badge}
 
 
 @register.simple_tag

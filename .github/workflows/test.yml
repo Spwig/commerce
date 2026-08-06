@@ -31,7 +31,11 @@ jobs:
       DB_PASSWORD: spwig
       REDIS_HOST: localhost
       REDIS_PORT: "6379"
-      SECRET_KEY: ci-test-secret-key-not-for-production
+      # Django reads SPWIG_SECRET_KEY (then DJANGO_SECRET_KEY); a bare
+      # SECRET_KEY env is ignored, so it must carry this name or settings
+      # silently fall back to the insecure default. The "test-secret"
+      # substring makes tests/config/test_security_settings.py skip in CI.
+      SPWIG_SECRET_KEY: ci-test-secret-key-not-for-production
       # Test-only Fernet key. Email / SMS provider credential fields
       # get symmetrically encrypted at rest — no default in settings
       # means every send-service test fails at credential-write.
@@ -51,17 +55,22 @@ jobs:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
           POSTGRES_DB: spwig_test
-        ports:
-          - 5432:5432
+          # Data dir a level below the tmpfs mount so initdb gets a clean,
+          # correctly-owned 0700 dir (tmpfs root is 1777 and initdb refuses it).
+          PGDATA: /var/lib/postgresql/data/pgdata
+        # No host port published: under gitea/act the tests reach postgres by
+        # its DNS alias (DB_HOST=postgres), and publishing a fixed host port
+        # collides across concurrent jobs when the runner capacity is > 1.
         options: >-
+          --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
       redis:
         image: redis:7
-        ports:
-          - 6379:6379
+        # No host port published (DNS alias under act; avoids the concurrency
+        # collision described on the postgres service above).
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -103,49 +112,173 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
 
-      - name: Run Django tests (community edition + integration sandbox)
+      - name: Run tests (scoped on PRs, full audited suite on dev/main)
+        # PRs run only the changed app's tests + a smoke baseline
+        # (scripts/select_test_paths.py) to keep per-PR CI fast. The FULL audited
+        # ~4,400-test suite still runs on every dev/main push as the cross-app
+        # net — and on PRs whose blast radius is wide (core/config/deps) or whose
+        # diff can't be scoped. Money-handling code can't land untested: a
+        # changed money app runs its own tests per-PR, and everything runs on dev
+        # before release. See docs/.claude_code/plans/test-suite-drift-recovery.md
+        # (Phases 1 + 4 + 5) for the audited scope in run_full below.
         run: |
-          pytest -n auto tests/community_edition/ tests/integration/test_sandbox.py -v
+          run_full() {
+            pytest -n auto tests/community_edition/ tests/integration/test_sandbox.py -v
+            pytest -n auto --create-db -v \
+              tests/unit/ tests/integration/ tests/contract/ tests/catalog/ \
+              tests/invariants/ tests/tier2/ \
+              tests/rbac/ tests/integrity/ accounts/tests/ admin_api/tests/ \
+              catalog/tests/ design/tests/ email_system/tests/ loyalty/tests/ \
+              migration/tests/ orders/tests/ referrals/tests/ search/tests/ \
+              shipping/tests/ social_sharing/tests/ subscriptions/tests/ \
+              cart/ core/ page_builder/ payment_providers/ pos_api/ pos_app/ \
+              vouchers/ wallet/
+          }
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            run_full
+            exit $?
+          fi
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}" || true
+          TARGETS=$(python scripts/select_test_paths.py "origin/${{ github.base_ref }}" || true)
+          if [ -z "$TARGETS" ]; then
+            echo "Wide blast radius or undetermined diff — running the full suite."
+            run_full
+          else
+            echo "Scoped PR test targets: $TARGETS"
+            pytest -n auto --create-db -v $TARGETS
+          fi
 
-      - name: Run Django tests (app-level suites — audited drift-recovery scope)
-        # Explicit paths: pytest.ini has `testpaths = tests`, so bare
-        # `pytest` skips these dirs. Guards the ~4,400 tests audited
-        # in the drift-recovery campaign (Phases 1 + 4 + 5 of
-        # docs/.claude_code/plans/test-suite-drift-recovery.md).
-        # New drift in any of these paths will now turn CI red.
-        #
-        # The stored-value apps below are listed as app ROOTS, not `<app>/tests/`,
-        # because several have no test package yet (see
-        # docs/.claude_code/plans/wondrous-moseying-wolf.md P1.0). pytest collects
-        # nothing from them today and picks up `<app>/tests/` automatically the
-        # moment it is created — so adding coverage never needs a workflow edit.
-        # Money-handling code must not be able to land untested again.
+  # Oracle-parity (Tier-3, NO browser): proves the ORM and HTTP footprint
+  # backends agree over real HTTP — the shared-contract seam the standalone
+  # spwig-e2e cert suite depends on. It uses live_server (a real socket) but NO
+  # Playwright, so it runs reliably on the self-hosted Gitea/act runner and
+  # GATES EVERY PR. Split out of the browser job precisely so a flaky browser
+  # install can never take the contract check down with it.
+  oracle-parity:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: core.settings
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_NAME: spwig_test
+      DB_USER: spwig
+      DB_PASSWORD: spwig
+      REDIS_HOST: localhost
+      REDIS_PORT: "6379"
+      SPWIG_SECRET_KEY: ci-test-secret-key-not-for-production
+      EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
+      SPWIG_TELEMETRY: "0"
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: spwig
+          POSTGRES_PASSWORD: spwig
+          POSTGRES_DB: spwig_test
+          PGDATA: /var/lib/postgresql/data/pgdata
+        options: >-
+          --tmpfs /var/lib/postgresql/data:rw,size=2g
+          --health-cmd "pg_isready -U spwig"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Configure env for Gitea Actions (act)
+        if: env.ACT == 'true'
         run: |
-          pytest -n auto --create-db -v \
-            tests/unit/ \
-            tests/integration/ \
-            tests/contract/ \
-            tests/catalog/ \
-            tests/rbac/ \
-            tests/integrity/ \
-            accounts/tests/ \
-            admin_api/tests/ \
-            catalog/tests/ \
-            design/tests/ \
-            email_system/tests/ \
-            loyalty/tests/ \
-            migration/tests/ \
-            orders/tests/ \
-            referrals/tests/ \
-            search/tests/ \
-            shipping/tests/ \
-            social_sharing/tests/ \
-            subscriptions/tests/ \
-            cart/ \
-            core/ \
-            page_builder/ \
-            payment_providers/ \
-            pos_api/ \
-            pos_app/ \
-            vouchers/ \
-            wallet/
+          echo "DB_HOST=postgres" >> $GITHUB_ENV
+          echo "REDIS_HOST=redis" >> $GITHUB_ENV
+          echo "SPWIG_IS_HQ=true" >> $GITHUB_ENV
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run oracle-parity (no browser)
+        run: pytest tests/e2e/test_oracle_parity.py -m e2e --create-db -v
+
+  # Golden BROWSER flows (Tier 3, Playwright). The authoritative run of these is
+  # the nightly cron on the cert host (spwige2e.spwig.com), where Playwright +
+  # the app are installed and they pass green against a real deployment — that's
+  # the industry-standard "E2E against staging" tier. This CI job is a best-effort
+  # convenience copy: it does NOT run on PRs and NEVER blocks the pipeline
+  # (continue-on-error), because `playwright install --with-deps` is unreliable on
+  # the self-hosted act runner. TODO: register the cert host as a Gitea runner and
+  # run this against it on merge-to-dev for real merge-time browser gating.
+  e2e-golden:
+    if: github.event_name != 'pull_request'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: core.settings
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_NAME: spwig_test
+      DB_USER: spwig
+      DB_PASSWORD: spwig
+      REDIS_HOST: localhost
+      REDIS_PORT: "6379"
+      SPWIG_SECRET_KEY: ci-test-secret-key-not-for-production
+      EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
+      SPWIG_TELEMETRY: "0"
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: spwig
+          POSTGRES_PASSWORD: spwig
+          POSTGRES_DB: spwig_test
+          PGDATA: /var/lib/postgresql/data/pgdata
+        options: >-
+          --tmpfs /var/lib/postgresql/data:rw,size=2g
+          --health-cmd "pg_isready -U spwig"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Configure env for Gitea Actions (act)
+        if: env.ACT == 'true'
+        run: |
+          echo "DB_HOST=postgres" >> $GITHUB_ENV
+          echo "REDIS_HOST=redis" >> $GITHUB_ENV
+          echo "SPWIG_IS_HQ=true" >> $GITHUB_ENV
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+      - name: Run golden browser flows
+        run: pytest tests/e2e/test_golden_flows.py -m e2e --create-db -v
+
+  # The committed api-schema.yml IS the published contract: the SDK
+  # generator bakes it into typed clients. It once drifted 168 paths behind
+  # the code because nothing regenerated it — the published SDK carried types
+  # for deleted endpoints and missed ~170 real ones. This job fails the build
+  # the moment code and contract disagree.
+  #
+  # Deliberately NOT --fail-on-warn: spectacular emits ~1119 pre-existing
+  # warnings, and that cleanup is its own project. This is a drift gate only.

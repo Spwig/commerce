@@ -1,0 +1,55 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/*
+ * Canonical price block used by the {% product_price_display %} tag across every
+ * storefront surface (cards, PDP, grids, related, search, ...). One place for the
+ * price + sale styling so all surfaces stay visually consistent. Uses theme
+ * tokens (matches the previous per-surface sale styling) and is RTL-safe (flex +
+ * gap, no left/right offsets).
+ */
+
+.price-display {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.price-display__current {
+  font-size: var(--theme-font-size-lg, 1.125rem);
+  font-weight: 600;
+  color: var(--theme-color-text, #111827);
+}
+
+/* Prominent on the product detail page — matches the previous `.price` sizing. */
+.product-info__price .price-display__current {
+  font-size: var(--theme-font-size-2xl, 1.5rem);
+  font-weight: var(--theme-font-weight-bold, 700);
+}
+
+/* On sale: the effective price takes the danger/sale accent. */
+.price-display--on-sale .price-display__current {
+  color: var(--theme-color-danger, #dc2626);
+}
+
+/* The struck-through regular ("was") price. */
+.price-display__original {
+  color: var(--theme-color-text-muted, #6b7280);
+  text-decoration: line-through;
+  font-weight: 400;
+  font-size: 0.9em;
+}
+
+/* Inline "Sale" pill (surfaces with their own overlay badge pass show_badge=False). */
+.price-display__badge {
+  display: inline-block;
+  padding: var(--theme-space-1, 0.25rem) var(--theme-space-2, 0.5rem);
+  background: var(--theme-color-danger, #dc2626);
+  color: var(--theme-color-on-danger, #ffffff);
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--theme-radius-sm, 0.25rem);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

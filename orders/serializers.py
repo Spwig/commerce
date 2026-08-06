@@ -361,8 +361,10 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
+            "order",
             "user",
             "status",
+            "items_json",
             "return_label_generated",
             "return_tracking_number",
             "return_label_url",
@@ -443,7 +445,8 @@ class OrderNoteSerializer(serializers.ModelSerializer):
         if not obj.author:
             return _("Store")
         # Only show customer name for customer notes, otherwise just "Store"
-        if obj.author == self.context.get("request", {}).user:
+        request = self.context.get("request")
+        if request and obj.author == request.user:
             return obj.author.get_full_name() or obj.author.email
         return _("Store")
 

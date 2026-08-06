@@ -25,7 +25,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install ruff
-        run: pip install ruff
+        run: pip install ruff==0.16.0
 
       - name: ruff format --check
         run: ruff format --check .
@@ -40,7 +40,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install ruff
-        run: pip install ruff
+        run: pip install ruff==0.16.0
 
       - name: ruff check
         run: ruff check .
@@ -74,3 +74,4 @@ jobs:
 
       - name: eslint
         run: npm run lint
+

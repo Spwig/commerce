@@ -99,6 +99,15 @@ def reply_to_message(request, message_id):
             status=400,
         )
 
+    if not isinstance(data, dict) or not isinstance(data.get("reply_text"), str):
+        return JsonResponse(
+            {
+                "success": False,
+                "error": _("Invalid request data."),
+            },
+            status=400,
+        )
+
     reply_text = data.get("reply_text", "").strip()
     if not reply_text:
         return JsonResponse(

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db.models import Q
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from seo_generator.models import SEOProviderAccount
@@ -58,12 +59,12 @@ class SEOProviderAccountAdmin(admin.ModelAdmin):
     @admin.display(description=_("Status"))
     def is_active_badge(self, obj):
         if obj.is_active:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge active">'
                 '<i class="fas fa-check-circle"></i> ACTIVE'
                 "</span>"
             )
-        return format_html(
+        return mark_safe(
             '<span class="status-badge inactive">'
             '<i class="fas fa-times-circle"></i> INACTIVE'
             "</span>"
@@ -72,7 +73,7 @@ class SEOProviderAccountAdmin(admin.ModelAdmin):
     @admin.display(description=_("Primary"))
     def is_primary_badge(self, obj):
         if obj.is_primary:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge primary"><i class="fas fa-star"></i> PRIMARY</span>'
             )
         return "-"

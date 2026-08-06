@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ Оплата не прошла для {{ plan_name }} - Требуется действие - {{ shop_name }}
+⚠️ Оплата не удалась для {{ plan_name }} - Требуется действие - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -17,12 +17,12 @@ category: Subscriptions
       <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="20px" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="{{ theme.color.background_secondaryondary|default:'#f9fafb' }}">
+  <mj-body background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}">
     <!-- Header -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ Оплата не прошла
+          ⚠️ Оплата не удалась
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
           Мы не смогли обработать вашу оплату
@@ -37,7 +37,7 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                Информация об оплате
+                Информация о платеже
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Пожалуйста, обновите способ оплаты до {{ retry_date|date:"F d, Y" }} чтобы избежать прерывания услуги.
+                Пожалуйста, обновите способ оплаты до {{ retry_date|date:"F d, Y" }}, чтобы избежать перерыва в обслуживании.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          Что делать?
+          Что вам следует сделать?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Проверьте, что у вашего способа оплаты достаточно средств
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          Убедитесь, что ваш способ оплаты имеет достаточные средства
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          Обновите способ оплаты, если карта просрочена
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          Обновите способ оплаты, если карта просрена
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Мы автоматически попытаемся обработать оплату через {{ retry_days }} дней
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Мы автоматически попробуем оплатить в течение {{ retry_days }} дней
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -99,7 +103,7 @@ category: Subscriptions
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            Просмотреть подписку
+            Посмотреть подписку
           </a>
         </mj-text>
       </mj-column>
@@ -131,7 +135,7 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ Оплата не прошла
+⚠️ Оплата не удалась
 
 Мы не смогли обработать вашу оплату
 
@@ -141,15 +145,15 @@ category: Subscriptions
 Способ оплаты: {{ payment_method }}
 Причина: {{ failure_reason }}
 
-Пожалуйста, обновите способ оплаты до {{ retry_date|date:"F d, Y" }} чтобы избежать прерывания услуги.
+{% if retry_date %}Пожалуйста, обновите способ оплаты до {{ retry_date|date:"F d, Y" }}, чтобы избежать перерыва в обслуживании.{% endif %}
 
-Что делать?
-1. Проверьте, что у вашего способа оплаты достаточно средств
-2. Обновите способ оплаты, если карта просрочена
-3. Мы автоматически попытаемся обработать оплату через {{ retry_days }} дней
+Что вам следует сделать?
+1. Убедитесь, что ваш способ оплаты имеет достаточные средства
+2. Обновите способ оплаты, если карта просрена
+{% if retry_days %}3. Мы автоматически попробуем оплатить в течение {{ retry_days }} дней{% endif %}
 
 Обновить способ оплаты: {{ update_payment_url }}
-Просмотреть подписку: {{ manage_subscription_url }}
+Посмотреть подписку: {{ manage_subscription_url }}
 
 Нужна помощь? Свяжитесь с нами по адресу {{ support_email }}
 

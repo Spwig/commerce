@@ -7,6 +7,12 @@ Serializers for bulk order and product operations.
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from catalog.models import Product
+
+# Product.price persists a fixed number of decimal places, so rounding finer
+# than the column would report a value that diverges from what is stored.
+_PRICE_DECIMAL_PLACES = Product._meta.get_field("price").decimal_places
+
 # =============================================================================
 # Bulk Order Serializers
 # =============================================================================
@@ -140,11 +146,26 @@ class BulkPriceUpdateSerializer(serializers.Serializer):
     )
     round_to = serializers.IntegerField(
         required=False,
-        default=2,
+        default=_PRICE_DECIMAL_PLACES,
         min_value=0,
-        max_value=4,
-        help_text=_("Number of decimal places to round the result to."),
+        max_value=_PRICE_DECIMAL_PLACES,
+        help_text=_(
+            "Number of decimal places to round the result to (0 to the price field's precision)."
+        ),
     )
+
+    def validate(self, data):
+        update_type = data["update_type"]
+        value = data["value"]
+
+        if update_type == "absolute" and value < 0:
+            raise serializers.ValidationError({"value": _("Absolute price must not be negative.")})
+        if update_type == "percentage" and value < -100:
+            raise serializers.ValidationError(
+                {"value": _("Percentage change cannot be less than -100.")}
+            )
+
+        return data
 
 
 class BulkAssignCategorySerializer(serializers.Serializer):
@@ -236,8 +257,10 @@ class BulkSaleUpdateSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"sale_value": _('sale_value is required when sale_type is not "none".')}
             )
-        if sale_value < 0:
-            raise serializers.ValidationError({"sale_value": _("sale_value must not be negative.")})
+        if sale_value <= 0:
+            raise serializers.ValidationError(
+                {"sale_value": _("sale_value must be greater than zero.")}
+            )
         if sale_type == "percentage_off" and sale_value > 100:
             raise serializers.ValidationError(
                 {"sale_value": _("Percentage off cannot exceed 100.")}

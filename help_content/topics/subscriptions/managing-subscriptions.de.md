@@ -1,129 +1,162 @@
 ---
-title: Kundennachverfolgung verwalten
+title: Kundennutzung verwalten
 ---
 
-Der Abschnitt Kundennachverfolgung gibt Ihnen einen vollständigen Überblick über alle aktiven, pausierten und abgebrochenen wiederkehrenden Abonnements in Ihrem Geschäft. Von hier aus können Sie den Zahlungsstatus überwachen, detaillierte Informationen zu einzelnen Abonnements einsehen und Maßnahmen ergreifen, wenn Probleme auftreten.
+Der Bereich Kundennutzungen bietet Ihnen einen vollständigen Überblick über alle aktiven, pausierten und stornierten Wiederkehrauszahlungen in Ihrem Geschäft. Hier können Sie die Gesundheit der Rechnungsstellung überwachen, Einzelheiten zu jeder Nutzungsvereinbarung ansehen und Maßnahmen ergreifen, wenn Probleme auftreten.
 
-## Kundennachverfolgung ansehen
+## Kunden-Nutzungen ansehen
 
-Navigieren Sie zu **Abonnements > Kundennachverfolgung**, um die vollständige Liste aller Abonnements aller Kunden anzuzeigen.
+Gehen Sie zu **Nutzungen > Kundennutzungen**, um die vollständige Liste der Nutzungen aller Kunden anzuzeigen.
 
-![Liste der Kundennachverfolgungen](/static/core/admin/img/help/managing-subscriptions/subscription-list.webp)
+![Liste der Kundennutzungen](/static/core/admin/img/help/managing-subscriptions/subscription-list.webp)
 
-Die Liste zeigt für jedes Abonnement den Kunden, den Plan-Namen, den aktuellen Status, das nächste Zahlungsdatum und die Anzahl der abgeschlossenen Zahlungszyklen an.
+Die Liste zeigt für jede Nutzungsvereinbarung den Kunden, den Namen des Plans, den aktuellen Status, das nächste Fälligkeitsdatum und die Anzahl der abgeschlossenen Abrechnungszyklen an.
 
-### Filtern und Suchen
+### Filtern und suchen
 
-Verwenden Sie das Filterpanel auf der rechten Seite, um Abonnements nach folgenden Kriterien zu filtern:
+Verwenden Sie das Filterpanel rechts, um Nutzungen nach folgenden Kriterien einzugrenzen:
 
-- **Status** — Filtern Sie nach Aktiv, Testphase, Überfällig, Pausiert, Abgebrochen oder Abgelaufen
-- **Plan** — Zeigen Sie Abonnements für einen bestimmten Plan an
-- **Provider-Modus** — Native (Stripe/PayPal-gesteuert) oder Fallback (interne Abrechnung)
+- **Status** — Filtern Sie nach aktiv, Probezeit, Überfällig, pausiert, storniert oder abgelaufen
+- **Plan** — Zeigen Sie Nutzungen für einen bestimmten Plan an
+- **Anbietermodus** — Native (Stripe/PayPal-verwaltete) oder Fallback (interner Abrechnungsmodus)
 
-Verwenden Sie die Suchleiste, um Abonnements nach E-Mail-Adresse des Kunden zu finden.
+Verwenden Sie die Suchleiste, um Nutzungen anhand der E-Mail-Adresse des Kunden zu finden.
 
-## Abonnementsstatus
+## Nutzungsstatus
 
-Das Verständnis jedes Status hilft Ihnen dabei, Abonnements zu identifizieren, die Aufmerksamkeit erfordern:
+Das Verständnis jedes Status hilft Ihnen, Nutzungen zu identifizieren, die Aufmerksamkeit erfordern:
 
 | Status | Was es bedeutet |
-|--------|---------------|
-| **Testphase** | Der Kunde ist in der kostenlosen oder reduzierten Testphase |
-| **Aktiv** | Das Abonnement ist gesund — die Zahlung ist aktuell und der Zugriff ist aktiv |
-| **Überfällig** | Ein Zahlungsversuch ist fehlgeschlagen — das System versucht erneut. Der Kunde behält während der Verjährungsfrist den Zugriff |
-| **Pausiert** | Das Abonnement ist vorübergehend ausgesetzt — keine Zahlung, kein Zugriff |
-| **Abgebrochen** | Die Kündigung wurde beantragt. Der Kunde kann bis zum Enddatum des Abonnements weiterhin Zugriff haben |
-| **Abgelaufen** | Das Abonnement ist vollständig beendet — Testphase abgelaufen, maximale Zahlungszyklen erreicht oder Kündigungsfrist abgelaufen |
+|--------|----------------|
+| **Probezeit** | Der Kunde befindet sich in der kostenlosen oder reduzierten Preis-Probezeit |
+| **Aktiv** | Die Nutzungsvereinbarung ist gesund – die Abrechnung ist aktuell und der Zugang ist aktiv |
+| **Überfällig** | Ein Zahlungsversuch ist fehlgeschlagen – das System versucht, erneut zu zahlen. Der Kunde hat während der Frist noch Zugang |
+| **Pausiert** | Die Nutzungsvereinbarung ist vorübergehend unterbrochen – keine Abrechnung, kein Zugang |
+| **Storniert** | Die Stornierung wurde beantragt. Der Kunde kann möglicherweise noch Zugang bis zum Enddatum des Zeitraums haben |
+| **Abgelaufen** | Die Nutzungsvereinbarung ist vollständig beendet – die Probezeit ist abgelaufen, die maximale Anzahl von Abrechnungszyklen erreicht oder die Stornierungsfrist ist abgelaufen |
 
-Abonnements, die **überfällig** sind, benötigen die größte Aufmerksamkeit — wenn die Zahlung weiterhin fehlschlägt und die Verjährungsfrist abgelaufen ist, wird das Abonnement ausgesetzt.
+Nutzungen, die **Überfällig** sind, erfordern die meiste Aufmerksamkeit – wenn die Zahlung weiterhin fehlschlägt und die Frist abgelaufen ist, wird die Nutzungsvereinbarung unterbrochen.
 
-## Details eines Abonnements ansehen
+## Details einer Nutzungsvereinbarung ansehen
 
-Klicken Sie auf ein beliebiges Abonnement, um die Detailansicht zu öffnen. Dies zeigt:
+Klicken Sie auf eine beliebige Nutzungsvereinbarung, um die Detailansicht zu öffnen. Dies zeigt Folgendes an:
 
-### Aktueller Zahlungszyklus
+### Aktueller Abrechnungszeitraum
 
-- **Aktueller Zyklusbeginn / -ende** — Die Daten des aktiven Zahlungszeitraums
-- **Nächster Zahlungsdatum** — Wann der nächste Zahlungsversuch stattfinden wird
-- **Letztes Zahlungsdatum** und **Letzter Zahlungsstatus** — Ergebnis des letzten Zahlungsversuchs
-- **Zahlungszyklusanzahl** — Wie viele erfolgreiche Zahlungszyklen abgeschlossen wurden
+- **Aktueller Zeitraum Anfang / Ende** — Die Daten des aktiven Abrechnungszeitraums
+- **Nächstes Fälligkeitsdatum** — Wann der nächste Zahlungsversuch unternommen wird
+- **Letztes Fälligkeitsdatum** und **Letzter Abrechnungsstatus** — Das Ergebnis des letzten Abrechnungsversuchs
+- **Anzahl der Abrechnungszyklen** — Wie viele erfolgreiche Abrechnungszyklen abgeschlossen wurden
 
-### Abonnementinformationen
+### Nutzungsinformationen
 
-- **Plan** und **Preistufe** — Welchen Plan und Zahlungshäufigkeit der Kunde nutzt
-- **Produkt / Variante** — Das Katalogprodukt, das mit diesem Abonnement verknüpft ist (falls zutreffend)
-- **Menge** — Anzahl der Sitzplätze oder Einheiten (für mengenbasierte Pläne)
-- **Zahlungstoken** — Der gespeicherte Zahlungsmethode, der für wiederkehrende Zahlungen verwendet wird
+- **Plan** und **Preisstufe** — Welcher Plan und welches Abrechnungsfrequenz der Kunde verwendet
+- **Produkt / Variante** — Das Katalogprodukt, das mit dieser Nutzungsvereinbarung verknüpft ist (sofern zutreffend)
+- **Menge** — Anzahl der Plätze oder Einheiten (für plangestützte Pläne)
+- **Zahlungstoken** — Die gespeicherte Zahlungsmethode, die für die wiederkehrende Abrechnung verwendet wird
 
-### Testphase-Details
+### Probephase Details
 
-Wenn das Abonnement in der Testphase ist, zeigt das **Enddatum der Testphase** an, wann die Testphase des Kunden endet und die volle Abrechnung beginnt.
+Wenn die Nutzungsvereinbarung sich in der Probezeit befindet, zeigt das **Enddatum der Probezeit** an, wann die Probezeit des Kunden abläuft und die vollständige Abrechnung beginnt.
 
-### Kündigungsdetails
+### Stornierungsdetails
 
-Für abgebrochene Abonnements können Sie folgende Informationen einsehen:
+Bei stornierten Nutzungsvereinbarungen können Sie Folgendes sehen:
 
-- **Kündigungsart** — Ob die Kündigung sofort, zum Enddatum des Abonnements oder geplant war
-- **Abgebrochen am** — Wann die Kündigung beantragt wurde
-- **Kündigungsgrund** — Notizen, warum der Kunde das Abonnement abgebrochen hat (falls aufgezeichnet)
-- **Wiederherstellungstermin** — Letzter Tag, an dem der Kunde das Abonnement ohne erneutes Abonnement von Grund auf wiederherstellen kann
+- **Stornierungstyp** — Ob die Stornierung sofort, am Ende des Zeitraums oder geplant war
+- **Stornierungsdatum** — Wann die Stornierung beantragt wurde
+- **Stornierungsgrund** — Bemerkungen dazu, warum der Kunde die Stornierung vorgenommen hat (sofern aufgezeichnetet)
+- **Wiederherstellungstermin** — Der letzte Tag, an dem der Kunde die Wiederherstellung ohne Neuanmeldung durchführen kann
 
-### Verjährungsfrist und Verpflichtungen
+### Frist und Verpflichtungen
 
-- **Enddatum der Verjährungsfrist** — Wenn eine Zahlung fehlschlägt, zeigt dies das Deadline an, bevor der Zugriff ausgesetzt wird
-- **Enddatum der Mindestverpflichtung** — Für Pläne mit Mindestverpflichtungen ist dies das früheste Kündigungsdatum
+- **Fristende** — Falls eine Zahlung fehlgeschlagen ist, zeigt dies das Ablaufdatum an, bevor der Zugang unterbrochen wird
+- **Mindestverpflichtungsdatum** — Für Pläne mit Mindestverpflichtungen das früheste Stornierungsdatum
 
-## Ein Abonnement pausieren
+## Pausieren einer Nutzungsvereinbarung
 
-Ein pausiertes Abonnement stoppt vorübergehend die Abrechnung und suspendiert den Zugriff. Dies ist nützlich für Kunden, die eine Pause machen möchten, ohne das Abonnement vollständig zu kündigen.
+Eine pausierte Nutzungsvereinbarung unterbricht die Abrechnung vorübergehend und unterbricht auch den Zugang. Dies ist nützlich für Kunden, die eine Pause einlegen möchten, ohne vollständig zu stornieren.
 
-Um pausierte Abonnements anzuzeigen, filtern Sie nach **Status: Pausiert**. Die Detailansicht zeigt an:
+Um pausierte Nutzungsvereinbarungen anzuzeigen, filtern Sie nach **Status: Pausiert**. Die Detailansicht zeigt Folgendes an:
 
-- **Pausiert am** — Wann die Pausierung begonnen hat
-- **Pausierungsgrund** — Notizen, warum es pausiert wurde
-- **Automatischer Wiederstartdatum** — Wenn festgelegt, ist dies das Datum, an dem das Abonnement automatisch wieder abgerechnet und der Zugriff wiederhergestellt wird
+- **Pausierungsdatum** — Wann die Pause begonnen hat
+- **Pausierungsgrund** — Bemerkungen dazu, warum sie pausiert wurde
+- **Automatisches Wiederaufnahme-Datum** — Falls festgelegt, das Datum, an dem die Nutzungsvereinbarung automatisch wieder abgerechnet und der Zugang wiederhergestellt wird
 
-Abonnements werden entweder am automatischen Wiederholungsdatum oder wenn der Kunde sie manuell reaktiviert, wieder aufgenommen.
+Abonnements werden entweder am Auto-Resume-Datum wieder aufgenommen oder wenn der Kunde sie manuell erneut aktiviert.
 
-## Abrechnungszyklus-Protokolle
+## Gebührenzyklus-Protokolle
 
-Jeder Abrechnungsversuch — erfolgreich oder fehlgeschlagen — wird im Abrechnungszyklus-Protokoll gespeichert. Navigieren Sie zu **Abonnements > Abrechnungszyklus-Protokolle**, um diese Historie anzuzeigen.
+Jeder Gebührenversuch — erfolgreich oder fehlgeschlagen — wird im Gebührenzyklus-Protokoll protokolliert. Navigieren Sie zu **Abonnements > Gebührenzyklus-Protokolle**, um diese Historie anzuzeigen.
 
-![Liste der Abrechnungszyklus-Protokolle](/static/core/admin/img/help/managing-subscriptions/billing-cycle-log.webp)
+![Liste des Gebührenzyklus-Protokolls](/static/core/admin/img/help/managing-subscriptions/billing-cycle-log.webp)
 
-### Eintrag im Abrechnungszyklus-Protokoll einsehen
+### Eintrag des Gebührenzyklus-Protokolls lesen
 
-Jeder Protokolleintrag dokumentiert:
+Jeder Protokolleintrag enthält folgende Informationen:
 
-- **Abonnement** — Welches Kundenabonnement dieser Abrechnungsversuch gehört
-- **Zyklusnummer** — Sequenzieller Abrechnungszyklus (Zyklus 1 = erste Gebühr nach der Testphase)
-- **Abrechnungsdatum** — Wann die Gebühr versucht wurde
-- **Status** — Ausstehend, In Bearbeitung, Erfolgreich, Fehlgeschlagen oder Wiederholung
-- **Gebührenbreakdown**:
-  - **Grundgebühr** — Der Planpreis vor jeder Anpassung
-  - **Mengengebühr** — Zusätzliche Gebühr für die Anzahl der Sitzplätze/Einheiten
-  - **Zusatzgebühren** — Gesamtkosten aktiver Zusatzleistungen
-  - **Rabattgebühr** — Gesamte Rabatte, die angewendet wurden
-  - **Gesamtgebühr** — Der endgültige Betrag, der abgebucht wurde (oder versucht wurde)
+- **Abonnement** — Zu welchem Kundensubskription dieser Gebührenversuch gehört
+- **Zyklusnummer** — Sekundärer Gebührenzyklus (Zyklus 1 = erste Gebühr nach dem Testzeitraum)
+- **Gebührendatum** — Wann die Gebühr versucht wurde
+- **Status** — Ausstehend, Verarbeitung, Erfolgreich, Fehlgeschlagen oder Wiederholung
+- **Betragsspalte**:
+  - **Grundbetrag** — Der Planpreis vor allen Anpassungen
+  - **Mengenbetrag** — Zusätzliche Gebühr für die Anzahl der Plätze/Einheiten
+  - **Zusatzleistungen-Betrag** — Gesamtkosten aktiver Zusatzleistungen
+  - **Rabatt-Betrag** — Gesamtrabatte angewandt
+  - **Gesamtbetrag** — Der endgültige Gebetrag (oder versuchter Betrag)
 - **Zahlungsmethode** — Die Karte oder Zahlungsmethode, die verwendet wurde
-- **Transaktions-ID des Anbieters** — Die Referenznummer des Zahlungsanbieters (nützlich für Rückzahlungsabfragen)
-- **Fehlergrund** — Wenn die Abrechnung fehlgeschlagen ist, warum sie fehlgeschlagen ist (z. B. Karte abgelehnt, nicht genügend Guthaben)
+- **Provider-Transaktions-ID** — Die Referenznummer des Zahlungsanbieters (nützlich für Rückerstattungsanfragen)
+- **Fehlerschlussfolgerung** — Falls die Gebühr fehlgeschlagen ist, warum sie fehlgeschlagen ist (z. B. Karte abgelehnt, unzureichende Mittel)
 
 ### Diagnose von Zahlungsfehlern
 
-Wenn ein Kunde Sie wegen eines Abrechnungsproblems kontaktiert, suchen Sie nach seinem Abonnement und prüfen Sie die Abrechnungszyklus-Protokolle. Das Feld **Fehlergrund** erklärt, was schiefgelaufen ist. Häufige Fehlergründe sind:
+Wenn ein Kunde sich bei Ihnen wegen eines Gebührenproblems meldet, finden Sie ihr Abonnement und prüfen Sie das Gebührenzyklus-Protokoll. Das Feld **Fehlerschlussfolgerung** erklärt, was schiefgelaufen ist. Häufige Fehlerschlussfolgerungen sind:
 
-- **Karte abgelehnt** — Die Karte des Kunden wurde von ihrer Bank abgelehnt
-- **Nicht genügend Guthaben** — Der Kontostand war zu niedrig zum Zeitpunkt der Abrechnung
+- **Karte abgelehnt** — Die Karte des Kunden wurde von der Bank abgelehnt
+- **Unzureichende Mittel** — Das Kontoguthaben war zum Zeitpunkt der Gebühr zu niedrig
 - **Karte abgelaufen** — Die gespeicherte Zahlungsmethode ist abgelaufen
-- **Netzwerkfehler** — Ein vorübergehender Verbindungsfehler mit dem Zahlungsanbieter — löst sich in der Regel bei einer Wiederholung
+- **Netzwerkfehler** — Ein temporäres Verbindungsproblem mit dem Zahlungsanbieter — wird in der Regel bei erneuter Versuch gelöst
 
-Bei anhaltenden Fehlern bitten Sie den Kunden, seine Zahlungsmethode in seinen Kontoeinstellungen zu aktualisieren.
+Bei anhaltenden Fehlern leiten Sie den Kunden dazu an, ihre Zahlungsmethode in den Kontoeinstellungen zu aktualisieren.
+
+## Wie Erneuerungen erfüllt werden
+
+Jeder erfolgreiche Erneuerungsgebührenversuch erstellt ein brandneues bezahltes Auftrag für diesen Gebührenzyklus — es handelt sich nicht nur um einen Zahlungsverlauf. Dieser Auftrag durchläuft Ihren normalen Erfüllungsprozess genau so wie ein bei der Kasse platziertes Auftrag:
+
+- **Physische Produkte** — Der Erneuerungsauftrag gelangt in die reguläre Erfüllungswarteschlange für das Auswählen, Verpacken und Versenden. Er wird nicht automatisch anhand des Lagerbestands zugewiesen, sobald die Karte belastet wird, sodass ein vorübergehender Lagerbestandsmangel niemals einen bereits erfolgreich abgeschlossenen Gebührenversuch blockiert — Sie sehen den Auftrag immer noch und können ihn entsprechend dem Lagerbestand erfüllen.
+- **Digitale Produkte** — Der Zugang (Download-Links, Lizenzschlüssel) wird automatisch erneut erteilt, sobald der Erneuerungsauftrag erstellt wird, genau so wie bei einem Erstkauf.
+
+Erneuerungsaufträge kopieren die Versand- und Rechnungsdaten des Auftrags, der das Abonnement gestartet hat, sodass Sie nichts erneut eingeben müssen. Sie tragen kein besonderes Abzeichen in Ihrem **Bestellungen**-Liste, aber Sie können immer einen bestimmten Zykl direkt zurück zu seinem Auftrag verfolgen: öffnen Sie **Abonnements > Gebührenzyklus-Protokolle**, klicken Sie auf den Protokolleintrag für diesen Zykl, und das Feld **Bestellung** verweist direkt darauf.
+
+## Automatische Abonnement-E-Mails
+
+Spwig sendet automatisch E-Mails zum Abonnement-Lifecycle — Sie müssen diese manuell nicht auslösen. Die, die Händler am häufigsten fragen:
+
+| E-Mail | Wann wird sie gesendet |
+|-------|------------------|
+| **Erinnerung zur Erneuerung** | Vor einer bevorstehenden Erneuerungsgutschrift |
+| **Testzeitraum endet** | Vor dem Übergang eines kostenlosen oder reduzierten Testzeitraums in die vollständige Gebühr |
+| **Zahlung fehlgeschlagen** | Sofort nach dem Fehlschlagen einer Erneuerungsgutschrift und erneut als letzte Mitteilung, wenn die Frist abgelaufen ist (Dunning) |
+| **Bestätigung der Kündigung** | Wenn ein Abonnement gekündigt wird |
+
+Spwig sendet außerdem Willkommens-, Zahlungserfolgs-, Pause/Erneuerung, Ablauf, Wiederaktivierung, Planaenderung und E-Mail zur Ablauf des Zahlungsmethode bei den relevanten Punkten in einem Abonnement-Lifecycle.
+
+Alle Markdown-Formatierungen, Bildpfade, Codeblöcke und technischen Begriffe beibehalten.
+
+Alle diese sind gewöhnliche E-Mail-Vorlagen — siehe [E-Mail-Vorlagen](/help/email-templates), um deren Inhalt zu überprüfen oder anzupassen und sicherzustellen, dass sie aktiviert sind.
+
+## Kunden-Selbstbedienung
+
+Kunden müssen Sie nicht für gewöhnliche Abonnementsänderungen kontaktieren — sie können ihre eigenen Abonnements über ihr Konto verwalten: Details und Rechnungsverlauf ansehen, das Abonnement pausieren, fortsetzen, kündigen und die auf der Karte hinterlegte Zahlungsmethode aktualisieren. Dies deckt den Großteil ab, was andernfalls in Ihrem Support-Queue landen würde. Wenn ein Kunde sich wegen ihres Abonnements an Sie wendet, lohnt es sich, zuerst zu prüfen, ob sie bereits ihre Kontoseite genutzt haben, bevor Sie die Änderung für sie im Admin vornehmen.
 
 ## Tipps
 
-- Prüfen Sie den Filter **Überfällig** wöchentlich, um Abonnements zu erkennen, die das Risiko eines Abfalls bergen. Eine schnelle E-Mail an den Kunden löst oft Zahlungsprobleme, bevor die Verjährungsfrist abläuft.
-- Abrechnungszyklus-Protokolle sind schreibgeschützt — sie werden automatisch erstellt und können nicht geändert werden. Dies stellt eine zuverlässige Prüfprotokollierung sicher.
-- Wenn ein Kundenabonnement **Überfällig** anzeigt, aber der Kunde bereits seine Zahlungsmethode aktualisiert hat, wird der nächste automatische Wiederholungsversuch die neue Karte verwenden. Wiederholungen folgen dem Verjährungsplan, der im Plan konfiguriert ist.
+- Prüfen Sie wöchentlich den **Überfällig**-Filter, um Abonnements zu ermitteln, die das Austrittsrisiko haben. Eine schnelle E-Mail an den Kunden löst die Zahlungsprobleme oft vor Ablauf der Frist auf.
+- Die Protokolle der Abrechnungszyklen sind schreibgeschützt — sie werden automatisch erstellt und können nicht geändert werden. Dies stellt sicher, dass ein zuverlässiger Audit-Verlauf gewährleistet ist.
+- Falls das Abonnement eines Kunden **Überfällig** ist, aber sie bereits ihre Zahlungsmethode aktualisiert haben, erfasst der nächste automatische Versuch die neue Karte. Wiederholungsversuche folgen dem im Plan konfigurierten Fristenplan.
 - **Abgelaufene** Abonnements werden nicht gelöscht — sie bleiben für Berichte sichtbar. Verwenden Sie die Datumsfilter, um sich auf aktuelle Abonnements zu konzentrieren.
-- Für Abonnements in der **Testphase** prüfen Sie das **Enddatum der Testphase**, um bevorstehende erste Gebühren vorherzusehen und Probleme mit der Zahlungsmethode proaktiv zu beheben.
+- Bei Abonnements im **Probemonat** prüfen Sie das **Datum des Probemonatsende**, um auf kommende erste Gebühren vorbereitet zu sein, und lösen Sie proaktiv mögliche Probleme mit der Zahlungsmethode.
+- Falls ein Kunde sagt, dass ein physisches Erneuerungsprodukt "noch nicht versandt wurde", prüfen Sie Ihren regulären Versand-Queue anstelle des Abonnement-Records — Erneuerungsaufträge werden auf die gleiche Weise abgewickelt wie andere Aufträge und springen nicht in der Warteschlange.
+
+Alle Markdown-Formatierungen, Bildpfade, Codeblöcke und technischen Begriffe beibehalten.

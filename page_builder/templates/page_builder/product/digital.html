@@ -1,5 +1,5 @@
 {% extends "page_builder/product/_base.html" %}
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans currency_tags %}
 {# Digital Product Template - Optimized for software, ebooks, courses, digital downloads #}
 {# No shipping UI, feature lists, instant delivery badges, license info #}
 
@@ -39,13 +39,7 @@
                     {% endif %}
 
                     <div class="product-info__price" id="product-price">
-                        {% if product.is_on_sale %}
-                        <span class="price price--sale">{{ product.formatted_price }}</span>
-                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
-                        <span class="price__badge">{% mtrans 'Sale' %}</span>
-                        {% else %}
-                        <span class="price">{{ product.formatted_price }}</span>
-                        {% endif %}
+                        {% product_price_display product current_currency.code %}
                     </div>
 
                     {% if template_options.show_instant_delivery_badge %}
@@ -133,6 +127,9 @@
                         </div>
                     </div>
                     {% endif %}
+
+                    {# Subscription Options #}
+                    {% include "page_builder/product/_subscription_options.html" %}
 
                     {# Add to Cart (no quantity selector for digital by default) #}
                     <div class="product-actions product-actions--digital">

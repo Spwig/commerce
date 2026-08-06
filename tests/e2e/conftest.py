@@ -5,11 +5,14 @@ Provides browser, page, and checkout helper fixtures for
 end-to-end browser testing against a live Django server.
 """
 
+import json
 import os
 import time
 
 import pytest
 from playwright.sync_api import Page, sync_playwright
+
+from tests.helpers import E2E_TIMEOUT_MS
 
 # Allow Django DB access from async context (needed for pytest-playwright + live_server)
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -64,11 +67,40 @@ def browser_instance(playwright_instance, browser_engine):
 
 
 @pytest.fixture
-def page(browser_instance, live_server):
-    """Fresh browser page per test, wired to the live server."""
+def target_url(request):
+    """Base URL the browser suite drives — the env-agnostic switch (§4.1).
+
+    Default: the in-process Django ``live_server`` (fast, used in CI). When
+    ``SPWIG_E2E_BASE_URL`` is set, the SAME page objects and journeys drive
+    that instead — e.g. the deployed Linode nightly — with no test rewrites.
+    ``live_server`` is requested lazily so a remote run doesn't spin up a local
+    server. (The remote path's Footprint assertions use the HTTP inspection
+    backend rather than the ORM — Phase 3, once ``/api/e2e/inspect/`` exists.)
+    """
+    external = os.environ.get("SPWIG_E2E_BASE_URL", "").strip()
+    if external:
+        return external.rstrip("/")
+    return request.getfixturevalue("live_server").url
+
+
+@pytest.fixture
+def page(browser_instance, target_url):
+    """Fresh browser page per test, wired to the target (live_server or remote)."""
     pg = browser_instance.new_page()
-    pg._live_server_url = live_server.url
+    pg._live_server_url = target_url
+    pg.set_default_timeout(E2E_TIMEOUT_MS)
+    pg.set_default_navigation_timeout(E2E_TIMEOUT_MS)
     yield pg
+    # Park on about:blank before closing so a request still in flight can't
+    # deadlock the live_server DB flush on transaction=True teardown (the same
+    # guard mobile_page/desktop_page get via _quiesce_and_close). Tests that
+    # complete a checkout land on a still-loading confirmation page, which made
+    # this bite intermittently across the full golden-flow run.
+    try:
+        pg.goto("about:blank")
+        pg.wait_for_timeout(100)
+    except Exception:
+        pass
     pg.close()
 
 
@@ -92,7 +124,7 @@ def _quiesce_and_close(context, pg):
 
 
 @pytest.fixture
-def mobile_page(browser_instance, playwright_instance, live_server):
+def mobile_page(browser_instance, playwright_instance, target_url):
     """Page in an emulated iPhone 13 context (390x664 viewport, touch, DPR 3).
 
     Uses a real device descriptor rather than a bare ``set_viewport_size`` so
@@ -103,17 +135,21 @@ def mobile_page(browser_instance, playwright_instance, live_server):
     device = playwright_instance.devices["iPhone 13"]
     context = browser_instance.new_context(**device)
     pg = context.new_page()
-    pg._live_server_url = live_server.url
+    pg._live_server_url = target_url
+    pg.set_default_timeout(E2E_TIMEOUT_MS)
+    pg.set_default_navigation_timeout(E2E_TIMEOUT_MS)
     yield pg
     _quiesce_and_close(context, pg)
 
 
 @pytest.fixture
-def desktop_page(browser_instance, live_server):
+def desktop_page(browser_instance, target_url):
     """Page in a 1280x900 desktop context (no touch, no mobile UA)."""
     context = browser_instance.new_context(viewport={"width": 1280, "height": 900})
     pg = context.new_page()
-    pg._live_server_url = live_server.url
+    pg._live_server_url = target_url
+    pg.set_default_timeout(E2E_TIMEOUT_MS)
+    pg.set_default_navigation_timeout(E2E_TIMEOUT_MS)
     yield pg
     _quiesce_and_close(context, pg)
 
@@ -196,29 +232,53 @@ class CheckoutHelper:
                 }}
             """)
 
-    def add_to_cart(self, product_id: int, quantity: int = 1):
-        """Add product to cart via API (faster than UI clicks)."""
+    def add_to_cart(self, product_id: int, quantity: int = 1, **payload):
+        """Add a product to the cart via the API (faster than UI clicks) and
+        return the HTTP status.
+
+        Extra keyword args are merged into the POST body, so every product type
+        goes through the same ``/api/cart/add/`` path with its own detail:
+        ``variant_id`` (variable), ``configuration``/``preset_id`` (configurable),
+        ``booking_data`` (booking), ``gift_card_data`` (gift_card),
+        ``customizations`` (customizable), ``variant_selections`` /
+        ``excluded_optional_items`` (bundle). Returning the status lets a caller
+        assert the add succeeded rather than debug a confusing empty-cart
+        checkout downstream.
+        """
         # CSRF_COOKIE_HTTPONLY=True prevents JS from reading the cookie,
         # so we use Playwright's cookie API to get the token
         csrf = self._get_csrf_token()
-        self.page.evaluate(f"""
+        body = {"product_id": product_id, "quantity": quantity, **payload}
+        return self.page.evaluate(f"""
             async () => {{
-                await fetch('/api/cart/add/', {{
+                const r = await fetch('/api/cart/add/', {{
                     method: 'POST',
                     headers: {{
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': '{csrf}',
+                        'X-CSRFToken': {json.dumps(csrf)},
                     }},
-                    body: JSON.stringify({{product_id: {product_id}, quantity: {quantity}}}),
+                    body: JSON.stringify({json.dumps(body)}),
                 }});
+                return r.status;
             }}
         """)
 
     # --- Navigation ---
 
-    def go_to_checkout(self):
-        """Navigate to checkout page and wait for it to load."""
-        self.page.goto(f"{self.base_url}/en/checkout/")
+    def go_to_checkout(self, template: str = None):
+        """Navigate to checkout page and wait for it to load.
+
+        ``template`` selects a checkout layout via ``?template=`` (accordion,
+        multi_step, single_page, express) — the merchant's default renders when
+        omitted. The step partials, field IDs and ``continue-*`` data-actions
+        are shared across the accordion/multi_step/single_page layouts (each
+        only overrides step reveal on top of the base ``checkout.js``
+        controller), so this same helper drives all three.
+        """
+        url = f"{self.base_url}/en/checkout/"
+        if template:
+            url += f"?template={template}"
+        self.page.goto(url)
         self.page.wait_for_load_state("networkidle")
         # Inject CSRF token into DOM so checkout JS API calls can find it
         # (CSRF_COOKIE_HTTPONLY=True prevents JS from reading the cookie)
@@ -227,7 +287,7 @@ class CheckoutHelper:
         # multi-step uses .multistep__step)
         self.page.wait_for_selector(
             ".checkout-step, .multistep__step, #checkout-steps",
-            timeout=10000,
+            timeout=E2E_TIMEOUT_MS,
         )
 
     def go_to_cart(self):
@@ -299,7 +359,7 @@ class CheckoutHelper:
         # Wait for shipping methods API call to complete (spinner goes away)
         self.page.wait_for_selector(
             ".shipping-method-card, .checkout-empty-state .fa-exclamation-circle",
-            timeout=15000,
+            timeout=E2E_TIMEOUT_MS,
         )
 
     # --- Step: Shipping Method ---
@@ -324,7 +384,7 @@ class CheckoutHelper:
         """
         self.page.wait_for_selector(
             ".payment-provider-card, .checkout-empty-state .fa-credit-card",
-            timeout=15000,
+            timeout=E2E_TIMEOUT_MS,
         )
 
     def get_available_shipping_methods(self) -> list:

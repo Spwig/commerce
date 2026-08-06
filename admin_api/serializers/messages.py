@@ -251,6 +251,7 @@ class MessageReplyResponseSerializer(serializers.Serializer):
     replied_at = serializers.DateTimeField()
     replied_by_name = serializers.CharField()
     email_sent = serializers.BooleanField()
+    email_error = serializers.CharField(required=False, allow_null=True)
     status = serializers.CharField()
     status_display = serializers.CharField()
 

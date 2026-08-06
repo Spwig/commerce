@@ -39,7 +39,7 @@ def cleanup_old_preference_logs(days=90):
 
     except Exception as e:
         logger.error(f"Error cleaning up preference logs: {e}", exc_info=True)
-        return 0
+        raise
 
 
 @shared_task(name="accounts.cleanup_expired_sms_codes", base=BackgroundDBTask, ignore_result=True)
@@ -79,4 +79,4 @@ def cleanup_expired_sms_codes():
 
     except Exception as e:
         logger.error(f"Error cleaning up SMS codes: {e}", exc_info=True)
-        return 0
+        raise

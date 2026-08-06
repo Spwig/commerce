@@ -1,102 +1,93 @@
 {% extends "page_builder/base.html" %}
-{% load i18n %}
+{% load i18n static merchant_trans currency_tags %}
 
-{% block title %}{% trans "Resume Subscription" %} - {{ subscription.plan.name }}{% endblock %}
+{% block title %}{% mtrans "Resume Subscription" %} - {{ subscription.plan.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/subscriptions.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-    <!-- Breadcrumb -->
-    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="{% url 'accounts:subscription_list' %}" class="text-gray-700 hover:text-blue-600">
-                    {% trans "My Subscriptions" %}
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}" class="text-gray-700 hover:text-blue-600">
-                        {{ subscription.plan.name }}
-                    </a>
-                </div>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="text-gray-500">{% trans "Resume" %}</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:subscription_list' %}" class="breadcrumb__link">{% mtrans 'My Subscriptions' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}" class="breadcrumb__link">{{ subscription.plan.name }}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Resume' %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</section>
 
-    <!-- Confirmation Card -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <svg class="h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+<section class="section">
+    <div class="container">
+        <div class="subscription-narrow">
+            <div class="subscription-panel">
+                <div class="subscription-confirm__header">
+                    <span class="subscription-confirm__icon subscription-confirm__icon--success">
+                        <i class="fas fa-circle-play"></i>
+                    </span>
+                    <div>
+                        <h1 class="subscription-confirm__title">{% mtrans "Resume Subscription" %}</h1>
+                        <p class="subscription-confirm__subtitle">{{ subscription.plan.name }}</p>
+                    </div>
                 </div>
-                <div class="ml-4">
-                    <h1 class="text-2xl font-bold text-gray-900">{% trans "Resume Subscription" %}</h1>
-                    <p class="mt-1 text-gray-600">{{ subscription.plan.name }}</p>
+
+                <div class="subscription-confirm__body">
+                    <div class="subscription-notice subscription-notice--info">
+                        <p class="subscription-notice__title">{% mtrans "What happens when you resume?" %}</p>
+                        <ul class="subscription-notice__list">
+                            <li>{% mtrans "Your subscription will be reactivated immediately" %}</li>
+                            <li>{% mtrans "Billing will resume according to your plan schedule" %}</li>
+                            <li>{% mtrans "You'll regain full access to all subscription benefits" %}</li>
+                            <li>{% mtrans "Your billing history will be preserved" %}</li>
+                        </ul>
+                    </div>
+
+                    <dl class="subscription-summary">
+                        <div class="subscription-summary__row">
+                            <dt class="subscription-summary__label">{% mtrans "Plan" %}</dt>
+                            <dd class="subscription-summary__value">{{ subscription.plan.name }}</dd>
+                        </div>
+                        {% if subscription_price %}
+                        <div class="subscription-summary__row">
+                            <dt class="subscription-summary__label">{% mtrans "Billing Amount" %}</dt>
+                            <dd class="subscription-summary__value">{{ subscription_price|money }} / {{ subscription.pricing_tier.get_billing_display }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if subscription.paused_at %}
+                        <div class="subscription-summary__row">
+                            <dt class="subscription-summary__label">{% mtrans "Paused Since" %}</dt>
+                            <dd class="subscription-summary__value">{{ subscription.paused_at|date:"M d, Y" }}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                <div class="subscription-confirm__footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="subscription-confirm__actions">
+                            <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}"
+                               class="btn btn--secondary">
+                                {% mtrans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn--success">
+                                {% mtrans "Resume Subscription" %}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-
-        <div class="p-6">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 class="text-sm font-medium text-blue-800 mb-2">{% trans "What happens when you resume?" %}</h3>
-                <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
-                    <li>{% trans "Your subscription will be reactivated immediately" %}</li>
-                    <li>{% trans "Billing will resume according to your plan schedule" %}</li>
-                    <li>{% trans "You'll regain full access to all subscription benefits" %}</li>
-                    <li>{% trans "Your billing history will be preserved" %}</li>
-                </ul>
-            </div>
-
-            <div class="border-t border-gray-200 pt-6">
-                <dl class="space-y-4">
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500">{% trans "Plan" %}</dt>
-                        <dd class="mt-1 text-lg text-gray-900">{{ subscription.plan.name }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500">{% trans "Billing Amount" %}</dt>
-                        <dd class="mt-1 text-lg text-gray-900">{{ subscription.plan.price }} / {{ subscription.plan.get_billing_cycle_display }}</dd>
-                    </div>
-                    {% if subscription.paused_at %}
-                    <div>
-                        <dt class="text-sm font-medium text-gray-500">{% trans "Paused Since" %}</dt>
-                        <dd class="mt-1 text-lg text-gray-900">{{ subscription.paused_at|date:"M d, Y" }}</dd>
-                    </div>
-                    {% endif %}
-                </dl>
-            </div>
-        </div>
-
-        <div class="p-6 bg-gray-50 border-t border-gray-200">
-            <form method="post">
-                {% csrf_token %}
-                <div class="flex items-center justify-between">
-                    <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}"
-                       class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-white">
-                        {% trans "Cancel" %}
-                    </a>
-                    <button type="submit"
-                            class="px-6 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        {% trans "Resume Subscription" %}
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

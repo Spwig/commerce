@@ -30,7 +30,7 @@ category: Subscriptions
       </mj-column>
     </mj-section>
 
-    <!-- Failed Payment Card -->
+    <!-- Gagal Pembayaran Card -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-wrapper background-color="#fef2f2" padding="30px" border="2px solid {{ theme.color.error|default:'#ef4444' }}" border-radius="12px">
@@ -58,16 +58,18 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Silakan perbarui cara pembayaran Anda sebelum {{ retry_date|date:"F d, Y" }} untuk menghindari gangguan layanan.
+                Harap perbarui metode pembayaran Anda pada {{ retry_date|date:"F d, Y" }} untuk menghindari gangguan layanan.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
       </mj-column>
     </mj-section>
 
-    <!-- What to Do Section -->
+    <!-- Bagian Apa yang Harus Dilakukan -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
@@ -75,27 +77,29 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Periksa bahwa cara pembayaran Anda memiliki dana yang cukup
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          Pastikan metode pembayaran Anda memiliki dana yang cukup
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          Perbarui cara pembayaran Anda jika kartu sudah kedaluwarsa
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          Perbarui metode pembayaran Anda jika kartu telah kedaluwarsa
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Kami akan otomatis mencoba pembayaran kembali dalam {{ retry_days }} hari
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Kami akan mencoba kembali pembayaran secara otomatis dalam {{ retry_days }} hari
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
-    <!-- CTA Buttons -->
+    <!-- Tombol CTA -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          Perbarui Cara Pembayaran
+          Perbarui Metode Pembayaran
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
@@ -105,24 +109,24 @@ category: Subscriptions
       </mj-column>
     </mj-section>
 
-    <!-- Support Block -->
+    <!-- Blok Bantuan -->
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="20px">
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          Membutuhkan bantuan? Hubungi kami di {{ support_email }}
+          Butuh bantuan? Hubungi kami di {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
 
-    <!-- Spwig Branding Footer -->
+    <!-- Footer Branding Spwig -->
     <mj-section padding="15px 0 10px 0" background-color="transparent">
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" border-width="1px" padding="0 0 12px 0"></mj-divider>
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Powered by Spwig
+            Dikembangkan oleh Spwig
           </a>
         </mj-text>
       </mj-column>
@@ -141,17 +145,17 @@ Jumlah: {{ subscription_amount }}
 Cara Pembayaran: {{ payment_method }}
 Alasan: {{ failure_reason }}
 
-Silakan perbarui cara pembayaran Anda sebelum {{ retry_date|date:"F d, Y" }} untuk menghindari gangguan layanan.
+{% if retry_date %}Harap perbarui metode pembayaran Anda pada {{ retry_date|date:"F d, Y" }} untuk menghindari gangguan layanan.{% endif %}
 
 Apa yang Harus Anda Lakukan?
-1. Periksa bahwa cara pembayaran Anda memiliki dana yang cukup
-2. Perbarui cara pembayaran Anda jika kartu sudah kedaluwarsa
-3. Kami akan otomatis mencoba pembayaran kembali dalam {{ retry_days }} hari
+1. Pastikan metode pembayaran Anda memiliki dana yang cukup
+2. Perbarui metode pembayaran Anda jika kartu telah kedaluwarsa
+{% if retry_days %}3. Kami akan mencoba kembali pembayaran secara otomatis dalam {{ retry_days }} hari{% endif %}
 
-Perbarui Cara Pembayaran: {{ update_payment_url }}
+Perbarui Metode Pembayaran: {{ update_payment_url }}
 Lihat Langganan: {{ manage_subscription_url }}
 
-Membutuhkan bantuan? Hubungi kami di {{ support_email }}
+Butuh bantuan? Hubungi kami di {{ support_email }}
 
 ---
-Powered by Spwig - https://spwig.com
+Dikembangkan oleh Spwig - https://spwig.com

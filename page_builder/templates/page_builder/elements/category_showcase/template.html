@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture %}
 <!-- Category Showcase Element -->
 <section class="category-showcase category-showcase--{{ element.content.style|default:'cards' }} section"
          {% hover_animation_attrs element %}
@@ -22,10 +22,7 @@
                 <div class="category-showcase__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'1/1' }};">
                     {% with card_image=category.get_card_image_thumbnail %}
                     {% if card_image %}
-                    <img src="{{ card_image }}"
-                         alt="{{ category.name }}"
-                         class="category-showcase__image"
-                         loading="lazy">
+                    {% picture card_image alt=category.name css="category-showcase__image" %}
                     {% elif category.icon %}
                     <div class="category-showcase__image-placeholder">
                         <i class="{{ category.icon }}"></i>

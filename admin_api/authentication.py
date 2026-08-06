@@ -106,12 +106,15 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
         return (token.user, token)
 
     def _get_client_ip(self, request):
-        """Extract client IP from request."""
+        """Return the trusted client IP, or None.
+
+        Uses REMOTE_ADDR only. The X-Forwarded-For header is not trusted
+        because this installation has no trusted WAF/CDN in front of it: an
+        authenticated client can forge that header with any syntactically
+        valid address, which would poison the token's ``inet`` audit field.
+        """
         if not request:
             return None
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            return x_forwarded_for.split(",")[0].strip()
         return request.META.get("REMOTE_ADDR")
 
     def authenticate_header(self, request):

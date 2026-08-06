@@ -155,6 +155,7 @@ def inventory_dashboard(request):
     ],
     responses={
         200: LowStockProductListSerializer,
+        400: ErrorResponseSerializer,
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
@@ -190,20 +191,40 @@ def inventory_low_stock(request):
 
     # Optional filters
     category_id = None
-    try:
-        cat_param = request.query_params.get("category_id")
-        if cat_param:
+    cat_param = request.query_params.get("category_id")
+    if cat_param:
+        try:
             category_id = int(cat_param)
-    except (ValueError, TypeError):
-        pass
+        except (ValueError, TypeError):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 400,
+                        "message": _("category_id must be a valid integer."),
+                        "reference": _generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     warehouse_id = None
-    try:
-        wh_param = request.query_params.get("warehouse_id")
-        if wh_param:
+    wh_param = request.query_params.get("warehouse_id")
+    if wh_param:
+        try:
             warehouse_id = int(wh_param)
-    except (ValueError, TypeError):
-        pass
+        except (ValueError, TypeError):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 400,
+                        "message": _("warehouse_id must be a valid integer."),
+                        "reference": _generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     try:
         data = InventoryService.get_low_stock_products(
@@ -317,12 +338,22 @@ def inventory_velocity(request):
         )
 
     variant_id = None
-    try:
-        v_param = request.query_params.get("variant_id")
-        if v_param:
+    v_param = request.query_params.get("variant_id")
+    if v_param:
+        try:
             variant_id = int(v_param)
-    except (ValueError, TypeError):
-        pass
+        except (ValueError, TypeError):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 400,
+                        "message": _("variant_id must be a valid integer."),
+                        "reference": _generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     period = request.query_params.get("period", "30d")
     if period not in ("7d", "30d", "90d"):

@@ -2,129 +2,159 @@
 title: Müşteri Aboneliklerini Yönetme
 ---
 
-Müşteri abonelikleri bölümü, mağazanızdaki tüm etkin, duraklatılmış ve iptal edilmiş tekrar eden aboneliklerin tam bir görünümünü sağlar. Buradan faturalandırma sağlığına bakabilir, bireysel abonelik detaylarını görebilir ve sorunlar ortaya çıktığında işlem yapabilirsiniz.
+Müşteri abonelikleri bölümü, mağazanızdaki tüm aktif, duraklatılmış ve iptal edilmiş tekrarlayan abonelikler hakkında tam bir görünüm sunar. Buradan faturalandırma sağlığını izleyebilir, bireysel abonelik detaylarını görüntüleyebilir ve sorunlar oluştuğunda eylem alabilirsiniz.
 
 ## Müşteri aboneliklerini görüntüleme
 
-**Abonelikler > Müşteri Abonelikleri** menüsünden tüm müşterilerin aboneliklerinin tam listesini görebilirsiniz.
+**Abonelikler > Müşteri Abonelikleri**'ne giderek tüm müşteriler arasındaki aboneliklerin tamamını görebilirsiniz.
 
 ![Müşteri abonelikleri listesi](/static/core/admin/img/help/managing-subscriptions/subscription-list.webp)
 
-Liste, her abonelik için müşteri, plan adı, geçerli durum, son fatura tarihi ve tamamlanmış fatura döngü sayısını gösterir.
+Liste, her abonelik için müşteri, plan adı, mevcut durum, bir sonraki faturalandırma tarihi ve tamamlanan faturalandırma döngüsünün sayısını gösterir.
 
 ### Filtreleme ve arama
 
-Sağdaki filtre panelini kullanarak abonelikleri aşağıdaki kriterlere göre daraltabilirsiniz:
+Sağdaki filtre panelini kullanarak abonelikleri şu şekilde daraltabilirsiniz:
 
-- **Durum** — Aktif, Deneme, Gecikmiş, Duraklatılmış, İptal Edilmiş veya Süresi Dolmuş durumlarına göre filtreleyin
-- **Plan** — Belirli bir plan için abonelikleri görüntüleyin
-- **Provider Mode** — Yerel (Stripe/PayPal yönetilen) veya Geri Dönüş (iç faturalandırma)
+- **Durum** — Aktif, Deneme, Vadesi Doldu, Duraklatılmış, İptal Edildi veya Süresi Doldu olarak filtreleme
+- **Plan** — Belirli bir plan için abonelikleri görüntüleme
+- **Sağlayıcı Modu** — Özgün (Stripe/PayPal tarafından yönetilen) veya Geri Dönüş (iç faturalandırma)
 
-Arama çubuğunu kullanarak abonelikleri müşteri e-posta adresine göre bulabilirsiniz.
+Arama çubuğunu kullanarak müşteri e-posta adresine göre abonelikleri arayabilirsiniz.
 
 ## Abonelik durumları
 
-Her durumun anlamını anlamak, dikkat gerektiren abonelikleri tanımanıza yardımcı olur:
+Her durumun ne anlama geldiğini anlamak, dikkat edilmesi gereken abonelikleri belirlemek için size yardımcı olur:
 
 | Durum | Ne anlama gelir |
-|--------|---------------|
-| **Deneme** | Müşteri ücretsiz veya indirimli fiyatlı deneme döneminde |
-| **Aktif** | Abonelik sağlıklı — faturalandırma güncel ve erişim aktif |
-| **Gecikmiş** | Ödeme denemesi başarısız oldu — sistem tekrar deniyor. Müşteri, geçiş süresi boyunca erişimi korur |
-| **Duraklatılmış** | Abonelik geçici olarak duraklatıldı — faturalandırma yok, erişim yok |
-| **İptal Edilmiş** | İptal isteği yapıldı. Müşteri, dönem sonu tarihine kadar hala erişim sağlayabilir |
-| **Süresi Dolmuş** | Abonelik tamamen sona erdi — deneme süresi doldu, maksimum fatura döngüleri ulaşıldı veya iptal süresi geçti |
+|--------|----------------|
+| **Deneme** | Müşteri, ücretsiz ya da indirimli fiyatlı deneme dönemindeler |
+| **Aktif** | Abonelik sağlıklıdır — faturalandırma güncel ve erişim aktiftir |
+| **Vadesi Doldu** | Bir ödeme denemesi başarısız oldu — sistem yeniden denemektedir. Müşteri, geçim süresi boyunca erişimine devam eder |
+| **Duraklatılmış** | Abonelik geçici olarak duraklatılmıştır — faturalandırma yapılmaz, erişim yok |
+| **İptal Edildi** | İptal talebi yapılmıştır. Müşteri, dönem sonuna kadar erişimine devam edebilir |
+| **Süresi Doldu** | Abonelik tamamen sona erdi — deneme süresi doldu, maksimum faturalandırma döngüsü eklendi veya iptal süresi geçti |
 
-**Gecikmiş** durumda olan abonelikler en çok dikkat gerektirir — ödeme devam edememişse ve geçiş süresi bittiğinde abonelik duraklatılacaktır.
+**Vadesi Doldu** olan abonelikler, en çok dikkat etmeniz gerekenlerdir — ödeme devam ederse ve geçim süresi biterse, abonelik duraklatılacaktır.
 
-## Bir abonelik detaylarını görüntüleme
+## Bir aboneliğin detaylarını görüntüleme
 
-Herhangi bir abonelik üzerine tıklayarak detay görünümünü açabilirsiniz. Bu, aşağıdaki bilgileri gösterir:
+Herhangi bir aboneliğe tıklayarak detay görünümünü açabilirsiniz. Bunu gösterir:
 
-### Mevcut fatura dönemi
+### Şu anki faturalandırma dönemi
 
-- **Mevcut Dönem Başlangıcı / Bitişi** — Aktif fatura penceresinin tarihleri
-- **Sonraki Fatura Tarihi** — Sonraki ödeme denemesinin yapılacağı tarih
-- **Son Fatura Tarihi** ve **Son Fatura Durumu** — En son fatura denemesinin sonucu
-- **Fatura Döngü Sayısı** — Başarılı fatura döngü sayısının tamamlanması
+- **Şu anki Dönem Başlangıç / Bitiş** — Aktif faturalandırma penceresinin tarihleri
+- **Bir Sonraki Faturalandırma Tarihi** — Bir sonraki tahsilatın yapılması beklenen tarih
+- **Son Faturalandırma Tarihi** ve **Son Faturalandırma Durumu** — En son faturalandırma denemesinin sonucu
+- **Faturalandırma Döngüsü Sayısı** — Tamamlanan başarılı faturalandırma döngüsünün sayısı
 
-### Abonelik bilgileri
+### Abonelik bilgisi
 
-- **Plan** ve **Fiyatlandırma Seviyesi** — Müşterinin hangi plan ve fatura sıklığında olduğunu gösterir
-- **Ürün / Değişken** — Bu abonelikle ilişkili katalog ürününü (uygunsa) gösterir
-- **Miktar** — Oturum sayısı veya birim sayısı (miktar bazlı planlar için)
-- **Ödeme Token** — Tekrar eden faturalandırma için kullanılan depolanan ödeme yöntemi
+- **Plan** ve **Faturalandırma Seviyesi** — Müşterinin hangi plan ve faturalandırma sıklığı üzerinde olduğuna dair bilgi
+- **Ürün / Variant** — Bu abonelikle ilişkili olan katalog ürününü (varsa)
+- **Miktar** — Kullanım hakkı veya birim sayısı (miktar temelli planlar için)
+- **Ödeme Tokenı** — Tekrarlayan faturalandırma için kullanılan saklı ödeme yöntemi
 
 ### Deneme detayları
 
-Abonelik deneme dönemindeyse, **Deneme Bitiş Tarihi** müşterinin deneme süresinin sona erdiği ve tam faturalandırmanın başladığı tarihi gösterir.
+Abonelik deneme aşamasındaysa, **Deneme Bitiş Tarihi**, müşterinin denemenin bittiğini ve tam faturalandırmanın başladığını gösterer.
 
 ### İptal detayları
 
-İptal edilmiş abonelikler için aşağıdaki bilgileri görebilirsiniz:
+İptal edilmiş abonelikler için şunları görebilirsiniz:
 
-- **İptal Türü** — İptal, hemen, dönem sonunda veya planlanan bir tarihte yapıldı mı
-- **İptal Tarihi** — İptal isteğinin yapıldığı tarih
-- **İptal Nedeni** — Müşterinin neden iptal ettiğini belirten notlar (kayıt edilmişse)
-- **Yeniden Aktifleştirme Son Tarihi** — Müşterinin yeniden aktifleştirmesi için son tarih (tekrar abone olmaksızın)
+- **İptal Türü** — İptal, dönem sonuna kadar ya da planlanmış mı
+- **İptal Edildiğinde** — İptalin istendiği tarih
+- **İptal Nedeni** — Müşterinin iptal nedeniyle notlar (varsa)
+- **Yeniden Aktivasyon Süresi** — Müşterinin tamamen yeniden abone olmadan önce yeniden aktif hale gelebileceği son tarih
 
-### Geçiş süresi ve taahhütler
+### Geçim süresi ve taahhütler
 
-- **Geçiş Süresi Bitiş Tarihi** — Ödeme başarısız olursa, erişimin durdurulacağı tarihi gösterir
-- **Minimum Taahhüt Bitiş Tarihi** — Minimum taahhütlere sahip planlar için en erken iptal tarihi
+- **Geçim Süresi Bitiş Tarihi** — Bir ödeme başarısız olursa, erişimin askıya alınmadan önceki son tarih
+- **Minimum Taahhüt Bitiş Tarihi** — Minimum taahhütleri olan planlar için, en erken iptal tarihi
 
 ## Bir aboneliği duraklatma
 
-Duraklatılmış bir abonelik, faturalandırma geçici olarak durdurulurken erişimi de durdurur. Bu, tamamen iptal etmek istemeyen müşteriler için bir ara verme imkanı sağlar.
+Bir abonelik, geçici olarak faturalandırma yapmayı ve erişimi askıya almayı durdurur. Bu, tamamen iptal etmek yerine bir süre durmak isteyen müşteriler için yararlıdır.
 
-Duraklatılmış abonelikleri görmek için **Durum: Duraklatılmış** ile filtreleyin. Detay görünümü aşağıdaki bilgileri gösterir:
+Duraklatılmış abonelikleri görüntülemek için **Durum: Duraklatılmış**'a göre filtreleme yapabilirsiniz. Detay görünümü şunları gösterir:
 
-- **Duraklatılma Tarihi** — Duraklatmanın başladığı tarih
-- **Duraklatma Nedeni** — Neden duraklatıldığını belirten notlar
-- **Otomatik Devam Tarihi** — Ayarlanmışsa, abonelik faturalandırma ve erişimi otomatik olarak yeniden başlatılacağı tarih
+- **Duraklatma Zamanı** — Duraklatmanın başladığı tarih
+- **Duraklatma Nedeni** — Nedeniyle duraklatıldığını belirten notlar
+- **Otomatik Olarak Devam Etme Tarihi** — Ayarlandıysa, aboneliğin faturalandırma ve erişim açısından otomatik olarak devam edeceği tarih
 
+Abonelikler, otomatik devam tarihi veya müşteri tarafından elle yeniden başlatıldığında devam eder.
 
-Abonelikler, otomatik yeniden başlatma tarihinde veya müşteri tarafından el ile yeniden etkinleştirildiğinde devam eder.
+## Faturalandırma döngüsü kayıtları
 
-## Fatura döngüsü günlükleri
+Her faturalandırma denemesi — başarılı ya da başarısız olsa da — faturalandırma döngüsü loguna kaydedilir. Bu tarihi görüntülemek için **Abonelikler > Faturalandırma Döngüsü Kayıtları**'na gidin.
 
-Her fatura denemesi — başarılı veya başarısız — fatura döngüsü günlüğüne kaydedilir. **Abonelikler > Fatura Döngüsü Günlükleri**'ne giderek bu tarihi görüntüleyebilirsiniz.
+![Faturalandırma döngüsü logu listesi](/static/core/admin/img/help/managing-subscriptions/billing-cycle-log.webp)
 
-![Fatura döngüsü günlüğü listesi](/static/core/admin/img/help/managing-subscriptions/billing-cycle-log.webp)
+### Bir faturalandırma döngüsü logu girişini okuma
 
-### Bir fatura döngüsü günlüğü girdisini okuma
+Her log girişi şunları kaydeder:
 
-Her günlük girdi aşağıdaki bilgileri kaydeder:
-
-- **Abonelik** — Bu fatura denemesinin hangi müşteri aboneliğine ait olduğunu belirtir
-- **Döngü Numarası** — Sırasıyla fatura döngüsü (Döngü 1 = deneme döneminden sonra ilk ücret)
-- **Fatura Tarihi** — Ücretin ne zaman denendiği
-- **Durum** — Beklemede, İşlemde, Başarılı, Başarısız veya Yeniden Deneme
+- **Abonelik** — Bu faturalandırma denemesinin hangi müşteri aboneliğine ait olduğunu belirtir
+- **Döngü Numarası** — Sıralı faturalandırma döngüsü (Döngü 1 = deneme sonrası ilk ödeme)
+- **Faturalandırma Tarihi** — Ödemenin yapıldığı tarih
+- **Durum** — Bekleme, İşleme, Başarılı, Başarısız veya Tekrarlama
 - **Tutar analizi**:
-  - **Temel Tutar** — Herhangi bir ayarlama yapılmadan önce plan fiyatı
-  - **Miktar Tutarı** — Koltuk/ünite sayısına ek olarak ek ücret
-  - **Ekstra Tutar** — Aktif ekstra maliyetlerin toplamı
+  - **Temel Tutar** — Herhangi bir düzeltme yapılmadan önce plan fiyatını belirtir
+  - **Miktar Tutarı** — Koltuk/birim miktarı için ekstra ödeme
+  - **Ekstra Tutarı** — Etkin ekstra eklerin toplam maliyeti
   - **İndirim Tutarı** — Uygulanan toplam indirimler
-  - **Toplam Tutar** — Sonuçta alınan (veya denenen) toplam tutar
-- **Ödeme Yöntemi** — Kullanılan kredi kartı veya ödeme yöntemi
-- **Provider İşlem Kimliği** — Ödeme sağlayıcısının referans numarası (iade araştırmaları için faydalıdır)
-- **Başarısızlık Nedeni** — Eğer fatura başarısız olursa, neden başarısız olduğunu açıklar (örneğin, kredi kartı reddedildi, yetersiz bakiye)
+  - **Toplam Tutar** — Sonuçta tahsil edilen (ya da denenen) tutar
+- **Ödeme Yöntemi** — Kullanılan karta ya da ödeme yöntemine ait bilgi
+- **Sağlayıcı İşlem Kimliği** — Ödeme sağlayıcısının referans numarası (iade sorguları için yararlıdır)
+- **Başarısızlık Nedeni** — Faturalandırma başarısız olursa, nedeninin ne olduğu (örneğin, kart reddedildi, yetersiz bakiye)
 
-### Ödeme başarısızlıklarını tanımlama
+### Ödeme hatalarının tanılanması
 
-Bir müşteri bir fatura sorunundan bahsediyorsa, aboneliğini bulun ve fatura döngüsü günlüklerini inceleyin. **Başarısızlık Nedeni** alanı neyin yanlış gittiğini açıklar. Ortak başarısızlık nedenleri şunlardır:
+Bir müşteri, faturalandırma sorunu hakkında size ulaşırsa, aboneliğini bul ve faturalandırma döngüsü kayıtlarını kontrol et. **Başarısızlık Nedeni** alanı neyin yanlış gittiğini açıklar. Sık karşılaşılan başarısızlık nedenleri şunlardır:
 
-- **Kart reddedildi** — Müşterinin bankası tarafından kredi kartı reddedildi
-- **Yetersiz bakiye** — Fatura zamanında hesap bakiyesi çok düşüktü
-- **Kartın son kullanma tarihi geçti** — Kaydedilmiş ödeme yöntemi sona erdi
-- **Ağ hatası** — Ödeme sağlayıcısıyla geçici bir bağlantı sorunu — genellikle yeniden deneme ile çözülür
+- **Kart reddedildi** — Müşteri kartı bankası tarafından reddedildi
+- **Yetersiz bakiye** — Faturalandırma anında hesap bakiyesi yetersiz
+- **Kart süresi doldu** — Kayıtlı ödeme yöntemi süresi doldu
+- **Ağ hatası** — Ödeme sağlayıcısıyla olan geçici bir bağlantı problemi — genellikle tekrar denemede çözülür
 
-Sürekli başarısızlıklar varsa, müşteriyi hesap ayarlarında ödeme yöntemini güncellemeye yönlendirin.
+Sürekli başarısızlıklar için, müşteriye hesap ayarlarında ödeme yöntemini günclemesini önerin.
+
+## Yeniden doğrulanmanın nasıl yerine getirildiğine dair
+
+Her başarılı yeniden doğrulanma ödemesi, bu faturalandırma döngüsü için yeni bir ödeme siparişi oluşturur — sadece bir ödeme kaydı değildir. Bu sipariş, alışveriş yaparken yapılan bir siparişle aynı şekilde normal teslimat sürecine girer:
+
+- **Fiziksel ürünler** — Yeniden doğrulanma siparişi, abonelik ile başlayan siparişin sevkiyat ve faturalandırma bilgilerini kopyalar. Bu nedenle, kartın hemen ardından stoktan ayrılmaz, bu nedenle geçici stok eksikliği, zaten başarılı olan bir ödemeyi engellemez — yine de siparişi görür ve stok miktarına göre teslim edebilirsiniz.
+- **Dijital ürünler** — Yeniden doğrulanma siparişi oluşturulduğunda, ilk kez satın alındığı gibi, indirme linkleri, lisans anahtarları gibi erişim otomatik olarak yeniden verilir.
+
+Yeniden doğrulanma siparişleri, aboneliği başlatan siparişin sevkiyat ve faturalandırma bilgilerini kopyalar, bu nedenle bir şeyi tekrar girmek gerekmez. **Siparişler** listesinde özel bir nişangah taşımayabilir, ancak herhangi bir döngüyü o siparişe izleyebilirsiniz. **Abonelikler > Faturalandırma Döngüsü Kayıtları**'na açın, bu döngü için log girişi üzerine tıklayın ve **Sipariş** alanındaki bağlantı doğrudan ona gider.
+
+## Otomatik abonelik e-postaları
+
+Spwig, abonelik yaşam döngüsü e-postalarını otomatik olarak gönderir — bunları manuel olarak tetiklemek gerekmez. İş sahiplerinin en çok sorduğu e-postalar:
+
+| E-posta | Ne zaman gönderildiği |
+|-------|----------------|
+| **Yeniden doğrulama hatırlatması** | Bir sonraki yeniden doğrulama ödemesinden önce |
+| **Deneme bitiyor** | Ücretsiz ya da indirimli deneme süresinin tamamlayıcı faturalandırma ile dönüştüğüne dair |
+| **Ödeme başarısızlığı** | Yeniden doğrulama ödemesi başarısız olduğunda hemen sonra, ve grace periodunun biteceği zaman son bir uyarı olarak |
+| **İptal onayı** | Abonelik iptal edildiğinde |
+
+Spwig, ilgili abonelik yaşam döngüsünde noktalarda konuk, ödeme başarılı, duraklatma/devam, sona erme, yeniden başlatma, plan değişikliği ve ödeme yöntemi sona erme e-postalarını da gönderir.
+
+Tüm markdown formatını, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
+
+Bunların hepsi sıradan bir e-posta şablonudur — içeriklerini inceleyip özelleştirmek ve bunların etkin olduğundan emin olmak için [E-posta Şablonları](/help/email-templates)'na bakın.
+
+## Müşteri tarafından kendi kendine hizmet
+
+Müşteriler, sıradan bir abonelik değişikliği için sana ulaşmak zorunda kalmaz — hesaplarında bulunan aboneliklerini, detayları ve fatura tarihçesi, duraklatma, devam ettirme, iptal etme ve dosyadaki ödeme yöntemini güncelleme gibi işlemleri kendi hesaplarından yönetebilirler. Bu, destek kuyruğuna gelenlerin çoğu için yeterli olur. Bir müşteri aboneliği hakkında sana ulaşır ise, onun hesap sayfasını denediğini kontrol etmek için önce senin onlar için değişikliği yapman gerekir.
 
 ## İpuçları
 
-- Haftada bir kez **Gecikmiş** filtresini kontrol ederek churn riski taşıyan abonelikleri yakalayın. Müşteriye hızlı bir e-posta göndermek, genellikle grâce periodun sona ermeden önce ödeme sorunlarını çözer.
-- Fatura döngüsü günlükleri sadece okunabilir — otomatik olarak oluşturulur ve değiştirilemez. Bu, güvenilir bir denetim kaydı sağlar.
-- Eğer bir müşterinin aboneliği **Gecikmiş** olarak gösteriliyor ancak zaten ödeme yöntemini güncellediyse, sonraki otomatik yeniden deneme yeni kartı seçer. Yeniden denemeler, planda yapılandırılan grâce periodunun zaman çizelgesine göre yapılır.
-- **Sona Eren** abonelikler silinmez — raporlama için görünür kalırlar. Tarih filtrelerini kullanarak şu anda aktif olan aboneliklere odaklanın.
-- **Deneme** aşamasındaki abonelikler için **Deneme Bitiş Tarihi**'ni kontrol ederek yaklaşan ilk ücretleri öngörün ve ödeme yöntemi sorunlarını önceden çözmek için müşteriyle iletişime geçin.
+- Aboneliklerin çerez riski taşıyıp taşımadığını kontrol etmek için **Gecikmiş** filtresini haftada bir kez kontrol edin. Müşteriye kısa bir e-posta atmak, kurtarma süresi dolmadan önce ödeme sorunlarını çözebilir.
+- Faturalandırma döngüsü logları sadece okunur olup, otomatik olarak oluşturulur ve değiştirilemez. Bunu, güvenilir bir denetim izi sağlar.
+- Bir müşterinin aboneliği **Gecikmiş** olarak görünürse ve zaten ödeme yöntemini güncellediyse, bir sonraki otomatik tekrar denemesi yeni kartı alır. Tekrarlar, plan içinde yapılandırılan kurtarma süresi planına göre gerçekleşir.
+- **Süresi dolduğu** abonelikler silinmez — raporlama için görünür kalır. Şu anki aktif aboneliklere odaklanmak için tarih filtrelerini kullanın.
+- **Deneme** aşamasındaki abonelikler için **Deneme Bitiş Tarihi**'ni kontrol ederek yakında gelecek ilk ödeme ve ödeme yöntemi sorunlarını önceden tahmin edin.
+- Bir müşteri, fiziksel bir yenilemenin "hiç gönderilmediğini" söylüyorsa, abonelik kaydına değil, normal teslimat kuyruğuna bakın — yeniden yapılan abonelikler, diğer tüm siparişler gibi aynı şekilde işlenir ve kuyruğu atlar.

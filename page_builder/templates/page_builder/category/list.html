@@ -1,5 +1,5 @@
 {% extends "page_builder/category/_base.html" %}
-{% load i18n static merchant_trans currency_tags %}
+{% load i18n static merchant_trans currency_tags media_picture %}
 
 {% block template_css %}
 <link rel="stylesheet" href="{% static 'page_builder/css/category-list.css' %}">
@@ -18,11 +18,7 @@
             <a href="{{ product.get_absolute_url }}" class="cat-list-row__image-link"
                aria-label="{{ product.name }}">
                 {% if product.primary_image_listing_url %}
-                <img src="{{ product.primary_image_listing_url }}"
-                     alt="{{ product.name }}"
-                     class="cat-list-row__img"
-                     loading="lazy"
-                     width="400" height="400">
+                {% picture product.primary_image size="product_listing" alt=product.name css="cat-list-row__img" width="400" height="400" %}
                 {% else %}
                 <div class="cat-list-row__placeholder"><i class="fas fa-box"></i></div>
                 {% endif %}
@@ -56,18 +52,7 @@
 
             {# Price with proper multi-currency support #}
             <div class="cat-list-row__price">
-                {% if product.is_on_sale %}
-                <span class="cat-list-row__price-current cat-list-row__price-current--sale">
-                    {{ product|product_price:current_currency.code }}
-                </span>
-                <span class="cat-list-row__price-original">
-                    {{ product|product_compare_price:current_currency.code }}
-                </span>
-                {% else %}
-                <span class="cat-list-row__price-current">
-                    {{ product|product_price:current_currency.code }}
-                </span>
-                {% endif %}
+                {% product_price_display product current_currency.code show_badge=False %}
             </div>
 
             {# --- Action Buttons --- #}

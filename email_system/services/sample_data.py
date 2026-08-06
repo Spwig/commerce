@@ -734,6 +734,148 @@ class SampleDataProvider:
                 "update_payment_url": f"{shop_url}/account/payment-methods",
                 "manage_subscription_url": f"{shop_url}/account/subscriptions",
             },
+            # Plan change: keys mirror subscriptions.email_notifications
+            # _add_event_context() for PLAN_UPGRADED (old/new_plan_name,
+            # new_price, billing_period, upgrade_date, prorated_charge,
+            # account_url/upgrade_url/support_url) plus the common context.
+            # `new_features` is template-only (not sent at runtime) — supplied
+            # here so the preview renders the benefits block.
+            "subscription_plan_upgraded": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "old_plan_name": "Basic Monthly",
+                "new_plan_name": "Premium Monthly",
+                "plan_name": "Premium Monthly",
+                "product_name": "Premium Membership",
+                "new_price": "$29.99",
+                "subscription_amount": "$29.99",
+                "billing_period": "month",
+                "billing_cycle": "month",
+                "next_billing_date": "December 15, 2025",
+                "upgrade_date": "November 15, 2025",
+                "change_date": "November 15, 2025",
+                "effective_date": "November 15, 2025",
+                "prorated_charge": "$12.50",
+                "new_features": "• Unlimited downloads\n• Priority support\n• Advanced analytics",
+                "payment_method": "Visa ending in 4242",
+                "account_url": f"{shop_url}/account/subscriptions",
+                "upgrade_url": f"{shop_url}/account/subscriptions",
+                "support_url": f"{shop_url}/contact",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
+            # Plan change: keys mirror _add_event_context() for
+            # PLAN_DOWNGRADED (shares the plan-change branch with upgrade;
+            # adds credit_amount + credit_applied). `features_lost` and
+            # `plan_changes` are template-only summary strings.
+            "subscription_plan_downgraded": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "old_plan_name": "Premium Monthly",
+                "new_plan_name": "Basic Monthly",
+                "plan_name": "Basic Monthly",
+                "product_name": "Basic Membership",
+                "new_price": "$9.99",
+                "subscription_amount": "$9.99",
+                "billing_period": "month",
+                "billing_cycle": "month",
+                "next_billing_date": "December 15, 2025",
+                "downgrade_date": "November 15, 2025",
+                "change_date": "November 15, 2025",
+                "effective_date": "December 15, 2025",
+                "credit_amount": "$8.00",
+                "credit_applied": True,
+                "features_lost": "• Priority support\n• Advanced analytics\n• Custom branding",
+                "plan_changes": "Your download limit will be reduced to 10 per month",
+                "payment_method": "Visa ending in 4242",
+                "account_url": f"{shop_url}/account/subscriptions",
+                "upgrade_url": f"{shop_url}/account/subscriptions",
+                "support_url": f"{shop_url}/contact",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
+            # Reactivation: keys mirror _add_event_context() for REACTIVATED
+            # (reactivation_date, new_billing_date, previous_cancellation_date)
+            # plus common context. The template applies the `date` filter to
+            # `reactivation_date` and `new_billing_date`, so these MUST be real
+            # datetime objects — pre-formatted strings render EMPTY through the
+            # `date` filter (same trap documented on gift_card_delivery above).
+            "subscription_reactivated": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "plan_name": "Premium Monthly",
+                "product_name": "Premium Membership",
+                "subscription_amount": "$29.99",
+                "billing_cycle": "month",
+                "reactivation_date": timezone.now(),
+                "new_billing_date": timezone.now() + timedelta(days=30),
+                "previous_cancellation_date": "October 1, 2025",
+                "payment_method": "Visa ending in 4242",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
+            # Dunning final notice: keys mirror the direct sender
+            # send_dunning_final_notice_email() context (amount_due,
+            # retry_count, last_retry_date, days_until_cancellation,
+            # cancellation_date, payment_error_message, update_payment_url,
+            # support_url). None of these pass through the `date` filter, so
+            # pre-formatted date strings are fine.
+            "subscription_dunning_final_notice": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "plan_name": "Premium Monthly",
+                "product_name": "Premium Membership",
+                "amount_due": "$29.99",
+                "retry_count": 3,
+                "last_retry_date": "November 6, 2025",
+                "days_until_cancellation": 2,
+                "cancellation_date": "November 8, 2025",
+                "payment_error_message": "Your card was declined (insufficient funds)",
+                "update_payment_url": f"{shop_url}/account/payment-methods",
+                "support_url": f"{shop_url}/contact",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
+            # Add-on templates: NOT wired to any runtime event yet — no
+            # SubscriptionEventType fires them and no direct sender exists, so
+            # there are no real-sender keys to mirror. Keys below match the
+            # variables the delivery templates reference so a merchant can still
+            # preview/edit them. Documented future item: add an emitter.
+            "subscription_addon_added": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "plan_name": "Premium Monthly",
+                "product_name": "Premium Membership",
+                "addon_name": "Extra Storage 100GB",
+                "addon_description": "100GB additional cloud storage for your files",
+                "addon_price": "$4.99",
+                "plan_price": "$29.99",
+                "new_total": "$34.98",
+                "billing_period": "month",
+                "added_date": "November 15, 2025",
+                "prorated_charge": "$2.50",
+                "account_url": f"{shop_url}/account/subscriptions",
+                "addon_setup_url": f"{shop_url}/account/subscriptions/addons",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
+            # Add-on templates: NOT wired to any runtime event yet (see note on
+            # subscription_addon_added). Keys match the delivery template vars.
+            "subscription_addon_removed": {
+                "customer_name": SampleDataProvider._get_name(language),
+                "customer_email": "customer@example.com",
+                "plan_name": "Premium Monthly",
+                "product_name": "Premium Membership",
+                "addon_name": "Extra Storage 100GB",
+                "addon_price": "$4.99",
+                "old_total": "$34.98",
+                "new_total": "$29.99",
+                "credit_amount": "$3.00",
+                "credit_applied": True,
+                "access_until": "December 15, 2025",
+                "data_retention_info": "Your files will be retained for 30 days before deletion",
+                "effective_date": "December 15, 2025",
+                "removed_date": "November 15, 2025",
+                "billing_period": "month",
+                "account_url": f"{shop_url}/account/subscriptions",
+                "addons_url": f"{shop_url}/account/subscriptions/addons",
+                "manage_subscription_url": f"{shop_url}/account/subscriptions",
+            },
             # Marketing Templates
             "newsletter": {
                 "subscriber_email": "subscriber@example.com",

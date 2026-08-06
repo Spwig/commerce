@@ -5,10 +5,12 @@ Provides comprehensive payment analytics and metrics for merchants
 
 import json
 from datetime import datetime
+from decimal import Decimal
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from core.models import SiteSettings
@@ -40,10 +42,16 @@ def payment_dashboard_view(request):
     if period == "custom":
         custom_start_str = request.GET.get("start_date")
         custom_end_str = request.GET.get("end_date")
-        if custom_start_str:
-            custom_start = datetime.fromisoformat(custom_start_str)
-        if custom_end_str:
-            custom_end = datetime.fromisoformat(custom_end_str)
+        try:
+            if custom_start_str:
+                custom_start = datetime.fromisoformat(custom_start_str)
+            if custom_end_str:
+                custom_end = datetime.fromisoformat(custom_end_str)
+        except ValueError:
+            # Fall back to current month if custom dates are malformed
+            custom_start = None
+            custom_end = None
+            period = "this_month"
 
     # Get date range
     try:
@@ -82,7 +90,7 @@ def payment_dashboard_view(request):
             return {k: decimal_to_float(v) for k, v in obj.items()}
         elif isinstance(obj, list):
             return [decimal_to_float(item) for item in obj]
-        elif hasattr(obj, "__float__"):
+        elif isinstance(obj, Decimal):
             return float(obj)
         else:
             return obj
@@ -162,11 +170,15 @@ def payment_dashboard_api(request):
                 custom_start = datetime.fromisoformat(custom_start_str)
             except ValueError:
                 return JsonResponse({"error": "Invalid start_date format"}, status=400)
+            if timezone.is_naive(custom_start):
+                custom_start = timezone.make_aware(custom_start)
         if custom_end_str:
             try:
                 custom_end = datetime.fromisoformat(custom_end_str)
             except ValueError:
                 return JsonResponse({"error": "Invalid end_date format"}, status=400)
+            if timezone.is_naive(custom_end):
+                custom_end = timezone.make_aware(custom_end)
 
     # Get date range
     try:
@@ -200,7 +212,7 @@ def payment_dashboard_api(request):
             return {k: decimal_to_float(v) for k, v in obj.items()}
         elif isinstance(obj, list):
             return [decimal_to_float(item) for item in obj]
-        elif hasattr(obj, "__float__"):
+        elif isinstance(obj, Decimal):
             return float(obj)
         else:
             return obj

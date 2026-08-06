@@ -9,6 +9,7 @@ Usage:
 
 import json
 import os
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
@@ -106,8 +107,11 @@ class Command(BaseCommand):
         data = PreferenceExportService.export_user_preferences(user)
 
         # Generate filename
-        timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{user.username}_{timestamp}.{export_format}"
+        # Include microseconds and a short random suffix so repeated exports of
+        # the same user/format within one second don't overwrite each other.
+        timestamp = timezone.now().strftime("%Y%m%d_%H%M%S_%f")
+        unique_suffix = uuid.uuid4().hex[:8]
+        filename = f"{user.username}_{timestamp}_{unique_suffix}.{export_format}"
         filepath = os.path.join(output_dir, filename)
 
         # Write file

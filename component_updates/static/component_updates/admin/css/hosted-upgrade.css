@@ -18,14 +18,18 @@
   align-items: flex-start;
   gap: 14px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary) 8%, transparent),
+    color-mix(in srgb, var(--purple-accent) 8%, transparent)
+  );
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   border-radius: 10px;
   color: var(--body-fg, #333);
 }
 .managed-notice i {
   font-size: 1.4em;
-  color: #667eea;
+  color: var(--primary-color, #667eea);
   margin-top: 2px;
 }
 .managed-notice p {
@@ -50,7 +54,7 @@
   font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--quiet-fg, #999);
+  color: var(--body-quiet-color, #999);
   margin-bottom: 6px;
 }
 .hosted-card-version {
@@ -68,14 +72,14 @@
   justify-content: center;
   gap: 10px;
   padding: 20px;
-  color: var(--quiet-fg, #999);
+  color: var(--body-quiet-color, #999);
 }
 .hosted-loading .spinner {
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(102, 126, 234, 0.3);
-  border-top-color: #667eea;
+  border: 2px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-top-color: var(--primary-color, #667eea);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -91,8 +95,8 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(40, 167, 69, 0.05);
-  border-color: rgba(40, 167, 69, 0.2);
+  background: color-mix(in srgb, var(--success-fg) 6%, transparent);
+  border-color: color-mix(in srgb, var(--success-fg) 20%, transparent);
 }
 .up-to-date-card i {
   font-size: 1.6em;
@@ -275,7 +279,7 @@
 .schedule-picker p {
   margin: 4px 0 14px;
   font-size: 0.9em;
-  color: var(--quiet-fg, #999);
+  color: var(--body-quiet-color, #999);
 }
 .schedule-input-row {
   display: flex;
@@ -292,8 +296,8 @@
   color: var(--body-fg, #333);
 }
 .schedule-picker .btn-upgrade-now {
-  color: #fff;
-  background: #667eea;
+  color: var(--primary-fg, #fff);
+  background: var(--primary-color, #667eea);
 }
 .schedule-picker .btn-snooze {
   color: var(--body-fg, #333);
@@ -307,8 +311,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: rgba(102, 126, 234, 0.05);
-  border-color: rgba(102, 126, 234, 0.2);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 .scheduled-header {
   display: flex;
@@ -317,7 +321,7 @@
 }
 .scheduled-header i {
   font-size: 1.4em;
-  color: #667eea;
+  color: var(--primary-color, #667eea);
 }
 .scheduled-card p {
   margin: 4px 0 0;
@@ -333,7 +337,7 @@
 /* ── Progress Card ──────────────────────────────────────────────────── */
 
 .progress-card {
-  border-color: rgba(102, 126, 234, 0.3);
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
 }
 .progress-header {
   display: flex;
@@ -343,12 +347,12 @@
 }
 .progress-header i {
   font-size: 1.4em;
-  color: #667eea;
+  color: var(--primary-color, #667eea);
 }
 .progress-header p {
   margin: 4px 0 0;
   font-size: 0.9em;
-  color: var(--quiet-fg, #999);
+  color: var(--body-quiet-color, #999);
 }
 .progress-bar-container {
   height: 10px;
@@ -367,7 +371,7 @@
   text-align: right;
   font-size: 0.85em;
   font-weight: 600;
-  color: #667eea;
+  color: var(--primary-color, #667eea);
   margin-bottom: 12px;
 }
 .progress-notice {
@@ -375,14 +379,14 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: rgba(255, 152, 0, 0.08);
-  border: 1px solid rgba(255, 152, 0, 0.2);
+  background: color-mix(in srgb, var(--warning-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning-color) 20%, transparent);
   border-radius: 6px;
   font-size: 0.85em;
   color: var(--body-fg, #333);
 }
 .progress-notice i {
-  color: #ff9800;
+  color: var(--warning-color, #ff9800);
 }
 
 /* ── Completed Card ─────────────────────────────────────────────────── */
@@ -391,8 +395,8 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(40, 167, 69, 0.05);
-  border-color: rgba(40, 167, 69, 0.2);
+  background: color-mix(in srgb, var(--success-fg) 6%, transparent);
+  border-color: color-mix(in srgb, var(--success-fg) 20%, transparent);
 }
 .completed-card i {
   font-size: 1.6em;
@@ -410,8 +414,8 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  background: rgba(220, 53, 69, 0.05);
-  border-color: rgba(220, 53, 69, 0.2);
+  background: color-mix(in srgb, var(--error-fg) 6%, transparent);
+  border-color: color-mix(in srgb, var(--error-fg) 20%, transparent);
 }
 .error-card i {
   font-size: 1.4em;
@@ -429,12 +433,12 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(108, 117, 125, 0.05);
-  border-color: rgba(108, 117, 125, 0.2);
+  background: color-mix(in srgb, var(--body-quiet-color) 6%, transparent);
+  border-color: color-mix(in srgb, var(--body-quiet-color) 20%, transparent);
 }
 .snoozed-card i {
   font-size: 1.4em;
-  color: var(--quiet-fg, #6c757d);
+  color: var(--body-quiet-color, #6c757d);
 }
 .snoozed-card p {
   margin: 4px 0 0;
@@ -467,5 +471,5 @@
 
 .schedule-datetime-input.input-error {
   border-color: var(--error-fg, #dc3545);
-  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--error-fg) 15%, transparent);
 }

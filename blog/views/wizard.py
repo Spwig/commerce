@@ -606,6 +606,23 @@ class WizardSelectAccountView(WizardSessionMixin, View):
         if not accounts:
             messages.warning(request, _("No accounts found. Please check your permissions."))
 
+        # SECURITY: per-account tokens (e.g. Facebook Page access tokens) must
+        # never be sent to the browser. Keep them server-side in the session,
+        # keyed by account id, and strip them from the accounts we render so the
+        # selection template only ever sees non-secret id/name/metadata.
+        account_tokens = {}
+        safe_accounts = []
+        for acc in accounts:
+            acc_id = str(acc.get("id", ""))
+            token = acc.get("access_token") or acc.get("token")
+            if acc_id and token:
+                account_tokens[acc_id] = token
+            safe_accounts.append(
+                {k: v for k, v in acc.items() if k not in ("access_token", "token")}
+            )
+        self.update_wizard_data(account_tokens=account_tokens)
+        accounts = safe_accounts
+
         # Load provider's selection template
         selection_template_content = self._load_provider_template(component, account_selection)
 
@@ -640,9 +657,15 @@ class WizardSelectAccountView(WizardSessionMixin, View):
         manifest = component.get_manifest() or {}
         account_selection = manifest.get("account_selection", {})
 
-        # Get account details from hidden fields
+        # Account name is not sensitive and may come from the submitted form.
         account_name = request.POST.get(f"account_name_{account_id}", "")
-        account_token = request.POST.get(f"account_token_{account_id}", "")
+
+        # SECURITY: retrieve the per-account token from the SERVER-SIDE session
+        # map populated during GET — never trust an account_token_* value posted
+        # back by the browser (it would let a client substitute an arbitrary
+        # token, and it exposed the page token in the page DOM).
+        account_tokens = wizard_data.get("account_tokens", {})
+        account_token = account_tokens.get(str(account_id), "")
 
         # Build credentials based on manifest config
         id_field = account_selection.get("id_field", "account_id")
@@ -661,6 +684,8 @@ class WizardSelectAccountView(WizardSessionMixin, View):
                 "id": account_id,
                 "name": account_name,
             },
+            # Drop the transient token map now the chosen token is in credentials.
+            account_tokens={},
         )
 
         return redirect("blog_admin:wizard_step3")

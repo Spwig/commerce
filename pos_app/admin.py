@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib import admin
 from django.db.models import BooleanField, Case, Count, Value, When
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from catalog.models import Warehouse
@@ -438,17 +439,16 @@ class POSTerminalReaderAdmin(admin.ModelAdmin):
     @admin.display(description=_("Splash"))
     def splash_status(self, obj):
         """Display splash screen status in list view."""
-        from django.utils.html import format_html
 
         if obj.splash_generated_at:
             if obj.splash_override_image:
-                return format_html(
+                return mark_safe(
                     '<span style="color: #28a745;" title="Custom splash uploaded">&#10003; Custom</span>'
                 )
-            return format_html(
+            return mark_safe(
                 '<span style="color: #28a745;" title="Auto-generated splash uploaded">&#10003; Auto</span>'
             )
-        return format_html(
+        return mark_safe(
             '<span style="color: #6c757d;" title="No splash screen configured">&mdash;</span>'
         )
 

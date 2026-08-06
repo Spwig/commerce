@@ -1,4 +1,4 @@
-{% load i18n merchant_trans currency_tags %}
+{% load i18n merchant_trans currency_tags media_picture %}
 {# Product Masonry Layout - matches category/masonry.html structure #}
 <div class="cat-masonry cat-masonry--cols-{{ element.content.masonry_columns|default:'3' }} cat-masonry--gap-{{ element.content.gap_size|default:'md' }}"
      data-columns="{{ element.content.masonry_columns|default:'3' }}"
@@ -14,7 +14,7 @@
                    class="cat-masonry__image-link"
                    aria-label="{{ product.name }}">
                     {% if product.primary_image_listing_url %}
-                    <img src="{{ product.primary_image_listing_url }}" alt="{{ product.name }}" class="cat-masonry__image" loading="lazy">
+                    {% picture product.primary_image size="product_listing" alt=product.name css="cat-masonry__image" %}
                     {% else %}
                     <div class="cat-masonry__placeholder">
                         <i class="fas fa-box"></i>
@@ -60,18 +60,7 @@
                     <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
                 </h3>
                 <div class="cat-masonry__price">
-                    {% if product.is_on_sale %}
-                    <span class="cat-masonry__price-current cat-masonry__price-current--sale">
-                        {{ product|product_price:current_currency.code }}
-                    </span>
-                    <span class="cat-masonry__price-original">
-                        {{ product|product_compare_price:current_currency.code }}
-                    </span>
-                    {% else %}
-                    <span class="cat-masonry__price-current">
-                        {{ product|product_price:current_currency.code }}
-                    </span>
-                    {% endif %}
+                    {% product_price_display product current_currency.code show_badge=False %}
                 </div>
             </div>
         </div>

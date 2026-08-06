@@ -80,6 +80,63 @@
     return cookieValue;
   };
 
+  // === Responsive <picture> Helpers ===
+  // Build AVIF→WebP→<img> markup from a source set (see get_picture_sources()).
+  // A <source> is emitted only when its URL exists, so the browser never lands
+  // on a 404 candidate. Falls back to a plain <img> when no source set is
+  // available (e.g. AVIF not generated yet), so callers can pass image_sources
+  // (may be null) plus the legacy string URL as fallbackSrc.
+  window.escapeHtmlAttr = function (value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+
+  window.buildPictureMarkup = function (sources, opts) {
+    opts = opts || {};
+    sources = sources || {};
+    const esc = window.escapeHtmlAttr;
+    const avif = sources.avif || '';
+    const webp = sources.webp || '';
+    const fallbackSrc = sources.fallback || opts.fallbackSrc || '';
+    const imgSrc = fallbackSrc || webp || avif;
+    if (!imgSrc) return opts.emptyHtml || '';
+    let sourceTags = '';
+    if (avif) sourceTags += '<source srcset="' + esc(avif) + '" type="image/avif">';
+    if (webp) sourceTags += '<source srcset="' + esc(webp) + '" type="image/webp">';
+    const cls = opts.className ? ' class="' + esc(opts.className) + '"' : '';
+    const loading = opts.loading ? ' loading="' + esc(opts.loading) + '"' : '';
+    const extra = opts.extraAttrs ? ' ' + opts.extraAttrs : '';
+    return (
+      '<picture class="spwig-picture">' +
+      sourceTags +
+      '<img src="' +
+      esc(imgSrc) +
+      '" alt="' +
+      esc(opts.alt || '') +
+      '"' +
+      cls +
+      loading +
+      extra +
+      '></picture>'
+    );
+  };
+
+  // Replace an existing <picture> (or bare <img>) element in place with a fresh
+  // source set. Replacing outerHTML forces the browser to re-run <source>
+  // selection — mutating <source> nodes after load is unreliable across engines.
+  // Returns the new <picture> element. Use for interactive swaps (gallery,
+  // mini-cart) where the image changes without a full re-render.
+  window.swapPicture = function (el, sources, opts) {
+    if (!el) return null;
+    const html = window.buildPictureMarkup(sources, opts);
+    if (!html) return el;
+    el.insertAdjacentHTML('beforebegin', html);
+    const next = el.previousElementSibling;
+    el.remove();
+    return next;
+  };
+
   // === Merchant Translation Helper ===
   // Reads translations from JSON script tag if available
   let uiTranslations = {};

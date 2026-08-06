@@ -2,144 +2,156 @@
 title: Tasarım & Temalar
 ---
 
-Tasarım & Tema sistemi, mağazanızın tüm satış mağazasının görünümünü ve hissini kontrol etmenizi sağlar — renklerden, tipografiye kadar başlıklardan, alt bilgilerden ve sayfa düzenlerine kadar. **Ayarlar > Tasarım & Tema**'ya giderek Tasarım Paneli'ni açın.
+Tasarım & Tema sistemi, mağazanızın tüm görünümünü ve hissini kontrol etmenizi sağlar — renkler ve tipografi, başlıklar, ayaklar ve sayfa düzenleri dahil. Tasarım Panosunu açmak için **Ayarlar > Tasarım & Tema**'ya gidin.
 
-![Tasarım paneli](/static/core/admin/img/help/design-themes/theme-dashboard.webp)
+![Tasarım panosu](/static/core/admin/img/help/design-themes/theme-dashboard.webp)
 
-## Tasarım Paneli
+## Tasarım Panosu
 
-Panel, mağazanızın tasarım durumu hakkında genel bir bakış sağlar:
+Panodan mağazanızın tasarım durumuna genel bir bakış verir:
 
-- **Etkin Tema** — Mevcut uygulanan temayı gösterir, önizleme ve hızlı erişim düğmeleriyle
-- **Tasarım İstatistikleri** — Yüklenebilir temaların sayısı, özel başlıklar, özel alt bilgiler ve menüler
-- **Bölüm Kartları** — Temalar, Başlık Oluşturucu, Alt Bilgi Oluşturucu, Menüler veya Duyurular'a atla
+- **Aktif Tema** — Hangi temanın şu anda uygulandığını, bir önizleme ve hızlı erişim butonlarını gösterir
+- **Tasarım İstatistikleri** — Kurulu temaların, özel başlıkların, özel ayakların ve menülerin sayısı
+- **Bölüm Kartları** — Temalar, Başlık Oluşturucu, Ayak Oluşturucu, Menüleri veya Duyurulara geçiş yapabilirsiniz
 
 ## Temalar
 
-### Temaları Gözden Geçirme
+### Temaları Göz Atma
 
-**Tema** bölümü kartını tıklayarak tüm yüklü temaları görün. Her tema kartı şu bilgileri gösterir:
+**Tema** bölümünü tıklayarak tüm kurulu temaları görün. Her tema kartında şunlar yer alır:
 - Tema adı ve önizleme resmi
 - Yazar ve sürüm
-- Etkin/etkin değil durumu
+- Etkin/kapalı durumu
 
 ### Bir Temayı Etkinleştirme
 
-1. Kullanmak istediğiniz temanın **Etkinleştir** butonuna tıklayın
-2. Tema, satış mağazanıza hemen uygulanır
+1. Kullanmak istediğiniz temanın **Etkinleştir**'e tıklayın
+2. Tema mağazanıza anında uygulanır
 3. Aynı anda yalnızca bir tema etkin olabilir
 
-### Tema Özelleştirmesi
+### Tema Özelleştirme
 
-Her tema, **tasarım jetonları** kümesini destekler — kodu düzenlemek zorunda kalmadan görsel görünümü kontrol eden yapılandırılabilir değerler.
+Her tema, **tasarım token'ları** adı verilen, kod düzenlemesi yapmadan görsel görünümü kontrol eden yapılandırılamaz değerler setine sahiptir.
 
-Etkin temanızda **Özelleştir** butonuna tıklayarak jeton düzenleyiciye erişin. Kullanılabilir jeton kategorileri şunları içerir:
+Etkin temanızın **Özelleştir**'e tıklayarak token editörünüze erişin. Kullanılabilir token kategorileri şunlardır:
 
-| Kategori | Ne Kontrol Ediyor |
+| Kategori | Neyi Kontrol Eder |
 |----------|-----------------|
-| **Renkler** | Birincil, ikincil, vurgu renkleri, arka planlar, metin renkleri |
-| **Tipografi** | Font aileleri, boyutlar, ağırlıklar, satır yükseklikleri |
-| **Boşluklar** | Kenar boşlukları, dolgular, öğeler arası boşluklar |
-| **Kenarlıklar** | Kenarlık genişlikleri, yarım çemberler, renkler |
-| **Gölge** | Kartlar, butonlar, modaller için kutu gölgeleri |
-| **Butonlar** | Buton stilleri, boyutları, hover etkileri |
-| **Düzen** | Konteyner genişlikleri, ızgara boşlukları, kırılma noktaları |
+| **Renkler** | Ana, ikincil, vurgu renkleri, arka planlar, metin renkleri |
+| **Tipografi** | Font aileleri, boyutları, ağırlıkları, satır yükseklikleri |
+| **Boşluk** | Kenar boşlukları, dolgu, elementler arası boşluklar |
+| **Çizgiler** | Çizgi kalınlıkları, yuvarlaklık, renkler |
+| **Gölgeler** | Kartlar, düğmeler, modeller için kutu gölgeleri |
+| **Düğmeler** | Düğme stilleri, boyutları, hover etkileri |
+| **Düzen** | Kapsayıcı genişlikleri, grid boşlukları, breakpoints |
 
-Değişiklikler, kaydetmeden önce gerçek zamanlı olarak önizlenir.
+Değişiklikleri kaydetmeden önce gerçek zamanlı olarak önizlenir.
 
 ## Başlık Oluşturucu
 
-Başlık Oluşturucu, sürükleyip bırakma arayüzü kullanarak mağazanızın başlığını tasarlamayı sağlar.
+Başlık Oluşturucu, mağazanızaki başlığı sürükleyip bırakma arayüzü kullanarak tasarlamana olanak tanır.
 
 ### Başlık Oluşturma
 
 1. **Tasarım > Başlık Oluşturucu**'ya gidin
-2. **Başlık Oluştur**'a tıklayın veya mevcut birini düzenleyin
-3. Oluşturucu, **Üst Çubuk**, **Ana Başlık** ve **Alt Çubuk** olmak üzere üç satır içerir
-4. Araç kutusundan bileşenleri herhangi bir satıra sürükleyin
+2. **Başlık Oluştur**'a tıklayın ya da mevcut birini düzenleyin
+3. Oluşturucu, üç satırdan oluşur: **Üst Çizgi**, **Ana Başlık**, ve **Alt Çizgi**
+4. Araç kutusundan herhangi bir satıra widget'lar sürükleyin
 
-### Kullanılabilir Başlık Bileşenleri
+### Kullanılabilir Başlık Widget'ları
 
-- **Logo** — Yapılandırılabilir boyut ve bağlantı ile mağaza logosu
-- **Navigasyon Menüsü** — Tanımlı menülerden açılır menü
-- **Arama Çubuğu** — Ürün araması ile anında sonuçlar
-- **Sepet Simgesi** — Mini-sepet ile öğe sayısı etiketi
-- **Hesap Simgesi** — Oturum açma/hesap açma açılır menüsü
-- **Dil Seçici** — Çok dilli mağazalar için dil değiştirici
-- **Para Birimi Seçici** — Çok para birimi mağazalar için para birimi değiştirici
-- **Özel HTML** — Herhangi bir özel içerik ekleyin
-- **Sosyal Simgeleri** — Sosyal medya profillerinize bağlantılar
-- **Duyuru Çubuğu** — Promosyon mesajları ve teklifler
+- **Logo** — Yapılandırılamaz boyut ve bağlantı ile mağaza logosu
+- **İşlem Menüsü** — Tanımladığınız menülerden dropdown menü
+- **Arama Çubuğu** — Anlık sonuçlarla ürün araması
+- **Sepet İconu** — Öge sayısı etiketi ile mini sepet
+- **Hesap İconu** — Giriş/hesap dropdown'u
+- **Dil Seçici** — Çoklu dil mağazaları için dil değiştirme
+- **Para Birimi Seçici** — Çoklu para birimi mağazaları için para birimi değiştirme
+- **İade Seçici** — Alıcıların kargo destinasyonu ülkesini seçmesine olanak tanır, satış bölgesini değiştirir (çoklu para birimi mağazaları için para birimi ile birlikte). Detaylar için **Bölge Kullanılabilirliği** rehberine bakın
+- **Özel HTML** — Herhangi özel içeriğin eklenmesi
+- **Sosyal İkonlar** — Sosyal medya profellerinize bağlantılar
+- **Duyuru Çubuğu** — Tanıtım mesajları ve teklifler
 
 ### Başlık Ayarları
 
-Her başlık şablonu, aşağıdaki küresel ayarlara sahiptir:
-- **Sabit Başlık** — Kaydırıldığında başlık görünür kalır
-- **Şeffaf Mod** — Hero resimlerinde örtü
-- **Mobil Kırılma Noktası** — Mobil düzenine geçme zamanı
+Her başlık şablonu için küresel ayarlar vardır:
+- **Yükseklikli Başlık** — Kaydırma yaparken başlığın görünür kalması
+- **Transparan Mod** — Hikâye resimleri üzerine overlay
+- **Mobil Aralığı** — Mobil düzenine ne zaman geçileceği
 
-## Alt Bilgi Oluşturucu
+## Ayak Oluşturucu
 
-Alt Bilgi Oluşturucu, Başlık Oluşturucuya benzer şekilde çalışır.
+Ayak Oluşturucu, Başlık Oluşturucu ile aynı şekilde çalışır.
 
-### Alt Bilgi Oluşturma
+### Ayak Oluşturma
 
-1. **Tasarım > Alt Bilgi Oluşturucu**'ya gidin
-2. **Alt Bilgi Oluştur**'a tıklayın veya mevcut birini düzenleyin
+1. **Tasarım > Ayak Oluşturucu**'a gidin
+2. **Ayak Oluştur**'a tıklayın ya da mevcut birini düzenleyin
 3. Oluşturucu, birden fazla sütun ve satır destekler
-4. Bileşenleri istenen konuma sürükleyin
+4. Widget'ları pozisyona göre sürükleyin
 
-### Kullanılabilir Alt Bilgi Bileşenleri
+### Kullanılabilir Ayak Widget'ları
 
-- **Navigasyon Menüsü** — Alt bilgi navigasyonu bağlantıları
+- **İşlem Menüsü** — Ayakta bulunan navigasyon bağlantıları
 - **Bülten Aboneliği** — E-posta abonelik formu
-- **Sosyal Simgeleri** — Sosyal medya bağlantıları
-- **Özel HTML** — Özel içerik, etiketler, sertifikalar
-- **Ödeme Simgeleri** — Kabul edilen ödeme yöntemlerini göster
-- **Telif Hakkı** — Dinamik telif hakkı metni ile yıl
-- **Logo** — Alt bilgi logosu varyasyonu
+- **Sosyal İkonlar** — Sosyal medya bağlantıları
+- **Özel HTML** — Özel içerik, badajlar, sertifikasyonlar
+- **Ödeme İkonları** — Kabul edilen ödeme yöntemlerini gösterir
+- **Telif Hakkı** — Yıl içeren dinamik telif hakkı metni
+- **Logo** — Ayakta bulunan logo varyantı
 
-## Navigasyon Menüleri
+## Menüleri Oluşturma
 
-Menüler, başlık ve alt bilgideki navigasyon bağlantılarını tanımlar.
+Menüler, başlık ve ayakta bulunan navigasyon bağlantılarını tanımlar.
 
-### Menü Oluşturma
+### Bir Menü Oluşturma
 
-1. **Tasarım > Menüler**'e gidin
-2. **Menü Ekle**'ye tıklayın
-3. Menüye bir isim verin (örneğin, "Ana Navigasyon")
-4. Menü öğelerini ekleyin:
+1. 
+
+Design > Menü'ye gidin
+2.
+
+Menü Ekle'ye tıklayın
+3.
+
+Menüye bir isim verin (örneğin, "Ana Navigasyon")
+4.
+
+Menü öğeleri ekleyin:
    - **Sayfa Bağlantısı** — Sayfa oluşturucu sayfasına bağlantı
    - **Kategori Bağlantısı** — Ürün kategorisine bağlantı
    - **Özel URL** — Herhangi bir dış veya iç URL
-   - **Açılır Menü** — İç içe alt menü öğeleri
-5. Öğeleri sıralamak için sürükleyin
-6. Kaydedin ve menüyü bir başlık veya alt bilgi bileşenine atayın
+   - **Açılır Menü** — İç içe geçmiş alt menü öğeleri
+5.
+
+Öğeleri sıralamak için sürükleyin
+6.
+
+Menüyü bir başlık veya ayak kismı widget'ına atayın ve kaydedin
 
 ## Duyurular
 
-Satış mağazasının en üstüne yerleştireceğiniz promosyon afişlerini oluşturun.
+Mağaza arayüzünün en üstünde görünen tanıtım bantları oluşturun.
 
-### Duyuru Oluşturma
+### Bir Duyuru Oluşturmak
 
-1. **Tasarım > Duyurular**'a gidin (veya Dashboard kartını kullanın)
+1. **Tasarım > Duyurular** (veya Dashboard kartı) sayfasına gidin
 2. **Duyuru Ekle**'ye tıklayın
 3. Yapılandırın:
-   - **Mesaj** — Duyuru metni (çevirileri destekler)
-   - **Bağlantı** — Tıklandığında isteğe bağlı URL
+   - **Mesaj** — Duyuru metni (çevirilere uygun)
+   - **Link** — Tıklandığında isteğe bağlı URL
    - **Stil** — Arka plan rengi, metin rengi, simge
    - **Zamanlama** — Başlangıç ve bitiş tarihleri
-   - **Kapatılabilir** — Müşterilerin bunu kapatıp kapatamayacağı
-4. Kaydedin ve etkinleştirin
+   - **Kapatılabilir** — Müşterilerin kapatma imkanı olup olmadığı
+4. Kaydet ve etkinleştir
 
-Birden fazla duyuru aynı anda etkin olabilir — otomatik olarak döngüye girerler.
+Birden fazla duyuru aynı anda etkin olabilir — otomatik olarak döner.
 
 ## İpuçları
 
-- Başlık ve alt bilgileri oluşturmadan önce etkin temanın özelleştiricisini kullanarak marka renklerinize uymasını sağlayın.
-- Başlık ve Alt Bilgi Oluşturucularında **önizleme** özelliğini kullanarak yayın yapmadan önce değişiklikleri görün.
-- Farklı düzenleriniz varsa, masaüstü ve mobil için ayrı başlıklar oluşturun.
-- Navigasyonu basit tutun — kullanıcı deneyimi için 5-7 üst düzey menü öğesi idealdir.
-- Zaman sınırlı promosyonlar için duyuruları kullanın, kalıcı mesajlar için değil.
-- Tema jeton düzenleyici, gerçek zamanlı önizleme destekler — özgürce deneyin ve memnuniyetinizi sağladığında kaydedin.
-
+- Başlık ve ayak kismini inşa etmeden önce aktif tema customizer'ını kullanarak marka renklerinize uygun hale getirin.
+ - Header ve Footer oluşturucularında **önizleme** özelliğini kullanarak yayımlamadan önce değişiklikleri görün.
+ - Çok farklı düzenler gerekiyorsa masaüstü ve mobil için ayrı başlık oluşturun.
+ - Navigasyonu basit tutun — kullanıcı dostu olmak için 5-7 tane üst düzey menü öğesi idealdir.
+ - Kalıcı mesajlar yerine zamanında promosyonlar için duyurular kullanın.
+ - Tema token düzenleyicisi gerçek zamanlı önizleme destekler — serbestçe deneyin ve yeterli geldiğinde kaydedin.

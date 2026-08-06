@@ -229,6 +229,12 @@
   opacity: 0.9;
 }
 
+.changelog-preview .changelog-summary {
+  font-size: 13px;
+  margin: 0 0 8px 0;
+  opacity: 0.95;
+}
+
 .changelog-preview ul {
   margin: 0;
   padding-left: 20px;
@@ -304,50 +310,10 @@
 
 /* ============================================
    Progress Modal
+   Chrome (overlay / modal / header / title / body) reuses the shared
+   .admin-modal-* system from admin-base.css. Only the progress-specific
+   content classes below are bespoke.
    ============================================ */
-
-.update-progress-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.update-progress-overlay.active {
-  display: flex;
-}
-
-.update-progress-modal {
-  background: var(--body-bg);
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.update-progress-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.update-progress-title {
-  font-size: 18px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
 .do-not-close {
   font-size: 11px;
@@ -356,28 +322,6 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: 600;
-}
-
-.btn-close-modal {
-  font-size: 13px;
-  padding: 6px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--body-bg);
-  color: var(--body-fg);
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.btn-close-modal:hover {
-  background: var(--darkened-bg, #f0f0f0);
-}
-
-.update-progress-body {
-  padding: 24px;
-  max-height: calc(90vh - 200px);
-  overflow-y: auto;
 }
 
 .progress-bar-container {
@@ -611,23 +555,6 @@
   margin-bottom: 12px;
 }
 
-.btn-rollback {
-  background: var(--body-quiet-color, #6c757d);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-rollback:hover {
-  filter: brightness(0.9);
-}
-
 /* ============================================
    No Updates Card
    ============================================ */
@@ -752,7 +679,7 @@
 .cu-badge-downloading,
 .cu-badge-verifying,
 .cu-badge-extracting {
-  background-color: #9b59b6;
+  background-color: var(--purple-accent, #9b59b6);
 }
 .cu-badge-pre_checks,
 .cu-badge-migrating {
@@ -816,7 +743,7 @@
   font-weight: 500;
 }
 .cu-channel-dev {
-  color: #9b59b6;
+  color: var(--purple-accent, #9b59b6);
   font-size: 11px;
   font-weight: 500;
 }
@@ -917,17 +844,17 @@
 
 .cu-error-stage {
   font-weight: 600;
-  color: #721c24;
+  color: var(--error-fg, #721c24);
   margin-bottom: 8px;
 }
 
 .cu-error-message {
-  color: #721c24;
+  color: var(--error-fg, #721c24);
 }
 
 .cu-error-traceback-toggle {
   cursor: pointer;
-  color: #721c24;
+  color: var(--error-fg, #721c24);
   margin-top: 10px;
 }
 

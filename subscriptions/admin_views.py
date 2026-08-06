@@ -52,9 +52,9 @@ def filter_subscription_plans(request):
         queryset = queryset.filter(cancellation_policy=cancellation)
 
     if trial:
-        if trial == "yes":
+        if trial == "with_trial":
             queryset = queryset.filter(trial_period_days__gt=0)
-        elif trial == "no":
+        elif trial == "no_trial":
             queryset = queryset.filter(trial_period_days=0)
 
     # Order by created date (newest first)

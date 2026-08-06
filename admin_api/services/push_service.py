@@ -100,6 +100,9 @@ class PushNotificationService:
                 "failed": result.failed,
                 "results": result.results,
                 "invalid_tokens": invalid_tokens,
+                # Surface transport-level failures (timeouts, network errors)
+                # that the client returns as a PushResult rather than raising.
+                "error": result.error,
             }
 
         except PushAuthError as e:
@@ -179,6 +182,11 @@ class PushNotificationService:
 
         Returns:
             int: Number of notifications sent successfully
+
+        Raises:
+            PushClientError: If delivery fails at the service level
+                (network/timeout/rate-limit/auth). Raised so the calling
+                Celery task can retry; a genuine no-recipient result returns 0.
         """
         from admin_api.models import DeviceRegistration
 
@@ -190,18 +198,19 @@ class PushNotificationService:
             logger.debug(f"No devices registered for {notification_type} notifications")
             return 0
 
-        # Collect tokens by platform
-        ios_tokens = []
-        device_map = {}  # token -> device for updating status
+        # Collect tokens by platform, mapping each token to every device that
+        # shares it so duplicate registrations all receive their status update.
+        device_map = {}  # token -> list of devices for updating status
 
         for device in devices:
             if device.platform == "ios":
-                ios_tokens.append(device.push_token)
-                device_map[device.push_token] = device
+                device_map.setdefault(device.push_token, []).append(device)
             elif device.platform == "android":
                 # Android/FCM not yet supported by push service
                 logger.debug("Android notifications not yet supported")
                 continue
+
+        ios_tokens = list(device_map.keys())
 
         if not ios_tokens:
             return 0
@@ -217,8 +226,7 @@ class PushNotificationService:
         # Update device statuses based on results
         for token_result in result.get("results", []):
             token = token_result.get("token")
-            device = device_map.get(token)
-            if device:
+            for device in device_map.get(token, []):
                 if token_result.get("status") == "sent":
                     device.mark_notification_sent()
                 else:
@@ -226,6 +234,14 @@ class PushNotificationService:
 
         # Remove invalid tokens
         cls._remove_invalid_tokens(result.get("invalid_tokens", []))
+
+        # A service-level error means the batch was not delivered (network
+        # outage, timeout, rate limit, auth). Raise so the Celery task retries
+        # instead of recording a false success and dropping the notification.
+        # Test against None, not truthiness: an exception with an empty message
+        # yields "error": "" (a real failure) that a truthiness check would miss.
+        if result.get("error") is not None:
+            raise PushClientError(result["error"])
 
         sent_count = result.get("sent", 0)
         logger.info(f"Sent {sent_count}/{len(ios_tokens)} notifications for {notification_type}")
@@ -359,6 +375,10 @@ class PushNotificationService:
 
         Returns:
             Number of notifications sent
+
+        Raises:
+            PushClientError: If delivery fails at the service level, so the
+                calling Celery task can retry.
         """
         from admin_api.models import DeviceRegistration
 
@@ -384,13 +404,15 @@ class PushNotificationService:
         # Payment alerts go to all active devices regardless of preferences
         devices = DeviceRegistration.objects.filter(is_active=True)
 
-        ios_tokens = []
+        # Map each token to every device that shares it so duplicate
+        # registrations all receive their status update.
         device_map = {}
 
         for device in devices:
             if device.platform == "ios":
-                ios_tokens.append(device.push_token)
-                device_map[device.push_token] = device
+                device_map.setdefault(device.push_token, []).append(device)
+
+        ios_tokens = list(device_map.keys())
 
         if not ios_tokens:
             return 0
@@ -405,8 +427,7 @@ class PushNotificationService:
         # Update device statuses
         for token_result in result.get("results", []):
             token = token_result.get("token")
-            device = device_map.get(token)
-            if device:
+            for device in device_map.get(token, []):
                 if token_result.get("status") == "sent":
                     device.mark_notification_sent()
                 else:
@@ -414,5 +435,12 @@ class PushNotificationService:
 
         # Remove invalid tokens
         cls._remove_invalid_tokens(result.get("invalid_tokens", []))
+
+        # Raise on service-level delivery failure so the Celery task retries
+        # rather than silently losing the payment alert (see send_notification).
+        # Test against None, not truthiness: an empty error message is still a
+        # real failure (sent=0) that a truthiness check would drop.
+        if result.get("error") is not None:
+            raise PushClientError(result["error"])
 
         return result.get("sent", 0)

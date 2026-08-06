@@ -10,7 +10,7 @@ import secrets
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -34,7 +34,7 @@ from admin_api.serializers.categories import (
 from admin_api.services.audit_service import AuditService
 from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
 from catalog.models import Category, Product
-from media_library.models import MediaAsset
+from media_library.models import MediaAsset, MediaThumbnail
 from media_library.services import ImageProcessor
 
 logger = logging.getLogger(__name__)
@@ -111,8 +111,16 @@ def category_list(request):
         )
 
     filters = filter_serializer.validated_data
-    queryset = Category.objects.select_related("parent").annotate(
-        product_count=Count("products", filter=Q(products__is_deleted=False))
+    queryset = (
+        Category.objects.select_related("parent", "image_asset")
+        .prefetch_related(
+            Prefetch(
+                "image_asset__thumbnails",
+                queryset=MediaThumbnail.objects.filter(size_preset="medium"),
+                to_attr="medium_thumbnails",
+            )
+        )
+        .annotate(product_count=Count("products", filter=Q(products__is_deleted=False)))
     )
 
     # Apply filters
@@ -706,6 +714,11 @@ def _upload_category_asset(request, category_id, field_name):
             except Exception as e:
                 logger.error(f"Error generating thumbnail {size_name}: {e}")
                 continue
+
+        # Queue AVIF generation off the request path (WebP was done inline)
+        from media_library.services import queue_avif_generation
+
+        queue_avif_generation(media_asset)
 
         # Replace existing asset if present
         getattr(category, field_name)

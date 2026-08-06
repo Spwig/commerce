@@ -16,9 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
 #: admin.py:45 templates/admin/pos_app/posterminal/change_form.html:122
 #: templates/admin/pos_app/posterminalreader/change_form.html:90
@@ -221,13 +219,14 @@ msgstr "Скрин-загрузка"
 #: admin.py:418 templates/admin/pos_app/posterminalreader/change_form.html:190
 #: templates/admin/pos_app/posterminalreader/change_form.html:403
 msgid ""
-"Custom splash screen for this reader. Leave blank to auto-generate from your "
-"site logo. Splash screens are uploaded to Stripe when the reader is "
+"Custom splash screen for this reader. Leave blank to auto-generate from your"
+" site logo. Splash screens are uploaded to Stripe when the reader is "
 "registered."
 msgstr ""
 "Пользовательский экран приветствия для этого считывателя. Оставьте поле "
 "пустым, чтобы сгенерировать его автоматически на основе логотипа вашего "
-"сайта. Экранные изображения загружаются в Stripe при регистрации считывателя."
+"сайта. Экранные изображения загружаются в Stripe при регистрации "
+"считывателя."
 
 #: admin.py:438
 msgid "Splash"
@@ -285,8 +284,8 @@ msgid ""
 "Leave both blank for the default template. Select a group for all stores in "
 "that group. Select a specific store to override group/default."
 msgstr ""
-"Оставьте оба поля пустыми для шаблона по умолчанию. Выберите группу для всех "
-"магазинов в этой группе. Выберите конкретный магазин, чтобы переопределить "
+"Оставьте оба поля пустыми для шаблона по умолчанию. Выберите группу для всех"
+" магазинов в этой группе. Выберите конкретный магазин, чтобы переопределить "
 "группу/по умолчанию."
 
 #: admin.py:627
@@ -317,8 +316,8 @@ msgstr "Промо-код QR"
 #: admin.py:668
 #, python-format
 msgid ""
-"Add a QR code to the bottom of receipts for promotions like \"Scan for "
-"10% off\", \"Leave a review\", or \"Visit our website\"."
+"Add a QR code to the bottom of receipts for promotions like \"Scan for 10% "
+"off\", \"Leave a review\", or \"Visit our website\"."
 msgstr ""
 "Добавьте QR-код в нижнюю часть чеков для акций, таких как \"Сканируйте для "
 "получения 10% скидки\", \"Оставьте отзыв\" или \"Посетите наш сайт\"."
@@ -765,8 +764,7 @@ msgstr "причина"
 
 #: models.py:470
 msgid "Reason for cash movement, e.g. \"Change float top-up\""
-msgstr ""
-"Причина движения денежных средств, например, \"Пополнение фонда сдачи\""
+msgstr "Причина движения денежных средств, например, \"Пополнение фонда сдачи\""
 
 #: models.py:476 models.py:1330
 msgid "performed by"
@@ -866,7 +864,8 @@ msgstr "Поставщики терминалов POS"
 msgid "Offline"
 msgstr "Офлайн"
 
-#: models.py:604 templates/admin/pos_app/posterminalreader/change_list.html:108
+#: models.py:604
+#: templates/admin/pos_app/posterminalreader/change_list.html:108
 #: templates/admin/pos_app/posterminalreader/change_list.html:178
 #: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:40
 msgid "Busy"
@@ -886,8 +885,7 @@ msgstr "идентификатор считывателя поставщика"
 
 #: models.py:628
 msgid "Reader ID from the provider, e.g. \"tmr_xxx\" for Stripe"
-msgstr ""
-"Идентификатор считывателя от поставщика, например, \"tmr_xxx\" для Stripe"
+msgstr "Идентификатор считывателя от поставщика, например, \"tmr_xxx\" для Stripe"
 
 #: models.py:631
 msgid "label"
@@ -930,8 +928,8 @@ msgid ""
 "Upload a custom splash screen image. Leave blank to auto-generate from site "
 "logo."
 msgstr ""
-"Загрузите пользовательское изображение для экрана приветствия. Оставьте поле "
-"пустым, чтобы сгенерировать его автоматически на основе логотипа сайта."
+"Загрузите пользовательское изображение для экрана приветствия. Оставьте поле"
+" пустым, чтобы сгенерировать его автоматически на основе логотипа сайта."
 
 #: models.py:664
 msgid "Stripe file ID"
@@ -962,7 +960,8 @@ msgid "provider metadata"
 msgstr "метаданные провайдера"
 
 #: models.py:687
-msgid "Provider-specific reader data, e.g. Adyen POIID, Square device_code_id."
+msgid ""
+"Provider-specific reader data, e.g. Adyen POIID, Square device_code_id."
 msgstr ""
 "Данные считывателя, специфичные для поставщика, например, Adyen POIID, "
 "Square device_code_id."
@@ -1121,8 +1120,8 @@ msgstr "логотип"
 #: models.py:859
 msgid "Monochrome logo image. Max 384px wide for 80mm paper, 192px for 58mm."
 msgstr ""
-"Черно-белое изображение логотипа. Максимальная ширина 384 пикселя для бумаги "
-"80 мм, 192 пикселя для бумаги 58 мм."
+"Черно-белое изображение логотипа. Максимальная ширина 384 пикселя для бумаги"
+" 80 мм, 192 пикселя для бумаги 58 мм."
 
 #: models.py:862
 msgid "header text"
@@ -1143,7 +1142,8 @@ msgid "custom address"
 msgstr "пользовательский адрес"
 
 #: models.py:871
-msgid "Custom receipt address. Leave blank to use the store warehouse address."
+msgid ""
+"Custom receipt address. Leave blank to use the store warehouse address."
 msgstr ""
 "Пользовательский адрес чека. Оставьте пустым, чтобы использовать адрес "
 "склада магазина."
@@ -1177,8 +1177,7 @@ msgid "tax ID label"
 msgstr "название налогового ИД"
 
 #: models.py:890
-msgid ""
-"Label for your tax number, e.g. \"GST No.\", \"VAT No.\", \"ABN\", \"Tax ID\""
+msgid "Label for your tax number, e.g. \"GST No.\", \"VAT No.\", \"ABN\", \"Tax ID\""
 msgstr ""
 "Этикетка для вашего налогового номера, напр. \"GST No.\", \"VAT No.\", "
 "\"ABN\", \"Tax ID\""
@@ -1868,8 +1867,8 @@ msgstr "Неограниченное количество терминалов"
 
 #: templates/admin/pos_app/dashboard_upsell.html:46
 msgid ""
-"One flat price covers all your terminals and staff. Scale without per-device "
-"fees."
+"One flat price covers all your terminals and staff. Scale without per-device"
+" fees."
 msgstr ""
 "Один единый тариф охватывает все ваши терминалы и сотрудников. "
 "Масштабируйтесь без дополнительных платежей за устройство."
@@ -2157,7 +2156,8 @@ msgstr ""
 #: templates/admin/pos_app/posterminal/change_form.html:278
 #: templates/admin/pos_app/posterminal/change_form.html:510
 msgid "Assign staff members who are authorized to use this terminal."
-msgstr "Назначьте сотрудников, которые имеют право использовать этот терминал."
+msgstr ""
+"Назначьте сотрудников, которые имеют право использовать этот терминал."
 
 #: templates/admin/pos_app/posterminal/change_form.html:360
 #: templates/admin/pos_app/posterminal/change_form.html:560
@@ -2211,8 +2211,8 @@ msgstr "Настройка расположения магазина"
 
 #: templates/admin/pos_app/posterminal/change_list.html:46
 msgid ""
-"Before adding POS terminals, you need to designate at least one warehouse as "
-"a physical store location."
+"Before adding POS terminals, you need to designate at least one warehouse as"
+" a physical store location."
 msgstr ""
 "Перед добавлением терминалов POS вам нужно назначить хотя бы один склад в "
 "качестве физического местоположения магазина."
@@ -2238,15 +2238,11 @@ msgstr "Включить как расположение магазина"
 #, python-format
 msgid ""
 "\n"
-"                You have %(count)s warehouses configured. Enable \"POS / "
-"Retail Store\" on the warehouses that have physical store locations with POS "
-"terminals.\n"
+"                You have %(count)s warehouses configured. Enable \"POS / Retail Store\" on the warehouses that have physical store locations with POS terminals.\n"
 "                "
 msgstr ""
 "\n"
-"                У вас настроено %(count)s складов. Включите \"POS / "
-"Розничный магазин\" на складах, где есть физические локации магазинов с "
-"терминалами POS.\n"
+"                У вас настроено %(count)s складов. Включите \"POS / Розничный магазин\" на складах, где есть физические локации магазинов с терминалами POS.\n"
 "                "
 
 #: templates/admin/pos_app/posterminal/change_list.html:90
@@ -2268,14 +2264,11 @@ msgstr "Создать склад"
 #: templates/admin/pos_app/posterminal/change_list.html:106
 msgid ""
 "\n"
-"            Need multiple store locations? You can enable any warehouse as a "
-"store location from <strong>Warehouse Management</strong>.\n"
+"            Need multiple store locations? You can enable any warehouse as a store location from <strong>Warehouse Management</strong>.\n"
 "            "
 msgstr ""
 "\n"
-"            Нужны несколько местоположений магазинов? Вы можете включить "
-"любой склад в качестве местоположения магазина через <strong>Управление "
-"складами</strong>.\n"
+"            Нужны несколько местоположений магазинов? Вы можете включить любой склад в качестве местоположения магазина через <strong>Управление складами</strong>.\n"
 "            "
 
 #: templates/admin/pos_app/posterminal/change_list.html:109
@@ -2371,13 +2364,13 @@ msgstr "Что такое поставщики терминалов?"
 #: templates/admin/pos_app/posterminalprovider/change_list.html:42
 msgid ""
 "Terminal providers are payment processing integrations (like Stripe "
-"Terminal) that allow your POS to accept card payments through connected card "
-"readers. Configure a provider here, then assign readers to terminals."
+"Terminal) that allow your POS to accept card payments through connected card"
+" readers. Configure a provider here, then assign readers to terminals."
 msgstr ""
 "Поставщики терминалов — это интеграции обработки платежей (например, Stripe "
 "Terminal), которые позволяют вашему POS принимать оплату картами через "
-"подключенные считыватели карт. Настройте поставщика здесь, а затем назначьте "
-"считыватели на терминалы."
+"подключенные считыватели карт. Настройте поставщика здесь, а затем назначьте"
+" считыватели на терминалы."
 
 #: templates/admin/pos_app/posterminalprovider/change_list.html:79
 #: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:48
@@ -2516,8 +2509,8 @@ msgid ""
 "Stripe Terminal) that will manage the reader connections."
 msgstr ""
 "Перед добавлением считывателей карт вам нужно настроить поставщика "
-"терминалов (например, Stripe Terminal), который будет управлять соединениями "
-"считывателей."
+"терминалов (например, Stripe Terminal), который будет управлять соединениями"
+" считывателей."
 
 #: templates/admin/pos_app/posterminalreader/change_list.html:53
 msgid ""
@@ -2822,8 +2815,8 @@ msgid ""
 "Settings applied to all stores in this group. Leave blank to inherit from "
 "site defaults."
 msgstr ""
-"Настройки применяются ко всем магазинам в этой группе. Оставьте поле пустым, "
-"чтобы наследовать значения по умолчанию сайта."
+"Настройки применяются ко всем магазинам в этой группе. Оставьте поле пустым,"
+" чтобы наследовать значения по умолчанию сайта."
 
 #: templates/admin/pos_app/storegroup/change_form.html:161
 msgid "Advanced Settings"
@@ -2927,8 +2920,8 @@ msgstr "Зарегистрировать новое устройство"
 
 #: templates/admin/pos_app/wizard/reader_step1_select.html:74
 msgid ""
-"Enter the registration code shown on your device screen to pair it with your "
-"account."
+"Enter the registration code shown on your device screen to pair it with your"
+" account."
 msgstr ""
 "Введите код регистрации, отображаемый на экране вашего устройства, чтобы "
 "связать его с вашей учетной записью."
@@ -2943,8 +2936,8 @@ msgid ""
 "Fetch readers already registered with your provider and import them into "
 "your POS system."
 msgstr ""
-"Получить читалки, уже зарегистрированные в вашем провайдере, и импортировать "
-"их в вашу систему POS."
+"Получить читалки, уже зарегистрированные в вашем провайдере, и импортировать"
+" их в вашу систему POS."
 
 #: templates/admin/pos_app/wizard/reader_step1_select.html:96
 #: templates/admin/pos_app/wizard/step1_select.html:82
@@ -3018,7 +3011,8 @@ msgstr "Введите код в поле слева"
 #: templates/admin/pos_app/wizard/reader_step2_register.html:83
 msgid "If you're using a simulated reader for testing, use:"
 msgstr ""
-"Если вы используете симулированный считыватель для тестирования, используйте:"
+"Если вы используете симулированный считыватель для тестирования, "
+"используйте:"
 
 #: templates/admin/pos_app/wizard/reader_step2_register.html:91
 #: templates/admin/pos_app/wizard/reader_step2_register.html:172
@@ -3050,34 +3044,16 @@ msgstr "Повторить"
 #, python-format
 msgid ""
 "\n"
-"                Found %(count)s unregistered reader in your "
-"%(provider.display_name)s account.\n"
+"                Found %(count)s unregistered reader in your %(provider.display_name)s account.\n"
 "            "
 msgid_plural ""
 "\n"
-"                Found %(count)s unregistered readers in your "
-"%(provider.display_name)s account.\n"
+"                Found %(count)s unregistered readers in your %(provider.display_name)s account.\n"
 "            "
-msgstr[0] ""
-"\n"
-"                Найден %(count)s нерегистрированный читатель в вашем "
-"%%(provider.display_name)s аккаунте.\n"
-"            "
-msgstr[1] ""
-"\n"
-"                Найдено %(count)s нерегистрированных читателей в вашем "
-"%%(provider.display_name)s аккаунте.\n"
-"            "
-msgstr[2] ""
-"\n"
-"                Найдено %(count)s нерегистрированных читателей в вашем "
-"%%(provider.display_name)s аккаунте.\n"
-"            "
-msgstr[3] ""
-"\n"
-"                Found %(count)s unregistered reader in your %%(provider."
-"display_name)s account.\n"
-"            "
+msgstr[0] "Ваш аккаунт содержит не зарегистрированных читателей. %(count)s"
+msgstr[1] "Ваш аккаунт содержит не зарегистрированных читателей. %(count)s"
+msgstr[2] "Ваш аккаунт содержит не зарегистрированных читателей. %(count)s"
+msgstr[3] "Ваш аккаунт содержит не зарегистрированных читателей. %(count)s"
 
 #: templates/admin/pos_app/wizard/reader_step2_register.html:162
 msgid "Select All"
@@ -3195,7 +3171,8 @@ msgstr "Выбрать поставщика терминала"
 msgid ""
 "Choose a payment terminal provider to accept card payments at the point of "
 "sale."
-msgstr "Выберите поставщика терминала оплаты для приема карт в момент покупки."
+msgstr ""
+"Выберите поставщика терминала оплаты для приема карт в момент покупки."
 
 #: templates/admin/pos_app/wizard/step1_select.html:50
 msgid "Supported Readers:"
@@ -3497,8 +3474,8 @@ msgid ""
 "For standalone terminals that process cards independently. Card details are "
 "entered manually after each transaction."
 msgstr ""
-"Для автономных терминалов, обрабатывающих карты самостоятельно. Данные карты "
-"вводятся вручную после каждой транзакции."
+"Для автономных терминалов, обрабатывающих карты самостоятельно. Данные карты"
+" вводятся вручную после каждой транзакции."
 
 #: wizard_views/terminal_wizard.py:147
 msgid "Connect Terminal Provider - Select Provider"

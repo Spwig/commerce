@@ -1,118 +1,120 @@
 ---
-title: Piani di Abbonamento
+title: Piani di abbonamento
 ---
 
-I piani di abbonamento ti permettono di offrire un fatturazione ricorrente per i tuoi prodotti — ideale per prodotti consumabili, servizi, scatole curate o qualsiasi prodotto che i clienti acquistano ripetutamente. Questa guida spiega come creare e configurare i piani, impostare le fasce di prezzo, aggiungere periodi di prova e collegare opzioni aggiuntive.
+I piani di abbonamento ti consentono di offrire addebiti ricorrenti per i tuoi prodotti: ideali per prodotti di consumo, servizi, box curate o qualsiasi prodotto che i clienti acquistano ripetutamente. Questa guida spiega come creare e configurare i piani, impostare i livelli di prezzo, aggiungere periodi di prova e collegare accessori opzionali.
 
-## Getting started
+## Per iniziare
 
-Naviga verso **Subscriptions > Subscription Plans** nel sidebar dell'amministratore. L'elenco dei piani mostra tutti i tuoi piani con il loro modello di prezzo, il numero di abbonati attivi e lo stato di visibilità.
+Passa a **Abbonamenti > Piani di abbonamento** nella barra laterale amministrativa. L'elenco dei piani mostra tutti i tuoi piani con il modello di prezzo, il numero di abbonati attivi e lo stato di visibilità.
 
-Per creare un nuovo piano, fai clic sul pulsante **+ Add Subscription Plan** — questo apre il wizard per la creazione del piano, che ti guida passo dopo passo nell'impostazione.
+Per creare un nuovo piano, fai clic sul pulsante **+ Aggiungi un piano di abbonamento** - questo apre la procedura guidata per la creazione del piano, che ti guida passo dopo passo alla configurazione.
 
-![Subscription plans list](/static/core/admin/img/help/subscription-plans/plan-list.webp)
+![Elenco dei piani di abbonamento](/static/core/admin/img/help/subscription-plans/plan-list.webp)
 
-## Plan information
+Un piano da solo non è acquistabile: è un modello. Una volta che lo hai creato qui, collegalo a uno o più prodotti dal tab **Abbonamenti** del prodotto (esclusivi per prodotti semplici, variabili e digitali), in modo che i clienti possano effettivamente iscriversi. Vedere [Vendere prodotti come abbonamenti](/help/selling-products-as-subscriptions) per questo passaggio.
+
+## Informazioni sul piano
 
 La prima sezione cattura l'identità principale del tuo piano.
 
-- **Plan Name** — Il nome che i clienti vedranno quando si iscrivono. Fai clic sull'icona della Terra per aggiungere traduzioni per altre lingue del negozio.
-- **Slug** — Un identificatore amico degli URL generato automaticamente dal nome (es. `premium-plan`). Viene utilizzato internamente e nelle integrazioni.
-- **Description** — Testo opzionale che descrive cosa include il piano. Supporta le traduzioni.
+- **Nome del piano** - Il nome che i clienti vedono quando si iscrivono. Fai clic sull'icona del globo per aggiungere le traduzioni per le altre lingue del negozio.
+- **Slug** - Un identificatore amichevole per le URL generato automaticamente dal nome (es. `piano-premium`). Viene utilizzato internamente e negli integratori.
+- **Descrizione** - Testo opzionale che descrive cosa include il piano. Supporta le traduzioni.
 
-## Pricing model
+## Modello di prezzo
 
-Scegli come è strutturato il prezzo per questo piano:
+Scegli come strutturare i prezzi per questo piano:
 
-| Pricing Model | Best For |
-|---------------|----------|
-| **Tiered Pricing** | Offrire opzioni di impegno mensile, trimestrale e annuale con sconti per termini più lunghi |
-| **Quantity-Based** | Prezzo per postazione o per utente dove il totale si scala in base alla quantità (es. licenze per team) |
-| **Flat Rate** | Un prezzo fisso unico senza variazioni |
+| Modello di prezzo | Ideale per |
+|------------------|-------------|
+| **Prezzo a livelli** | Offrire opzioni di impegno mensile, trimestrale e annuale con sconti per periodi più lunghi |
+| **Prezzo in base alla quantità** | Prezzo per utente o posto dove il totale si adatta alla quantità (es. licenze per team) |
+| **Prezzo fisso** | Un unico prezzo fisso senza variazioni |
 
-Per i piani **Quantity-Based**, imposta la **Minimum Quantity** (quantità minima richiesta) e opzionalmente una **Maximum Quantity** per limitare il numero di postazioni che un abbonato può acquistare.
+Per i piani a **Prezzo in base alla quantità**, imposta la **Quantità minima** (posti richiesti minimi) e, opzionalmente, una **Quantità massima** per limitare il numero di posti che un abbonato può acquistare.
 
-## Pricing tiers
+## Livelli di prezzo
 
-Le fasce di prezzo definiscono la frequenza di fatturazione e le opzioni di sconto disponibili per i clienti su questo piano. Aggiungile nella sezione **Pricing Tiers** sotto il modulo principale.
+I livelli di prezzo definiscono la frequenza di addebitamento e le opzioni di sconto disponibili ai clienti su questo piano. Aggiungili nella sezione **Livelli di prezzo** qui sotto il modulo principale.
 
-Ogni fascia ha questi campi:
+Ogni livello ha questi campi:
 
-- **Tier Name** — L'etichetta mostrata ai clienti (es. `Monthly`, `Annual — Save 20%`). Supporta le traduzioni.
-- **Billing Cycle** — Con quale frequenza il cliente viene addebitato: Giornaliera, Settimanale, Mensile, Trimestrale, Semestrale o Annuale.
-- **Billing Interval** — Il moltiplicatore del ciclo di fatturazione. Imposta su `2` con Mensile per fatturare ogni 2 mesi.
-- **Discount Percentage** — Lo sconto applicato al prezzo del prodotto per questa fascia. Imposta su `0` per il prezzo completo, o `20` per un sconto del 20%. Questo sconto si sovrappone a qualsiasi prezzo promozionale sul prodotto stesso.
-- **Default Tier** — Contrassegna una fascia come predefinita per selezionarla automaticamente per i clienti quando visualizzano le opzioni di abbonamento.
+- **Nome del livello** - L'etichetta visualizzata ai clienti (es. `Mensile`, `Annuale - Risparmia 20%`). Supporta le traduzioni.
+- **Ciclo di fatturazione** - Quanti spesso il cliente viene addebitato: Giornaliero, Setimanale, Mensile, Trimestrale, Semestrale o Annuale.
+- **Intervallo di fatturazione** - Il moltiplicatore per il ciclo di fatturazione. Impostalo a `2` con il Mensile per fatturare ogni 2 mesi.
+- **Percentuale di sconto** - Lo sconto applicato al prezzo del prodotto per questo livello. Impostalo a `0` per il prezzo pieno, oppure a `20` per ottenere uno sconto del 20%. Questo sconto si sovrappone a qualsiasi prezzo in saldo sul prodotto stesso.
+- **Livello predefinito** - Contrassegna un livello come predefinito per selezionarlo automaticamente per i clienti quando guardano le opzioni di abbonamento.
 
-### Esempio: piano a fasce con tre opzioni
+Lo sconto si applica a partire dal primo ciclo di fatturazione del cliente, non solo sui rinnovi - un livello con uno sconto del 20% addebiterà lo sconto del 20% fin dal primo giorno (o dal primo addebito dopo un periodo di prova, se il piano ne ha uno).
+
+### Esempio: piano a livelli con tre opzioni
 
 Per un piano di abbonamento "Coffee Club":
 
-| Tier Name | Billing Cycle | Discount |
-|-----------|---------------|----------|
-| Monthly | Monthly | 0% |
-| Quarterly — Save 10% | Quarterly | 10% |
-| Annual — Save 20% | Annual | 20% |
+| Nome del livello | Ciclo di fatturazione | Sconto |
+|----------------|----------------------|--------|
+| Mensile | Mensile | 0% |
+| Trimestrale - Risparmia 10% | Trimestrale | 10% |
+| Annuale - Risparmia 20% | Annuale | 20% |
 
-## Trial period
+## Periodo di prova
 
-Un periodo di prova permette ai clienti di provare l'abbonamento prima del primo addebito completo. Configuralo nella sezione **Trial Period**:
+Un periodo di prova permette ai clienti di provare il tuo abbonamento prima del primo addebito completo. Configuralo nella sezione **Periodo di prova**:
 
-- **Trial Period (Days)** — Numero di giorni di prova gratuiti. Imposta su `0` per disattivare i periodi di prova. Massimo 365 giorni.
-- **Trial Price** — Prezzo ridotto opzionale durante il periodo di prova (es. $1 per il primo mese). Lascia vuoto per un periodo di prova completamente gratuito.
+- **Periodo di prova (giorni)** - Numero di giorni di prova gratuiti. Imposta a `0` per disabilitare le prove. Il massimo è 365 giorni.
+- **Prezzo di prova** - Prezzo ridotto opzionale durante la prova (es. $1 per il primo mese). Lascia vuoto per un periodo di prova completamente gratuito.
 
-## Cancellation policy
+## Policy di annullamento
 
-Controlla come i clienti possono cancellare l'abbonamento nella sezione **Cancellation Policy**:
+Controlla come i clienti possono annullare il loro abbonamento nella sezione **Policy di annullamento**:
 
-| Policy | Description |
+| Policy | Descrizione |
 |--------|-------------|
-| **Cancel Anytime** | I clienti possono cancellare immediatamente in qualsiasi momento |
-| **Cancel at Period End** | La cancellazione entra in vigore alla fine del periodo pagato — i clienti mantengono l'accesso fino all'expiry |
-| **Minimum Commitment Required** | I clienti devono completare un numero minimo di cicli di fatturazione prima di poter cancellare |
+| **Annulla in qualsiasi momento** | I clienti possono annullare immediatamente in qualsiasi momento |
+| **Annulla alla fine del periodo** | L'annullamento diventa effettivo alla fine del periodo pagato — i clienti mantengono l'accesso fino alla scadenza |
+| **Obbligo minimo richiesto** | I clienti devono completare un numero minimo di cicli di fatturazione prima di annullare |
 
-Additional settings:
+Ulteriori impostazioni:
 
-- **Minimo impegno (Cicli)** — Quando si utilizza la politica di impegno, impostare il numero richiesto di cicli di fatturazione (es. `3` per un minimo di 3 mesi).
-- **Periodo di grazia (Giorni)** — Giorni di accesso continuo dopo un fallimento del pagamento prima che l'abbonamento venga sospeso.
+- **Obbligo minimo (cicli)** — Quando si utilizza il piano di impegno, impostare il numero richiesto di cicli di fatturazione (es. `3` per un obbligo minimo di 3 mesi).
+- **Periodo di tolleranza (giorni)** — Giorni di accesso continuo dopo un fallimento del pagamento prima che la sottoscrizione venga sospesa. Impostare su `0` per la sospensione immediata.
+- **Periodo di riacquisto (giorni)** — Giorni dopo l'annullamento durante i quali un cliente può riprendere la propria sottoscrizione senza dover riscrivere da capo.
 
-Impostare su `0` per la sospensione immediata.
-- **Periodo di riacquisto (Giorni)** — Giorni dopo la cancellazione durante i quali un cliente può riacquistare l'abbonamento senza doverlo riascrivere da zero.
+## Comportamento modifica piano
 
-## Comportamento del cambio piano
+Quando i clienti passano da un piano all'altro, puoi controllare quando avviene la modifica:
 
-Quando i clienti aggiornano o riducono il piano, è possibile controllare quando il cambiamento entra in vigore:
-
-- **Comportamento di aggiornamento** — Impostare su **Immediato** (addebito proporzionato ora) o **Al Rinnovo** (cambiare al prossimo data di fatturazione).
-- **Comportamento di riduzione** — Impostare su **Immediato** (applicare il credito alla prossima fattura) o **Al Rinnovo** (cambiare al prossimo data di fatturazione).
+- **Comportamento aggiornamento** — Imposta su **Immediato** (addebita importo proporzionato adesso) o **All'aggiornamento** (cambia alla data di fatturazione successiva).
+- **Comportamento riduzione** — Imposta su **Immediato** (applica credito sulla prossima bolletta) o **All'aggiornamento** (cambia alla data di fatturazione successiva).
 
 ## Limiti e restrizioni
 
-- **Numero massimo di cicli di fatturazione** — Il numero totale di cicli di fatturazione prima che l'abbonamento termini automaticamente. Lasciare vuoto per un'abbonamento ricorrente illimitato. Utile per piani a rate o abbonamenti con scadenza.
-- **Tariffa di configurazione** — Un addebito unico raccolto quando l'abbonamento viene creato per la prima volta (es. tariffa di onboarding o di attivazione). Impostare su `0.00` per non avere una tariffa di configurazione.
+- **Cicli di fatturazione massimi** — Il numero totale di cicli di fatturazione prima che la sottoscrizione si concluda automaticamente. Lasciare vuoto per una fatturazione ricorrente illimitata. Utile per piani a rate o sottoscrizioni con scadenza temporanea.
+- **Fee di attivazione** — Un addebito unico riscosso quando la sottoscrizione viene creata per la prima volta (es. tariffa di accoglienza o attivazione). Impostare su `0.00` per nessuna tariffa di attivazione.
 
-## Add-on del piano
+## Aggiunte al piano
 
-Gli add-on sono extra opzionali che i sottoscrittori possono aggiungere al loro piano. Aggiungerli nella sezione **Add-on del piano**:
+Le aggiunte sono opzioni extra che i sottoscrittori possono collegare al loro piano. Aggiungile nella sezione **Aggiunte al piano**:
 
-- **Nome dell'add-on** — Il nome visualizzato ai clienti. Supporta le traduzioni.
-- **Descrizione** — Cosa offre l'add-on.
-- **Prezzo** — Costo dell'add-on.
-- **Frequenza di fatturazione** — Se l'add-on viene addebitato **Per ciclo di fatturazione** (ricorrente) o **Una volta** all'inizio dell'abbonamento.
-- **Consenti quantità** — Abilitare per permettere ai clienti di acquistare più unità dell'add-on.
-- **Obbligatorio** — Selezionare per includere automaticamente l'add-on in tutti i nuovi abbonamenti. Gli add-on obbligatori non possono essere rimossi dal cliente.
+- **Nome aggiunta** — Il nome visualizzato ai clienti. Supporta le traduzioni.
+- **Descrizione** — Cosa fornisce l'aggiunta.
+- **Prezzo** — Costo dell'aggiunta.
+- **Frequenza di fatturazione** — Se l'aggiunta viene addebitata **Per ciclo di fatturazione** (ricorrente) o **Unica volta** all'inizio della sottoscrizione.
+- **Consenti quantità** — Attiva per consentire ai clienti di acquistare più unità dell'aggiunta.
+- **Obbligatorio** — Seleziona questa opzione per includere automaticamente l'aggiunta su tutte le nuove sottoscrizioni. Le aggiunte obbligatorie non possono essere rimosse dal cliente.
 
 ## Visibilità e stato
 
-- **Attivo** — Deselezionare per disattivare un piano in modo che non possano essere creati nuovi abbonamenti. Gli abbonamenti esistenti non sono influenzati.
-- **Pubblico** — Deselezionare per nascondere il piano dalle pagine rivolte ai clienti (utile per piani interni o obsoleti su cui i sottoscrittori esistenti rimangono).
-- **Ordine di ordinamento** — Controlla l'ordine di visualizzazione sulle pagine di selezione degli abbonamenti. I numeri più bassi appaiono per primi.
+- **Attivo** — Deseleziona per disattivare un piano in modo che non possano essere create nuove sottoscrizioni. Le sottoscrizioni esistenti non sono interessate.
+- **Pubblico** — Deseleziona per nascondere il piano dalle pagine visibili ai clienti (utile per piani interni o obsoleti che i sottoscrittori esistenti mantengono).
+- **Ordine di visualizzazione** — Controlla l'ordine di visualizzazione sulle pagine di selezione delle sottoscrizioni. I numeri più bassi appaiono per primi.
 
-## Consigli
+## Suggerimenti
 
-- Utilizzare un **periodo di prova** per ridurre l'esitazione — anche un breve periodo di prova gratuito di 7 giorni può migliorare significativamente il tasso di conversione per i prodotti a abbonamento.
-- Configurare **tre livelli di prezzo** (mensile, trimestrale, annuale) con sconti crescenti per incoraggiare gli impegni annuali e migliorare il flusso di cassa.
-- Per gli abbonamenti basati su servizi, impostare **Politica di cancellazione** su **Cancella alla fine del periodo** in modo che i clienti mantengano l'accesso durante il periodo pagato — questo sembra giusto e riduce i rimborshi.
-- Mantenere il **Periodo di grazia** tra 3–7 giorni per i fallimenti di pagamento. Questo dà ai clienti tempo per aggiornare il loro metodo di pagamento prima di perdere l'accesso.
-- Utilizzare raramente il flag **Obbligatorio** sugli add-on — utilizzarlo solo per cose che sono veramente obbligatori (es. un accordo di servizio), non come modo per gonfiare i prezzi.
-- Disattivare i piani senza sottoscrittori invece di eliminarli — questo preserva i dati storici per eventuali clienti che hanno precedentemente sottoscritto.
+- Usa un **periodo di prova** per ridurre l'esitazione — anche una breve prova gratuita di 7 giorni può migliorare significativamente i tassi di conversione per i prodotti a sottoscrizione.
+- Configura **tre livelli di prezzo** (mensile, trimestrale, annuale) con sconti crescenti per incoraggiare gli impegni annuali e migliorare il tuo flusso di cassa.
+- Per le sottoscrizioni basate sui servizi, imposta **Policy di annullamento** su **Annulla alla fine del periodo** in modo che i clienti mantengano l'accesso durante il loro periodo pagato — questo sembra equo e riduce i rimborssi.
+- Mantieni il **Periodo di tolleranza** tra 3-7 giorni per i fallimenti di pagamento. Questo dà ai clienti il tempo di aggiornare il loro metodo di pagamento prima di perdere l'accesso.
+- Usa l'indicatore **Obbligatorio** sugli accessori con moderazione — usalo solo per cose che sono veramente obbligatorie (es. un accordo di servizio), non come modo per aumentare i prezzi.
+- Disattiva i piani senza sottoscrittori invece di cancellarli — questo preserva i dati storici per qualsiasi cliente che si è precedentemente sottoscritto.

@@ -37,24 +37,29 @@ class AdminOrderItemSerializer(serializers.ModelSerializer):
             "image_url",
         ]
 
+    @staticmethod
+    def _select_image(manager):
+        """Pick the primary image (or the first) from the prefetched set.
+
+        Iterate the already-fetched ``images.all()`` collection so we reuse the
+        detail view's prefetch cache instead of issuing a fresh query per item;
+        calling ``filter(is_primary=True)`` would bypass that cache.
+        """
+        images = list(manager.all())
+        primary = next((image for image in images if image.is_primary), None)
+        chosen = primary or (images[0] if images else None)
+        return chosen.thumbnail_small if chosen else None
+
     def get_image_url(self, obj):
         """Get product/variant thumbnail image URL."""
         # Try variant image first (if item has a variant)
         if obj.variant:
-            variant_image = obj.variant.images.filter(is_primary=True).first()
-            if not variant_image:
-                variant_image = obj.variant.images.first()
-            if variant_image:
-                return variant_image.thumbnail_small
+            variant_image_url = self._select_image(obj.variant.images)
+            if variant_image_url:
+                return variant_image_url
 
         # Fall back to product primary image
-        product_image = obj.product.images.filter(is_primary=True).first()
-        if not product_image:
-            product_image = obj.product.images.first()
-        if product_image:
-            return product_image.thumbnail_small
-
-        return None
+        return self._select_image(obj.product.images)
 
 
 class AdminOrderListSerializer(serializers.ModelSerializer):
@@ -69,7 +74,9 @@ class AdminOrderListSerializer(serializers.ModelSerializer):
         source="get_payment_status_display", read_only=True
     )
     customer_name = serializers.CharField(source="shipping_name", read_only=True)
-    item_count = serializers.IntegerField(source="total_item_quantity", read_only=True)
+    # Reads the ``item_count`` annotation added by the order list view so the
+    # count does not trigger a per-order aggregate query. See order_list().
+    item_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Order

@@ -175,7 +175,7 @@ class WalletService:
 
     @staticmethod
     @transaction.atomic
-    def debit(user, amount, currency, source, description, reference_id=""):
+    def debit(user, amount, currency, source, description, reference_id="", created_by=None):
         """
         Deduct from a customer's wallet.
 
@@ -186,6 +186,7 @@ class WalletService:
             source: Source choice
             description: Human-readable description
             reference_id: External reference
+            created_by: Staff user for manual adjustments
 
         Returns:
             WalletTransaction
@@ -228,6 +229,7 @@ class WalletService:
             source=source,
             description=description,
             reference_id=reference_id,
+            created_by=created_by,
         )
 
         wallet.available_balance = Money(new_balance, currency)

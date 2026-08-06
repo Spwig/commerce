@@ -21,4 +21,5 @@ urlpatterns = [
     path("currency/", store.get_store_currency_settings, name="store-currency"),
     path("currencies/", store.list_currencies, name="store-currencies"),
     path("set-currency/", store.set_currency_api, name="store-set-currency"),
+    path("set-region/", store.set_region_api, name="store-set-region"),
 ]

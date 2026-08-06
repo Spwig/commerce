@@ -15,7 +15,7 @@ django-redis==5.4.0            # Django Redis cache backend
 # Task Queue
 celery==5.5.3                  # Distributed task queue
 django-celery-beat==2.9.0      # Database-backed periodic tasks
-tqdm==4.67.1                   # Progress bars for management commands
+tqdm==4.67.3                   # Progress bars for management commands
 
 # Content Management
 django-modeltranslation==0.19.19  # Model field translations for admin interface
@@ -48,7 +48,7 @@ qrcode[pil]==8.2               # QR code generation for referrals
 reportlab==4.4.10               # PDF generation for shipping documents
 
 # Object Storage (MinIO/S3) & Remote Backup
-boto3==1.43.54                 # AWS SDK for Python (S3-compatible APIs)
+boto3==1.43.59                 # AWS SDK for Python (S3-compatible APIs)
 django-storages==1.14.6        # Django storage backends for S3/MinIO
 minio==7.2.20                  # MinIO Python client for object storage
 paramiko>=3.0.0                # SSH/SFTP client for remote backup uploads
@@ -63,7 +63,7 @@ dj-rest-auth==6.0.0            # REST API wrapper for allauth
 
 # Authentication & Security
 PyJWT==2.10.1                  # JWT encode/decode for license and API auth
-cryptography==46.0.7           # Encryption/signing for secure integrations
+cryptography==48.0.1           # Encryption/signing for secure integrations
 fido2==2.2.1                   # WebAuthn/FIDO2 for biometric POS unlock
 mozilla-django-oidc==5.0.2     # Enterprise SSO via OpenID Connect (OIDC)
 
@@ -77,6 +77,7 @@ django-compressor==4.5.1       # CSS/JS compression and optimization
 # Security & Rate Limiting
 django-csp==4.0                # Content-Security-Policy header enforcement
 django-ratelimit==4.1.0        # Rate limiting for views and APIs
+defusedxml==0.7.1              # Safe XML parsing (XXE / entity-expansion) for provider XML responses
 
 # Monitoring & Error Tracking
 sentry-sdk==2.19.2             # Error tracking and performance monitoring
@@ -105,9 +106,9 @@ squareup==43.2.0.20251016      # Square payment integration
 # Email System
 dnspython==2.8.0               # DNS queries for email deliverability (SPF/DKIM/DMARC)
 mjml==0.11.1                   # MJML email template rendering
-google-auth==2.41.1            # Google OAuth authentication
-google-auth-oauthlib==1.2.4    # Google OAuth flow helpers
-google-auth-httplib2==0.2.1    # Google API HTTP library integration
+google-auth==2.56.2            # Google OAuth authentication
+google-auth-oauthlib==1.4.0    # Google OAuth flow helpers
+google-auth-httplib2==0.4.0    # Google API HTTP library integration
 google-api-python-client==2.198.0  # Google APIs (Gmail)
 msal==1.34.0                   # Microsoft Authentication Library (Office 365)
 aiosmtpd==1.4.6                # Asyncio SMTP server for built-in email sending

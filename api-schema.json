@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Spwig eCommerce API Documentation",
-        "version": "1.7.0",
+        "version": "1.7.1",
         "description": "## Spwig API Documentation\n\nWelcome to the Spwig eCommerce Platform API documentation. This API enables you to build custom headless storefronts, mobile apps, and integrations.\n\n### Authentication\n\nMost endpoints require authentication using one of these methods:\n\n- **Token Authentication**: Include `Authorization: Token <your-token>` header\n- **Session Authentication**: Use Spwig session cookies (for browser-based apps)\n\nPublic endpoints (like product catalog) allow anonymous access.\n\n### API Standards\n\n- **Pagination**: List endpoints return 20 items per page by default. Use `?page=N` to navigate.\n- **Filtering**: Most list endpoints support query parameter filtering\n- **Multi-language**: Set `Accept-Language` header for localized responses\n- **Multi-currency**: Currency information included in price responses\n\n### Response Format\n\nAll endpoints return JSON with a consistent format:\n```json\n{\n  \"success\": true,\n  \"data\": { ... },\n  \"message\": \"Optional status message\"\n}\n```\n\n### Rate Limiting\n\nPublic endpoints may be rate-limited. Authenticated requests have higher limits."
     },
     "paths": {
@@ -4771,6 +4771,16 @@
                         },
                         "description": ""
                     },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
                     "401": {
                         "description": "Authentication required"
                     },
@@ -9039,7 +9049,7 @@
         "/api/admin/settings/branding/update/": {
             "patch": {
                 "operationId": "api_admin_settings_branding_update_partial_update",
-                "description": "\n    Update the store's branding and identity settings.\n\n    **Rate Limit:** 30 requests per minute (sensitive operation)\n\n    Only provided fields will be updated. Supports partial updates.\n\n    **Updatable fields:**\n    - store_name: Store display name\n    - primary_color: Brand color hex code\n    - invoice_footer_text: Custom invoice footer\n    - packing_slip_footer_text: Custom packing slip footer\n    - tax_id: Business tax ID / VAT number\n    - business_address: Address object (line1, line2, city, state, postal_code, country)\n    - business_phone: Business phone number\n    - business_email: Business email address\n    ",
+                "description": "\n    Update the store's branding and identity settings.\n\n    **Rate Limit:** 30 requests per minute (sensitive operation)\n\n    Only provided fields will be updated. Supports partial updates.\n\n    **Updatable fields:**\n    - store_name: Store display name\n    - invoice_footer_text: Custom invoice footer\n    - packing_slip_footer_text: Custom packing slip footer\n    - tax_id: Business tax ID / VAT number\n    - business_address: Address object (line1, line2, city, state, postal_code, country)\n    - business_phone: Business phone number\n    - business_email: Business email address\n    ",
                 "summary": "Update branding settings",
                 "tags": [
                     "Admin - Branding"
@@ -9893,6 +9903,16 @@
                     },
                     "429": {
                         "description": "Rate limit exceeded"
+                    },
+                    "502": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -13454,7 +13474,7 @@
         "/api/cart/add/": {
             "post": {
                 "operationId": "api_cart_add_create",
-                "description": "Add a product to cart with specified quantity. Optionally include variant ID, customizations, and notes. Validates stock availability and merges with existing cart item if same product/variant. For subscription products, include is_subscription=true with subscription_plan_id, payment_token_id, and optionally pricing_tier_id.",
+                "description": "Add a product to cart with specified quantity. Optionally include variant ID, customizations, and notes. Validates stock availability and merges with existing cart item if same product/variant. For subscription products, include is_subscription=true with subscription_plan_id and optionally pricing_tier_id (the shopper must be authenticated). No payment token is required here — the reusable payment method is captured at the checkout payment step and bound via the attach-subscription-token endpoint.",
                 "summary": "Add item to cart",
                 "tags": [
                     "Cart"
@@ -13868,6 +13888,66 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/cart/items/{item_id}/attach-subscription-token/": {
+            "post": {
+                "operationId": "api_cart_items_attach_subscription_token_create",
+                "description": "Bind a saved reusable payment method (PaymentToken) to a subscription cart item before checkout. The token must belong to the authenticated user, be active, and its payment provider must support subscriptions. Called after minting the token at the checkout payment step so recurring billing has a method to charge.",
+                "summary": "Attach payment token to a subscription cart item",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "item_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CartRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CartRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CartRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Cart"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -14506,6 +14586,14 @@
                 "summary": "Get brand products",
                 "parameters": [
                     {
+                        "in": "query",
+                        "name": "ship_only",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "When true (`1`), hide products not sold in the shopper's region instead of returning them. By default (matching the storefront's region_restricted_action) such products are returned and flagged via the `ships_to_region` field so clients can mark them."
+                    },
+                    {
                         "in": "path",
                         "name": "slug",
                         "schema": {
@@ -14656,6 +14744,14 @@
                 "description": "Get products in a specific category\nSupports filtering, sorting, pagination\nRegion-aware: only shows products visible and in-stock in visitor's region",
                 "summary": "Get products in category",
                 "parameters": [
+                    {
+                        "in": "query",
+                        "name": "ship_only",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "When true (`1`), hide products not sold in the shopper's region instead of returning them. By default (matching the storefront's region_restricted_action) such products are returned and flagged via the `ships_to_region` field so clients can mark them."
+                    },
                     {
                         "in": "path",
                         "name": "slug",
@@ -15542,6 +15638,14 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "ship_only",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "When true (`1`), hide products not sold in the shopper's region instead of returning them. By default (matching the storefront's region_restricted_action) such products are returned and flagged via the `ships_to_region` field so clients can mark them."
                     }
                 ],
                 "tags": [
@@ -24060,6 +24164,7 @@
                         "schema": {
                             "type": "string",
                             "enum": [
+                                "image/avif",
                                 "image/gif",
                                 "image/hdr",
                                 "image/jpeg",
@@ -24075,7 +24180,7 @@
                                 "video/x-msvideo"
                             ]
                         },
-                        "description": "* `image/jpeg` - JPEG\n* `image/png` - PNG\n* `image/gif` - GIF\n* `image/webp` - WebP\n* `image/svg+xml` - SVG\n* `video/mp4` - MP4\n* `video/webm` - WebM\n* `video/quicktime` - MOV\n* `video/x-matroska` - MKV\n* `video/x-msvideo` - AVI\n* `model/gltf-binary` - GLB\n* `model/gltf+json` - glTF\n* `image/hdr` - HDR"
+                        "description": "* `image/jpeg` - JPEG\n* `image/png` - PNG\n* `image/gif` - GIF\n* `image/webp` - WebP\n* `image/avif` - AVIF\n* `image/svg+xml` - SVG\n* `video/mp4` - MP4\n* `video/webm` - WebM\n* `video/quicktime` - MOV\n* `video/x-matroska` - MKV\n* `video/x-msvideo` - AVI\n* `model/gltf-binary` - GLB\n* `model/gltf+json` - glTF\n* `image/hdr` - HDR"
                     },
                     {
                         "name": "ordering",
@@ -35503,6 +35608,51 @@
                 }
             }
         },
+        "/api/store/set-region/": {
+            "post": {
+                "operationId": "api_store_set_region_create",
+                "description": "Set the shopper's ship-to destination country for the session. The country is resolved to its sales region, which drives product availability and — on multi-currency stores — the display currency. The country must be one the store ships to. Headless twin of the storefront /api/set-region/ endpoint.",
+                "summary": "Set ship-to region",
+                "tags": [
+                    "Store"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "country": {
+                                        "type": "string",
+                                        "example": "AU"
+                                    }
+                                },
+                                "required": [
+                                    "country"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Region set successfully"
+                    },
+                    "400": {
+                        "description": "Missing or non-shippable country code"
+                    }
+                }
+            }
+        },
         "/api/store/shipping-info/": {
             "get": {
                 "operationId": "api_store_shipping_info_retrieve",
@@ -36477,6 +36627,56 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/subscriptions/tokens/begin-setup/": {
+            "post": {
+                "operationId": "api_subscriptions_tokens_begin_setup_create",
+                "description": "Provider-agnostic start of capturing a reusable (off-session) payment method for subscriptions. Given a provider_account_id, returns the manifest-driven client bundle {supported, provider_key, handler_url, sdk_dependencies, client_params} for whichever gateway the merchant configured, so the storefront renders that provider's setup UI via the shared window.PaymentHandlers registry — no gateway-specific code. Returns {supported: false} when the provider has not shipped a setup handler, so the storefront can fall back to the shopper's saved tokens.",
+                "summary": "Begin reusable payment-method setup",
+                "tags": [
+                    "Subscriptions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentTokenRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentTokenRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentTokenRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentToken"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -42246,9 +42446,9 @@
                     },
                     "compare_at_price": {
                         "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
-                        "nullable": true
+                        "nullable": true,
+                        "description": "Regular price to strike through when on sale, else null (sale_type-derived).",
+                        "readOnly": true
                     },
                     "currency": {
                         "type": "string",
@@ -43053,6 +43253,32 @@
                 ],
                 "type": "string",
                 "description": "* `price` - price"
+            },
+            "AttributeAssignmentInputRequest": {
+                "type": "object",
+                "description": "Serializer for a single attribute assignment in the payload.",
+                "properties": {
+                    "attribute_id": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "value_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "default": 0
+                    }
+                },
+                "required": [
+                    "attribute_id",
+                    "value_ids"
+                ]
             },
             "AttributeCreateRequest": {
                 "type": "object",
@@ -44972,7 +45198,8 @@
                     "website": {
                         "type": "string",
                         "format": "uri",
-                        "default": ""
+                        "default": "",
+                        "maxLength": 200
                     },
                     "show_brand_page": {
                         "type": "boolean",
@@ -45440,10 +45667,10 @@
                     },
                     "round_to": {
                         "type": "integer",
-                        "maximum": 4,
+                        "maximum": 2,
                         "minimum": 0,
                         "default": 2,
-                        "description": "Number of decimal places to round the result to."
+                        "description": "Number of decimal places to round the result to (0 to the price field's precision)."
                     }
                 },
                 "required": [
@@ -46406,10 +46633,26 @@
                         "description": "Get image URL from MediaAsset",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PictureSources"
+                            }
+                        ],
+                        "readOnly": true
+                    },
                     "banner_image": {
                         "type": "string",
                         "nullable": true,
                         "description": "Get banner image URL from MediaAsset",
+                        "readOnly": true
+                    },
+                    "banner_image_sources": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PictureSources"
+                            }
+                        ],
                         "readOnly": true
                     },
                     "parent": {
@@ -46471,10 +46714,12 @@
                 },
                 "required": [
                     "banner_image",
+                    "banner_image_sources",
                     "effective_theme",
                     "full_path",
                     "id",
                     "image",
+                    "image_sources",
                     "name",
                     "product_count",
                     "slug",
@@ -46528,6 +46773,14 @@
                         "description": "Get image URL from MediaAsset",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PictureSources"
+                            }
+                        ],
+                        "readOnly": true
+                    },
                     "parent": {
                         "type": "integer",
                         "nullable": true
@@ -46554,6 +46807,7 @@
                     "full_path",
                     "id",
                     "image",
+                    "image_sources",
                     "name",
                     "product_count",
                     "slug"
@@ -48046,8 +48300,7 @@
                 "description": "Request serializer for creating a payment intent.",
                 "properties": {
                     "checkout_session_id": {
-                        "type": "string",
-                        "format": "uuid",
+                        "type": "integer",
                         "description": "Checkout session ID. If not provided, uses current user's active session."
                     },
                     "provider_id": {
@@ -49910,6 +50163,9 @@
                 "type": "object",
                 "description": "Complete dashboard analytics response.",
                 "properties": {
+                    "custom_range": {
+                        "$ref": "#/components/schemas/SalesKPI"
+                    },
                     "today": {
                         "$ref": "#/components/schemas/SalesKPI"
                     },
@@ -55119,6 +55375,10 @@
                     "email_sent": {
                         "type": "boolean"
                     },
+                    "email_error": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "status": {
                         "type": "string"
                     },
@@ -55241,6 +55501,7 @@
                     "image/png",
                     "image/gif",
                     "image/webp",
+                    "image/avif",
                     "image/svg+xml",
                     "video/mp4",
                     "video/webm",
@@ -55252,7 +55513,7 @@
                     "image/hdr"
                 ],
                 "type": "string",
-                "description": "* `image/jpeg` - JPEG\n* `image/png` - PNG\n* `image/gif` - GIF\n* `image/webp` - WebP\n* `image/svg+xml` - SVG\n* `video/mp4` - MP4\n* `video/webm` - WebM\n* `video/quicktime` - MOV\n* `video/x-matroska` - MKV\n* `video/x-msvideo` - AVI\n* `model/gltf-binary` - GLB\n* `model/gltf+json` - glTF\n* `image/hdr` - HDR"
+                "description": "* `image/jpeg` - JPEG\n* `image/png` - PNG\n* `image/gif` - GIF\n* `image/webp` - WebP\n* `image/avif` - AVIF\n* `image/svg+xml` - SVG\n* `video/mp4` - MP4\n* `video/webm` - WebM\n* `video/quicktime` - MOV\n* `video/x-matroska` - MKV\n* `video/x-msvideo` - AVI\n* `model/gltf-binary` - GLB\n* `model/gltf+json` - glTF\n* `image/hdr` - HDR"
             },
             "MiniCartResponse": {
                 "type": "object",
@@ -60565,7 +60826,8 @@
                     },
                     "website": {
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "maxLength": 200
                     },
                     "show_brand_page": {
                         "type": "boolean"
@@ -60598,11 +60860,6 @@
                         "minLength": 1,
                         "description": "Store name displayed in header and emails.",
                         "maxLength": 100
-                    },
-                    "primary_color": {
-                        "type": "string",
-                        "description": "Primary brand color hex code (e.g., #2c3e50).",
-                        "maxLength": 7
                     },
                     "invoice_footer_text": {
                         "type": "string",
@@ -61743,9 +62000,6 @@
                         ],
                         "description": "Primary reason for return\n\n* `defective` - Defective Product\n* `wrong_item` - Wrong Item Received\n* `not_as_described` - Not as Described\n* `changed_mind` - Changed Mind\n* `sizing` - Wrong Size/Fit\n* `damaged_shipping` - Damaged in Shipping\n* `other` - Other"
                     },
-                    "items_json": {
-                        "description": "Items being returned with quantities and item-specific reasons"
-                    },
                     "customer_notes": {
                         "type": "string",
                         "description": "Customer explanation for the return"
@@ -62800,6 +63054,39 @@
                     "amount"
                 ]
             },
+            "PictureSources": {
+                "type": "object",
+                "description": "Responsive image source set for a storefront <picture> element.\n\nMirrors ``MediaAsset.get_picture_sources()``: ``avif``/``webp`` are the\nnext-gen candidates (null when not generated yet — the client omits that\n<source>), ``fallback`` is always a usable original-format URL for the\n<img>. Emitted alongside — never instead of — the existing single image\nURL field, so deployed clients keep working.",
+                "properties": {
+                    "avif": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "webp": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fallback": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "width": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "height": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "avif",
+                    "fallback",
+                    "height",
+                    "webp",
+                    "width"
+                ]
+            },
             "PlanPricingTier": {
                 "type": "object",
                 "description": "Serializer for pricing tiers (shows discount applied to product prices)",
@@ -63053,8 +63340,7 @@
                     "assignments": {
                         "type": "array",
                         "items": {
-                            "type": "object",
-                            "additionalProperties": {}
+                            "$ref": "#/components/schemas/AttributeAssignmentInputRequest"
                         }
                     }
                 },
@@ -63266,12 +63552,22 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "effective_price_amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+                        "readOnly": true
+                    },
                     "compare_at_price_amount": {
                         "type": "string",
                         "format": "decimal",
                         "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
-                        "readOnly": true,
-                        "nullable": true
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "is_on_sale": {
+                        "type": "string",
+                        "readOnly": true
                     },
                     "cost_amount": {
                         "type": "string",
@@ -63301,6 +63597,10 @@
                     },
                     "is_low_stock": {
                         "type": "string",
+                        "readOnly": true
+                    },
+                    "ships_to_region": {
+                        "type": "boolean",
                         "readOnly": true
                     },
                     "weight": {
@@ -63584,10 +63884,12 @@
                     "discount_percentage",
                     "effective_bundle_price",
                     "effective_design",
+                    "effective_price_amount",
                     "id",
                     "images",
                     "is_in_stock",
                     "is_low_stock",
+                    "is_on_sale",
                     "meta_description",
                     "meta_title",
                     "name",
@@ -63598,6 +63900,7 @@
                     "regional_stock",
                     "related_products",
                     "review_count",
+                    "ships_to_region",
                     "short_description",
                     "sku",
                     "slug",
@@ -63619,6 +63922,14 @@
                         "type": "string",
                         "nullable": true,
                         "description": "Get image URL from MediaAsset (returns relative URL for cross-origin safety)",
+                        "readOnly": true
+                    },
+                    "image_sources": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PictureSources"
+                            }
+                        ],
                         "readOnly": true
                     },
                     "alt_text": {
@@ -63643,7 +63954,8 @@
                 },
                 "required": [
                     "id",
-                    "image"
+                    "image",
+                    "image_sources"
                 ]
             },
             "ProductImageReorderRequest": {
@@ -63783,12 +64095,22 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "effective_price_amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+                        "readOnly": true
+                    },
                     "compare_at_price_amount": {
                         "type": "string",
                         "format": "decimal",
                         "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
-                        "readOnly": true,
-                        "nullable": true
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "is_on_sale": {
+                        "type": "string",
+                        "readOnly": true
                     },
                     "discount_percentage": {
                         "type": "string",
@@ -63800,6 +64122,10 @@
                     },
                     "is_low_stock": {
                         "type": "string",
+                        "readOnly": true
+                    },
+                    "ships_to_region": {
+                        "type": "boolean",
                         "readOnly": true
                     },
                     "is_featured": {
@@ -63834,15 +64160,18 @@
                     "category_name",
                     "compare_at_price_amount",
                     "discount_percentage",
+                    "effective_price_amount",
                     "id",
                     "images",
                     "is_in_stock",
                     "is_low_stock",
+                    "is_on_sale",
                     "name",
                     "price_amount",
                     "price_currency",
                     "primary_image",
                     "review_count",
+                    "ships_to_region",
                     "sku",
                     "slug"
                 ]
@@ -64164,6 +64493,14 @@
                         "description": "Get primary image URL for this variant (medium thumbnail)",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PictureSources"
+                            }
+                        ],
+                        "readOnly": true
+                    },
                     "images": {
                         "type": "array",
                         "items": {},
@@ -64183,6 +64520,7 @@
                     "attributes_structured",
                     "effective_price",
                     "id",
+                    "image_sources",
                     "image_url",
                     "images",
                     "name",
@@ -66285,6 +66623,7 @@
                         "readOnly": true
                     },
                     "items_json": {
+                        "readOnly": true,
                         "description": "Items being returned with quantities and item-specific reasons"
                     },
                     "customer_notes": {
@@ -66389,6 +66728,7 @@
                     "inspected_at",
                     "items_condition",
                     "items_condition_display",
+                    "items_json",
                     "merchant_notes",
                     "order",
                     "order_number",
@@ -66423,9 +66763,6 @@
                             }
                         ],
                         "description": "Primary reason for return\n\n* `defective` - Defective Product\n* `wrong_item` - Wrong Item Received\n* `not_as_described` - Not as Described\n* `changed_mind` - Changed Mind\n* `sizing` - Wrong Size/Fit\n* `damaged_shipping` - Damaged in Shipping\n* `other` - Other"
-                    },
-                    "items_json": {
-                        "description": "Items being returned with quantities and item-specific reasons"
                     },
                     "customer_notes": {
                         "type": "string",
@@ -66558,6 +66895,12 @@
                         "format": "decimal",
                         "pattern": "^-?\\d{0,10}(?:\\.\\d{0,2})?$"
                     },
+                    "current_order_count": {
+                        "type": "integer"
+                    },
+                    "previous_order_count": {
+                        "type": "integer"
+                    },
                     "change_percentage": {
                         "type": "string",
                         "format": "decimal",
@@ -66569,14 +66912,65 @@
                     },
                     "currency": {
                         "type": "string"
+                    },
+                    "daily_breakdown": {
+                        "$ref": "#/components/schemas/SalesComparisonDailyBreakdown"
                     }
                 },
                 "required": [
                     "change_percentage",
                     "currency",
+                    "current_order_count",
                     "current_value",
+                    "daily_breakdown",
+                    "previous_order_count",
                     "previous_value",
                     "trend"
+                ]
+            },
+            "SalesComparisonDailyBreakdown": {
+                "type": "object",
+                "description": "Current and previous period daily breakdown arrays for chart rendering.",
+                "properties": {
+                    "current": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SalesComparisonDailyItem"
+                        }
+                    },
+                    "previous": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SalesComparisonDailyItem"
+                        }
+                    }
+                },
+                "required": [
+                    "current",
+                    "previous"
+                ]
+            },
+            "SalesComparisonDailyItem": {
+                "type": "object",
+                "description": "Single day data point in a sales-comparison breakdown.",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "revenue": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,10}(?:\\.\\d{0,2})?$"
+                    },
+                    "order_count": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "date",
+                    "order_count",
+                    "revenue"
                 ]
             },
             "SalesComparisonTrendEnum": {

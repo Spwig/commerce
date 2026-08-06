@@ -49,9 +49,15 @@ def generate_error_reference():
 @throttle_classes([AdminAPIThrottle])
 def role_list(request):
     """List all roles."""
+    from django.db.models import Count
+
     from staff_roles.models import StaffRole
 
-    roles = StaffRole.objects.all().select_related("group")
+    roles = (
+        StaffRole.objects.all()
+        .select_related("group")
+        .annotate(member_count_annotated=Count("group__user", distinct=True))
+    )
     return Response(
         {
             "success": True,
@@ -216,6 +222,21 @@ def role_update(request, role_id):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    if "name" in serializer.validated_data:
+        new_name = serializer.validated_data["name"]
+        if StaffRole.objects.filter(display_name__iexact=new_name).exclude(pk=role.pk).exists():
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "CONFLICT",
+                        "message": _("A role with this name already exists."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
 
     old_values = {}
     new_values = {}

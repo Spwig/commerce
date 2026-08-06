@@ -1,4 +1,4 @@
-{% load i18n element_tags merchant_trans %}
+{% load i18n element_tags merchant_trans media_picture currency_tags %}
 {% mtrans "View All" as default_view_all %}
 <!-- Product List Element -->
 <section class="product-list product-list--{{ element.content.card_style|default:'default' }} product-list--divider-{{ element.content.divider_style|default:'line' }}"
@@ -32,17 +32,20 @@
             <a href="{{ product.url|default:product.get_absolute_url }}" class="product-list__image-link">
                 <div class="product-list__image-wrapper">
                     {% if product.image or product.primary_image %}
-                    <img src="{% if product.image %}{{ product.image }}{% elif product.primary_image.file %}{{ product.primary_image.file.url }}{% endif %}"
+                    {% with picsrc=product.image|default:product.primary_image.file.url %}{% with picps=picsrc|picture_sources %}
+                    <picture class="spwig-picture">{% if picps.avif %}<source srcset="{{ picps.avif }}" type="image/avif">{% endif %}{% if picps.webp %}<source srcset="{{ picps.webp }}" type="image/webp">{% endif %}
+                    <img src="{{ picsrc }}"
                          alt="{{ product.name|default:product.title }}"
                          class="product-list__image"
-                         loading="lazy">
+                         loading="lazy"></picture>
+                    {% endwith %}{% endwith %}
                     {% else %}
                     <div class="product-list__image-placeholder">
                         <i class="fas fa-box"></i>
                     </div>
                     {% endif %}
 
-                    {% if product.on_sale or product.sale_price %}
+                    {% if product.is_on_sale %}
                     <span class="product-list__badge product-list__badge--sale">{% mtrans "Sale" %}</span>
                     {% endif %}
                 </div>
@@ -75,12 +78,7 @@
 
                 <div class="product-list__price-row">
                     <div class="product-list__price">
-                        {% if product.sale_price or product.original_price %}
-                        <span class="product-list__price-original">{{ product.original_price }}</span>
-                        <span class="product-list__price-current product-list__price-current--sale">{{ product.sale_price|default:product.price }}</span>
-                        {% else %}
-                        <span class="product-list__price-current">{{ product.price|default:product.display_price }}</span>
-                        {% endif %}
+                        {% product_price_display product current_currency.code show_badge=False %}
                     </div>
 
                     {% if element.content.show_stock_status|default:True %}

@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffUser
 from admin_api.serializers.traffic import TrafficAnalyticsResponseSerializer
 from admin_api.throttling import AdminAPIThrottle
 from core.api.api_descriptions import AUTH_REQUIRED, PERMISSION_DENIED, RATE_LIMIT_EXCEEDED
@@ -90,7 +90,7 @@ def _parse_date(date_str):
     },
 )
 @api_view(["GET"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([IsStaffUser])
 @throttle_classes([AdminAPIThrottle])
 def traffic_analytics(request):
     """Combined web/visitor analytics wrapping geoip.analytics_service."""

@@ -1,4 +1,4 @@
-{% load i18n merchant_trans %}
+{% load i18n merchant_trans media_picture currency_tags %}
 {# Product List Layout - matches category/list.html structure #}
 <div class="cat-list-products">
     {% for product in products %}
@@ -6,7 +6,7 @@
         <div class="cat-list-row__image">
             <a href="{{ product.get_absolute_url }}">
                 {% if product.primary_image_listing_url %}
-                <img src="{{ product.primary_image_listing_url }}" alt="{{ product.name }}" loading="lazy">
+                {% picture product.primary_image size="product_listing" alt=product.name %}
                 {% else %}
                 <div class="cat-list-row__placeholder"><i class="fas fa-image"></i></div>
                 {% endif %}
@@ -18,12 +18,7 @@
             <p class="cat-list-row__desc">{{ product.short_description|striptags|truncatewords:30 }}</p>
             {% endif %}
             <div class="cat-list-row__price">
-                {% if product.is_on_sale %}
-                <span class="cat-list-row__price--sale">{{ product.formatted_price }}</span>
-                <span class="cat-list-row__price--original">{{ product.formatted_compare_price }}</span>
-                {% else %}
-                {{ product.formatted_price }}
-                {% endif %}
+                {% product_price_display product current_currency.code %}
             </div>
         </div>
         <div class="cat-list-row__actions">

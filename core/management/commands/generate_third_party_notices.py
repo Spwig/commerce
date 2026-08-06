@@ -12,7 +12,9 @@ import json
 import re
 import subprocess
 import sys
+from collections import deque
 from datetime import UTC, datetime
+from importlib import metadata as importlib_metadata
 from pathlib import Path
 
 from django.conf import settings
@@ -86,25 +88,37 @@ class Command(BaseCommand):
         all_packages = json.loads(result.stdout)
         self.stdout.write(f"Found {len(all_packages)} installed packages")
 
-        # Parse requirements.txt for direct dependencies
-        direct_deps = set()
-        if requirements_path.exists():
-            with open(requirements_path) as f:
-                for line in f:
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    m = re.match(r"^([a-zA-Z0-9_.-]+)", line)
-                    if m:
-                        direct_deps.add(self._normalize(m.group(1)))
+        # Restrict to the PRODUCTION dependency closure: the packages named in
+        # requirements.txt plus their transitive runtime dependencies. Without
+        # this the notices list every package installed in whatever venv ran the
+        # command — in a dev checkout that wrongly attributes dev-only tools
+        # (pytest, ruff, playwright, ...) as shipped software. Computing the
+        # closure from installed package metadata makes the output correct
+        # regardless of what else happens to be installed.
+        roots, closure = self._compute_prod_closure(requirements_path)
+        if closure is None:
+            self.stdout.write(
+                self.style.WARNING(
+                    "Could not compute the production dependency closure "
+                    "(packaging unavailable?) — falling back to ALL installed "
+                    "packages; output may include dev-only dependencies."
+                )
+            )
+            in_scope = all_packages
+        else:
+            in_scope = [
+                pkg for pkg in all_packages if self._normalize(pkg.get("Name", "")) in closure
+            ]
+            self.stdout.write(
+                f"Production closure: {len(in_scope)} packages "
+                f"({len(all_packages) - len(in_scope)} dev-only/uninstalled excluded)"
+            )
 
-        # Categorize
+        # Categorize into direct (named in requirements.txt) vs transitive.
         direct = []
         transitive = []
-        normalized_direct = {d.replace("-", "") for d in direct_deps}
-        for pkg in all_packages:
-            name_norm = self._normalize(pkg.get("Name", ""))
-            if name_norm in direct_deps or name_norm.replace("-", "") in normalized_direct:
+        for pkg in in_scope:
+            if self._normalize(pkg.get("Name", "")) in roots:
                 direct.append(pkg)
             else:
                 transitive.append(pkg)
@@ -112,9 +126,9 @@ class Command(BaseCommand):
         direct.sort(key=lambda p: p["Name"].lower())
         transitive.sort(key=lambda p: p["Name"].lower())
 
-        # License type summary
+        # License type summary (over the in-scope set only)
         license_counts = {}
-        for pkg in all_packages:
+        for pkg in in_scope:
             lic_key = self._classify_license(pkg.get("License", "UNKNOWN"))
             license_counts[lic_key] = license_counts.get(lic_key, 0) + 1
 
@@ -131,6 +145,81 @@ class Command(BaseCommand):
                 f"{size_kb:.0f} KB)"
             )
         )
+
+    def _compute_prod_closure(self, requirements_path):
+        """Return ``(roots, closure)`` as sets of normalized package names.
+
+        ``roots`` are the packages named in requirements.txt; ``closure`` is
+        those plus their full transitive *runtime* dependency graph, walked from
+        installed package metadata. Environment markers are evaluated against the
+        current interpreter and extras declared in requirements.txt are honoured,
+        so the closure reflects what actually ships in the production image.
+
+        Returns ``(set(), None)`` if the closure cannot be computed (``packaging``
+        unavailable or no requirements file), so the caller can fall back to the
+        full installed set.
+        """
+        try:
+            from packaging.requirements import Requirement
+        except ImportError:
+            return set(), None
+
+        if not requirements_path.exists():
+            return set(), None
+
+        roots = set()
+        queue = deque()
+        for raw in requirements_path.read_text().splitlines():
+            line = raw.split("#", 1)[0].strip()
+            if not line or line.startswith("-"):
+                continue
+            try:
+                req = Requirement(line)
+                name, extras = self._normalize(req.name), frozenset(req.extras)
+            except Exception:
+                m = re.match(r"^([A-Za-z0-9_.-]+)", line)
+                if not m:
+                    continue
+                name, extras = self._normalize(m.group(1)), frozenset()
+            roots.add(name)
+            queue.append((name, extras))
+
+        # normalized dist name -> distribution, for Requires-Dist lookups
+        dist_by_name = {}
+        for dist in importlib_metadata.distributions():
+            dist_name = dist.metadata["Name"] if dist.metadata else None
+            if dist_name:
+                dist_by_name[self._normalize(dist_name)] = dist
+
+        # BFS the runtime-dependency graph, honouring extras + markers. Keyed on
+        # (name, extras) so a package pulled in under a new extra is re-expanded.
+        seen = set()
+        closure = set()
+        while queue:
+            name, extras = queue.popleft()
+            if (name, extras) in seen:
+                continue
+            seen.add((name, extras))
+            closure.add(name)
+            dist = dist_by_name.get(name)
+            if dist is None:
+                continue
+            for req_str in dist.requires or []:
+                try:
+                    req = Requirement(req_str)
+                except Exception:
+                    continue
+                marker = req.marker
+                if marker is None:
+                    applies = True
+                else:
+                    applies = marker.evaluate({"extra": ""}) or any(
+                        marker.evaluate({"extra": ex}) for ex in extras
+                    )
+                if applies:
+                    queue.append((self._normalize(req.name), frozenset(req.extras)))
+
+        return roots, closure
 
     @staticmethod
     def _normalize(name):

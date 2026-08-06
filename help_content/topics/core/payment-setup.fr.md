@@ -49,7 +49,7 @@ Entrez vos identifiants API :
 Cliquez sur **Tester la connexion** pour vérifier que vos identifiants sont valides. L'assistant vérifie :
 - L'authentification de la clé API
 - Les autorisations du compte
-- L'accessibilité de l'endpoint de webhook
+- L'accessibilité du point de terminaison Webhook
 
 ### Étape 5 : Configurer et enregistrer
 
@@ -88,7 +88,7 @@ Chaque fournisseur prend en charge différentes méthodes de paiement. Vous pouv
 1. Accédez à la page de configuration d'un fournisseur
 2. Faites défiler jusqu'à la section **Méthodes de paiement**
 3. Activez ou désactivez les méthodes individuelles
-4. Utilisez les contrôles au niveau du pays pour restreindre les méthodes à certains marchés
+4. Utilisez les contrôles au niveau du pays pour restreindre les méthodes à des marchés spécifiques
 
 Cela est utile lorsque une méthode de paiement est populaire dans une région mais pas dans une autre (par exemple, iDEAL aux Pays-Bas, Bancontact en Belgique).
 
@@ -96,7 +96,7 @@ Cela est utile lorsque une méthode de paiement est populaire dans une région m
 
 Les webhooks permettent de synchroniser votre magasin en temps réel avec le prestataire de paiement.
 
-Ils gèrent des événements tels que :
+Ils gèrent des événements tels que :
 - Paiement terminé ou échoué
 - Remboursements traités
 - Disputes et recours bancaires ouverts
@@ -108,8 +108,8 @@ Lorsque vous connectez un prestataire, Spwig enregistre automatiquement un point
 
 ### Surveillance des webhooks
 
-Chaque webhook entrant est enregistré avec :
-- **Type d'événement** (ex. : payment_intent.succeeded)
+Chaque webhook entrant est enregistré avec :
+- **Type d'événement** (par exemple, payment_intent.succeeded)
 - **Horodatage** et statut de traitement
 - **Charge utile** pour le débogage
 
@@ -117,11 +117,11 @@ Si un webhook échoue lors du traitement, il est enregistré en tant qu'erreur a
 
 ## Utilisation de plusieurs prestataires
 
-Vous pouvez connecter simultanément plusieurs prestataires de paiement :
+Vous pouvez connecter simultanément plusieurs prestataires de paiement :
 
-- **Prestataire par défaut** — Le prestataire sélectionné par défaut lors du paiement. Marquez un prestataire comme par défaut dans sa configuration.
+- **Prestataire par défaut** — Le prestataire sélectionné par défaut lors du paiement. Sélectionnez un prestataire comme par défaut dans sa configuration.
 - **Ordre de tri** — Contrôle l'ordre d'affichage lors du paiement. Les clients voient tous les prestataires actifs et peuvent choisir leur préféré.
-- **Redondance** — Si un prestataire connaît un temps d'arrêt, les clients peuvent toujours payer en utilisant un autre prestataire.
+- **Fonction de secours** — Si un prestataire connaît un temps d'arrêt, les clients peuvent toujours payer en utilisant un autre prestataire.
 
 ## Conseils
 
@@ -129,5 +129,5 @@ Vous pouvez connecter simultanément plusieurs prestataires de paiement :
 - Utilisez le **mode test/sandbox** pour traiter des transactions de test avant de passer en production. Chaque prestataire dispose de numéros de carte de test dans sa documentation.
 - Activez **plusieurs prestataires** afin que les clients aient une option de paiement de secours si un prestataire rencontre des problèmes.
 - Affectez un **ordre de tri bas** à votre prestataire préféré afin qu'il s'affiche en premier lors du paiement.
-- Surveillez le tableau de bord des paiements hebdomadairement pour détecter tôt les transactions échouées et les problèmes de connexion.
-- Gardez vos **informations d'API** sécurisées — elles sont stockées chiffrées dans la base de données, mais ne devraient jamais être partagées.
+- Surveillez le tableau de bord des paiements hebdomadairement pour détecter les transactions échouées et les problèmes de connexion tôt.
+- Gardez vos **identifiants API** sécurisés — ils sont stockés chiffrés dans la base de données, mais ne devraient jamais être partagés.

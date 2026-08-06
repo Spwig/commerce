@@ -24,6 +24,7 @@ related:
   - inventory-warehouses
   - add-product
   - product-variants
+  - region-availability
 published: true
 ---
 
@@ -41,7 +42,7 @@ Common use cases:
 
 ## Creating a sales region
 
-1. Navigate to **Catalog > Sales Regions**
+1. Navigate to **Inventory > Sales Regions**. If you don't see it, turn on **Enable Multi-Warehouse** under **Settings > Store Settings > E-Commerce** to reveal the menu item — you don't need to actually use multiple warehouses for this, it only unlocks the link. You can also go straight to `/admin/catalog/salesregion/`.
 2. Click **+ Add Sales Region**
 3. Fill in the region details:
 
@@ -69,36 +70,13 @@ If a customer's country matches more than one region, the region with the highes
 
 ## Controlling product visibility by region
 
-By default, every product is visible in all regions. To restrict a product to specific regions, use **Product Region Visibility** records.
+By default, every product is visible in all regions. To restrict a product, open it under **Products > All Products** and set its **Region availability** field (in the Status section) to either allow it only in specific regions or in all regions except specific ones, then choose the regions in the table below that field.
 
-### Restricting a product to specific regions
-
-1. Navigate to **Catalog > Product Region Visibility**
-2. Click **+ Add Product Region Visibility**
-3. Select the **Product**
-4. Select the **Region**
-5. Set **Visible** to on or off as required
-6. Click **Save**
-
-Once any visibility record exists for a product, Spwig applies the rules. Products with no visibility records remain visible everywhere.
-
-### Common patterns
-
-**Limit to one region only**
-
-Add one visibility record per region you want to support, setting **Visible** to `Yes` for the allowed regions. Customers in other regions will not see the product.
-
-**Exclude from one region**
-
-Add a single visibility record for the region you want to exclude and set **Visible** to `No`. The product remains visible in all other regions.
-
-### Editing visibility from the product page
-
-You can also manage region visibility directly from the product edit form. On the **Region Visibility** section of the product, you will find an inline table showing all regions and their visibility setting for that product.
+This also determines what shoppers outside a product's available regions see — whether the product is hidden from listings entirely, or shown with a "Does not ship to [region]" notice. See the **Region Availability** guide for the full walkthrough, including that display setting and the storefront Ship-To Selector.
 
 ## Regional currency
 
-Each region has a default currency. Customers browsing from within that region see prices displayed in the region's currency. The currency used is determined at checkout.
+Each region has a default currency. If your store explicitly supports more than one currency (**Settings > Multi-Currency**), a customer's displayed currency switches to their region's default currency whenever their region changes — whether that's from the automatic region prompt or the Ship-To Selector. Stores with only one currency, or that haven't deliberately enabled multi-currency, always display that single currency regardless of region.
 
 To set up pricing in multiple currencies, configure exchange rates under **Settings > Exchange Rates**. Prices can be converted automatically or set manually per currency.
 
@@ -113,6 +91,6 @@ For more detail on warehouses, see the **Inventory and Warehouses** help topic.
 - Keep region codes short and descriptive (`NZ`, `APAC`, `EU`, `US`) — they are used internally and in logs.
 - Use higher priority numbers for smaller, more specific regions so they take precedence over broader catch-all regions.
 - If you only sell to one country, you do not need to configure regions at all — Spwig works fine with a single global catalog.
-- Test region-based visibility by previewing your store while filtering by a specific region in the admin.
-- Product visibility records only need to be created when you want to restrict products. Leaving a product with no visibility records makes it universally available.
-- Review your visibility rules whenever you add a new region to ensure existing product restrictions are correct.
+- Only set a product's **Region availability** away from **Available in all regions** when you actually need to restrict it — the default keeps products universally available with no upkeep.
+- Review each product's region rules whenever you add a new Sales Region, so restrictions still match what you intend.
+- Add the Ship-To Selector to your header (see the **Region Availability** guide) so you can switch regions yourself and check restricted products behave as expected.

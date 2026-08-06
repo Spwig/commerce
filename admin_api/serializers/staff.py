@@ -25,16 +25,33 @@ class StaffMemberListSerializer(serializers.Serializer):
     def get_is_owner(self, obj):
         return obj.is_superuser
 
-    def get_groups(self, obj):
+    def _get_roles(self, obj):
+        """Return the user's StaffRole objects.
+
+        When the caller prefetched ``groups__staff_role`` (e.g. the staff
+        list view) this reuses that prefetch so serializing a page of staff
+        members issues no per-member role queries. Otherwise it falls back
+        to the cached ``get_user_roles`` lookup so callers that pass an
+        unprefetched user (e.g. ``staff_update``) don't trigger an N+1.
+        """
+        prefetched = getattr(obj, "_prefetched_objects_cache", None)
+        if prefetched is not None and "groups" in prefetched:
+            roles = [group.staff_role for group in obj.groups.all() if hasattr(group, "staff_role")]
+            # Preserve StaffRole.Meta.ordering (sort_order, display_name); the
+            # prefetched groups come back in the Group relation's order.
+            roles.sort(key=lambda role: (role.sort_order, role.display_name))
+            return roles
+
         from staff_roles.services import get_user_roles
 
-        roles = get_user_roles(obj)
+        return get_user_roles(obj)
+
+    def get_groups(self, obj):
+        roles = self._get_roles(obj)
         return [{"id": role.id, "name": role.display_name} for role in roles]
 
     def get_permissions_summary(self, obj):
-        from staff_roles.services import get_user_roles
-
-        roles = get_user_roles(obj)
+        roles = self._get_roles(obj)
         modules = set()
         total = 0
         for role in roles:
@@ -113,6 +130,13 @@ class StaffRoleListSerializer(serializers.Serializer):
         return obj.is_predefined
 
     def get_staff_count(self, obj):
+        # Prefer the ``member_count_annotated`` annotation set by the role-list
+        # queryset so serializing a page of roles issues no per-role COUNT
+        # queries; fall back to ``member_count`` for callers that pass an
+        # unannotated role.
+        annotated = getattr(obj, "member_count_annotated", None)
+        if annotated is not None:
+            return annotated
         return obj.member_count
 
     def get_permissions(self, obj):
@@ -139,7 +163,7 @@ class RoleCreateSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     f"Unknown permission category: {key}. Valid: {sorted(valid_keys)}"
                 )
-            if level not in valid_levels:
+            if not isinstance(level, str) or level not in valid_levels:
                 raise serializers.ValidationError(
                     f"Invalid access level '{level}' for {key}. Valid: {sorted(valid_levels)}"
                 )
@@ -165,7 +189,7 @@ class RoleUpdateSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     f"Unknown permission category: {key}. Valid: {sorted(valid_keys)}"
                 )
-            if level not in valid_levels:
+            if not isinstance(level, str) or level not in valid_levels:
                 raise serializers.ValidationError(
                     f"Invalid access level '{level}' for {key}. Valid: {sorted(valid_levels)}"
                 )

@@ -36,19 +36,19 @@ Ogni token ha anche una sezione **API Scopes** che decide esattamente quali part
 
 Per ogni scope, scegli uno dei tre livelli di accesso:
 
-| Livello di accesso | Cosa consente |
+| Livello di accesso | Cosa permette |
 |------------------|------------------|
 | **Nessun accesso** | Il token non può chiamare alcun endpoint in questa area |
-| **Lettura** | Il token può recuperare dati da questa area, ma non può apportare modifiche |
-| **Lettura e Scrittura** | Il token può recuperare dati e anche crearli, aggiornarli o eliminarli |
+| **Leggi** | Il token può recuperare dati da questa area, ma non può apportare modifiche |
+| **Leggi & Scrivi** | Il token può recuperare dati e anche crearli, aggiornarli o eliminarli |
 
 I scopes sono raggruppati per corrispondere alle aree del tuo amministratore:
 
-| Gruppo | Scope | Disponibile Lettura e Scrittura? | Concede accesso a |
+| Gruppo | Scope | Disponibile Leggi & Scrivi? | Concede accesso a |
 |-------|-------|:---:|-------------------|
 | Analytics | **Sales Analytics** | Solo lettura | Dashboard di vendita, KPI, analisi di prodotti/clienti/categorie, confronti ed esportazioni |
 | Analytics | **Web Analytics** | Solo lettura | Analisi dei visitatori e del traffico: panoramica, tendenze, pagine più visitate, geografia e referrer |
-| Catalog | **Products** | Sì | Prodotti, varianti, immagini, aggiustamenti di stock e assegnazione degli attributi |
+| Catalog | **Products** | Sì | Prodotti, varianti, immagini, aggiustamenti di stock e assegnazione di attributi |
 | Catalog | **Categories** | Sì | Categorie di prodotti, inclusi immagini e banner |
 | Catalog | **Brands** | Sì | Marchi di prodotti |
 | Catalog | **Attributes** | Sì | Definizioni degli attributi dei prodotti |
@@ -58,34 +58,34 @@ I scopes sono raggruppati per corrispondere alle aree del tuo amministratore:
 | Store & Settings | **Store Settings** | Sì | Impostazioni del negozio, lingue disponibili e branding (nome, colori, logo) |
 | Users & Access | **Staff & Roles** | Sì | Account dello staff, inviti, ruoli e catalogo dei permessi |
 
-I due scopes **Analytics** sono sempre solo in lettura — i dati di reporting non hanno un concetto di "scrittura", quindi il selettore offre solo **Nessun accesso** o **Lettura** per loro.
+I due scopes **Analytics** sono sempre solo in lettura — i dati di reporting non hanno un concetto di "scrittura", quindi il selettore offre solo **Nessun accesso** o **Leggi** per loro.
 
 [![Il selettore delle API Scopes, con una nota di accesso sopra i gruppi di scope Analytics e Catalog](/static/core/admin/img/help/api-tokens/api-token-scope-picker.webp)]
 
-Sotto il selettore delle scope, una descrizione **'Questo token può accedere a:'** in sola lettura elenca ogni scope che hai concesso e il relativo livello, in modo da poter verificare rapidamente l'accesso del token senza dover decodificare il selettore.
+Sotto il selettore delle scope, una descrizione **'This token can access:'** (Questo token può accedere a:) elenca ogni scope che hai concesso e il relativo livello, in modo da poter verificare rapidamente l'accesso del token senza dover decodificare il selettore.
 
-![La descrizione 'Questo token può accedere a:' che elenca ogni scope concesso e il livello di lettura o lettura e scrittura](/static/core/admin/img/help/api-tokens/api-token-scope-summary.webp)
+![La descrizione 'This token can access' che elenca ogni scope concesso e il livello di lettura o lettura/scrittura](/static/core/admin/img/help/api-tokens/api-token-scope-summary.webp)
 
 ### Quali permessi utilizza effettivamente un token
 
-Le scope di un token descrivono il *tetto* di ciò che può fare — ma il token eredita anche i reali permessi del membro dello staff che lo ha creato:
+Le scope di un token descrivono il *soffitto* di ciò che può fare — ma il token eredita anche i reali permessi del membro dello staff che lo ha creato:
 
-- Il token non può mai agire con i **permessi di superuser**, nemmeno se il membro dello staff che lo ha creato è un superuser.
+- Il token non può mai agire con i **permessi superuser**, nemmeno se il membro dello staff che lo ha creato è un superuser.
 - Il **Read & Write** su una scope funziona solo se il ruolo del membro dello staff che lo ha creato permette anche l'accesso in scrittura a quell'area. Se il loro ruolo è solo in lettura, ad esempio, per i Prodotti, un token che creano con 'Prodotti: Read & Write' può comunque leggere solo — il ruolo agisce come una seconda porta sopra la scope.
-- Se il membro dello staff che ha creato un token viene eliminato o il loro account viene disattivato, il token perde immediatamente l'accesso API, indipendentemente dalle sue scope — non esiste più un utente autorizzato per cui agire.
+- Se il membro dello staff che ha creato un token viene eliminato o il loro account viene disattivato, il token perde immediatamente l'accesso API, indipendentemente dalle sue scope — non c'è più un utente autorizzato per cui agire.
 
 Questo significa che il modo più sicuro per limitare le scope di un token è crearlo mentre sei loggato come un membro dello staff il cui ruolo corrisponde già all'accesso che desideri che il token abbia.
 
 ## Creare un token API
 
-1. Naviga su **Impostazioni > Token API**
-2. Clicca su **+ Aggiungi Token API**
-3. Inserisci un **Nome** che descriva chiaramente a cosa serve il token (es. `Zapier Product Sync` o `Help System API`)
-4. Seleziona il tipo di **Token** appropriato
-5. Opzionalmente aggiungi una **Descrizione** con ulteriori dettagli sull'integrazione
-6. In **API Scopes**, seleziona **No access**, **Read** o **Read & Write** per ogni area necessaria all'integrazione — lascia tutte le altre scope su **No access**
-7. Configura lo stato **Active**, la **Data di scadenza** e le **IP consentite** come necessario (vedi di seguito)
-8. Clicca su **Salva**
+1. Naviga su **Settings > API Tokens** (Impostazioni > Token API)
+2. Clicca su **+ Add API Token** (+ Aggiungi Token API)
+3. Inserisci un **Name** (Nome) che descriva chiaramente a cosa serve il token (es. `Zapier Product Sync` o `Help System API`)
+4. Seleziona il tipo di **Token Type** (Tipo di Token)
+5. Opzionalmente aggiungi una **Description** (Descrizione) con ulteriori dettagli sull'integrazione
+6. In **API Scopes** (Scope API), seleziona **No access**, **Read**, o **Read & Write** per ogni area necessaria all'integrazione — lascia ogni altra scope su **No access**
+7. Configura lo stato **Active** (Attivo), la **Expiry Date** (Data di scadenza) e le **Allowed IPs** (IP consentiti) come necessario (vedi di seguito)
+8. Clicca su **Save** (Salva)
 
 Dopo aver salvato, il valore completo del token viene visualizzato sulla pagina dei dettagli. **Copia immediatamente** — il token è mascherato nella vista elenco per motivi di sicurezza e non può essere recuperato nuovamente una volta lasciata questa pagina.
 
@@ -101,25 +101,25 @@ Se perdi il valore di un token, non puoi recuperarlo. Dovrai eliminare il vecchi
 
 ## Impostare una data di scadenza
 
-Il campo **Scade il** imposta una data e un'ora dopo le quali il token smetterà di funzionare automaticamente. Lascialo vuoto per i token che non dovrebbero scadere.
+Il campo **Expires At** (Scade il) imposta una data e un'ora dopo le quali il token smetterà di funzionare automaticamente. Lascialo vuoto per i token che non dovrebbero scadere.
 
 Le date di scadenza sono utili per:
 
 - Integrazioni temporanee con una data di fine fissata
-- Token dati a terzi dove si desidera la rimozione automatica dell'accesso
+- Token dati a terzi dove si desidera l'eliminazione automatica dell'accesso
 - Aggiungere un ulteriore livello di sicurezza alle integrazioni ad alto privilegio
 
-Quando un token scade, le richieste che lo utilizzano vengono rifiutate. Puoi estendere l'accesso aggiornando la data **Scade il** o creando un token di sostituzione.
+Quando un token scade, le richieste che lo utilizzano vengono rifiutate. Puoi estendere l'accesso aggiornando la data **Expires At** o creando un token di sostituzione.
 
 ## Limitare a specifiche indirizzi IP
 
-Il campo **IP consentiti** accetta un elenco di indirizzi IP. Quando l'elenco non è vuoto, il token funziona solo quando la richiesta proviene da uno di questi indirizzi.
+Il campo **Allowed IPs** (IP consentiti) accetta un elenco di indirizzi IP. Quando l'elenco non è vuoto, il token funziona solo quando la richiesta proviene da uno di questi indirizzi.
 
 Ad esempio, se il tuo strumento di analisi funziona su un server a `203.0.113.42`, aggiungendo quell'IP significa che il token non può essere utilizzato da altre ubicazioni, nemmeno se venisse compromesso.
 
-Lascia **IP consentiti** vuoto per permettere richieste da qualsiasi indirizzo IP.
+Lascia **Allowed IPs** (IP consentiti) vuoto per permettere le richieste da qualsiasi indirizzo IP.
 
-**Le scadenze e le restrizioni IP vengono verificate in modo indipendente dagli ambiti.** Un token scaduto o non incluso nell'elenco autorizzato viene rifiutato prima che vengano nemmeno considerati i suoi ambiti, e un token con ambiti generosi viene comunque rifiutato non appena scade o viene richiamato da un IP non elencato.
+**Le scadenze e le restrizioni IP vengono verificate in modo indipendente dagli ambiti.** Un token scaduto o non presente nell'elenco autorizzato viene rifiutato prima che vengano nemmeno considerati i suoi ambiti, e un token con ambiti generosi viene comunque rifiutato non appena scade o viene richiamato da un IP non elencato.
 
 ## Effettuare una chiamata all'API con un token
 
@@ -131,7 +131,7 @@ Authorization: Bearer <your-token-value>
 
 Ogni endpoint dell'API amministrativa si trova sotto `/api/admin/...`. Lo sviluppatore che crea la tua integrazione decide quali endpoint chiamare — il tuo compito come commerciante è assicurarti che gli **ambiti API** del token coprano quegli endpoint. Se una richiesta viene rifiutata con un errore di autorizzazione, la prima cosa da controllare è se il token ha ricevuto l'ambito corretto al livello di accesso appropriato.
 
-### Esempio: lettura dell'analisi del traffico web
+### Esempio: lettura delle analisi del traffico web
 
 Spwig espone un endpoint `GET /api/admin/analytics/traffic/` che restituisce analisi del traffico e dei visitatori del tuo negozio — un riepilogo delle visite e dei visitatori unici, tendenze nel tempo, pagine più popolari, geografia dei visitatori e fonti di riferimento. Per permettere a uno strumento di reporting o a un dashboard di leggere questi dati:
 
@@ -139,20 +139,20 @@ Spwig espone un endpoint `GET /api/admin/analytics/traffic/` che restituisce ana
 2. In **Ambiti API**, imposta **Analisi Web** su **Lettura**
 3. Salva il token e forniscilo all'integrazione
 
-Poiché **Analisi Web** è un ambito di sola lettura, non esiste un'opzione "Lettura & Scrittura" da selezionare — l'integrazione può recuperare solo i dati di analisi, mai modificare la configurazione del tuo negozio.
+Poiché **Analisi Web** è un ambito di sola lettura, non esiste un'opzione "Lettura & Scrittura" da selezionare — l'integrazione può recuperare solo i dati delle analisi, mai modificare la configurazione del tuo negozio.
 
-## Monitorare l'utilizzo del token
+## Monitoraggio dell'utilizzo del token
 
 L'elenco dei token mostra:
 
 - **Conteggio utilizzo** — numero totale di volte in cui il token è stato utilizzato
 - **Ultimo utilizzo** — quando il token è stato utilizzato per l'ultima volta per effettuare una richiesta
 
-Questi campi ti aiutano a identificare i token non utilizzati (candidati per la revoca) e a notare attività inaspettata. Un improvviso aumento del conteggio di utilizzo potrebbe indicare che un token è utilizzato da qualcun altro diverso dall'integrazione prevista.
+Questi campi ti aiutano a identificare i token non utilizzati (candidati per la revoca) e a notare attività inaspettata. Un improvviso aumento del conteggio di utilizzo potrebbe indicare che un token è in uso da parte di qualcun altro diverso dall'integrazione prevista.
 
-## Revocare un token
+## Revoca di un token
 
-Per fermare immediatamente un token dal funzionare senza eliminarlo:
+Per fermare immediatamente un token senza eliminarlo:
 
 1. Fai clic sul nome del token
 2. Deseleziona **Attivo**
@@ -162,13 +162,13 @@ Il token rimane nella tua lista per riferimento ma viene rifiutato in ogni richi
 
 Per rimuovere definitivamente un token:
 
-1. Seleziona la casella di controllo accanto al token nell'elenco
+1. Seleziona la casella accanto al token nell'elenco
 2. Scegli **Elimina i token API selezionati** dal menu delle azioni
 3. Conferma l'eliminazione
 
 Una volta eliminato, un token non può essere recuperato. Se l'integrazione ha ancora bisogno di accesso, crea un nuovo token e aggiorna la configurazione dell'integrazione.
 
-## Esempio: configurare un'integrazione Zapier
+## Esempio: configurazione di un'integrazione Zapier
 
 **Scenario:** Vuoi collegare il tuo negozio a Zapier per automatizzare le notifiche degli ordini.
 

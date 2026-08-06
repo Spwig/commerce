@@ -129,42 +129,8 @@ class RegionDetectionMiddleware:
         return None
 
     def _find_region_by_country(self, country_code: str) -> SalesRegion | None:
-        """
-        Find sales region that includes the given country code.
-
-        Uses caching to avoid repeated database queries.
-
-        Args:
-            country_code: Two-letter ISO country code
-
-        Returns:
-            SalesRegion instance or None
-        """
-        # Check cache first
-        cache_key = f"region_by_country:{country_code}"
-        cached_region_id = cache.get(cache_key)
-
-        if cached_region_id:
-            try:
-                return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
-            except SalesRegion.DoesNotExist:
-                # Cached region no longer exists, invalidate cache
-                cache.delete(cache_key)
-
-        # Query database for matching region
-        # A region matches if the country_code is in its countries JSON array
-        try:
-            regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
-
-            for region in regions:
-                if isinstance(region.countries, list) and country_code in region.countries:
-                    # Cache the match for 1 hour
-                    cache.set(cache_key, region.id, timeout=3600)
-                    return region
-        except Exception as e:
-            logger.error(f"Error querying regions for country {country_code}: {e}")
-
-        return None
+        """Thin wrapper around the shared ``get_region_for_country`` helper."""
+        return get_region_for_country(country_code)
 
     def _get_default_region(self) -> SalesRegion | None:
         """
@@ -256,3 +222,130 @@ def get_region_from_request(request) -> SalesRegion | None:
             logger.error(f"Error accessing request.sales_region: {e}")
 
     return None
+
+
+def get_region_for_country(country_code: str) -> SalesRegion | None:
+    """
+    Resolve a two-letter ISO country code to the SalesRegion that ships it.
+
+    A region matches when the country code is in its ``countries`` JSON list;
+    the highest-priority active region wins. Results are cached for one hour.
+
+    This is the single shared implementation of the country → region mapping.
+    ``RegionDetectionMiddleware`` uses it for GeoIP resolution, and the ship-to
+    selector / checkout / fulfilment paths use it to turn a chosen or shipping
+    country into a region.
+
+    Args:
+        country_code: Two-letter ISO country code (case-insensitive).
+
+    Returns:
+        SalesRegion instance or None.
+    """
+    if not country_code:
+        return None
+
+    country_code = country_code.upper()
+    cache_key = f"region_by_country:{country_code}"
+    cached_region_id = cache.get(cache_key)
+
+    if cached_region_id:
+        try:
+            return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
+        except SalesRegion.DoesNotExist:
+            # Cached region no longer exists, invalidate cache
+            cache.delete(cache_key)
+
+    # A region matches if the country_code is in its countries JSON array.
+    try:
+        regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
+        for region in regions:
+            if isinstance(region.countries, list) and country_code in region.countries:
+                cache.set(cache_key, region.id, timeout=3600)
+                return region
+    except Exception as e:
+        logger.error(f"Error querying regions for country {country_code}: {e}")
+
+    return None
+
+
+def get_ship_to_options(request):
+    """
+    Build the ship-to picker options: the store's active shippable countries and
+    the shopper's current selection.
+
+    Options are the active ``ShippingCountry`` rows (code + display name, sorted
+    by name). The current selection is the explicitly chosen ``preferred_country``
+    (session, then cookie), else the GeoIP-detected country when the store ships
+    there, else None. Shared by the ship-to header widget and the region
+    confirmation modal.
+    """
+    from django_countries import countries as dj_countries
+
+    from shipping.models import ShippingCountry
+
+    codes = ShippingCountry.objects.filter(site_id=1, is_active=True).values_list(
+        "country_code", flat=True
+    )
+    options = sorted(
+        ({"code": c, "name": dj_countries.name(c) or c} for c in codes),
+        key=lambda x: x["name"],
+    )
+    shippable = {o["code"] for o in options}
+
+    current_code = None
+    if request is not None:
+        if hasattr(request, "session"):
+            current_code = request.session.get("preferred_country")
+        if not current_code and hasattr(request, "COOKIES"):
+            current_code = request.COOKIES.get("preferred_country")
+        if not current_code:
+            try:
+                geo = getattr(request, "geo_location", None)
+                geo_cc = geo.get("country_code", "").upper() if isinstance(geo, dict) else ""
+            except Exception:
+                geo_cc = ""
+            if geo_cc in shippable:
+                current_code = geo_cc
+
+    current_code = current_code.upper() if current_code else None
+    if current_code and current_code not in shippable:
+        current_code = None
+
+    return {
+        "countries": options,
+        "current_code": current_code,
+        "current_name": (dj_countries.name(current_code) or current_code) if current_code else None,
+    }
+
+
+def get_ship_to_display(request):
+    """
+    Resolve the shopper's ship-to destination for display purposes.
+
+    Returns ``(country_code_or_None, display_name)``. Prefers the explicitly
+    chosen ``preferred_country`` (session then cookie), then the GeoIP-detected
+    country, and finally falls back to the resolved region's name. Used to word
+    the "does not ship to X" marks/notices consistently across listings and the
+    product page.
+    """
+    from django_countries import countries as dj_countries
+
+    code = None
+    if hasattr(request, "session"):
+        code = request.session.get("preferred_country")
+    if not code and hasattr(request, "COOKIES"):
+        code = request.COOKIES.get("preferred_country")
+    if not code:
+        try:
+            geo = getattr(request, "geo_location", None)
+            code = geo.get("country_code", "").upper() if isinstance(geo, dict) else None
+        except Exception:
+            code = None
+
+    if code:
+        code = code.upper()
+        return code, (dj_countries.name(code) or code)
+
+    region = get_region_from_request(request)
+    return None, (region.name if region else "")

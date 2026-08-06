@@ -130,7 +130,8 @@ webhooks, no language prefix)?
 
 - **Non-i18n group** (no language prefix) lives outside `i18n_patterns`
   in `core/urls.py`. Use for APIs (`/api/...`), webhooks
-  (`/webhooks/...`), health endpoints, and dev static/media helpers.
+  (`/webhooks/...`), health endpoints, `/i18n/`, and dev static/media
+  helpers.
 - **i18n group** (language prefix) lives inside `i18n_patterns`. Use for
   Django admin (`/en/admin/` etc.), admin sub-apps, all localised user
   pages.
@@ -156,7 +157,10 @@ urlpatterns += i18n_patterns(
 ### JavaScript URL building
 
 - Admin URLs: derive the language from
-  `document.documentElement.lang` or call `AdminUtils.buildAdminUrl(path)`.
+  `document.documentElement.lang` (as in the example below), or call
+  `AdminUtils.buildAdminUrl(path)`. `buildAdminUrl` attaches the prefix
+  for **Django admin core** URLs only — app URLs under `/admin/<app>/`
+  still need the manual `/${lang}/` prefix unless explicitly supported.
 - API URLs: call directly with no `/lang/` prefix.
 
 ```javascript
@@ -169,6 +173,16 @@ const apiUrl = '/api/set-currency/';
 
 - `/loyalty/...` without `/admin/` → 404.
 - `/en/api/...` → 404. APIs never carry a language prefix.
+
+### Conventions outside core routing
+
+- Always use named URLs in templates and tests
+  (`{% url 'product:detail' product.slug %}`), with language/country
+  prefixes where required.
+- Follow RESTful naming for storefront flows (`/products/`, `/cart/`,
+  `/checkout/`).
+- Apply the right permission checks (admin vs. customer) and lean on
+  class-based views/mixins for reusable behaviour.
 
 ---
 
@@ -195,8 +209,8 @@ Do not conflate them.
 AI translations for **merchant-authored content** (products, pages,
 SEO). Runs on the merchant's host.
 
-- Data lives in a `translations = models.JSONField(default=dict)` on
-  the model. Never use a different storage pattern.
+- Data lives in a `translations = models.JSONField(default=dict, blank=True)`
+  on the model. Never use a different storage pattern.
 - Payload shape:
   ```json
   {
@@ -222,6 +236,14 @@ SEO). Runs on the merchant's host.
 - **Don't**: use `modeltranslation`, create `name_en` columns,
   hardcode language lists, ship a custom UI, or mix admin i18n with
   this system.
+- **Retrofit steps:** add the JSONField via migration → wire the
+  mixin/widgets → patch any custom change-form template → test against
+  real multi-sentence data.
+- **Troubleshooting:** no 🌐 button → check `translatable_fields`,
+  widgets, and `Media` are declared and the object exists. Translation
+  failing → hit `/api/translation/health/` and
+  `/api/translation/languages/`, check the console, confirm the
+  JSONField.
 
 ### 3. Storefront UI chrome (`{% mtrans %}`)
 
@@ -254,6 +276,8 @@ merchant content translation.
 - Adding storefront strings without registering them.
 - Dynamic/variable arguments to `{% mtrans %}` — literals only.
 - Forgetting `{% load merchant_trans %}`.
+- Wrapping `{% blocktrans %}` with `{% mtrans %}` — mtrans has no block
+  mode; leave `blocktrans` as-is when migrating a template.
 
 ---
 
@@ -264,6 +288,7 @@ merchant content translation.
 - Always `{% load static %}` and reference assets via `{% static '...' %}`.
 - Organise as `app/static/app/{css,js,images}/`.
 - Never hardcode `/static/...` paths.
+- Compress/minify assets for production.
 - **Never edit anything under `staticfiles/`** — that directory is
   populated by `collectstatic` from the app-level source directories.
   Edit the source, then run
@@ -271,7 +296,8 @@ merchant content translation.
 
 ### Copyright headers
 
-Every new CSS and JS source file should begin with:
+Every new CSS and JS source file should begin with this as the very
+first line, followed by a blank line:
 
 ```
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
@@ -307,6 +333,15 @@ Do NOT add this header to:
 
 ### Admin form styling — three tiers
 
+**Reuse before you write — this is the one that matters most for admin
+work.** Build admin UI from the classes and utilities already in
+`admin-base.css`; **do not create new admin CSS unless nothing existing
+fits.** New (scoped) app CSS is a last resort for genuinely bespoke,
+page-specific needs — reach for it only after searching `admin-base.css`
+for a class that already does the job. The point is **admin-wide visual
+consistency** and keeping the **number of CSS files to maintain as small
+as possible**. A new admin CSS file should be rare and justified.
+
 1. **Django defaults** (`staticfiles/admin/css/forms.css`) — never
    modify.
 2. **Global admin overrides** (`core/static/core/admin/css/admin-base.css`)
@@ -317,8 +352,15 @@ Do NOT add this header to:
 
 **Cascade:** `forms.css` → `admin-base.css` → scoped app CSS.
 
-**Decision:** shared style → tier 2; page-specific → tier 3.
+**Decision:** an existing `admin-base.css` class fits → reuse it (do
+nothing); a shared style that's genuinely missing → add it to tier 2;
+only truly page-specific styling with no existing class → tier 3.
 Don't duplicate tier 2 rules in app CSS.
+
+**Maintenance:** audit `admin-base.css` before adding an override, scope
+every tier-3 selector, test across key pages, and respect specificity
+order (theme → app → components). Collapsible admin sections must adopt
+the `admin-base.css` fieldset utilities rather than rolling their own.
 
 ### Vendor scripts
 
@@ -426,6 +468,8 @@ simple 2–3 column tables.
 - Structure: checkbox, icon/avatar, content (title/subtitle/meta/badges/stats),
   action buttons.
 - Badge variants: default, `.primary`, `.success`, `.warning`, `.error`.
+  Both modifier-class (`.list-row-card-badge.success`) and BEM-dash
+  (`.list-row-card-badge-success`) syntaxes are supported.
 - Card states: `.selected`, `.disabled`.
 - Icon-only actions: use `admin-base.css` utility classes.
 - Responsive: horizontal on desktop, stacked <768px, ellipsis for long
@@ -540,6 +584,9 @@ Django view pattern:
   `admin-base.css`. Switching is handled by `window.AdminTabs`
   (`admin-tabs.js`) — do not write bespoke tab JS.
 - Preferred panel pattern: `.admin-tab-content` with `id="tab-{name}"`.
+  `AdminTabs` also auto-detects three legacy patterns (`data-panel="*"`,
+  `.admin-tab-content[data-tab="*"]`, `id="panel-*"`) — use the preferred
+  one for new pages.
 
 `AdminTabs` API:
 
@@ -563,7 +610,9 @@ Auto-loaded globally as `window.AdminUtils`, file at
 Helpers:
 
 - `AdminUtils.getLanguagePrefix()` → `/en`, `/fr`, …
-- `AdminUtils.buildAdminUrl(path)` — attaches the prefix.
+- `AdminUtils.buildAdminUrl(path)` — attaches the prefix for Django
+  admin **core** URLs. App URLs under `/admin/<app>/` still need a
+  manual `/${lang}/` prefix unless explicitly supported.
 - `AdminUtils.getCsrfToken()` — canonical CSRF lookup.
 - `AdminUtils.buildFetchOptions(method, data, headers)` — standardised
   fetch config (JSON body + headers).
@@ -586,6 +635,18 @@ If a model supports admin deletions and fits the recycle-bin workflow,
 integrate so deletions go through recycle bin, not hard deletes.
 
 ---
+
+## Building capabilities so they stay discoverable
+Spwig's product capabilities are derived automatically from the code by the Spwig refinery's capability scanner, it reads service methods, tests, permissions, and routes to reconstruct what the platform can do. Do not hand-write or hand-edit a capabilities file, the format isn't finalized and the scanner regenerates it. Your job is to leave evidence in the code so that derivation is accurate. When you add or change a behaviour:
+
+### Put the behaviour in a named service function/method
+ not inline in a view, serializer, or signal. The function name is the capability's anchor; prefer verb-object names (reserve_stock, issue_mandate, transfer_stock). One clear behavioural seam per capability.
+### Add at least one behaviour-named test 
+ test_stock_is_reserved_on_add_to_cart, test_transfer_creates_stock_movement. Behaviour-named tests are the single strongest capability signal; happy-path-only or missing tests make a capability read as half-baked (and it usually is). If the action is gated, prefer a real permission codename (transfer_stock) over relying only on vanilla view/add/change/delete. Role-membership gating is acceptable where that's the pattern — just know it's a weaker anchor.
+### Never let an enum/constant/status name a behaviour you haven't built
+A movement_type = "transfer" with no service or test that performs a transfer reads as a shipped capability that's actually vapour. If it's planned-not-built, say so — a # not yet implemented note or a skipped test named for it — so it's honestly discoverable as planned rather than falsely counted as shipped.
+### Give the behaviour a one-line, implementation-neutral docstring 
+what it does, not how it's marketed ("Move stock between locations, preserving an auditable movement history").
 
 ## Security & CSP hardening
 
@@ -644,6 +705,9 @@ attribute only. Static styles go external.
    - Function views → `@extend_schema(...)` and `@api_view`.
    - Tags must match the approved list exactly (see the tag registry
      in the docs code).
+   - Import every utility you use from `drf_spectacular.utils`
+     (`extend_schema`, `extend_schema_view`, `OpenApiResponse`,
+     `OpenApiParameter`) — missing imports raise runtime errors.
 4. Describe endpoints thoroughly:
    - `summary` (≤ 60 chars) + `description` (purpose, security, use
      cases, warnings).
@@ -668,6 +732,11 @@ attribute only. Static styles go external.
    endpoint change. Never write schema files under `docs/` — that directory
    is gitignored, so anything there is invisible to version control and will
    silently go stale.
+
+**Before finishing:** docstrings in code; URL patterns follow the
+conventions above; auth / permissions / filtering / pagination in place;
+every endpoint appears under the right tag; request/response examples and
+all error statuses documented.
 
 ### Admin API (mobile app) — `/api/admin/`
 
@@ -726,6 +795,15 @@ Used by the Spwig Merchant mobile app.
 Always use Django Money fields for monetary values. The platform
 supports optional multi-currency; every price/tax/discount/refund/etc.
 must flow through the shared money handling.
+
+---
+
+## Versioning distributable components
+
+Spwig is the version author of record. Whenever you add or update a
+distributable component (app, utility, widget, theme, provider), bump
+its version and follow the versioning/publish process — a code change to
+a shipped component is not finished until its version is bumped.
 
 ---
 

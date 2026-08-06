@@ -16,7 +16,7 @@ class CreatePaymentIntentSerializer(serializers.Serializer):
     Request serializer for creating a payment intent.
     """
 
-    checkout_session_id = serializers.UUIDField(
+    checkout_session_id = serializers.IntegerField(
         required=False,
         help_text=_("Checkout session ID. If not provided, uses current user's active session."),
     )
@@ -273,7 +273,7 @@ class PaymentIntentResponseSerializer(serializers.Serializer):
             # Fallback: build from available data
             config = {
                 "order_id": obj.provider_intent_id,
-                "currency": obj.currency.upper(),
+                "currency": obj.amount_currency.upper(),
             }
 
             # Get client_id from provider credentials
@@ -287,7 +287,7 @@ class PaymentIntentResponseSerializer(serializers.Serializer):
                 from decimal import ROUND_HALF_UP, Decimal
 
                 amount = obj.order.total
-                currency_upper = obj.currency.upper()
+                currency_upper = obj.amount_currency.upper()
                 zero_decimal = {"JPY", "HUF", "TWD", "KRW"}
                 if currency_upper in zero_decimal:
                     config["amount"] = str(int(amount))
@@ -309,7 +309,7 @@ class PaymentIntentResponseSerializer(serializers.Serializer):
             config = {
                 "order_id": obj.provider_intent_id,
                 "token": obj.provider_response.get("token", "") if obj.provider_response else "",
-                "currency": obj.currency.upper(),
+                "currency": obj.amount_currency.upper(),
             }
             settings = obj.provider_account.decrypted_credentials
             if settings:

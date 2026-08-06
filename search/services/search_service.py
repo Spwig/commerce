@@ -238,10 +238,14 @@ class SearchService:
             products = products.with_stock_totals().filter(
                 Q(track_inventory=False) | Q(allow_backorders=True) | Q(total_available__gt=0)
             )
+        # Price filters apply to the effective (sale) price so they match the
+        # displayed/sorted price — annotate it in SQL only when needed.
+        if filters.get("min_price") or filters.get("max_price"):
+            products = products.with_effective_price()
         if filters.get("min_price"):
-            products = products.filter(price__gte=filters["min_price"])
+            products = products.filter(effective_price_amount__gte=filters["min_price"])
         if filters.get("max_price"):
-            products = products.filter(price__lte=filters["max_price"])
+            products = products.filter(effective_price_amount__lte=filters["max_price"])
 
         if limit:
             products = products[:limit]
@@ -263,6 +267,22 @@ class SearchService:
 
             # Get thumbnail using product's listing-size thumbnail (400x400)
             thumbnail = product.primary_image_listing_url
+            thumbnail_sources = None
+            product_asset = product.primary_image
+            if product_asset and hasattr(product_asset, "get_picture_sources"):
+                thumbnail_sources = product_asset.get_picture_sources("product_listing")
+
+            # Sale presentation: show the discounted price + struck-through
+            # regular only for a *genuine* displayable discount. For variable
+            # products a parent sale applies only when the active variants
+            # inherit the parent price — custom-priced variants are not
+            # sale-adjusted, so fall back to the regular price (mirrors the
+            # shared product_price_display component; avoids a false Sale badge).
+            on_sale = bool(product.has_discount)
+            if on_sale and getattr(product, "product_type", None) == "variable":
+                active_variants = list(product.variants.filter(is_active=True))
+                on_sale = bool(active_variants) and all(v.price is None for v in active_variants)
+            display_price = product.effective_price if on_sale else product.price
 
             results.append(
                 {
@@ -272,13 +292,18 @@ class SearchService:
                     "name_base": product.name if is_translated else None,
                     "slug": product.slug,
                     "url": f"/product/{product.slug}/",
-                    "price": str(product.price.amount)
-                    if hasattr(product.price, "amount")
-                    else str(product.price),
+                    "price": str(display_price.amount)
+                    if hasattr(display_price, "amount")
+                    else str(display_price),
+                    "regular_price": str(product.price.amount)
+                    if on_sale and hasattr(product.price, "amount")
+                    else None,
+                    "is_on_sale": on_sale,
                     "currency": str(product.price.currency)
                     if hasattr(product.price, "currency")
                     else get_default_currency(),
                     "thumbnail": thumbnail,
+                    "thumbnail_sources": thumbnail_sources,
                     "sku": product.sku,
                     "in_stock": product.is_in_stock,
                     "is_translated": is_translated,
@@ -324,6 +349,11 @@ class SearchService:
 
             # Get category thumbnail (uses MediaAsset thumbnail)
             thumbnail = category.get_image_thumbnail("category_thumbnail")
+            thumbnail_sources = (
+                category.image_asset.get_picture_sources("category_thumbnail")
+                if category.image_asset
+                else None
+            )
 
             results.append(
                 {
@@ -334,6 +364,7 @@ class SearchService:
                     "slug": category.slug,
                     "url": f"/category/{category.slug}/",
                     "thumbnail": thumbnail,
+                    "thumbnail_sources": thumbnail_sources,
                     "product_count": category.products.filter(status="published").count(),
                     "is_translated": is_translated,
                 }
@@ -426,8 +457,11 @@ class SearchService:
 
             # Get blog post thumbnail (featured image)
             thumbnail = None
+            thumbnail_sources = None
             if hasattr(post, "featured_image") and post.featured_image:
                 thumbnail = post.featured_image.thumbnail_small
+                if hasattr(post.featured_image, "get_picture_sources"):
+                    thumbnail_sources = post.featured_image.get_picture_sources("small")
 
             results.append(
                 {
@@ -438,6 +472,7 @@ class SearchService:
                     "slug": post.slug,
                     "url": f"/blog/{post.slug}/",
                     "thumbnail": thumbnail,
+                    "thumbnail_sources": thumbnail_sources,
                     "excerpt": excerpt[:200] if excerpt else "",
                     "is_translated": is_translated,
                 }

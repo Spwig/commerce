@@ -117,6 +117,56 @@ class SubscriptionProviderBase(ABC):
         pass
 
     # ===========================
+    # Reusable payment-method setup (provider-agnostic)
+    # ===========================
+
+    def supports_reusable_setup(self) -> bool:
+        """
+        Whether this provider can capture a reusable (off-session) payment
+        method at checkout via begin_setup() + a client-side ``initializeSetup``
+        handler.
+
+        Providers OPT IN by declaring ``reusable_setup: True`` in ``capabilities``
+        AND shipping an ``initializeSetup(...)`` entry in their component's
+        ``checkout-handler.js`` (alongside the existing charge ``initialize``).
+        Defaults to False so an un-migrated provider degrades gracefully — the
+        storefront falls back to the shopper's saved tokens or a clear message,
+        never a hard failure and never a hardcoded gateway branch.
+        """
+        return bool(self.capabilities.get("reusable_setup", False))
+
+    def begin_setup(self, user, options: dict[str, Any] | None = None) -> dict[str, Any]:
+        """
+        Begin capturing a reusable, off-session payment method — the server side
+        of a SetupIntent-style flow — PROVIDER-AGNOSTICALLY.
+
+        Implementations return the provider-specific ``client_params`` their
+        ``initializeSetup(...)`` handler needs to render a tokenize-without-charge
+        UI, e.g.:
+          * Stripe   → SetupIntent ``client_secret`` + publishable key
+          * Airwallex→ payment-consent ``client_secret``
+          * PayPal   → a vault setup-token / approval reference
+          * Square   → app id / location id from config (no server init needed)
+        The generic ``/api/subscriptions/tokens/begin-setup/`` endpoint wraps this
+        in the manifest-driven bundle (``provider_key``, ``handler_url``,
+        ``sdk_dependencies``) so NO core code ever names a gateway. The client
+        dispatches on ``provider_key`` through the same ``window.PaymentHandlers``
+        registry it already uses for charging.
+
+        Args:
+            user: Django User the reusable method will belong to.
+            options: Optional extras (e.g. ``{'customer_id': ...}``).
+
+        Returns:
+            dict: Provider-specific ``client_params`` (``{}`` when no server init
+            is needed).
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not implement begin_setup(); declare the "
+            f"reusable_setup capability and add an initializeSetup handler to enable it."
+        )
+
+    # ===========================
     # Subscription Management (Native Providers)
     # ===========================
 

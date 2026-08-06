@@ -294,7 +294,7 @@ def password_reset_confirm(request, uidb64, token):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    serializer = PasswordResetConfirmSerializer(data=request.data)
+    serializer = PasswordResetConfirmSerializer(data=request.data, context={"user": user})
 
     if serializer.is_valid():
         # Set new password

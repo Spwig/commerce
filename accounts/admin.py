@@ -9,7 +9,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.urls import path, reverse
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import conditional_escape, format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
@@ -101,16 +102,16 @@ class OAuthProviderSettingsAdmin(admin.ModelAdmin):
     def enabled_status(self, obj):
         """Display enabled status with color"""
         if obj.enabled:
-            return format_html('<span style="color: green; font-weight: bold;">✓ Enabled</span>')
-        return format_html('<span style="color: gray;">○ Disabled</span>')
+            return mark_safe('<span style="color: green; font-weight: bold;">✓ Enabled</span>')
+        return mark_safe('<span style="color: gray;">○ Disabled</span>')
 
     enabled_status.short_description = _("Status")
 
     def configuration_status(self, obj):
         """Display configuration status with color"""
         if obj.is_configured:
-            return format_html('<span style="color: green;">✓ Configured</span>')
-        return format_html('<span style="color: red;">✗ Not Configured</span>')
+            return mark_safe('<span style="color: green;">✓ Configured</span>')
+        return mark_safe('<span style="color: red;">✗ Not Configured</span>')
 
     configuration_status.short_description = _("OAuth Credentials")
 
@@ -201,8 +202,8 @@ class CustomSocialAppAdmin(admin.ModelAdmin):
         """Check if credentials are configured"""
         has_creds = bool(obj.client_id and (obj.secret or obj.provider == "apple"))
         if has_creds:
-            return format_html('<span style="color: green;">✓ Yes</span>')
-        return format_html('<span style="color: red;">✗ No</span>')
+            return mark_safe('<span style="color: green;">✓ Yes</span>')
+        return mark_safe('<span style="color: red;">✗ No</span>')
 
     has_credentials.boolean = False
     has_credentials.short_description = _("Has Credentials")
@@ -212,7 +213,7 @@ class CustomSocialAppAdmin(admin.ModelAdmin):
         sites = obj.sites.all()
         if sites:
             return ", ".join([site.domain for site in sites])
-        return format_html('<span style="color: red;">No sites configured!</span>')
+        return mark_safe('<span style="color: red;">No sites configured!</span>')
 
     sites_list.short_description = _("Sites")
 
@@ -323,12 +324,12 @@ class CustomUserAdmin(BaseUserAdmin):
 
         roles = get_user_roles(obj)
         if obj.is_superuser and not roles:
-            return format_html(
+            return mark_safe(
                 '<span style="background: #7c3aed; color: #fff; padding: 2px 8px; '
                 'border-radius: 10px; font-size: 11px;">Owner</span>'
             )
         if not roles:
-            return format_html('<span style="color: var(--body-quiet-color);">—</span>')
+            return mark_safe('<span style="color: var(--body-quiet-color);">—</span>')
         color_map = {
             "primary": "#7c3aed",
             "success": "#22c55e",
@@ -343,9 +344,9 @@ class CustomUserAdmin(BaseUserAdmin):
             badges.append(
                 f'<span style="background: {bg}; color: #fff; padding: 2px 8px; '
                 'border-radius: 10px; font-size: 11px; margin-right: 4px;">'
-                f"{role.display_name}</span>"
+                f"{conditional_escape(role.display_name)}</span>"
             )
-        return format_html("".join(badges))
+        return mark_safe("".join(badges))
 
     display_roles.short_description = _("Roles")
 
@@ -355,21 +356,21 @@ class CustomUserAdmin(BaseUserAdmin):
             from allauth.mfa.utils import is_mfa_enabled
 
             if is_mfa_enabled(obj):
-                return format_html(
+                return mark_safe(
                     '<span style="display: inline-block; padding: 3px 8px; '
                     "background: #d4edda; color: #155724; border-radius: 4px; "
                     'font-size: 11px; font-weight: 600;">'
                     '<i class="fas fa-check-circle"></i> Enabled</span>'
                 )
             else:
-                return format_html(
+                return mark_safe(
                     '<span style="display: inline-block; padding: 3px 8px; '
                     "background: #f8d7da; color: #721c24; border-radius: 4px; "
                     'font-size: 11px; font-weight: 600;">'
                     '<i class="fas fa-times-circle"></i> Not Enabled</span>'
                 )
         except ImportError:
-            return format_html('<span style="color: var(--body-quiet-color);">-</span>')
+            return mark_safe('<span style="color: var(--body-quiet-color);">-</span>')
 
     mfa_status_display.short_description = _("2FA Status")
     mfa_status_display.admin_order_field = None  # Can't order by this field

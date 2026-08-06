@@ -284,12 +284,18 @@
      * @param {Object} item - Item data
      */
     updateItemElement(element, item) {
-      // Update image src only if changed
+      // Update image only if changed — swap the whole <picture> so the browser
+      // re-runs AVIF/WebP source selection (mutating <source> in place is
+      // unreliable across engines).
       const img = element.querySelector('.cart-item__image');
       const newSrc = item.image_url || '/static/img/placeholder-product-thumb.png';
-      if (img && img.src !== newSrc) {
-        img.src = newSrc;
-        img.alt = this.escapeHtml(item.name);
+      if (img && img.getAttribute('src') !== newSrc) {
+        const picture = img.closest('picture') || img;
+        window.swapPicture(picture, item.image_sources, {
+          fallbackSrc: newSrc,
+          alt: item.name,
+          className: 'cart-item__image',
+        });
       }
 
       // Update quantity
@@ -303,10 +309,14 @@
       const increaseBtn = element.querySelector('[data-action="increase"]');
       if (increaseBtn) increaseBtn.setAttribute('data-quantity', item.quantity + 1);
 
-      // Update price (use item total)
+      // Update price (use item total; show the struck-through regular total on sale)
       const priceEl = element.querySelector('.cart-item__price');
       if (priceEl) {
-        priceEl.textContent = item.item_total_formatted || item.price_formatted || item.price;
+        const total = item.item_total_formatted || item.price_formatted || item.price;
+        priceEl.innerHTML =
+          item.is_on_sale && item.regular_total_formatted
+            ? `${total} <del class="cart-item__price-original">${item.regular_total_formatted}</del>`
+            : total;
       }
 
       // Update just_added class
@@ -351,7 +361,12 @@
                           .map(comp => {
                             const compImage = comp.image_url || '';
                             const compImageHtml = compImage
-                              ? `<img src="${compImage}" alt="" class="cart-item__component-image" loading="lazy">`
+                              ? window.buildPictureMarkup(comp.image_sources, {
+                                  fallbackSrc: compImage,
+                                  className: 'cart-item__component-image',
+                                  loading: 'lazy',
+                                  alt: '',
+                                })
                               : '<div class="cart-item__component-image cart-item__component-image--placeholder"><i class="fas fa-box"></i></div>';
                             return `
                             <div class="cart-item__component">
@@ -370,14 +385,16 @@
 
       const template = `
                 <div class="cart-item ${item.just_added ? 'cart-item--added' : ''}" data-item-id="${item.id}">
-                    <img src="${item.image_url || '/static/img/placeholder-product-thumb.png'}"
-                         alt="${this.escapeHtml(item.name)}"
-                         class="cart-item__image">
+                    ${window.buildPictureMarkup(item.image_sources, {
+                      fallbackSrc: item.image_url || '/static/img/placeholder-product-thumb.png',
+                      alt: item.name,
+                      className: 'cart-item__image',
+                    })}
                     <div class="cart-item__details">
                         <a href="${item.url || '#'}" class="cart-item__name">${this.escapeHtml(item.name)}</a>
                         ${item.variant_name ? `<p class="cart-item__variant">${this.escapeHtml(item.variant_name)}</p>` : ''}
                         ${componentsHtml}
-                        <p class="cart-item__price">${item.item_total_formatted || item.price_formatted || item.price}</p>
+                        <p class="cart-item__price">${item.item_total_formatted || item.price_formatted || item.price}${item.is_on_sale && item.regular_total_formatted ? ` <del class="cart-item__price-original">${item.regular_total_formatted}</del>` : ''}</p>
                         <div class="cart-item__actions">
                             <div class="cart-item__quantity">
                                 <button type="button"
@@ -550,10 +567,13 @@
       return `
                 <div class="recommendation-item" data-product-id="${product.id}">
                     <a href="${product.url}" class="recommendation-item__link">
-                        <img src="${product.image_url || '/static/img/placeholder-product-thumb.png'}"
-                             alt="${this.escapeHtml(product.name)}"
-                             class="recommendation-item__image"
-                             loading="lazy">
+                        ${window.buildPictureMarkup(product.image_sources, {
+                          fallbackSrc:
+                            product.image_url || '/static/img/placeholder-product-thumb.png',
+                          alt: product.name,
+                          className: 'recommendation-item__image',
+                          loading: 'lazy',
+                        })}
                         <div class="recommendation-item__info">
                             <span class="recommendation-item__name">${this.escapeHtml(product.name)}</span>
                             <div class="recommendation-item__prices">

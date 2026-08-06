@@ -190,8 +190,8 @@ class TestPreferenceAuditService:
         assert log.ip_address == "192.168.1.100"
         assert log.user_agent == "Mozilla/5.0"
 
-    def test_log_change_with_x_forwarded_for(self, db):
-        """Test IP extraction from X-Forwarded-For header."""
+    def test_log_change_ignores_x_forwarded_for(self, db):
+        """X-Forwarded-For is untrusted; REMOTE_ADDR must be recorded."""
         user = UserFactory()
         prefs = CommunicationPreference.get_or_create_for_user(user)[0]
 
@@ -209,8 +209,9 @@ class TestPreferenceAuditService:
             source="user",
         )
 
-        # Should use first IP from X-Forwarded-For
-        assert log.ip_address == "203.0.113.1"
+        # The spoofable X-Forwarded-For header must be ignored in favour of
+        # REMOTE_ADDR so the consent audit trail can't be poisoned.
+        assert log.ip_address == "192.168.1.1"
 
     def test_log_change_error_handling(self, db):
         """Test that logging errors don't break the main operation."""

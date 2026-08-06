@@ -20,73 +20,11 @@
    Header
    ========================================================================== */
 
-.change-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--hairline-color);
-}
-
-.change-list-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--body-fg);
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.change-list-header h1 i {
-  color: var(--primary);
-}
-
-.change-list-header .subtitle {
-  font-size: 14px;
-  color: var(--body-quiet-color);
-  margin: 0 0 5px 0;
-}
-
-.change-list-stats-subtitle {
-  font-size: 13px;
-  color: var(--body-quiet-color);
-  margin: 0;
-}
-
-.stat-separator {
-  margin: 0 8px;
-  color: var(--hairline-color);
-}
-
-.change-list-header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.change-list-action-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: var(--primary);
-  color: var(--primary-fg);
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-
-.change-list-action-button:hover {
-  background: var(--primary-hover);
-  color: var(--primary-fg);
-  text-decoration: none;
-  transform: translateY(-1px);
-}
+/* The header, stats subtitle, action bar and buttons are inherited from the
+   canonical .change-list-header / .change-list-header-actions /
+   .change-list-action-button components in admin-base.css (the banner used by
+   every other changelist). The template already tags the button with
+   `button primary change-list-action-button`, so no local rules are needed. */
 
 /* ==========================================================================
    Toolbar
@@ -224,7 +162,7 @@
    Provider Card
    ========================================================================== */
 
-.provider-card {
+.providers-grid .provider-card {
   background: var(--body-bg);
   border: 2px solid var(--hairline-color);
   border-radius: 8px;
@@ -233,13 +171,13 @@
   flex-direction: column;
 }
 
-.provider-card:hover {
+.providers-grid .provider-card:hover {
   border-color: var(--primary);
   box-shadow: 0 4px 12px var(--box-shadow);
   transform: translateY(-2px);
 }
 
-.provider-card.inactive {
+.providers-grid .provider-card.inactive {
   opacity: 0.7;
 }
 
@@ -268,7 +206,7 @@
   align-items: center;
 }
 
-.provider-icon {
+.providers-grid .provider-icon {
   width: 48px;
   height: 48px;
   border-radius: 8px;
@@ -279,7 +217,7 @@
   flex-shrink: 0;
 }
 
-.provider-icon i {
+.providers-grid .provider-icon i {
   font-size: 24px;
   color: var(--primary);
 }
@@ -400,10 +338,6 @@
   font-size: 11px;
   font-weight: 500;
   margin-right: 4px;
-}
-
-.quiet {
-  color: var(--body-quiet-color);
 }
 
 /* Card Footer */
@@ -581,19 +515,5 @@
 
   .search-box input {
     width: 100%;
-  }
-
-  .change-list-header {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .change-list-header-actions {
-    width: 100%;
-  }
-
-  .change-list-action-button {
-    width: 100%;
-    justify-content: center;
   }
 }

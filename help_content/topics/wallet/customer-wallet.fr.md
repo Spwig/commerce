@@ -10,7 +10,7 @@ Accédez à **Clients > Portefeuilles clients** pour consulter et gérer les por
 
 ## Comprendre les soldes de portefeuille
 
-Chaque portefeuille client affiche quatre soldes :
+Chaque portefeuille client affiche quatre figures de solde :
 
 | Solde | Description |
 |---|---|
@@ -19,7 +19,7 @@ Chaque portefeuille client affiche quatre soldes :
 | **Crédit total jamais** | Le montant total jamais crédité à ce portefeuille, y compris tous les crédits passés |
 | **Débit total jamais** | Le montant total jamais débité de ce portefeuille |
 
-Le solde disponible est le chiffre qui importera une fois que le paiement via le portefeuille sera disponible. Les crédits en attente passent dans ce solde une fois que la période d'attente expire.
+Le solde disponible est la figure qui aura de l'importance une fois que le paiement via le portefeuille sera disponible. Les crédits en attente passent dans ce solde une fois que la période d'attente expire.
 
 ## Consulter le portefeuille d'un client
 
@@ -27,7 +27,7 @@ Le solde disponible est le chiffre qui importera une fois que le paiement via le
 2. Utilisez le champ de recherche pour trouver le client par nom ou par e-mail
 3. Cliquez sur l'entrée du portefeuille pour ouvrir la vue détaillée
 
-La vue détaillée affiche les soldes actuels en haut et l'historique complet des transactions en dessous. Les horodatages **Dernier crédit à** et **Dernier débit à** indiquent quand le portefeuille a été utilisé pour la dernière fois.
+La vue détaillée affiche les soldes actuels en haut et l'historique complet des transactions en dessous. Les timestamps **Dernier crédit** et **Dernier débit** indiquent quand le portefeuille a été utilisé pour la dernière fois.
 
 ### Filtre de la liste des portefeuilles
 
@@ -53,7 +53,7 @@ Chaque transaction affiche :
 ### Explication des types de transactions
 
 - **Crédit** — fonds ajoutés au portefeuille (à partir d'un remboursement, d'une promotion ou d'un ajustement manuel)
-- **Débit** — fonds retirés du portefeuille. Une fois que le paiement via le portefeuille sera disponible, cela signifiera "dépensé sur une commande" — pour l'instant, la seule façon dont un débit se produit est un ajustement manuel
+- **Débit** — fonds retirés du portefeuille. Une fois que le paiement via le portefeuille est disponible, cela signifiera "dépensé sur une commande" — pour l'instant, la seule façon dont un débit se produit est un ajustement manuel
 - **Remboursement** — crédit ajouté spécifiquement en raison d'une commande retournée ou annulée
 - **Ajustement** — une correction manuelle effectuée par votre équipe
 - **Annulation** — une transaction qui annule une entrée antérieure
@@ -70,7 +70,7 @@ Chaque transaction affiche :
 
 Vous ne pouvez pas ajouter ou retirer des fonds depuis le panneau d'administration — les transactions de portefeuille sont créées uniquement par les processus qui les possèdent : remboursements de commandes, récompenses de fidélité et récompenses de parrainage. Cela est délibéré. Chaque mouvement porte une référence indiquant ce qui l'a provoqué, et une vérification nocturne vérifie le solde de chaque portefeuille par rapport à son propre historique ; les lignes saisies à la main sont ce qui brisent cette chaîne.
 
-Pour un crédit de bonne volonté — un problème de service, un geste après un problème — émettez une **carte cadeau** manuellement à la place (voir le sujet d'aide **Cartes cadeaux**). Une carte cadeau a été conçue exactement pour cela : vous contrôlez la valeur, le client reçoit un code par e-mail, et elle s'utilise à la caisse de la même manière que le crédit magasin.
+Pour un crédit de bonne volonté — un problème de service, un geste après un problème — émettez une **carte cadeau** manuellement à la place (voir le sujet d'aide **Cartes cadeaux**). Une carte cadeau a été conçue exactement pour cela : vous contrôlez la valeur, le client reçoit un code par e-mail, et elle se utilise à la caisse de la même manière que le crédit magasin.
 
 ## Bloquer un portefeuille
 
@@ -84,7 +84,7 @@ Le solde est conservé et le portefeuille peut être réactivé à tout moment. 
 
 ## Voir toutes les transactions
 
-Pour obtenir une vue globale des activités de portefeuille, accédez à **Clients > Transactions de portefeuille**. Cette liste affiche toutes les transactions de tous les portefeuilles clients, avec des filtres pour :
+Pour obtenir une vue globale de l'activité des portefeuilles, accédez à **Clients > Transactions de portefeuille**. Cette liste affiche toutes les transactions de tous les portefeuilles de clients, avec des filtres pour :
 
 - **Type de transaction** — filtrez par crédit, débit, ajustement, etc.
 - **Source** — filtrez par l'endroit d'où proviennent les transactions
@@ -99,4 +99,4 @@ La liste des transactions est en lecture seule — les transactions ne peuvent p
 - Si un client signale que son solde semble incorrect, examinez l'historique complet des transactions pour retracer exactement comment le solde a changé au fil du temps ; la colonne **Solde après** sur chaque entrée rend cela facile
 - Un solde non dépensé important vaut une petite poussée — les clients voient leur crédit magasin sur le tableau de bord du compte et à l'étape de paiement à la caisse, mais un e-mail court le signalant souvent le convertit en commande
 - Les portefeuilles gelés conservent leur solde de manière permanente ; il n'y a pas d'expiration — si vous désactivez temporairement un portefeuille, n'oubliez pas de le réactiver une fois que le problème est résolu
-- L'**ID de référence** sur chaque transaction renvoie au dossier d'origine, ce qui permet de vérifier facilement pourquoi un crédit ou un débit a été appliqué sans avoir à chercher ailleurs
+- L'**ID de référence** sur chaque transaction renvoie au record d'origine, ce qui permet de vérifier facilement pourquoi un crédit ou un débit a été appliqué sans avoir à chercher ailleurs

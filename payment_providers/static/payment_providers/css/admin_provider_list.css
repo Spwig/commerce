@@ -367,7 +367,7 @@ body.change-list #content-main {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ffc107;
+  background: var(--warning-color, #ffc107);
   color: white;
   padding: 2px 6px;
   border-radius: 10px;
@@ -461,18 +461,18 @@ body.change-list #content-main {
 }
 
 .status-badge.status-connected {
-  background: #d4edda;
-  color: #155724;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 .status-badge.status-error {
-  background: #f8d7da;
-  color: #721c24;
+  background: color-mix(in srgb, var(--error-fg) 12%, transparent);
+  color: var(--error-fg);
 }
 
 .status-badge.status-unknown {
-  background: #e2e3e5;
-  color: #383d41;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 .last-tested {
@@ -504,19 +504,19 @@ body.change-list #content-main {
 
 .badge-active,
 .badge-success {
-  background: #d4edda;
-  color: #155724;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
 }
 
 .badge-inactive,
 .badge-secondary {
-  background: #e2e3e5;
-  color: #383d41;
+  background: color-mix(in srgb, var(--body-quiet-color) 12%, transparent);
+  color: var(--body-quiet-color);
 }
 
 .badge-default {
-  background: #ffc107;
-  color: #333;
+  background: color-mix(in srgb, var(--warning-fg) 12%, transparent);
+  color: var(--warning-fg);
 }
 
 /* Mode Badge */
@@ -532,8 +532,8 @@ body.change-list #content-main {
 
 .mode-badge.mode-hosted,
 .mode-badge.mode-integrated {
-  background: #d1ecf1;
-  color: #0c5460;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
 }
 
 /* Quick Actions */
@@ -577,43 +577,44 @@ body.change-list #content-main {
 
 .action-btn.edit-btn:hover,
 .action-button.action-edit:hover {
-  color: #007bff;
-  border-color: #007bff;
+  color: var(--primary, #007bff);
+  border-color: var(--primary, #007bff);
 }
 
 .action-btn.test-btn:hover,
 .action-button.action-test:hover {
-  color: #17a2b8;
-  border-color: #17a2b8;
+  color: var(--primary, #17a2b8);
+  border-color: var(--primary, #17a2b8);
 }
 
 .action-btn.provider-toggle-btn.active {
-  color: #28a745;
-  border-color: #28a745;
+  color: var(--success-fg, #28a745);
+  border-color: var(--success-fg, #28a745);
 }
 
 .action-btn.provider-toggle-btn.inactive {
-  color: #6c757d;
-  border-color: #6c757d;
+  color: var(--body-quiet-color, #6c757d);
+  border-color: var(--body-quiet-color, #6c757d);
 }
 
 .action-btn.default-btn.is-default,
 .action-button.action-set-default {
-  background: #ffc107;
-  color: white;
-  border-color: #ffc107;
+  background: var(--warning-bg, #ffc107);
+  color: var(--warning-fg, #856404);
+  border-color: var(--warning-bg, #ffc107);
 }
 
 .action-btn.default-btn.is-default:hover,
 .action-button.action-set-default:hover {
-  background: #e0a800;
-  border-color: #e0a800;
+  background: var(--warning-bg, #ffc107);
+  color: var(--warning-fg, #856404);
+  border-color: var(--warning-fg, #856404);
 }
 
 .action-btn.delete-btn:hover,
 .action-button.action-delete:hover {
-  color: #dc3545;
-  border-color: #dc3545;
+  color: var(--error-fg, #dc3545);
+  border-color: var(--error-fg, #dc3545);
 }
 
 /* Hide old vertical card body and header classes */
@@ -753,19 +754,19 @@ body.change-list #content-main {
 }
 
 .notification.success {
-  border-left-color: #28a745;
+  border-left-color: var(--success-fg, #28a745);
 }
 
 .notification.error {
-  border-left-color: #dc3545;
+  border-left-color: var(--error-fg, #dc3545);
 }
 
 .notification.warning {
-  border-left-color: #ffc107;
+  border-left-color: var(--warning-color, #ffc107);
 }
 
 .notification.info {
-  border-left-color: #17a2b8;
+  border-left-color: var(--admin-info, #17a2b8);
 }
 
 .notification i {
@@ -773,19 +774,19 @@ body.change-list #content-main {
 }
 
 .notification.success i {
-  color: #28a745;
+  color: var(--success-fg, #28a745);
 }
 
 .notification.error i {
-  color: #dc3545;
+  color: var(--error-fg, #dc3545);
 }
 
 .notification.warning i {
-  color: #ffc107;
+  color: var(--warning-color, #ffc107);
 }
 
 .notification.info i {
-  color: #17a2b8;
+  color: var(--admin-info, #17a2b8);
 }
 
 .notification-message {

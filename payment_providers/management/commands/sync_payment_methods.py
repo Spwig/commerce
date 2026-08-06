@@ -7,6 +7,7 @@ Usage:
     python manage.py sync_payment_methods --account=<uuid>      # Sync specific account
 """
 
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import gettext as _
 
@@ -50,7 +51,7 @@ class Command(BaseCommand):
                 queryset = queryset.filter(id=account_uuid)
                 if not queryset.exists():
                     raise CommandError(f"Account with UUID {account_uuid} not found")
-            except ValueError:
+            except (ValueError, ValidationError):
                 raise CommandError(f"Invalid UUID: {account_uuid}")
         elif provider_slug:
             # Sync all accounts for specific provider

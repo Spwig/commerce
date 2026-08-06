@@ -312,19 +312,45 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
         batch_result = provider.create_batch_payout(payout_requests)
 
         if batch_result.success:
-            # Update payouts with batch reference
-            Payout.objects.filter(id__in=payout_ids).update(
-                provider_reference=batch_result.batch_reference or "",
-                provider_response=batch_result.raw_response or {},
-            )
+            # Inspect per-item results so requests the provider skipped/rejected
+            # (e.g. a recipient with no PayPal email) are not recorded as
+            # submitted payouts. Fall back to treating the whole batch as
+            # submitted only when the provider returns no per-item detail.
+            submitted_ids = []
+            failed_items = []  # (payout_id, message)
+            if batch_result.results and len(batch_result.results) == len(payout_requests):
+                for req, item_result in zip(payout_requests, batch_result.results, strict=True):
+                    if item_result.success:
+                        submitted_ids.append(req.payout_id)
+                    else:
+                        failed_items.append((req.payout_id, item_result.message))
+            else:
+                submitted_ids = list(payout_ids)
 
-            logger.info(f"Batch payout submitted. Ref: {batch_result.batch_reference}")
+            if submitted_ids:
+                Payout.objects.filter(id__in=submitted_ids).update(
+                    provider_reference=batch_result.batch_reference or "",
+                    provider_response=batch_result.raw_response or {},
+                )
+
+            for failed_id, message in failed_items:
+                Payout.objects.filter(id=failed_id).update(
+                    status="failed",
+                    notes=message or "Payout skipped by provider",
+                    provider_response=batch_result.raw_response or {},
+                )
+
+            logger.info(
+                f"Batch payout submitted. Ref: {batch_result.batch_reference}. "
+                f"Submitted: {len(submitted_ids)}, skipped: {len(failed_items)}"
+            )
 
             return {
                 "success": True,
                 "batch_reference": batch_result.batch_reference,
                 "message": batch_result.message,
-                "count": len(payout_ids),
+                "count": len(submitted_ids),
+                "failed_count": len(failed_items),
             }
         else:
             # Batch failed - mark all as failed

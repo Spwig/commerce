@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import path
 from django.utils.html import escape, format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from management.services import SystemStatusService
@@ -355,11 +356,11 @@ class ComponentRegistryAdmin(admin.ModelAdmin):
     def update_status(self, obj):
         """Display colorful update status"""
         if obj.locked:
-            return format_html('<span class="cu-status-locked">🔒 Locked</span>')
+            return mark_safe('<span class="cu-status-locked">🔒 Locked</span>')
         elif obj.update_available:
-            return format_html('<span class="cu-status-update">⬆️ Update Available</span>')
+            return mark_safe('<span class="cu-status-update">⬆️ Update Available</span>')
         else:
-            return format_html('<span class="cu-status-ok">✓ Up to date</span>')
+            return mark_safe('<span class="cu-status-ok">✓ Up to date</span>')
 
     update_status.short_description = _("Status")
 
@@ -404,7 +405,7 @@ class ComponentRegistryAdmin(admin.ModelAdmin):
         """Display available rollback versions"""
         versions = obj.get_rollback_versions()
         if not versions:
-            return format_html("<em>No rollback versions available</em>")
+            return mark_safe("<em>No rollback versions available</em>")
 
         health_class_map = {
             "healthy": "cu-health-healthy",
@@ -645,7 +646,7 @@ class UpdateLogAdmin(admin.ModelAdmin):
 
     def error_display(self, obj):
         if not obj.error_message:
-            return format_html("<em>No errors</em>")
+            return mark_safe("<em>No errors</em>")
 
         if obj.error_traceback:
             return format_html(
@@ -717,15 +718,15 @@ class UpdateServerConfigAdmin(admin.ModelAdmin):
 
     def connection_status(self, obj):
         if obj.is_connected:
-            return format_html('<span class="cu-connection-ok">● Connected</span>')
-        return format_html('<span class="cu-connection-error">● Disconnected</span>')
+            return mark_safe('<span class="cu-connection-ok">● Connected</span>')
+        return mark_safe('<span class="cu-connection-error">● Disconnected</span>')
 
     connection_status.short_description = _("Status")
 
     def jwt_status(self, obj):
         if obj.is_jwt_valid():
-            return format_html('<span class="cu-jwt-valid">✓ Valid</span>')
-        return format_html('<span class="cu-jwt-expired">⚠ Expired</span>')
+            return mark_safe('<span class="cu-jwt-valid">✓ Valid</span>')
+        return mark_safe('<span class="cu-jwt-expired">⚠ Expired</span>')
 
     jwt_status.short_description = _("JWT")
 
@@ -739,7 +740,7 @@ class UpdateServerConfigAdmin(admin.ModelAdmin):
                     "</div>",
                     obj.last_connection_attempt.strftime("%Y-%m-%d %H:%M:%S"),
                 )
-            return format_html(
+            return mark_safe(
                 '<div class="cu-detail-box cu-detail-box-success">'
                 "<strong>✓ Connected to Update Server</strong>"
                 "</div>"
@@ -753,7 +754,7 @@ class UpdateServerConfigAdmin(admin.ModelAdmin):
                     "</div>",
                     obj.last_connection_error,
                 )
-            return format_html(
+            return mark_safe(
                 '<div class="cu-detail-box cu-detail-box-error">'
                 "<strong>✗ Not Connected</strong>"
                 "</div>"
@@ -1123,9 +1124,9 @@ class PlatformUpdateAdmin(admin.ModelAdmin):
     def progress_bar(self, obj):
         """Display progress as mini bar."""
         if obj.status == "completed":
-            return format_html('<span class="cu-status-ok">✓</span>')
+            return mark_safe('<span class="cu-status-ok">✓</span>')
         if obj.status in ["failed", "rolled_back"]:
-            return format_html('<span class="cu-connection-error">✗</span>')
+            return mark_safe('<span class="cu-connection-error">✗</span>')
 
         percent = obj.progress_percent
         return format_html(
@@ -1169,7 +1170,7 @@ class PlatformUpdateAdmin(admin.ModelAdmin):
     def progress_display(self, obj):
         """Display progress details with steps."""
         if not obj.steps:
-            return format_html("<em>No progress data</em>")
+            return mark_safe("<em>No progress data</em>")
 
         # Build progress bar
         progress_bar = format_html(
@@ -1233,7 +1234,7 @@ class PlatformUpdateAdmin(admin.ModelAdmin):
     def log_display(self, obj):
         """Display recent log lines."""
         if not obj.log_lines:
-            return format_html("<em>No log entries</em>")
+            return mark_safe("<em>No log entries</em>")
 
         lines_html = ""
         for line in obj.log_lines[-30:]:
@@ -1246,7 +1247,7 @@ class PlatformUpdateAdmin(admin.ModelAdmin):
     def error_display(self, obj):
         """Display error information if any."""
         if not obj.error_message:
-            return format_html('<em class="cu-no-errors">No errors</em>')
+            return mark_safe('<em class="cu-no-errors">No errors</em>')
 
         if obj.error_traceback:
             return format_html(

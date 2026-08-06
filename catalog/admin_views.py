@@ -291,7 +291,7 @@ def digital_products_analytics_dashboard(request):
             product__is_digital=True,
             order__status__in=["processing", "completed", "delivered"],
             order__created_at__gte=thirty_days_ago,
-        ).aggregate(total=Sum("line_total"))["total"]
+        ).aggregate(total=Sum("total_price_base", output_field=models.DecimalField()))["total"]
         or 0
     )
 

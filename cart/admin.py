@@ -53,6 +53,12 @@ class CartAdmin(admin.ModelAdmin):
     ]
     inlines = [CartItemInline]
 
+    def get_queryset(self, request):
+        """Prefetch items and applied vouchers so the changelist's
+        total_items / total_amount / grand_total properties reuse loaded
+        data instead of issuing per-row related-manager queries (N+1)."""
+        return super().get_queryset(request).prefetch_related("items", "applied_vouchers")
+
     fieldsets = (
         ("Cart Information", {"fields": ("user", "session_key")}),
         (
@@ -109,6 +115,7 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ["__str__", "cart", "quantity", "unit_price", "total_price"]
+    list_select_related = ("cart", "product", "variant")
     list_filter = ["created_at"]
     search_fields = ["product__name", "cart__user__username"]
     readonly_fields = ["total_price", "savings"]
@@ -121,11 +128,20 @@ class WishlistItemInline(admin.TabularInline):
 
 @admin.register(Wishlist)
 class WishlistAdmin(admin.ModelAdmin):
-    list_display = ["name", "user", "total_items", "is_public", "created_at"]
+    list_display = ["name", "user", "item_count", "is_public", "created_at"]
     list_filter = ["wishlist_layout", "is_public", "created_at"]
     search_fields = ["name", "user__username"]
     readonly_fields = ["total_items", "total_value"]
     inlines = [WishlistItemInline]
+
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(_item_count=Count("items"))
+
+    @admin.display(description=_("Total Items"), ordering="_item_count")
+    def item_count(self, obj):
+        return obj._item_count
 
     fieldsets = (
         ("Wishlist Information", {"fields": ("user", "name")}),
@@ -148,6 +164,7 @@ class WishlistItemAdmin(admin.ModelAdmin):
 @admin.register(RecentlyViewed)
 class RecentlyViewedAdmin(admin.ModelAdmin):
     list_display = ["product", "user_display", "view_count", "viewed_at"]
+    list_select_related = ("product", "user")
     list_filter = ["viewed_at"]
     search_fields = ["product__name", "user__username", "session_key"]
     readonly_fields = ["viewed_at"]
@@ -155,7 +172,9 @@ class RecentlyViewedAdmin(admin.ModelAdmin):
     def user_display(self, obj):
         if obj.user:
             return obj.user.username
-        return f"Session: {obj.session_key[:8]}..."
+        if obj.session_key:
+            return f"Session: {obj.session_key[:8]}..."
+        return "Anonymous"
 
     user_display.short_description = "User/Session"
 
@@ -332,14 +351,26 @@ class ShippingMethodAdmin(admin.ModelAdmin):
             count = methods.count()
 
             if action == "enable":
+                if not self.has_change_permission(request):
+                    return JsonResponse(
+                        {"success": False, "message": _("Permission denied")}, status=403
+                    )
                 methods.update(is_active=True)
                 message = _("{} method(s) enabled").format(count)
 
             elif action == "disable":
+                if not self.has_change_permission(request):
+                    return JsonResponse(
+                        {"success": False, "message": _("Permission denied")}, status=403
+                    )
                 methods.update(is_active=False)
                 message = _("{} method(s) disabled").format(count)
 
             elif action == "delete":
+                if not self.has_delete_permission(request):
+                    return JsonResponse(
+                        {"success": False, "message": _("Permission denied")}, status=403
+                    )
                 methods.delete()
                 message = _("{} method(s) deleted").format(count)
 
@@ -436,7 +467,7 @@ class TaxRateAdmin(admin.ModelAdmin):
         # Add rate_percent and exempt_count as properties
         for rate in tax_rates:
             rate.rate_percent = f"{rate.rate * 100}%"
-            rate.exempt_count = rate.exempt_categories.count()
+            rate.exempt_count = len(rate.exempt_categories.all())
         extra_context["tax_rates"] = tax_rates
 
         # Preset groups for the modal

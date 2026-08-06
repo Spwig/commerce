@@ -15,6 +15,11 @@ from orders.models import Order
 
 from ..models import PaymentProviderAccount, PaymentTransaction, PaymentWebhook
 
+# Canonical "successful" transaction status. PaymentTransaction.STATUS_CHOICES
+# defines the success state as "completed"; there is no "succeeded" value, so
+# filtering on that literal silently excludes every successful transaction.
+SUCCESS_STATUS = "completed"
+
 
 class PaymentAnalyticsService:
     """Service for retrieving payment analytics and metrics"""
@@ -105,12 +110,12 @@ class PaymentAnalyticsService:
 
         current_stats = current_transactions.aggregate(
             total_revenue=Coalesce(
-                Sum("amount", filter=Q(status="succeeded")),
+                Sum("amount", filter=Q(status=SUCCESS_STATUS)),
                 Decimal("0"),
                 output_field=DecimalField(),
             ),
             total_transactions=Count("id"),
-            successful_transactions=Count("id", filter=Q(status="succeeded")),
+            successful_transactions=Count("id", filter=Q(status=SUCCESS_STATUS)),
             failed_transactions=Count("id", filter=Q(status="failed")),
             authorized_amount=Coalesce(
                 Sum("amount", filter=Q(status="authorized")),
@@ -122,7 +127,7 @@ class PaymentAnalyticsService:
                 Decimal("0"),
                 output_field=DecimalField(),
             ),
-            average_transaction=Avg("amount", filter=Q(status="succeeded")),
+            average_transaction=Avg("amount", filter=Q(status=SUCCESS_STATUS)),
         )
 
         # Calculate success rate
@@ -155,12 +160,12 @@ class PaymentAnalyticsService:
 
             prev_stats = prev_transactions.aggregate(
                 total_revenue=Coalesce(
-                    Sum("amount", filter=Q(status="succeeded")),
+                    Sum("amount", filter=Q(status=SUCCESS_STATUS)),
                     Decimal("0"),
                     output_field=DecimalField(),
                 ),
                 total_transactions=Count("id"),
-                successful_transactions=Count("id", filter=Q(status="succeeded")),
+                successful_transactions=Count("id", filter=Q(status=SUCCESS_STATUS)),
             )
 
             # Calculate changes
@@ -184,29 +189,28 @@ class PaymentAnalyticsService:
     @staticmethod
     def get_provider_performance(start_date: datetime, end_date: datetime) -> list[dict[str, Any]]:
         """Get performance metrics by payment provider"""
-        providers = PaymentProviderAccount.objects.all()
+        date_range = Q(
+            transactions__created_at__gte=start_date, transactions__created_at__lte=end_date
+        )
+        succeeded = date_range & Q(transactions__status=SUCCESS_STATUS)
+
+        providers = PaymentProviderAccount.objects.select_related("component").annotate(
+            total_revenue=Coalesce(
+                Sum("transactions__amount", filter=succeeded),
+                Decimal("0"),
+                output_field=DecimalField(),
+            ),
+            total_transactions=Count("transactions__id", filter=date_range),
+            successful=Count("transactions__id", filter=succeeded),
+            failed=Count("transactions__id", filter=date_range & Q(transactions__status="failed")),
+            average_amount=Avg("transactions__amount", filter=succeeded),
+        )
+
         results = []
-
         for provider in providers:
-            transactions = PaymentTransaction.objects.filter(
-                provider_account=provider, created_at__gte=start_date, created_at__lte=end_date
-            )
-
-            stats = transactions.aggregate(
-                total_revenue=Coalesce(
-                    Sum("amount", filter=Q(status="succeeded")),
-                    Decimal("0"),
-                    output_field=DecimalField(),
-                ),
-                total_transactions=Count("id"),
-                successful=Count("id", filter=Q(status="succeeded")),
-                failed=Count("id", filter=Q(status="failed")),
-                average_amount=Avg("amount", filter=Q(status="succeeded")),
-            )
-
             success_rate = (
-                (stats["successful"] / stats["total_transactions"] * 100)
-                if stats["total_transactions"] > 0
+                (provider.successful / provider.total_transactions * 100)
+                if provider.total_transactions > 0
                 else 0
             )
 
@@ -216,12 +220,12 @@ class PaymentAnalyticsService:
                     "provider_logo": provider.component.logo.get("url")
                     if provider.component.logo
                     else None,
-                    "total_revenue": stats["total_revenue"],
-                    "total_transactions": stats["total_transactions"],
-                    "successful": stats["successful"],
-                    "failed": stats["failed"],
+                    "total_revenue": provider.total_revenue,
+                    "total_transactions": provider.total_transactions,
+                    "successful": provider.successful,
+                    "failed": provider.failed,
                     "success_rate": round(success_rate, 2),
-                    "average_amount": stats["average_amount"] or Decimal("0"),
+                    "average_amount": provider.average_amount or Decimal("0"),
                     "is_active": provider.is_active,
                     "is_default": provider.is_default,
                 }
@@ -260,7 +264,9 @@ class PaymentAnalyticsService:
         # Current period
         current_data = (
             PaymentTransaction.objects.filter(
-                created_at__gte=start_date, created_at__lte=end_date, status="succeeded"
+                created_at__gte=start_date,
+                created_at__lte=end_date,
+                status=SUCCESS_STATUS,
             )
             .annotate(period=trunc_func)
             .values("period")
@@ -293,7 +299,9 @@ class PaymentAnalyticsService:
 
             prev_data = (
                 PaymentTransaction.objects.filter(
-                    created_at__gte=prev_start, created_at__lt=prev_end, status="succeeded"
+                    created_at__gte=prev_start,
+                    created_at__lt=prev_end,
+                    status=SUCCESS_STATUS,
                 )
                 .annotate(period=trunc_func)
                 .values("period")
@@ -359,7 +367,9 @@ class PaymentAnalyticsService:
         """Get distribution of payment methods used"""
         methods = (
             PaymentTransaction.objects.filter(
-                created_at__gte=start_date, created_at__lte=end_date, status="succeeded"
+                created_at__gte=start_date,
+                created_at__lte=end_date,
+                status=SUCCESS_STATUS,
             )
             .values("payment_method_type")
             .annotate(count=Count("id"), revenue=Sum("amount"))
@@ -403,20 +413,23 @@ class PaymentAnalyticsService:
     ) -> dict[str, Any]:
         """Get refund metrics"""
         refund_transactions = PaymentTransaction.objects.filter(
-            created_at__gte=start_date, created_at__lte=end_date, transaction_type="refund"
+            created_at__gte=start_date,
+            created_at__lte=end_date,
+            transaction_type="refund",
+            status=SUCCESS_STATUS,
         )
 
         current_stats = refund_transactions.aggregate(
             total_refunded=Coalesce(Sum("amount"), Decimal("0"), output_field=DecimalField()),
             refund_count=Count("id"),
-            full_refunds=Count("id", filter=Q(transaction_type="refund", status="succeeded")),
+            full_refunds=Count("id", filter=Q(transaction_type="refund", status=SUCCESS_STATUS)),
         )
 
         # Calculate refund rate
         total_revenue = PaymentTransaction.objects.filter(
             created_at__gte=start_date,
             created_at__lte=end_date,
-            status="succeeded",
+            status=SUCCESS_STATUS,
             transaction_type="charge",
         ).aggregate(revenue=Coalesce(Sum("amount"), Decimal("0"), output_field=DecimalField()))[
             "revenue"
@@ -443,7 +456,10 @@ class PaymentAnalyticsService:
             prev_end = start_date
 
             prev_refunds = PaymentTransaction.objects.filter(
-                created_at__gte=prev_start, created_at__lt=prev_end, transaction_type="refund"
+                created_at__gte=prev_start,
+                created_at__lt=prev_end,
+                transaction_type="refund",
+                status=SUCCESS_STATUS,
             ).aggregate(
                 total_refunded=Coalesce(Sum("amount"), Decimal("0"), output_field=DecimalField()),
                 refund_count=Count("id"),

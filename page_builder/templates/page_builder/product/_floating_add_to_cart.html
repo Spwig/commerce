@@ -1,4 +1,4 @@
-{% load i18n merchant_trans %}
+{% load i18n merchant_trans currency_tags %}
 {# Floating Add-to-Cart Bar - shown when main add-to-cart scrolls out of view #}
 {# Context: product, template_options #}
 
@@ -18,12 +18,7 @@
                 <div class="floating-cart-bar__details">
                     <span class="floating-cart-bar__name">{{ product.name }}</span>
                     <span class="floating-cart-bar__price" id="floating-price">
-                        {% if product.is_on_sale %}
-                        <span class="price price--sale">{{ product.formatted_price }}</span>
-                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
-                        {% else %}
-                        <span class="price">{{ product.formatted_price }}</span>
-                        {% endif %}
+                        {% product_price_display product current_currency.code %}
                     </span>
                 </div>
             </div>

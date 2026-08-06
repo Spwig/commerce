@@ -258,3 +258,54 @@ def configurable_product_scenario():
         "options": [cpu_option, ram_option],
         "category": category,
     }
+
+
+def booking_product_scenario():
+    """Booking product (appointment) with a resource + one person type, set up so
+    a future slot is bookable. Returns dict with: product, config, resource,
+    person_type, category.
+
+    Booking products are track_inventory=False; a Booking row is created at
+    checkout from the cart's booking_data (confirm_booking is lenient — it
+    creates the reservation, it doesn't hard-gate on slot conflicts)."""
+    from catalog.models import BookingConfig, BookingPersonType, BookingResource
+
+    category = CategoryFactory(name="Experiences", slug="experiences")
+    product = ProductFactory(
+        name="Guided Tour",
+        slug="guided-tour",
+        category=category,
+        price=Decimal("80.00"),
+        product_type="booking",
+        status="published",
+    )
+    config = BookingConfig.objects.create(
+        product=product,
+        booking_type="appointment",
+        duration_type="fixed",
+        duration=60,
+        duration_unit="minute",
+        max_bookings_per_slot=5,
+        confirmation_required=False,
+    )
+    resource = BookingResource.objects.create(
+        product=product,
+        name="Guide A",
+        resource_type="staff",
+        quantity=1,
+        base_cost_adjustment=Decimal("0"),
+    )
+    person_type = BookingPersonType.objects.create(
+        product=product,
+        name="Adult",
+        cost_adjustment=Decimal("0"),
+        is_counted_for_capacity=True,
+        is_per_night=False,
+    )
+    return {
+        "product": product,
+        "config": config,
+        "resource": resource,
+        "person_type": person_type,
+        "category": category,
+    }

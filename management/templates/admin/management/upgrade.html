@@ -46,15 +46,20 @@
         </div>
 
         <!-- Changelog -->
-        {% if changelog %}
+        {% if changelog_html or release_notes %}
         <div class="changelog-section">
             <h3>
                 <i class="fas fa-list-alt"></i>
-                {% trans "What's New" %}
+                {% trans "What's New in" %} {{ available_version }}
             </h3>
+            {% if release_notes %}
+            <p class="changelog-summary">{{ release_notes }}</p>
+            {% endif %}
+            {% if changelog_html %}
             <div class="changelog-content">
-                {{ changelog|safe }}
+                {{ changelog_html|safe }}
             </div>
+            {% endif %}
         </div>
         {% endif %}
 

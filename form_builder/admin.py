@@ -12,6 +12,7 @@ from django.contrib import admin
 from django.db.models import Count
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.admin_mixins import TranslatableAdminMixin
@@ -165,9 +166,7 @@ class FormAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 url,
                 count,
             )
-        return format_html(
-            '<span class="list-row-card-badge"><i class="fas fa-inbox"></i> 0</span>'
-        )
+        return mark_safe('<span class="list-row-card-badge"><i class="fas fa-inbox"></i> 0</span>')
 
     response_count_display.short_description = _("Responses")
     response_count_display.admin_order_field = "_response_count"

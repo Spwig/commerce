@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
 from .models import SSOProviderConfig
@@ -143,6 +144,9 @@ class SSOProviderConfigAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         """Redirect changelist to the singleton change page."""
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
+
         config = SSOProviderConfig.get_config()
         from django.shortcuts import redirect
 

@@ -1,4 +1,4 @@
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans media_picture %}
 {# Product Gallery Partial - supports images and video #}
 {# Context: images, product #}
 
@@ -15,18 +15,30 @@
                     <source src="{{ first_image.media_asset.get_display_url }}" type="{{ first_image.media_asset.mime_type }}">
                 </video>
                 {% else %}
+                {% with mainpic=first_image.media_asset|picture_sources %}
+                <picture class="spwig-picture">
+                {% if mainpic.avif %}<source srcset="{{ mainpic.avif }}" type="image/avif">{% endif %}
+                {% if mainpic.webp %}<source srcset="{{ mainpic.webp }}" type="image/webp">{% endif %}
                 <img src="{{ first_image.media_asset.get_display_url }}"
                      alt="{{ product.name }}"
                      class="product-gallery__image"
                      id="main-image"
                      data-zoom-src="{{ first_image.media_asset.get_original_url|default:first_image.media_asset.get_display_url }}">
+                </picture>
+                {% endwith %}
                 {% endif %}
                 {% endwith %}
             {% elif product.primary_image_url %}
+            {% with mainpic=product.primary_image|picture_sources %}
+            <picture class="spwig-picture">
+            {% if mainpic.avif %}<source srcset="{{ mainpic.avif }}" type="image/avif">{% endif %}
+            {% if mainpic.webp %}<source srcset="{{ mainpic.webp }}" type="image/webp">{% endif %}
             <img src="{{ product.primary_image_url }}"
                  alt="{{ product.name }}"
                  class="product-gallery__image"
                  id="main-image">
+            </picture>
+            {% endwith %}
             {% else %}
             <div class="product-gallery__placeholder">
                 <i class="fas fa-box"></i>
@@ -40,9 +52,12 @@
     {% if images.count > 1 %}
     <div class="product-gallery__thumbnails">
         {% for image in images %}
+        {% with thumbpic=image.media_asset|picture_sources %}
         <button class="product-gallery__thumb {% if forloop.first %}product-gallery__thumb--active{% endif %} {% if image.media_asset.is_video %}product-gallery__thumb--video{% endif %}"
                 data-image="{{ image.media_asset.get_display_url }}"
                 data-zoom="{{ image.media_asset.get_original_url|default:image.media_asset.get_display_url }}"
+                {% if thumbpic.avif %}data-avif="{{ thumbpic.avif }}"{% endif %}
+                {% if thumbpic.webp %}data-webp="{{ thumbpic.webp }}"{% endif %}
                 data-is-video="{{ image.media_asset.is_video|yesno:'true,false' }}"
                 {% if image.media_asset.is_video %}
                 data-video-type="{{ image.media_asset.mime_type }}"
@@ -58,6 +73,7 @@
                  alt="{{ product.name }} - {{ forloop.counter }}"
                  loading="lazy">
         </button>
+        {% endwith %}
         {% endfor %}
     </div>
     {% endif %}

@@ -1,4 +1,4 @@
-{% load static i18n element_tags merchant_trans %}
+{% load static i18n element_tags merchant_trans media_picture %}
 {% mtrans "Image" as default_image_alt %}
 <!-- Image Element v2.1.0 -->
 {% if element.content.src %}
@@ -41,6 +41,10 @@ style="{% entrance_animation_styles element %}
            class="pb-image__link">
         {% endif %}
 
+        {% with pic_sources=element.content.src|picture_sources %}
+        <picture class="spwig-picture">
+        {% if pic_sources.avif %}<source srcset="{{ pic_sources.avif }}" type="image/avif">{% endif %}
+        {% if pic_sources.webp %}<source srcset="{{ pic_sources.webp }}" type="image/webp">{% endif %}
         <img src="{{ element.content.src }}"
              alt="{{ element.content.alt|default:default_image_alt }}"
              {% if element.content.title %}title="{{ element.content.title }}"{% endif %}
@@ -75,6 +79,8 @@ style="{% entrance_animation_styles element %}
              "
              loading="lazy"
         />
+        </picture>
+        {% endwith %}
 
         {# Overlay layer #}
         {% if element.content.overlay_color %}

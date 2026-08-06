@@ -1,93 +1,72 @@
 ---
-title: Khu vực bán hàng
+title: Các khu vực bán hàng
 ---
 
-Khu vực bán hàng cho phép bạn xác định các thị trường địa lý cho cửa hàng của mình và kiểm soát sản phẩm nào có sẵn trong mỗi khu vực. Điều này rất hữu ích khi bạn bán hàng ở nhiều quốc gia hoặc khu vực khác nhau và cần có các danh mục sản phẩm, tiền tệ khu vực hoặc tình trạng tồn kho khác nhau theo từng địa điểm.
+Các khu vực bán hàng cho phép bạn xác định các thị trường địa lý cho cửa hàng của bạn và kiểm soát sản phẩm nào có sẵn ở mỗi khu vực. Điều này hữu ích khi bạn bán hàng ở nhiều quốc gia hoặc lãnh thổ khác nhau và cần các danh mục sản phẩm riêng biệt, tiền tệ khu vực, hoặc tình trạng tồn kho theo từng địa điểm.
 
 ## Khu vực bán hàng là gì?
 
-Một khu vực bán hàng là một khu vực địa lý có tên, bao gồm một hoặc nhiều quốc gia. Mỗi khu vực có một loại tiền tệ mặc định, một độ ưu tiên và có thể được liên kết với một hoặc nhiều kho hàng. Khi khách hàng duyệt cửa hàng của bạn, Spwig xác định khu vực của họ dựa trên vị trí và áp dụng các quy tắc tiền tệ và hiển thị sản phẩm phù hợp.
+Một khu vực bán hàng là một khu vực địa lý được đặt tên bao gồm một hoặc nhiều quốc gia. Mỗi khu vực có một tiền tệ mặc định, mức độ ưu tiên và có thể được liên kết với một hoặc nhiều kho hàng. Khi khách hàng duyệt cửa hàng của bạn, Spwig xác định khu vực của họ dựa trên vị trí của họ và áp dụng tiền tệ phù hợp và các quy tắc hiển thị sản phẩm.
 
-Một số trường hợp sử dụng phổ biến:
-- Chỉ hiển thị các sản phẩm có sẵn tại mỗi quốc gia cho khách hàng ở đó
-- Gán loại tiền tệ mặc định theo khu vực (ví dụ: NZD cho khách hàng New Zealand)
-- Kiểm soát kho hàng nào sẽ xử lý đơn hàng cho từng khu vực
-- Ẩn các sản phẩm chưa có sẵn tại một số thị trường nhất định
+Các trường hợp sử dụng phổ biến:
+- Hiển thị sản phẩm chỉ có sẵn tại địa phương cho khách hàng ở mỗi quốc gia
+- Gán tiền tệ mặc định riêng cho khu vực (ví dụ: NZD cho khách hàng New Zealand)
+- Kiểm soát kho hàng nào giao hàng cho mỗi khu vực
+- Ẩn các sản phẩm chưa có sẵn ở một số thị trường nhất định
 
 ## Tạo khu vực bán hàng
 
-1. Di chuyển đến **Catalog > Sales Regions**
-2. Nhấp **+ Add Sales Region**
+1. Truy cập **Kho hàng > Khu vực bán hàng**. Nếu bạn không thấy nó, hãy bật **Kích hoạt Kho hàng đa địa điểm** dưới **Cài đặt > Cài đặt Cửa hàng > Thương mại điện tử** để hiển thị mục menu — bạn không cần phải sử dụng thực sự nhiều kho hàng cho điều này, chỉ cần mở khóa liên kết. Bạn cũng có thể truy cập trực tiếp vào `/admin/catalog/salesregion/`.
+2. Nhấn **+ Thêm Khu vực Bán hàng**
 3. Điền thông tin khu vực:
 
-| Field | Description | Example |
+| Trường | Mô tả | Ví dụ |
 |-------|-------------|---------|
-| **Region Name** | Tên hiển thị cho khu vực này | `Asia-Pacific` |
-| **Region Code** | Mã định danh duy nhất ngắn gọn | `APAC` |
-| **Countries** | Các mã quốc gia ISO được bao gồm trong khu vực này | `["NZ", "AU", "SG", "FJ"]` |
-| **Default Currency** | Mã tiền tệ ISO cho khu vực này | `NZD` |
-| **Priority** | Các khu vực có độ ưu tiên cao hơn sẽ được khớp trước | `10` |
-| **Active** | Khu vực này có đang được sử dụng không | Checked |
+| **Tên Khu vực** | Tên hiển thị cho khu vực này | `Châu Á - Thái Bình Dương` |
+| **Mã Khu vực** | Mã định danh duy nhất ngắn | `APAC` |
+| **Quốc gia** | Các mã quốc gia ISO bao gồm trong khu vực này | `["NZ", "AU", "SG", "FJ"]` |
+| **Tiền tệ Mặc định** | Mã tiền tệ ISO cho khu vực này | `NZD` |
+| **Mức độ Ưu tiên** | Các khu vực có mức độ ưu tiên cao hơn sẽ được khớp trước | `10` |
+| **Đang hoạt động** | Liệu khu vực này có đang được sử dụng không | Đã chọn |
 
-4. Nhấp **Save**
+4. Nhấn **Lưu**
 
 ### Mã quốc gia
 
-Nhập các quốc gia dưới dạng danh sách JSON gồm các mã ISO hai chữ. Ví dụ:
-- New Zealand và Australia: `["NZ", "AU"]`
-- Singapore: `["SG"]`
-- Toàn bộ châu Âu: `["DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "PL"]`
+Nhập các quốc gia dưới dạng danh sách JSON các mã hai chữ ISO. Ví dụ:
+- New Zealand và Úc: `["NZ", "AU"]`
+- Chỉ có Singapore: `["SG"]`
+- Tất cả châu Âu: `["DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "PL"]`
 
-### Độ ưu tiên
+### Mức độ Ưu tiên
 
-Nếu quốc gia của khách hàng khớp với nhiều hơn một khu vực, khu vực có số ưu tiên cao nhất sẽ được sử dụng. Đặt độ ưu tiên cao hơn cho các khu vực cụ thể hơn (ví dụ: đặt độ ưu tiên cho `NZ` là 20 và `APAC` là 10 để khách hàng New Zealand được khớp với khu vực `NZ` trước).
+Nếu quốc gia của khách hàng khớp với nhiều hơn một khu vực, khu vực có số mức độ ưu tiên cao nhất sẽ được sử dụng. Đặt mức độ ưu tiên cao hơn cho các khu vực cụ thể hơn (ví dụ: gán cho `NZ` mức độ ưu tiên là 20 và `APAC` là 10 để khách hàng New Zealand được khớp với khu vực `NZ` trước).
 
-## Kiểm soát hiển thị sản phẩm theo khu vực
+## Kiểm soát tính khả dụng của sản phẩm theo khu vực
 
-Mặc định, mọi sản phẩm đều hiển thị ở tất cả các khu vực. Để giới hạn sản phẩm cho các khu vực cụ thể, hãy sử dụng **Product Region Visibility**.
+Mặc định, mọi sản phẩm đều có sẵn ở tất cả các khu vực. Để giới hạn sản phẩm, mở nó dưới **Sản phẩm > Tất cả Sản phẩm** và đặt trường **Tình trạng Khu vực** (trong phần Trạng thái) để cho phép sản phẩm chỉ ở các khu vực nhất định hoặc ở tất cả các khu vực ngoại trừ các khu vực nhất định, sau đó chọn các khu vực trong bảng dưới đây.
 
-### Giới hạn sản phẩm cho các khu vực cụ thể
+Điều này cũng xác định điều gì người mua ngoài khu vực có sẵn của sản phẩm thấy — liệu sản phẩm có bị ẩn khỏi danh sách hoàn toàn hay không, hoặc có thể hiện thị với thông báo "Không giao đến [khu vực]". Xem hướng dẫn **Tình trạng Khu vực** để biết hướng dẫn đầy đủ, bao gồm cài đặt hiển thị đó và Bộ chọn Giao hàng đến.
 
-1. Di chuyển đến **Catalog > Product Region Visibility**
-2. Nhấp **+ Add Product Region Visibility**
-3. Chọn **Product**
-4. Chọn **Region**
-5. Thiết lập **Visible** thành bật hoặc tắt theo nhu cầu
-6. Nhấp **Save**
+## Tiền tệ khu vực
 
-Khi có bất kỳ bản ghi hiển thị nào cho sản phẩm, Spwig sẽ áp dụng các quy tắc. Các sản phẩm không có bản ghi hiển thị sẽ vẫn hiển thị ở mọi nơi.
+Mỗi khu vực có một tiền tệ mặc định. Nếu cửa hàng của bạn hỗ trợ rõ ràng hơn một tiền tệ (**Cài đặt > Nhiều Tiền tệ**), tiền tệ được hiển thị của khách hàng sẽ chuyển sang tiền tệ mặc định của khu vực mỗi khi khu vực của họ thay đổi — có thể do trình hướng dẫn khu vực tự động hoặc Bộ chọn Giao hàng đến. Các cửa hàng chỉ có một tiền tệ, hoặc chưa chủ ý bật nhiều tiền tệ, luôn hiển thị tiền tệ duy nhất đó bất kể khu vực nào.
 
-### Mô hình phổ biến
-
-**Giới hạn chỉ một khu vực duy nhất**
-
-Thêm một bản ghi hiển thị cho mỗi khu vực bạn muốn hỗ trợ, thiết lập **Visible** thành `Yes` cho các khu vực được phép. Khách hàng ở các khu vực khác sẽ không nhìn thấy sản phẩm.
-
-**Loại bỏ khỏi một khu vực**
-
-Thêm một bản ghi hiển thị cho khu vực bạn muốn loại bỏ và thiết lập **Visible** thành `No`. Sản phẩm sẽ vẫn hiển thị ở tất cả các khu vực khác.
-
-### Chỉnh sửa hiển thị từ trang sản phẩm
-
-Bạn cũng có thể quản lý hiển thị theo khu vực trực tiếp từ biểu mẫu chỉnh sửa sản phẩm. Trên phần **Region Visibility** của sản phẩm, bạn sẽ tìm thấy một bảng hiển thị inline liệt kê tất cả các khu vực và cài đặt hiển thị cho sản phẩm đó.
-
-## Tiền tệ theo khu vực
-
-Mỗi khu vực có một loại tiền tệ mặc định. Khách hàng duyệt cửa hàng từ khu vực đó sẽ thấy giá được hiển thị bằng tiền tệ của khu vực. Loại tiền tệ được sử dụng được xác định tại bước thanh toán.
-
-Để thiết lập giá ở nhiều loại tiền tệ, hãy cấu hình tỷ giá hối đoái dưới **Settings > Exchange Rates**. Giá có thể được chuyển đổi tự động hoặc thiết lập thủ công theo từng loại tiền tệ.
+Để thiết lập giá theo nhiều tiền tệ, cấu hình tỷ giá hối đoái dưới **Cài đặt > Tỷ giá Hối đoái**. Giá có thể được chuyển đổi tự động hoặc được đặt thủ công theo từng tiền tệ.
 
 ## Liên kết kho hàng với khu vực
 
-Kho hàng được liên kết với khu vực khi bạn tạo hoặc chỉnh sửa kho hàng dưới **Catalog > Warehouses**. Mỗi kho hàng thuộc về một khu vực, điều này kiểm soát kho hàng nào sẽ được sử dụng để xử lý đơn hàng.
+Kho hàng được liên kết với khu vực khi bạn tạo hoặc chỉnh sửa kho hàng dưới **Danh mục > Kho hàng**. Mỗi kho hàng thuộc về một khu vực, điều này kiểm soát hàng tồn kho của khu vực nào được sử dụng để giao hàng.
 
-Để biết thêm chi tiết về kho hàng, vui lòng xem chủ đề trợ giúp **Inventory and Warehouses**.
+Giữ nguyên định dạng markdown, đường dẫn hình ảnh, khối mã, và các thuật ngữ kỹ thuật.
 
-## Tips
+Để biết thêm chi tiết về kho hàng, xem chủ đề **Inventory and Warehouses** (Kho hàng và Kho lưu trữ) trong phần trợ giúp.
 
-- Giữ mã vùng ngắn gọn và mô tả (`NZ`, `APAC`, `EU`, `US`) — chúng được sử dụng bên trong và trong nhật ký.
-- Sử dụng số độ ưu tiên cao hơn cho các khu vực nhỏ và cụ thể hơn để chúng có quyền ưu tiên hơn các khu vực rộng và chung.
-- Nếu bạn chỉ bán ở một quốc gia, bạn hoàn toàn không cần cấu hình các khu vực — Spwig hoạt động tốt với một danh mục toàn cầu duy nhất.
-- Kiểm tra tính hiển thị theo khu vực bằng cách xem trước cửa hàng của bạn trong khi lọc theo một khu vực cụ thể trong phần quản trị.
-- Các bản ghi hiển thị sản phẩm chỉ cần được tạo khi bạn muốn giới hạn sản phẩm. Để lại một sản phẩm không có bản ghi hiển thị sẽ làm cho nó có sẵn cho tất cả mọi người.
-- Kiểm tra lại các quy tắc hiển thị của bạn mỗi khi bạn thêm một khu vực mới để đảm bảo các giới hạn sản phẩm hiện tại là chính xác.
+## Mẹo
+
+- Giữ mã khu vực ngắn và mô tả (`NZ`, `APAC`, `EU`, `US`) — chúng được sử dụng bên trong và trong nhật ký.
+- Sử dụng số thứ tự cao hơn cho các khu vực nhỏ và cụ thể hơn để chúng có ưu tiên hơn các khu vực tổng quát.
+- Nếu bạn chỉ bán cho một quốc gia, bạn không cần phải cấu hình khu vực — Spwig hoạt động tốt với một danh mục toàn cầu duy nhất.
+- Chỉ đặt **Tình trạng khu vực** của sản phẩm khác với **Có sẵn ở tất cả các khu vực** khi bạn thực sự cần giới hạn — mặc định sẽ giữ sản phẩm có sẵn ở mọi nơi mà không cần bảo trì.
+- Kiểm tra lại các quy tắc khu vực của mỗi sản phẩm mỗi khi bạn thêm một **Khu vực bán hàng** mới, để đảm bảo các hạn chế vẫn phù hợp với mục đích của bạn.
+- Thêm **Bộ chọn giao hàng đến** vào thanh đầu trang của bạn (xem hướng dẫn **Tình trạng khu vực**) để bạn có thể chuyển đổi khu vực và kiểm tra xem sản phẩm bị giới hạn có hoạt động đúng như mong đợi hay không.

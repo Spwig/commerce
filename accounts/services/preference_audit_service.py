@@ -202,7 +202,10 @@ class PreferenceAuditService:
         """
         Extract client IP address from request.
 
-        Handles proxy headers (X-Forwarded-For) for accurate IP tracking.
+        Uses REMOTE_ADDR directly. The X-Forwarded-For header is not
+        trusted because this installation has no trusted WAF/CDN in front
+        of it: a direct client can forge that header, which would poison
+        the GDPR consent audit trail with a spoofed IP address.
 
         Args:
             request: HttpRequest object
@@ -210,13 +213,4 @@ class PreferenceAuditService:
         Returns:
             str: IP address or None
         """
-        # Check X-Forwarded-For header first (proxy support)
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            # Take the first IP (client IP)
-            ip = x_forwarded_for.split(",")[0].strip()
-        else:
-            # Fallback to REMOTE_ADDR
-            ip = request.META.get("REMOTE_ADDR")
-
-        return ip
+        return request.META.get("REMOTE_ADDR")

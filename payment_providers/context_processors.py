@@ -9,6 +9,7 @@ from typing import Any
 
 from core.license import get_license_manager
 from payment_providers.models import PaymentProviderAccount
+from payment_providers.services.payment_method_filter import PaymentMethodFilter
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +62,21 @@ EXPRESS_CHECKOUT_METHODS = {
 }
 
 
-def get_available_express_methods() -> list[dict[str, Any]]:
+def get_available_express_methods(
+    country_code: str | None = None, currency: str | None = None
+) -> list[dict[str, Any]]:
     """
-    Get list of available express checkout methods from all active providers.
+    Get list of express checkout methods available to the visitor.
+
+    When the visitor's country and currency are known, only methods the
+    merchant enabled for that country — through a provider account that is
+    actually eligible for that country/currency — are surfaced. When the
+    country is unknown, only globally-enabled (``_global``) methods are
+    exposed, since country-specific overrides can't be honoured yet.
+
+    Args:
+        country_code: ISO 3166-1 alpha-2 country code, or None when unknown
+        currency: ISO 4217 currency code, or None when unknown
 
     Returns:
         List of express checkout method configurations
@@ -72,20 +85,47 @@ def get_available_express_methods() -> list[dict[str, Any]]:
     seen_methods = set()  # Avoid duplicates across providers
 
     try:
-        # Get all active payment providers
-        active_providers = PaymentProviderAccount.objects.filter(
-            is_active=True, connection_status="connected"
-        ).select_related("component")
+        if country_code and currency:
+            # Country known: restrict to providers eligible for this
+            # country/currency and to the methods enabled for it. The
+            # ships-to gate is a cart concern we can't evaluate here.
+            providers = PaymentMethodFilter.get_available_providers_for_checkout(
+                customer_country=country_code,
+                currency=currency,
+                require_ships_to=False,
+            )
+            # get_available_providers_for_checkout only filters is_active, so
+            # keep the connected-account requirement the global path enforces —
+            # never surface methods from a disconnected account.
+            provider_methods = []
+            for provider in providers:
+                if provider.connection_status != "connected":
+                    continue
+                # Intersect enabled with available for this country: enabled
+                # falls back to _global when a country has no override, so a
+                # globally-enabled method can leak into a country where the
+                # provider doesn't actually offer it. Only surface methods the
+                # provider both enables and makes available here.
+                available = set(provider.get_available_methods_for_country(country_code))
+                enabled = provider.get_enabled_methods_for_country(country_code)
+                provider_methods.append((provider, [m for m in enabled if m in available]))
+        else:
+            # Country unknown: only methods enabled for all countries
+            # (_global) apply regardless of where the visitor is.
+            active_providers = PaymentProviderAccount.objects.filter(
+                is_active=True, connection_status="connected"
+            ).select_related("component")
+            provider_methods = [
+                (
+                    provider,
+                    provider.get_enabled_methods_for_country(PaymentProviderAccount.GLOBAL_KEY),
+                )
+                for provider in active_providers
+            ]
 
-        for provider in active_providers:
-            # Get enabled methods from all countries (union of all)
-            all_enabled_methods = set()
-
-            for _country_code, methods in provider.enabled_payment_methods.items():
-                all_enabled_methods.update(methods)
-
+        for provider, enabled_methods in provider_methods:
             # Filter for express checkout methods only
-            for method_slug in all_enabled_methods:
+            for method_slug in enabled_methods:
                 if method_slug in EXPRESS_CHECKOUT_METHODS and method_slug not in seen_methods:
                     method_config = EXPRESS_CHECKOUT_METHODS[method_slug].copy()
                     method_config["provider_slug"] = provider.component.slug
@@ -120,7 +160,12 @@ def payment_providers(request) -> dict[str, Any]:
     # Get express checkout methods (only if licensed and providers exist)
     express_checkout_methods = []
     if payments_enabled and has_payment_providers:
-        express_checkout_methods = get_available_express_methods()
+        # Resolve the visitor's country (GeoIP) and currency so the methods
+        # shown belong to a provider eligible for that country/currency.
+        geo_location = getattr(request, "geo_location", None)
+        country_code = geo_location.get("country_code") if geo_location else None
+        currency = getattr(request, "currency", None)
+        express_checkout_methods = get_available_express_methods(country_code, currency)
 
     # Show setup prompt to staff if no providers configured
     is_staff = getattr(request.user, "is_staff", False)

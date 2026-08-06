@@ -6,8 +6,10 @@ Bulk order status update and fulfillment endpoints for the merchant mobile app.
 
 import logging
 import secrets
+import uuid
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -25,8 +27,23 @@ from admin_api.services.audit_service import AuditService
 from admin_api.throttling import AdminSensitiveOperationThrottle
 from core.api.api_descriptions import AUTH_REQUIRED, PERMISSION_DENIED, RATE_LIMIT_EXCEEDED
 from orders.models import Order
+from shipping.models import CarrierPreset
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_carrier(identifier):
+    """Resolve an active carrier preset from a supplied name, slug, or UUID.
+
+    The bulk-fulfill API accepts a carrier "name or identifier", so match all
+    three forms. Returns the CarrierPreset or None when nothing matches.
+    """
+    lookup = Q(name__iexact=identifier) | Q(slug__iexact=identifier)
+    try:
+        lookup |= Q(pk=uuid.UUID(str(identifier)))
+    except (ValueError, AttributeError, TypeError):
+        pass
+    return CarrierPreset.objects.filter(lookup, is_active=True).first()
 
 
 def generate_error_reference():
@@ -229,7 +246,7 @@ def bulk_order_fulfill(request):
         )
 
     orders_data = serializer.validated_data["orders"]
-    serializer.validated_data.get("notify_customers", True)
+    notify_customers = serializer.validated_data.get("notify_customers", True)
 
     succeeded = 0
     failed = 0
@@ -283,7 +300,36 @@ def bulk_order_fulfill(request):
                 metadata["fulfillment"] = fulfillment_info
                 order.metadata = metadata
 
+                # Assign the canonical carrier so downstream consumers (e.g. the
+                # shipping-confirmation email reading order.carrier.name) use the
+                # supplied carrier instead of the generic default. The field
+                # accepts a name, slug, or UUID identifier — resolve every form,
+                # and reject the order if none match rather than silently
+                # shipping with the generic default carrier.
                 update_fields = ["status", "tracking_number", "metadata", "updated_at"]
+                if carrier_name:
+                    carrier = _resolve_carrier(carrier_name)
+                    if carrier is None:
+                        results.append(
+                            {
+                                "order_number": order_number,
+                                "success": False,
+                                "error": _(
+                                    'Unknown carrier "%(carrier)s". Provide the name, '
+                                    "slug, or ID of an active carrier."
+                                )
+                                % {"carrier": carrier_name},
+                            }
+                        )
+                        failed += 1
+                        continue
+                    order.carrier = carrier
+                    update_fields.append("carrier")
+
+                # Gate the automatic shipping-confirmation email on the
+                # caller's notify_customers flag.
+                order._suppress_status_email = not notify_customers
+
                 order.save(update_fields=update_fields)
 
                 AuditService.log_order_status_change(

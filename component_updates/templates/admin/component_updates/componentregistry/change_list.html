@@ -138,42 +138,26 @@
     {% endif %}
 
     <!-- Stats Overview -->
-    <div class="component-stats-overview">
+    <div class="dashboard-stats-grid">
         <div class="dashboard-stat-card">
-            <div class="stat-card-icon total">
-                <i class="fas fa-puzzle-piece"></i>
-            </div>
-            <div class="stat-card-content">
-                <div class="stat-card-value" id="stat-total">{{ total_components }}</div>
-                <div class="stat-card-label">{% trans "Total Components" %}</div>
-            </div>
+            <div class="icon"><i class="fas fa-puzzle-piece"></i></div>
+            <div class="value" id="stat-total">{{ total_components }}</div>
+            <div class="label">{% trans "Total Components" %}</div>
         </div>
         <div class="dashboard-stat-card">
-            <div class="stat-card-icon updates">
-                <i class="fas fa-cloud-download-alt"></i>
-            </div>
-            <div class="stat-card-content">
-                <div class="stat-card-value" id="stat-updates">{{ updates_available }}</div>
-                <div class="stat-card-label">{% trans "Updates Available" %}</div>
-            </div>
+            <div class="icon"><i class="fas fa-cloud-download-alt"></i></div>
+            <div class="value" id="stat-updates">{{ updates_available }}</div>
+            <div class="label">{% trans "Updates Available" %}</div>
         </div>
         <div class="dashboard-stat-card">
-            <div class="stat-card-icon uptodate">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-card-content">
-                <div class="stat-card-value" id="stat-uptodate">{{ up_to_date }}</div>
-                <div class="stat-card-label">{% trans "Up to Date" %}</div>
-            </div>
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value" id="stat-uptodate">{{ up_to_date }}</div>
+            <div class="label">{% trans "Up to Date" %}</div>
         </div>
         <div class="dashboard-stat-card">
-            <div class="stat-card-icon locked">
-                <i class="fas fa-lock"></i>
-            </div>
-            <div class="stat-card-content">
-                <div class="stat-card-value" id="stat-locked">{{ locked_count }}</div>
-                <div class="stat-card-label">{% trans "Locked" %}</div>
-            </div>
+            <div class="icon"><i class="fas fa-lock"></i></div>
+            <div class="value" id="stat-locked">{{ locked_count }}</div>
+            <div class="label">{% trans "Locked" %}</div>
         </div>
     </div>
 

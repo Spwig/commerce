@@ -21,6 +21,8 @@ registration, push tokens, session revocation). These are inherently tied to
 an interactive mobile-app session, not a long-lived integration credential.
 """
 
+from rest_framework.permissions import SAFE_METHODS
+
 # url_name -> scope_key
 SCOPE_MAP = {
     # --- Staff & roles ---
@@ -164,7 +166,31 @@ TOKEN_FORBIDDEN = {
     "revoke_session",
 }
 
+# url_name -> fixed access level ("read"/"write").
+#
+# Read vs. write is normally derived from the HTTP method (safe = read, unsafe
+# = write). A few endpoints break that mapping: ``batch_documents`` is a POST
+# purely because it streams a generated ZIP body, but it only reads order data
+# (guarded by the existing ``orders`` view permission), so a read scope must
+# satisfy it. Entries here override the method-derived access.
+ACCESS_OVERRIDES = {
+    "batch_documents": "read",
+}
+
 
 def required_scope(url_name):
     """Return the scope key required for a url_name, or None if unmapped."""
     return SCOPE_MAP.get(url_name)
+
+
+def required_access(url_name, method):
+    """Return the scope access level ("read"/"write") for a url_name.
+
+    Defaults to the HTTP method (safe methods = read, unsafe = write), but
+    ``ACCESS_OVERRIDES`` can pin an endpoint whose method misrepresents its
+    actual data access.
+    """
+    override = ACCESS_OVERRIDES.get(url_name)
+    if override is not None:
+        return override
+    return "read" if method in SAFE_METHODS else "write"

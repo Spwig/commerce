@@ -216,19 +216,19 @@
 }
 
 .quick-action-btn.primary {
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
 }
 
 .quick-action-btn.primary:visited {
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .quick-action-btn.primary:hover {
   background: var(--link-hover-color);
-  color: white;
+  color: var(--button-fg);
 }
 
 /* Customer Segment Display */
@@ -479,13 +479,13 @@
   color: var(--body-fg);
   border-radius: 4px;
   font-size: 0.8rem;
-  border-left: 3px solid #ffa726;
+  border-left: 3px solid var(--warning-color);
   text-align: left;
   line-height: 1.4;
 }
 
 .segment-cta i {
-  color: #ffa726;
+  color: var(--warning-color);
   margin-right: 5px;
 }
 
@@ -511,7 +511,7 @@
   border-radius: 6px 0 0 6px;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: -2px 2px 8px var(--shadow-dark, rgba(0, 0, 0, 0.15));
   transition: all 0.3s ease;
   align-items: center;
   justify-content: center;
@@ -520,7 +520,7 @@
 .customer-sidebar-toggle:hover {
   opacity: 1;
   transform: translateY(-50%) translateX(-2px);
-  box-shadow: -4px 2px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: -4px 2px 12px var(--shadow-dark, rgba(0, 0, 0, 0.2));
 }
 
 .customer-sidebar-toggle i {
@@ -554,8 +554,8 @@
 }
 
 .customer-sidebar-close:hover {
-  background: var(--error-fg);
-  color: white;
+  background: var(--delete-button-bg);
+  color: var(--button-fg);
   transform: rotate(90deg);
 }
 
@@ -613,7 +613,7 @@
     z-index: 1000;
     transition: right 0.3s ease;
     padding: 60px 24px 40px 20px;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+    box-shadow: -4px 0 12px var(--shadow-dark, rgba(0, 0, 0, 0.2));
     margin-top: 70px;
     box-sizing: border-box;
   }
@@ -724,7 +724,7 @@
 }
 
 .address-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.1));
 }
 
 .address-card-header {
@@ -753,20 +753,22 @@
 }
 
 .address-type-shipping {
-  background: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #1976d2;
+  background: color-mix(in srgb, var(--link-fg) 12%, transparent);
+  color: var(--link-fg);
+  border: 1px solid color-mix(in srgb, var(--link-fg) 40%, transparent);
 }
 
 .address-type-billing {
-  background: #e8f5e9;
-  color: #388e3c;
-  border: 1px solid #388e3c;
+  background: color-mix(in srgb, var(--success-fg) 12%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
+/* Type-coded "both" address badge — deliberate purple, kept as a filled badge
+   with white text (readable in both themes; a dark hue can't use a tint). */
 .address-type-both {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  background: #7b1fa2;
+  color: #fff;
   border: 1px solid #7b1fa2;
 }
 
@@ -775,9 +777,9 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.25rem 0.6rem;
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffc107;
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border: 1px solid var(--warning-color);
   border-radius: 12px;
   font-size: 0.7rem;
   font-weight: 600;
@@ -785,7 +787,7 @@
 
 .address-default-badge i {
   font-size: 0.75rem;
-  color: #ffc107;
+  color: var(--warning-color);
 }
 
 .address-card-body {
@@ -916,13 +918,13 @@
 
 .address-action-edit {
   background: var(--accent-bg);
-  color: var(--primary);
-  border-color: var(--primary);
+  color: var(--button-bg);
+  border-color: var(--button-bg);
 }
 
 .address-action-edit:hover {
-  background: var(--primary);
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
 }
 
 .address-action-default {
@@ -933,7 +935,7 @@
 
 .address-action-default:hover {
   background: var(--warning-fg);
-  color: white;
+  color: var(--warning-bg);
 }
 
 .empty-state {
@@ -1047,8 +1049,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: var(--primary, #417690);
-  color: #fff;
+  background: var(--button-bg, #417690);
+  color: var(--button-fg);
   border-radius: 6px;
   text-decoration: none;
   font-size: 0.8rem;
@@ -1058,5 +1060,5 @@
 
 .comm-prefs-manage-btn:hover {
   opacity: 0.9;
-  color: #fff;
+  color: var(--button-fg);
 }

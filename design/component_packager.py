@@ -28,7 +28,7 @@ Usage:
 
 import json
 import zipfile
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -189,7 +189,7 @@ class ComponentPackager:
             "external_domains": kwargs.get("external_domains", []),
             "script_budget_kb": kwargs.get("script_budget_kb", 0),
             "requires_sandbox": kwargs.get("requires_sandbox", False),
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(UTC).replace(tzinfo=None).isoformat(),
         }
 
         self.manifest = manifest

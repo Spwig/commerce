@@ -27,9 +27,11 @@ from agentic import views_wellknown as agentic_wellknown
 from catalog.api.image_endpoints import get_product_images
 from catalog.api.translation_endpoints import get_available_languages
 from catalog.download_views import download_digital_asset
+from catalog.region_views import set_region
 from core import views
 from core.api import currency_endpoints, translation_api
 from core.currency_views import set_currency
+from core.e2e_inspection import inspect_order
 from core.error_reporting import views as error_reporting_views
 from core.sandbox.views import tamper_report
 from pos_app import views as pos_views
@@ -79,6 +81,8 @@ urlpatterns += [
     path("i18n/", include("translations.i18n_urls")),
     # Currency switcher API (non-i18n as it's an API)
     path("api/set-currency/", set_currency, name="set_currency"),
+    # Ship-to region selector API (non-i18n as it's an API)
+    path("api/set-region/", set_region, name="set_region"),
     # Multi-Currency Management API
     path("api/currencies/", currency_endpoints.list_all_currencies, name="api_currencies_list"),
     path(
@@ -157,6 +161,15 @@ urlpatterns += [
     path("api/csp-report/", views.csp_report, name="csp_report"),
     # JS error report endpoint (non-i18n, csrf-exempt, POST-only)
     path("api/error-reports/js/", error_reporting_views.receive_js_errors, name="js_error_report"),
+    # E2E footprint inspection (read-only, non-i18n). Registered unconditionally
+    # but fail-closed: 404s unless SPWIG_E2E_INSPECTION is on AND the shared
+    # secret matches, so a disabled endpoint is indistinguishable from an absent
+    # one. Off by default on every merchant install. See core/e2e_inspection.py.
+    path(
+        "api/e2e/inspect/order/<str:order_number>/",
+        inspect_order,
+        name="e2e_inspect_order",
+    ),
     # Bug report submission from admin wizard (staff-only, requires CSRF)
     path(
         "api/bug-reports/submit/", error_reporting_views.submit_bug_report, name="submit_bug_report"

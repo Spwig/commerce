@@ -6,6 +6,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.widgets import IconPickerWidget
@@ -229,8 +230,8 @@ class WidgetAdmin(admin.ModelAdmin):
             devices.append('<i class="fas fa-desktop" title="{}"></i>'.format(_("Desktop")))
 
         if devices:
-            return format_html(" ".join(devices))
-        return format_html(
+            return mark_safe(" ".join(devices))
+        return mark_safe(
             '<i class="fas fa-times-circle" style="color: var(--error-color);" title="{}"></i>'.format(
                 _("None")
             )

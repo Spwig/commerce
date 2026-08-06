@@ -35,19 +35,31 @@ urlpatterns = [
     path("tiers/filter/", views.filter_tiers, name="filter_tiers"),
     path("badges/filter/", views.filter_badges, name="filter_badges"),
     path("rules/filter/", views.filter_rules, name="filter_rules"),
-    path("rules/<int:rule_id>/activate/", views.toggle_rule_status, name="activate_rule"),
-    path("rules/<int:rule_id>/deactivate/", views.toggle_rule_status, name="deactivate_rule"),
+    path(
+        "rules/<int:rule_id>/activate/",
+        views.toggle_rule_status,
+        {"action": "activate"},
+        name="activate_rule",
+    ),
+    path(
+        "rules/<int:rule_id>/deactivate/",
+        views.toggle_rule_status,
+        {"action": "deactivate"},
+        name="deactivate_rule",
+    ),
     path("segments/filter/", views.filter_segments, name="filter_segments"),
     path("segments/<int:segment_id>/refresh/", views.refresh_segment, name="refresh_segment"),
     path("campaigns/filter/", views.filter_campaigns, name="filter_campaigns"),
     path(
         "campaigns/<int:campaign_id>/activate/",
         views.toggle_campaign_status,
+        {"action": "activate"},
         name="activate_campaign",
     ),
     path(
         "campaigns/<int:campaign_id>/deactivate/",
         views.toggle_campaign_status,
+        {"action": "deactivate"},
         name="deactivate_campaign",
     ),
     # Customer-Facing URLs

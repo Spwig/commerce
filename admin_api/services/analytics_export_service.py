@@ -10,6 +10,7 @@ import logging
 from datetime import date
 from decimal import Decimal
 from io import BytesIO, StringIO
+from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_RIGHT
@@ -100,6 +101,19 @@ class AnalyticsExportService:
         )
 
         return styles
+
+    @staticmethod
+    def _sanitize_csv_cell(value):
+        """Neutralize spreadsheet formula injection in an externally controlled cell.
+
+        Prefixes a leading formula trigger (=, +, -, @, tab, carriage return)
+        with an apostrophe so the value opens as text rather than executing as a
+        formula in common spreadsheet software. Non-string values pass through
+        unchanged.
+        """
+        if isinstance(value, str) and value and value[0] in ("=", "+", "-", "@", "\t", "\r"):
+            return "'" + value
+        return value
 
     @staticmethod
     def _format_decimal(value):
@@ -213,10 +227,10 @@ class AnalyticsExportService:
         for product in data["products"]:
             writer.writerow(
                 [
-                    product["product_name"],
-                    product["sku"],
-                    product["category_name"],
-                    product["brand_name"],
+                    cls._sanitize_csv_cell(product["product_name"]),
+                    cls._sanitize_csv_cell(product["sku"]),
+                    cls._sanitize_csv_cell(product["category_name"]),
+                    cls._sanitize_csv_cell(product["brand_name"]),
                     product["units_sold"],
                     cls._format_decimal(product["revenue"]),
                     product["orders_count"],
@@ -261,8 +275,8 @@ class AnalyticsExportService:
         for customer in data["top_customers"]:
             writer.writerow(
                 [
-                    customer["name"],
-                    customer["email"],
+                    cls._sanitize_csv_cell(customer["name"]),
+                    cls._sanitize_csv_cell(customer["email"]),
                     customer["segment"],
                     cls._format_decimal(customer["total_spent"]),
                     customer["total_orders"],
@@ -279,7 +293,7 @@ class AnalyticsExportService:
         for geo in data["geo_breakdown"]:
             writer.writerow(
                 [
-                    geo["country"],
+                    cls._sanitize_csv_cell(geo["country"]),
                     geo["order_count"],
                     cls._format_decimal(geo["revenue"]),
                     geo["customer_count"],
@@ -317,7 +331,7 @@ class AnalyticsExportService:
         for cat in data["categories"]:
             writer.writerow(
                 [
-                    cat["category_name"],
+                    cls._sanitize_csv_cell(cat["category_name"]),
                     cls._format_decimal(cat["revenue"]),
                     cls._format_decimal(cat["revenue_percentage"]),
                     cat["units_sold"],
@@ -357,7 +371,7 @@ class AnalyticsExportService:
         for brand in data["brands"]:
             writer.writerow(
                 [
-                    brand["brand_name"],
+                    cls._sanitize_csv_cell(brand["brand_name"]),
                     cls._format_decimal(brand["revenue"]),
                     cls._format_decimal(brand["revenue_percentage"]),
                     brand["units_sold"],
@@ -369,6 +383,8 @@ class AnalyticsExportService:
     @classmethod
     def _csv_orders(cls, writer, start_date, end_date):
         """Write order-level CSV data for the date range."""
+        from django.db.models import Count
+
         from orders.models import Order
 
         start_dt = AnalyticsService._date_to_aware_dt(start_date)
@@ -383,6 +399,7 @@ class AnalyticsExportService:
             )
             .exclude(status__in=["cancelled", "refunded"])
             .select_related("user")
+            .annotate(item_count=Count("items"))
             .order_by("-created_at")
         )
 
@@ -409,18 +426,18 @@ class AnalyticsExportService:
                 customer_name = (
                     f"{order.user.first_name} {order.user.last_name}".strip() or order.user.email
                 )
-            item_count = order.items.count()
+            item_count = order.item_count
 
             writer.writerow(
                 [
-                    order.order_number,
+                    cls._sanitize_csv_cell(order.order_number),
                     order.created_at.strftime("%Y-%m-%d %H:%M"),
-                    customer_name,
-                    order.email,
+                    cls._sanitize_csv_cell(customer_name),
+                    cls._sanitize_csv_cell(order.email),
                     order.status,
                     cls._format_decimal(order.total_amount_base),
                     item_count,
-                    order.shipping_country,
+                    cls._sanitize_csv_cell(order.shipping_country),
                 ]
             )
 
@@ -449,7 +466,7 @@ class AnalyticsExportService:
         for cat in cat_data["categories"][:10]:
             writer.writerow(
                 [
-                    cat["category_name"],
+                    cls._sanitize_csv_cell(cat["category_name"]),
                     cls._format_decimal(cat["revenue"]),
                     cat["units_sold"],
                 ]
@@ -461,7 +478,7 @@ class AnalyticsExportService:
         for brand in brand_data["brands"][:10]:
             writer.writerow(
                 [
-                    brand["brand_name"],
+                    cls._sanitize_csv_cell(brand["brand_name"]),
                     cls._format_decimal(brand["revenue"]),
                     brand["units_sold"],
                 ]
@@ -556,7 +573,7 @@ class AnalyticsExportService:
         for p in data["products"]:
             rows.append(
                 [
-                    Paragraph(p["product_name"][:40], styles["Normal"]),
+                    Paragraph(escape(p["product_name"][:40]), styles["Normal"]),
                     p["sku"][:15],
                     str(p["units_sold"]),
                     cls._format_decimal(p["revenue"]),
@@ -613,7 +630,7 @@ class AnalyticsExportService:
         for c in data["top_customers"][:20]:
             rows.append(
                 [
-                    Paragraph(c["name"][:30], styles["Normal"]),
+                    Paragraph(escape(c["name"][:30]), styles["Normal"]),
                     c["email"][:30],
                     c["segment"],
                     cls._format_decimal(c["total_spent"]),
@@ -677,7 +694,7 @@ class AnalyticsExportService:
         for cat in data["categories"]:
             rows.append(
                 [
-                    Paragraph(cat["category_name"][:35], styles["Normal"]),
+                    Paragraph(escape(cat["category_name"][:35]), styles["Normal"]),
                     cls._format_decimal(cat["revenue"]),
                     cls._format_decimal(cat["revenue_percentage"]),
                     str(cat["units_sold"]),
@@ -731,7 +748,7 @@ class AnalyticsExportService:
         for brand in data["brands"]:
             rows.append(
                 [
-                    Paragraph(brand["brand_name"][:35], styles["Normal"]),
+                    Paragraph(escape(brand["brand_name"][:35]), styles["Normal"]),
                     cls._format_decimal(brand["revenue"]),
                     cls._format_decimal(brand["revenue_percentage"]),
                     str(brand["units_sold"]),
@@ -806,7 +823,7 @@ class AnalyticsExportService:
                 [
                     order.order_number,
                     order.created_at.strftime("%Y-%m-%d"),
-                    Paragraph(customer_name[:25], styles["Normal"]),
+                    Paragraph(escape(customer_name[:25]), styles["Normal"]),
                     order.status.title(),
                     cls._format_decimal(order.total_amount_base),
                 ]
@@ -855,7 +872,7 @@ class AnalyticsExportService:
         for cat in cat_data["categories"][:10]:
             cat_rows.append(
                 [
-                    Paragraph(cat["category_name"][:30], styles["Normal"]),
+                    Paragraph(escape(cat["category_name"][:30]), styles["Normal"]),
                     cls._format_decimal(cat["revenue"]),
                     str(cat["units_sold"]),
                     f"{cls._format_decimal(cat['revenue_percentage'])}%",
@@ -878,7 +895,7 @@ class AnalyticsExportService:
         for brand in brand_data["brands"][:10]:
             brand_rows.append(
                 [
-                    Paragraph(brand["brand_name"][:30], styles["Normal"]),
+                    Paragraph(escape(brand["brand_name"][:30]), styles["Normal"]),
                     cls._format_decimal(brand["revenue"]),
                     str(brand["units_sold"]),
                     f"{cls._format_decimal(brand['revenue_percentage'])}%",

@@ -61,9 +61,8 @@
                     <label class="account-card">
                         <input type="radio" name="account_id" value="{{ account.id }}" required>
                         <input type="hidden" name="account_name_{{ account.id }}" value="{{ account.name }}">
-                        {% if account.access_token %}
-                        <input type="hidden" name="account_token_{{ account.id }}" value="{{ account.access_token }}">
-                        {% endif %}
+                        {% comment %}Per-account tokens are held server-side (session) and looked up by
+                           account_id on submit — never rendered into the page.{% endcomment %}
                         <div class="account-info">
                             <div class="account-info__name">{{ account.name }}</div>
                             <div class="account-info__id">ID: {{ account.id }}</div>

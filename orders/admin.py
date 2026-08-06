@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.utils import get_default_currency, get_shipping_origin_country
@@ -52,11 +53,11 @@ class OrderItemInline(admin.TabularInline):
 
     def customization_summary(self, obj):
         """Display customizations in a readable format"""
-        from django.utils.html import escape, format_html
+        from django.utils.html import escape
         from django.utils.safestring import mark_safe
 
         if not obj.customizations:
-            return format_html('<span class="admin-text-muted">—</span>')
+            return mark_safe('<span class="admin-text-muted">—</span>')
 
         # Build HTML for customizations display
         html_parts = []
@@ -97,32 +98,31 @@ class OrderItemInline(admin.TabularInline):
 
         if html_parts:
             return mark_safe("".join(html_parts))
-        return format_html('<span class="admin-text-muted">—</span>')
+        return mark_safe('<span class="admin-text-muted">—</span>')
 
     customization_summary.short_description = _("Customizations")
 
     def product_status(self, obj):
         """Display product deletion status"""
-        from django.utils.html import format_html
 
         from catalog.models import Product
 
         if not obj.product_id:
-            return format_html('<span class="admin-text-muted">—</span>')
+            return mark_safe('<span class="admin-text-muted">—</span>')
 
         try:
             # Check if product is soft-deleted
             product = Product.all_objects.get(id=obj.product_id)
             if product.is_deleted:
-                return format_html(
+                return mark_safe(
                     '<span class="admin-text-danger admin-text-bold" title="Product has been deleted">⚠️ Deleted</span>'
                 )
             else:
-                return format_html(
+                return mark_safe(
                     '<span class="admin-text-success" title="Product is active">✓ Active</span>'
                 )
         except Product.DoesNotExist:
-            return format_html(
+            return mark_safe(
                 '<span class="admin-text-danger" title="Product not found">⚠️ Not Found</span>'
             )
 
@@ -138,24 +138,23 @@ class OrderItemInline(admin.TabularInline):
                 obj.warehouse.name,
                 obj.warehouse.region.name if obj.warehouse.region else _("No region"),
             )
-        return format_html('<span class="admin-text-muted">—</span>')
+        return mark_safe('<span class="admin-text-muted">—</span>')
 
     warehouse_info.short_description = _("Warehouse")
 
     def fulfillment_status(self, obj):
         """Display fulfillment status with icons"""
-        from django.utils.html import format_html
 
         if obj.stock_fulfilled:
-            return format_html(
+            return mark_safe(
                 '<span class="admin-text-success admin-text-bold" title="Stock Fulfilled">✅ Fulfilled</span>'
             )
         elif obj.stock_allocated:
-            return format_html(
+            return mark_safe(
                 '<span class="admin-text-warning admin-text-bold" title="Stock Allocated">📦 Allocated</span>'
             )
         else:
-            return format_html(
+            return mark_safe(
                 '<span class="admin-text-muted" title="Not Allocated">⏳ Pending</span>'
             )
 
@@ -391,7 +390,7 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
     def test_order_badge(self, obj):
         """Display TEST badge for sandbox/test orders"""
         if obj.is_test_order:
-            return format_html('<span class="admin-badge-test">TEST</span>')
+            return mark_safe('<span class="admin-badge-test">TEST</span>')
         return ""
 
     test_order_badge.short_description = _("Test")
@@ -1379,7 +1378,7 @@ class AddressAdmin(admin.ModelAdmin):
             return format_html(
                 '<span class="admin-text-warning admin-text-bold">v{}</span>', obj.version
             )
-        return format_html('<span class="admin-text-muted">v1</span>')
+        return mark_safe('<span class="admin-text-muted">v1</span>')
 
     version_info.short_description = _("Version")
 
@@ -1394,7 +1393,7 @@ class AddressAdmin(admin.ModelAdmin):
                 count,
                 _("order" if count == 1 else "orders"),
             )
-        return format_html('<span class="admin-text-muted">—</span>')
+        return mark_safe('<span class="admin-text-muted">—</span>')
 
     usage_count.short_description = _("Used in")
 

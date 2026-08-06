@@ -51,10 +51,12 @@ class ProviderBrowseView(View):
             selected_country = default_country
 
         # Try to get available providers from update server
+        has_update_server = False
         try:
             available_providers = update_manager.list_available_components(
                 component_type="payment_provider"
             )
+            has_update_server = True
         except Exception:
             messages.warning(
                 request,
@@ -65,10 +67,34 @@ class ProviderBrowseView(View):
             available_providers = []
 
         # Get installed providers for version comparison
-        installed_db = {
-            p.slug: p.current_version
-            for p in ComponentRegistry.objects.filter(component_type="payment_provider")
-        }
+        installed_components = list(
+            ComponentRegistry.objects.filter(component_type="payment_provider")
+        )
+        installed_db = {p.slug: p.current_version for p in installed_components}
+
+        # Merge locally installed providers that the update server did not
+        # return (e.g. the server is unreachable). Without this, installed
+        # providers vanish from the page whenever the fetch fails. Metadata is
+        # taken from each provider's local manifest where available.
+        server_slugs = {p.get("slug") for p in available_providers}
+        for component in installed_components:
+            if component.slug in server_slugs:
+                continue
+            manifest = component.get_manifest() or {}
+            available_providers.append(
+                {
+                    "slug": component.slug,
+                    "name": component.name,
+                    "description": component.description,
+                    "current_version": component.current_version,
+                    "version": component.current_version,
+                    "manifest": manifest,
+                    "thumbnail_url": component.thumbnail_url,
+                    "homepage_url": component.homepage_url,
+                    "documentation_url": component.support_url,
+                    "capabilities": manifest.get("capabilities", {}),
+                }
+            )
 
         # Get current admin language for manifest-based i18n
         lang = get_language() or "en"
@@ -219,7 +245,7 @@ class ProviderBrowseView(View):
             "selected_country_name": countries.name(selected_country) if selected_country else "",
             "default_country": default_country,
             "installed_count": installed_count,
-            "has_update_server": len(available_providers) > 0,
+            "has_update_server": has_update_server,
         }
 
         return render(request, self.template_name, context)
@@ -353,33 +379,20 @@ def install_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Create 'current' symlink to the installed version
+            # The package installer already activated the canonical 'current'
+            # symlink under the registry-slug directory (the same slug
+            # ProviderRegistry uses for discovery). Just reload providers to
+            # make the newly installed provider available.
             try:
-                from component_updates.integration_paths import INTEGRATIONS_DIR
-
-                provider_base_dir = INTEGRATIONS_DIR / "payment_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
-                )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the new provider available
                 from payment_providers.providers.registry import ProviderRegistry
 
                 ProviderRegistry.reload_providers()
             except Exception as e:
-                # Log warning but don't fail - symlink is optional
+                # Log warning but don't fail - reload is best-effort.
                 import logging
 
                 logger = logging.getLogger(__name__)
-                logger.warning(f"Failed to create symlink for {provider_slug}: {e}")
+                logger.warning(f"Failed to reload providers for {provider_slug}: {e}")
 
         from django.urls import reverse
 
@@ -429,7 +442,7 @@ def update_provider_ajax(request, provider_slug):
         latest_version = None
         for item in available:
             if item.get("slug") == provider_slug:
-                latest_version = item.get("current_version")
+                latest_version = item.get("current_version") or item.get("version")
                 break
 
         if not latest_version:

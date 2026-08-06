@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from email_system.models import EmailAccount, EmailEvent, EmailOutbox, EmailTemplate, ScheduledEmail
@@ -128,12 +129,12 @@ class EmailAccountAdmin(admin.ModelAdmin):
     def is_active_badge(self, obj):
         """Display active status badge"""
         if obj.is_active:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge active">'
                 '<i class="fas fa-check-circle"></i> ACTIVE'
                 "</span>"
             )
-        return format_html(
+        return mark_safe(
             '<span class="status-badge inactive">'
             '<i class="fas fa-times-circle"></i> INACTIVE'
             "</span>"
@@ -144,7 +145,7 @@ class EmailAccountAdmin(admin.ModelAdmin):
     def is_default_badge(self, obj):
         """Display default account badge"""
         if obj.is_default:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge primary"><i class="fas fa-star"></i> DEFAULT</span>'
             )
         return "-"
@@ -570,15 +571,15 @@ class EmailTemplateAdmin(admin.ModelAdmin):
     def is_active_badge(self, obj):
         """Display active status badge"""
         if obj.is_active:
-            return format_html('<span class="email-admin-badge status-badge-success">ACTIVE</span>')
-        return format_html('<span class="email-admin-badge status-badge-pending">INACTIVE</span>')
+            return mark_safe('<span class="email-admin-badge status-badge-success">ACTIVE</span>')
+        return mark_safe('<span class="email-admin-badge status-badge-pending">INACTIVE</span>')
 
     is_active_badge.short_description = _("Status")
 
     def is_system_badge(self, obj):
         """Display system template badge"""
         if obj.is_system:
-            return format_html('<span class="email-admin-badge status-badge-pending">SYSTEM</span>')
+            return mark_safe('<span class="email-admin-badge status-badge-pending">SYSTEM</span>')
         return "-"
 
     is_system_badge.short_description = _("Type")

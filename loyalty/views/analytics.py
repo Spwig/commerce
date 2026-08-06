@@ -29,6 +29,22 @@ from loyalty.models import (
     LoyaltyTransaction,
 )
 
+DEFAULT_ANALYTICS_DAYS = 30
+
+
+def _get_analytics_days(request):
+    """Return the day count from the ``?days=`` query param.
+
+    Falls back to the default when the value is missing or non-numeric, so an
+    invalid filter never crashes the analytics views with a 500. A successfully
+    parsed integer is returned unchanged to preserve the existing filter
+    semantics.
+    """
+    try:
+        return int(request.GET.get("days", DEFAULT_ANALYTICS_DAYS))
+    except (TypeError, ValueError):
+        return DEFAULT_ANALYTICS_DAYS
+
 
 @staff_member_required
 def analytics_dashboard(request):
@@ -36,7 +52,7 @@ def analytics_dashboard(request):
     Main analytics dashboard showing overview of loyalty program health
     """
     # Date range filter
-    days = int(request.GET.get("days", 30))
+    days = _get_analytics_days(request)
     start_date = timezone.now() - timedelta(days=days)
 
     # Program Overview
@@ -173,7 +189,7 @@ def member_analytics(request):
     """
     Member engagement and behavior analytics
     """
-    days = int(request.GET.get("days", 30))
+    days = _get_analytics_days(request)
     start_date = timezone.now() - timedelta(days=days)
 
     # Member growth

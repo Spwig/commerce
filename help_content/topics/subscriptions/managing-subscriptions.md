@@ -17,6 +17,8 @@ keywords:
   - subscription expired
   - reactivate subscription
   - subscription grace period
+  - renewal order
+  - subscription self-service
 url_patterns:
   - /admin/subscriptions/customersubscription/
   - /admin/subscriptions/customersubscription/\d+/change/
@@ -24,6 +26,8 @@ url_patterns:
 related:
   - subscription-plans
   - subscription-discounts
+  - selling-products-as-subscriptions
+  - email-templates
 published: true
 ---
 
@@ -145,6 +149,32 @@ If a customer contacts you about a billing issue, find their subscription and ch
 
 For persistent failures, direct the customer to update their payment method in their account settings.
 
+## How renewals are fulfilled
+
+Every successful renewal charge creates a brand-new paid order for that billing cycle — it isn't just a payment record. That order flows through your normal fulfilment process exactly like an order placed at checkout:
+
+- **Physical products** — The renewal order enters your regular fulfilment queue for picking, packing, and shipping. It is not automatically stock-allocated the instant the card is charged, so a temporary stock shortfall never blocks a charge that already succeeded — you'll still see the order and can fulfil it as stock allows.
+- **Digital products** — Access (download links, license keys) is re-granted automatically the moment the renewal order is created, the same way it would be for a first-time purchase.
+
+Renewal orders copy the shipping and billing details from the order that started the subscription, so you don't need to re-enter anything. They don't carry a special badge in your **Orders** list, but you can always trace a specific cycle back to its order: open **Subscriptions > Billing Cycle Logs**, click the log entry for that cycle, and the **Order** field links straight to it.
+
+## Automatic subscription emails
+
+Spwig sends subscription lifecycle emails automatically — you don't need to trigger these manually. The ones merchants ask about most:
+
+| Email | When it sends |
+|-------|----------------|
+| **Renewal reminder** | Ahead of an upcoming renewal charge |
+| **Trial ending** | Before a free or reduced-price trial converts to full billing |
+| **Payment failed** | Immediately after a renewal charge fails, and again as a final notice if the grace period is about to run out (dunning) |
+| **Cancellation confirmation** | When a subscription is canceled |
+
+Spwig also sends welcome, payment-success, pause/resume, expiration, reactivation, plan-change, and payment-method-expiring emails at the relevant points in a subscription's lifecycle. All of these are ordinary email templates — see [Email Templates](/help/email-templates) to review or customize their content and confirm they're active.
+
+## Customer self-service
+
+Customers don't need to contact you for routine subscription changes — they can manage their own subscriptions from their account: viewing details and billing history, pausing, resuming, canceling, and updating the payment method on file. This covers most of what would otherwise land in your support queue, so when a customer reaches out about their subscription, it's worth first checking whether they've tried their account page before you make the change for them in the admin.
+
 ## Tips
 
 - Check the **Past Due** filter weekly to catch subscriptions at risk of churning. A quick email to the customer often resolves payment issues before the grace period expires.
@@ -152,3 +182,4 @@ For persistent failures, direct the customer to update their payment method in t
 - If a customer's subscription shows **Past Due** but they have already updated their payment method, the next automated retry will pick up the new card. Retries follow the grace period schedule configured in the plan.
 - **Expired** subscriptions are not deleted — they remain visible for reporting. Use the date filters to focus on currently active subscriptions.
 - For subscriptions in **Trial**, check the **Trial End Date** to anticipate upcoming first charges and proactively address any payment method issues.
+- If a customer says a physical renewal "hasn't shipped," check your regular fulfilment queue rather than the subscription record — renewal orders are fulfilled the same way as any other order and don't jump the queue.

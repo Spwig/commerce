@@ -1,5 +1,5 @@
 {% extends "page_builder/product/_base.html" %}
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans currency_tags %}
 {# Booking Product Template - Appointments, rentals, classes, accommodation, events #}
 {# Calendar/date-picker selection, person types, resource selection, live pricing #}
 
@@ -40,13 +40,7 @@
 
                     {# Base price display #}
                     <div class="product-info__price" id="product-price">
-                        {% if product.is_on_sale %}
-                        <span class="price price--sale">{% if booking_config.booking_type == 'accommodation' %}{% mtrans 'From' %} {% endif %}{{ product.formatted_price }}</span>
-                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
-                        <span class="price__badge">{% mtrans 'Sale' %}</span>
-                        {% else %}
-                        <span class="price">{% if booking_config.booking_type == 'accommodation' %}{% mtrans 'From' %} {% endif %}{{ product.formatted_price }}</span>
-                        {% endif %}
+                        {% if booking_config.booking_type == 'accommodation' %}<span class="price">{% mtrans 'From' %}</span> {% endif %}{% product_price_display product current_currency.code %}
                         <span class="booking-price-label">
                             {% if booking_config.duration_unit == 'night' %}/ {% mtrans 'night' %}
                             {% elif booking_config.duration_unit == 'day' %}/ {% mtrans 'day' %}

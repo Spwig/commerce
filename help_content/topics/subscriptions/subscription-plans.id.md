@@ -2,51 +2,55 @@
 title: Rencana Langganan
 ---
 
-Rencana langganan memungkinkan Anda menawarkan pembayaran berulang untuk produk Anda — ideal untuk barang konsumsi, layanan, kotak terpilih, atau produk apa pun yang dibeli pelanggan secara berulang. Panduan ini menjelaskan cara membuat dan mengonfigurasi rencana, menetapkan tingkatan harga, menambahkan masa uji coba, dan menambahkan opsi tambahan yang opsional.
+Rencana langganan memungkinkan Anda menawarkan pembayaran berulang untuk produk Anda — idealnya untuk barang habiskan, layanan, kotak yang dikuratori, atau produk apa pun yang pelanggan beli berulang kali. Panduan ini menjelaskan cara membuat dan mengkonfigurasi rencana, menyiapkan tingkatan harga, menambahkan periode percobaan, dan menghubungkan tambahan opsional.
 
-## Memulai
+## Mulai dari awal
 
-Navigasikan ke **Langganan > Rencana Langganan** di bilah sisi admin. Daftar rencana menampilkan semua rencana Anda dengan model harganya, jumlah pelanggan aktif, dan status visibilitas.
+Navigasi ke **Langganan > Rencana Langganan** di bilah sisi admin. Daftar rencana menunjukkan semua rencana Anda dengan model harga, jumlah pelanggan aktif, dan status visibilitasnya.
 
-Untuk membuat rencana baru, klik tombol **+ Tambah Rencana Langganan** — ini membuka wizard pembuatan rencana, yang memandu Anda melalui pengaturan langkah demi langkah.
+Untuk membuat rencana baru, klik tombol **+ Tambahkan Rencana Langganan** — ini membuka wizard pembuatan rencana, yang memandu Anda melalui langkah-langkah pemasangan secara bertahap.
 
 ![Daftar rencana langganan](/static/core/admin/img/help/subscription-plans/plan-list.webp)
 
+Sebuah rencana sendiri tidak bisa dibeli — ini adalah template. Setelah Anda membangunnya di sini, sertakan dalam satu atau beberapa produk dari tab **Langganan** produk (hanya produk Sederhana, Variabel, dan Digital) agar pelanggan sebenarnya dapat berlangganan. Lihat [Penjualan Produk sebagai Langganan](/help/selling-products-as-subscriptions) untuk langkah tersebut.
+
 ## Informasi Rencana
 
-Bagian pertama menangkap identitas inti dari rencana Anda.
+Bagian pertama ini menangkap identitas inti dari rencana Anda.
 
-- **Nama Rencana** — Nama yang dilihat pelanggan saat berlangganan. Klik ikon globe untuk menambahkan terjemahan untuk bahasa toko lain.
+- **Nama Rencana** — Nama yang dilihat pelanggan saat berlangganan. Klik ikon globe untuk menambahkan terjemahan untuk bahasa toko lainnya.
 - **Slug** — Identifikasi yang ramah URL yang dihasilkan secara otomatis dari nama (misalnya, `premium-plan`). Ini digunakan secara internal dan dalam integrasi.
-- **Deskripsi** — Teks opsional yang menggambarkan apa yang termasuk dalam rencana ini. Mendukung terjemahan.
+- **Deskripsi** — Teks opsional yang menjelaskan apa saja yang termasuk dalam rencana ini. Mendukung terjemahan.
 
 ## Model Harga
 
-Pilih cara struktur harga untuk rencana ini:
+Pilih bagaimana struktur harga untuk rencana ini:
 
-| Model Harga | Terbaik Untuk |
+| Model Harga | Paling Cocok untuk |
 |---------------|----------|
-| **Harga Berlapis** | Menawarkan opsi komitmen bulanan, kuartalan, dan tahunan dengan diskon untuk masa yang lebih lama |
-| **Berdasarkan Kuantitas** | Harga per tempat duduk atau per pengguna di mana totalnya berkembang seiring kuantitas (misalnya, lisensi tim) |
-| **Harga Tetap** | Harga tetap tunggal tanpa variasi |
+| **Harga Tiered** | Menawarkan opsi komitmen bulanan, kuartalan, dan tahunan dengan diskon untuk jangka yang lebih lama |
+| **Berdasarkan Jumlah** | Harga per kursi atau pengguna di mana totalnya meningkat sesuai jumlah (misalnya, lisensi tim) |
+| **Tarif Tetap** | Harga tetap tunggal tanpa variasi |
 
-Untuk rencana **Berdasarkan Kuantitas**, tetapkan **Kuantitas Minimum** (jumlah tempat duduk minimum yang diperlukan) dan secara opsional **Kuantitas Maksimum** untuk membatasi jumlah tempat duduk yang dapat dibeli pelanggan.
+Untuk rencana **Berdasarkan Jumlah**, tetapkan **Jumlah Minimum** (jumlah kursi minimal yang diperlukan) dan secara opsional **Jumlah Maksimum** untuk membatasi jumlah kursi yang dapat dibeli oleh pelanggan.
 
 ## Tingkatan Harga
 
-Tingkatan harga mendefinisikan frekuensi pembayaran dan opsi diskon yang tersedia bagi pelanggan di rencana ini. Tambahkan mereka di bagian **Tingkatan Harga** di bawah formulir utama.
+Tingkatan harga menentukan frekuensi pembayaran dan opsi diskon yang tersedia bagi pelanggan pada rencana ini. Tambahkan di bagian **Tingkatan Harga** di bawah formulir utama.
 
 Setiap tingkatan memiliki bidang berikut:
 
 - **Nama Tingkatan** — Label yang ditampilkan kepada pelanggan (misalnya, `Bulanan`, `Tahunan — Hemat 20%`). Mendukung terjemahan.
-- **Siklus Pembayaran** — Seberapa sering pelanggan dikenakan biaya: Harian, Mingguan, Bulanan, Kuartalan, Setengah Tahunan, atau Tahunan.
-- **Interval Pembayaran** — Pengali untuk siklus pembayaran. Tetapkan ke `2` dengan Bulanan untuk menagih setiap 2 bulan.
-- **Persentase Diskon** — Diskon yang diterapkan pada harga produk untuk tingkatan ini. Tetapkan ke `0` untuk harga penuh, atau `20` untuk memberikan diskon 20%. Diskon ini ditumpuk di atas harga penjualan apa pun pada produk itu sendiri.
-- **Tingkatan Default** — Tandai satu tingkatan sebagai default untuk memilih secara otomatis saat pelanggan melihat opsi langganan.
+- **Siklus Pembayaran** — Seberapa sering pelanggan dibebankan: Harian, Mingguan, Bulanan, Kuartalan, Semi-Annual, atau Tahunan.
+- **Interval Pembayaran** — Pengali untuk siklus pembayaran. Atur ke `2` dengan Bulanan untuk menagih setiap 2 bulan.
+- **Persentase Diskon** — Diskon yang diterapkan pada harga produk untuk tingkatan ini. Atur ke `0` untuk harga penuh, atau `20` untuk memberi diskon 20%. Diskon ini ditambahkan pada harga penjualan apa pun pada produk itu sendiri.
+- **Tingkatan Default** — Tandai satu tingkatan sebagai default untuk memilihnya secara otomatis bagi pelanggan saat mereka melihat opsi langganan.
 
-### Contoh: rencana berlapis dengan tiga opsi
+Diskon berlaku sejak siklus pembayaran pertama pelanggan, bukan hanya pada pembaruan — tingkatan dengan diskon 20% membebankan 20% diskon sejak hari pertama (atau dari pembayaran pertama setelah percobaan, jika rencana memiliki satu).
 
-Untuk rencana langganan "Coffee Club":
+### Contoh: rencana tiered dengan tiga opsi
+
+Untuk rencana langganan "Kopi Club":
 
 | Nama Tingkatan | Siklus Pembayaran | Diskon |
 |-----------|---------------|----------|
@@ -54,67 +58,63 @@ Untuk rencana langganan "Coffee Club":
 | Kuartalan — Hemat 10% | Kuartalan | 10% |
 | Tahunan — Hemat 20% | Tahunan | 20% |
 
-## Masa Uji Coba
+## Masa Percobaan
 
-Masa uji coba memungkinkan pelanggan mencoba langganan Anda sebelum pembayaran penuh pertama mereka. Konfigurasikan ini di bagian **Masa Uji Coba**:
+Masa percobaan memungkinkan pelanggan mencoba langganan Anda sebelum pembayaran penuh pertama mereka. Atur ini di bagian **Masa Percobaan**:
 
-- **Masa Uji Coba (Hari)** — Jumlah hari uji coba gratis. Tetapkan ke `0` untuk menonaktifkan uji coba. Maksimum 365 hari.
-- **Harga Uji Coba** — Harga tereduksi opsional selama masa uji coba (misalnya, $1 untuk bulan pertama). Biarkan kosong untuk uji coba sepenuhnya gratis.
+- **Masa Percobaan (Hari)** — Jumlah hari percobaan gratis. Atur ke `0` untuk menonaktifkan percobaan. Maksimalnya 365 hari.
+- **Harga Percobaan** — Harga yang direduksi secara opsional selama masa percobaan (misalnya, $1 untuk bulan pertama). Biarkan kosong untuk uji coba sepenuhnya gratis.
 
-## Kebijakan Pembatalan
+## Kebbijakan Pembatalan
 
-Kontrol cara pelanggan dapat membatalkan langganan mereka di bagian **Kebijakan Pembatalan**:
+Atur bagaimana pelanggan dapat membatalkan langganan mereka di bagian **Kebijakan Pembatalan**:
 
 | Kebijakan | Deskripsi |
 |--------|-------------|
-| **Batal Kapan Saja** | Pelanggan dapat membatalkan segera kapan saja |
-| **Batal di Akhir Periode** | Pembatalan berlaku di akhir periode berbayar — pelanggan tetap memiliki akses hingga berakhir |
-| **Komitmen Minimum Diperlukan** | Pelanggan harus menyelesaikan jumlah siklus pembayaran minimum sebelum membatalkan |
+| **Batalkan Kapan Saja** | Pelanggan dapat membatalkan kapan saja |
+| **Batalkan di Akhir Masa** | Pembatalan berlaku di akhir periode berbayar — pelanggan tetap memiliki akses hingga masa berlaku berakhir |
+| **Kewajiban Minimal Dibutuhkan** | Pelanggan harus menyelesaikan jumlah siklus pembayaran minimal sebelum membatalkan |
 
-Pengaturan tambahan:
+Tambahan pengaturan:
 
-Preserve all markdown formatting, image paths, code blocks, and technical terms.
+- **Kewajiban Minimal (Siklus)** — Ketika menggunakan kebijakan kewajiban, tetapkan jumlah siklus pembayaran yang diperlukan (misalnya, `3` untuk kewajiban minimal 3 bulan).
+- **Masa Percaya (Hari)** — Hari akses berkelanjutan setelah kegagalan pembayaran sebelum langganan dihentikan. Atur menjadi `0` untuk penghentian segera.
+- **Masa Aktif Kembali (Hari)** — Hari setelah pembatalan selama pelanggan dapat mengaktifkan ulang langganan mereka tanpa harus berlangganan dari awal.
 
-- **Minimum Commitment (Cycles)** — Ketika menggunakan kebijakan komitmen, tetapkan jumlah siklus pembayaran yang diperlukan (misalnya, `3` untuk komitmen minimum 3 bulan).
-- **Grace Period (Days)** — Hari akses terus-menerus setelah kegagalan pembayaran sebelum langganan dibatasi.
+## Perilaku Perubahan Rencana
 
-Setel ke `0` untuk pembatasan segera.
-- **Reactivation Period (Days)** — Hari setelah pembatalan selama pelanggan dapat mengaktifkan kembali langganan mereka tanpa perlu mendaftar ulang dari awal.
+Ketika pelanggan meningkatkan atau menurunkan rencana, Anda dapat mengontrol kapan perubahan tersebut berlaku:
 
-## Perilaku perubahan rencana
+- **Perilaku Peningkatan** — Atur menjadi **Langsung** (menebus jumlah yang sesuai sekarang) atau **Pada Saat Perpanjangan** (berpindah pada tanggal pembayaran berikutnya).
+- **Perilaku Penurunan** — Atur menjadi **Langsung** (menerapkan kredit pada tagihan berikutnya) atau **Pada Saat Perpanjangan** (berpindah pada tanggal pembayaran berikutnya).
 
-Ketika pelanggan meningkatkan atau menurunkan antar rencana, Anda dapat mengontrol kapan perubahan berlaku:
+## Batasan dan keterbatasan
 
-- **Upgrade Behavior** — Setel ke **Immediate** (tagih jumlah prorata sekarang) atau **At Renewal** (ubah pada tanggal pembayaran berikutnya).
-- **Downgrade Behavior** — Setel ke **Immediate** (terapkan kredit ke tagihan berikutnya) atau **At Renewal** (ubah pada tanggal pembayaran berikutnya).
+- **Jumlah Siklus Pembayaran Maksimal** — Jumlah total siklus pembayaran sebelum langganan berakhir secara otomatis. Biarkan kosong untuk pembayaran berulang tak terbatas. Berguna untuk rencana cicilan atau langganan berdurasi terbatas.
+- **Biaya Pemasangan** — Biaya satu kali yang dikumpulkan ketika langganan dibuat pertama kali (misalnya, biaya onboarding atau aktivasi). Atur menjadi `0.00` untuk tidak ada biaya pemasangan.
 
-## Batasan dan pembatasan
+## Tambahan Rencana
 
-- **Maximum Billing Cycles** — Jumlah total siklus pembayaran sebelum langganan berakhir secara otomatis. Biarkan kosong untuk pembayaran berulang tanpa batas. Berguna untuk rencana cicilan atau langganan berbatas waktu.
-- **Setup Fee** — Biaya satu kali yang dikumpulkan saat langganan pertama kali dibuat (misalnya, biaya onboarding atau aktivasi). Setel ke `0.00` untuk tidak ada biaya setup.
+Tambahan adalah ekstra opsional yang dapat ditambahkan pelanggan ke rencana mereka. Tambahkan di bagian **Tambahan Rencana**:
 
-## Add-on rencana
-
-Add-on adalah tambahan opsional yang dapat pelanggan lampirkan ke rencana mereka. Tambahkan di bagian **Plan Add-ons**:
-
-- **Add-on Name** — Nama yang ditampilkan kepada pelanggan. Mendukung terjemahan.
-- **Description** — Apa yang ditawarkan oleh add-on.
-- **Price** — Biaya add-on.
-- **Billing Frequency** — Apakah add-on dikenakan **Per Billing Cycle** (berulang) atau **One-Time** saat awal langganan.
-- **Allow Quantity** — Aktifkan untuk memungkinkan pelanggan membeli beberapa unit add-on.
-- **Required** — Centang untuk secara otomatis menyertakan add-on pada semua langganan baru. Add-on yang diperlukan tidak dapat dihapus oleh pelanggan.
+- **Nama Tambahan** — Nama yang ditampilkan kepada pelanggan. Mendukung terjemahan.
+- **Deskripsi** — Apa yang ditawarkan tambahan tersebut.
+- **Harga** — Biaya tambahan tersebut.
+- **Frekuensi Pembayaran** — Apakah tambahan dikenakan biaya **Per Siklus Pembayaran** (berulang) atau **Satu Kali** saat pendaftaran.
+- **Izinkan Jumlah** — Aktifkan untuk memungkinkan pelanggan membeli beberapa unit tambahan.
+- **Wajib** — Centang ini untuk secara otomatis termasuk tambahan pada semua langganan baru. Tambahan yang wajib tidak dapat dihapus oleh pelanggan.
 
 ## Visibilitas dan status
 
-- **Active** — Nonaktifkan untuk menonaktifkan rencana sehingga tidak ada langganan baru yang dapat dibuat. Langganan yang sudah ada tidak terpengaruh.
-- **Public** — Nonaktifkan untuk menyembunyikan rencana dari halaman pelanggan (berguna untuk rencana internal atau lama yang tetap digunakan oleh pelanggan yang sudah berlangganan).
-- **Sort Order** — Mengontrol urutan tampilan pada halaman pemilihan langganan. Angka yang lebih rendah muncul lebih dulu.
+- **Aktif** — Nonaktifkan untuk menonaktifkan rencana sehingga tidak ada langganan baru yang dapat dibuat. Langganan yang sudah ada tidak terpengaruh.
+- **Umum** — Nonaktifkan untuk menyembunyikan rencana dari halaman yang terlihat pelanggan (berguna untuk rencana internal atau lama yang tetap diikuti pelanggan saat ini).
+- **Urutan Pemesanan** — Mengontrol urutan tampilan pada halaman pemilihan langganan. Angka yang lebih rendah muncul lebih dulu.
 
-## Tips
+## Saran
 
-- Gunakan **periode uji coba** untuk mengurangi keraguan — bahkan uji coba gratis singkat selama 7 hari dapat meningkatkan signifikan tingkat konversi pada produk langganan.
-- Atur **tiga tingkat harga** (bulanan, kuartalan, tahunan) dengan diskon yang meningkat untuk mendorong komitmen tahunan dan meningkatkan aliran kas Anda.
-- Untuk langganan berbasis layanan, atur **Kebijakan Pembatalan** ke **Cancel at Period End** sehingga pelanggan tetap memiliki akses selama periode yang telah dibayar — ini terasa adil dan mengurangi pembatalan pembayaran.
-- Pertahankan **Grace Period** selama 3–7 hari untuk kegagalan pembayaran. Ini memberi pelanggan waktu untuk memperbarui metode pembayaran sebelum kehilangan akses.
-- Gunakan bendera **Required** pada add-on secara jarang — hanya gunakan untuk hal-hal yang benar-benar wajib (misalnya, perjanjian layanan), bukan sebagai cara untuk memperbesar harga.
-- Nonaktifkan rencana yang tidak memiliki pelanggan daripada menghapusnya — ini mempertahankan data historis untuk pelanggan yang sebelumnya berlangganan.
+- Gunakan **masa percobaan** untuk mengurangi keraguan — bahkan masa percobaan 7 hari singkat pun dapat meningkatkan tingkat konversi secara signifikan pada produk langganan.
+- Atur **tiga tingkatan harga** (bulanan, kuartalan, tahunan) dengan diskon yang meningkat untuk mendorong komitmen tahunan dan meningkatkan aliran kas Anda.
+- Untuk langganan berbasis layanan, tetapkan **Kebijakan Pembatalan** menjadi **Batalkan di Akhir Masa** agar pelanggan tetap memiliki akses hingga masa berbayar mereka — ini terasa adil dan mengurangi klaim pembatalan pembayaran.
+- Pertahankan **Masa Percaya** pada 3–7 hari untuk kegagalan pembayaran. Hal ini memberi waktu kepada pelanggan untuk memperbarui metode pembayaran mereka sebelum kehilangan akses.
+- Gunakan bendera **Wajib** pada tambahan secara terbatas — hanya gunakan untuk hal-hal yang benar-benar wajib (misalnya, perjanjian layanan), bukan sebagai cara untuk menaikkan harga.
+- Nonaktifkan rencana yang tidak memiliki pelanggan alih-alih menghapusnya — ini mempertahankan data historis untuk pelanggan mana pun yang pernah berlangganan.

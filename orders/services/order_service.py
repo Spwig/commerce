@@ -10,6 +10,8 @@ from django.db.models import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from core.utils import get_default_currency
+
 from ..models import Order
 
 if TYPE_CHECKING:
@@ -97,8 +99,17 @@ class OrderService:
         orders = Order.objects.filter(user=user)
 
         total_orders = orders.count()
-        # Order.total_amount is a Money instance; unwrap .amount before float().
-        total_spent = sum(float(order.total_amount.amount) for order in orders)
+        # Sum in the store's base currency so orders placed in different
+        # customer currencies are actually additive. total_amount_base holds each
+        # order's total converted to the base currency. It is NULL only for
+        # cross-currency orders with no captured exchange rate (see
+        # Order.compute_base_amounts); those cannot be converted, so exclude them
+        # rather than add a raw foreign-currency amount into a base-currency sum.
+        base_currency = get_default_currency()
+        convertible_totals = [
+            order.total_amount_base for order in orders if order.total_amount_base is not None
+        ]
+        total_spent = float(sum(convertible_totals))
 
         # Get status breakdown
         status_counts = {}
@@ -110,12 +121,17 @@ class OrderService:
         # Get recent orders
         recent_orders = orders.order_by("-created_at")[:5]
 
-        # Calculate average order value
-        avg_order_value = total_spent / total_orders if total_orders > 0 else 0
+        # Calculate average order value over the orders that actually
+        # contributed to total_spent. Dividing by total_orders would understate
+        # the average whenever some orders were excluded for lacking a
+        # convertible base-currency amount.
+        convertible_orders = len(convertible_totals)
+        avg_order_value = total_spent / convertible_orders if convertible_orders > 0 else 0
 
         return {
             "total_orders": total_orders,
             "total_spent": total_spent,
+            "currency": base_currency,
             "average_order_value": avg_order_value,
             "status_breakdown": status_counts,
             "recent_orders": [
@@ -146,6 +162,13 @@ class OrderService:
         Returns:
             Tuple of (success: bool, message: str)
         """
+        # Lock and refresh the order for the duration of this transaction so two
+        # concurrent cancellations can't both pass the status check and release
+        # the same stock allocation twice. Refresh the caller's own instance in
+        # place (rather than rebinding to a fresh object) so the mutations we
+        # persist below are visible to the caller after we return.
+        order.refresh_from_db(from_queryset=Order.objects.select_for_update())
+
         # Check permission
         if order.user != user and not user.is_staff:
             return False, _("You don't have permission to cancel this order")
@@ -170,7 +193,9 @@ class OrderService:
 
             logger = logging.getLogger(__name__)
 
-            for item in order.items.all():
+            # Lock the item rows too, so their stock_allocated flags are read and
+            # decremented under the same lock that guards the order.
+            for item in order.items.select_for_update():
                 # If stock was allocated but not yet fulfilled, release it
                 if item.stock_allocated and not item.stock_fulfilled and item.warehouse:
                     try:
@@ -182,11 +207,14 @@ class OrderService:
                             f"Released stock for {item.sku} at {item.warehouse.code} "
                             f"(Order: {order.order_number})"
                         )
-                    except Exception as e:
-                        logger.error(
-                            f"Failed to release stock for {item.sku} at {item.warehouse.code}: {e}"
+                    except Exception:
+                        # Re-raise so the atomic transaction rolls back: the item
+                        # must stay stock_allocated and the order must not be
+                        # marked cancelled while inventory is still reserved.
+                        logger.exception(
+                            f"Failed to release stock for {item.sku} at {item.warehouse.code}"
                         )
-                        # Continue with cancellation even if stock release fails
+                        raise
                 elif item.stock_fulfilled:
                     # Stock already fulfilled (shipped) - cannot automatically restore
                     # This would need manual inventory adjustment
@@ -267,7 +295,8 @@ class OrderService:
                     product=product, quantity=order_item.quantity, region=region, variant=variant
                 )
 
-                if not availability["available"]:
+                # Pre-order/backorder products can be re-ordered without stock.
+                if not availability["available"] and not product.can_sell_without_stock():
                     if variant:
                         items_unavailable.append(
                             f"{order_item.product_name} - {order_item.variant_name} (out of stock)"
@@ -339,7 +368,7 @@ class OrderService:
         # Add status update note
         if notes:
             status_note = f"\n\n[Status updated by {user.username} on {timezone.now()}]\n{old_status} → {new_status}\n{notes}"
-            order.notes += status_note
+            order.notes = (order.notes or "") + status_note
 
         order.save()
 
@@ -361,11 +390,10 @@ class OrderService:
         if order.user != user and not user.is_staff:
             return None
 
-        # Calculate estimated delivery (placeholder - should integrate with shipping provider)
+        # Use the order's stored estimated delivery date if available
         estimated_delivery = None
-        if order.status == "shipped" and order.tracking_number:
-            # This is a placeholder - real implementation would call shipping API
-            estimated_delivery = (timezone.now() + timedelta(days=3)).date().isoformat()
+        if order.status == "shipped" and order.tracking_number and order.estimated_delivery_date:
+            estimated_delivery = order.estimated_delivery_date.isoformat()
 
         return {
             "order_number": order.order_number,
@@ -387,7 +415,7 @@ class OrderService:
                 {
                     "status": "processing",
                     "date": order.updated_at.isoformat() if order.status != "pending" else None,
-                    "completed": order.status not in ["pending"],
+                    "completed": order.status in ["processing", "shipped", "delivered"],
                 },
                 {
                     "status": "shipped",

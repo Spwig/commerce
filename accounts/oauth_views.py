@@ -145,14 +145,16 @@ def oauth_provider_wizard(request, provider_type):
         defaults={"display_name": provider_config["display_name"], "enabled": False},
     )
 
-    # Get existing social app if any
-    try:
-        social_app = SocialApp.objects.get(provider=provider_type)
-    except SocialApp.DoesNotExist:
-        social_app = None
-
     # Get current site
     site = Site.objects.get_current()
+
+    # Get existing social app if any. SocialApp does not enforce provider
+    # uniqueness, so there may be more than one row per provider; prefer the
+    # one attached to the current site, falling back to any match.
+    social_app = (
+        SocialApp.objects.filter(provider=provider_type, sites=site).first()
+        or SocialApp.objects.filter(provider=provider_type).first()
+    )
 
     # Handle form submission
     if request.method == "POST":

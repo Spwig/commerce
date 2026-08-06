@@ -30,9 +30,9 @@ Ao criar um token, você escolhe um tipo que descreve seu propósito. O tipo é 
 
 ## Escopos da API: controlando o que um token pode acessar
 
-Cada token também tem uma seção **Escopos da API** que decide exatamente quais partes de sua loja ele é autorizado a chamar. Em vez de um token ter acesso abrangente a tudo, você concede acesso uma área de cada vez — e no nível que a integração realmente precisa.
+Cada token também tem uma seção **Escopos da API** que decide exatamente quais partes de sua loja ele é permitido chamar. Em vez de um token ter acesso abrangente a tudo, você concede acesso uma área de cada vez — e no nível que a integração realmente precisa.
 
-**Um token sem escopos selecionados não pode acessar nenhuma API**, mesmo que esteja ativo e válido. Isso é o padrão para um novo token, então uma integração não funcionará até que você conceda intencionalmente acesso a ela.
+**Um token sem escopos selecionados não pode acessar nenhuma API**, mesmo que ele esteja ativo e válido. Isso é o padrão para um novo token, então uma integração não funcionará até que você conceda intencionalmente acesso a ela.
 
 Para cada escopo, você escolhe um dos três níveis de acesso:
 
@@ -46,8 +46,8 @@ Os escopos são agrupados para corresponder às áreas do seu painel de administ
 
 | Grupo | Escopo | Leitura e Escrita disponível? | Concede acesso a |
 |-------|-------|:---:|-------------------|
-| Análise | **Análise de Vendas** | Apenas Leitura | Dashboards de vendas, KPIs, análises de produtos/clientes/categorias, comparações e exportações |
-| Análise | **Análise Web** | Apenas Leitura | Análises de visitantes e tráfego: visão geral, tendências, páginas mais visitadas, geografia e referências |
+| Análises | **Análises de Vendas** | Apenas Leitura | Dashboards de vendas, KPIs, análises de produtos/clientes/categorias, comparações e exportações |
+| Análises | **Análises Web** | Apenas Leitura | Análises de visitantes e tráfego: visão geral, tendências, páginas mais visitadas, geografia e referências |
 | Catálogo | **Produtos** | Sim | Produtos, variantes, imagens, ajustes de estoque e atribuição de atributos |
 | Catálogo | **Categorias** | Sim | Categorias de produtos, incluindo imagens e banners |
 | Catálogo | **Marcas** | Sim | Marcas de produtos |
@@ -58,20 +58,20 @@ Os escopos são agrupados para corresponder às áreas do seu painel de administ
 | Loja e Configurações | **Configurações da Loja** | Sim | Configurações da loja, idiomas disponíveis e branding (nome, cores, logotipo) |
 | Usuários e Acesso | **Funcionários e Papéis** | Sim | Contas de funcionários, convites, papéis e catálogo de permissões |
 
-Os dois escopos de **Análise** são sempre somente leitura — os dados de relatório não têm um conceito de "escrita", então o seletor oferece apenas **Nenhum acesso** ou **Leitura** para eles.
+Os dois escopos **Análises** são sempre somente leitura — os dados de relatório não têm um conceito de "escrita", então o seletor oferece apenas **Nenhum acesso** ou **Leitura** para eles.
 
-[![O seletor de escopo da API, com uma nota de acesso acima dos grupos de escopo Analytics e Catalog](/static/core/admin/img/help/api-tokens/api-token-scope-picker.webp)]
+[![O seletor de escopo da API, com uma nota de acesso acima dos grupos de escopo de Análise e Catálogo](/static/core/admin/img/help/api-tokens/api-token-scope-picker.webp)]
 
 Abaixo do seletor de escopo, uma visão geral de **"Este token pode acessar:"** somente leitura lista cada escopo que você concedeu e seu nível, para que você possa verificar rapidamente o acesso do token sem decodificar o seletor.
 
-[![A visão geral de "Este token pode acessar" listando cada escopo concedido e seu nível de Leitura ou Leitura & Escrita](/static/core/admin/img/help/api-tokens/api-token-scope-summary.webp)]
+![A visão geral de "Este token pode acessar" listando cada escopo concedido e seu nível de Leitura ou Leitura & Escrita](/static/core/admin/img/help/api-tokens/api-token-scope-summary.webp)
 
 ### Quais permissões um token realmente usa
 
 Os escopos de um token descrevem o *teto* do que ele pode fazer — mas o token também herda as permissões reais do membro da equipe que o criou:
 
 - O token nunca pode agir com poderes de **superusuário**, mesmo que o membro da equipe que o criou seja um superusuário.
-- **Leitura & Escrita** em um escopo só funciona se o papel do membro da equipe que o criou também permitir acesso de escrita a essa área. Se seu papel for apenas visualização, por exemplo, para Produtos, um token que ele criar com "Produtos: Leitura & Escrita" ainda só poderá ler — o papel atua como uma segunda porta acima do escopo.
+- **Leitura & Escrita** em um escopo só funciona se o papel do membro da equipe que o criou também permitir acesso de escrita a essa área. Se seu papel for somente leitura para, digamos, Produtos, um token que ele criar com "Produtos: Leitura & Escrita" ainda só poderá ler — o papel atua como uma segunda porta acima do escopo.
 - Se o membro da equipe que criou um token for excluído ou sua conta for desativada, o token perde imediatamente o acesso à API, independentemente de seus escopos — não há mais um usuário permitido para ele agir.
 
 Isso significa que a maneira mais segura de limitar os escopos de um token é criá-lo enquanto estiver logado como um membro da equipe cujo próprio papel já corresponda ao acesso que você deseja que o token tenha.
@@ -80,7 +80,7 @@ Isso significa que a maneira mais segura de limitar os escopos de um token é cr
 
 1. Navegue até **Configurações > Tokens de API**
 2. Clique em **+ Adicionar Token de API**
-3. Insira um **Nome** que descreva claramente para o que o token é usado (ex: `Zapier Sincronização de Produtos` ou `API do Sistema de Ajuda`)
+3. Insira um **Nome** que descreva claramente para o que o token é usado (ex.: `Zapier Sincronização de Produtos` ou `API do Sistema de Ajuda`)
 4. Selecione o tipo de **Token apropriado**
 5. Adicione opcionalmente uma **Descrição** com mais detalhes sobre a integração
 6. Em **Escopos de API**, escolha **Nenhum acesso**, **Leitura** ou **Leitura & Escrita** para cada área que a integração necessita — deixe todos os outros escopos em **Nenhum acesso**
@@ -89,11 +89,11 @@ Isso significa que a maneira mais segura de limitar os escopos de um token é cr
 
 Após salvar, o valor completo do token é exibido na página de detalhes. **Copie-o imediatamente** — o token é mascarado na visão de lista por segurança e não pode ser recuperado novamente após você sair dessa página.
 
-[![Detalhes do Token de API](/static/core/admin/img/help/api-tokens/api-token-detail.webp)]
+![Detalhes do Token de API](/static/core/admin/img/help/api-tokens/api-token-detail.webp)
 
 ## Segurança do valor do token
 
-O Spwig exibe o valor completo do token apenas uma vez: imediatamente após você salvar um novo token. Após isso, a visão de lista mostra apenas uma versão mascarada (ex: `spw_••••••••••••••••••••3f8a`).
+O Spwig exibe o valor completo do token apenas uma vez: imediatamente após você salvar um novo token. Após isso, a visão de lista mostra apenas uma versão mascarada (ex.: `spw_••••••••••••••••••••3f8a`).
 
 Se você perder o valor de um token, não será possível recupera-lo. Você precisará excluir o token antigo e criar um novo, depois atualizar a integração que estava usando-o.
 
@@ -109,17 +109,17 @@ Datas de expiração são úteis para:
 - Tokens fornecidos a terceiros onde você deseja a remoção automática do acesso
 - Adicionar uma camada extra de segurança a integrações de alto privilégio
 
-Quando um token expira, as solicitações que o usarem serão rejeitadas. Você pode estender o acesso atualizando a data **Expira em** ou criando um token de substituição.
+Quando um token expira, as solicitações que o usam são rejeitadas. Você pode estender o acesso atualizando a data **Expira em** ou criando um token de substituição.
 
 ## Restringindo a endereços IP específicos
 
 O campo **IPs Permitidos** aceita uma lista de endereços IP. Quando a lista não estiver vazia, o token só funcionará quando a solicitação vier de um desses endereços.
 
-Por exemplo, se sua ferramenta de análise rodar em um servidor em `203.0.113.42`, adicionar esse IP significa que o token não pode ser mal utilizado de qualquer outro local, mesmo que ele seja vazado.
+Por exemplo, se sua ferramenta de análise rodar em um servidor em `203.0.113.42`, adicionar esse IP significa que o token não pode ser mal utilizado de nenhum outro local, mesmo que ele seja vazado.
 
 Deixe **IPs Permitidos** vazio para permitir solicitações de qualquer endereço IP.
 
-**A expiração e as restrições de IP são verificadas independentemente das permissões.** Um token expirado ou fora da lista de IPs permitidos é rejeitado antes que suas permissões sequer sejam consideradas, e um token com permissões generosas ainda é rejeitado no momento em que expira ou é chamado de um IP não listado.
+**A expiração e as restrições de IP são verificadas independentemente das permissões.** Um token expirado ou não listado na lista de IPs permitidos é rejeitado antes que suas permissões sejam sequer consideradas, e um token com permissões generosas ainda é rejeitado no momento em que expira ou é chamado de um IP não listado.
 
 ## Chamando a API com um token
 
@@ -131,9 +131,9 @@ Authorization: Bearer <seu-valor-de-token>
 
 Todos os endpoints da API de administração estão localizados em `/api/admin/...`. O desenvolvedor que está construindo sua integração decide quais endpoints chamar — sua tarefa como comerciante é garantir que o token tenha **Permissões da API** que cubram esses endpoints. Se uma solicitação for rejeitada com um erro de permissão, a primeira coisa a verificar é se o token foi concedido a permissão correta no nível de acesso correto.
 
-### Exemplo: lendo análise de tráfego da web
+### Exemplo: lendo análises de tráfego da web
 
-O Spwig expõe um endpoint `GET /api/admin/analytics/traffic/` que retorna análise de visitantes e tráfego para sua loja — uma visão geral de visitas e visitantes únicos, tendências ao longo do tempo, páginas mais acessadas, geografia dos visitantes e fontes de referência. Para permitir que uma ferramenta de relatórios ou painel de controle leia esses dados:
+O Spwig expõe um endpoint `GET /api/admin/analytics/traffic/` que retorna análises de visitantes e tráfego para sua loja — uma visão geral de visitas e visitantes únicos, tendências ao longo do tempo, páginas mais acessadas, geografia dos visitantes e fontes de referência. Para permitir que uma ferramenta de relatórios ou painel de controle leia esses dados:
 
 1. Crie um token (ou edite um existente) para essa integração
 2. Em **Permissões da API**, defina **Análise de Web** para **Leitura**
@@ -148,7 +148,7 @@ A lista de tokens mostra:
 - **Contagem de Uso** — número total de vezes que o token foi usado
 - **Último Uso** — quando o token foi usado pela última vez para fazer uma solicitação
 
-Esses campos ajudam você a identificar tokens não utilizados (candidatos para revogação) e detectar atividade inesperada. Um aumento súbito na contagem de uso pode indicar que o token está sendo usado por alguém diferente da integração pretendida.
+Esses campos ajudam você a identificar tokens não usados (candidatos para revogação) e detectar atividade inesperada. Um aumento súbito na contagem de uso pode indicar que o token está sendo usado por alguém diferente da integração pretendida.
 
 ## Revogando um token
 
@@ -163,12 +163,12 @@ O token permanece em sua lista para referência, mas é rejeitado em qualquer so
 Para remover permanentemente um token:
 
 1. Selecione sua caixa de seleção na lista
-2. Escolha **Excluir os tokens de API selecionados** no menu de ações
+2. Escolha **Excluir os tokens da API selecionados** no menu de ações
 3. Confirme a exclusão
 
 Uma vez excluído, um token não pode ser recuperado. Se a integração ainda precisar de acesso, crie um novo token e atualize a configuração da integração.
 
-## Exemplo: configurando uma integração Zapier
+## Exemplo: configurando uma integração do Zapier
 
 **Cenário:** Você deseja conectar sua loja ao Zapier para automatizar notificações de pedidos.
 
@@ -190,7 +190,7 @@ Preserve todos os formatos de marcação, caminhos de imagem, blocos de código 
 
 - Dê a cada token um nome claro e específico — `Shopify Sync v2` é muito mais útil do que `Token 3` quando você estiver solucionando problemas meses depois
 - Crie um token por integração — se uma integração for comprometida, você pode revogar apenas esse token sem atrapalhar as outras
-- **Conceda apenas os escopos que a integração realmente precisa** — uma ferramenta de relatórios precisa apenas de acesso de Leitura a Analytics de Vendas ou Web Analytics, e não de Leitura e Escrita em Produtos ou Funcionários & Papéis
+- **Conceda apenas os escopos que a integração realmente precisa** — uma ferramenta de relatórios precisa apenas de acesso de Leitura a Analytics de Vendas ou Web Analytics, e não de Leitura e Escrita em Produtos ou Pessoal & Papéis
 - Verifique a **"Este token pode acessar:"** no formulário de alteração antes de entregar um token a uma terceira parte — é a forma mais rápida de confirmar que você não concedeu mais do que o planejado
 - Lembre-se de que o acesso de escrita também depende do próprio papel do membro da equipe que criou o token — se um escopo mostra Leitura & Escrita, mas as escritas ainda estão falhando, verifique também as permissões do papel desse usuário
 - Defina uma data de expiração para tokens usados em projetos únicos ou integrações temporárias — isso reduz o risco de tokens esquecidos permanecerem ativos indefinidamente

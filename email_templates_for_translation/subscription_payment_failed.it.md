@@ -25,7 +25,7 @@ category: Subscriptions
           ⚠️ Pagamento fallito
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          Non possiamo processare il tuo pagamento
+          Non siamo riusciti a elaborare il tuo pagamento
         </mj-text>
       </mj-column>
     </mj-section>
@@ -41,26 +41,28 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Plan:</strong> {{ plan_name }}
+                <strong>Piano:</strong> {{ plan_name }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Amount:</strong> {{ subscription_amount }}
+                <strong>Importo:</strong> {{ subscription_amount }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Payment Method:</strong> {{ payment_method }}
+                <strong>Metodo di pagamento:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
-                <strong>Reason:</strong> {{ failure_reason }}
+                <strong>Motivo:</strong> {{ failure_reason }}
               </mj-text>
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
                 Aggiorna il tuo metodo di pagamento entro {{ retry_date|date:"F d, Y" }} per evitare interruzioni del servizio.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          Cosa dovresti fare?
+          Cosa devi fare?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
           Verifica che il tuo metodo di pagamento abbia fondi sufficienti
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
           Aggiorna il tuo metodo di pagamento se la carta è scaduta
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Riproveremo automaticamente il pagamento in {{ retry_days }} giorni
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Provcheremo automaticamente il pagamento in {{ retry_days }} giorni
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -99,7 +103,7 @@ category: Subscriptions
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            Visualizza l'abbonamento
+            Visualizza la sottoscrizione
           </a>
         </mj-text>
       </mj-column>
@@ -133,23 +137,23 @@ category: Subscriptions
 ## Text Content
 ⚠️ Pagamento fallito
 
-Non possiamo processare il tuo pagamento
+Non siamo riusciti a elaborare il tuo pagamento
 
 INFORMAZIONI SUL PAGAMENTO:
-Plan: {{ plan_name }}
-Amount: {{ subscription_amount }}
-Payment Method: {{ payment_method }}
-Reason: {{ failure_reason }}
+Piano: {{ plan_name }}
+Importo: {{ subscription_amount }}
+Metodo di pagamento: {{ payment_method }}
+Motivo: {{ failure_reason }}
 
-Aggiorna il tuo metodo di pagamento entro {{ retry_date|date:"F d, Y" }} per evitare interruzioni del servizio.
+{% if retry_date %}Aggiorna il tuo metodo di pagamento entro {{ retry_date|date:"F d, Y" }} per evitare interruzioni del servizio.{% endif %}
 
-Cosa dovresti fare?
+Cosa devi fare?
 1. Verifica che il tuo metodo di pagamento abbia fondi sufficienti
 2. Aggiorna il tuo metodo di pagamento se la carta è scaduta
-3. Riproveremo automaticamente il pagamento in {{ retry_days }} giorni
+{% if retry_days %}3. Provcheremo automaticamente il pagamento in {{ retry_days }} giorni{% endif %}
 
 Aggiorna il metodo di pagamento: {{ update_payment_url }}
-Visualizza l'abbonamento: {{ manage_subscription_url }}
+Visualizza la sottoscrizione: {{ manage_subscription_url }}
 
 Hai bisogno di aiuto? Contattaci a {{ support_email }}
 

@@ -27,7 +27,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-primary, #3b82f6);
+  background: var(--button-bg, #3b82f6);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -90,8 +90,8 @@
 
 .variant-row:hover {
   background: var(--selected-bg, #e8f0fe);
-  border-color: var(--accent-primary, #3b82f6);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: var(--button-bg, #3b82f6);
+  box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .variant-row-inactive {
@@ -177,7 +177,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -220,18 +220,18 @@
 }
 
 .variant-stock-badge.stock-in {
-  background: #dcfce7;
-  color: #166534;
+  background: color-mix(in srgb, var(--success-fg) 15%, transparent);
+  color: var(--success-fg);
 }
 
 .variant-stock-badge.stock-low {
-  background: #fef3c7;
-  color: #92400e;
+  background: color-mix(in srgb, var(--warning-fg) 15%, transparent);
+  color: var(--warning-fg);
 }
 
 .variant-stock-badge.stock-out {
-  background: #fee2e2;
-  color: #991b1b;
+  background: color-mix(in srgb, var(--error-fg) 15%, transparent);
+  color: var(--error-fg);
 }
 
 /* Actions column */
@@ -264,12 +264,12 @@
 }
 
 .variant-row-edit:hover {
-  background: var(--accent-primary, #3b82f6);
+  background: var(--button-bg, #3b82f6);
   color: #fff;
 }
 
 .variant-row-delete:hover {
-  background: #ef4444;
+  background: var(--delete-button-bg);
   color: #fff;
 }
 
@@ -296,7 +296,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--shadow-dark);
 }
 
 .variant-modal-header {
@@ -351,13 +351,13 @@
 }
 
 .variant-modal-save-btn {
-  background: var(--accent-primary, #3b82f6) !important;
+  background: var(--button-bg, #3b82f6) !important;
   color: #fff !important;
   border: none !important;
 }
 
 .variant-modal-save-btn:hover {
-  background: #2563eb !important;
+  background: var(--button-hover-bg) !important;
 }
 
 .variant-modal-save-btn:disabled {
@@ -400,7 +400,7 @@
 }
 
 .variant-modal-section h4 i {
-  color: var(--accent-primary, #3b82f6);
+  color: var(--button-bg, #3b82f6);
   font-size: 0.9rem;
 }
 
@@ -426,7 +426,7 @@
 }
 
 .variant-modal-field label .required {
-  color: #ef4444;
+  color: var(--error-fg);
 }
 
 .variant-modal-field input[type='text'],
@@ -446,8 +446,8 @@
 .variant-modal-field input:focus,
 .variant-modal-field select:focus {
   outline: none;
-  border-color: var(--accent-primary, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--button-bg, #3b82f6);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
 .variant-modal-field-checkbox {
@@ -486,7 +486,7 @@
 }
 
 .variant-modal-attr-label .required {
-  color: #ef4444;
+  color: var(--error-fg);
 }
 
 .variant-modal-attr-values {
@@ -509,13 +509,13 @@
 }
 
 .variant-attr-option:hover {
-  border-color: var(--accent-primary, #3b82f6);
+  border-color: var(--button-bg, #3b82f6);
 }
 
 .variant-attr-option.selected {
-  border-color: var(--accent-primary, #3b82f6);
-  background: rgba(59, 130, 246, 0.06);
-  box-shadow: 0 0 0 1px var(--accent-primary, #3b82f6);
+  border-color: var(--button-bg, #3b82f6);
+  background: color-mix(in srgb, var(--button-bg) 6%, transparent);
+  box-shadow: 0 0 0 1px var(--button-bg, #3b82f6);
 }
 
 .variant-attr-option input[type='checkbox'] {
@@ -526,7 +526,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.12);
+  border: 2px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -605,7 +605,7 @@
 }
 
 .variant-modal-image-card .image-card-delete:hover {
-  color: #ef4444;
+  color: var(--error-fg);
 }
 
 .variant-modal-image-card .image-card-preview {
@@ -716,8 +716,8 @@
 
 .variant-stock-table input:focus {
   outline: none;
-  border-color: var(--accent-primary, #3b82f6);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  border-color: var(--button-bg, #3b82f6);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
 .variant-stock-table .stock-allocated,
@@ -743,7 +743,7 @@
   transform: translateY(-20px);
   opacity: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px var(--shadow-dark);
 }
 
 .variant-notification.visible {
@@ -752,15 +752,15 @@
 }
 
 .variant-notification.success {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
+  background: color-mix(in srgb, var(--success-fg) 15%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 40%, transparent);
 }
 
 .variant-notification.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  background: color-mix(in srgb, var(--error-fg) 15%, transparent);
+  color: var(--error-fg);
+  border: 1px solid color-mix(in srgb, var(--error-fg) 40%, transparent);
 }
 
 /* ===== Help Text ===== */
@@ -775,101 +775,19 @@
 }
 
 .text-error {
-  color: #dc2626;
+  color: var(--error-fg);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* ========================================================================
-   Dark Mode
-   ======================================================================== */
-
-[data-theme='dark'] .variant-row {
-  background: var(--darkened-bg, #1e293b);
-  border-color: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-row:hover {
-  background: var(--selected-bg, #1e3a5f);
-  border-color: var(--accent-primary, #60a5fa);
-}
-
-[data-theme='dark'] .variant-row-name {
-  color: var(--body-fg, #e2e8f0);
-}
-
-[data-theme='dark'] .variant-attr-pill {
-  background: var(--selected-bg, #1e3a5f);
-  color: var(--body-fg, #e2e8f0);
-}
-
-[data-theme='dark'] .variant-stock-badge.stock-in {
-  background: #064e3b;
-  color: #6ee7b7;
-}
-
-[data-theme='dark'] .variant-stock-badge.stock-low {
-  background: #78350f;
-  color: #fbbf24;
-}
-
-[data-theme='dark'] .variant-stock-badge.stock-out {
-  background: #7f1d1d;
-  color: #fca5a5;
-}
-
-[data-theme='dark'] .variant-modal {
-  background: var(--body-bg, #1e293b);
-}
-
-[data-theme='dark'] .variant-modal-header,
-[data-theme='dark'] .variant-modal-footer {
-  border-color: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-modal-section {
-  border-color: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-attr-option {
-  background: var(--darkened-bg, #1e293b);
-  border-color: var(--border-color, #475569);
-}
-
-[data-theme='dark'] .variant-attr-option.selected {
-  background: rgba(96, 165, 250, 0.1);
-  border-color: var(--accent-primary, #60a5fa);
-}
-
-[data-theme='dark'] .variant-modal-image-card {
-  background: var(--darkened-bg, #1e293b);
-  border-color: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-modal-image-card .image-card-header {
-  background: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-stock-table th {
-  border-color: var(--border-color, #475569);
-}
-
-[data-theme='dark'] .variant-stock-table td {
-  border-color: var(--border-color, #334155);
-}
-
-[data-theme='dark'] .variant-notification.success {
-  background: #064e3b;
-  color: #6ee7b7;
-  border-color: #065f46;
-}
-
-[data-theme='dark'] .variant-notification.error {
-  background: #7f1d1d;
-  color: #fca5a5;
-  border-color: #991b1b;
-}
+/* Dark mode is driven entirely by the design tokens now: rows, modal, image
+   cards, attr options, tables and pills use --darkened-bg / --border-color /
+   --selected-bg / --body-bg / --body-fg / --button-bg (all flip via the admin
+   data-theme toggle), and the stock/notification status badges use color-mix
+   over --success-fg / --warning-fg / --error-fg, whose tints flip with the
+   tokens. The hand-authored [data-theme='dark'] overrides are therefore
+   redundant. */
 
 /* ========================================================================
    Responsive

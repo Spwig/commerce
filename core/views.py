@@ -7,7 +7,7 @@ import hmac
 import json
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 import jwt
@@ -242,8 +242,8 @@ def community_redirect(request):
         "name": user.get_full_name() or user.username,
         "merchant_id": merchant_id,
         "groups": groups,
-        "exp": datetime.utcnow() + timedelta(seconds=60),
-        "iat": datetime.utcnow(),
+        "exp": timezone.now() + timedelta(seconds=60),
+        "iat": timezone.now(),
     }
 
     try:
@@ -744,8 +744,8 @@ def sso_redirect(request):
         "is_superuser": user.is_superuser,
         # Token metadata
         "auth_type": "merchant",  # Identifies this as a merchant SSO auth
-        "iat": datetime.utcnow(),
-        "exp": datetime.utcnow() + timedelta(seconds=60),  # Short-lived
+        "iat": timezone.now(),
+        "exp": timezone.now() + timedelta(seconds=60),  # Short-lived
     }
 
     try:

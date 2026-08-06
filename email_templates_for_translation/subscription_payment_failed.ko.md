@@ -25,7 +25,7 @@ category: Subscriptions
           ⚠️ 결제 실패
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          결제를 처리할 수 없습니다
+          결제 처리에 실패했습니다
         </mj-text>
       </mj-column>
     </mj-section>
@@ -41,26 +41,28 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Plan:</strong> {{ plan_name }}
+                <strong>플랜:</strong> {{ plan_name }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Amount:</strong> {{ subscription_amount }}
+                <strong>금액:</strong> {{ subscription_amount }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Payment Method:</strong> {{ payment_method }}
+                <strong>결제 방법:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
-                <strong>Reason:</strong> {{ failure_reason }}
+                <strong>이유:</strong> {{ failure_reason }}
               </mj-text>
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                {{ retry_date|date:"F d, Y" }}까지 결제 수단을 업데이트하여 서비스 중단을 피하십시오.
+                {{ retry_date|date:"F d, Y" }}까지 결제 방법을 업데이트하지 않으면 서비스가 중단될 수 있습니다.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          무엇을 해야 할까요?
+          무엇을 해야 하나요?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          결제 수단에 충분한 자금이 있는지 확인하세요
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          결제 방법이 충분한 자금을 가지고 있는지 확인하십시오
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          카드가 만료된 경우 결제 수단을 업데이트하세요
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
+          카드가 만료된 경우 결제 방법을 업데이트하십시오
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          {{ retry_days }}일 후 자동으로 결제를 다시 시도할 것입니다
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          {{ retry_days }}일 후에 자동으로 결제를 재시도할 것입니다
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,7 +99,7 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          결제 수단 업데이트
+          결제 방법 업데이트
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          도움이 필요하시면 {{ support_email }}로 연락주세요
+          도움이 필요하신가요? {{ support_email }}에서 문의해주세요
         </mj-text>
       </mj-column>
     </mj-section>
@@ -122,7 +126,7 @@ category: Subscriptions
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Spwig에서 제공함
+            Spwig에서 제공
           </a>
         </mj-text>
       </mj-column>
@@ -133,25 +137,25 @@ category: Subscriptions
 ## Text Content
 ⚠️ 결제 실패
 
-결제를 처리할 수 없습니다
+결제 처리에 실패했습니다
 
 결제 정보:
-Plan: {{ plan_name }}
-Amount: {{ subscription_amount }}
-Payment Method: {{ payment_method }}
-Reason: {{ failure_reason }}
+플랜: {{ plan_name }}
+금액: {{ subscription_amount }}
+결제 방법: {{ payment_method }}
+이유: {{ failure_reason }}
 
-{{ retry_date|date:"F d, Y" }}까지 결제 수단을 업데이트하여 서비스 중단을 피하십시오.
+{% if retry_date %}{{ retry_date|date:"F d, Y" }}까지 결제 방법을 업데이트하지 않으면 서비스가 중단될 수 있습니다.{% endif %}
 
-무엇을 해야 할까요?
-1. 결제 수단에 충분한 자금이 있는지 확인하세요
-2. 카드가 만료된 경우 결제 수단을 업데이트하세요
-3. {{ retry_days }}일 후 자동으로 결제를 다시 시도할 것입니다
+무엇을 해야 하나요?
+1. 결제 방법이 충분한 자금을 가지고 있는지 확인하십시오
+2. 카드가 만료된 경우 결제 방법을 업데이트하십시오
+{% if retry_days %}3. {{ retry_days }}일 후에 자동으로 결제를 재시도할 것입니다{% endif %}
 
-결제 수단 업데이트: {{ update_payment_url }}
+결제 방법 업데이트: {{ update_payment_url }}
 구독 보기: {{ manage_subscription_url }}
 
-도움이 필요하시면 {{ support_email }}로 연락주세요
+도움이 필요하신가요? {{ support_email }}에서 문의해주세요
 
 ---
-Spwig에서 제공함 - https://spwig.com
+Spwig에서 제공 - https://spwig.com

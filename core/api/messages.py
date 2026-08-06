@@ -201,15 +201,25 @@ def submit_contact_form(request):
 
     data = serializer.validated_data
 
-    # Check for order if order_number provided
+    # Link an order only when the submitter is entitled to it. This endpoint is
+    # public, so linking purely by order_number let anyone attach support state
+    # to another customer's order. Link for the authenticated owner or staff, or
+    # for the browser that placed the order as a guest (session allow-list);
+    # otherwise the message is still created, just not attached to that order.
     order = None
     if data.get("order_number"):
         from orders.models import Order
 
         try:
-            order = Order.objects.get(order_number=data["order_number"])
+            candidate = Order.objects.get(order_number=data["order_number"])
         except Order.DoesNotExist:
-            pass  # Order not found - proceed without linking
+            candidate = None
+        if candidate is not None:
+            user = request.user if (request.user and request.user.is_authenticated) else None
+            is_owner_or_staff = user is not None and (candidate.user_id == user.id or user.is_staff)
+            in_session = data["order_number"] in request.session.get("guest_order_numbers", [])
+            if is_owner_or_staff or in_session:
+                order = candidate
 
     # Create the message
     forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", "")

@@ -5,6 +5,7 @@ Provides filtering capabilities for products
 
 import django_filters
 from django.db.models import F, Q
+from django.utils import timezone
 
 from .models import Category, Product
 
@@ -137,15 +138,25 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_has_discount(self, queryset, name, value):
         """
-        Filter products with active discounts
-        True = has discount (compare_at_price > price)
+        Filter products with an active discount.
+
+        A discount is the canonical sale_type/sale_value sale, active within its
+        optional date window (mirrors Product.is_on_sale / effective_price). There
+        is no compare_at_price field.
         """
-        if value:
-            return queryset.filter(compare_at_price__gt=F("price"))
-        else:
-            return queryset.filter(
-                Q(compare_at_price__isnull=True) | Q(compare_at_price__lte=F("price"))
-            )
+        now = timezone.now()
+        within_window = (Q(sale_start_date__isnull=True) | Q(sale_start_date__lte=now)) & (
+            Q(sale_end_date__isnull=True) | Q(sale_end_date__gte=now)
+        )
+        # Only count as a discount when the sale actually reduces the price
+        # (mirrors Product.has_discount: effective_price < price). amount_off /
+        # percentage_off always reduce for a positive value; a fixed_price only
+        # reduces when it is below the regular price.
+        reduces_price = (
+            Q(sale_type__in=["amount_off", "percentage_off"]) & Q(sale_value__gt=0)
+        ) | (Q(sale_type="fixed_price") & Q(sale_value__gt=0) & Q(sale_value__lt=F("price")))
+        active_sale = within_window & reduces_price
+        return queryset.filter(active_sale) if value else queryset.exclude(active_sale)
 
     def filter_min_rating(self, queryset, name, value):
         """

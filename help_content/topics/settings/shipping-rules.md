@@ -1,5 +1,3 @@
-# Shipping Rules
-
 ---
 slug: shipping-rules
 title_i18n_key: Shipping Rules

@@ -15,7 +15,7 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
 
     price_amount = serializers.SerializerMethodField()
     currency = serializers.SerializerMethodField()
-    available_stock = serializers.IntegerField(read_only=True)
+    available_stock = serializers.IntegerField(source="_available_stock", read_only=True)
     attributes = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
 
@@ -37,12 +37,12 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
         ]
 
     def get_price_amount(self, obj):
-        if obj.price:
+        if obj.price is not None:
             return str(obj.price.amount)
         return None
 
     def get_currency(self, obj):
-        if obj.price:
+        if obj.price is not None:
             return str(obj.price.currency)
         return None
 
@@ -59,7 +59,7 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
                 "value": av.value,
                 "color_hex": av.color_hex,
             }
-            for av in obj.selected_attributes.select_related("attribute").all()
+            for av in obj.selected_attributes.all()
         ]
 
     def get_image_url(self, obj):
@@ -94,6 +94,16 @@ class VariantCreateSerializer(serializers.Serializer):
         if ProductVariant.objects.filter(sku=value).exists():
             raise serializers.ValidationError(_("A variant with this SKU already exists."))
         return value
+
+    def validate_currency(self, value):
+        if not value:
+            return value
+        from moneyed import CURRENCIES
+
+        code = value.upper()
+        if code not in CURRENCIES:
+            raise serializers.ValidationError(_("Unsupported currency code."))
+        return code
 
     def validate_attribute_value_ids(self, value):
         if value:
@@ -133,6 +143,16 @@ class VariantUpdateSerializer(serializers.Serializer):
         if qs.exists():
             raise serializers.ValidationError(_("A variant with this SKU already exists."))
         return value
+
+    def validate_currency(self, value):
+        if not value:
+            return value
+        from moneyed import CURRENCIES
+
+        code = value.upper()
+        if code not in CURRENCIES:
+            raise serializers.ValidationError(_("Unsupported currency code."))
+        return code
 
     def validate_attribute_value_ids(self, value):
         if value:

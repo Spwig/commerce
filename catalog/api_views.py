@@ -72,12 +72,48 @@ from .serializers import (
     WarehouseSerializer,
 )
 
+SHIP_ONLY_PARAM = OpenApiParameter(
+    name="ship_only",
+    type=bool,
+    location=OpenApiParameter.QUERY,
+    required=False,
+    description=(
+        "When true (`1`), hide products not sold in the shopper's region instead "
+        "of returning them. By default (matching the storefront's "
+        "region_restricted_action) such products are returned and flagged via the "
+        "`ships_to_region` field so clients can mark them."
+    ),
+)
+
+
+def region_filtered_products(queryset, region, request=None):
+    """
+    Region-filter a product queryset for the catalog API, mirroring the
+    storefront listings: region-restricted products are hidden when the merchant
+    chooses ``region_restricted_action="hide"`` or the client passes
+    ``?ship_only=1``; otherwise they are kept (so clients can mark them via the
+    ``ships_to_region`` serializer field) while genuinely out-of-stock products
+    stay hidden via ``sellable_in_region``.
+    """
+    from catalog.models import StockDisplaySettings
+
+    params = getattr(request, "query_params", None) if request else None
+    if params is None:
+        params = getattr(request, "GET", {}) if request else {}
+    ship_only = params.get("ship_only") == "1"
+    action = StockDisplaySettings.get_settings().region_restricted_action
+    if ship_only or action == "hide":
+        return queryset.available_in_region(region)
+    return queryset.sellable_in_region(region)
+
 
 @extend_schema_view(
     list=extend_schema(tags=["Catalog"], summary=_("List all categories")),
     retrieve=extend_schema(tags=["Catalog"], summary=_("Get category details")),
     tree=extend_schema(tags=["Catalog"], summary=_("Get categories as tree structure")),
-    products=extend_schema(tags=["Catalog"], summary=_("Get products in category")),
+    products=extend_schema(
+        tags=["Catalog"], summary=_("Get products in category"), parameters=[SHIP_ONLY_PARAM]
+    ),
 )
 class CategoryViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
     """
@@ -211,39 +247,20 @@ class CategoryViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         return None
 
     def _filter_by_region(self, queryset, region):
-        """Filter products by region visibility and stock availability"""
-        from .models import ProductRegionVisibility
-
-        # Get products with no visibility rules (visible everywhere)
-        products_without_rules = queryset.exclude(
-            id__in=ProductRegionVisibility.objects.values_list("product_id", flat=True)
-        )
-
-        # Get products with explicit visibility=True for this region
-        products_with_visibility = queryset.filter(
-            region_visibility__region=region, region_visibility__is_visible=True
-        )
-
-        # Combine both querysets
-        visible_products = products_without_rules | products_with_visibility
-
-        # Filter to only products with stock in this region
-        products_with_stock = visible_products.filter(
-            Q(track_inventory=False)
-            | Q(
-                stock_items__warehouse__region=region,
-                stock_items__warehouse__is_active=True,
-                stock_items__on_hand__gt=0,
-            )
-        ).distinct()
-
-        return products_with_stock
+        """
+        Filter products by region visibility and stock availability, honouring
+        the merchant's hide/show setting and ?ship_only (see
+        region_filtered_products).
+        """
+        return region_filtered_products(queryset, region, self.request)
 
 
 @extend_schema_view(
     list=extend_schema(tags=["Catalog"], summary=_("List all brands")),
     retrieve=extend_schema(tags=["Catalog"], summary=_("Get brand details")),
-    products=extend_schema(tags=["Catalog"], summary=_("Get brand products")),
+    products=extend_schema(
+        tags=["Catalog"], summary=_("Get brand products"), parameters=[SHIP_ONLY_PARAM]
+    ),
 )
 class BrandViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
     """
@@ -319,33 +336,12 @@ class BrandViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         return None
 
     def _filter_by_region(self, queryset, region):
-        """Filter products by region visibility and stock availability"""
-        from .models import ProductRegionVisibility
-
-        # Get products with no visibility rules (visible everywhere)
-        products_without_rules = queryset.exclude(
-            id__in=ProductRegionVisibility.objects.values_list("product_id", flat=True)
-        )
-
-        # Get products with explicit visibility=True for this region
-        products_with_visibility = queryset.filter(
-            region_visibility__region=region, region_visibility__is_visible=True
-        )
-
-        # Combine both querysets
-        visible_products = products_without_rules | products_with_visibility
-
-        # Filter to only products with stock in this region
-        products_with_stock = visible_products.filter(
-            Q(track_inventory=False)
-            | Q(
-                stock_items__warehouse__region=region,
-                stock_items__warehouse__is_active=True,
-                stock_items__on_hand__gt=0,
-            )
-        ).distinct()
-
-        return products_with_stock
+        """
+        Filter products by region visibility and stock availability, honouring
+        the merchant's hide/show setting and ?ship_only (see
+        region_filtered_products).
+        """
+        return region_filtered_products(queryset, region, self.request)
 
 
 @extend_schema_view(
@@ -371,7 +367,9 @@ class ProductAttributeViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(tags=["Catalog"], summary=_("List all products")),
+    list=extend_schema(
+        tags=["Catalog"], summary=_("List all products"), parameters=[SHIP_ONLY_PARAM]
+    ),
     retrieve=extend_schema(tags=["Catalog"], summary=_("Get product details")),
     track_view=extend_schema(tags=["Catalog"], summary=_("Track product view")),
     featured=extend_schema(tags=["Catalog"], summary=_("Get featured products")),
@@ -458,10 +456,11 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
     def _filter_by_region(self, queryset, region):
         """
-        Filter products by region visibility and stock availability.
-        Delegates to ProductQuerySet.available_in_region() for centralized logic.
+        Filter products by region visibility and stock availability, honouring
+        the merchant's hide/show setting and ?ship_only (see
+        region_filtered_products).
         """
-        return queryset.available_in_region(region)
+        return region_filtered_products(queryset, region, self.request)
 
     def get_serializer_class(self):
         """Use detailed serializer for retrieve, list serializer for list"""

@@ -73,6 +73,12 @@ def recalculate_order_totals(order):
 
         applied_vouchers = AppliedVoucher.objects.filter(order=order).select_related("voucher")
 
+        # Gift cards accumulate across vouchers, so reset before the loop.
+        # Without this the field keeps a stale value after a gift card is
+        # removed, and overwriting (instead of accumulating) below would drop
+        # every gift card but the last when several are applied.
+        order.gift_card_discount = Money(0, order.subtotal.currency)
+
         for applied in applied_vouchers:
             voucher = applied.voucher
 
@@ -100,7 +106,7 @@ def recalculate_order_totals(order):
 
             elif voucher.discount_type == "gift_card":
                 # Gift card value
-                order.gift_card_discount = Money(voucher.discount_value, order.subtotal.currency)
+                order.gift_card_discount += Money(voucher.discount_value, order.subtotal.currency)
 
     except Exception as e:
         logger.warning(f"Error calculating voucher discounts for order {order.order_number}: {e}")

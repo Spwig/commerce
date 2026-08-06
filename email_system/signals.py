@@ -179,6 +179,14 @@ def send_order_status_emails(sender, instance, created, **kwargs):
     if created:
         return  # Handled by order confirmation signal
 
+    # Allow callers to suppress the automatic status-change notification for a
+    # specific save (e.g. bulk fulfillment with notify_customers=False). Consume
+    # the flag so it only suppresses this one save, not every later save on the
+    # same Order instance.
+    if getattr(instance, "_suppress_status_email", False):
+        instance._suppress_status_email = False
+        return
+
     # Check if status changed
     if not hasattr(instance, "_original_status"):
         return

@@ -8,7 +8,7 @@ encrypted credentials and configuration.
 import logging
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
 from payment_providers.utils.encryption import decrypt_credentials, encrypt_credentials
@@ -116,6 +116,13 @@ class PayoutProviderAccount(models.Model):
         verbose_name = _("Payout Provider Account")
         verbose_name_plural = _("Payout Provider Accounts")
         ordering = ["-is_default", "-is_active", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["provider_type"],
+                condition=models.Q(is_default=True),
+                name="unique_default_payout_provider_per_type",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.get_provider_type_display()})"
@@ -175,15 +182,33 @@ class PayoutProviderAccount(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        # Auto-set as default if it's the first active account for this provider
-        if self.is_active and not self.pk:
-            existing = PayoutProviderAccount.objects.filter(
-                provider_type=self.provider_type, is_active=True
-            ).exists()
-            if not existing:
-                self.is_default = True
+        with transaction.atomic():
+            # Auto-set as default when this provider type has no existing default,
+            # so a deactivated default doesn't leave the provider without one.
+            if self.is_active and not self.is_default:
+                has_default = (
+                    PayoutProviderAccount.objects.filter(
+                        provider_type=self.provider_type, is_default=True
+                    )
+                    .exclude(pk=self.pk)
+                    .exists()
+                )
+                if not has_default:
+                    self.is_default = True
+                    # Ensure the promotion is persisted even if a caller passes
+                    # update_fields that omits is_default.
+                    update_fields = kwargs.get("update_fields")
+                    if update_fields is not None and "is_default" not in update_fields:
+                        kwargs["update_fields"] = list(update_fields) + ["is_default"]
 
-        super().save(*args, **kwargs)
+            # Enforce a single default per provider type: atomically unset any
+            # existing default before promoting this account.
+            if self.is_default:
+                PayoutProviderAccount.objects.filter(
+                    provider_type=self.provider_type, is_default=True
+                ).exclude(pk=self.pk).update(is_default=False)
+
+            super().save(*args, **kwargs)
 
     def get_provider_instance(self):
         """

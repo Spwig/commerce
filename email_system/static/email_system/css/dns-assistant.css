@@ -50,8 +50,8 @@
 
 .domain-override-form input.form-control:focus {
   outline: none;
-  border-color: var(--primary, #4f46e5);
-  box-shadow: 0 0 0 3px var(--primary-fg, rgba(79, 70, 229, 0.1));
+  border-color: var(--link-fg, #4f46e5);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-fg, #4f46e5) 20%, transparent);
 }
 
 .domain-override-form .help-text {
@@ -89,7 +89,7 @@
 }
 
 .dns-check-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-light, rgba(0, 0, 0, 0.1));
 }
 
 /* Status-specific card borders */
@@ -104,7 +104,7 @@
 }
 
 .dns-check-card.dns-check-fail {
-  border-color: var(--error-fg-light, #dc3545);
+  border-color: var(--error-fg, #dc3545);
   background: var(--body-bg, #fff);
 }
 
@@ -147,23 +147,23 @@
 }
 
 .dns-status-badge.status-pass {
-  background: var(--success-fg, #28a745);
-  color: var(--button-fg, #fff);
+  background: color-mix(in srgb, var(--success-fg, #28a745) 12%, transparent);
+  color: var(--success-fg, #137333);
 }
 
 .dns-status-badge.status-warn {
-  background: var(--warning-fg, #ffc107);
-  color: var(--body-fg, #000);
+  background: color-mix(in srgb, var(--warning-fg, #ffc107) 12%, transparent);
+  color: var(--warning-fg, #b34700);
 }
 
 .dns-status-badge.status-fail {
-  background: var(--error-fg-light, #dc3545);
-  color: var(--button-fg, #fff);
+  background: color-mix(in srgb, var(--error-fg, #dc3545) 12%, transparent);
+  color: var(--error-fg, #c62828);
 }
 
 .dns-status-badge.status-error {
-  background: var(--body-quiet-color, #6c757d);
-  color: var(--button-fg, #fff);
+  background: color-mix(in srgb, var(--body-quiet-color, #6c757d) 12%, transparent);
+  color: var(--body-quiet-color, #5f6368);
 }
 
 /* DNS Check Message */
@@ -197,7 +197,7 @@
   border-radius: 3px;
   font-family: 'Monaco', 'Courier New', monospace;
   font-size: 0.85em;
-  color: var(--primary, #4f46e5);
+  color: var(--link-fg, #4f46e5);
   word-wrap: break-word;
   white-space: pre-wrap;
 }
@@ -226,7 +226,7 @@
   border-radius: 3px;
   font-family: 'Monaco', 'Courier New', monospace;
   font-size: 0.9em;
-  color: var(--primary, #4f46e5);
+  color: var(--link-fg, #4f46e5);
 }
 
 /* DNS Check Errors */
@@ -257,17 +257,17 @@
 }
 
 .dns-propagation .text-success {
-  color: #28a745;
+  color: var(--success-color, #28a745);
   font-weight: 600;
 }
 
 .dns-propagation .text-warning {
-  color: #ffc107;
+  color: var(--warning-color, #ffc107);
   font-weight: 600;
 }
 
 .dns-propagation .text-danger {
-  color: #dc3545;
+  color: var(--error-color, #dc3545);
   font-weight: 600;
 }
 
@@ -280,21 +280,21 @@
 }
 
 .alert-pass {
-  background: #d4edda;
-  border-left-color: #28a745;
-  color: #155724;
+  background: var(--message-success-bg, #d4edda);
+  border-left-color: var(--success-fg, #28a745);
+  color: var(--body-fg, #155724);
 }
 
 .alert-warn {
-  background: #fff3cd;
-  border-left-color: #ffc107;
-  color: #856404;
+  background: var(--message-warning-bg, #fff3cd);
+  border-left-color: var(--warning-fg, #ffc107);
+  color: var(--body-fg, #856404);
 }
 
 .alert-fail {
-  background: #f8d7da;
-  border-left-color: #dc3545;
-  color: #721c24;
+  background: var(--message-error-bg, #f8d7da);
+  border-left-color: var(--error-fg, #dc3545);
+  color: var(--body-fg, #721c24);
 }
 
 .dns-overall-status strong {
@@ -339,15 +339,15 @@
 }
 
 .alert-info {
-  background: #d1ecf1;
-  border-left-color: #17a2b8;
-  color: #0c5460;
+  background: var(--admin-info-bg, #d1ecf1);
+  border-left-color: var(--admin-info, #17a2b8);
+  color: var(--body-fg, #0c5460);
 }
 
 .alert-warning {
-  background: #fff3cd;
-  border-left-color: #ffc107;
-  color: #856404;
+  background: var(--message-warning-bg, #fff3cd);
+  border-left-color: var(--warning-fg, #ffc107);
+  color: var(--body-fg, #856404);
 }
 
 .alert strong {
@@ -405,7 +405,7 @@
   width: 30px;
   height: 30px;
   border: 3px solid var(--border-color, #dee2e6);
-  border-top-color: var(--primary, #4f46e5);
+  border-top-color: var(--link-fg, #4f46e5);
   border-radius: 50%;
   animation: dns-spinner 0.8s linear infinite;
 }
@@ -436,7 +436,7 @@
 }
 
 .dns-oneliner:hover {
-  background: var(--accent-bg, #f8f9fa);
+  background: var(--darkened-bg, #f8f9fa);
 }
 
 /* Status Colors */
@@ -453,7 +453,7 @@
 }
 
 .dns-oneliner-error {
-  border-left-color: var(--info-color, #17a2b8);
+  border-left-color: var(--admin-info, #17a2b8);
 }
 
 /* One-Liner Components */
@@ -478,7 +478,7 @@
 }
 
 .dns-oneliner-error .dns-oneliner-icon {
-  color: var(--info-color, #17a2b8);
+  color: var(--admin-info, #17a2b8);
 }
 
 .dns-oneliner-label {

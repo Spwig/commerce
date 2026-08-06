@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ {{ plan_name }} Ödemesi Başarısız - Eylem Gerekiyor - {{ shop_name }}
+⚠️ {{ plan_name }} için Ödeme Başarısızı - Eylem Gerekli - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -25,7 +25,7 @@ category: Subscriptions
           ⚠️ Ödeme Başarısız
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          Ödemenizi işlemek mümkün olmadı
+          Ödemenizi işlemek için yeterli değil
         </mj-text>
       </mj-column>
     </mj-section>
@@ -37,7 +37,7 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                Ödeme Bilgileri
+                Ödeme Bilgisi
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                {{ retry_date|date:"F d, Y" }} tarihine kadar ödeme yönteminizi güncelleyin, hizmet kesilmemesi için.
+                {{ retry_date|date:"F d, Y" }} tarihine kadar ödeme yöntemini güncellemelisiniz, aksi takdirde hizmet kesintisine uğrayabilirsiniz.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -71,23 +73,25 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
       <mj-column>
         <mj-text font-size="20px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
-          Ne Yapmanız Gerekiyor?
+          Ne Yapmalısınız?
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
           <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Ödeme yönteminizin yeterli bakiyeye sahip olduğundan emin olun
+          Ödeme yönteminde yeterli bakiye olup olmadığını kontrol edin
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
           <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
-          Kartın son kullanma tarihi geçmişse ödeme yönteminizi güncelleyin
+          Kartınızın süresi dolmuşsa ödeme yöntemini güncelleyin
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
           <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          {{ retry_days }} gün içinde ödeme otomatik olarak tekrar denenecektir
+          {{ retry_days }} gün içinde otomatik olarak ödeme denenecektir
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -99,7 +103,7 @@ category: Subscriptions
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            Abonelik Göster
+            Aboneliği Görüntüle
           </a>
         </mj-text>
       </mj-column>
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          Yardma mı gerekiyor? Bize {{ support_email }} adresinden ulaşın
+          Yardıma mı ihtiyacınız var? {{ support_email }} adresinden bize ulaşın
         </mj-text>
       </mj-column>
     </mj-section>
@@ -122,7 +126,7 @@ category: Subscriptions
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Spwig Tarafından Güçlendirildi
+            Spwig tarafından desteklenmektedir
           </a>
         </mj-text>
       </mj-column>
@@ -131,27 +135,27 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ Ödeme Başarısız
+⚠️ Ödeme Başarısızı
 
-Ödemenizi işlemek mümkün olmadı
+Ödemenizi işlemek için yeterli değil
 
-ÖDEME BİLGİLERİ:
+ÖDEME BİLGİSİ:
 Plan: {{ plan_name }}
 Tutar: {{ subscription_amount }}
 Ödeme Yöntemi: {{ payment_method }}
 Neden: {{ failure_reason }}
 
-{{ retry_date|date:"F d, Y" }} tarihine kadar ödeme yönteminizi güncelleyin, hizmet kesilmemesi için.
+{% if retry_date %}{{ retry_date|date:"F d, Y" }} tarihine kadar ödeme yöntemini güncellemelisiniz, aksi takdirde hizmet kesintisine uğrayabilirsiniz.{% endif %}
 
-Ne Yapmanız Gerekiyor?
-1. Ödeme yönteminizin yeterli bakiyeye sahip olduğundan emin olun
-2. Kartın son kullanma tarihi geçmişse ödeme yönteminizi güncelleyin
-3. {{ retry_days }} gün içinde ödeme otomatik olarak tekrar denenecektir
+Ne Yapmalısınız?
+1. Ödeme yönteminde yeterli bakiye olup olmadığını kontrol edin
+2. Kartınızın süresi dolmuşsa ödeme yöntemini güncelleyin
+{% if retry_days %}3. {{ retry_days }} gün içinde otomatik olarak ödeme denenecektir{% endif %}
 
 Ödeme Yöntemini Güncelle: {{ update_payment_url }}
-Abonelik Göster: {{ manage_subscription_url }}
+Aboneliği Görüntüle: {{ manage_subscription_url }}
 
-Yardma mı gerekiyor? Bize {{ support_email }} adresinden ulaşın
+Yardıma mı ihtiyacınız var? {{ support_email }} adresinden bize ulaşın
 
 ---
-Spwig Tarafından Güçlendirildi - https://spwig.com
+Spwig tarafından desteklenmektedir - https://spwig.com

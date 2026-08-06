@@ -61,6 +61,11 @@ UI_STRING_REGISTRY = {
     "common.or": gettext_noop("or"),
     "common.skip_to_main": gettext_noop("Skip to main content"),
     "common.sale": gettext_noop("Sale"),
+    "common.region_set_to": gettext_noop("We've set your region to"),
+    "common.region_picked_from_location": gettext_noop(
+        "We picked this from your location so you see the right products and prices. Not right? Choose your country."
+    ),
+    "common.region_keep_browsing": gettext_noop("Keep browsing"),
     "common.default": gettext_noop("Default"),
     # === Cart ===
     "cart.shopping_cart": gettext_noop("Shopping Cart"),
@@ -168,6 +173,8 @@ UI_STRING_REGISTRY = {
     ),
     # === Product Page ===
     "product.add_to_cart": gettext_noop("Add to Cart"),
+    "product.does_not_ship_to": gettext_noop("Does not ship to"),
+    "product.doesnt_ship_here": gettext_noop("This product doesn't ship to"),
     "product.or_checkout_with": gettext_noop("or checkout with"),
     "product.sku": gettext_noop("SKU"),
     "product.category": gettext_noop("Category"),
@@ -187,6 +194,9 @@ UI_STRING_REGISTRY = {
     "product.quantity": gettext_noop("Quantity"),
     "product.no_attributes_available": gettext_noop("No attributes available for this product."),
     # === Category Page ===
+    "category.some_products_dont_ship": gettext_noop("Some products don't ship to"),
+    "category.show_all_products": gettext_noop("Show all products"),
+    "category.show_only_ships_here": gettext_noop("Show only items that ship here"),
     "category.product_categories": gettext_noop("Product Categories"),
     "category.browse_collection": gettext_noop("Browse our collection of products"),
     "category.categories": gettext_noop("Categories"),
@@ -712,6 +722,8 @@ UI_STRING_REGISTRY = {
     "widgets.search_category": gettext_noop("Search category"),
     "widgets.all_categories": gettext_noop("All Categories"),
     "widgets.voice_search": gettext_noop("Voice search"),
+    "widgets.ship_to": gettext_noop("Ship to"),
+    "widgets.ship_to_choose": gettext_noop("Choose your shipping destination"),
     "widgets.submit_search": gettext_noop("Submit search"),
     "widgets.clear_search": gettext_noop("Clear search"),
     "widgets.close_search": gettext_noop("Close search"),
@@ -775,6 +787,110 @@ UI_STRING_REGISTRY = {
     "account.subject": gettext_noop("Subject"),
     "account.submitted": gettext_noop("Submitted"),
     "account.optional": gettext_noop("optional"),
+    # === Account: subscription self-service pages ===
+    "account.sub_cancel_subscription": gettext_noop("Cancel Subscription"),
+    "account.sub_my_subscriptions": gettext_noop("My Subscriptions"),
+    "account.sub_we_re_sorry_to_see_you_go": gettext_noop("We're sorry to see you go!"),
+    "account.sub_before_you_cancel_please_consider": gettext_noop(
+        "Before you cancel, please consider:"
+    ),
+    "account.sub_you_can_pause_your_subscription_instead": gettext_noop(
+        "You can pause your subscription instead"
+    ),
+    "account.sub_cancellation_may_result_in_loss_of_data_or_b": gettext_noop(
+        "Cancellation may result in loss of data or benefits"
+    ),
+    "account.sub_you_may_be_charged_for_the_current_billing_p": gettext_noop(
+        "You may be charged for the current billing period"
+    ),
+    "account.sub_cancel_at_period_end": gettext_noop("Cancel at period end"),
+    "account.sub_you_ll_continue_to_have_access_until": gettext_noop(
+        "You'll continue to have access until"
+    ),
+    "account.sub_cancel_immediately": gettext_noop("Cancel immediately"),
+    "account.sub_your_subscription_will_be_canceled_right_awa": gettext_noop(
+        "Your subscription will be canceled right away. You will lose access immediately."
+    ),
+    "account.sub_why_are_you_canceling": gettext_noop("Why are you canceling?"),
+    "account.sub_optional": gettext_noop("Optional"),
+    "account.sub_your_feedback_helps_us_improve_our_service": gettext_noop(
+        "Your feedback helps us improve our service..."
+    ),
+    "account.sub_plan": gettext_noop("Plan"),
+    "account.sub_billing_amount": gettext_noop("Billing Amount"),
+    "account.sub_next_billing_date": gettext_noop("Next Billing Date"),
+    "account.sub_member_since": gettext_noop("Member Since"),
+    "account.sub_keep_subscription": gettext_noop("Keep Subscription"),
+    "account.sub_subscription_details": gettext_noop("Subscription Details"),
+    "account.sub_details": gettext_noop("Details"),
+    "account.sub_price": gettext_noop("Price"),
+    "account.sub_started_on": gettext_noop("Started On"),
+    "account.sub_total_paid": gettext_noop("Total Paid"),
+    "account.sub_billing_cycles": gettext_noop("Billing Cycles"),
+    "account.sub_cancellation_scheduled": gettext_noop("Cancellation Scheduled:"),
+    "account.sub_your_subscription_will_end_on": gettext_noop("Your subscription will end on"),
+    "account.sub_billing_history": gettext_noop("Billing History"),
+    "account.sub_cycle": gettext_noop("Cycle"),
+    "account.sub_no_billing_history_yet": gettext_noop("No billing history yet"),
+    "account.sub_payment_method": gettext_noop("Payment Method"),
+    "account.sub_expires": gettext_noop("Expires"),
+    "account.sub_update_payment_method": gettext_noop("Update Payment Method"),
+    "account.sub_no_payment_method_on_file": gettext_noop("No payment method on file"),
+    "account.sub_manage_subscription": gettext_noop("Manage Subscription"),
+    "account.sub_pause_subscription": gettext_noop("Pause Subscription"),
+    "account.sub_resume_subscription": gettext_noop("Resume Subscription"),
+    "account.sub_manage_your_active_and_past_subscriptions": gettext_noop(
+        "Manage your active and past subscriptions"
+    ),
+    "account.sub_next_billing": gettext_noop("Next billing:"),
+    "account.sub_no_subscriptions_yet": gettext_noop("No subscriptions yet"),
+    "account.sub_you_don_t_have_any_subscriptions_browse_our": gettext_noop(
+        "You don't have any subscriptions. Browse our products to find subscription options."
+    ),
+    "account.sub_browse_products": gettext_noop("Browse Products"),
+    "account.sub_manage_payment_methods": gettext_noop("Manage Payment Methods"),
+    "account.sub_pause": gettext_noop("Pause"),
+    "account.sub_what_happens_when_you_pause": gettext_noop("What happens when you pause?"),
+    "account.sub_your_subscription_will_be_paused_immediately": gettext_noop(
+        "Your subscription will be paused immediately"
+    ),
+    "account.sub_you_will_not_be_charged_during_the_pause_per": gettext_noop(
+        "You will not be charged during the pause period"
+    ),
+    "account.sub_you_can_resume_your_subscription_at_any_time": gettext_noop(
+        "You can resume your subscription at any time"
+    ),
+    "account.sub_your_subscription_data_and_history_will_be_p": gettext_noop(
+        "Your subscription data and history will be preserved"
+    ),
+    "account.sub_current_plan": gettext_noop("Current Plan"),
+    "account.sub_scheduled_next_billing": gettext_noop("Scheduled Next Billing"),
+    "account.sub_resume": gettext_noop("Resume"),
+    "account.sub_what_happens_when_you_resume": gettext_noop("What happens when you resume?"),
+    "account.sub_your_subscription_will_be_reactivated_immedi": gettext_noop(
+        "Your subscription will be reactivated immediately"
+    ),
+    "account.sub_billing_will_resume_according_to_your_plan_s": gettext_noop(
+        "Billing will resume according to your plan schedule"
+    ),
+    "account.sub_you_ll_regain_full_access_to_all_subscriptio": gettext_noop(
+        "You'll regain full access to all subscription benefits"
+    ),
+    "account.sub_your_billing_history_will_be_preserved": gettext_noop(
+        "Your billing history will be preserved"
+    ),
+    "account.sub_paused_since": gettext_noop("Paused Since"),
+    "account.sub_update_payment": gettext_noop("Update Payment"),
+    "account.sub_current_payment_method": gettext_noop("Current Payment Method"),
+    "account.sub_select_a_saved_payment_method": gettext_noop("Select a saved payment method"),
+    "account.sub_note": gettext_noop("Note:"),
+    "account.sub_your_payment_method_will_be_updated_immediat": gettext_noop(
+        "Your payment method will be updated immediately. The new method will be used for all future billing cycles."
+    ),
+    "account.sub_no_payment_methods_available": gettext_noop("No payment methods available"),
+    "account.sub_please_add_a_payment_method_to_your_account": gettext_noop(
+        "Please add a payment method to your account first"
+    ),
     # === Cart (additional) ===
     # === Category (additional) ===
     "category.all_products": gettext_noop("All Products"),
@@ -1476,6 +1592,40 @@ UI_STRING_REGISTRY = {
     "elements.menu_not_available": gettext_noop("Menu not available"),
     "elements.image": gettext_noop("Image"),
     "elements.submit": gettext_noop("Submit"),
+    # === Subscriptions (Product buy box) ===
+    "product.purchase_options": gettext_noop("Purchase options"),
+    "product.one_time_purchase": gettext_noop("One-time purchase"),
+    "product.subscribe_and_save": gettext_noop("Subscribe & Save"),
+    "product.subscription": gettext_noop("Subscription"),
+    "product.choose_a_plan": gettext_noop("Choose a plan"),
+    "product.delivery_frequency": gettext_noop("Delivery frequency"),
+    "product.save": gettext_noop("Save"),
+    "product.day_free_trial": gettext_noop("day free trial"),
+    "product.setup_fee": gettext_noop("Setup fee"),
+    "product.cancel_anytime": gettext_noop("Cancel anytime"),
+    "product.cancel_minimum_commitment": gettext_noop("Minimum commitment applies"),
+    "product.cancel_end_of_period": gettext_noop("Cancel at the end of your billing period"),
+    "product.add_payment_at_checkout": gettext_noop("You'll add a payment method at checkout."),
+    # === Subscriptions (Checkout) ===
+    "checkout.subscription_account_required": gettext_noop("You need an account to subscribe."),
+    "checkout.subscription_sign_in": gettext_noop("Sign in"),
+    "checkout.recurring_billing_notice": gettext_noop(
+        "Your order includes a subscription. By placing this order you authorise recurring charges until you cancel."
+    ),
+    "checkout.recurring_billing_consent": gettext_noop(
+        "I agree to the recurring billing terms for the subscription items in my order."
+    ),
+    # === Subscriptions (JavaScript-rendered) ===
+    "js.subscription": gettext_noop("Subscription"),
+    "js.subscription_per_cycle": gettext_noop("{price} / {cadence}"),
+    "js.subscription_free_trial": gettext_noop("Includes a free trial"),
+    "js.sign_in_to_subscribe": gettext_noop("Please sign in to complete your subscription."),
+    "js.subscription_consent_required": gettext_noop(
+        "Please agree to the recurring billing terms to continue."
+    ),
+    "js.subscription_provider_unsupported": gettext_noop(
+        "This payment method can’t be used for subscriptions yet. Please choose another."
+    ),
 }
 
 

@@ -2,17 +2,17 @@
 title: Thẻ quà tặng
 ---
 
-Thẻ quà tặng là tiền mặt mà khách hàng có thể mua cho người khác hoặc cho chính họ, được gửi qua email dưới dạng mã quy đổi duy nhất. Bạn cũng có thể cấp một thẻ quà tặng trực tiếp từ trang quản trị mà không cần mua hàng của khách hàng.
+Thẻ quà tặng là tiền mặt mà khách hàng có thể mua cho người khác — hoặc cho chính họ — được gửi qua email dưới dạng mã đổi thưởng duy nhất. Bạn cũng có thể cấp một thẻ quà tặng trực tiếp từ trang quản trị mà không cần mua hàng của khách hàng.
 
 Việc bán thẻ quà tặng hiện đang được kích hoạt. Khi một khách hàng mua một thẻ, thẻ sẽ được tạo và gửi qua email tự động sau khi thanh toán của họ được xử lý — không bao giờ trước đó, vì vậy không ai nhận được mã cho một thanh toán sau đó thất bại.
 
-Một số điều cần biết trước khi bạn kích hoạt sản phẩm thẻ quà tặng:
+Một vài điều cần biết trước khi bạn kích hoạt sản phẩm thẻ quà tặng:
 
-- **Thẻ quà tặng là tiền, không phải là phiếu giảm giá.** Nó được trừ khỏi hóa đơn cuối cùng sau thuế và phí vận chuyển, và nó không làm giảm số thuế bạn phải nộp. Điều này ngược lại với phiếu giảm giá, vốn làm giảm giá hàng hóa.
-- **Các thẻ là một loại tiền tệ duy nhất.** Một thẻ được mua bằng euro chỉ có thể được sử dụng cho đơn hàng bằng euro. Nếu bạn bán hàng bằng nhiều loại tiền tệ, hãy tạo một sản phẩm thẻ quà tặng riêng biệt cho từng loại. Điều này bảo vệ bạn khỏi biến động tỷ giá trên số dư có thể không được sử dụng trong một năm.
-- **Thẻ quà tặng không thể được giảm giá.** Một phiếu giảm giá sẽ không áp dụng cho dòng thẻ quà tặng, vì việc bán 100 bảng Anh tiền tín dụng với giá 80 bảng Anh khiến bạn mất 20 bảng Anh mỗi lần.
+- **Thẻ quà tặng là tiền, không phải là phiếu giảm giá.** Nó được trừ khỏi hóa đơn cuối cùng sau thuế và phí vận chuyển, và nó không làm giảm số thuế bạn phải nộp. Điều này ngược lại với phiếu giảm giá, vốn làm giảm giá trị hàng hóa.
+- **Các thẻ là duy nhất theo loại tiền tệ.** Một thẻ được mua bằng euro chỉ có thể được sử dụng cho đơn hàng bằng euro. Nếu bạn bán hàng bằng nhiều loại tiền tệ, hãy tạo một sản phẩm thẻ quà tặng riêng biệt cho từng loại. Điều này bảo vệ bạn khỏi biến động tỷ giá trên số dư có thể không được sử dụng trong một năm.
+- **Thẻ quà tặng không thể được giảm giá.** Một phiếu giảm giá sẽ không áp dụng cho dòng thẻ quà tặng, vì việc bán 100 bảng Anh tiền mặt với giá 80 bảng Anh khiến bạn mất 20 bảng Anh mỗi lần.
 - **Một thẻ quà tặng không thể mua một thẻ quà tặng khác.** Điều này đóng lại một con đường mà người khác sử dụng để rửa tiền từ thẻ bị đánh cắp.
-- **Việc mua thẻ quà tặng không làm tăng điểm thưởng trung thành.** Các điểm thưởng được tích lũy khi thẻ được sử dụng để mua hàng hóa, vì vậy không ai có thể tích lũy hai lần cho cùng một khoản tiền.
+- **Việc mua thẻ quà tặng không làm tăng điểm thưởng trung thành.** Điểm thưởng được tính khi thẻ được sử dụng để mua hàng, vì vậy không ai có thể nhận điểm thưởng hai lần cho cùng một khoản tiền.
 
 ![Quản lý thẻ quà tặng](/static/core/admin/img/help/gift-cards/gift-card-list.webp)
 
@@ -44,32 +44,32 @@ Mọi thẻ quà tặng — dù cuối cùng sẽ được bán hoặc được 
 
 ### Bước 2: Xuất bản
 
-Xuất bản sản phẩm khi bạn sẵn sàng bán nó. Khách hàng có thể mua nó trực tiếp từ cửa hàng của bạn ngay lập tức, và thẻ sẽ được gửi qua email tự động sau khi thanh toán của họ được xử lý.
+Xuất bản sản phẩm khi bạn sẵn sàng bán nó. Khách hàng có thể mua nó từ cửa hàng của bạn ngay lập tức, và thẻ sẽ được gửi qua email tự động sau khi thanh toán của họ được xử lý.
 
-Sản phẩm này cũng là thứ bạn chọn khi cấp phát thẻ thủ công — vì vậy việc tạo một sản phẩm là đáng giá ngay cả khi bạn chỉ định sẽ tặng thẻ cho người khác.
+Sản phẩm này cũng là thứ bạn chọn khi cấp phát thẻ thủ công — vì vậy việc tạo một sản phẩm là đáng giá ngay cả khi bạn chỉ có kế hoạch tặng thẻ cho người khác.
 
 ## Tạo thẻ quà tặng thủ công
 
-Đây là cách duy nhất để tạo một thẻ quà tặng có số dư hiện tại, và nó hoạt động đầy đủ ngay hôm nay.
+Đây là cách duy nhất để tạo một thẻ quà tặng được tài trợ ngay lúc này, và nó hoạt động đầy đủ ngay hôm nay.
 
 1. Di chuyển đến **Sản phẩm > Thẻ quà tặng** và nhấp vào **+ Thêm Thẻ quà tặng**
 2. Chọn **Sản phẩm** — đây phải là một sản phẩm loại thẻ quà tặng hiện có (xem trên)
 3. Nhập **Giá trị ban đầu** — số dư bắt đầu, với số tiền bạn chọn. Khác với việc mua hàng của khách hàng, điều này không bị giới hạn bởi cài đặt mệnh giá của sản phẩm
-4. Tùy chọn đặt ngày **Hết hạn vào**, và để **Hoạt động** được chọn để thẻ có thể được quy đổi
+4. Tùy chọn đặt ngày **Hết hạn**, và để **Hoạt động** được chọn để thẻ có thể được đổi thưởng
 5. Điền vào phần **Người nhận**, phía dưới cùng trang:
-   - **Email người nhận** — bắt buộc; nơi email gửi sẽ được gửi đến
+   - **Email người nhận** — bắt buộc; nơi email giao hàng sẽ được gửi
    - **Tên người nhận**, **Tên người gửi**, và **Thông điệp cá nhân** — tất cả đều là tùy chọn
-   - **Gửi theo lịch trình vào lúc** — tùy chọn; để trống và gửi khi bạn sẵn sàng, hoặc đặt ngày/giờ trong tương lai (ví dụ: sinh nhật)
+   - **Thời gian gửi định sẵn** — tùy chọn; để trống và gửi khi bạn sẵn sàng, hoặc đặt ngày và giờ trong tương lai (ví dụ: sinh nhật)
 6. Nhấp vào **Lưu**
 
-Mã quy đổi được tạo tự động và số dư ban đầu được thiết lập từ Giá trị ban đầu — bạn không điền cả hai trong đó.
+Mã đổi thưởng được tạo tự động và số dư ban đầu được thiết lập từ Giá trị ban đầu — bạn không điền cả hai trong đó.
 
 
-**Lưu thẻ quà tặng không gửi email.** Để gửi nó, quay lại danh sách thẻ quà tặng, chọn ô kiểm của thẻ, chọn **Gửi email thẻ quà tặng** từ dropdown Hành động, và nhấn **Tiến hành**.
+**Lưu thẻ quà tặng không gửi email.** Để gửi nó, quay lại danh sách thẻ quà tặng, chọn ô kiểm của thẻ, chọn **Gửi email thẻ quà tặng** từ danh sách thả xuống Hành động, và nhấn **Tiến hành**.
 
 Hành động này cũng gửi lại email nếu bạn cần gửi lại sau này.
 
-## Quản lý Thẻ Quà Tặng trong Admin
+## Quản lý Thẻ Quà Tặng trong Quản trị
 
 Truy cập **Sản phẩm > Thẻ Quà Tặng** để quản lý tất cả các thẻ quà tặng:
 
@@ -78,7 +78,7 @@ Truy cập **Sản phẩm > Thẻ Quà Tặng** để quản lý tất cả các
 Tại đầu trang, bốn thẻ hiển thị các chỉ số chính:
 
 - **Tổng số Thẻ Quà Tặng** — Tổng số thẻ quà tặng đã phát hành
-- **Đang hoạt động** — Các thẻ hiện đang hoạt động và có số dư
+- **Đang hoạt động** — Các thẻ hiện đang hoạt động và có số dư khả dụng
 - **Tổng số dư** — Số dư còn lại tổng cộng trên tất cả các thẻ
 - **Đã sử dụng một phần** — Các thẻ đã được sử dụng một phần
 
@@ -87,7 +87,7 @@ Tại đầu trang, bốn thẻ hiển thị các chỉ số chính:
 Lọc các thẻ quà tặng theo:
 
 - **Tìm kiếm** — Tìm theo mã, email hoặc tên người nhận
-- **Trạng thái** — Đang hoạt động, Không hoạt động, Hết hạn, Đã sử dụng hết hoặc Đã sử dụng một phần
+- **Trạng thái** — Hoạt động, Không hoạt động, Hết hạn, Đã sử dụng hết hoặc Đã sử dụng một phần
 - **Số dư** — Có số dư hoặc Số dư bằng 0
 - **Tạo** — Khoảng thời gian (Hôm nay, Tuần này, Tháng này, Năm này)
 
@@ -104,8 +104,8 @@ Mỗi thẻ quà tặng hiển thị:
 
 ### Hành động
 
-- Nhấp vào một thẻ quà tặng để **sửa** chi tiết và xem **lịch sử giao dịch** đầy đủ, được hiển thị trực tiếp trên cùng trang
-- Chọn một hoặc nhiều thẻ và sử dụng dropdown **Hành động** để **Gửi email thẻ quà tặng** (gửi hoặc gửi lại email giao hàng) hoặc **Đánh dấu các thẻ quà tặng đã chọn là không hoạt động** (tắt — số dư được giữ lại nhưng thẻ không thể được sử dụng nữa)
+- Nhấp vào một thẻ quà tặng để **sửa đổi** chi tiết và xem **lịch sử giao dịch** đầy đủ, được hiển thị trực tiếp trên cùng trang
+- Chọn một hoặc nhiều thẻ và sử dụng danh sách thả xuống **Hành động** để **Gửi email thẻ quà tặng** (gửi hoặc gửi lại email giao hàng) hoặc **Đánh dấu các thẻ quà tặng đã chọn là không hoạt động** (tắt — số dư được giữ lại nhưng thẻ không thể được sử dụng nữa)
 
 ## Việc sử dụng Thẻ Quà Tặng Hôm Nay
 
@@ -117,28 +117,28 @@ Mỗi thẻ quà tặng hiển thị:
 4. Nếu số dư không đủ để thanh toán toàn bộ giao dịch, khách hàng sẽ thanh toán phần còn lại bằng cách khác
 5. Số dư được trừ và giao dịch được ghi lại
 
-Lưu ý rằng nhân viên thu ngân nhập mã tại **bước thanh toán**, không phải khi xây dựng giỏ hàng. Một thẻ quà tặng là tiền mà khách hàng đã đưa ra, vì vậy nó thanh toán hóa đơn thay vì giảm giá hàng hóa.
+Lưu ý rằng nhân viên thu ngân nhập mã tại **bước thanh toán**, không phải khi xây dựng giỏ hàng. Thẻ quà tặng là tiền mà khách hàng đã đưa ra, vì vậy nó thanh toán hóa đơn thay vì giảm giá hàng hóa.
 
-**Trực tuyến**, bước thanh toán có trường nhập thẻ quà tặng. Khách hàng nhập mã của họ, số dư được trừ khỏi số tiền phải trả — sau thuế và phí vận chuyển — và phần còn lại được thanh toán bằng thẻ của họ như thường lệ. Nếu thẻ bao phủ toàn bộ đơn hàng, không cần thanh toán phương thức nào khác. Số dư chỉ thực sự được trừ khi thanh toán được xác nhận, vì vậy một giỏ hàng bị bỏ qua sẽ không ảnh hưởng đến thẻ.
+**Trực tuyến**, bước thanh toán có trường nhập thẻ quà tặng. Khách hàng nhập mã của họ, số dư được trừ khỏi số tiền phải trả — sau thuế và phí vận chuyển — và phần còn lại được thanh toán bằng thẻ của họ như thường lệ. Nếu thẻ bao phủ toàn bộ đơn hàng, không cần thanh toán phương thức nào khác. Số dư chỉ được trừ thực sự sau khi thanh toán được xác nhận, vì vậy việc bỏ giỏ hàng không bao giờ ảnh hưởng đến thẻ.
 
 Người nhận cũng có thể kiểm tra số dư còn lại bất kỳ lúc nào thông qua liên kết trong email giao hàng của họ.
 
 ## Xử lý Hoàn Tiền
 
-Khi hoàn tiền các đơn hàng hoặc giao dịch đã sử dụng thẻ quà tặng:
+Khi hoàn tiền các đơn hàng hoặc giao dịch sử dụng thẻ quà tặng:
 
 - **Một thẻ quà tặng mà khách hàng mua, chưa sử dụng** — thẻ được tắt và số dư được đặt về 0, do đó số dư tín dụng sẽ biến mất cùng với khoản hoàn tiền.
 - **Một thẻ quà tặng mà khách hàng mua và đã sử dụng một phần** — điều này cần bạn đánh giá. Tắt thẻ sẽ lấy lại số dư mà khách hàng đã sử dụng, do đó số dư được giữ nguyên và đánh dấu để bạn điều chỉnh thủ công.
-- **Một thẻ quà tặng được sử dụng để thanh toán cho đơn hàng đang hoàn tiền** — khoản hoàn tiền được hoàn lại vào thẻ trước, sau đó mới là các phương thức thanh toán thẻ hoặc ngân hàng. Hoàn tiền tiền cho ngân hàng mà người bán chưa từng thu thập là sai lầm lớn hơn, và hoàn tiền giá trị về nơi nó đến cũng đóng lại một con đường lừa đảo đã biết. Nếu thẻ gốc đã hết hạn hoặc bị tắt, một thẻ thay thế sẽ được cấp cho cùng người nhận với hạn sử dụng không xác định.
+- **Một thẻ quà tặng được sử dụng để thanh toán cho đơn hàng đang hoàn tiền** — khoản hoàn tiền được hoàn lại vào thẻ trước, sau đó mới là các phương thức thanh toán thẻ hoặc ngân hàng. Việc hoàn tiền lại tiền cho ngân hàng mà người bán chưa từng thu thập là sai lầm nghiêm trọng hơn, và việc hoàn lại giá trị đúng nơi nó đến cũng đóng lại một con đường lừa đảo đã biết. Nếu thẻ gốc đã hết hạn hoặc bị tắt, một thẻ thay thế sẽ được cấp cho cùng người nhận với hạn sử dụng không xác định.
 - **Hoàn tiền toàn bộ** — Hoàn lại số tiền vào số dư thẻ quà tặng thông qua giao dịch hoàn tiền
 
 ## Một số lưu ý
 
 Giữ nguyên tất cả định dạng markdown, đường dẫn hình ảnh, khối mã và các thuật ngữ kỹ thuật.
 
-- Sử dụng phát hành thủ công cho các khoản tín dụng hảo ý, giải quyết các vấn đề dịch vụ khách hàng, hoặc bất kỳ trường hợp nào bạn muốn cấp cho khách hàng một khoản tín dụng cửa hàng mà không cần mua hàng tại cửa hàng.
+- Sử dụng phát hành thủ công cho các khoản tín dụng hảo ý, giải quyết các vấn đề dịch vụ khách hàng hoặc bất kỳ trường hợp nào bạn muốn cấp cho khách hàng một khoản tín dụng cửa hàng mà không cần mua hàng tại cửa hàng.
 - Thiết lập các khoảng thời gian hết hạn hợp lý (ví dụ: 365 ngày) để tuân thủ các quy định về thẻ quà tặng địa phương — một số khu vực yêu cầu thời gian hiệu lực tối thiểu.
-- Sử dụng loại mệnh giá "Cả hai" để cung cấp sự tiện lợi (số tiền được đặt sẵn) và tính linh hoạt (số tiền tùy chỉnh).
+- Sử dụng loại mệnh giá "Cả hai" để cung cấp sự tiện lợi (số tiền được đặt sẵn) và tính linh hoạt (một số tiền tùy chỉnh).
 - Theo dõi chỉ số Tổng Số Dư thường xuyên — nó đại diện cho một khoản nợ chưa thanh toán trên sổ sách của bạn.
 - Một thẻ được sử dụng theo cùng một cách cả trực tuyến và tại cửa hàng — tại bước thanh toán trong quá trình thanh toán trực tuyến, hoặc tại quầy thu ngân.
 

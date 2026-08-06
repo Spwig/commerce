@@ -87,12 +87,18 @@ class AdminProductListSerializer(serializers.ModelSerializer):
 
     def get_image_url(self, obj):
         """Get primary image thumbnail URL for list views."""
-        primary = obj.images.filter(is_primary=True).first()
+        # Iterate the prefetched images collection so we don't issue a fresh
+        # query per product (the list queryset prefetches images with their
+        # media_asset). Prefer the primary image, but fall back to the first
+        # image in the prefetched order when the primary is missing or has no
+        # media_asset.
+        images = list(obj.images.all())
+        primary = next((image for image in images if image.is_primary), None)
         if primary and primary.media_asset:
             return (
                 primary.media_asset.get_thumbnail("medium") or primary.media_asset.get_display_url()
             )
-        first_image = obj.images.first()
+        first_image = images[0] if images else None
         if first_image and first_image.media_asset:
             return (
                 first_image.media_asset.get_thumbnail("medium")
@@ -105,9 +111,7 @@ class AdminProductDetailSerializer(serializers.ModelSerializer):
     """Full serializer for product detail view (admin/mobile app)."""
 
     price = serializers.DecimalField(max_digits=10, decimal_places=2, source="price.amount")
-    compare_at_price = serializers.DecimalField(
-        max_digits=10, decimal_places=2, source="compare_at_price.amount", allow_null=True
-    )
+    compare_at_price = serializers.SerializerMethodField()
     currency = serializers.CharField(source="price.currency.code", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     product_type_display = serializers.CharField(source="get_product_type_display", read_only=True)
@@ -159,6 +163,11 @@ class AdminProductDetailSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def get_compare_at_price(self, obj) -> str | None:
+        """Regular price to strike through when on sale, else null (sale_type-derived)."""
+        # 2-decimal string to match the sibling `price` DecimalField output.
+        return f"{obj.price.amount:.2f}" if obj.is_on_sale else None
 
     def get_brand_name(self, obj):
         return obj.brand.name if obj.brand else None
@@ -477,6 +486,16 @@ class ProductCreateSerializer(serializers.Serializer):
                 raise serializers.ValidationError(_("Brand not found."))
         return value
 
+    def validate_currency(self, value):
+        if value:
+            from moneyed import CURRENCIES
+
+            code = value.upper()
+            if code not in CURRENCIES:
+                raise serializers.ValidationError(_("Unsupported currency code."))
+            return code
+        return value
+
 
 class ProductUpdateSerializer(serializers.Serializer):
     """Serializer for partial update of a product."""
@@ -543,6 +562,16 @@ class ProductUpdateSerializer(serializers.Serializer):
             except Brand.DoesNotExist:
                 raise serializers.ValidationError(_("Brand not found."))
         return value
+
+    def validate_currency(self, value):
+        if not value:
+            return value
+        from moneyed import CURRENCIES
+
+        code = value.upper()
+        if code not in CURRENCIES:
+            raise serializers.ValidationError(_("Unsupported currency code."))
+        return code
 
 
 class BulkProductCreateSerializer(serializers.Serializer):

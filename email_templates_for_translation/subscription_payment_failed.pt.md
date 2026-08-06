@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ Pagamento falhou para {{ plan_name }} - Ação necessária - {{ shop_name }}
+⚠️ Falha no pagamento para {{ plan_name }} - Ação necessária - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -22,10 +22,10 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
       <mj-column>
         <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.error|default:'#ef4444' }}" align="center">
-          ⚠️ Pagamento falhou
+          ⚠️ Falha no pagamento
         </mj-text>
         <mj-text font-size="18px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
-          Não conseguimos processar seu pagamento
+          Não pudemos processar seu pagamento
         </mj-text>
       </mj-column>
     </mj-section>
@@ -37,7 +37,7 @@ category: Subscriptions
           <mj-section background-color="transparent">
             <mj-column>
               <mj-text font-size="20px" font-weight="600" color="#7f1d1d" align="center" padding-bottom="15px">
-                Informações do Pagamento
+                Informações do pagamento
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -49,7 +49,7 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Método de Pagamento:</strong> {{ payment_method }}
+                <strong>Método de pagamento:</strong> {{ payment_method }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Por favor, atualize seu método de pagamento até {{ retry_date|date:"F d, Y" }} para evitar interrupção do serviço.
+                Por favor, atualize seu método de pagamento até {{ retry_date|date:"F d, Y" }} para evitar interrupção no serviço.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
           Verifique se seu método de pagamento possui fundos suficientes
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
           Atualize seu método de pagamento se o cartão estiver expirado
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Vamos tentar automaticamente o pagamento em {{ retry_days }} dias
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Faremos uma nova tentativa de pagamento automaticamente em {{ retry_days }} dias
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -95,11 +99,11 @@ category: Subscriptions
     <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="10px 20px 30px 20px">
       <mj-column>
         <mj-button href="{{ update_payment_url }}" background-color="{{ theme.color.error|default:'#ef4444' }}" color="{{ theme.color.background|default:'#ffffff' }}" font-size="16px" font-weight="600" border-radius="6px" padding="14px 32px">
-          Atualizar Método de Pagamento
+          Atualizar método de pagamento
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            Ver Assinatura
+            Ver assinatura
           </a>
         </mj-text>
       </mj-column>
@@ -131,25 +135,25 @@ category: Subscriptions
 </mjml>
 
 ## Text Content
-⚠️ Pagamento falhou
+⚠️ Falha no pagamento
 
-Não conseguimos processar seu pagamento
+Não pudemos processar seu pagamento
 
 INFORMAÇÕES DO PAGAMENTO:
 Plano: {{ plan_name }}
 Valor: {{ subscription_amount }}
-Método de Pagamento: {{ payment_method }}
+Método de pagamento: {{ payment_method }}
 Motivo: {{ failure_reason }}
 
-Por favor, atualize seu método de pagamento até {{ retry_date|date:"F d, Y" }} para evitar interrupção do serviço.
+{% if retry_date %}Por favor, atualize seu método de pagamento até {{ retry_date|date:"F d, Y" }} para evitar interrupção no serviço.{% endif %}
 
 O que você deve fazer?
 1. Verifique se seu método de pagamento possui fundos suficientes
 2. Atualize seu método de pagamento se o cartão estiver expirado
-3. Vamos tentar automaticamente o pagamento em {{ retry_days }} dias
+{% if retry_days %}3. Faremos uma nova tentativa de pagamento automaticamente em {{ retry_days }} dias{% endif %}
 
-Atualizar Método de Pagamento: {{ update_payment_url }}
-Ver Assinatura: {{ manage_subscription_url }}
+Atualizar método de pagamento: {{ update_payment_url }}
+Ver assinatura: {{ manage_subscription_url }}
 
 Precisa de ajuda? Entre em contato conosco em {{ support_email }}
 

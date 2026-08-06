@@ -150,6 +150,16 @@ if [ "$IS_CELERY" = false ]; then
             }
             chown -R spwig:spwig /app/staticfiles 2>/dev/null || true
         fi
+        # Self-heal: the fast path must still end with a COMPLETE manifest. If
+        # the pre-baked layer shipped an incomplete core manifest (or its hashed
+        # files are missing), WhiteNoise 404s every core CSS/JS/favicon and the
+        # storefront renders unstyled. Detect that and repair with a full
+        # collectstatic (which also re-collects component assets).
+        if ! python manage.py verify_static_manifest; then
+            echo "Static manifest incomplete — running full collectstatic to repair..."
+            python manage.py collectstatic --noinput
+            chown -R spwig:spwig /app/staticfiles 2>/dev/null || true
+        fi
     else
         echo "Clearing old static files..."
         rm -rf /app/staticfiles/* 2>/dev/null || true

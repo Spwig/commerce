@@ -51,14 +51,37 @@ def refresh_platform_secrets():
         return {"status": "error", "error": str(e)}
 
 
+@shared_task(name="media_library.generate_avif_for_asset", ignore_result=True)
+def generate_avif_for_asset(asset_id, force=False):
+    """Generate AVIF renditions for a media asset off the upload request path.
+
+    WebP is produced inline during upload; AVIF (slower to encode) is deferred
+    here so admin uploads stay responsive. Until this runs, storefront
+    <picture> elements simply omit the AVIF <source> and serve WebP.
+    """
+    from media_library.models import MediaAsset
+    from media_library.services import generate_avif_variants
+
+    try:
+        asset = MediaAsset.objects.get(id=asset_id)
+    except MediaAsset.DoesNotExist:
+        logger.warning(f"generate_avif_for_asset: asset {asset_id} not found")
+        return {"status": "not_found", "asset_id": str(asset_id)}
+
+    written = generate_avif_variants(asset, force=force)
+    return {"status": "success", "asset_id": str(asset_id), "avif_written": written}
+
+
 @shared_task(bind=True, name="core.regenerate_thumbnails")
 def regenerate_thumbnails_task(self):
     """
     Background task to regenerate all product image thumbnails.
     Uses Celery for proper background processing to handle thousands of images.
     """
+    from django.conf import settings
+
     from media_library.models import ImageSizePreset, MediaAsset, MediaThumbnail
-    from media_library.services import ImageProcessor
+    from media_library.services import ImageProcessor, generate_avif_variants
 
     processor = ImageProcessor()
     # Get image size presets from database (configurable in Media Library → Image Size Presets)
@@ -134,6 +157,15 @@ def regenerate_thumbnails_task(self):
                         logger.warning(
                             f"Failed to generate {preset.slug} thumbnail for asset {asset.id}: {e}"
                         )
+
+                # Generate AVIF renditions (full-size + all freshly-built
+                # thumbnails) so a "Regenerate thumbnails" run produces the
+                # complete <picture> source set, not just WebP.
+                if getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get("AUTO_AVIF", True):
+                    try:
+                        generate_avif_variants(asset, processor=processor, force=True)
+                    except Exception as e:
+                        logger.warning(f"Failed to generate AVIF for asset {asset.id}: {e}")
 
                 processed += 1
                 progress = int((processed / total) * 100) if total > 0 else 100

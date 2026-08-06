@@ -276,7 +276,23 @@ class AccountCreationService:
             orders_moved = Order.objects.filter(user=dup_user).update(user=canonical_user)
             stats["orders_moved"] += orders_moved
 
-            # Reassign addresses
+            # Reassign addresses. QuerySet.update() bypasses Address.save(),
+            # so its logic that clears the previous default never runs. Clear
+            # the duplicate's default flags for any address type where the
+            # canonical user already has an active default, to avoid leaving
+            # the canonical user with multiple active defaults of the same type.
+            existing_default_types = set(
+                Address.objects.filter(
+                    user=canonical_user, is_default=True, is_active=True
+                ).values_list("address_type", flat=True)
+            )
+            if existing_default_types:
+                Address.objects.filter(
+                    user=dup_user,
+                    is_default=True,
+                    is_active=True,
+                    address_type__in=existing_default_types,
+                ).update(is_default=False)
             addresses_moved = Address.objects.filter(user=dup_user).update(user=canonical_user)
             stats["addresses_moved"] += addresses_moved
 

@@ -76,7 +76,7 @@ class CustomAuthenticateView(FormView):
                 settings = SiteSettings.get_settings()
                 if settings.allow_trusted_devices:
                     # Create trusted device token
-                    token, device = TrustedDevice.create_trusted_device(
+                    device, token = TrustedDevice.create_trusted_device(
                         user=self.stage.login.user,
                         request=self.request,
                         duration_days=settings.trusted_device_duration_days,

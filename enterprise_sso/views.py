@@ -92,6 +92,9 @@ def oidc_discover(request):
     except ValueError:
         return JsonResponse({"error": "Invalid JSON in discovery response"}, status=400)
 
+    if not isinstance(config, dict):
+        return JsonResponse({"error": "Discovery document must be a JSON object"}, status=400)
+
     return JsonResponse(
         {
             "authorization_endpoint": config.get("authorization_endpoint", ""),

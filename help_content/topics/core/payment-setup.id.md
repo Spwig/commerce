@@ -2,7 +2,7 @@
 title: Pengaturan Pembayaran
 ---
 
-Pengelola pembayaran menghubungkan toko Anda ke pintu gerai pembayaran sehingga Anda dapat menerima kartu kredit, dompet digital, dan metode pembayaran lainnya saat checkout. Spwig mendukung beberapa penyedia secara bersamaan, memberi pelanggan Anda pilihan pembayaran yang fleksibel.
+Pengelola pembayaran menghubungkan toko Anda ke pintu gerai pembayaran sehingga Anda dapat menerima kartu kredit, dompet digital, dan metode pembayaran lainnya saat checkout. Spwig mendukung beberapa penyedia secara bersamaan, memberi pelanggan Anda opsi pembayaran yang fleksibel.
 
 ![Pengelola pembayaran](/static/core/admin/img/help/payment-setup/payment-dashboard.webp)
 
@@ -29,7 +29,7 @@ Pilih dari penyedia pembayaran yang tersedia. Setiap kartu menampilkan fitur dan
 Lihat panduan pengaturan khusus penyedia. Ini termasuk:
 - Cara membuat akun dengan penyedia (jika Anda belum memiliki akun)
 - Di mana menemukan kredensial API Anda di dashboard penyedia
-- Persyaratan apa pun (misalnya, verifikasi bisnis)
+- Persyaratan prasyarat (misalnya, verifikasi bisnis)
 
 ### Langkah 3: Masukkan Kredensial
 
@@ -74,7 +74,7 @@ Kartu peringatan di bagian atas menyoroti masalah yang memerlukan perhatian:
 
 - **Grafik Pendapatan** — Pemecahan visual volume pembayaran seiring waktu, dikelompokkan berdasarkan hari, minggu, atau bulan
 - **Metrik Kinerja** — Total pendapatan, tingkat keberhasilan, nilai transaksi rata-rata, dan tingkat pengembalian
-- **Perbandingan Penyedia** — Kartu kinerja berdampingan untuk setiap penyedia yang terhubung
+- **Perbandingan Penyedia** — Kartu kinerja sampingan untuk setiap penyedia yang terhubung
 
 ### Pemecahan Transaksi
 
@@ -104,7 +104,7 @@ Mereka menangani acara seperti:
 
 ### Pengaturan Otomatis
 
-Ketika Anda menghubungkan penyedia, Spwig secara otomatis mendaftarkan endpoint webhook dengan penyedia. URL webhook ditampilkan pada halaman konfigurasi penyedia untuk referensi.
+Ketika Anda menghubungkan penyedia, Spwig secara otomatis mendaftarkan endpoint webhook dengan penyedia. URL webhook ditampilkan di halaman konfigurasi penyedia untuk referensi.
 
 ### Pemantauan Webhook
 
@@ -125,9 +125,9 @@ Anda dapat menghubungkan beberapa penyedia pembayaran secara bersamaan:
 
 ## Tips
 
-- Mulailah dengan **Stripe** atau **PayPal** — mereka menutupi rentang metode pembayaran dan wilayah yang paling luas.
+- Mulailah dengan **Stripe** atau **PayPal** — mereka menjangkau rentang metode pembayaran dan wilayah yang paling luas.
 - Gunakan **mode sandbox/test** untuk memproses transaksi uji sebelum diluncurkan. Setiap penyedia memiliki nomor kartu uji dalam dokumentasinya.
 - Aktifkan **banyak penyedia** sehingga pelanggan memiliki opsi pembayaran cadangan jika satu penyedia mengalami masalah.
 - Tetapkan **urutan penyortiran yang rendah** untuk penyedia favorit Anda sehingga muncul pertama saat checkout.
-- Pantau Dashboard Pembayaran secara mingguan untuk menangkap transaksi yang gagal dan masalah koneksi secara dini.
-- Jaga kredensial API Anda aman — mereka disimpan dalam bentuk terenkripsi di database tetapi tidak pernah boleh dibagikan.
+- Pantau Dashboard Pembayaran secara mingguan untuk mendeteksi transaksi yang gagal dan masalah koneksi secara dini.
+- Jaga kredensial API Anda aman — mereka disimpan dalam bentuk terenkripsi di database tetapi seharusnya tidak pernah dibagikan.

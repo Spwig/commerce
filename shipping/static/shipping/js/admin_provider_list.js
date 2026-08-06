@@ -127,7 +127,7 @@
    */
   function toggleProviderActive(providerId, button) {
     const isActive = button.dataset.isActive === 'true';
-    const card = button.closest('.provider-card');
+    const card = button.closest('.list-row-card');
 
     setLoading(true);
 
@@ -158,7 +158,7 @@
           // Update badge
           const badge = card.querySelector('.badge-status');
           if (badge) {
-            badge.className = `badge badge-status ${data.is_active ? 'badge-active' : 'badge-inactive'}`;
+            badge.className = `list-row-card-badge badge-status ${data.is_active ? 'list-row-card-badge-success' : ''}`;
             badge.innerHTML = data.is_active
               ? '<i class="fas fa-check-circle"></i> Active'
               : '<i class="fas fa-times-circle"></i> Inactive';
@@ -274,7 +274,7 @@
         if (data.success) {
           showNotification(data.message, 'success');
           // Remove card from UI
-          const card = button.closest('.provider-card');
+          const card = button.closest('.list-row-card');
           if (card) {
             card.style.opacity = '0';
             setTimeout(() => card.remove(), 300);

@@ -40,76 +40,8 @@ body.change-list #content-main {
   max-width: none !important;
 }
 
-/* ============================================================================
-   Header
-   ============================================================================ */
-
-.provider-admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--hairline-color, #e0e0e0);
-}
-
-.provider-admin-header .header-title h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--body-fg, #333);
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.provider-admin-header .header-title h1 i {
-  color: var(--primary, #417690);
-}
-
-.provider-admin-header .header-subtitle {
-  font-size: 14px;
-  color: var(--body-quiet-color, #666);
-  margin: 0;
-}
-
-.provider-admin-header .header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.provider-admin-header .header-actions .button {
-  padding: 10px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.provider-admin-header .header-actions .button.primary {
-  background: var(--primary, #417690);
-  color: var(--body-bg, white);
-}
-
-.provider-admin-header .header-actions .button.primary:hover {
-  background: var(--link-hover-color, #2e5368);
-}
-
-.provider-admin-header .header-actions .button.default {
-  background: var(--darkened-bg, #f8f8f8);
-  color: var(--body-fg, #333);
-  border: 1px solid var(--border-color, #ddd);
-}
-
-.provider-admin-header .header-actions .button.default:hover {
-  background: var(--border-color, #ddd);
-}
+/* Page header uses the shared .change-list-header / .change-list-header-actions
+   components from admin-base.css (the old .provider-admin-header block was dead). */
 
 /* ============================================================================
    Toolbar
@@ -159,7 +91,7 @@ body.change-list #content-main {
 .filter-dropdown:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .bulk-actions .button {
@@ -228,7 +160,7 @@ body.change-list #content-main {
 .search-box input:focus {
   outline: none;
   border-color: var(--primary, #417690);
-  box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
   width: 300px;
 }
 
@@ -266,48 +198,9 @@ body.change-list #content-main {
   min-height: 300px;
 }
 
-.providers-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-/* ============================================================================
-   Provider Card
-   ============================================================================ */
-
-.provider-card {
-  background: var(--body-bg, white);
-  border: 1px solid var(--border-color, #ddd);
-  border-radius: 8px;
-  padding: 16px 20px;
-  position: relative;
-  transition: all 0.2s;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  min-height: 90px;
-}
-
-.provider-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary, #417690);
-}
-
-/* Checkbox */
-.provider-checkbox {
-  display: flex;
-  align-items: center;
-  padding-right: 8px;
-}
-
-.provider-checkbox input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
+/* Providers grid + card container + checkbox reuse the shared
+   .list-row-cards / .list-row-card / .list-row-card-checkbox components
+   from admin-base.css. Only the bespoke horizontal internals remain below. */
 
 /* Logo */
 .provider-logo {
@@ -344,7 +237,7 @@ body.change-list #content-main {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ffc107;
+  background: var(--warning-color);
   color: white;
   padding: 2px 6px;
   border-radius: 10px;
@@ -437,18 +330,18 @@ body.change-list #content-main {
 }
 
 .status-connected {
-  background: #d4edda;
-  color: #155724;
+  background: var(--success-bg);
+  color: var(--success-fg);
 }
 
 .status-error {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--error-bg);
+  color: var(--error-fg);
 }
 
 .status-unknown {
-  background: #e2e3e5;
-  color: #383d41;
+  background: var(--darkened-bg);
+  color: var(--body-quiet-color);
 }
 
 .last-tested {
@@ -456,37 +349,8 @@ body.change-list #content-main {
   color: var(--body-quiet-color, #999);
 }
 
-/* Provider Badges */
-.provider-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.badge i {
-  font-size: 10px;
-}
-
-.badge-active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badge-inactive {
-  background: #e2e3e5;
-  color: #383d41;
-}
+/* Active/inactive badges reuse the shared .list-row-card-badge* variants
+   from admin-base.css (.badge-status retained in markup as a JS hook only). */
 
 /* Quick Actions */
 .provider-actions {
@@ -521,39 +385,39 @@ body.change-list #content-main {
 }
 
 .action-btn.edit-btn:hover {
-  color: #007bff;
-  border-color: #007bff;
+  color: var(--link-fg);
+  border-color: var(--link-fg);
 }
 
 .action-btn.test-btn:hover {
-  color: #17a2b8;
-  border-color: #17a2b8;
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .action-btn.provider-toggle-btn.active {
-  color: #28a745;
-  border-color: #28a745;
+  color: var(--success-fg);
+  border-color: var(--success-fg);
 }
 
 .action-btn.provider-toggle-btn.inactive {
-  color: #6c757d;
-  border-color: #6c757d;
+  color: var(--body-quiet-color);
+  border-color: var(--body-quiet-color);
 }
 
 .action-btn.default-btn.is-default {
-  background: #ffc107;
+  background: var(--warning-color);
   color: white;
-  border-color: #ffc107;
+  border-color: var(--warning-color);
 }
 
 .action-btn.default-btn.is-default:hover {
-  background: #e0a800;
-  border-color: #e0a800;
+  background: var(--warning-fg);
+  border-color: var(--warning-fg);
 }
 
 .action-btn.delete-btn:hover {
-  color: #dc3545;
-  border-color: #dc3545;
+  color: var(--error-color);
+  border-color: var(--error-color);
 }
 
 /* ============================================================================
@@ -677,19 +541,19 @@ body.change-list #content-main {
 }
 
 .notification.success {
-  border-left-color: #28a745;
+  border-left-color: var(--success-fg);
 }
 
 .notification.error {
-  border-left-color: #dc3545;
+  border-left-color: var(--error-color);
 }
 
 .notification.warning {
-  border-left-color: #ffc107;
+  border-left-color: var(--warning-color);
 }
 
 .notification.info {
-  border-left-color: #17a2b8;
+  border-left-color: var(--primary);
 }
 
 .notification i {
@@ -697,19 +561,19 @@ body.change-list #content-main {
 }
 
 .notification.success i {
-  color: #28a745;
+  color: var(--success-fg);
 }
 
 .notification.error i {
-  color: #dc3545;
+  color: var(--error-color);
 }
 
 .notification.warning i {
-  color: #ffc107;
+  color: var(--warning-color);
 }
 
 .notification.info i {
-  color: #17a2b8;
+  color: var(--primary);
 }
 
 .notification-message {
@@ -766,7 +630,7 @@ body.change-list #content-main {
 
 /* Medium screens - wrap provider actions */
 @media (max-width: 968px) {
-  .provider-card {
+  .list-row-card {
     flex-wrap: wrap;
     padding: 12px 16px;
   }
@@ -805,11 +669,6 @@ body.change-list #content-main {
 
 /* Mobile screens - compact 3-row layout */
 @media (max-width: 640px) {
-  .provider-admin-header {
-    flex-direction: column;
-    gap: 12px;
-  }
-
   .search-box input {
     width: 100%;
   }
@@ -822,7 +681,7 @@ body.change-list #content-main {
        Row 1: Checkbox + Logo + Name (full width)
        Row 2: Connection Status + Active Badge
        Row 3: Action buttons */
-  .provider-card {
+  .list-row-card {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-start;
@@ -832,7 +691,7 @@ body.change-list #content-main {
   }
 
   /* Row 1: Checkbox + Logo + Name (horizontal, full width for name) */
-  .provider-checkbox {
+  .list-row-card-checkbox {
     flex-shrink: 0;
     align-self: flex-start;
     margin-top: 8px;
@@ -892,14 +751,14 @@ body.change-list #content-main {
     display: none; /* Hide on mobile to save space */
   }
 
-  .provider-badges {
+  .list-row-card-badges {
     display: inline-flex;
     gap: 6px;
     order: 4;
     margin: 0;
   }
 
-  .badge {
+  .list-row-card-badge {
     font-size: 10px;
     padding: 4px 8px;
   }

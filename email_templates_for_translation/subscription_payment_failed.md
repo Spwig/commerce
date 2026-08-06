@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
                 Please update your payment method by {{ retry_date|date:"F d, Y" }} to avoid service interruption.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -84,10 +86,12 @@ category: Subscriptions
           Update your payment method if the card has expired
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
           <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
           We'll automatically retry the payment in {{ retry_days }} days
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -141,12 +145,12 @@ Amount: {{ subscription_amount }}
 Payment Method: {{ payment_method }}
 Reason: {{ failure_reason }}
 
-Please update your payment method by {{ retry_date|date:"F d, Y" }} to avoid service interruption.
+{% if retry_date %}Please update your payment method by {{ retry_date|date:"F d, Y" }} to avoid service interruption.{% endif %}
 
 What Should You Do?
 1. Check that your payment method has sufficient funds
 2. Update your payment method if the card has expired
-3. We'll automatically retry the payment in {{ retry_days }} days
+{% if retry_days %}3. We'll automatically retry the payment in {{ retry_days }} days{% endif %}
 
 Update Payment Method: {{ update_payment_url }}
 View Subscription: {{ manage_subscription_url }}

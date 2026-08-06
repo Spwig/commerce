@@ -5,6 +5,9 @@ Provides a lightweight DRF-based interface for cart operations used by
 the frontend mini-cart JavaScript module.
 """
 
+from decimal import Decimal
+
+from django.db.models import Prefetch
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import (
@@ -147,29 +150,64 @@ def get_cart_for_request(request):
         return CartService.get_or_create_cart(session_key=session_key)
 
 
+def _primary_image_asset(product):
+    """Select a product's primary (or first) image asset from prefetched images.
+
+    Mirrors Product.primary_image but reads from the prefetched images
+    collection instead of querying once per cart line, avoiding extra
+    queries when the relation has been prefetched.
+    """
+    images = list(product.images.all())
+    primary = next((img for img in images if img.is_primary), None)
+    if primary and primary.media_asset:
+        return primary.media_asset
+    if images and images[0].media_asset:
+        return images[0].media_asset
+    return None
+
+
 def format_cart_for_minicart(cart, just_added_item_id=None):
     """Format cart data for the mini-cart component."""
     items = []
     currency_code = cart.effective_currency
 
-    # Only return parent/top-level items (exclude child components)
-    parent_items = cart.items.select_related("product", "variant").filter(
-        parent_bundle__isnull=True
+    # Only return parent/top-level items (exclude child components).
+    # Prefetch product images and bundle components once to avoid an N+1
+    # query per parent item.
+    parent_items = (
+        cart.items.select_related("product", "variant")
+        .filter(parent_bundle__isnull=True)
+        .prefetch_related(
+            "product__images",
+            "product__images__media_asset",
+            Prefetch(
+                "component_items",
+                queryset=CartItem.objects.select_related(
+                    "product", "variant", "variant__image_asset"
+                ),
+            ),
+        )
     )
 
     for item in parent_items:
         # Get image URL (use thumbnails to save bandwidth)
         image_url = None
+        image_sources = None
+        img_asset = None
         if item.variant and item.variant.image_asset:
-            image_url = item.variant.image_asset.thumbnail_small
-        elif hasattr(item.product, "primary_image"):
-            primary_img = item.product.primary_image
-            if primary_img:
-                image_url = (
-                    primary_img.get_thumbnail("small")
-                    if hasattr(primary_img, "get_thumbnail")
-                    else primary_img.get_display_url()
-                )
+            img_asset = item.variant.image_asset
+        else:
+            # Read from the prefetched images collection to avoid a query per
+            # cart line (see _primary_image_asset).
+            img_asset = _primary_image_asset(item.product)
+        if img_asset:
+            image_url = (
+                img_asset.get_thumbnail("small")
+                if hasattr(img_asset, "get_thumbnail")
+                else img_asset.get_display_url()
+            )
+            if hasattr(img_asset, "get_picture_sources"):
+                image_sources = img_asset.get_picture_sources("small")
 
         # Get product URL
         product_url = reverse(
@@ -189,8 +227,22 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
         if hasattr(price, "amount"):
             price = price.amount
 
-        # Calculate item total (price × quantity)
-        item_total = price * item.quantity
+        # Calculate item total from total_price so per-unit customization
+        # charges are included (matches the cart subtotal)
+        item_total = item.total_price
+        if hasattr(item_total, "currency"):
+            item_currency = str(item_total.currency)
+        if hasattr(item_total, "amount"):
+            item_total = item_total.amount
+
+        # Sale display: struck-through regular line total when the product is on
+        # sale. CartItem.savings is the per-LINE discount (already x quantity,
+        # currency-converted); a positive value means this line is discounted, so
+        # the regular line total is the effective total plus the savings.
+        savings = item.savings
+        savings_amount = savings.amount if hasattr(savings, "amount") else Decimal("0")
+        line_on_sale = savings_amount > 0
+        regular_total = item_total + savings_amount
 
         item_data = {
             "id": item.id,
@@ -202,18 +254,22 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
             "price_formatted": _format_price(price, item_currency),
             "item_total": str(item_total),
             "item_total_formatted": _format_price(item_total, item_currency),
+            "is_on_sale": line_on_sale,
+            "regular_total_formatted": (
+                _format_price(regular_total, item_currency) if line_on_sale else None
+            ),
             "image_url": image_url,
+            "image_sources": image_sources,
             "url": product_url,
             "just_added": item.id == just_added_item_id,
             "is_configurable": False,
             "components": [],
         }
 
-        # Include component breakdown for configurable/bundle products
-        children = cart.items.filter(parent_bundle=item).select_related(
-            "product", "variant", "variant__image_asset"
-        )
-        if children.exists():
+        # Include component breakdown for configurable/bundle products.
+        # Use the prefetched components (materialized once) to avoid N+1 queries.
+        children = list(item.component_items.all())
+        if children:
             item_data["is_configurable"] = True
             for child in children:
                 child_price = child.unit_price
@@ -225,16 +281,20 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
 
                 # Get component image (use small thumbnail for mini-cart)
                 child_image_url = None
+                child_image_sources = None
+                child_asset = None
                 if child.variant and child.variant.image_asset:
-                    child_image_url = child.variant.image_asset.thumbnail_small
+                    child_asset = child.variant.image_asset
                 elif hasattr(child.product, "primary_image"):
-                    pi = child.product.primary_image
-                    if pi:
-                        child_image_url = (
-                            pi.get_thumbnail("small")
-                            if hasattr(pi, "get_thumbnail")
-                            else pi.get_display_url()
-                        )
+                    child_asset = child.product.primary_image
+                if child_asset:
+                    child_image_url = (
+                        child_asset.get_thumbnail("small")
+                        if hasattr(child_asset, "get_thumbnail")
+                        else child_asset.get_display_url()
+                    )
+                    if hasattr(child_asset, "get_picture_sources"):
+                        child_image_sources = child_asset.get_picture_sources("small")
 
                 item_data["components"].append(
                     {
@@ -245,6 +305,7 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
                         "price": str(child_price),
                         "price_formatted": _format_price(child_price, child_currency),
                         "image_url": child_image_url,
+                        "image_sources": child_image_sources,
                     }
                 )
 

@@ -9,7 +9,7 @@ import secrets
 from decimal import Decimal
 
 from django.db import IntegrityError, transaction
-from django.db.models import F, IntegerField, Max, Q, Sum
+from django.db.models import F, IntegerField, Max, Prefetch, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -184,7 +184,10 @@ def product_list(request):
     # Base queryset with stock annotation
     queryset = (
         Product.objects.select_related("category", "brand")
-        .prefetch_related("images", "stock_items")
+        .prefetch_related(
+            Prefetch("images", queryset=ProductImage.objects.select_related("media_asset")),
+            "stock_items",
+        )
         .annotate(
             _available_stock=Coalesce(
                 Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
@@ -943,6 +946,11 @@ def upload_product_image(request, product_id):
 
                 logging.getLogger(__name__).error(f"Error generating thumbnail {size_name}: {e}")
                 continue
+
+        # Queue AVIF generation off the request path (WebP was done inline)
+        from media_library.services import queue_avif_generation
+
+        queue_avif_generation(media_asset)
 
         # Auto-assign position if not provided
         if position is None:

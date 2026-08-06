@@ -40,8 +40,8 @@
 .address-card:hover {
   border-color: var(--primary);
   box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    0 4px 6px -1px var(--shadow-light),
+    0 2px 4px -1px var(--shadow-light);
 }
 
 /* Address Type Badge */
@@ -59,15 +59,15 @@
 }
 
 .address-type-badge.shipping {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: color-mix(in srgb, var(--button-bg) 10%, transparent);
   color: var(--primary);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid color-mix(in srgb, var(--button-bg) 30%, transparent);
 }
 
 .address-type-badge.billing {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background-color: color-mix(in srgb, var(--success-fg) 10%, transparent);
+  color: var(--success-fg);
+  border: 1px solid color-mix(in srgb, var(--success-fg) 30%, transparent);
 }
 
 /* Address Content */
@@ -153,38 +153,38 @@
 
 .btn-use-shipping {
   background-color: var(--primary);
-  color: white;
+  color: var(--primary-fg);
   border: 1px solid var(--primary);
 }
 
 .btn-use-shipping:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .btn-use-billing {
-  background-color: #10b981;
-  color: white;
-  border: 1px solid #10b981;
+  background-color: var(--success-fg);
+  color: var(--primary-fg);
+  border: 1px solid var(--success-fg);
 }
 
 .btn-use-billing:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .btn-use-both {
-  background-color: #8b5cf6;
-  color: white;
-  border: 1px solid #8b5cf6;
+  background-color: var(--purple-accent);
+  color: var(--primary-fg);
+  border: 1px solid var(--purple-accent);
 }
 
 .btn-use-both:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .address-actions .btn i {
@@ -220,9 +220,9 @@
 }
 
 .alert-info {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: color-mix(in srgb, var(--button-bg) 10%, transparent);
   color: var(--primary);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid color-mix(in srgb, var(--button-bg) 30%, transparent);
 }
 
 .alert i {

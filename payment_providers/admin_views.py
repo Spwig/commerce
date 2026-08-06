@@ -3,6 +3,8 @@ Payment Providers Admin AJAX Views.
 Provides AJAX filter endpoints for admin change list pages.
 """
 
+import uuid
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.http import JsonResponse
@@ -19,7 +21,9 @@ def filter_transactions(request):
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
 
-    queryset = PaymentTransaction.objects.select_related("provider_account", "order").all()
+    queryset = PaymentTransaction.objects.select_related(
+        "provider_account", "provider_account__component", "order"
+    ).all()
 
     # Search filter
     search = request.GET.get("search", "").strip()
@@ -41,6 +45,10 @@ def filter_transactions(request):
     # Provider account filter
     provider = request.GET.get("provider", "").strip()
     if provider:
+        try:
+            provider = uuid.UUID(provider)
+        except ValueError:
+            return JsonResponse({"error": "Invalid provider"}, status=400)
         queryset = queryset.filter(provider_account_id=provider)
 
     total_count = queryset.count()

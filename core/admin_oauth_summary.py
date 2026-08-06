@@ -4,7 +4,8 @@ This generates the OAuth providers tab content using CSS classes instead of inli
 """
 
 from django.urls import reverse
-from django.utils.html import format_html
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 
@@ -71,9 +72,11 @@ def generate_oauth_providers_summary():
             provider_badges = []
             for provider in active_providers.order_by("button_order"):
                 icon = provider_icons.get(provider.provider, '<i class="fas fa-key"></i>')
+                # Escape DB-sourced display_name: parts are joined and marked
+                # safe below, so escape here to keep that safe.
                 provider_badges.append(f"""
                     <span class="oauth-provider-badge">
-                        {icon} {provider.display_name}
+                        {icon} {conditional_escape(provider.display_name)}
                     </span>
                 """)
 
@@ -193,10 +196,10 @@ def generate_oauth_providers_summary():
             </div>
         ''')
 
-        return format_html("".join(summary_parts))
+        return mark_safe("".join(summary_parts))
 
     except ImportError:
-        return format_html("""
+        return mark_safe("""
             <div class="oauth-warning-box">
                 <div class="oauth-warning-title">
                     <i class="fas fa-times-circle"></i> {_('Social authentication module not available')}
@@ -204,12 +207,12 @@ def generate_oauth_providers_summary():
             </div>
         """)
     except Exception as e:
-        return format_html(f"""
+        return mark_safe(f"""
             <div class="oauth-warning-box">
                 <div class="oauth-warning-title">
                     <i class="fas fa-times-circle"></i> {_("Error loading OAuth providers")}
                 </div>
-                <div class="oauth-warning-content">{str(e)}</div>
+                <div class="oauth-warning-content">{conditional_escape(str(e))}</div>
             </div>
         """)
 

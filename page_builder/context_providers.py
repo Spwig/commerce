@@ -390,11 +390,10 @@ def sale_products_context(content: dict, request=None) -> dict:
             except Promotion.DoesNotExist:
                 return {"products": []}
 
-    # Get all products with active sale prices or promotions
+    # Get all published products with an active discount (canonical sale_type
+    # mechanism — there is no sale_price/is_active/featured_image field).
     products = (
-        Product.objects.filter(is_active=True, sale_price__isnull=False)
-        .select_related("featured_image")
-        .order_by("-updated_at")[:max_products]
+        Product.objects.filter(status="published").on_sale().order_by("-updated_at")[:max_products]
     )
 
     return {"products": list(products)}
@@ -447,7 +446,7 @@ def product_list_context(content: dict, request=None) -> dict:
     source = content.get("source", "recent")
     max_products = content.get("max_products", 10)
 
-    queryset = Product.objects.filter(is_active=True).select_related("featured_image", "category")
+    queryset = Product.objects.filter(status="published").select_related("category")
 
     if source == "category":
         category_id = content.get("category_id")
@@ -460,7 +459,7 @@ def product_list_context(content: dict, request=None) -> dict:
     elif source == "featured":
         queryset = queryset.filter(is_featured=True)
     elif source == "sale":
-        queryset = queryset.filter(sale_price__isnull=False)
+        queryset = queryset.on_sale()
 
     queryset = queryset.order_by("-created_at")
 
@@ -689,10 +688,8 @@ def gift_card_promo_context(content: dict, request=None) -> dict:
     from catalog.models import Product
 
     # Get active gift card products
-    gift_cards = (
-        Product.objects.filter(is_active=True, product_type="gift_card")
-        .select_related("featured_image")
-        .order_by("base_price")
+    gift_cards = Product.objects.filter(status="published", product_type="gift_card").order_by(
+        "price"
     )
 
     return {"gift_cards": list(gift_cards)}

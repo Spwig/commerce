@@ -1,4 +1,4 @@
-{% load i18n static element_tags merchant_trans %}
+{% load i18n static element_tags merchant_trans media_picture %}
 <!-- Gift Card Promo Element -->
 <section class="gift-card-promo gift-card-promo--{{ element.content.style|default:'card' }}"
          {% hover_animation_attrs element %}
@@ -8,7 +8,7 @@
     <div class="gift-card-promo__container">
         {% if element.content.image %}
         <div class="gift-card-promo__image-wrapper">
-            <img src="{{ element.content.image }}" alt="{% mtrans 'Gift Card' %}" class="gift-card-promo__image" loading="lazy">
+            {% mtrans 'Gift Card' as gift_card_alt %}{% picture element.content.image alt=gift_card_alt css="gift-card-promo__image" %}
         </div>
         {% else %}
         <div class="gift-card-promo__visual">

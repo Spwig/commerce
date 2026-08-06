@@ -8,7 +8,6 @@ import hashlib
 import hmac
 import json
 import logging
-from datetime import datetime
 
 import requests
 from django.db import models as django_models
@@ -85,7 +84,7 @@ class LicenseWebhookDispatcher:
         # Prepare payload
         payload = {
             "event": event_type,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": timezone.now().isoformat().replace("+00:00", "Z"),
             "license": {
                 "key": license_key.key,
                 "type": license_key.key_type,
@@ -179,7 +178,7 @@ class LicenseWebhookDispatcher:
             "Content-Type": "application/json",
             "X-Spwig-Signature": f"sha256={signature}",
             "X-Spwig-Event": payload["event"],
-            "X-Spwig-Delivery-ID": f"{subscription.id}-{int(datetime.utcnow().timestamp())}",
+            "X-Spwig-Delivery-ID": f"{subscription.id}-{int(timezone.now().timestamp())}",
             "User-Agent": "Spwig-Webhooks/1.0",
         }
 

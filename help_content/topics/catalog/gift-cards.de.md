@@ -4,15 +4,15 @@ title: Gutscheinkarten
 
 Gutscheinkarten sind Einzahlungen, die Kunden für jemand anderen – oder für sich selbst – per E-Mail als eindeutigen Gutscheincode übermitteln können. Sie können eine Gutscheinkarte auch direkt aus dem Admin-Panel ohne Kundenkauf ausstellen.
 
-Der Verkauf von Gutscheinkarten ist aktiv. Wenn ein Kunde eine Karte kauft, wird diese automatisch erstellt und per E-Mail gesendet, sobald die Zahlung abgeschlossen ist – niemals vorher, damit niemand einen Code für eine später fehlgeschlagene Zahlung erhält.
+Der Verkauf von Gutscheinkarten ist aktiv. Wenn ein Kunde eine Karte kauft, wird diese automatisch erstellt und per E-Mail gesendet, sobald die Zahlung abgeschlossen ist – nie vorher, damit niemand einen Code für eine später fehlgeschlagene Zahlung erhält.
 
 Ein paar Dinge, die Sie wissen sollten, bevor Sie ein Gutscheinkartenprodukt aktivieren:
 
 - **Eine Gutscheinkarte ist Geld, nicht ein Rabatt.** Sie wird vom Endbetrag nach Steuern und Versand abgezogen und verringert nicht die Steuern, die Sie zahlen müssen. Das ist das Gegenteil eines Gutscheins, der den Preis der Waren reduziert.
 - **Karten sind in einer einzigen Währung.** Eine in Euro gekaufte Karte kann nur für einen Euro-Bestellung verwendet werden. Wenn Sie in mehreren Währungen verkaufen, erstellen Sie bitte ein separates Gutscheinkartenprodukt für jede Währung. Das schützt Sie vor Wechselkursbewegungen auf einem Saldo, das möglicherweise ein Jahr lang nicht ausgegeben wird.
-- **Gutscheinkarten können nicht vergünstigt werden.** Ein Gutschein gilt nicht für eine Gutscheinkartenposition, da der Verkauf von 100 £ Kredit für 80 £ Sie jedes Mal 20 £ kostet.
+- **Gutscheinkarten können nicht rabattiert werden.** Ein Gutschein gilt nicht für eine Gutscheinkartenposition, da der Verkauf von 100 £ Kredit für 80 £ Sie jedes Mal 20 £ kostet.
 - **Eine Gutscheinkarte kann keine andere Gutscheinkarte kaufen.** Das schließt einen Weg, den Menschen nutzen, um gestohlene Karteninformationen zu waschen.
-- **Das Kaufen einer Gutscheinkarte bringt keine Treuepunkte.** Die Punkte werden erzielt, wenn die Karte für Waren verwendet wird, also erhält niemand zweimal für das gleiche Geld.
+- **Das Kaufen einer Gutscheinkarte bringt keine Treuepunkte.** Die Punkte werden erzielt, wenn die Karte für Waren verwendet wird, also erhält niemand doppelt für das gleiche Geld.
 
 ![Gutscheinkarten-Verwaltung](/static/core/admin/img/help/gift-cards/gift-card-list.webp)
 
@@ -24,7 +24,7 @@ Diese Einstellungen steuern, wie ein Kunde den Betrag wählt, wenn er eine Gutsc
 |------|-------------|
 | **Feste Nennungen** | Kunden wählen aus vordefinierten Beträgen (z. B. 25 $, 50 $, 100 $) |
 | **Benutzerdefinierter Betrag** | Kunden können einen beliebigen Betrag innerhalb eines Min-/Max-Bereichs eingeben |
-| **Beide** | Bieten Sie feste Nennungen an und fügen Sie eine Option für einen benutzerdefinierten Betrag hinzu |
+| **Beides** | Bieten Sie feste Nennungen an und fügen Sie eine Option für einen benutzerdefinierten Betrag hinzu |
 
 ## Erstellen eines Gutscheinkartenprodukts
 
@@ -36,7 +36,7 @@ Jede Gutscheinkarte – ob sie letztendlich verkauft wird oder heute manuell aus
 2. Wählen Sie **Produkttyp** auf **Gutscheinkarte**
 3. Geben Sie den Produktname und die Beschreibung ein
 4. Konfigurieren Sie die Nennungseinstellungen:
-   - Wählen Sie einen **Nennungstyp** (Fest, Benutzerdefiniert oder Beide)
+   - Wählen Sie einen **Nennungstyp** (Fest, Benutzerdefiniert oder Beides)
    - Für Fest: legen Sie die verfügbaren Nennungsbeträge fest
    - Für Benutzerdefiniert: setzen Sie den **Mindest-** und **Höchstbetrag**
 5. Setzen Sie **Ablauf in Tagen** (0 = nie abläuft) – dies bestimmt, wie lange Gutscheinkarten nach dem Kauf gültig sind
@@ -59,10 +59,10 @@ Dies ist der einzige Weg, eine finanzierte Gutscheinkarte jetzt zu erstellen, un
 5. Füllen Sie den **Empfänger**-Abschnitt weiter unten auf der gleichen Seite aus:
    - **Empfänger-E-Mail** – erforderlich; Ort, an den die Liefer-E-Mail gesendet wird
    - **Empfängername**, **Absendername** und **Persönliche Nachricht** – alle optional
-   - **Geplantes Sendedatum** – optional; lassen Sie es leer und senden Sie es, sobald Sie bereit sind, oder setzen Sie ein zukünftiges Datum/Uhrzeit (z. B. ein Geburtstag)
+   - **Geplantes Sendedatum** – optional; lassen Sie es leer und senden Sie es, sobald Sie bereit sind, oder setzen Sie ein zukünftiges Datum/Zeit (z. B. ein Geburtstag)
 6. Klicken Sie auf **Speichern**
 
-Der Einlösungscodewird automatisch generiert und der Startguthabenbetrag wird aus dem Anfangswert gesetzt – Sie füllen weder von diesen beiden Feldern selbst ein.
+Der Einlösungscode wird automatisch generiert und der Startguthabenbetrag wird aus dem Anfangswert festgelegt – Sie füllen weder von diesen beiden Feldern selbst ein.
 
 **Das Speichern der Karte sendet keine E-Mail.** Um sie zu versenden, kehren Sie zur Geschenkkartenliste zurück, aktivieren Sie das Häkchen der Karte, wählen Sie **Geschenkkarten-E-Mails senden** im Aktionen-Dropdown aus und klicken Sie auf **Weiter**.
 
@@ -104,7 +104,7 @@ Jede Geschenkkarte zeigt an:
 ### Aktionen
 
 - Klicken Sie auf eine Geschenkkarte, um ihre **Details zu bearbeiten** und ihre vollständige **Transaktionshistorie** anzuzeigen, die inline auf derselben Seite angezeigt wird
-- Wählen Sie eine oder mehrere Karten aus und verwenden Sie das **Aktionen**-Dropdown, um **Geschenkkarten-E-Mails zu senden** (liefert oder sendet die Liefer-E-Mail erneut) oder **Ausgewählte Geschenkkarten als inaktiv markieren** (deaktiviert — das Saldo bleibt erhalten, aber die Karte kann nicht mehr eingelöst werden)
+- Wählen Sie eine oder mehrere Karten aus und verwenden Sie das **Aktionen**-Dropdown, um **Geschenkkarten-E-Mails zu senden** (lieferung oder erneutes Senden der Liefer-E-Mail) oder **Ausgewählte Geschenkkarten als inaktiv markieren** (deaktiviert — das Saldo bleibt erhalten, die Karte kann aber nicht mehr eingelöst werden)
 
 ## Einlösung heute
 
@@ -120,14 +120,14 @@ Beachten Sie, dass der Kassierer den Code am **Zahlungsschritt** entgegennimmt, 
 
 **Online** hat der Checkout-Schritt ein Feld für Geschenkkarten am Zahlungsschritt. Der Kunde gibt seinen Code ein, das Saldo wird vom fälligen Betrag abgezogen — nach Steuern und Lieferkosten — und der Rest wird wie gewohnt auf seine Karte belastet. Wenn die Karte den gesamten Auftrag abdeckt, ist keine weitere Zahlung erforderlich. Das Saldo wird erst tatsächlich abgebucht, wenn die Zahlung bestätigt wird, daher berührt ein abgebrochener Checkout die Karte nie.
 
-Empfänger können auch jederzeit den verbleibenden Saldo anhand des Links in ihrer Liefer-E-Mail überprüfen.
+Empfänger können auch jederzeit den verbleibenden Saldo über den Link in ihrer Liefer-E-Mail überprüfen.
 
 ## Rückerstattung
 
 Bei Rückerstattungen von Bestellungen oder Verkäufen, die eine Geschenkkarte verwendet haben:
 
 - **Eine von dem Kunden gekaufte Geschenkkarte, die noch nicht verwendet wurde** — die Karte wird deaktiviert und ihr Saldo auf Null gesetzt, sodass der Kredit mit der Rückerstattung verschwindet.
-- **Eine von dem Kunden gekaufte Geschenkkarte, die teilweise genutzt wurde** — dies erfordert Ihre Einschätzung. Die Deaktivierung würde den Kredit zurücknehmen, den der Kunde bereits genutzt hat, daher bleibt das Saldo unverändert und wird für Sie markiert, um es manuell anzupassen.
+- **Eine von dem Kunden gekaufte Geschenkkarte, die teilweise verwendet wurde** — dies erfordert Ihre Einschätzung. Die Deaktivierung würde den Kredit zurücknehmen, den der Kunde bereits verwendet hat, daher bleibt das Saldo unverändert und wird für Sie markiert, um es manuell anzupassen.
 - **Eine Geschenkkarte, die zur Bezahlung der rückzuerstattenden Bestellung verwendet wurde** — die Rückerstattung geht zuerst auf die Karte zurück, bevor jede Karte oder Bankzahlung erfolgt. Das Zurückgeben von Geld an eine Bank, von der der Händler nie tatsächlich Geld erhalten hat, ist der größere Fehler, und das Zurückgeben von Wert an den ursprünglichen Ort schließt einen bekannten Betrugsweg ab. Wenn die ursprüngliche Karte seitdem abgelaufen oder deaktiviert wurde, wird eine Ersatzkarte ohne Ablaufdatum an denselben Empfänger ausgestellt.
 - **Vollständige Rückerstattung** — Kreditieren Sie den Betrag über die Geschenkkarten-Saldo über eine Rückerstattungstransaktion
 
@@ -135,11 +135,11 @@ Bei Rückerstattungen von Bestellungen oder Verkäufen, die eine Geschenkkarte v
 
 Erhalten Sie alle Markdown-Formatierung, Bildpfade, Codeblöcke und technischen Begriffe beibehalten.
 
-- Verwenden Sie manuelle Ausstellung für Goodwill-Gutschriften, Kundendienstlösungen oder in jedem Fall, in dem Sie einem Kunden ohne Kauf im Onlineshop ein Guthaben gewähren möchten.
-- Legen Sie realistische Ablaufzeiten fest (z. B. 365 Tage), um den lokalen Geschenkkartenregelungen zu entsprechen – einige Jurisdiktionen verlangen Mindestgültigkeitszeiträume.
+- Verwenden Sie manuelle Ausstellung für Goodwill-Gutschriften, Kundendienstlösungen oder in jedem Fall, in dem Sie einem Kunden ohne Kauf im Onlineshop ein Geschäfts-Guthaben geben möchten.
+- Legen Sie realistische Ablaufzeiten fest (z. B. 365 Tage), um den lokalen Gesetzen zu gift cards zu entsprechen – einige Jurisdiktionen verlangen Mindestgültigkeitszeiten.
 - Verwenden Sie den Bezeichnungstyp "Beide", um Bequemlichkeit (vordefinierte Beträge) und Flexibilität (einen individuellen Betrag) anzubieten.
-- Überwachen Sie regelmäßig das Metric "Gesamtbetrag" – es stellt eine offene Verbindlichkeit auf Ihren Büchern dar.
+- Überwachen Sie regelmäßig das Gesamtguthaben-Metrik – es stellt eine offene Verbindlichkeit auf Ihren Büchern dar.
 - Eine Karte wird online und vor Ort gleichartig ausgegeben – bei der Web-Bezahlung im Zahlungsschritt oder am Kassentisch.
 
-Die Liefer-E-Mail enthält einen Link zur Kontrolle des Kontostands, den die Empfänger jederzeit verwenden können.
-- Wenn Sie Kunden in mehreren Ländern bedienen, können Sie Geschenkkarten in bestimmten Währungen ausstellen – siehe den Hilfethema **Multi-Currency Gift Cards** für Details.
+Die Liefer-E-Mail enthält einen Link zur Kontrolle des Guthabens, den Empfänger jederzeit verwenden können.
+- Wenn Sie Kunden in mehreren Ländern verkaufen, können Sie Geschenkkarten in bestimmten Währungen ausstellen – siehe den **Multi-Currency Gift Cards**-Hilfethema für Details.

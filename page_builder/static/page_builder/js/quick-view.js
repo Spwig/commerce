@@ -111,6 +111,26 @@
     return imgObj.image || imgObj.display_url || imgObj.url || '';
   }
 
+  /**
+   * Swap the main image to a responsive <picture> (AVIF/WebP/fallback),
+   * re-pointing imgEl at the new <img>. Replacing the element forces the
+   * browser to re-run source selection. `sources` may be null (no AVIF yet),
+   * in which case the fallback URL renders as a plain image.
+   */
+  function setMainImage(sources, fallbackUrl, altText) {
+    const target = (imgEl && imgEl.closest('picture')) || imgEl;
+    const newEl = window.swapPicture(target, sources || null, {
+      fallbackSrc: fallbackUrl || '',
+      alt: altText || '',
+      className: 'quick-view__image',
+    });
+    if (newEl && newEl.tagName === 'PICTURE') {
+      imgEl = newEl.querySelector('img');
+    } else if (newEl && newEl.tagName === 'IMG') {
+      imgEl = newEl;
+    }
+  }
+
   function render(data) {
     currentProduct = data;
 
@@ -123,8 +143,13 @@
     // Title
     titleEl.textContent = data.name;
 
-    // Price
-    renderPrice(data.price_amount, data.price_currency, data.compare_at_price_amount);
+    // Price — show the sale-aware effective price; compare_at_price_amount is the
+    // regular price to strike through, present only when on sale.
+    renderPrice(
+      data.effective_price_amount != null ? data.effective_price_amount : data.price_amount,
+      data.price_currency,
+      data.compare_at_price_amount
+    );
 
     // Description
     if (data.short_description) {
@@ -136,8 +161,7 @@
 
     // Main image
     if (data.images && data.images.length > 0) {
-      imgEl.src = getImageUrl(data.images[0]);
-      imgEl.alt = data.name;
+      setMainImage(data.images[0].image_sources, getImageUrl(data.images[0]), data.name);
     }
 
     // Thumbnails
@@ -194,7 +218,7 @@
       thumb.type = 'button';
       thumb.innerHTML = '<img src="' + escapeHtml(getImageUrl(img)) + '" alt="">';
       thumb.addEventListener('click', function () {
-        imgEl.src = getImageUrl(img);
+        setMainImage(img.image_sources, getImageUrl(img), currentProduct && currentProduct.name);
         thumbsEl.querySelectorAll('.quick-view__thumb').forEach(function (t) {
           t.classList.remove('quick-view__thumb--active');
         });
@@ -413,12 +437,15 @@
     const variantImages = variant.images || [];
     if (variantImages.length > 0) {
       // Variant has its own gallery — show those images
-      imgEl.src = getImageUrl(variantImages[0]);
-      imgEl.alt = variantImages[0].alt_text || variant.name;
+      setMainImage(
+        variantImages[0].image_sources,
+        getImageUrl(variantImages[0]),
+        variantImages[0].alt_text || variant.name
+      );
       renderThumbnails(variantImages);
     } else if (variant.image_url) {
       // Single variant image
-      imgEl.src = variant.image_url;
+      setMainImage(variant.image_sources, variant.image_url, variant.name);
     }
     // If variant has no images at all, keep the current product images
   }
@@ -463,10 +490,10 @@
       for (const slug in selectedAttributes) {
         let found = false;
         for (let j = 0; j < attrs.length; j++) {
-          if (
-            attrs[j].attribute_slug === slug &&
-            attrs[j].value_slug === selectedAttributes[slug]
-          ) {
+          // The serializer emits the value slug as `slug` (with `attribute_slug`
+          // for the parent attribute); tolerate `value_slug` too for safety.
+          const valueSlug = attrs[j].value_slug != null ? attrs[j].value_slug : attrs[j].slug;
+          if (attrs[j].attribute_slug === slug && valueSlug === selectedAttributes[slug]) {
             found = true;
             break;
           }

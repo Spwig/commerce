@@ -5,7 +5,6 @@
  *
  * Description: Styles for step4_test.html
  * Template: product_feeds/templates/admin/product_feeds/wizard/step4_test.html
- * Extracted: 2026-02-14
  *
  * Dependencies:
  * - core/static/core/admin/css/wizard-base.css (base wizard styles)
@@ -13,32 +12,32 @@
  *
  * Notes:
  * - Extracted during CSP hardening migration
- * - Uses theme CSS variables for consistent theming
+ * - Uses the admin theme tokens for consistent theming
  */
 
 /* Feed Preview Styles */
 .feed-preview {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: var(--admin-bg-secondary, var(--darkened-bg));
+  background: var(--darkened-bg);
   border-radius: 8px;
-  border: 1px solid var(--admin-border-color, #dee2e6);
+  border: 1px solid var(--border-color, #dee2e6);
 }
 
 .feed-preview h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
-  color: var(--admin-text-primary, #212529);
+  color: var(--body-fg, #212529);
 }
 
 .feed-preview h3 i {
   margin-right: 0.5rem;
-  color: var(--admin-primary, #007bff);
+  color: var(--link-hover-color, #007bff);
 }
 
 .preview-description {
   margin: 0 0 1rem 0;
-  color: var(--admin-text-secondary, var(--close-button-bg));
+  color: var(--body-quiet-color);
   font-size: 0.9rem;
 }
 
@@ -55,12 +54,12 @@
   display: block;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--admin-primary, #007bff);
+  color: var(--link-hover-color, #007bff);
 }
 
 .preview-stats .stat-label {
   font-size: 0.85rem;
-  color: var(--admin-text-secondary, var(--close-button-bg));
+  color: var(--body-quiet-color);
 }
 
 .btn-success {
@@ -69,6 +68,6 @@
 }
 
 .btn-success:hover {
-  background-color: var(--success-dark, #218838) !important;
-  border-color: var(--success-dark, #1e7e34) !important;
+  background-color: color-mix(in srgb, var(--success-color) 85%, #000) !important;
+  border-color: color-mix(in srgb, var(--success-color) 82%, #000) !important;
 }

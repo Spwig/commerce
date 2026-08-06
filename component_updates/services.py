@@ -1326,8 +1326,15 @@ class UpdateManager:
         logger.info(f"Installing {component_type}: {provider_slug} v{version}")
 
         try:
-            # Base path uses component_type slug directly as directory name
-            base_path = INTEGRATIONS_DIR / component_type / provider_slug
+            # Install under the registry slug, not the manifest slug. Every
+            # reader (ProviderRegistry.discover_providers, component static
+            # serving, the setup wizard, the already-installed check) resolves
+            # a provider's files via ComponentRegistry.slug. The manifest slug
+            # is verified equal to it up to hyphen/underscore normalization
+            # above, so keying the install directory off component.slug keeps
+            # the files where discovery looks for them (e.g. 'foo_bar' rather
+            # than a stray 'foo-bar').
+            base_path = INTEGRATIONS_DIR / component_type / component.slug
             base_path.mkdir(parents=True, exist_ok=True)
 
             # Version directory with 'v' prefix
@@ -1846,11 +1853,49 @@ class PlatformUpdateService:
 
             data = response.json()
             logger.info(f"Platform update check: {data.get('update_available', False)}")
+            self._backfill_changelog(data)
             return data
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Failed to check for platform updates: {e}")
             raise PlatformUpdateError(f"Update check failed: {e}")
+
+    @staticmethod
+    def _backfill_changelog(data: dict) -> None:
+        """Fill in missing changelog/release notes from the bundled CHANGELOG.md.
+
+        Installs that build their own image from the public GitHub repo may not
+        have changelog text registered on the update server, so ``check`` comes
+        back with empty ``changelog``/``release_notes``. When the target version
+        exists in the changelog shipped with this build, use that so the "What's
+        New" panel is populated rather than blank. Never overwrites text the
+        server already provided.
+        """
+        if not data.get("update_available"):
+            return
+        if data.get("changelog") and data.get("release_notes"):
+            return
+
+        version = data.get("latest_version")
+        if not version:
+            return
+
+        try:
+            from core.changelog import get_changelog_entry
+
+            entry = get_changelog_entry(version)
+        except Exception as e:  # pragma: no cover - defensive; never break a check
+            logger.debug(f"Local changelog lookup failed for {version}: {e}")
+            return
+
+        if not entry:
+            return
+
+        if not data.get("changelog") and entry.notes:
+            data["changelog"] = entry.notes
+            data["changelog_source"] = "local"
+        if not data.get("release_notes") and entry.summary:
+            data["release_notes"] = entry.summary
 
     def download_package(self, version: str, update_record=None) -> Path:
         """

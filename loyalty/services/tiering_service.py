@@ -76,8 +76,11 @@ class TieringService:
                 str(order_qs.aggregate(total=Sum("total_amount_base"))["total"] or "0.00")
             )
             order_count = order_qs.count()
-        except Exception as e:
-            logger.warning(f"Could not fetch order data for member {member.id}: {e}")
+        except ImportError as e:
+            # Orders app not installed on this edition; fall back to zero metrics.
+            # Database/query errors must propagate so the atomic evaluation aborts
+            # rather than demoting a member on incomplete data.
+            logger.warning(f"Order system unavailable for member {member.id}: {e}")
             lifetime_spend = Decimal("0.00")
             order_count = 0
 
@@ -85,19 +88,18 @@ class TieringService:
         eligible_tier = None
 
         for tier in tiers:
-            qualifies = False
+            # Only positive thresholds are real criteria; a zero threshold is an
+            # unused/default criterion and must not qualify a member on its own.
+            checks = []
+            if tier.min_points_earned > 0:
+                checks.append(lifetime_points >= tier.min_points_earned)
+            if tier.min_spend > 0:
+                checks.append(lifetime_spend >= tier.min_spend)
+            if tier.min_orders > 0:
+                checks.append(order_count >= tier.min_orders)
 
-            # Check if meets points threshold
-            if lifetime_points >= tier.min_points_earned:
-                qualifies = True
-
-            # Check if meets spend threshold
-            if lifetime_spend >= tier.min_spend:
-                qualifies = True
-
-            # Check if meets order count threshold
-            if order_count >= tier.min_orders:
-                qualifies = True
+            # A tier with all three thresholds at zero is the universal baseline tier.
+            qualifies = any(checks) if checks else True
 
             # If qualifies and this is a higher tier (lower rank), set it
             if qualifies and (eligible_tier is None or tier.rank < eligible_tier.rank):
@@ -312,8 +314,8 @@ class TieringService:
         current_tier = member.current_tier
 
         if not current_tier:
-            # No tier yet, return lowest tier
-            return LoyaltyTier.objects.filter(is_active=True).order_by("rank").first()
+            # No tier yet, return lowest tier (highest rank number)
+            return LoyaltyTier.objects.filter(is_active=True).order_by("-rank").first()
 
         # Get next tier (lower rank number = higher tier)
         return (
@@ -342,8 +344,10 @@ class TieringService:
                 "current_points": 0,
             }
 
-        balance = member.balance
-        current_points = balance.lifetime_earned if balance else 0
+        try:
+            current_points = member.balance.lifetime_earned
+        except LoyaltyBalance.DoesNotExist:
+            current_points = 0
         required_points = next_tier.min_points_earned
 
         if required_points == 0:
@@ -389,6 +393,24 @@ class TieringService:
             benefits.append(_("Early access to new products and sales"))
 
         return benefits
+
+    def is_within_grace_period(self, member, tier):
+        """Report whether a grace period would currently spare a member from demotion.
+
+        Read-only mirror of the demotion decision in ``_is_grace_period_active``:
+        it never starts, extends, or clears grace-period tracking, so it is safe
+        for previews such as the ``evaluate_loyalty_tiers --dry-run`` command.
+        """
+        if not tier or tier.grace_period_days <= 0:
+            return False
+
+        if member.grace_period_started_at is None:
+            # Member has not been demoted yet; a real run would open a grace
+            # period now, so no demotion would occur this cycle.
+            return True
+
+        grace_end = member.grace_period_started_at + timedelta(days=tier.grace_period_days)
+        return timezone.now() < grace_end
 
     def _is_grace_period_active(self, member, tier):
         """
@@ -442,19 +464,23 @@ class TieringService:
             tier: LoyaltyTier instance
             badge_type: 'promotion' or 'achievement'
         """
-        # Look for a badge associated with this tier
-        try:
-            badge = LoyaltyBadge.objects.get(name=f"{tier.name} Tier", is_active=True)
+        # Look for a badge associated with this tier. Badge names are not unique,
+        # so use a deterministic filter().first() rather than get(), which would
+        # raise MultipleObjectsReturned and roll back the promotion transaction.
+        badge = (
+            LoyaltyBadge.objects.filter(name=f"{tier.name} Tier", is_active=True)
+            .order_by("pk")
+            .first()
+        )
 
-            # Check if member already has this badge
-            if not LoyaltyMemberBadge.objects.filter(member=member, badge=badge).exists():
-                LoyaltyMemberBadge.objects.create(
-                    member=member, badge=badge, earned_at=timezone.now()
-                )
-                logger.info(f"Awarded badge '{badge.name}' to member {member.id}")
-        except LoyaltyBadge.DoesNotExist:
+        if badge is None:
             # No badge for this tier, that's okay
-            pass
+            return
+
+        # Check if member already has this badge
+        if not LoyaltyMemberBadge.objects.filter(member=member, badge=badge).exists():
+            LoyaltyMemberBadge.objects.create(member=member, badge=badge, earned_at=timezone.now())
+            logger.info(f"Awarded badge '{badge.name}' to member {member.id}")
 
     def batch_evaluate_all_members(self, limit=None):
         """
@@ -469,7 +495,9 @@ class TieringService:
         Returns:
             dict with statistics
         """
-        members = LoyaltyMember.objects.filter(is_active=True)
+        members = LoyaltyMember.objects.filter(is_active=True).select_related(
+            "current_tier", "customer", "balance"
+        )
 
         if limit:
             members = members[:limit]

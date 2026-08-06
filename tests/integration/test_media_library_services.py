@@ -11,7 +11,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
-from media_library.models import ImageSizePreset, MediaThumbnail
+from media_library.models import ImageSizePreset, MediaAsset, MediaThumbnail
 from media_library.services import ImageProcessor
 from tests.factories import (
     ImageSizePresetFactory,
@@ -123,6 +123,281 @@ class TestImageProcessor:
         # Both should succeed
         assert high_quality_size > 0
         assert low_quality_size > 0
+
+
+class TestAVIFConversion:
+    """Test AVIF conversion — the primary next-gen rendition alongside WebP."""
+
+    def test_convert_to_avif_produces_avif_bytes(self):
+        """convert_to_avif returns valid AVIF-encoded content."""
+        processor = ImageProcessor()
+        jpeg_io = create_test_image(800, 600, "JPEG")
+
+        avif_content = processor.convert_to_avif(jpeg_io, quality=63)
+
+        assert avif_content is not None
+        data = avif_content.read()
+        assert len(data) > 0
+        # ISO-BMFF ftyp box brand for AVIF still images.
+        assert data[4:12] == b"ftypavif"
+
+    def test_convert_to_avif_uses_settings_defaults(self):
+        """Quality/speed default to MEDIA_LIBRARY_SETTINGS when not passed."""
+        processor = ImageProcessor()
+
+        assert processor.avif_quality == 63
+        assert processor.avif_speed == 6
+
+        avif_content = processor.convert_to_avif(create_test_image(400, 400, "JPEG"))
+        assert avif_content is not None
+        assert avif_content.read()[4:12] == b"ftypavif"
+
+    def test_avif_preserves_transparency(self):
+        """RGBA input keeps its alpha channel when preserve_transparency=True."""
+        processor = ImageProcessor()
+        rgba = Image.new("RGBA", (64, 64), (120, 30, 200, 128))
+        buf = io.BytesIO()
+        rgba.save(buf, format="PNG")
+        buf.seek(0)
+
+        avif_content = processor.convert_to_avif(buf, preserve_transparency=True)
+
+        assert avif_content is not None
+        decoded = Image.open(io.BytesIO(avif_content.read()))
+        decoded.load()
+        assert decoded.mode in ("RGBA", "LA")
+
+    def test_avif_smaller_than_webp_at_default_quality(self):
+        """AVIF typically encodes smaller than WebP for photographic content."""
+        processor = ImageProcessor()
+        # A gradient compresses realistically (a flat colour would be atypical).
+        img = Image.new("RGB", (600, 600))
+        px = img.load()
+        for y in range(600):
+            for x in range(600):
+                px[x, y] = ((x + y) % 256, (x * 2) % 256, (y * 2) % 256)
+        webp_io = io.BytesIO()
+        img.save(webp_io, format="PNG")
+        webp_io.seek(0)
+        webp = processor.convert_to_webp(webp_io)
+        webp_io.seek(0)
+        avif = processor.convert_to_avif(webp_io)
+
+        assert webp is not None and avif is not None
+        assert avif.size <= webp.size
+
+    def test_convert_to_avif_handles_invalid_data(self):
+        """Invalid image data returns None rather than raising."""
+        processor = ImageProcessor()
+        assert processor.convert_to_avif(io.BytesIO(b"not an image")) is None
+
+
+class TestAVIFVariantGeneration:
+    """Test async AVIF rendition generation for assets and their thumbnails."""
+
+    def _real_image_asset(self, admin_user, **kwargs):
+        """MediaAsset whose original_file holds real (decodable) JPEG bytes."""
+        jpeg = create_test_image(400, 400, "JPEG").read()
+        return MediaAssetFactory(
+            original_file__data=jpeg,
+            original_file__filename="orig.jpg",
+            uploaded_by=admin_user,
+            **kwargs,
+        )
+
+    def _real_thumbnail(self, asset, preset="medium"):
+        thumb_bytes = create_test_image(300, 300, "JPEG").read()
+        return ThumbnailFactory(
+            media_asset=asset,
+            size_preset=preset,
+            file__data=thumb_bytes,
+            file__filename="thumb.jpg",
+            webp_file=None,
+        )
+
+    def test_generate_avif_variants_populates_asset_and_thumbnail(self, admin_user):
+        """AVIF is written for the full-size asset and each thumbnail."""
+        from media_library.services import generate_avif_variants
+
+        asset = self._real_image_asset(admin_user)
+        self._real_thumbnail(asset)
+
+        written = generate_avif_variants(asset)
+
+        assert written >= 2
+        asset.refresh_from_db()
+        assert asset.avif_file
+        thumb = asset.thumbnails.get(size_preset="medium")
+        assert thumb.avif_file
+
+    def test_generate_avif_variants_is_idempotent_without_force(self, admin_user):
+        """A second pass writes nothing unless force=True."""
+        from media_library.services import generate_avif_variants
+
+        asset = self._real_image_asset(admin_user)
+        self._real_thumbnail(asset)
+        generate_avif_variants(asset)
+
+        assert generate_avif_variants(asset) == 0
+        assert generate_avif_variants(asset, force=True) >= 2
+
+    def test_generate_avif_variants_skips_non_image(self, admin_user):
+        """Videos/3D/SVG produce no AVIF and no error."""
+        from media_library.services import generate_avif_variants
+
+        video = MediaAssetFactory(video=True, uploaded_by=admin_user)
+        assert generate_avif_variants(video) == 0
+        video.refresh_from_db()
+        assert not video.avif_file
+
+    def test_queue_avif_generation_enqueues_task_for_image(self, admin_user):
+        """Upload paths enqueue the Celery task for images when AUTO_AVIF on."""
+        from unittest.mock import patch
+
+        from media_library.services import queue_avif_generation
+
+        asset = self._real_image_asset(admin_user)
+        with patch("core.tasks.generate_avif_for_asset.delay") as delay:
+            queue_avif_generation(asset)
+        delay.assert_called_once_with(str(asset.id))
+
+    def test_queue_avif_generation_noop_for_video(self, admin_user):
+        """Non-images are never enqueued."""
+        from unittest.mock import patch
+
+        from media_library.services import queue_avif_generation
+
+        video = MediaAssetFactory(video=True, uploaded_by=admin_user)
+        with patch("core.tasks.generate_avif_for_asset.delay") as delay:
+            queue_avif_generation(video)
+        delay.assert_not_called()
+
+    def test_generate_avif_for_asset_task_runs(self, admin_user):
+        """The Celery task resolves the asset and writes AVIF synchronously."""
+        from core.tasks import generate_avif_for_asset
+
+        asset = self._real_image_asset(admin_user)
+        self._real_thumbnail(asset)
+
+        result = generate_avif_for_asset(str(asset.id))
+
+        assert result["status"] == "success"
+        assert result["avif_written"] >= 2
+        asset.refresh_from_db()
+        assert asset.avif_file
+
+
+class TestPictureSources:
+    """Test MediaAsset.get_picture_sources — the <picture> data layer."""
+
+    def _asset_with(self, admin_user, avif=False, webp=False, **kwargs):
+        from django.core.files.base import ContentFile
+
+        asset = MediaAssetFactory(uploaded_by=admin_user, **kwargs)
+        if webp:
+            asset.webp_file.save("a.webp", ContentFile(b"webp-bytes"), save=True)
+        if avif:
+            asset.avif_file.save("a.avif", ContentFile(b"avif-bytes"), save=True)
+        return asset
+
+    def test_sources_include_avif_and_webp_when_present(self, admin_user):
+        asset = self._asset_with(admin_user, avif=True, webp=True)
+        sources = asset.get_picture_sources()
+        assert sources["avif"].endswith(".avif")
+        assert sources["webp"].endswith(".webp")
+        # Fallback is the ORIGINAL format, not webp — webp is offered as a <source>.
+        assert sources["fallback"] == asset.original_file.url
+
+    def test_sources_omit_avif_when_missing(self, admin_user):
+        """Backfill-window safety: no avif file -> no avif source."""
+        asset = self._asset_with(admin_user, webp=True)
+        sources = asset.get_picture_sources()
+        assert sources["avif"] is None
+        assert sources["fallback"] == asset.original_file.url
+
+    def test_sources_for_preset_use_thumbnail(self, admin_user):
+        from django.core.files.base import ContentFile
+
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        thumb = ThumbnailFactory(media_asset=asset, size_preset="product_listing", webp_file=None)
+        thumb.avif_file.save("t.avif", ContentFile(b"avif-bytes"), save=True)
+        sources = asset.get_picture_sources("product_listing")
+        assert sources["avif"].endswith(".avif")
+        assert sources["width"] == thumb.width
+
+    def test_svg_has_no_raster_candidates(self, admin_user):
+        asset = MediaAssetFactory(svg=True, uploaded_by=admin_user)
+        sources = asset.get_picture_sources()
+        assert sources["avif"] is None
+        assert sources["webp"] is None
+        assert sources["fallback"] == asset.original_file.url
+
+    def test_resolve_from_url_matches_by_filename(self, admin_user):
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        assert MediaAsset.resolve_from_url(asset.original_file.url) == asset
+        assert MediaAsset.resolve_from_url("https://cdn.example.com/nope.jpg") is None
+        assert MediaAsset.resolve_from_url("") is None
+
+
+class TestPictureTag:
+    """Test the {% picture %} inclusion tag and picture_sources filter."""
+
+    def _render(self, tpl, ctx):
+        from django.template import Context, Template
+
+        return Template(tpl).render(Context(ctx))
+
+    def test_tag_renders_avif_then_webp_then_img(self, admin_user):
+        from django.core.files.base import ContentFile
+
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        asset.webp_file.save("a.webp", ContentFile(b"webp-bytes"), save=True)
+        asset.avif_file.save("a.avif", ContentFile(b"avif-bytes"), save=True)
+        html = self._render(
+            '{% load media_picture %}{% picture asset alt="Hi" css="product-card__img" %}',
+            {"asset": asset},
+        )
+        assert '<picture class="spwig-picture">' in html
+        # Ordering: avif source appears before webp source, which precedes <img>.
+        assert html.index('type="image/avif"') < html.index('type="image/webp"')
+        assert html.index('type="image/webp"') < html.index("<img")
+        assert 'class="product-card__img"' in html
+        assert 'alt="Hi"' in html
+
+    def test_tag_omits_avif_source_when_missing(self, admin_user):
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        html = self._render(
+            '{% load media_picture %}{% picture asset alt="Hi" %}', {"asset": asset}
+        )
+        assert 'type="image/avif"' not in html
+        assert "<img" in html
+        assert asset.original_file.url in html
+
+    def test_filter_resolves_thumbnail_url_to_thumbnail_sources(self, admin_user):
+        """A thumbnail rendition URL resolves to that thumbnail's own siblings."""
+        from django.core.files.base import ContentFile
+
+        from media_library.templatetags.media_picture import resolve_sources
+
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        thumb = ThumbnailFactory(media_asset=asset, size_preset="product_listing", webp_file=None)
+        thumb.avif_file.save("t.avif", ContentFile(b"avif-bytes"), save=True)
+        sources = resolve_sources(thumb.file.url)
+        assert sources["avif"].endswith(".avif")
+        assert sources["fallback"] == thumb.file.url
+
+    def test_filter_resolves_url_to_sources(self, admin_user):
+        from django.core.files.base import ContentFile
+
+        asset = MediaAssetFactory(uploaded_by=admin_user)
+        asset.avif_file.save("a.avif", ContentFile(b"avif-bytes"), save=True)
+        html = self._render(
+            "{% load media_picture %}"
+            "{% with s=url|picture_sources %}{{ s.avif }}|{{ s.fallback }}{% endwith %}",
+            {"url": asset.original_file.url},
+        )
+        assert ".avif" in html
+        assert asset.original_file.url in html
 
 
 # ============================================================

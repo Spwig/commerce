@@ -1133,6 +1133,13 @@ class SystemMetricsAdmin(admin.ModelAdmin):
         # Get version info
         version_info = SystemStatusService.get_version_info()
 
+        # Render the changelog markdown to safe HTML for display (the raw text
+        # comes from the update server or the bundled CHANGELOG.md, both
+        # maintainer-authored).
+        from core.changelog import render_changelog_html
+
+        changelog_html = render_changelog_html(version_info.get("changelog") or "")
+
         # Get recent upgrades
         recent_upgrades = SystemUpgrade.objects.order_by("-created_at")[:5]
 
@@ -1146,6 +1153,8 @@ class SystemMetricsAdmin(admin.ModelAdmin):
                 "available_version": version_info.get("available"),
                 "update_available": version_info.get("update_available", False),
                 "changelog": version_info.get("changelog"),
+                "changelog_html": changelog_html,
+                "release_notes": version_info.get("release_notes"),
                 "recent_upgrades": recent_upgrades,
                 "status": status,
             },

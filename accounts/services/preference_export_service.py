@@ -214,8 +214,12 @@ class PreferenceExportService:
             elif isinstance(value, list):
                 # Convert lists to comma-separated string
                 if value and isinstance(value[0], dict):
-                    # List of dicts - show count
-                    items.append((new_key, f"{len(value)} entries"))
+                    # List of dicts - flatten each entry with an indexed key
+                    # (e.g. change_history.0.timestamp) so no record is lost.
+                    for idx, entry in enumerate(value):
+                        items.extend(
+                            cls._flatten_for_csv(entry, f"{new_key}{sep}{idx}", sep=sep).items()
+                        )
                 else:
                     # List of primitives - join as string
                     items.append((new_key, ", ".join(str(v) for v in value)))

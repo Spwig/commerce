@@ -346,6 +346,7 @@ class CustomizationOptionInlineTest(TestCase):
             "gallery_type": "standard",
             "template_variant": "default",
             "status": "draft",
+            "region_restriction_mode": "all",
             # License fields (required by ProductForm even though model has defaults)
             "license_generation_trigger": "on_payment",
             "default_license_type": "perpetual",

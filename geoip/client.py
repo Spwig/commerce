@@ -6,7 +6,7 @@ Provides integration with the JWT-authenticated GeoIP service
 import hashlib
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import urljoin
 
@@ -100,7 +100,7 @@ class GeoIPClient:
 
     def _generate_token(self) -> str:
         """Generate JWT token for authentication"""
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         payload = {
             "iss": self.jwt_issuer,
             "sub": self.merchant_id,

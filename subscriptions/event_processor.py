@@ -177,6 +177,10 @@ class SubscriptionEventProcessor:
                 subscription.next_billing_date = event.period_end
                 update_fields.extend(["current_period_end", "next_billing_date"])
 
+            # A successful provider charge fulfils recurring at the end of this
+            # method (cls._fulfil_native_cycle) — mirroring the fallback engine's
+            # per-cycle renewal Order — after the state update below is saved.
+
         elif event.event_type == SubscriptionEventType.PAYMENT_FAILED:
             subscription.status = "past_due"
             subscription.last_billing_status = "failed"
@@ -222,6 +226,89 @@ class SubscriptionEventProcessor:
 
         if update_fields:
             subscription.save(update_fields=update_fields)
+
+        # Native renewal fulfilment: a successful provider charge should create a
+        # paid Order so recurring stock/shipping + digital-licence fulfilment run,
+        # mirroring the fallback billing engine. Isolated in its own try/except so
+        # a fulfilment failure never fails webhook processing (the charge already
+        # happened; the event's state update above must stand).
+        if event.event_type == SubscriptionEventType.PAYMENT_SUCCEEDED:
+            try:
+                cls._fulfil_native_cycle(subscription, event)
+            except Exception:
+                logger.exception(
+                    "Native renewal fulfilment failed for subscription %s",
+                    subscription.subscription_id,
+                )
+
+    @classmethod
+    def _fulfil_native_cycle(cls, subscription: CustomerSubscription, event: SubscriptionEvent):
+        """
+        Create a paid renewal Order for a native (webhook-billed) cycle so
+        recurring fulfilment runs — the native counterpart of the fallback
+        engine's SubscriptionManager._create_renewal_order.
+
+        Two safeguards:
+        * **First-invoice dedup.** The provider's first successful invoice is the
+          cycle the storefront checkout already charged and fulfilled (via
+          ``originating_order``). We record a BillingCycleLog for it (audit trail)
+          linked to that order but do NOT create a second fulfilment Order. A
+          subscription with no originating order (e.g. created via the API) has
+          nothing pre-fulfilled, so its first invoice DOES fulfil.
+        * **Idempotency.** One BillingCycleLog per cycle_number
+          (unique constraint); a redelivered/raced webhook is a no-op.
+
+        Amount is taken from the webhook; if absent, the tier price is used.
+        """
+        from decimal import Decimal
+
+        from django.db import transaction
+        from djmoney.money import Money
+
+        from .manager import SubscriptionManager
+        from .models import BillingCycleLog
+
+        already_billed = subscription.billing_logs.exists()
+        is_checkout_cycle = (not already_billed) and bool(subscription.originating_order_id)
+
+        cycle_number = subscription.billing_cycle_count + 1
+
+        if event.amount is not None:
+            amount = Money(Decimal(str(event.amount)), event.currency or "USD")
+        elif subscription.product and subscription.pricing_tier:
+            amount = subscription.pricing_tier.calculate_price(
+                subscription.product, subscription.variant
+            )
+        else:
+            amount = Money(Decimal("0.00"), "USD")
+
+        try:
+            with transaction.atomic():
+                billing_log = BillingCycleLog.objects.create(
+                    subscription=subscription,
+                    cycle_number=cycle_number,
+                    billing_date=event.occurred_at or timezone.now(),
+                    base_amount=amount,
+                    total_amount=amount,
+                    status="successful",
+                    order=(subscription.originating_order if is_checkout_cycle else None),
+                )
+        except IntegrityError:
+            # This cycle was already recorded (webhook redelivery / race).
+            return
+
+        subscription.billing_cycle_count = cycle_number
+        subscription.save(update_fields=["billing_cycle_count", "updated_at"])
+
+        # The checkout cycle is already fulfilled via originating_order — stop here.
+        if is_checkout_cycle:
+            return
+
+        # Cycle 2+ (or the first cycle of an API-created native subscription):
+        # create the paid renewal Order so the fulfilment pipeline re-runs.
+        SubscriptionManager(subscription.payment_provider_account)._create_renewal_order(
+            subscription, billing_log
+        )
 
     @classmethod
     def retry_skipped_events(cls, max_retries: int = 5) -> int:

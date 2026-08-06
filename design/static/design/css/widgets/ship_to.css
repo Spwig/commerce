@@ -1,0 +1,101 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Ship-To Selector Widget Styles - v1.0.0 */
+/* Destination country picker; sets the shopper's ship-to region. */
+/* Uses the standard shared theme tokens (spacing/colour/radius/typography). */
+
+.widget-ship-to {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+  font-family: var(--theme-font-sans, inherit);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  line-height: 1.5;
+  color: inherit;
+}
+
+.ship-to-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-1, 0.25rem);
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
+.ship-to-icon {
+  font-size: 0.9em;
+}
+
+/* Hide the "Ship to" text on small screens; keep the icon + picker */
+@media (max-width: 640px) {
+  .ship-to-label-text {
+    display: none;
+  }
+}
+
+.ship-to-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ship-to-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: var(--theme-space-2, 0.5rem) calc(var(--theme-space-3, 0.75rem) + 1rem)
+    var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
+  border: 1px solid var(--theme-color-border, #e0e0e0);
+  border-radius: var(--theme-radius-md, 0.375rem);
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  max-width: 14rem;
+  transition: border-color var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
+}
+
+.ship-to-select:hover {
+  border-color: var(--theme-color-primary, #3b82f6);
+}
+
+.ship-to-select:focus {
+  outline: 2px solid var(--theme-color-primary, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Button style variants (parity with the currency widget) */
+.widget-ship-to[data-button-style='solid'] .ship-to-select {
+  background: var(--theme-color-primary, #3b82f6);
+  color: var(--theme-color-text-inverse, #fff);
+  border-color: transparent;
+}
+
+.widget-ship-to[data-button-style='ghost'] .ship-to-select {
+  border-color: transparent;
+}
+
+.ship-to-chevron {
+  position: absolute;
+  right: var(--theme-space-2, 0.5rem);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.ship-to-loading {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ship-to-spinner {
+  animation: ship-to-spin 0.8s linear infinite;
+}
+
+@keyframes ship-to-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

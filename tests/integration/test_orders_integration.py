@@ -5,6 +5,7 @@ Tests service layer integration, order creation workflows, payment processing,
 refunds, returns, and cross-model interactions.
 """
 
+import warnings
 from decimal import Decimal
 
 import pytest
@@ -535,7 +536,13 @@ class TestPaymentRefundIntegration:
         assert refund.status == "approved"
         refund.start_processing()
         assert refund.status == "processing"
-        refund.complete()
+        # complete() is deprecated in favour of execute() (which also moves the
+        # money via TenderRefundAllocator). This workflow test only asserts the
+        # status transition, so keep complete() and suppress its deprecation
+        # warning; a true execute() migration needs fundable capture fixtures.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            refund.complete()
         assert refund.status == "completed"
 
     def test_partial_refund_workflow(self):

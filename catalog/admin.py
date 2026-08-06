@@ -9,6 +9,8 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
@@ -309,13 +311,13 @@ class ProductVariantInline(admin.StackedInline):
             for item in stock_items:
                 warehouse_code = item["warehouse__code"]
                 qty = item["quantity"] or 0
-                breakdown.append(f"{warehouse_code}: {qty}")
+                breakdown.append(f"{conditional_escape(warehouse_code)}: {qty}")
 
             summary = f"<strong>Total: {total}</strong>"
             if breakdown:
                 summary += f'<br><small style="color: #666;">{" | ".join(breakdown)}</small>'
 
-            return format_html(summary)
+            return mark_safe(summary)
         return "-"
 
     stock_summary.short_description = _("Stock")
@@ -457,16 +459,17 @@ class StockItemInline(admin.TabularInline):
 
 
 class ProductRegionVisibilityInline(admin.TabularInline):
-    """Inline for managing product visibility per region"""
+    """
+    Inline for selecting the regions this product's availability applies to.
+    Each row is simply a selected region; whether the list is an allow- or
+    block-list is set by the product's "Region availability" field.
+    """
 
     model = ProductRegionVisibility
     extra = 0
-    fields = ["region", "is_visible"]
-    template = "admin/catalog/edit_inline/simple_tabular.html"
-
-    class Media:
-        css = {"all": ("catalog/css/admin_region_visibility.css",)}
-        js = ("catalog/js/admin_region_visibility.js",)
+    fields = ["region"]
+    verbose_name = _("Region")
+    verbose_name_plural = _("Region availability (selected regions)")
 
 
 class BundleComponentAutocomplete(AutocompleteSelect):
@@ -1491,6 +1494,7 @@ class ProductAdmin(
                     "is_digital",
                     "requires_shipping",
                     "hide_from_storefront",
+                    "region_restriction_mode",
                 )
             },
         ),
@@ -2515,7 +2519,6 @@ class ProductAdmin(
 
     def variant_stock_display(self, obj):
         """Display aggregated stock totals from all variants for variable products"""
-        from django.utils.html import format_html
 
         if obj.product_type != "variable":
             return "-"
@@ -2523,7 +2526,7 @@ class ProductAdmin(
         summary = obj.variant_stock_summary
 
         if not summary or not summary["variants"]:
-            return format_html(
+            return mark_safe(
                 '<div style="padding: 12px; background: #f8f9fa; border-radius: 6px; color: #6c757d;">'
                 '<i class="fas fa-info-circle"></i> No variants with stock yet'
                 "</div>"
@@ -2561,7 +2564,7 @@ class ProductAdmin(
 
             html.append(
                 f'<tr style="border-bottom: 1px solid #e5e7eb;">'
-                f'<td style="padding: 10px;"><strong>{variant.name}</strong></td>'
+                f'<td style="padding: 10px;"><strong>{conditional_escape(variant.name)}</strong></td>'
                 f'<td style="padding: 10px; text-align: center;">{variant_data["on_hand"]}</td>'
                 f'<td style="padding: 10px; text-align: center;">{variant_data["allocated"]}</td>'
                 f'<td style="padding: 10px; text-align: center; color: {avail_color}; font-weight: 600;">'
@@ -2590,7 +2593,7 @@ class ProductAdmin(
 
         html.append("</tbody></table></div>")
 
-        return format_html("".join(html))
+        return mark_safe("".join(html))
 
     variant_stock_display.short_description = _("Variant Stock Summary")
 
@@ -3674,23 +3677,22 @@ class StockItemAdmin(admin.ModelAdmin):
 
     def stock_status_icon(self, obj):
         """Display icon indicating stock status"""
-        from django.utils.html import format_html
 
         available = obj.available
 
         if available <= 0:
             # Out of stock
-            return format_html(
+            return mark_safe(
                 '<span style="color: #dc3545; font-weight: bold;" title="Out of Stock">🔴 Out</span>'
             )
         elif available <= obj.low_stock_threshold:
             # Low stock
-            return format_html(
+            return mark_safe(
                 '<span style="color: #ffc107; font-weight: bold;" title="Low Stock">⚠️ Low</span>'
             )
         else:
             # Adequate stock
-            return format_html('<span style="color: #28a745;" title="In Stock">✅ OK</span>')
+            return mark_safe('<span style="color: #28a745;" title="In Stock">✅ OK</span>')
 
     stock_status_icon.short_description = _("Status")
     stock_status_icon.admin_order_field = "on_hand"
@@ -3979,20 +3981,21 @@ class StockMovementAdmin(admin.ModelAdmin):
 
 @admin.register(ProductRegionVisibility)
 class ProductRegionVisibilityAdmin(admin.ModelAdmin):
-    """Admin for product region visibility"""
+    """Admin for the regions selected against a product's availability."""
 
-    list_display = ["product", "region", "is_visible"]
-    list_filter = ["region", "is_visible"]
+    list_display = ["product", "region"]
+    list_filter = ["region"]
     search_fields = ["product__name", "product__sku", "region__name"]
 
     fieldsets = (
-        (_("Product & Region"), {"fields": ("product", "region")}),
         (
-            _("Visibility"),
+            _("Product & Region"),
             {
-                "fields": ("is_visible",),
+                "fields": ("product", "region"),
                 "description": _(
-                    "Controls whether this product appears in this region. If no rules exist for a product, it is visible in all regions by default."
+                    "A selected region for the product's availability. Whether it is "
+                    "an allow- or block-list is set by the product's 'Region "
+                    "availability' field; products with no rows are sold everywhere."
                 ),
             },
         ),
@@ -4156,7 +4159,7 @@ class LicenseKeyAdmin(admin.ModelAdmin):
         from django.utils.html import format_html
 
         if obj.max_activations is None:
-            return format_html('<span style="color: #28a745;">♾️ Unlimited</span>')
+            return mark_safe('<span style="color: #28a745;">♾️ Unlimited</span>')
 
         percentage = (
             (obj.current_activations / obj.max_activations * 100) if obj.max_activations > 0 else 0
@@ -4701,15 +4704,14 @@ class LicenseProviderAdmin(admin.ModelAdmin):
 
     def is_active_badge(self, obj):
         """Display active status badge"""
-        from django.utils.html import format_html
 
         if obj.is_active:
-            return format_html(
+            return mark_safe(
                 '<span class="status-badge active">'
                 '<i class="fas fa-check-circle"></i> ACTIVE'
                 "</span>"
             )
-        return format_html(
+        return mark_safe(
             '<span class="status-badge inactive">'
             '<i class="fas fa-times-circle"></i> INACTIVE'
             "</span>"
@@ -4731,7 +4733,7 @@ class LicenseProviderAdmin(admin.ModelAdmin):
 
         if syncs:
             return format_html('<span style="color: #28a745;">✓ {}</span>', ", ".join(syncs))
-        return format_html('<span style="color: #999;">No sync enabled</span>')
+        return mark_safe('<span style="color: #999;">No sync enabled</span>')
 
     sync_status_display.short_description = _("Sync Events")
 
@@ -5004,7 +5006,7 @@ class WebhookSubscriptionAdmin(admin.ModelAdmin):
                 obj.total_deliveries,
                 success_rate,
             )
-        return format_html('<span style="color: #999;">No deliveries yet</span>')
+        return mark_safe('<span style="color: #999;">No deliveries yet</span>')
 
     delivery_stats.short_description = _("Success Rate")
 
@@ -5479,11 +5481,10 @@ class DigitalAssetAdmin(admin.ModelAdmin):
 
     def is_active_badge(self, obj):
         """Display active status badge"""
-        from django.utils.html import format_html
 
         if obj.is_active:
-            return format_html('<span style="color: #28a745; font-weight: 600;">✓ Active</span>')
-        return format_html('<span style="color: #dc3545; font-weight: 600;">✗ Inactive</span>')
+            return mark_safe('<span style="color: #28a745; font-weight: 600;">✓ Active</span>')
+        return mark_safe('<span style="color: #dc3545; font-weight: 600;">✗ Inactive</span>')
 
     is_active_badge.short_description = _("Status")
 
@@ -5545,7 +5546,7 @@ class DigitalAssetAdmin(admin.ModelAdmin):
 
         if obj.pk:
             if not obj.requires_license:
-                return format_html(
+                return mark_safe(
                     '<div style="padding: 12px; background: var(--darkened-bg, #f8f9fa); '
                     'border-radius: 6px; color: #666; font-size: 13px;">'
                     "🔓 License keys are not required for this asset"
@@ -5555,7 +5556,7 @@ class DigitalAssetAdmin(admin.ModelAdmin):
             licenses = LicenseKey.objects.filter(digital_asset=obj)
 
             if not licenses.exists():
-                return format_html(
+                return mark_safe(
                     '<div style="padding: 12px; background: var(--warning-light, #fff3cd); '
                     'border-radius: 6px; color: #856404; font-size: 13px;">'
                     "⚠️ No license keys generated yet. Keys will be created automatically on order completion."
@@ -6502,6 +6503,16 @@ class StockDisplaySettingsAdmin(admin.ModelAdmin):
                 ),
                 "description": _(
                     "Configure default behavior when products are out of stock. These can be overridden at category and product level."
+                ),
+            },
+        ),
+        (
+            _("Region Availability"),
+            {
+                "fields": ("region_restricted_action",),
+                "description": _(
+                    "How to display products that aren't sold in the shopper's region "
+                    "(set per product via 'Region availability')."
                 ),
             },
         ),

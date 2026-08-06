@@ -25,6 +25,13 @@ iframe {
   height: auto;
 }
 
+/* Responsive <picture> wrapper (AVIF/WebP/fallback). display:contents removes
+   the wrapper box so the inner <img> keeps the layout and CSS it had before
+   the element was wrapped — do not give .spwig-picture its own box styles. */
+.spwig-picture {
+  display: contents;
+}
+
 /* ============================================================
    Accessibility
    ============================================================ */

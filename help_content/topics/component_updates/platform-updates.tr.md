@@ -8,19 +8,19 @@ Spwig kurulumunuz, temalar, widget'lar, entegrasyonlar, sayfa inşaat öğeleri 
 
 ## Bileşen Kayıt Defterini Anlamak
 
-**Uzantılar > Bileşen Kayıt Defteri**'ne giderek mağazanızda yüklene bileşenleri görebilirsiniz. Her satır şu bilgileri gösterir:
+**Sistem Panosu > Bileşen Güncellemeleri**'ne giderek mağazanızda yüklenebilecek her bileşeni görebilirsiniz. Her satır şu bilgileri gösterir:
 
-- **Ad** — bileşenin görüntülenen adı
+- **Ad** — bileşenin görüntülenecek adı
 - **Tip** — bileşenin türü (tema, widget, entegrasyon vb.)
 - **Mevcut Sürüm** — mağazanızda şu anda çalışan sürüm
 - **Güncelleme Durumu** — bir güncelleme mevcut olup olmadığını gösterir
 - **Kanal** — bileşenin takip ettiği güncelleme kanalı
-- **Otomatik Güncelle** — güncellemelerin otomatik olarak yüklenip yüklenmeyeceğini gösterir
+- **Otomatik Güncelle** — güncellemelerin otomatik olarak yüklenebilir olup olmadığını gösterir
 - **Kilitli** — bileşenin mevcut sürümünde donmuş olup olmadığını gösterir
 
-Sayfa üstündeki panoda özet sayım bilgileri yer alır: toplam yüklene bileşen sayısı, güncellemelerin mevcut olduğu bileşen sayısı ve güncel olan bileşen sayısı.
+Sayfa üstündeki panoda özet sayım bilgileri yer alır: toplam yüklenebilecek bileşen sayısı, güncellemelerin mevcut olduğu bileşen sayısı ve güncel olan bileşen sayısı.
 
-### Bileşen Türleri
+### Bileşen Tipleri
 
 | Tip | Ne olduğunu açıklar |
 |------|------------|
@@ -32,7 +32,7 @@ Sayfa üstündeki panoda özet sayım bilgileri yer alır: toplam yüklene bile�
 | Kargo Sağlayıcısı | Taşıyıcı entegrasyonları (FedEx, UPS vb.) |
 | E-posta Sağlayıcısı | E-posta teslim hizmetleri |
 | Ödeme Sağlayıcısı | Ödeme ağ geçidi entegrasyonları |
-| Döviz Kuru Sağlayıcısı | Para birimi kuru veri kaynakları |
+| Döviz Kuru Sağlayıcısı | Döviz kuru veri kaynakları |
 | Çeviri Sağlayıcısı | Yapay zeka çevirisi hizmetleri |
 | Dil Paketi | Arayüz çeviri dosyaları |
 
@@ -40,38 +40,38 @@ Sayfa üstündeki panoda özet sayım bilgileri yer alır: toplam yüklene bile�
 
 Her bileşen, hangi sürümleri alacağına karar veren bir güncelleme kanalına takip eder. Risk toleransınızın ne kadar yüksek olduğuna göre her bileşeni farklı bir kanala atayabilirsiniz.
 
-| Kanal | Açıklama | En iyi uygulandığı yer |
+| Kanal | Açıklama | En iyi uygunluk |
 |---------|-------------|----------|
-| **Stabil** | Üretim hazıры, dikkatle test edilmiş sürümler | Canlı mağazalardaki tüm bileşenler |
+| **Stabil** | Üretim hazırlığı, dikkatlice test edilmiş sürümler | Canlı mağazalardaki tüm bileşenler |
 | **Beta** | Yeni özelliklerin stabil olana kadar test edilmesi için ön sürümler | Ön izlemek istediğiniz kritik olmayan bileşenler |
-| **Geliştirme** | En son özellikleri, kararsız olabilir | Sadece test ortamlarında |
+| **Geliştirme** | En son özellikleri, kararsız olabilir | Sadece test ortamları |
 | **Güvenlik** | Sadece kritik güvenlik yamaları, en yüksek öncelikle teslim edilir | Güvenilirlik en önemli olan bileşenler |
 
 Bir bileşenin kanalını değiştirmek için, adını tıklayarak detay görünümünü açın, ardından **Güncelleme Kanalı** alanına yeni bir değer seçin ve kaydedin.
 
 ## Güncellemeleri Kontrol Etme
 
-Spwig, güncelleme sunucu ayarlarınızda yapılandırılan aralıklarla (varsayılan: her 24 saat) otomatik olarak güncellemeleri kontrol eder. Hemen kontrol etmek için:
+Spwig, güncelleme sunucusu ayarlarında yapılandırılan aralıklarla (varsayılan: her 24 saat) otomatik olarak güncellemeleri kontrol eder. Hemen kontrol etmek için:
 
-1. **Uzantılar > Bileşen Kayıt Defteri**'ne gidin
+1. **Sistem Panosu > Bileşen Güncellemeleri**'ne gidin
 2. Sayfa üstündeki **Güncellemeleri Kontrol Et** butonuna tıklayın
-3. Sistem, Spwig güncelleme sunucusuna bağlanır ve tüm bileşenlerin güncellemesi durumunu yeniler
-4. Mevcut güncellemeleri olan bileşenler vurgulanır ve **Mevcut Güncellemeler** sayısı güncellenir
+3. Sistem, Spwig güncellemesi sunucusu ile iletişime geçer ve tüm bileşenlerin güncellemesi durumunu yeniler
+4. Mevcut güncellemeleri olan bileşenler vurgulanır ve **Mevcut Güncellemeler** sayacı güncellenir
 
 Bir bileşen için güncellemeyi kontrol etmek için, listedeki eylem menüsünden **Güncellemeleri Kontrol Et** eylemini kullanabilirsiniz.
 
 ## Güncellemeleri Yükleme
 
-### Tek bir bileşeni güncelleme
+### Tek Bileşeni Güncellemek
 
-1. **Uzantılar > Bileşen Kayıt Defteri**'ne gidin
-2. Güncellemesi istenen bileşeni bulun — güncellemesi mevcut bileşenlerin sürümü yanında bir güncelleme göstergesi gösterir
+1. **Sistem Panosu > Bileşen Güncellemeleri**'ne gidin
+2. Güncellemek istediğiniz bileşeni bulun — mevcut güncellemeleri olan bileşenlerin sürümü yanında bir güncelleme göstergesi vardır
 3. O bileşenin satırındaki **Güncelleme Yükle** butonuna tıklayın
 4. Güncellemeyi onaylayın
-5. Güncelleme indirilir, doğrulanır ve yüklenir — her aşamada ilerleme göstergesi gösterilir
+5. Güncellemesi indirilir, doğrulanır ve yüklenir — her aşamada ilerleme göstergesi gösterilir
 6. Tamamlandıktan sonra bileşenin **Mevcut Sürüm** alanı yeni sürüm numarasına güncellenir
 
-### Birden fazla bileşeni güncelleme
+### Birden Fazla Bileşeni Güncellemek
 
 1.
 
@@ -79,29 +79,45 @@ Güncellemek istediğiniz bileşenlerin yanındaki onay kutularını seçin
 2.
 
 
+Yükleme güncellemelerini **Yükleme güncellemelerini seçin** menüsünden **Eylem** açılır menüsünden seçin
+3.
 
-Yükseltmeler, bağımlılık sırasına göre yüklenir — diğer bileşenlerin bağımlı olduğu bileşenler önce güncellenir
+**Devam et**'e tıklayın
+4.
 
-### Yükseltme sırasında ne olur
+Güncellemeler, bağımlılık sırasına göre yüklenecek — diğer bileşenlerin bağımlı olduğu bileşenler önce güncellenir
 
-Yükseltme işlemi şu aşamalardan geçer:
+### Bir güncelleme sırasında ne olur
 
-1. **Kontrol etme** — yükseltmenin mevcut olduğundan ve lisansınızın geçerli olduğundan emin olur
-2. **İndirme** — Spwig yükseltme sunucusundan paketi alır
+Güncelleme işlemi şu aşamalardan geçer:
+
+1. **Kontrol etme** — güncellemenin mevcut olduğundan ve lisansınızın geçerli olduğundan emin olur
+2. **İndirme** — Spwig güncelleme sunucusundan paketi alır
 3. **Doğrulama** — paketin SHA-256 kontrol toplamına göre bütünlüğünü kontrol eder
 4. **Çıkarma** — yeni dosyaları çıkarır
 5. **Dağıtım** — yeni sürümü etkinleştirir
-6. **Sağlık kontrolü** — yükseltme sonrası bileşenin çalışıp çalışmadığını doğrular
+6. **Sağlık kontrolü** — güncelleme sonrası bileşenin çalışıp çalışmadığını doğrular
 
 Herhangi bir aşama başarısız olursa, sistem otomatik olarak önceki sürümü geri yüklemeye çalışır.
 
-## Platform seviyesindeki yükseltmeler
+## Platform seviyesindeki güncellemeler
 
-Bireysel bileşenlerin yanı sıra, Spwig platform seviyesindeki yükseltmeler alabilir ve bu yükseltmeler, veritabanı geçişlerini ve kısa bir bakım penceresini içeren daha kapsamlı bir süreçten geçer.
+Bireysel bileşenlerin yanı sıra, Spwig platform seviyesindeki güncellemeler alabilir ve bu güncellemeler, çekirdek mağaza motorunu güncelleyebilir. Bu güncellemeler, veritabanı geçişleri ve kısa bir bakım penceresi dahil daha kapsamlı bir süreçten geçer.
 
-Platform yükseltme geçmişi, kayıt defterinin **Platform Yükseltmeleri** bölümünde görünür. Her girdi, sürüm geçişini (örneğin, `v1.3.2 → v1.3.3`), durumu ve yükseltme işleminin süresini gösterir.
+**Sistem Panosu > Platform Güncellemeleri**'ne giderek bireysel bileşenlerden ayrı olarak platform seviyesindeki güncellemeleri görüntüleyebilir ve yönetebilirsiniz.
 
-Güvenlik yükseltmeleri ayrı ayrı işaretlenir ve güncelleme sunucu yapılandırmanızda **Güvenlik Yükseltmelerini Otomatik Yükle** seçeneği etkinse, elle müdahale olmadan otomatik olarak yüklenir.
+### Yüklemeden önce ne yeni geldiğini inceleme
+
+**Güncellemeleri Kontrol Et**'e tıklayarak yeni bir platform sürümünün mevcut olup olmadığını kontrol edin. Bir sürüm bulunursa, **Yükleme Hazır** kartı sürüm değişikliğini (örneğin, `v1.7.0 → v1.7.1`), **Paket Boyutu**, **Tahmini Süre**, ve güncelleme **Kanali**'nı — ve **Ne Yeni** önizlemesini gösterir, böylece yükleme kararınızdan önce ne değiştiğini görebilirsiniz:
+
+- Yayınlama hakkında kısa bir açıklama satırı
+- O sürümdeki en önemli değişikliklerin bir madde listesi (en fazla beş tane, daha fazla değişiklik varsa bir not ile)
+
+Eğer güncelleme veritabanı şemasını değiştirirse, **Veritabanı geçişleri gerekir** uyarısı ve tahmini süre görünür. Güvenlik sürümleri, **Güvenlik güncelleme** etiketiyle birlikte hemen yükleme önerir. Yüklemeden önce **Ne Yeni** önizlemesini okuyun — bu, bir sürümün ekstra dikkat gerektiren herhangi bir şeyi (örneğin, yükseltme tamamlandıktan sonra çağrılan adımlar) hızlıca görmek için en hızlı yoldur.
+
+Platform güncelleme geçmişi sayfanın daha aşağısında görünür. Her girdi sürüm geçişini (örneğin, `v1.3.2 → v1.3.3`), durumu ve güncelleme işleminin süresini gösterir.
+
+Güvenlik güncellemeleri ayrı ayrı işaretlenir ve, **Güvenlik Güncellemelerini Otomatik Yükle** seçeneği, güncelleme sunucu yapılandırmanızda etkinse, elle müdahale olmadan otomatik olarak yüklenir.
 
 ## Sürüm geçmişini görüntüleme
 
@@ -109,58 +125,65 @@ Bir bileşenin önceki tüm yüklü sürümlerini görmek için:
 
 1. Bileşen adını tıklayarak detay görünümünü açın
 2. Sayfanın altındaki **Bileşen Sürümleri** bölümünü aşağıya kaydırın
-3. Her sürüm girdisi, sürüm numarasını, yüklendiği zamanı, yükleme yöntemini ve sağlığı durumunu gösterir
+3. Her sürüm girdisi sürüm numarasını, ne zaman yüklendiğini, yükleme yöntemini ve sağlığı durumunu gösterir
 
-Sistem, geri yükleme için son üç yüklü sürümü saklar. Bunların ötesindeki sürümler otomatik olarak silinir.
+Sistem, son üç yüklü sürümü geri dönüş için saklar. Bu sürümlerden daha eski olanlar otomatik olarak silinir.
 
-## Bir bileşeni geri yükleme
+## Bir bileşeni geri döndürme
 
-Bir yükseltme sorunlara neden olursa, önceki bir sürümü geri yükleyebilirsiniz:
+Bir güncelleme sorunlara neden olursa, önceki bir sürümde geri dönebilirsiniz:
 
 1. Bileşenin detay görünümünü açın
-2. Sayfanın altındaki **Geri Yükleme** bölümünü aşağıya kaydırın
-3. Geri yüklemek istediğiniz sürümü seçin
-4. **Bu Sürümü Geri Yükle**'ye tıklayın
+2. Sayfanın altındaki **Geri Dönüş** bölümünü aşağıya kaydırın
+3. Geri dönmek istediğiniz sürümü seçin
+4. **Bu Sürümde Geri Dön**'e tıklayın
 
-Yalnızca **Geri Yükleme Mevcut** olarak işaretlenmiş sürümler geri yüklenir. Geri yükleme günlük girdisi, geri yükleme işlemini başlatan kişiyi ve zamanı kaydeder.
+Yalnızca **Geri Dönüş Mevcut** olarak işaretlenmiş sürümler geri yüklenilebilir. Geri dönüş log girdisi, geri dönüşü başlatan kişiyi ve ne zaman yapıldığını kaydeder.
 
 ## Bileşenleri kilitleme
 
-Bir bileşeni kilitlemek, otomatik yükseltmelerin bile yüklenmesini engeller. Belirli bir sürümü gerektiren özelleştirmeler veya entegrasyonlar olduğunda bu yararlıdır.
+Bir bileşeni kilitlemek, otomatik güncellemeler dahil herhangi bir güncellemenin yüklenebilmesini engeller. Bu, özel bir sürüm üzerinde bağımlılıklarınız veya entegrasyonlarınız olduğunda faydalıdır.
 
 1. Bileşenin detay görünümünü açın
-2. **Kilitle & Dondur** bölümünde **Kilitli** onay kutusunu işaretleyin
+2. **Kilit & Dondur** bölümünde **Kilitli** onay kutusunu işaretleyin
 3. **Kilit Nedeni** alanına bir neden girin, ekibinizin neden kilitleendiğini anlayabilsin
 4. Kaydınızı kaydedin
 
-Kilitli bileşenler, kayıt defteri listesinde bir kilitleme göstergesiyle gösterilir. Kilidi kaldırmak için **Kilitli** onay kutusunu kaldırın ve kaydedin.
+Kilitli bileşenler, kayıt listesinde bir kilitleme göstergesiyle gösterilir. Kilidi kaldırmak için **Kilitli** onay kutusunu kaldırın ve kaydedin.
 
-## Yükseltme günlüklerini okuma
+## Güncellemeleri okuma günlükleri
 
-Yükseltme günlüğü, her yükleme, yükseltme, geri yükleme ve sağlık kontrolü işlemiyle ilgili bilgileri kaydeder:
+Güncelleme günlüğü, her yükleme, güncelleme, geri dönüş ve sağlık kontrolü işlemi kaydeder:
 
-1. Bir bileşenin detay görünümünü açın
-2. Sayfanın altında **Yükseltme Günlüğü** görünür
-3. Her girdi, alınan eylemi, başlangıç ve bitiş saatlerini, eski ve yeni sürümleri, işlemin otomatik mi yoksa el ile mi yapıldığını ve işlem başarısız olursa oluşan hata mesajlarını gösterir
+1.
 
-**Başarısız** durumlu günlük girdileri, sorun gidermeye yardımcı olmak için tam hata mesajını içerir.
+Bileşenin detay görünümünü açın
+2.
 
-## Otomatik yükseltmeleri etkinleştirme
+**Güncelleme Günlüğü** sayfanın alt kısmında inline olarak görünür
+3.
 
-Spwig'in yükseltmeleri otomatik olarak yüklemesine izin verebilirsiniz:
 
-1. Bileşenin detay görünümünü açın
-2. **Sürüm & Yükseltme Durumu** bölümünde **Otomatik Yükseltme** onay kutusunu işaretleyin
-3. Kaydınızı kaydedin
 
-Otomatik yükseltme etkinleştirildiğinde, sistem, sonraki planlanmış kontrol döngüsünde yükseltmeleri yükler. Güvenlik yükseltmeleri, bireysel bileşen ayarlarından bağımsız olarak, küresel **Güvenlik Yükseltmelerini Otomatik Yükle** ayarına göre işler.
+Her girdi, alınan eylemi, başlangıç ve bitiş saatlerini, eski ve yeni sürümleri, otomatik ya da el ile olup olmadığını ve işlem başarısız olursa herhangi bir hata mesajını gösterir.
+
+**Başarısız** durumlu log girdileri, sorun gidermeye yardımcı olmak için tam hata mesajını içerir.
+
+## Otomatik güncellemeyi etkinleştirme
+
+Spwig'in güncellemeleri otomatik olarak yüklemesine izin verebilirsiniz:
+
+1. Komponentin detay görünümünü açın
+2. **Sürüm & Güncellemeler Durumu** bölümünde **Otomatik Güncelle**'yi işaretleyin
+3. Kaydı kaydedin
+
+Otomatik güncelleme etkinse, sistem bir sonraki planlanan kontrol döngüsünde güncellemeleri yükler. Güvenlik güncellemeleri, bireysel komponent ayarlarından bağımsız olarak küresel **Güvenlik Güncellemelerini Otomatik Yükle** ayarına göre uygulanır.
 
 ## İpuçları
 
-Tüm markdown biçimlendirmesini, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
-
-- Her zaman temalar ve ödeme sağlayıcıları için **Stable** kanalında güncellemekten emin olun - bu bileşenler en çok müşteriyle etkileşimde bulunulan bileşenlerdir ve kararlılık en çok önemlidir
-- Bir bileşeni özelleştirilmiş değişiklikler yapmadan önce kilitleyin ve nedeni açıkça kaydedin, gelecekteki ekip üyeleri bunun güncellenmesi gerektiğini bilmesi için
-- Bir bileşenin sürüm girdisindeki **Yayın Notlarını** büyük bir sürüm artışı yapmadan önce inceleyin - kırılgan değişiklikler burada işaretlenir
-- Bir güncelleme yaptıktan sonra mağazanızın etkilenen alanına gidin ve güncelleme tamamlandı deklare etmeden önce her şeyin beklenen şekilde görünmesini ve çalışmasını onaylayın
-- Bir bileşen üzerinde otomatik güncelleme etkinse, otomatik güncellemelerin başarıyla tamamlandığından emin olmak için periyodik olarak **Güncelleme Günlüklerini** izleyin
+- Temalar ve ödeme sağlayıcıları için her zaman **Stable** kanalında güncellemeyi yapın — bu en çok müşteriyle etkileşimde bulunan bileşenlerdir ve kararlılık en çok önemlidir
+- Bir komponenti özelleştirme yapmadan önce kilitleyin ve nedeni açıkça kaydedin, böylece gelecekteki ekip üyeleri bunun güncellenmesi gerektiğini bilir
+- Bir büyük sürüm yükseltmesi yüklemeye başlamadan önce komponentin sürüm girdisindeki **Yayın Notlarını** inceleyin — kırıcı değişiklikler burada işaretlenir
+- Platform güncellemesi yüklemeye başlamadan önce **Platform Güncellemeleri** sayfasındaki **Yeni Neler Var** önizlemesini okuyun — yayın notlarını tam olarak görmek ve gereken ek adımları öğrenmek için **Sistem Güncellemesi** sayfasına gidin
+- Bir güncelleme yaptıktan sonra mağazanızın etkilenen alanına gidin ve güncellemenin tamamlandığını ilan etmeden önce her şeyin beklenen şekilde görünüp çalıştığını onaylayın
+- Bir komponente otomatik güncelleme etkinse, otomatik güncellemelerin başarıyla tamamlandığından emin olmak için periyodik olarak **Güncelleme Günlüklerini** izleyin

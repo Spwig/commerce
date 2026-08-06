@@ -1,5 +1,5 @@
 {% extends "page_builder/category/_base.html" %}
-{% load i18n static merchant_trans %}
+{% load i18n static merchant_trans media_picture %}
 
 {% block template_css %}
 <link rel="stylesheet" href="{% static 'page_builder/css/category-featured.css' %}">
@@ -14,7 +14,7 @@
         <a href="{{ product.get_absolute_url }}" class="cat-featured-hero__link">
             <div class="cat-featured-hero__image-wrapper">
                 {% if product.primary_image_large_url %}
-                <img src="{{ product.primary_image_large_url }}" alt="{{ product.name }}" class="cat-featured-hero__image" loading="eager">
+                {% picture product.primary_image size="large" alt=product.name css="cat-featured-hero__image" loading="eager" %}
                 {% else %}
                 <div class="cat-featured-hero__placeholder">
                     <i class="fas fa-image"></i>

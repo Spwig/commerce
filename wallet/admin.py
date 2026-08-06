@@ -23,6 +23,9 @@ class WalletTransactionInline(admin.TabularInline):
     ordering = ("-created_at",)
     show_change_link = True
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("reversed_by", "created_by")
+
     def has_add_permission(self, request, obj=None):
         return False
 
@@ -72,6 +75,7 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("transaction_type", "source", "status")
+    list_select_related = ("wallet__customer",)
     search_fields = (
         "wallet__customer__email",
         "description",
@@ -98,6 +102,14 @@ class WalletTransactionAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+    def has_change_permission(self, request, obj=None):
+        # Transactions are immutable; block saving an existing record so the
+        # change form has no save controls and never triggers the model's
+        # ValueError. Access remains via the view permission (read-only).
+        if obj is not None:
+            return False
+        return super().has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
         return False

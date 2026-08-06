@@ -6,7 +6,7 @@ category: Subscriptions
 # Email Template: subscription_payment_failed
 
 ## Subject
-⚠️ Thanh toán thất bại cho {{ plan_name }} - Hành động cần thiết - {{ shop_name }}
+⚠️ Thanh toán thất bại cho {{ plan_name }} - Yêu cầu hành động - {{ shop_name }}
 
 ## HTML Content
 <mjml>
@@ -41,7 +41,7 @@ category: Subscriptions
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
-                <strong>Plan:</strong> {{ plan_name }}
+                <strong>Kỳ hạn:</strong> {{ plan_name }}
               </mj-text>
 
               <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="5px 0">
@@ -58,9 +58,11 @@ category: Subscriptions
 
               <mj-divider border-color="#fecaca" border-width="1px" padding="15px 0" />
 
+              {% if retry_date %}
               <mj-text font-size="14px" color="{{ theme.color.error|default:'#ef4444' }}" padding="5px 0" font-weight="600">
-                Vui lòng cập nhật phương thức thanh toán trước {{ retry_date|date:"F d, Y" }} để tránh gián đoạn dịch vụ.
+                Vui lòng cập nhật phương thức thanh toán trước ngày {{ retry_date|date:"F d, Y" }} để tránh gián đoạn dịch vụ.
               </mj-text>
+              {% endif %}
             </mj-column>
           </mj-section>
         </mj-wrapper>
@@ -75,19 +77,21 @@ category: Subscriptions
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">1.</span>
-          Kiểm tra phương thức thanh toán của bạn có đủ số dư không
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">1.</span>
+          Kiểm tra xem phương thức thanh toán của bạn có đủ số dư không
         </mj-text>
 
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">2.</span>
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">2.</span>
           Cập nhật phương thức thanh toán nếu thẻ đã hết hạn
         </mj-text>
 
+        {% if retry_days %}
         <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}" padding="8px 20px" line-height="1.6">
-          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size=18px; margin-right: 8px;">3.</span>
-          Chúng tôi sẽ tự động thử thanh toán lại trong {{ retry_days }} ngày
+          <span style="color: {{ theme.color.error|default:'#ef4444' }}; font-size="18px" margin-right: 8px;">3.</span>
+          Chúng tôi sẽ tự động thử lại thanh toán trong {{ retry_days }} ngày
         </mj-text>
+        {% endif %}
       </mj-column>
     </mj-section>
 
@@ -99,7 +103,7 @@ category: Subscriptions
         </mj-button>
         <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="15px">
           <a href="{{ manage_subscription_url }}" style="color: {{ theme.color.info|default:'#3b82f6' }}; text-decoration: underline;">
-            Xem đăng ký
+            Xem gói đăng ký
           </a>
         </mj-text>
       </mj-column>
@@ -110,7 +114,7 @@ category: Subscriptions
       <mj-column>
         <mj-divider border-color="{{ theme.color.border|default:'#e5e7eb' }}" />
         <mj-text font-size="12px" color="#9ca3af" align="center">
-          Cần hỗ trợ? Liên hệ với chúng tôi tại {{ support_email }}
+          Cần hỗ trợ? Liên hệ chúng tôi tại {{ support_email }}
         </mj-text>
       </mj-column>
     </mj-section>
@@ -122,7 +126,7 @@ category: Subscriptions
         <mj-text align="center" padding="0" font-size="11px" color="#9ca3af" line-height="16px">
           <a href="https://spwig.com" style="color: #9ca3af; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" target="_blank">
             <img src="{{ shop_url }}/static/email_system/img/spwig-favicon.png" alt="Spwig" width="12" height="12" style="vertical-align: middle; display: inline-block;" />
-            Được cung cấp bởi Spwig
+            Powered by Spwig
           </a>
         </mj-text>
       </mj-column>
@@ -136,22 +140,22 @@ category: Subscriptions
 Chúng tôi không thể xử lý thanh toán của bạn
 
 THÔNG TIN THANH TOÁN:
-Plan: {{ plan_name }}
+Kỳ hạn: {{ plan_name }}
 Số tiền: {{ subscription_amount }}
 Phương thức thanh toán: {{ payment_method }}
 Lý do: {{ failure_reason }}
 
-Vui lòng cập nhật phương thức thanh toán trước {{ retry_date|date:"F d, Y" }} để tránh gián đoạn dịch vụ.
+{% if retry_date %}Vui lòng cập nhật phương thức thanh toán trước ngày {{ retry_date|date:"F d, Y" }} để tránh gián đoạn dịch vụ.{% endif %}
 
 Bạn nên làm gì?
-1. Kiểm tra phương thức thanh toán của bạn có đủ số dư không
+1. Kiểm tra xem phương thức thanh toán của bạn có đủ số dư không
 2. Cập nhật phương thức thanh toán nếu thẻ đã hết hạn
-3. Chúng tôi sẽ tự động thử thanh toán lại trong {{ retry_days }} ngày
+{% if retry_days %}3. Chúng tôi sẽ tự động thử lại thanh toán trong {{ retry_days }} ngày{% endif %}
 
 Cập nhật phương thức thanh toán: {{ update_payment_url }}
-Xem đăng ký: {{ manage_subscription_url }}
+Xem gói đăng ký: {{ manage_subscription_url }}
 
-Cần hỗ trợ? Liên hệ với chúng tôi tại {{ support_email }}
+Cần hỗ trợ? Liên hệ chúng tôi tại {{ support_email }}
 
 ---
-Được cung cấp bởi Spwig - https://spwig.com
+Powered by Spwig - https://spwig.com
