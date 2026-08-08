@@ -145,7 +145,11 @@ jobs:
             vouchers/ wallet/ || true
 
       - name: Upload warning inventory
-        if: always()
+        # upload-artifact@v4 isn't supported on Gitea Actions (GHES-like) — it
+        # fails with GHESNotSupportedError and reds the whole job. The inventory
+        # itself is captured in the run log; the artifact is only for GitHub
+        # retention, so skip the upload on the self-hosted act runner.
+        if: ${{ always() && env.ACT != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: dep-warnings-jsonl

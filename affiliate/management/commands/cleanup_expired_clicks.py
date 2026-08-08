@@ -16,7 +16,7 @@ Best practice: Run this command daily via cron/celery beat
 import logging
 from datetime import timedelta
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count
 from django.utils import timezone
 
@@ -54,6 +54,9 @@ class Command(BaseCommand):
         dry_run = options["dry_run"]
         batch_size = options["batch_size"]
         respect_cookie_lifetime = options["respect_cookie_lifetime"]
+
+        if batch_size < 1:
+            raise CommandError("--batch-size must be a positive integer")
 
         self.stdout.write(self.style.SUCCESS("=" * 70))
         self.stdout.write(self.style.SUCCESS("Affiliate Click Cleanup"))

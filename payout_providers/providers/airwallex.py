@@ -54,6 +54,20 @@ class AirwallexPayoutProvider(BasePayoutProvider):
         "REJECTED": PayoutStatus.FAILED,
     }
 
+    # Local clearing routing schemes keyed by destination bank country. Maps a
+    # country to its (account_routing_type1, local_clearing_system) pair so a
+    # routing number is placed in account_routing_value1 with the right rail.
+    ROUTING_SCHEMES = {
+        "US": ("aba", "ACH"),
+        "GB": ("sort_code", "FASTER_PAYMENTS"),
+        "AU": ("bsb", "BANK_TRANSFER"),
+        "CA": ("bank_code", "EFT"),
+        "IN": ("ifsc", "IMPS"),
+        "HK": ("bank_code", "ACH"),
+        "SG": ("bank_code", "GIRO"),
+        "MX": ("clabe", "SPEI"),
+    }
+
     def __init__(self, config: dict[str, Any]):
         super().__init__(config)
         self._access_token = None
@@ -147,7 +161,7 @@ class AirwallexPayoutProvider(BasePayoutProvider):
             },
             "webhook_secret": {
                 "type": "string",
-                "required": False,
+                "required": True,
                 "label": "Webhook Secret",
                 "sensitive": True,
                 "help_text": "Secret for verifying webhook signatures",
@@ -275,30 +289,47 @@ class AirwallexPayoutProvider(BasePayoutProvider):
 
         Returns beneficiary_id if successful.
         """
-        # Build beneficiary data
-        beneficiary_data = {
-            "bank_details": {
-                "account_currency": currency,
-                "account_name": recipient.bank_account_holder,
-                "account_number": recipient.bank_account_number,
-                "bank_country_code": recipient.bank_country,
-            },
-            "entity_type": "PERSONAL",
-            "beneficiary_name": recipient.bank_account_holder or "Unknown",
+        # Build bank details for the beneficiary
+        bank_details = {
+            "account_currency": currency,
+            "account_name": recipient.bank_account_holder,
+            "account_number": recipient.bank_account_number,
+            "bank_country_code": recipient.bank_country,
         }
 
         # Add optional bank details
         if recipient.bank_swift_code:
-            beneficiary_data["bank_details"]["swift_code"] = recipient.bank_swift_code
+            bank_details["swift_code"] = recipient.bank_swift_code
 
         if recipient.bank_routing_code:
-            beneficiary_data["bank_details"]["local_clearing_system"] = recipient.bank_routing_code
+            # Routing numbers belong in account_routing_value1; the routing type
+            # and local clearing system are derived from the destination country.
+            bank_details["account_routing_value1"] = recipient.bank_routing_code
+            routing_type, clearing_system = self.ROUTING_SCHEMES.get(
+                (recipient.bank_country or "").upper(), (None, None)
+            )
+            if routing_type:
+                bank_details["account_routing_type1"] = routing_type
+            if clearing_system:
+                bank_details["local_clearing_system"] = clearing_system
+
+        # Airwallex expects a top-level beneficiary object plus the transfer
+        # method(s) the beneficiary can be paid through.
+        transfer_method = self.config.get("default_transfer_method", "LOCAL")
+        beneficiary_data = {
+            "beneficiary": {
+                "bank_details": bank_details,
+                "entity_type": "PERSONAL",
+                "beneficiary_name": recipient.bank_account_holder or "Unknown",
+            },
+            "transfer_methods": [transfer_method],
+        }
 
         try:
             result = self._make_request("POST", "/beneficiaries/create", data=beneficiary_data)
 
             if result["status_code"] in (200, 201):
-                return result["data"].get("beneficiary_id")
+                return result["data"].get("id")
             else:
                 logger.error(f"Failed to create beneficiary: {result['data']}")
                 return None
@@ -336,9 +367,10 @@ class AirwallexPayoutProvider(BasePayoutProvider):
 
         # Build transfer request
         transfer_data = {
+            "request_id": request.reference,
             "beneficiary_id": beneficiary_id,
-            "payment_amount": float(request.amount),
-            "payment_currency": request.currency,
+            "transfer_amount": float(request.amount),
+            "transfer_currency": request.currency,
             "reason": "affiliate_commission",
             "reference": request.reference,
             "source_currency": request.currency,
@@ -346,7 +378,7 @@ class AirwallexPayoutProvider(BasePayoutProvider):
         }
 
         if request.note:
-            transfer_data["payment_note"] = request.note[:140]
+            transfer_data["reference"] = request.note[:140]
 
         try:
             result = self._make_request("POST", "/transfers/create", data=transfer_data)
@@ -456,8 +488,8 @@ class AirwallexPayoutProvider(BasePayoutProvider):
         """
         webhook_secret = self.config.get("webhook_secret")
         if not webhook_secret:
-            logger.warning("No webhook_secret configured, skipping signature verification")
-            return True
+            logger.warning("No webhook_secret configured, rejecting webhook")
+            return False
 
         timestamp = headers.get("x-timestamp", "")
         signature = headers.get("x-signature", "")

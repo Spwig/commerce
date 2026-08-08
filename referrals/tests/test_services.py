@@ -153,19 +153,18 @@ class ValidationServiceTest(TestCase):
         """Test new customer validation."""
         user = create_user()
 
-        # No orders yet - should pass
-        is_valid, reason = check_new_customer(user, self.program)
+        # Only the order being validated exists - should pass because that
+        # order is excluded from the previous-order count.
+        order = create_order(user=user)
+        is_valid, reason = check_new_customer(user, self.program, order)
         self.assertTrue(is_valid)
 
-        # Create first order - still should pass (count=1)
+        # A prior order (distinct from the one being validated) exists -
+        # should fail because the customer is not new.
         create_order(user=user)
-        is_valid, reason = check_new_customer(user, self.program)
-        self.assertTrue(is_valid)
-
-        # Create second order - should fail (count=2, which is > 1)
-        create_order(user=user)
-        is_valid, reason = check_new_customer(user, self.program)
+        is_valid, reason = check_new_customer(user, self.program, order)
         self.assertFalse(is_valid)
+        self.assertEqual(reason, "not_new_customer")
 
     def test_check_min_order_value(self):
         """Test minimum order value check."""

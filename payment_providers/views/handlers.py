@@ -22,6 +22,67 @@ from payment_providers.services.webhook_service import WebhookService
 logger = logging.getLogger(__name__)
 
 
+def _load_verified_webhook(request, provider_slug: str):
+    """Parse, shape-validate, and signature-verify an incoming provider webhook.
+
+    Both webhook endpoints are public and CSRF-exempt, so the provider signature
+    is the only proof a request genuinely came from the provider. Verifying it
+    (and rejecting malformed payloads) here — before any record is written or any
+    payment state is touched — is what stops unauthenticated callers from
+    spoofing events or mutating orders.
+
+    Returns a ``(payload, raw_payload, headers, signature)`` tuple when the
+    request is a well-formed JSON object carrying a valid provider signature, or
+    an :class:`~django.http.HttpResponse` (HTTP 400) that the caller should
+    return directly when the request is malformed or fails verification.
+    """
+    raw_payload = request.body
+
+    try:
+        payload = json.loads(raw_payload.decode("utf-8"))
+    except json.JSONDecodeError:
+        logger.error(f"Invalid JSON in webhook from {provider_slug}")
+        return HttpResponse(status=400)
+
+    if not isinstance(payload, dict):
+        logger.error(f"Webhook payload from {provider_slug} is not a JSON object")
+        return HttpResponse(status=400)
+
+    # request.headers exposes canonical header names (e.g. 'X-Signature') that
+    # _get_webhook_signature and the provider verifiers expect.
+    headers = dict(request.headers.items())
+    signature = _get_webhook_signature(headers, provider_slug)
+    if not signature:
+        logger.warning(f"Missing webhook signature from {provider_slug}")
+        return HttpResponse(status=400)
+
+    provider_accounts = PaymentProviderAccount.objects.filter(
+        component__slug=provider_slug, is_active=True
+    )
+    if not provider_accounts.exists():
+        logger.error(f"No active provider account for webhook: {provider_slug}")
+        return HttpResponse(status=400)
+
+    # A provider slug can have several active accounts (e.g. test + live keys,
+    # or multiple merchant accounts), each with its own signing secret. The
+    # request is authentic if it verifies against ANY of them — checking only
+    # the first would reject webhooks legitimately signed by another account.
+    signature_valid = any(
+        WebhookService.verify_webhook_signature(
+            provider_account=provider_account,
+            payload=raw_payload,
+            signature=signature,
+            headers=headers,
+        )
+        for provider_account in provider_accounts
+    )
+    if not signature_valid:
+        logger.warning(f"Webhook signature verification failed from {provider_slug}")
+        return HttpResponse(status=400)
+
+    return payload, raw_payload, headers, signature
+
+
 # =============================================================================
 # Admin Webhook Handler (Legacy - for admin URLs)
 # =============================================================================
@@ -36,16 +97,16 @@ def webhook_handler(request, provider_slug):
 
     For new integrations, use the public webhook endpoint at /webhooks/payments/<slug>/
     """
-    try:
-        # Parse webhook payload
-        payload = json.loads(request.body.decode("utf-8"))
+    # Reject malformed or unsigned/spoofed requests before persisting anything.
+    verified = _load_verified_webhook(request, provider_slug)
+    if isinstance(verified, HttpResponse):
+        return verified
+    payload, _raw_payload, headers, _signature = verified
 
+    try:
         # Extract event information (varies by provider)
         event_id = payload.get("id") or payload.get("event_id") or payload.get("txn_id")
         event_type = payload.get("type") or payload.get("event_type") or payload.get("txn_type")
-
-        # Get all HTTP headers for signature verification
-        headers = {key: value for key, value in request.META.items() if key.startswith("HTTP_")}
 
         # Store webhook for processing (provider_account will be determined later)
         PaymentWebhook.objects.create(
@@ -54,15 +115,13 @@ def webhook_handler(request, provider_slug):
             event_type=event_type or "unknown",
             payload=payload,
             headers=headers,
+            signature_verified=True,
         )
 
         logger.info(f"Received webhook from {provider_slug}: {event_type} (ID: {event_id})")
 
         return HttpResponse(status=200)
 
-    except json.JSONDecodeError:
-        logger.error(f"Invalid JSON in webhook from {provider_slug}")
-        return HttpResponse(status=400)
     except Exception as e:
         logger.error(f"Error processing webhook from {provider_slug}: {str(e)}", exc_info=True)
         return HttpResponse(status=500)
@@ -141,26 +200,19 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
 
     Returns:
         HTTP 200 on success (required by most providers)
-        HTTP 400 on validation failure
-        HTTP 500 on processing error
+        HTTP 400 on validation failure (bad shape, missing/invalid signature)
+        HTTP 500 on processing error (retryable by the provider)
     """
+    # Parse, shape-validate, and verify the signature before any payment state is
+    # mutated. A missing or invalid signature is rejected with 400 here so
+    # WebhookService.process_webhook — which only logs verification failures — is
+    # never reached with an unverified event.
+    verified = _load_verified_webhook(request, provider_slug)
+    if isinstance(verified, HttpResponse):
+        return verified
+    payload, raw_payload, headers, signature = verified
+
     try:
-        # Get raw payload for signature verification
-        raw_payload = request.body
-
-        # Parse JSON payload
-        try:
-            payload = json.loads(raw_payload.decode("utf-8"))
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON in webhook payload: {e}")
-            return JsonResponse({"error": "Invalid JSON payload"}, status=400)
-
-        # Extract headers for signature verification
-        headers = dict(request.headers.items())
-
-        # Get signature from headers (varies by provider)
-        signature = _get_webhook_signature(headers, provider_slug)
-
         # Log webhook receipt
         event_type = payload.get("type", payload.get("name", payload.get("event_type", "unknown")))
         event_id = payload.get("id", payload.get("event_id", "unknown"))
@@ -180,15 +232,15 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
             return HttpResponse(status=200)
         else:
             logger.warning(f"Webhook processing returned failure: {message}")
-            # Still return 200 to prevent provider from retrying
-            # (webhook is stored and can be retried internally)
+            # process_webhook persists the event record before processing, so it
+            # can be retried internally — ack with 200 to avoid provider retries.
             return HttpResponse(status=200)
 
     except Exception as e:
         logger.error(f"Error handling webhook from {provider_slug}: {e}", exc_info=True)
-        # Return 200 to prevent infinite retries from provider
-        # The webhook is stored and can be retried internally
-        return HttpResponse(status=200)
+        # Pre-persistence failure: nothing was stored for internal retry, so
+        # return a retryable 5xx and let the provider redeliver the event.
+        return HttpResponse(status=500)
 
 
 def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
@@ -210,21 +262,16 @@ def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
     # Normalize headers to lowercase keys
     normalized = {k.lower(): v for k, v in headers.items()}
 
-    # Provider-specific signature headers
-    signature_headers = {
-        "stripe": "stripe-signature",
-        "airwallex": "x-signature",
-        "paypal": "paypal-transmission-sig",
-        "square": "x-square-signature",
-        "braintree": "bt-signature",
-    }
+    # 1. Pluggable path: the header the component DECLARES in its manifest
+    #    (webhooks.signature_header, else webhooks.headers[0]). A new provider
+    #    declares its header here and needs no core edit.
+    declared = _manifest_signature_header(provider_slug)
+    if declared and declared.lower() in normalized:
+        return normalized[declared.lower()]
 
-    # Get provider-specific header or try common ones
-    header_name = signature_headers.get(provider_slug.lower())
-    if header_name and header_name in normalized:
-        return normalized[header_name]
-
-    # Try common signature header names
+    # 2. Common signature header names (last-resort fallback). Providers declare
+    #    their exact header in the manifest (step 1); this only catches a
+    #    provider whose manifest omits it and uses a conventional name.
     common_headers = [
         "x-signature",
         "signature",
@@ -237,3 +284,26 @@ def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
             return normalized[header]
 
     return ""
+
+
+def _manifest_signature_header(provider_slug: str) -> str | None:
+    """Return the signature header a component declares in its manifest, or None.
+
+    Prefers ``webhooks.signature_header``; falls back to the first entry of
+    ``webhooks.headers``. Any lookup failure returns None so the caller drops to
+    its other resolution steps.
+    """
+    try:
+        from component_updates.models import ComponentRegistry
+
+        component = ComponentRegistry.objects.filter(slug=provider_slug).first()
+        if not component:
+            return None
+        webhooks = (component.get_manifest() or {}).get("webhooks") or {}
+        header = webhooks.get("signature_header")
+        if not header:
+            hdrs = webhooks.get("headers") or []
+            header = hdrs[0] if hdrs else None
+        return header
+    except Exception:
+        return None

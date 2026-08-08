@@ -27,6 +27,26 @@ class LedgerService:
     proper audit trails and balance reconciliation.
     """
 
+    def _get_locked_balance(self, member: LoyaltyMember) -> LoyaltyBalance:
+        """Return the member's cached balance row locked FOR UPDATE.
+
+        Creates the row first for legacy members that never had one. Writers
+        that mutate a balance acquire it through here, inside an atomic block,
+        so concurrent point changes serialise on this row rather than racing an
+        unlocked read-modify-write that silently drops updates.
+        """
+        LoyaltyBalance.objects.get_or_create(
+            member=member,
+            defaults={
+                "available_points": 0,
+                "pending_points": 0,
+                "lifetime_earned": 0,
+                "lifetime_redeemed": 0,
+                "lifetime_expired": 0,
+            },
+        )
+        return LoyaltyBalance.objects.select_for_update().get(member=member)
+
     def create_transaction(
         self,
         member: LoyaltyMember,
@@ -171,8 +191,11 @@ class LedgerService:
                 admin_note=admin_note,
             )
 
-            # Update balance
-            balance, created = LoyaltyBalance.objects.get_or_create(member=member)
+            # Update balance under a row lock so a concurrent adjustment or
+            # redemption cannot read the same pre-update balance and overwrite
+            # this change (both ledger rows would survive, one balance delta
+            # would not).
+            balance = self._get_locked_balance(member)
 
             balance.available_points += points
 
@@ -370,21 +393,11 @@ class LedgerService:
         points_amount = -abs(points)
 
         with db_transaction.atomic():
-            # Get-or-create first, then lock: two concurrent redemptions for the
-            # same member would otherwise both read the pre-deduction balance and
-            # the second would overwrite the first's deduction, spending the same
+            # Lock the balance first: two concurrent redemptions for the same
+            # member would otherwise both read the pre-deduction balance and the
+            # second would overwrite the first's deduction, spending the same
             # points twice.
-            balance, _created = LoyaltyBalance.objects.get_or_create(
-                member=member,
-                defaults={
-                    "available_points": 0,
-                    "pending_points": 0,
-                    "lifetime_earned": 0,
-                    "lifetime_redeemed": 0,
-                    "lifetime_expired": 0,
-                },
-            )
-            balance = LoyaltyBalance.objects.select_for_update().get(pk=balance.pk)
+            balance = self._get_locked_balance(member)
 
             # Re-check sufficiency under the lock. Callers check eligibility
             # before getting here, but that check is not serialised with this
@@ -506,19 +519,9 @@ class LedgerService:
 
             # Lock the balance row: a refund and a concurrent redemption would
             # otherwise read-modify-write the same counters and lose one update.
-            # get_or_create first (mirroring record_redemption) so a legacy
-            # member with no balance row gets one rather than a 500.
-            LoyaltyBalance.objects.get_or_create(
-                member=member,
-                defaults={
-                    "available_points": 0,
-                    "pending_points": 0,
-                    "lifetime_earned": 0,
-                    "lifetime_redeemed": 0,
-                    "lifetime_expired": 0,
-                },
-            )
-            balance = LoyaltyBalance.objects.select_for_update().get(member=member)
+            # The helper get_or_creates first so a legacy member with no balance
+            # row gets one rather than a 500.
+            balance = self._get_locked_balance(member)
             balance.available_points += points_returned
             balance.lifetime_redeemed -= points_returned
             balance.save(update_fields=["available_points", "lifetime_redeemed", "updated_at"])

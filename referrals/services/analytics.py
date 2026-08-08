@@ -5,7 +5,6 @@ Provides aggregated statistics and metrics for dashboard widgets.
 """
 
 from datetime import timedelta
-from decimal import Decimal
 
 from django.db.models import Avg, Count, Q, Sum
 from django.utils import timezone
@@ -17,6 +16,17 @@ from ..models import (
     ReferralProgram,
     ReferralReward,
 )
+
+
+def _money_sum_to_float(value):
+    """Convert a Sum() aggregate over a MoneyField to a float, defaulting to 0.0.
+
+    django-money returns a Money object (not a Decimal) for such aggregates, and
+    py-moneyed Money does not support float(); None is returned when no rows match.
+    """
+    if value is None:
+        return 0.0
+    return float(getattr(value, "amount", value))
 
 
 def get_referral_dashboard_stats(start_date=None, end_date=None):
@@ -84,7 +94,7 @@ def get_referral_dashboard_stats(start_date=None, end_date=None):
 
     total_rewards_value = rewards_qs.filter(status__in=["issued", "redeemed"]).aggregate(
         total=Sum("amount")
-    )["total"] or Decimal("0.00")
+    )["total"]
 
     # Conversion rate (clicks to conversions)
     total_clicks = events_qs.filter(event_type="click").count()
@@ -160,7 +170,7 @@ def get_referral_dashboard_stats(start_date=None, end_date=None):
         # Overall metrics
         "total_referrers": total_referrers,
         "total_conversions": total_conversions,
-        "total_rewards_value": float(total_rewards_value),
+        "total_rewards_value": _money_sum_to_float(total_rewards_value),
         "conversion_rate": conversion_rate,
         "avg_risk_score": round(avg_risk_score, 1),
         # Top performers
@@ -290,7 +300,7 @@ def get_referral_performance_over_time(start_date, end_date, grouping="day"):
     clicks_dict = {item["period"]: item["count"] for item in clicks_data}
     signups_dict = {item["period"]: item["count"] for item in signups_data}
     conversions_dict = {item["period"]: item["count"] for item in conversions_data}
-    rewards_dict = {item["period"]: float(item["total"]) for item in rewards_data}
+    rewards_dict = {item["period"]: _money_sum_to_float(item["total"]) for item in rewards_data}
 
     # Build final arrays
     labels = []

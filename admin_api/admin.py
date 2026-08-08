@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 from django.db.models import Case, IntegerField, When
 from django.utils.safestring import mark_safe
 
@@ -39,6 +40,10 @@ class CustomerMessageAdmin(admin.ModelAdmin):
             message = CustomerMessage.objects.select_related("order", "read_by", "replied_by").get(
                 pk=object_id
             )
+            # Enforce object-level permission before any mutation, so a staff
+            # user without view/change access can't flip status via a guessed URL.
+            if not self.has_view_or_change_permission(request, message):
+                raise PermissionDenied
             # Auto-mark as read when opened
             if message.status == "unread":
                 message.mark_as_read(request.user)

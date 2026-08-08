@@ -393,6 +393,13 @@ class PaymentMethodFilter:
                 supported_currencies = capabilities.get("supported_currencies", [])
                 return currency.upper() in [c.upper() for c in supported_currencies]
 
+            # Every BasePaymentProvider exposes currency support through the
+            # abstract `supported_currencies` property — honour it before falling
+            # back to assuming support, so unsupported currencies are rejected.
+            if hasattr(provider_instance, "supported_currencies"):
+                supported_currencies = provider_instance.supported_currencies
+                return currency.upper() in [c.upper() for c in supported_currencies]
+
             # If provider doesn't implement currency checking, assume supported
             logger.warning(
                 f"Provider {provider.component.slug} does not implement "

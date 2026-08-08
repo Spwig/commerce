@@ -154,7 +154,7 @@ class SegmentEvaluator:
 
             # Signup recency
             if "signup_days_min" in rules or "signup_days_max" in rules:
-                days_since_signup = (timezone.now() - member.joined_at).days
+                days_since_signup = (timezone.now() - member.enrolled_at).days
 
                 if "signup_days_min" in rules:
                     if days_since_signup < rules["signup_days_min"]:

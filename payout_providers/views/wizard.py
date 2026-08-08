@@ -11,6 +11,7 @@ from pathlib import Path
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -375,11 +376,13 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class ProviderWizardStep4View(WizardSessionMixin, View):
+class ProviderWizardStep4View(PermissionRequiredMixin, WizardSessionMixin, View):
     """
     Step 4: Test Connection & Save
     Tests the provider connection with entered credentials and saves if successful
     """
+
+    permission_required = "payout_providers.add_payoutprovideraccount"
 
     template_name = "admin/payout_providers/wizard/step4_test.html"
 

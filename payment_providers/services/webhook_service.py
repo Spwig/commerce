@@ -53,7 +53,13 @@ class WebhookService:
                 logger.error(f"Provider not found: {provider_account.component.slug}")
                 return False
 
-            provider_instance = provider_class(provider_account)
+            # Construct via the account's own factory: it decrypts the stored
+            # credentials and passes them as `credentials=` (the provider's real
+            # __init__ contract). Handing the account MODEL to provider_class()
+            # raised TypeError inside _select_credentials, and the try/except
+            # swallowed it into a silent False — so signature verification failed
+            # closed and every inbound webhook was rejected with a 400.
+            provider_instance = provider_account.get_provider_instance()
 
             # Delegate signature verification to provider
             is_valid = provider_instance.verify_webhook_signature(
@@ -150,7 +156,10 @@ class WebhookService:
             if not provider_class:
                 raise Exception(f"Provider not found in registry: {provider_slug}")
 
-            provider_instance = provider_class(provider_account)
+            # Same fix as verify_webhook_signature: the account factory is the
+            # credential-aware constructor. provider_class(provider_account) blew
+            # up in _select_credentials, breaking webhook processing entirely.
+            provider_instance = provider_account.get_provider_instance()
 
             # Process webhook through provider
             processing_result = provider_instance.process_webhook(payload, event_type)

@@ -5,9 +5,13 @@ Usage:
     python manage.py create_default_badges
 """
 
+from decimal import Decimal
+
 from django.core.management.base import BaseCommand
 from django.utils.text import slugify
 
+from core.utils import get_default_currency
+from core.utils.currency_helpers import format_money
 from loyalty.models import LoyaltyBadge
 
 
@@ -16,6 +20,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Create default badges"""
+
+        # Describe monetary criteria in the store's configured currency rather
+        # than hardcoding US dollars.
+        currency = get_default_currency()
 
         badges_data = [
             # First-Time Achievements
@@ -58,7 +66,7 @@ class Command(BaseCommand):
             # Spending Milestones
             {
                 "name": "Bronze Spender",
-                "description": "Spent $100 in total",
+                "description": f"Spent {format_money(Decimal('100'), currency)} in total",
                 "icon": "fa-medal",
                 "criteria_type": "total_spend",
                 "criteria_value": 100,
@@ -67,7 +75,7 @@ class Command(BaseCommand):
             },
             {
                 "name": "Silver Spender",
-                "description": "Spent $500 in total",
+                "description": f"Spent {format_money(Decimal('500'), currency)} in total",
                 "icon": "fa-medal",
                 "criteria_type": "total_spend",
                 "criteria_value": 500,
@@ -76,7 +84,7 @@ class Command(BaseCommand):
             },
             {
                 "name": "Gold Spender",
-                "description": "Spent $1,000 in total",
+                "description": f"Spent {format_money(Decimal('1000'), currency)} in total",
                 "icon": "fa-medal",
                 "criteria_type": "total_spend",
                 "criteria_value": 1000,
@@ -85,7 +93,7 @@ class Command(BaseCommand):
             },
             {
                 "name": "Platinum Spender",
-                "description": "Spent $5,000 in total",
+                "description": f"Spent {format_money(Decimal('5000'), currency)} in total",
                 "icon": "fa-trophy",
                 "criteria_type": "total_spend",
                 "criteria_value": 5000,
@@ -94,7 +102,7 @@ class Command(BaseCommand):
             },
             {
                 "name": "Diamond Elite",
-                "description": "Spent $10,000 in total",
+                "description": f"Spent {format_money(Decimal('10000'), currency)} in total",
                 "icon": "fa-gem",
                 "criteria_type": "total_spend",
                 "criteria_value": 10000,
@@ -292,7 +300,7 @@ class Command(BaseCommand):
             },
             {
                 "name": "Big Ticket Buyer",
-                "description": "Made a single order over $500",
+                "description": f"Made a single order over {format_money(Decimal('500'), currency)}",
                 "icon": "fa-sack-dollar",
                 "criteria_type": "single_order_value",
                 "criteria_value": 500,

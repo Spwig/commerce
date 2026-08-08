@@ -198,6 +198,11 @@ class LoyaltyBadgeSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
+    @classmethod
+    def setup_eager_loading(cls, queryset):
+        """Select the badge image FK so get_image_url avoids an N+1 query."""
+        return queryset.select_related("image")
+
     @extend_schema_field(serializers.CharField(allow_null=True))
     def get_image_url(self, obj) -> str | None:
         """Get badge image URL if available"""
@@ -220,6 +225,11 @@ class LoyaltyMemberBadgeSerializer(serializers.ModelSerializer):
             "earned_at",
         ]
         read_only_fields = fields
+
+    @classmethod
+    def setup_eager_loading(cls, queryset):
+        """Select the badge and its image FK to avoid N+1 queries per member badge."""
+        return queryset.select_related("badge", "badge__image")
 
 
 class LoyaltyRewardSerializer(serializers.ModelSerializer):

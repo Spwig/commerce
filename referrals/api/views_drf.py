@@ -262,7 +262,7 @@ class ReferralAttributionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Filter attributions"""
         queryset = ReferralAttribution.objects.select_related(
-            "referrer_identity", "referee", "first_order", "program"
+            "referrer_identity", "referee_customer", "first_order", "program"
         ).order_by("-created_at")
 
         # Filter by status

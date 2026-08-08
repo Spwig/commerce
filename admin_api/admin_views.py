@@ -6,6 +6,7 @@ from django.db.models import Case, IntegerField, Q, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST
 
@@ -138,19 +139,22 @@ def reply_to_message(request, message_id):
 
             email_subject = f"Re: {message.subject}"
 
+            reply_html = escape(reply_text).replace(chr(10), "<br>")
+            message_html = escape(message.message).replace(chr(10), "<br>")
+
             html_body = (
                 '<div style="font-family: Arial, sans-serif; max-width: 600px;">'
-                f"<p>{reply_text.replace(chr(10), '<br>')}</p>"
+                f"<p>{reply_html}</p>"
                 '<hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">'
                 '<p style="color: #666; font-size: 0.9em;">'
                 "<strong>Original Message:</strong><br>"
-                f"From: {message.name} &lt;{message.email}&gt;<br>"
-                f"Subject: {message.subject}<br>"
+                f"From: {escape(message.name)} &lt;{escape(message.email)}&gt;<br>"
+                f"Subject: {escape(message.subject)}<br>"
                 f"Date: {message.created_at.strftime('%B %d, %Y at %I:%M %p')}"
                 "</p>"
                 '<blockquote style="margin: 10px 0; padding: 10px; '
                 'border-left: 3px solid #e0e0e0; color: #666;">'
-                f"{message.message.replace(chr(10), '<br>')}"
+                f"{message_html}"
                 "</blockquote>"
                 "</div>"
             )

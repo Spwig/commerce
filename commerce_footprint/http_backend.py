@@ -58,8 +58,13 @@ class HttpBackend:
             # 404 covers all fail-closed cases (disabled / bad secret / no such
             # order) — indistinguishable by design, so don't over-interpret it.
             raise InspectionError(f"inspection GET {url} returned HTTP {exc.code}") from exc
-        except urllib.error.URLError as exc:
-            raise InspectionError(f"inspection GET {url} failed: {exc.reason}") from exc
+        except (urllib.error.URLError, TimeoutError) as exc:
+            # A connect-timeout arrives wrapped in URLError, but a timeout during
+            # response.read() (inside the `with`) raises a bare TimeoutError that
+            # would otherwise crash the caller instead of surfacing as a clean
+            # transport error. Catch both.
+            reason = getattr(exc, "reason", exc)
+            raise InspectionError(f"inspection GET {url} failed: {reason}") from exc
 
         try:
             payload = json.loads(body)

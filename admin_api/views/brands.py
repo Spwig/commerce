@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.brands import (
     AdminBrandDetailSerializer,
@@ -76,7 +76,7 @@ def _generate_unique_slug(name, exclude_id=None):
     responses={200: AdminBrandListSerializer(many=True), 400: ErrorResponseSerializer},
 )
 @api_view(["GET"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def brand_list(request):
     """Get a paginated list of brands."""
@@ -148,7 +148,7 @@ def brand_list(request):
     responses={200: AdminBrandDetailSerializer, 404: ErrorResponseSerializer},
 )
 @api_view(["GET"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def brand_detail(request, brand_id):
     """Get full details for a brand."""
@@ -189,7 +189,7 @@ def brand_detail(request, brand_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_brand(request):
     """Create a new brand."""
@@ -277,7 +277,7 @@ def create_brand(request):
     },
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_brand(request, brand_id):
     """Partially update a brand."""
@@ -391,7 +391,7 @@ def update_brand(request, brand_id):
     responses={200: None, 404: ErrorResponseSerializer, 409: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def delete_brand(request, brand_id):
     """Delete a brand."""
@@ -462,7 +462,7 @@ def delete_brand(request, brand_id):
     responses={201: None, 400: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_create_brands(request):
     """Bulk create brands."""

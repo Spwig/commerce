@@ -22,10 +22,10 @@ def reconcile_wallet_balances():
         call_command("reconcile_wallet_balances")
         logger.info("Wallet reconciliation clean")
         return True
-    except SystemExit:
+    except SystemExit as exc:
         logger.error(
             "WALLET DRIFT DETECTED: stored balances disagree with their ledgers. "
             "Run `manage.py reconcile_wallet_balances` for detail; --fix only "
             "after understanding the cause."
         )
-        return False
+        raise RuntimeError("Wallet reconciliation detected drift") from exc

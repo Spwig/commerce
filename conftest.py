@@ -193,22 +193,38 @@ def test_gateway_on_disk() -> "object":
         / "test_gateway"
     )
     current = base / "current"
-    if (current / "provider.py").exists():
-        return current  # already unpacked (local dev)
+    if not (current / "provider.py").exists():
+        bundle_dir = Path(settings.BASE_DIR) / "preinstalled"
+        manifest = json.loads((bundle_dir / "manifest.json").read_text())
+        entry = next(
+            c
+            for c in manifest["components"]
+            if c["type"] == "payment_provider" and c["slug"] == "test_gateway"
+        )
+        version = entry["version"]
+        version_dir = base / f"v{version}"
+        version_dir.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(bundle_dir / entry["package"]) as zf:
+            zf.extractall(version_dir)
+        if current.exists() or current.is_symlink():
+            current.unlink()
+        current.symlink_to(f"v{version}")
 
-    bundle_dir = Path(settings.BASE_DIR) / "preinstalled"
-    manifest = json.loads((bundle_dir / "manifest.json").read_text())
-    entry = next(
-        c
-        for c in manifest["components"]
-        if c["type"] == "payment_provider" and c["slug"] == "test_gateway"
-    )
-    version = entry["version"]
-    version_dir = base / f"v{version}"
-    version_dir.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(bundle_dir / entry["package"]) as zf:
-        zf.extractall(version_dir)
-    if current.exists() or current.is_symlink():
-        current.unlink()
-    current.symlink_to(f"v{version}")
-    return current
+    # Reset the payment ProviderRegistry's class-level discovery cache so this
+    # freshly-provisioned provider (plus the test's ComponentRegistry row) is
+    # picked up on the next get_provider(). The registry caches discovery at
+    # class scope for the worker's lifetime; without this, a prior test that
+    # discovered providers before this fixture provisioned test_gateway leaves
+    # a stale cache, and get_provider("test_gateway") returns None ("Payment
+    # provider not found"). That is order-dependent, so it can pass under one
+    # test distribution and fail under another. Reset on teardown too so the
+    # test provider doesn't leak into later tests.
+    from payment_providers.providers.registry import ProviderRegistry
+
+    ProviderRegistry._providers.clear()
+    ProviderRegistry._slug_to_key.clear()
+    ProviderRegistry._discovered = False
+    yield current
+    ProviderRegistry._providers.clear()
+    ProviderRegistry._slug_to_key.clear()
+    ProviderRegistry._discovered = False

@@ -290,8 +290,8 @@ class CustomerSubscriptionSerializer(serializers.ModelSerializer):
         """Total paid across successful billing cycles, as a decimal string.
 
         Prefers the ``total_paid_amount`` annotation added by the list/detail
-        queryset (avoiding a per-object aggregate) and falls back to the
-        ``CustomerSubscription.total_amount_paid`` method for instances that
+        queryset (avoiding an N+1 aggregate per subscription) and falls back to
+        the ``CustomerSubscription.total_amount_paid`` method for instances that
         weren't loaded through the annotated queryset (e.g. objects returned by
         the manager after a create/action). The method returns Money when there
         are successful billing logs and Decimal("0.00") when there are none, so

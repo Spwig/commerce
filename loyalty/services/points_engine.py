@@ -54,6 +54,7 @@ class PointsEngine:
 
         total_points = 0
         rules_applied = []
+        matched_rules = []
 
         # Evaluate rules by priority
         for rule in rules:
@@ -65,6 +66,7 @@ class PointsEngine:
                     points = int(points * float(member.current_tier.points_multiplier))
 
                 total_points += points
+                matched_rules.append(rule)
                 rules_applied.append(
                     {
                         "rule_id": rule.id,
@@ -78,8 +80,9 @@ class PointsEngine:
                     logger.info(f"Exclusive rule {rule.id} matched, stopping evaluation")
                     break
 
-        # Apply per-order caps
-        for rule in rules:
+        # Apply per-order caps — only from rules that actually produced points, so
+        # an unrelated rule's low cap can't clip a valid award.
+        for rule in matched_rules:
             if rule.max_points_per_order and total_points > rule.max_points_per_order:
                 logger.info(f"Capping points from {total_points} to {rule.max_points_per_order}")
                 total_points = rule.max_points_per_order
@@ -88,6 +91,7 @@ class PointsEngine:
         return {
             "total_points": total_points,
             "rules_applied": rules_applied,
+            "matched_rules": matched_rules,
             "message": f"Calculated {total_points} points from {len(rules_applied)} rule(s)",
         }
 
@@ -113,13 +117,16 @@ class PointsEngine:
             logger.info(f"No points to award for order {order.order_number}")
             return None
 
+        # Check caps against only the rules that produced this award
+        matched_rules = result["matched_rules"]
+
         # Check per-day cap
-        if not self._check_daily_cap(member, points):
+        if not self._check_daily_cap(member, points, matched_rules):
             logger.warning(f"Daily cap reached for member {member.id}")
             return None
 
         # Check per-member cap
-        if not self._check_member_cap(member, points):
+        if not self._check_member_cap(member, points, matched_rules):
             logger.warning(f"Member cap reached for member {member.id}")
             return None
 
@@ -232,12 +239,12 @@ class PointsEngine:
         if member.current_tier:
             points = int(points * float(member.current_tier.points_multiplier))
 
-        # Check caps
-        if not self._check_daily_cap(member, points):
+        # Check caps against only the rule that produced this award
+        if not self._check_daily_cap(member, points, [rule]):
             logger.warning(f"Daily cap reached for member {member.id}")
             return None
 
-        if not self._check_member_cap(member, points):
+        if not self._check_member_cap(member, points, [rule]):
             logger.warning(f"Member cap reached for member {member.id}")
             return None
 
@@ -381,14 +388,20 @@ class PointsEngine:
 
         # Calculate points based on rule type
         if rule.rule_type == LoyaltyRule.TYPE_SPEND_BASED:
-            # Points = floor(earning base * rate)
-            points = int(float(earning_base) * float(rule.points_rate))
+            # Points = floor(earning base * rate). Multiply the Decimals directly;
+            # going via binary float can drop exact products just below an integer
+            # and under-award by one point. int() truncates toward zero (== floor
+            # for the non-negative earning base).
+            points = int(earning_base * rule.points_rate)
             return points
 
         elif rule.rule_type == LoyaltyRule.TYPE_ITEM_BASED:
             # Calculate points per qualifying item
             total_points = 0
             for item in order.items.select_related("product", "product__brand").all():
+                # Gift cards never earn (see _earning_base) — skip before scoping.
+                if getattr(item.product, "product_type", None) == "gift_card":
+                    continue
                 if self._item_matches_scope(rule, item):
                     total_points += int(rule.points_rate) * item.quantity
             return total_points
@@ -436,15 +449,16 @@ class PointsEngine:
 
         return False
 
-    def _check_daily_cap(self, member: LoyaltyMember, points: int) -> bool:
-        """Check if awarding points would exceed daily cap."""
-        # Get all rules with daily caps
-        rules_with_caps = LoyaltyRule.objects.filter(
-            is_active=True,
-            max_points_per_day__isnull=False,
-        )
+    def _check_daily_cap(
+        self, member: LoyaltyMember, points: int, rules: list[LoyaltyRule]
+    ) -> bool:
+        """Check if awarding points would exceed daily cap.
 
-        if not rules_with_caps:
+        Only enforces caps belonging to the rules that produced this award; an
+        unrelated active rule must not block a valid award.
+        """
+        caps = [r.max_points_per_day for r in rules if r.max_points_per_day]
+        if not caps:
             return True
 
         # Check today's points for this member
@@ -458,20 +472,19 @@ class PointsEngine:
             or 0
         )
 
-        # Check against the strictest cap
-        min_cap = min(r.max_points_per_day for r in rules_with_caps)
+        # Check against the strictest cap among the matched rules
+        return (today_points + points) <= min(caps)
 
-        return (today_points + points) <= min_cap
+    def _check_member_cap(
+        self, member: LoyaltyMember, points: int, rules: list[LoyaltyRule]
+    ) -> bool:
+        """Check if awarding points would exceed member lifetime cap.
 
-    def _check_member_cap(self, member: LoyaltyMember, points: int) -> bool:
-        """Check if awarding points would exceed member lifetime cap."""
-        # Get all rules with member caps
-        rules_with_caps = LoyaltyRule.objects.filter(
-            is_active=True,
-            max_points_per_member__isnull=False,
-        )
-
-        if not rules_with_caps:
+        Only enforces caps belonging to the rules that produced this award; an
+        unrelated active rule must not block a valid award.
+        """
+        caps = [r.max_points_per_member for r in rules if r.max_points_per_member]
+        if not caps:
             return True
 
         # Get member's lifetime earned
@@ -481,26 +494,45 @@ class PointsEngine:
 
         lifetime_earned = balance.lifetime_earned
 
-        # Check against the strictest cap
-        min_cap = min(r.max_points_per_member for r in rules_with_caps)
-
-        return (lifetime_earned + points) <= min_cap
+        # Check against the strictest cap among the matched rules
+        return (lifetime_earned + points) <= min(caps)
 
     def _update_balance(self, member: LoyaltyMember, transaction: LoyaltyTransaction):
         """Update member's balance based on transaction."""
-        balance, created = LoyaltyBalance.objects.get_or_create(member=member)
+        # Lock the balance row for the read-modify-write so concurrent awards for
+        # the same member cannot both read the same values and lose an update
+        # (the sibling redemption_engine locks its rows the same way). Runs inside
+        # the caller's atomic block; get_or_create can still race on first award,
+        # so retry the locked read once if a concurrent create won.
+        try:
+            balance = LoyaltyBalance.objects.select_for_update().get(member=member)
+        except LoyaltyBalance.DoesNotExist:
+            LoyaltyBalance.objects.get_or_create(member=member)
+            balance = LoyaltyBalance.objects.select_for_update().get(member=member)
 
-        if transaction.transaction_type == LoyaltyTransaction.TYPE_EARN:
+        if transaction.transaction_type in (
+            LoyaltyTransaction.TYPE_EARN,
+            LoyaltyTransaction.TYPE_BONUS,
+        ):
             # Add to lifetime earned
             balance.lifetime_earned += transaction.points
 
-            # Add to appropriate balance field
+            # Add to appropriate balance field. Bonus awards are always available,
+            # so they fall through to available_points here.
             if transaction.status == LoyaltyTransaction.STATUS_PENDING:
                 balance.pending_points += transaction.points
             else:
                 balance.available_points += transaction.points
 
             # Update last earned timestamp
+            balance.last_earned_at = timezone.now()
+
+        elif transaction.transaction_type == LoyaltyTransaction.TYPE_BONUS:
+            # Bonus points count as earned and are immediately available.
+            # Mirrors LedgerService.reconcile_balance so the cached balance
+            # agrees with the authoritative ledger.
+            balance.lifetime_earned += transaction.points
+            balance.available_points += transaction.points
             balance.last_earned_at = timezone.now()
 
         elif transaction.transaction_type == LoyaltyTransaction.TYPE_REDEEM:

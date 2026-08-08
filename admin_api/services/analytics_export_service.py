@@ -224,7 +224,7 @@ class AnalyticsExportService:
             ]
         )
 
-        for product in data["products"]:
+        for product in data["results"]:
             writer.writerow(
                 [
                     cls._sanitize_csv_cell(product["product_name"]),
@@ -570,7 +570,7 @@ class AnalyticsExportService:
         story.append(Paragraph("Product Performance", styles["SectionHeader"]))
         header = ["Product", "SKU", "Units", f"Revenue ({currency})", "Orders", "Avg Price"]
         rows = []
-        for p in data["products"]:
+        for p in data["results"]:
             rows.append(
                 [
                     Paragraph(escape(p["product_name"][:40]), styles["Normal"]),

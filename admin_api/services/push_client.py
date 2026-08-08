@@ -253,10 +253,36 @@ class PushClient:
         if not tokens:
             return PushResult(success=True, sent=0, failed=0, results=[])
 
-        if len(tokens) > 100:
-            logger.warning(f"Token list exceeds 100, truncating from {len(tokens)}")
-            tokens = tokens[:100]
+        # The push service accepts at most 100 tokens per request. Send in chunks
+        # of 100 and aggregate the results so devices beyond the first 100 are
+        # notified instead of being silently discarded.
+        aggregated = PushResult(success=True, sent=0, failed=0, results=[])
+        for start in range(0, len(tokens), 100):
+            chunk = tokens[start : start + 100]
+            chunk_result = self._send_notification_chunk(
+                chunk, title, body, data=data, sound=sound, badge=badge, sandbox=sandbox
+            )
+            aggregated.sent += chunk_result.sent
+            aggregated.failed += chunk_result.failed
+            aggregated.results.extend(chunk_result.results)
+            if not chunk_result.success:
+                aggregated.success = False
+            if chunk_result.error and aggregated.error is None:
+                aggregated.error = chunk_result.error
 
+        return aggregated
+
+    def _send_notification_chunk(
+        self,
+        tokens: list[str],
+        title: str,
+        body: str,
+        data: dict[str, Any] | None = None,
+        sound: str = "default",
+        badge: int | None = None,
+        sandbox: bool = False,
+    ) -> PushResult:
+        """Send a notification to a single batch of at most 100 device tokens."""
         payload = {
             "tokens": tokens,
             "platform": "ios",

@@ -8,6 +8,7 @@ import logging
 from datetime import timedelta
 
 from celery import shared_task
+from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 
@@ -26,67 +27,84 @@ logger = logging.getLogger(__name__)
     retry_backoff_max=600,
     retry_jitter=True,
 )
-def trigger_campaign(self, campaign_id: int, member_id: int, context: dict):
+def trigger_campaign(self, execution_id: int, context: dict | None = None):
     """
-    Execute a campaign for a specific member.
+    Execute a specific campaign execution for its member.
 
     Args:
-        campaign_id: LoyaltyCampaign ID
-        member_id: LoyaltyMember ID
-        context: Execution context dict
+        execution_id: LoyaltyCampaignExecution ID to process
+        context: Optional execution context dict (unused; kept for compatibility)
 
     Returns:
         dict: Execution result
     """
-    from loyalty.models import LoyaltyCampaign, LoyaltyCampaignExecution, LoyaltyMember
+    from loyalty.models import LoyaltyCampaignExecution
     from loyalty.services.campaign_orchestrator import CampaignOrchestrator
 
-    try:
-        campaign = LoyaltyCampaign.objects.get(id=campaign_id)
-        member = LoyaltyMember.objects.select_related("customer", "balance", "current_tier").get(
-            id=member_id
+    # Atomically claim this exact execution by primary key. Selecting by
+    # campaign/member could pick the wrong pending row when several are queued
+    # for the same member; keying on the execution ID and locking the row makes
+    # sure each execution is processed once and only once.
+    with transaction.atomic():
+        execution = (
+            LoyaltyCampaignExecution.objects.select_for_update()
+            .select_related(
+                "campaign",
+                "member",
+                "member__customer",
+                "member__balance",
+                "member__current_tier",
+            )
+            .filter(id=execution_id)
+            .first()
         )
-    except (LoyaltyCampaign.DoesNotExist, LoyaltyMember.DoesNotExist) as e:
-        logger.error(f"Campaign or member not found: {str(e)}")
-        return {"success": False, "error": str(e)}
 
-    # Find the execution record
-    execution = (
-        LoyaltyCampaignExecution.objects.filter(
-            campaign=campaign, member=member, status=LoyaltyCampaignExecution.STATUS_PENDING
-        )
-        .order_by("-triggered_at")
-        .first()
-    )
+        if execution is None:
+            logger.error(f"No execution found with id {execution_id}")
+            return {"success": False, "error": "No execution found"}
 
-    if not execution:
-        logger.error(
-            f"No pending execution found for campaign {campaign_id} and member {member_id}"
-        )
-        return {"success": False, "error": "No pending execution found"}
+        # Only pending (first attempt) or a retry we previously reset may be
+        # claimed; anything completed/failed/cancelled has already been handled.
+        if execution.status not in (
+            LoyaltyCampaignExecution.STATUS_PENDING,
+            LoyaltyCampaignExecution.STATUS_PROCESSING,
+        ):
+            logger.info(f"Execution {execution_id} is {execution.status}; nothing to process")
+            return {
+                "success": False,
+                "error": "Execution not claimable",
+                "execution_id": execution_id,
+            }
+
+        execution.status = LoyaltyCampaignExecution.STATUS_PROCESSING
+        execution.save(update_fields=["status"])
 
     try:
         orchestrator = CampaignOrchestrator()
         result = orchestrator.process_campaign_actions(execution)
 
-        logger.info(f"Campaign {campaign_id} executed for member {member_id}")
+        logger.info(f"Campaign {execution.campaign_id} executed for member {execution.member_id}")
         return {"success": True, "execution_id": execution.id, "result": result}
 
     except Exception as e:
         logger.error(f"Campaign execution failed: {str(e)}", exc_info=True)
 
-        # Mark execution as failed
+        # If retries remain, keep the execution pending so the next attempt can
+        # reclaim it by ID; only record a final failure once retries run out.
+        if self.request.retries < self.max_retries:
+            execution.status = LoyaltyCampaignExecution.STATUS_PENDING
+            execution.retry_count = self.request.retries + 1
+            execution.save(update_fields=["status", "retry_count"])
+            raise self.retry(exc=e, countdown=60 * (2**self.request.retries))
+
         execution.mark_failed(str(e))
         execution.retry_count = self.request.retries
         execution.save(update_fields=["retry_count"])
 
-        # Update campaign statistics
+        # Update campaign statistics on final failure.
+        campaign = execution.campaign
         campaign.total_failed += 1
         campaign.save(update_fields=["total_failed"])
-
-        # Retry if not max retries
-        if self.request.retries < self.max_retries:
-            raise self.retry(exc=e, countdown=60 * (2**self.request.retries))
 
         return {"success": False, "error": str(e), "execution_id": execution.id}
 
@@ -150,12 +168,15 @@ def process_scheduled_campaigns():
     now = timezone.now()
 
     # Find scheduled campaigns that are active and due
-    campaigns = LoyaltyCampaign.objects.filter(
-        campaign_type=LoyaltyCampaign.TYPE_SCHEDULED,
-        is_active=True,
-        status=LoyaltyCampaign.STATUS_ACTIVE,
-        start_date__lte=now,
-    ).filter(Q(end_date__isnull=True) | Q(end_date__gte=now))
+    campaigns = (
+        LoyaltyCampaign.objects.filter(
+            campaign_type=LoyaltyCampaign.TYPE_SCHEDULED,
+            is_active=True,
+            status=LoyaltyCampaign.STATUS_ACTIVE,
+        )
+        .filter(Q(start_date__isnull=True) | Q(start_date__lte=now))
+        .filter(Q(end_date__isnull=True) | Q(end_date__gte=now))
+    )
 
     processed = 0
     skipped = 0
@@ -318,21 +339,21 @@ def trigger_expiring_points_campaigns():
 
         transactions = LoyaltyTransaction.objects.filter(
             expires_at__date=expiration_date.date(),
-            transaction_type="earn",
-            points_change__gt=0,
-            is_active=True,
+            transaction_type=LoyaltyTransaction.TYPE_EARN,
+            points__gt=0,
+            status=LoyaltyTransaction.STATUS_AVAILABLE,
         ).select_related("member", "member__customer", "member__balance")
 
-        for transaction in transactions:
+        for txn in transactions:
             context = {
-                "expiring_points": transaction.points_change,
-                "expiration_date": transaction.expires_at.isoformat(),
+                "expiring_points": txn.points,
+                "expiration_date": txn.expires_at.isoformat(),
                 "days_until_expiration": days,
             }
 
             result = orchestrator.trigger_event(
                 event=LoyaltyCampaign.EVENT_POINTS_EXPIRING,
-                member=transaction.member,
+                member=txn.member,
                 context=context,
             )
 
@@ -511,23 +532,18 @@ def calculate_campaign_statistics():
 
             failed = executions.filter(status=LoyaltyCampaignExecution.STATUS_FAILED).count()
 
-            # Update campaign stats
-            campaign.total_executions = total_executions
-            campaign.successful_executions = completed
-            campaign.failed_executions = failed
-
-            # Calculate completion rate
-            if total_executions > 0:
-                campaign.completion_rate = (completed / total_executions) * 100
-            else:
-                campaign.completion_rate = 0
+            # Update campaign stats using the real cached-statistics fields.
+            # Completion rate is derived on demand rather than persisted, since
+            # there is no model field backing it.
+            campaign.total_triggered = total_executions
+            campaign.total_completed = completed
+            campaign.total_failed = failed
 
             campaign.save(
                 update_fields=[
-                    "total_executions",
-                    "successful_executions",
-                    "failed_executions",
-                    "completion_rate",
+                    "total_triggered",
+                    "total_completed",
+                    "total_failed",
                 ]
             )
 

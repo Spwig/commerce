@@ -332,7 +332,7 @@ def cleanup_old_events():
     # Get retention period from settings (default 90 days)
     try:
         program = ReferralProgram.get_program()
-        retention_days = program.settings.get("event_retention_days", 90) if program else 90
+        retention_days = program.tracking_config.get("event_retention_days", 90) if program else 90
     except Exception:
         retention_days = 90
 

@@ -4,9 +4,12 @@ Provides REST API serialization for affiliate portal and merchant dashboard
 """
 
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum
+from django.db import transaction
+from django.db.models import Count, DecimalField, OuterRef, Subquery, Sum, Value
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -14,6 +17,30 @@ from rest_framework import serializers
 from .models import Affiliate, AffiliateProgramMembership, Click, Commission, Link, Payout, Program
 
 User = get_user_model()
+
+
+def resolve_acting_id(context, requested_id, owner_id, mismatch_error):
+    """Return the entity id an API caller is authorised to act on.
+
+    Ownership guard shared by identity-bearing serializers: non-staff callers
+    are pinned to their own resource, so a client cannot act on behalf of an
+    arbitrary user/affiliate by posting someone else's id.
+
+    - Staff may target any explicitly requested id.
+    - Non-staff are restricted to ``owner_id`` (their own resource); an explicit
+      id that differs raises ``mismatch_error``.
+    - With no authenticated request in context (trusted internal calls that set
+      the id server-side), the requested id is used as-is.
+    """
+    request = context.get("request")
+    user = getattr(request, "user", None)
+    if user is None or not getattr(user, "is_authenticated", False):
+        return requested_id
+    if user.is_staff and requested_id:
+        return requested_id
+    if requested_id and owner_id is not None and requested_id != owner_id:
+        raise serializers.ValidationError(mismatch_error)
+    return owner_id if owner_id is not None else requested_id
 
 
 # ============================================
@@ -266,29 +293,50 @@ class AffiliateDetailSerializer(serializers.ModelSerializer):
 class AffiliateRegistrationSerializer(serializers.Serializer):
     """Serializer for new affiliate registration"""
 
-    user_id = serializers.IntegerField(required=True)
+    user_id = serializers.IntegerField(required=False)
     company_name = serializers.CharField(max_length=200, required=False, allow_blank=True)
     website = serializers.URLField(required=False, allow_blank=True)
     payment_email = serializers.EmailField(required=True)
     payment_method = serializers.CharField(max_length=50, default="paypal")
 
-    def validate_user_id(self, value):
-        """Validate user exists and doesn't have affiliate profile"""
+    def validate(self, attrs):
+        """Resolve the target user from the caller and validate eligibility.
+
+        The profile owner is derived from the authenticated user; a supplied
+        ``user_id`` is honoured only for staff, so a caller cannot create an
+        affiliate profile linked to another user.
+        """
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        owner_id = None
+        if user is not None and getattr(user, "is_authenticated", False):
+            owner_id = user.id
+        resolved_id = resolve_acting_id(
+            self.context,
+            attrs.get("user_id"),
+            owner_id,
+            {"user_id": _("You cannot create an affiliate profile for another user.")},
+        )
+        if not resolved_id:
+            raise serializers.ValidationError({"user_id": _("User is required")})
+
         try:
-            user = User.objects.get(id=value)
+            target_user = User.objects.get(id=resolved_id)
         except User.DoesNotExist:
-            raise serializers.ValidationError(_("User does not exist"))
+            raise serializers.ValidationError({"user_id": _("User does not exist")})
 
-        if hasattr(user, "affiliate_profile"):
-            raise serializers.ValidationError(_("User already has an affiliate profile"))
+        if hasattr(target_user, "affiliate_profile"):
+            raise serializers.ValidationError(
+                {"user_id": _("User already has an affiliate profile")}
+            )
 
-        return value
+        attrs["user"] = target_user
+        return attrs
 
     def create(self, validated_data):
         """Create new affiliate profile"""
-        user = User.objects.get(id=validated_data["user_id"])
         affiliate = Affiliate.objects.create(
-            user=user,
+            user=validated_data["user"],
             company_name=validated_data.get("company_name", ""),
             website=validated_data.get("website", ""),
             payment_email=validated_data["payment_email"],
@@ -650,21 +698,9 @@ class PayoutDetailSerializer(serializers.ModelSerializer):
 class PayoutRequestSerializer(serializers.Serializer):
     """Serializer for requesting a payout"""
 
-    affiliate_id = serializers.IntegerField(required=True)
+    affiliate_id = serializers.IntegerField(required=False)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     method = serializers.CharField(max_length=50, default="paypal")
-
-    def validate_affiliate_id(self, value):
-        """Validate affiliate exists"""
-        try:
-            affiliate = Affiliate.objects.get(id=value)
-        except Affiliate.DoesNotExist:
-            raise serializers.ValidationError(_("Affiliate does not exist"))
-
-        if affiliate.status != "active":
-            raise serializers.ValidationError(_("Affiliate is not active"))
-
-        return value
 
     def validate_amount(self, value):
         """Validate amount is positive"""
@@ -673,14 +709,36 @@ class PayoutRequestSerializer(serializers.Serializer):
         return value
 
     def validate(self, data):
-        """Validate affiliate has sufficient balance"""
-        affiliate = Affiliate.objects.get(id=data["affiliate_id"])
+        """Resolve the target affiliate from the caller and validate the request.
 
-        # Get approved commissions total
-        approved_balance = (
-            affiliate.commissions.filter(status="approved").aggregate(Sum("amount"))["amount__sum"]
-            or 0
+        The affiliate is derived from the authenticated user's profile; a
+        supplied ``affiliate_id`` is honoured only for staff, so a caller cannot
+        request a payout for another affiliate. The authoritative balance check
+        happens under lock in ``create()`` to prevent over-committing funds.
+        """
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        owner_id = None
+        if user is not None and getattr(user, "is_authenticated", False) and not user.is_staff:
+            own = getattr(user, "affiliate_profile", None)
+            if own is None:
+                raise serializers.ValidationError(_("You do not have an affiliate profile"))
+            owner_id = own.id
+
+        resolved_id = resolve_acting_id(
+            self.context,
+            data.get("affiliate_id"),
+            owner_id,
+            {"affiliate_id": _("You cannot request a payout for another affiliate.")},
         )
+
+        try:
+            affiliate = Affiliate.objects.get(id=resolved_id)
+        except Affiliate.DoesNotExist:
+            raise serializers.ValidationError({"affiliate_id": _("Affiliate does not exist")})
+
+        if affiliate.status != "active":
+            raise serializers.ValidationError(_("Affiliate is not active"))
 
         # Check minimum payout from programs
         programs = affiliate.programs.filter(affiliateprogrammembership__status="approved")
@@ -691,22 +749,49 @@ class PayoutRequestSerializer(serializers.Serializer):
                     _("Amount is below minimum payout threshold of ${}".format(min_payout))
                 )
 
-        if data["amount"] > approved_balance:
-            raise serializers.ValidationError(
-                _("Insufficient balance. Available: ${}".format(approved_balance))
-            )
-
         data["affiliate"] = affiliate
         return data
 
     def create(self, validated_data):
-        """Create payout request"""
-        payout = Payout.objects.create(
-            affiliate=validated_data["affiliate"],
-            amount=validated_data["amount"],
-            method=validated_data["method"],
-            status="pending",
-        )
+        """Create payout request, reserving funds under a row lock.
+
+        Locking the affiliate row serialises concurrent/sequential requests so
+        the available balance (approved commissions minus already pending or
+        processing payouts) is evaluated atomically, preventing two requests
+        from over-committing the same funds.
+        """
+        affiliate = validated_data["affiliate"]
+        amount = validated_data["amount"]
+
+        with transaction.atomic():
+            locked_affiliate = Affiliate.objects.select_for_update().get(pk=affiliate.pk)
+
+            approved_balance = (
+                locked_affiliate.commissions.filter(status="approved").aggregate(Sum("amount"))[
+                    "amount__sum"
+                ]
+                or 0
+            )
+            # Reserve funds already committed to in-flight payouts.
+            reserved = (
+                locked_affiliate.payouts.filter(status__in=["pending", "processing"]).aggregate(
+                    Sum("amount")
+                )["amount__sum"]
+                or 0
+            )
+            available = approved_balance - reserved
+
+            if amount > available:
+                raise serializers.ValidationError(
+                    _("Insufficient balance. Available: ${}".format(available))
+                )
+
+            payout = Payout.objects.create(
+                affiliate=locked_affiliate,
+                amount=amount,
+                method=validated_data["method"],
+                status="pending",
+            )
         return payout
 
 
@@ -825,11 +910,30 @@ class MerchantDashboardSerializer(serializers.Serializer):
     def get_top_affiliates(self, obj) -> list:
         """Get top performing affiliates"""
         programs = Program.objects.filter(merchant=self.merchant)
+        # Compute each affiliate's commission total via a subquery so the
+        # program-membership join can't fan out and multiply the sum for
+        # affiliates approved in more than one of the merchant's programs.
+        commission_total = (
+            Commission.objects.filter(affiliate=OuterRef("pk"))
+            .order_by()
+            .values("affiliate")
+            .annotate(total=Sum("amount"))
+            .values("total")
+        )
         affiliates = (
             Affiliate.objects.filter(
                 programs__in=programs, affiliateprogrammembership__status="approved"
             )
-            .annotate(total_commissions=Sum("commissions__amount"))
+            .distinct()
+            .annotate(
+                total_commissions=Coalesce(
+                    Subquery(
+                        commission_total,
+                        output_field=DecimalField(max_digits=12, decimal_places=2),
+                    ),
+                    Value(Decimal("0"), output_field=DecimalField(max_digits=12, decimal_places=2)),
+                )
+            )
             .order_by("-total_commissions")[:5]
         )
         return AffiliateListSerializer(affiliates, many=True).data

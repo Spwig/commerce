@@ -742,11 +742,9 @@ class LoyaltyBadgeViewSet(HeadlessAPIMixin, viewsets.ViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        badges = (
+        badges = LoyaltyMemberBadgeSerializer.setup_eager_loading(
             LoyaltyMemberBadge.objects.filter(member=member)
-            .select_related("badge", "badge__image")
-            .order_by("-earned_at")
-        )
+        ).order_by("-earned_at")
 
         serializer = LoyaltyMemberBadgeSerializer(badges, many=True)
 
@@ -761,11 +759,9 @@ class LoyaltyBadgeViewSet(HeadlessAPIMixin, viewsets.ViewSet):
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def available(self, request):
         """Get all available badges"""
-        badges = (
+        badges = LoyaltyBadgeSerializer.setup_eager_loading(
             LoyaltyBadge.objects.filter(is_active=True, is_visible=True)
-            .select_related("image")
-            .order_by("display_order", "name")
-        )
+        ).order_by("display_order", "name")
 
         serializer = LoyaltyBadgeSerializer(badges, many=True)
 

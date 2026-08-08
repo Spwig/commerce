@@ -7,7 +7,7 @@ Serializers for the public payment orchestration API endpoints.
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from core.utils import get_default_country, get_default_currency
+from core.utils import get_default_currency
 from payment_providers.models import PaymentIntent
 
 
@@ -194,131 +194,20 @@ class PaymentIntentResponseSerializer(serializers.Serializer):
         except Exception:
             return None
 
-        # Build handler config dynamically from payment intent data
-        config = {
+        # ── Pluggable path (no per-provider branching) ───────────────────────
+        # The provider owns its handler_config: it builds it inside
+        # create_payment_intent_for_checkout and returns it in provider_response,
+        # and the platform passes it through verbatim. A new provider needs no
+        # edit here — it simply returns a handler_config from its intent creation.
+        handler_config = (obj.provider_response or {}).get("handler_config")
+        if handler_config:
+            return handler_config
+
+        # Minimal default for a provider that does not build its own config.
+        return {
             "intent_id": obj.provider_response.get("id") or obj.provider_intent_id,
             "currency": (obj.provider_response.get("currency") or get_default_currency()).upper(),
         }
-
-        # Add provider-specific settings
-        settings = obj.provider_account.settings or {}
-
-        # Get decrypted credentials to determine test_mode
-        try:
-            from payment_providers.utils.encryption import decrypt_credentials
-
-            decrypted_creds = decrypt_credentials(obj.provider_account.credentials_encrypted)
-        except Exception:
-            decrypted_creds = {}
-
-        # Determine test_mode (NEW + LEGACY)
-        test_mode = decrypted_creds.get("test_mode")
-        if test_mode is None:
-            # Legacy: derive from environment field
-            env = decrypted_creds.get("environment", settings.get("environment", "test"))
-            test_mode = env.lower() in ("test", "sandbox", "development", "dev", "demo")
-
-        # For Airwallex
-        if component.slug == "airwallex":
-            config["environment"] = "demo" if test_mode else "production"
-            # Get country from order if available
-            if obj.order:
-                config["country_code"] = (
-                    obj.order.shipping_country or obj.order.billing_country or get_default_country()
-                )
-            else:
-                config["country_code"] = get_default_country()
-
-        # For Stripe
-        elif component.slug == "stripe":
-            # NEW: Select correct publishable key based on test_mode
-            if test_mode:
-                config["publishable_key"] = decrypted_creds.get("test_publishable_key", "")
-            else:
-                config["publishable_key"] = decrypted_creds.get("live_publishable_key", "")
-
-            # LEGACY: Fallback for single-key structure
-            if not config["publishable_key"]:
-                config["publishable_key"] = decrypted_creds.get(
-                    "publishable_key", settings.get("publishable_key", "")
-                )
-
-            config["environment"] = "test" if test_mode else "live"
-            # Get country from order if available
-            if obj.order:
-                config["country_code"] = (
-                    obj.order.shipping_country or obj.order.billing_country or get_default_country()
-                )
-            else:
-                config["country_code"] = get_default_country()
-
-        # For Square
-        elif component.slug == "square":
-            # handler_config already built in provider.py _create_embedded_checkout
-            # Just pass it through from intent_data
-            intent_data = self.context.get("intent_data", {})
-            handler_config = intent_data.get("handler_config")
-            if handler_config:
-                return handler_config
-            return None
-
-        # For PayPal (v1.1.0+)
-        elif component.slug == "paypal_checkout":
-            # Extract handler_config from provider response
-            provider_response = obj.provider_response or {}
-            handler_config = provider_response.get("handler_config")
-            if handler_config:
-                return handler_config
-
-            # Fallback: build from available data
-            config = {
-                "order_id": obj.provider_intent_id,
-                "currency": obj.amount_currency.upper(),
-            }
-
-            # Get client_id from provider credentials
-            settings = obj.provider_account.decrypted_credentials
-            if settings:
-                config["client_id"] = settings.get("client_id", "")
-                config["environment"] = settings.get("environment", "sandbox")
-
-            # Get amount from order
-            if obj.order:
-                from decimal import ROUND_HALF_UP, Decimal
-
-                amount = obj.order.total
-                currency_upper = obj.amount_currency.upper()
-                zero_decimal = {"JPY", "HUF", "TWD", "KRW"}
-                if currency_upper in zero_decimal:
-                    config["amount"] = str(int(amount))
-                else:
-                    rounded = amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                    config["amount"] = str(rounded)
-
-            return config
-
-        # For Revolut (v1.1.0+)
-        elif component.slug == "revolut":
-            # Extract handler_config from provider response
-            provider_response = obj.provider_response or {}
-            handler_config = provider_response.get("handler_config")
-            if handler_config:
-                return handler_config
-
-            # Fallback: build from available data
-            config = {
-                "order_id": obj.provider_intent_id,
-                "token": obj.provider_response.get("token", "") if obj.provider_response else "",
-                "currency": obj.amount_currency.upper(),
-            }
-            settings = obj.provider_account.decrypted_credentials
-            if settings:
-                config["public_key"] = settings.get("public_key", "")
-                config["environment"] = settings.get("environment", "sandbox")
-
-            return config
-
-        return config
 
     def get_sdk_dependencies(self, obj):
         """Get SDK dependencies from provider manifest.

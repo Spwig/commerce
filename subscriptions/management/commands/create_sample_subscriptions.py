@@ -29,8 +29,27 @@ class Command(BaseCommand):
             )
             return
 
-        # Delete existing plans
-        SubscriptionPlan.objects.all().delete()
+        # Never delete existing plans. A plan whose slug collides with one of
+        # our sample slugs may be a merchant-created plan, so if any of the
+        # sample slugs are already taken we skip seeding entirely rather than
+        # risk destroying (or colliding on the unique slug with) merchant data.
+        sample_slugs = [
+            slugify("Basic Plan"),
+            slugify("Pro Plan"),
+            slugify("Enterprise Plan"),
+        ]
+        existing_slugs = list(
+            SubscriptionPlan.objects.filter(slug__in=sample_slugs).values_list("slug", flat=True)
+        )
+        if existing_slugs:
+            self.stdout.write(
+                self.style.WARNING(
+                    "Plans already exist for sample slugs "
+                    f"({', '.join(existing_slugs)}) - skipping sample data creation "
+                    "to avoid touching existing plans"
+                )
+            )
+            return
 
         # 1. Basic Plan - Simple tiered pricing, no add-ons
         self.stdout.write("Creating Basic Plan...")

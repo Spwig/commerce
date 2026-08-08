@@ -7,7 +7,7 @@ Serializers for bulk order and product operations.
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from catalog.models import Product
+from catalog.models import Product, ProductVariant
 
 # Product.price persists a fixed number of decimal places, so rounding finer
 # than the column would report a value that diverges from what is stored.
@@ -100,6 +100,38 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         choices=["set", "adjust"],
         help_text=_("'set': set on_hand to quantity. 'adjust': add quantity to on_hand."),
     )
+
+    def validate(self, data):
+        adjustment_type = data["adjustment_type"]
+        quantity = data["quantity"]
+        product_id = data["product_id"]
+        variant_id = data.get("variant_id")
+
+        # A "set" adjustment writes quantity straight to on_hand. Model field
+        # validators do not run on save(), so a negative value would persist
+        # negative stock — reject it before it reaches the mutation.
+        if adjustment_type == "set" and quantity < 0:
+            raise serializers.ValidationError(
+                {"quantity": _('quantity must not be negative when adjustment_type is "set".')}
+            )
+
+        # A variant must belong to the product it is being adjusted for, or
+        # get_or_create would attribute this product's stock to another
+        # product's variant and corrupt inventory attribution.
+        if variant_id is not None:
+            variant_product_id = (
+                ProductVariant.objects.filter(id=variant_id)
+                .values_list("product_id", flat=True)
+                .first()
+            )
+            if variant_product_id is None:
+                raise serializers.ValidationError({"variant_id": _("Variant not found.")})
+            if variant_product_id != product_id:
+                raise serializers.ValidationError(
+                    {"variant_id": _("Variant does not belong to the specified product.")}
+                )
+
+        return data
 
 
 class BulkStockAdjustSerializer(serializers.Serializer):

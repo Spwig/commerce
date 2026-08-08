@@ -4,6 +4,8 @@ Supports both native provider subscriptions (Stripe, PayPal) and fallback intern
 """
 
 import logging
+import threading
+import time
 from abc import ABC, abstractmethod
 from datetime import datetime
 from decimal import Decimal
@@ -408,6 +410,19 @@ class FallbackSubscriptionProvider(SubscriptionProviderBase):
 
 _PROVIDER_REGISTRY: dict[str, type] = {}
 _COMPONENT_PROVIDERS_DISCOVERED: bool = False
+_LAST_LOADED_AT: float = 0.0
+# Registry keys and sys.modules names created by component discovery, tracked so
+# a reload can surgically drop them without disturbing built-in providers.
+_COMPONENT_REGISTERED_KEYS: set[str] = set()
+_COMPONENT_LOADED_MODULES: set[str] = set()
+# Serialises discovery/reload so concurrent requests can't interleave the
+# check-and-act on the shared registry state above. Reentrant because the
+# entry point (_ensure_discovered) may nest into reload -> discover.
+_DISCOVERY_LOCK = threading.RLock()
+
+# Subscription providers ship inside payment_provider components, so we watch the
+# payment_provider cache marker to know when an install/update requires a reload.
+_MARKER_COMPONENT_TYPE = "payment_provider"
 
 
 def _resolve_gateway_name(gateway_or_account) -> str:
@@ -456,10 +471,11 @@ def _discover_component_providers() -> None:
     This keeps provider-specific subscription logic in the component
     package where it can be updated via the upgrade server independently.
     """
-    global _COMPONENT_PROVIDERS_DISCOVERED
+    global _COMPONENT_PROVIDERS_DISCOVERED, _LAST_LOADED_AT
     if _COMPONENT_PROVIDERS_DISCOVERED:
         return
     _COMPONENT_PROVIDERS_DISCOVERED = True
+    _LAST_LOADED_AT = time.time()
 
     try:
         from component_updates.integration_paths import INTEGRATIONS_DIR
@@ -529,7 +545,12 @@ def _load_component_subscription_provider(component_dir, slug: str) -> None:
 
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
+        keys_before = set(_PROVIDER_REGISTRY)
         spec.loader.exec_module(module)
+
+        # Remember what this component contributed so a later reload can undo it.
+        _COMPONENT_LOADED_MODULES.add(module_name)
+        _COMPONENT_REGISTERED_KEYS.update(set(_PROVIDER_REGISTRY) - keys_before)
 
         logger.info(f"Loaded subscription provider from component: {slug}")
 
@@ -537,10 +558,49 @@ def _load_component_subscription_provider(component_dir, slug: str) -> None:
         logger.error(f"Failed to load subscription provider for {slug}: {e}")
 
 
+def _reload_component_providers() -> None:
+    """
+    Force re-discovery of component subscription providers.
+
+    Clears the discovery flag, removes the registry entries and dynamically
+    imported modules that previous discovery created, then reruns discovery so
+    newly installed providers appear and updated provider classes are reloaded
+    from disk. Built-in providers registered via the decorator are left intact.
+    """
+    global _COMPONENT_PROVIDERS_DISCOVERED
+
+    import sys
+
+    for key in _COMPONENT_REGISTERED_KEYS:
+        _PROVIDER_REGISTRY.pop(key, None)
+    _COMPONENT_REGISTERED_KEYS.clear()
+
+    for module_name in _COMPONENT_LOADED_MODULES:
+        sys.modules.pop(module_name, None)
+    _COMPONENT_LOADED_MODULES.clear()
+
+    _COMPONENT_PROVIDERS_DISCOVERED = False
+    _discover_component_providers()
+
+
+def _cache_is_stale() -> bool:
+    """Return True if a payment-provider install/update marker is newer than our load."""
+    try:
+        from component_updates.integration_paths import provider_cache_is_stale
+
+        return provider_cache_is_stale(_MARKER_COMPONENT_TYPE, _LAST_LOADED_AT)
+    except Exception:
+        return False
+
+
 def _ensure_discovered() -> None:
     """Ensure both built-in and component providers are registered."""
-    if not _COMPONENT_PROVIDERS_DISCOVERED:
-        _discover_component_providers()
+    with _DISCOVERY_LOCK:
+        if not _COMPONENT_PROVIDERS_DISCOVERED:
+            _discover_component_providers()
+        elif _cache_is_stale():
+            logger.info("Payment-provider cache marker detected — reloading subscription providers")
+            _reload_component_providers()
 
 
 def get_provider(gateway) -> SubscriptionProviderBase:

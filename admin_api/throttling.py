@@ -4,18 +4,28 @@ Admin API Throttling
 Custom throttle classes for rate limiting admin API endpoints.
 """
 
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import SimpleRateThrottle, UserRateThrottle
 
 
-class AdminAuthThrottle(AnonRateThrottle):
+class AdminAuthThrottle(SimpleRateThrottle):
     """
     Strict rate limiting for admin authentication endpoints.
     Prevents brute-force login attempts.
+
+    Keys on the client IP regardless of authentication state, so callers
+    supplying a valid token/session cannot bypass the limit on these
+    AllowAny endpoints.
 
     Rate: 5 requests per minute (configured in settings)
     """
 
     scope = "admin_auth"
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {
+            "scope": self.scope,
+            "ident": self.get_ident(request),
+        }
 
 
 class AdminAPIThrottle(UserRateThrottle):

@@ -31,7 +31,10 @@ def test_http_backend_footprint_equals_orm_backend(live_server, warehouse):
 
     orm_footprint = footprint_for_order(order.order_number)
 
-    backend = HttpBackend(live_server.url, _TOKEN)
+    # 60s (not the 10s default): a threaded live_server serving a full footprint
+    # query on a freshly --create-db'd test DB under CI contention is legitimately
+    # slow; 10s intermittently trips a read-timeout and reddens unrelated PRs.
+    backend = HttpBackend(live_server.url, _TOKEN, timeout=60)
     http_footprint = backend.footprint_for_order(order.order_number)
 
     # Frozen dataclasses compare by value: equality here means every nested
@@ -49,6 +52,6 @@ def test_http_backend_raises_inspection_error_on_wrong_secret(live_server):
     """A transport-level failure (bad secret → 404) surfaces as InspectionError,
     not a silent empty footprint that would make an assertion pass vacuously."""
     order = OrderFactory()
-    backend = HttpBackend(live_server.url, "the-wrong-secret")
+    backend = HttpBackend(live_server.url, "the-wrong-secret", timeout=60)
     with pytest.raises(InspectionError):
         backend.footprint_for_order(order.order_number)

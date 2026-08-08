@@ -301,6 +301,8 @@ class ReferralRewardSerializer(serializers.ModelSerializer):
 
     def get_customer_name(self, obj) -> str:
         """Get customer's name"""
+        if not obj.customer:
+            return ""
         return obj.customer.get_full_name() or obj.customer.email
 
     def get_is_expiring_soon(self, obj) -> bool:
