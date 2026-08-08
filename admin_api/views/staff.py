@@ -9,6 +9,8 @@ import secrets
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -606,35 +608,94 @@ def accept_invitation(request, token):
         )
 
     # POST — accept invitation and create user
-    password = request.data.get("password", "").strip()
-    if not password or len(password) < 8:
+    password = request.data.get("password", "")
+
+    # Validate the password against Django's configured validators, using a
+    # prospective user instance so attribute-similarity checks have context.
+    prospective_user = User(
+        username=invitation.email,
+        email=invitation.email,
+        first_name=invitation.first_name,
+        last_name=invitation.last_name,
+    )
+    try:
+        validate_password(password, user=prospective_user)
+    except DjangoValidationError as exc:
         return Response(
             {
                 "success": False,
                 "error": {
                     "code": "VALIDATION_ERROR",
-                    "message": _("Password must be at least 8 characters."),
+                    "message": " ".join(exc.messages),
                     "reference": generate_error_reference(),
                 },
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Check if email already registered
-    if User.objects.filter(email=invitation.email).exists():
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "CONFLICT",
-                    "message": _("An account with this email already exists."),
-                    "reference": generate_error_reference(),
-                },
-            },
-            status=status.HTTP_409_CONFLICT,
-        )
-
     with transaction.atomic():
+        # Re-load the invitation under a row lock so two concurrent accepts of
+        # the same token can't both pass the checks below and race to create
+        # the user (which would raise an unhandled IntegrityError).
+        try:
+            invitation = (
+                StaffInvitation.objects.select_for_update()
+                .select_related("invited_by")
+                .get(token=token)
+            )
+        except StaffInvitation.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "NOT_FOUND",
+                        "message": _("Invitation not found."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if invitation.is_accepted:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "ALREADY_ACCEPTED",
+                        "message": _("This invitation has already been accepted."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if invitation.is_expired:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "EXPIRED",
+                        "message": _("This invitation has expired."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if email already registered
+        if User.objects.filter(email=invitation.email).exists():
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "CONFLICT",
+                        "message": _("An account with this email already exists."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
         user = User.objects.create_user(
             username=invitation.email,
             email=invitation.email,

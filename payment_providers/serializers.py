@@ -100,24 +100,11 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
         """
         if not obj.component_id:
             return None
+        # The provider selects its own publishable key from its credentials
+        # (Stripe's publishable key, Revolut's public key). Providers with no
+        # publishable-style credential return None. Any failure returns None so a
+        # stub error never bricks checkout.
         try:
-            from payment_providers.utils.encryption import decrypt_credentials
-
-            creds = decrypt_credentials(obj.credentials_encrypted or {})
+            return obj.get_provider_instance().get_client_publishable_key()
         except Exception:
             return None
-
-        slug = obj.component.slug
-        test_mode = bool(creds.get("test_mode"))
-
-        if slug == "stripe":
-            field = "test_publishable_key" if test_mode else "live_publishable_key"
-            return creds.get(field) or None
-
-        if slug == "revolut":
-            # Revolut's Checkout Widget uses a single `public_key` (no
-            # test/live split in the credential shape).
-            return creds.get("public_key") or None
-
-        # Airwallex / PayPal / Square have no publishable-style key.
-        return None

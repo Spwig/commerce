@@ -147,7 +147,7 @@ def branding_settings_update(request):
     """
     Update store branding settings.
     """
-    serializer = BrandingSettingsUpdateSerializer(data=request.data)
+    serializer = BrandingSettingsUpdateSerializer(data=request.data, partial=True)
     if not serializer.is_valid():
         return Response(
             {

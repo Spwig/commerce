@@ -12,13 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 def get_client_ip(request: HttpRequest | None) -> str | None:
-    """Extract client IP address from request."""
+    """Extract client IP address from request.
+
+    Uses REMOTE_ADDR directly. The X-Forwarded-For header is not trusted
+    because this installation may be reached without a trusted WAF/CDN in
+    front of it: a direct client can forge that header, which would poison
+    the admin audit trail with a spoofed IP address (or, if malformed, make
+    the GenericIPAddressField insert fail and drop the audit entry).
+    """
     if not request:
         return None
 
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        return x_forwarded_for.split(",")[0].strip()
     return request.META.get("REMOTE_ADDR")
 
 

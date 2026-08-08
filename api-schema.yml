@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Spwig eCommerce API Documentation
-  version: 1.7.1
+  version: 1.7.2
   description: |-
     ## Spwig API Documentation
 
@@ -28068,7 +28068,6 @@ components:
           maxLength: 50
       required:
       - payment_email
-      - user_id
     AffiliateRegistrationRequest:
       type: object
       description: Serializer for new affiliate registration
@@ -28092,7 +28091,6 @@ components:
           maxLength: 50
       required:
       - payment_email
-      - user_id
     AppSettings:
       type: object
       description: Serializer for app settings response.
@@ -30230,32 +30228,26 @@ components:
       properties:
         line1:
           type: string
-          default: ''
           description: Street address line 1.
           maxLength: 255
         line2:
           type: string
-          default: ''
           description: Street address line 2.
           maxLength: 255
         city:
           type: string
-          default: ''
           description: City.
           maxLength: 100
         state:
           type: string
-          default: ''
           description: State or province.
           maxLength: 100
         postal_code:
           type: string
-          default: ''
           description: ZIP or postal code.
           maxLength: 20
         country:
           type: string
-          default: ''
           description: Country.
           maxLength: 100
     BusinessAddressRequest:
@@ -30264,32 +30256,26 @@ components:
       properties:
         line1:
           type: string
-          default: ''
           description: Street address line 1.
           maxLength: 255
         line2:
           type: string
-          default: ''
           description: Street address line 2.
           maxLength: 255
         city:
           type: string
-          default: ''
           description: City.
           maxLength: 100
         state:
           type: string
-          default: ''
           description: State or province.
           maxLength: 100
         postal_code:
           type: string
-          default: ''
           description: ZIP or postal code.
           maxLength: 20
         country:
           type: string
-          default: ''
           description: Country.
           maxLength: 100
     CancelBookingRequestRequest:
@@ -43902,7 +43888,6 @@ components:
           default: paypal
           maxLength: 50
       required:
-      - affiliate_id
       - amount
     PayoutRequestRequest:
       type: object
@@ -43920,7 +43905,6 @@ components:
           default: paypal
           maxLength: 50
       required:
-      - affiliate_id
       - amount
     PictureSources:
       type: object

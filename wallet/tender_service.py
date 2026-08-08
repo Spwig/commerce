@@ -379,9 +379,20 @@ class WalletTenderService:
         if capture.transaction_type not in ("capture", "charge"):
             raise WalletTenderError(f"Cannot refund a {capture.transaction_type} transaction")
 
-        amount = amount or capture.amount
+        # Default only when unset: a Money of zero is falsey, so `amount or ...`
+        # would silently promote an explicit zero refund into a full refund.
+        if amount is None:
+            amount = capture.amount
         if amount.currency != capture.amount.currency:
             raise WalletTenderError("Refund currency must match the capture")
+        if amount.amount <= 0:
+            raise WalletTenderError("Refund amount must be greater than zero")
+
+        # Lock the wallet before the idempotency and capacity checks: two
+        # concurrent refunds with different refund_refs otherwise read the same
+        # prior-refunded total before either serialises, and both credit — their
+        # combined refunds can then exceed the captured amount.
+        wallet = CustomerWallet.objects.select_for_update().get(pk=capture.wallet_id)
 
         refund_id = f"wt-ref:{capture.transaction_id}:{refund_ref}"
         existing = PaymentTransaction.objects.filter(transaction_id=refund_id).first()
@@ -400,7 +411,6 @@ class WalletTenderService:
                 f"({already} already refunded)"
             )
 
-        wallet = CustomerWallet.objects.select_for_update().get(pk=capture.wallet_id)
         if not wallet.is_active:
             # Same policy as deactivated gift cards (f17e1ef99): frozen is a
             # merchant decision; auto-crediting would hand back frozen value.

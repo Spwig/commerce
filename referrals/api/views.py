@@ -4,6 +4,8 @@ Referral Program API Views
 Public API endpoints for click tracking and referrer dashboard data.
 """
 
+import logging
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
@@ -20,6 +22,8 @@ from core.api.throttling import ReferralTrackingThrottle
 from ..models import ReferralIdentity, ReferralProgram, ReferralReward
 from ..services import set_ref_cookie, track_click
 from .serializers import TrackClickSerializer
+
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(
@@ -205,5 +209,6 @@ def referrer_dashboard_data(request):
 
         return JsonResponse(response_data)
 
-    except Exception as e:
-        return JsonResponse({"success": False, "message": f"Error: {str(e)}"}, status=500)
+    except Exception:
+        logger.exception("Failed to build referrer dashboard data")
+        return JsonResponse({"success": False, "message": _("Internal error")}, status=500)

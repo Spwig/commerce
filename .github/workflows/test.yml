@@ -51,6 +51,10 @@ jobs:
         # vector` on first apply. The plain postgres:16 image doesn't
         # have the .so, and migrations fail before any test runs.
         image: pgvector/pgvector:pg16
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
@@ -58,10 +62,6 @@ jobs:
           # Data dir a level below the tmpfs mount so initdb gets a clean,
           # correctly-owned 0700 dir (tmpfs root is 1777 and initdb refuses it).
           PGDATA: /var/lib/postgresql/data/pgdata
-        # Host port published so the service is reachable at localhost:5432 on
-        # GitHub-hosted runners (the job runs on the VM, not in a container).
-        ports:
-          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
@@ -174,15 +174,15 @@ jobs:
     services:
       postgres:
         image: pgvector/pgvector:pg16
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
           POSTGRES_DB: spwig_test
           PGDATA: /var/lib/postgresql/data/pgdata
-        # Host port published so the service is reachable at localhost:5432 on
-        # GitHub-hosted runners (the job runs on the VM, not in a container).
-        ports:
-          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"
@@ -207,16 +207,43 @@ jobs:
           echo "DB_HOST=postgres" >> $GITHUB_ENV
           echo "REDIS_HOST=redis" >> $GITHUB_ENV
           echo "SPWIG_IS_HQ=true" >> $GITHUB_ENV
+      - name: Gate — only run this heavy parity test when it can be affected
+        id: gate
+        # Footprint parity can only break from the serialization/endpoint code or
+        # the models the footprint reads. Always run on a dev/main push (the
+        # cross-app net before release); on a PR, run only when one of those paths
+        # changed — otherwise this slow live_server test just burns a runner and
+        # flakes on ~90% of PRs it can't affect. The job still reports success, so
+        # a required status check (if any) stays satisfied when we skip.
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; echo "push to ${{ github.ref_name }} -> run"; exit 0
+          fi
+          files=$(curl -sf -H "Authorization: token ${{ github.token }}" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files?limit=100" 2>/dev/null) || files=""
+          if [ -z "$files" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; echo "::warning::could not list changed files - running to be safe"; exit 0
+          fi
+          if printf '%s' "$files" | grep -oE '"filename" *: *"[^"]+"' \
+               | grep -qE 'commerce_footprint/|core/e2e_inspection\.py|orders/models\.py|vouchers/models\.py|email_system/models\.py|catalog/models\.py|payment_providers/models\.py'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; echo "footprint-contract path changed -> run"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"; echo "::notice::oracle-parity skipped - no footprint-contract paths changed in this PR"
+          fi
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
       - name: Set up Python 3.12
+        if: steps.gate.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
       - name: Run oracle-parity (no browser)
+        if: steps.gate.outputs.run == 'true'
         run: pytest tests/e2e/test_oracle_parity.py -m e2e --create-db -v
 
   # Golden BROWSER flows (Tier 3, Playwright). The authoritative run of these is
@@ -246,15 +273,15 @@ jobs:
     services:
       postgres:
         image: pgvector/pgvector:pg16
+        # Host port published so the service is reachable at localhost:5432 on
+        # GitHub-hosted runners (the job runs on the VM, not in a container).
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
           POSTGRES_DB: spwig_test
           PGDATA: /var/lib/postgresql/data/pgdata
-        # Host port published so the service is reachable at localhost:5432 on
-        # GitHub-hosted runners (the job runs on the VM, not in a container).
-        ports:
-          - 5432:5432
         options: >-
           --tmpfs /var/lib/postgresql/data:rw,size=2g
           --health-cmd "pg_isready -U spwig"

@@ -5,6 +5,61 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.2] - 2026-08-08
+
+A payments and hardening release. Spwig adds **Razorpay** as a new payment
+gateway for merchants in India and Singapore, and the payment gateway system
+becomes fully modular — providers install as self-contained marketplace
+components with no change to the platform core.
+Alongside the new capability, our daily code reviews drove a broad round of
+proactive enhancements and hardening across the merchant admin and mobile
+API, referrals, wallet, subscriptions, single sign-on, payouts, and gateway
+refunds. Upgrading is drop-in: changes to the public API are additive and
+backward-compatible, and no manual migration steps are required.
+
+### Added
+
+- **Razorpay payments (India & Singapore).** Merchants registered in India
+  or Singapore can now accept payments through Razorpay Standard Checkout —
+  cards, UPI, netbanking, wallets, EMI and Pay Later in India, and cards and
+  UPI in Singapore — settling in INR or SGD. Payments are verified and
+  captured server-side, with full and partial refunds. Add it under
+  **Settings → Payments** and install from the marketplace.
+
+### Changed
+
+**Payments**
+
+- Spwig's payment gateways are now fully modular: adding a provider no
+  longer touches the platform core, because each gateway is a
+  self-contained marketplace component that declares its own checkout,
+  webhook and key handling. Stripe, PayPal, Airwallex, Square and Revolut
+  were updated to this model, so the gateway catalogue stays consistent and
+  is quicker to extend — which is how Razorpay drops in cleanly.
+
+### Fixed
+
+**Merchant admin & mobile API**
+
+- Proactive enhancements and hardening surfaced through our daily code
+  reviews: tightened permissions and rate limiting, stricter input
+  handling, and more accurate reporting and exports. All
+  backward-compatible.
+
+**Referrals, wallet & subscriptions**
+
+- Accuracy and robustness improvements to the referrals and wallet systems
+  and to subscription-provider handling, also caught in daily review.
+
+**Single sign-on & payouts**
+
+- Hardening of enterprise single sign-on and payout-provider setup.
+
+**Gateway refunds**
+
+- Gateway refunds are now processed more reliably and are idempotent, so a
+  retried refund can't be issued twice.
+
 ## [1.7.1] - 2026-08-05
 
 A performance, consistency, and hardening release that also lands major

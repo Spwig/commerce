@@ -61,6 +61,24 @@ def _get_sso_status():
         return False, None
 
 
+def _resolve_oidc_endpoints():
+    """Resolve the OIDC authorization/token/userinfo endpoints.
+
+    Discovery-only configs are considered valid with blank endpoint fields, so
+    resolve them from the provider's discovery document exactly as the web SSO
+    backend does. Returns a dict with ``authorization``/``token``/``userinfo``
+    keys, or None if any required endpoint cannot be resolved.
+    """
+    from enterprise_sso.backends import _get_db_setting
+
+    authorization = _get_db_setting("OIDC_OP_AUTHORIZATION_ENDPOINT")
+    token = _get_db_setting("OIDC_OP_TOKEN_ENDPOINT")
+    userinfo = _get_db_setting("OIDC_OP_USER_ENDPOINT")
+    if not (authorization and token and userinfo):
+        return None
+    return {"authorization": authorization, "token": token, "userinfo": userinfo}
+
+
 @extend_schema(
     tags=["Admin - SSO"],
     summary=_("Get SSO configuration"),
@@ -149,6 +167,20 @@ def sso_mobile_authorize(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    endpoints = _resolve_oidc_endpoints()
+    if endpoints is None:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("SSO is not enabled or not configured."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     # Generate state nonce and store with device_id
     state = secrets.token_urlsafe(32)
     cache.set(
@@ -169,7 +201,7 @@ def sso_mobile_authorize(request):
         "scope": config.oidc_scopes or "openid email profile",
         "state": state,
     }
-    authorize_url = f"{config.oidc_authorization_endpoint}?{urlencode(params)}"
+    authorize_url = f"{endpoints['authorization']}?{urlencode(params)}"
 
     return HttpResponseRedirect(authorize_url)
 
@@ -218,13 +250,17 @@ def sso_mobile_callback(request):
     if not enabled:
         return HttpResponseRedirect(f"{MOBILE_SSO_CALLBACK_SCHEME}://callback?error=sso_disabled")
 
+    endpoints = _resolve_oidc_endpoints()
+    if endpoints is None:
+        return HttpResponseRedirect(f"{MOBILE_SSO_CALLBACK_SCHEME}://callback?error=sso_disabled")
+
     # Exchange IdP code for tokens (server-to-server)
     callback_path = "/api/admin/auth/sso/mobile/callback/"
     callback_url = request.build_absolute_uri(callback_path)
 
     try:
         token_response = http_requests.post(
-            config.oidc_token_endpoint,
+            endpoints["token"],
             data={
                 "grant_type": "authorization_code",
                 "code": code,
@@ -252,7 +288,7 @@ def sso_mobile_callback(request):
 
     try:
         userinfo_response = http_requests.get(
-            config.oidc_userinfo_endpoint,
+            endpoints["userinfo"],
             headers={"Authorization": f"Bearer {access_token}"},
             timeout=10,
         )
@@ -319,6 +355,14 @@ def sso_mobile_callback(request):
             f"{MOBILE_SSO_CALLBACK_SCHEME}://callback?error=account_disabled"
         )
 
+    # Apply role mapping from IdP group claims before the staff check (same
+    # order as web SSO), so a user in a configured staff/superuser group is
+    # granted the required role before restrict_to_staff is enforced.
+    from enterprise_sso.backends import _apply_role_mapping
+
+    if _apply_role_mapping(user, claims, config):
+        user.save()
+
     if config.restrict_to_staff and not user.is_staff:
         logger.warning(
             "SSO mobile callback: user %s***@%s is not staff",
@@ -326,12 +370,6 @@ def sso_mobile_callback(request):
             email.split("@")[1] if "@" in email else "?",
         )
         return HttpResponseRedirect(f"{MOBILE_SSO_CALLBACK_SCHEME}://callback?error=unauthorized")
-
-    # Apply role mapping from IdP group claims (same as web SSO)
-    from enterprise_sso.backends import _apply_role_mapping
-
-    if _apply_role_mapping(user, claims, config):
-        user.save()
 
     # Generate one-time code for the iOS app
     one_time_code = secrets.token_urlsafe(32)

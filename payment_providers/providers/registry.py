@@ -79,7 +79,9 @@ class ProviderRegistry:
 
         except Exception as e:
             logger.error(f"Error discovering providers: {e}", exc_info=True)
-            cls._discovered = True  # Mark as discovered to prevent retry loops
+            # Leave _discovered False so a later access retries discovery;
+            # a transient DB/model-loading error must not permanently disable
+            # provider lookup for the lifetime of this worker.
 
     @classmethod
     def _load_provider_from_component(cls, component) -> None:

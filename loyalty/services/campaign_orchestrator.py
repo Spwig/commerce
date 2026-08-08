@@ -10,6 +10,7 @@ import random
 from datetime import timedelta
 
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 
 from loyalty.models import LoyaltyCampaign, LoyaltyCampaignExecution, LoyaltyMember
@@ -125,12 +126,14 @@ class CampaignOrchestrator:
         # Queue campaign execution via Celery
         from loyalty.tasks import trigger_campaign
 
-        trigger_campaign.delay(campaign.id, member.id, context)
+        trigger_campaign.delay(execution.id, context)
 
-        # Update campaign statistics
-        campaign.total_triggered += 1
-        campaign.last_triggered_at = timezone.now()
-        campaign.save(update_fields=["total_triggered", "last_triggered_at"])
+        # Update campaign statistics atomically so concurrent executions
+        # of the same campaign do not lose trigger increments.
+        LoyaltyCampaign.objects.filter(pk=campaign.pk).update(
+            total_triggered=F("total_triggered") + 1,
+            last_triggered_at=timezone.now(),
+        )
 
         return {"campaign_id": campaign.id, "execution_id": execution.id, "status": "queued"}
 
@@ -270,15 +273,20 @@ class CampaignOrchestrator:
                 result = executor.execute_action(action, member, context)
                 execution.add_action_result(action["type"], result)
 
-                # Track results
-                if action["type"] == "award_points" and result.get("success"):
-                    execution.points_awarded += result.get("points", 0)
-                elif action["type"] == "issue_reward" and result.get("success"):
-                    execution.rewards_issued.append(result.get("reward_id"))
-                elif action["type"] == "send_email" and result.get("success"):
-                    execution.emails_sent.append(action.get("template"))
+                # An executor may report failure without raising; only count it
+                # as completed (and track its effects) when it actually succeeded.
+                if result.get("success"):
+                    if action["type"] == "award_points":
+                        execution.points_awarded += result.get("points", 0)
+                    elif action["type"] == "issue_reward":
+                        execution.rewards_issued.append(result.get("reward_id"))
+                    elif action["type"] == "send_email":
+                        execution.emails_sent.append(action.get("template"))
 
-                results["actions_completed"] += 1
+                    results["actions_completed"] += 1
+                else:
+                    results["actions_failed"] += 1
+                    results["errors"].append(result.get("error", "Action reported failure"))
 
             except Exception as e:
                 logger.error(f"Action {action['type']} failed: {str(e)}")
@@ -291,13 +299,24 @@ class CampaignOrchestrator:
         # Handle journey next step scheduling
         if campaign.is_journey:
             self._schedule_next_journey_step(campaign, execution)
+        elif results["actions_failed"]:
+            # A single-step execution is only complete when every action
+            # succeeded; a failure means the execution failed.
+            execution.mark_failed("; ".join(results["errors"]) or "One or more actions failed")
+            LoyaltyCampaign.objects.filter(pk=campaign.pk).update(
+                total_failed=F("total_failed") + 1
+            )
         else:
-            # Mark as completed
-            execution.mark_completed()
-            campaign.total_completed += 1
-            campaign.save(update_fields=["total_completed"])
+            self._complete_execution(campaign, execution)
 
         return results
+
+    def _complete_execution(self, campaign: LoyaltyCampaign, execution: LoyaltyCampaignExecution):
+        """Mark an execution completed and atomically record the campaign completion."""
+        execution.mark_completed()
+        LoyaltyCampaign.objects.filter(pk=campaign.pk).update(
+            total_completed=F("total_completed") + 1
+        )
 
     def _get_journey_step_actions(self, campaign: LoyaltyCampaign, step_number: int) -> list:
         """
@@ -506,9 +525,7 @@ class CampaignOrchestrator:
         if next_step_number is None:
             # Journey complete or exit conditions met
             logger.info(f"Journey completed for execution {execution.id} at step {current_step}")
-            execution.mark_completed()
-            campaign.total_completed += 1
-            campaign.save(update_fields=["total_completed"])
+            self._complete_execution(campaign, execution)
             return
 
         # Schedule next step

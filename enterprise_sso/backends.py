@@ -151,7 +151,18 @@ class SpwigOIDCBackend(ModelBackend):
                     last_name=last_name,
                 )
                 logger.info("SSO auto-created user: %s (%s)", username, email)
-                _apply_role_mapping(user, claims, config)
+                if _apply_role_mapping(user, claims, config):
+                    user.save()
+
+                if config.restrict_to_staff and not user.is_staff:
+                    logger.warning(
+                        "SSO login denied: auto-created user %s is not staff "
+                        "(restrict_to_staff=True)",
+                        user.email,
+                    )
+                    user.delete()
+                    return None
+
                 return user
 
             def update_user(self, user, claims):

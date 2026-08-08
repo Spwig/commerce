@@ -4,6 +4,7 @@ Displays available payout providers for installation
 """
 
 import logging
+import shutil
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
@@ -18,6 +19,44 @@ from component_updates.models import ComponentRegistry
 from providers_common.utils import get_translated_provider_fields
 
 logger = logging.getLogger(__name__)
+
+
+def _point_current_symlink(provider_slug, version):
+    """Point a payout provider's 'current' symlink at the given version dir."""
+    from component_updates.integration_paths import INTEGRATIONS_DIR
+
+    current_link = INTEGRATIONS_DIR / "payout_provider" / provider_slug / "current"
+    version_dir = version if version.startswith("v") else f"v{version}"
+
+    if current_link.exists() or current_link.is_symlink():
+        current_link.unlink()
+    current_link.symlink_to(version_dir)
+
+
+def _remove_installed_provider(provider_slug):
+    """Remove all installed files for a payout provider (used to undo installs)."""
+    from component_updates.integration_paths import INTEGRATIONS_DIR
+
+    shutil.rmtree(INTEGRATIONS_DIR / "payout_provider" / provider_slug, ignore_errors=True)
+
+
+def _activate_installed_provider(provider_slug, previous_version):
+    """Reload the registry so freshly installed provider files become active.
+
+    ``_install_package`` has already pointed the provider's ``current`` symlink
+    at the new version, so activation here is just a reload. If the reload
+    fails the provider is unusable: restore the previous version's symlink when
+    one existed so the registry keeps a working provider, then propagate the
+    error so callers treat it as a failed install/update.
+    """
+    from payout_providers.loader import PayoutProviderLoader
+
+    try:
+        PayoutProviderLoader.reload_providers()
+    except Exception:
+        if previous_version:
+            _point_current_symlink(provider_slug, previous_version)
+        raise
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -255,30 +294,24 @@ def install_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Create 'current' symlink to the installed version
+            # `_install_package` has already activated the 'current' symlink
+            # for this version. Reload the registry so the new provider becomes
+            # available; if that fails the provider is unusable, so undo the
+            # install (remove files and registry entry) rather than reporting a
+            # success that would also block re-installation.
             try:
-                from component_updates.integration_paths import INTEGRATIONS_DIR
-
-                provider_base_dir = INTEGRATIONS_DIR / "payout_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
-                )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the new provider available
-                from payout_providers.loader import PayoutProviderLoader
-
-                PayoutProviderLoader.reload_providers()
+                _activate_installed_provider(provider_slug, previous_version=None)
             except Exception as e:
-                # Don't fail the installation if symlink creation fails, just log it
-                print(f"Warning: Could not create symlink for {provider_slug}: {e}")
+                _remove_installed_provider(provider_slug)
+                component.delete()  # Rollback component creation
+                logger.exception("Failed to activate installed payout provider %s", provider_slug)
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate provider: %(error)s") % {"error": str(e)},
+                    },
+                    status=500,
+                )
 
         return JsonResponse(
             {
@@ -395,32 +428,25 @@ def update_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Update the 'current' symlink to point to the new version
+            # `_install_package` has already activated the 'current' symlink
+            # for the new version. Reload the registry to make it live; on
+            # failure restore the previous version's symlink and abort so we
+            # never advance the recorded version past a provider we could not
+            # load.
             try:
-                from component_updates.integration_paths import INTEGRATIONS_DIR
-
-                provider_base_dir = INTEGRATIONS_DIR / "payout_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
+                _activate_installed_provider(provider_slug, previous_version=current_version)
+            except Exception as e:
+                logger.exception("Failed to activate updated payout provider %s", provider_slug)
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate updated provider: %(error)s")
+                        % {"error": str(e)},
+                    },
+                    status=500,
                 )
 
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the updated provider available
-                from payout_providers.loader import PayoutProviderLoader
-
-                PayoutProviderLoader.reload_providers()
-            except Exception as e:
-                # Don't fail the update if symlink creation fails, just log it
-                print(f"Warning: Could not update symlink for {provider_slug}: {e}")
-
-            # Update component version
+            # Activation and reload succeeded — record the new version.
             component.current_version = latest_version
             component.save()
 

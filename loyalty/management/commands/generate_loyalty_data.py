@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
         # Create campaigns (skip segment assignment for now)
         campaigns = self.create_campaigns(options["campaigns"], segments)
-        self.stdout.write(self.style.SUCCESS(f"✓ Created {options['campaigns']} campaigns"))
+        self.stdout.write(self.style.SUCCESS(f"✓ Created {len(campaigns)} campaigns"))
 
         # Generate campaign executions
         execution_count = self.generate_campaign_executions(campaigns, members)
@@ -97,6 +97,16 @@ class Command(BaseCommand):
 
         # Print summary
         self.print_summary()
+
+    @staticmethod
+    def _backdate(instance, **timestamps):
+        """Persist historical values for auto_now_add timestamp fields.
+
+        auto_now_add overwrites caller-supplied values on the initial save, so
+        the requested timestamps are re-applied via the queryset afterwards to
+        preserve the true creation/trigger time of seeded historical rows.
+        """
+        type(instance).objects.filter(pk=instance.pk).update(**timestamps)
 
     def clear_data(self):
         """Clear existing loyalty data"""
@@ -322,19 +332,19 @@ class Command(BaseCommand):
             if not member:
                 continue
 
-            # Calculate points: 1 point per dollar (assuming order.total is in cents)
-            points = int(order.total / 100)  # Total is in cents, so divide by 100 for dollars
+            # Calculate points from the order total (MoneyField, already in major units)
+            points = int(order.total_amount.amount * purchase_rule.points_rate)
 
-            # Create transaction
-            LoyaltyTransaction.objects.create(
+            # Create transaction, then backdate it to when the order occurred
+            transaction_record = LoyaltyTransaction.objects.create(
                 member=member,
                 transaction_type=LoyaltyTransaction.TYPE_EARN,
                 points=points,
                 description=f"Purchase reward - Order #{order.order_number}",
                 related_object_type="order",
                 related_object_id=str(order.id),
-                created_at=order.created_at,
             )
+            self._backdate(transaction_record, created_at=order.created_at)
 
             # Update balance
             balance = member.balance
@@ -533,9 +543,13 @@ class Command(BaseCommand):
         """Generate campaign execution history"""
         execution_count = 0
 
+        if not members:
+            return execution_count
+
         for campaign in campaigns:
-            # Select random members who would have triggered this campaign
-            num_executions = random.randint(10, min(50, len(members)))
+            # Select random members who would have triggered this campaign.
+            # Clamp the low bound so a small member pool can't invert the range.
+            num_executions = random.randint(min(10, len(members)), min(50, len(members)))
             selected_members = random.sample(list(members), num_executions)
 
             for member in selected_members:
@@ -565,7 +579,6 @@ class Command(BaseCommand):
                 execution_data = {
                     "campaign": campaign,
                     "member": member,
-                    "triggered_at": triggered_at,
                     "completed_at": completed_at,
                     "status": status,
                     "points_awarded": points_awarded,
@@ -581,7 +594,8 @@ class Command(BaseCommand):
                 if campaign.is_journey:
                     execution_data["current_step"] = 1
 
-                LoyaltyCampaignExecution.objects.create(**execution_data)
+                execution = LoyaltyCampaignExecution.objects.create(**execution_data)
+                self._backdate(execution, triggered_at=triggered_at)
 
                 execution_count += 1
 

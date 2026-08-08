@@ -10,7 +10,8 @@ import random
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from loyalty.models import LoyaltyBadge, LoyaltyMember, LoyaltyMemberBadge, LoyaltyTransaction
+from loyalty.models import LoyaltyBadge, LoyaltyMember, LoyaltyMemberBadge
+from loyalty.services.points_engine import PointsEngine
 
 User = get_user_model()
 
@@ -68,12 +69,10 @@ class Command(BaseCommand):
                     # Create transaction for points reward
                     transaction = None
                     if badge.points_reward > 0:
-                        transaction = LoyaltyTransaction.objects.create(
+                        transaction = PointsEngine().award_bonus_points(
                             member=member,
-                            transaction_type="earn",
                             points=badge.points_reward,
                             description=f"Earned badge: {badge.name}",
-                            status="completed",
                         )
 
                     # Award badge

@@ -15,35 +15,31 @@ class BusinessAddressSerializer(serializers.Serializer):
         max_length=255,
         required=False,
         allow_blank=True,
-        default="",
         help_text=_("Street address line 1."),
     )
     line2 = serializers.CharField(
         max_length=255,
         required=False,
         allow_blank=True,
-        default="",
         help_text=_("Street address line 2."),
     )
     city = serializers.CharField(
-        max_length=100, required=False, allow_blank=True, default="", help_text=_("City.")
+        max_length=100, required=False, allow_blank=True, help_text=_("City.")
     )
     state = serializers.CharField(
         max_length=100,
         required=False,
         allow_blank=True,
-        default="",
         help_text=_("State or province."),
     )
     postal_code = serializers.CharField(
         max_length=20,
         required=False,
         allow_blank=True,
-        default="",
         help_text=_("ZIP or postal code."),
     )
     country = serializers.CharField(
-        max_length=100, required=False, allow_blank=True, default="", help_text=_("Country.")
+        max_length=100, required=False, allow_blank=True, help_text=_("Country.")
     )
 
 

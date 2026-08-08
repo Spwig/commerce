@@ -290,6 +290,11 @@ class TenderRefundAllocator:
             original_transaction=capture,
             refund_amount=leg["amount"].amount,
             reason=reason,
+            # Same idempotency stance as the gift-card and wallet legs above:
+            # key off the caller's refund identity so a retry reuses the refund
+            # row id (colliding on its unique constraint) and the PSP's own
+            # idempotency key, instead of paying the gateway a second time.
+            idempotency_key=getattr(refund, "pk", None),
         )
         if not success:
             raise RefundAllocationError(f"Gateway refund of {leg['amount']} failed: {message}")

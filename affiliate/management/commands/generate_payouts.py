@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 "affiliate", "affiliate__user__username", "affiliate__affiliate_code"
             )
             .annotate(
-                total_amount=Coalesce(Sum("amount_base"), Sum("amount")),
+                total_amount=Sum(Coalesce("amount_base", "amount")),
                 commission_count=Count("id"),
             )
             .filter(total_amount__gte=min_amount)
@@ -118,16 +118,23 @@ class Command(BaseCommand):
                 with transaction.atomic():
                     affiliate = Affiliate.objects.get(id=item["affiliate"])
 
-                    # Get all approved commissions for this affiliate
-                    commissions = Commission.objects.filter(affiliate=affiliate, status="approved")
+                    # Lock the approved commissions for this affiliate so
+                    # concurrent runs can't generate duplicate payouts for the
+                    # same balance.
+                    commissions = Commission.objects.select_for_update().filter(
+                        affiliate=affiliate, status="approved"
+                    )
 
-                    # Check if affiliate has sufficient balance (use base currency)
-                    if (
-                        commissions.aggregate(total=Coalesce(Sum("amount_base"), Sum("amount")))[
-                            "total"
-                        ]
-                        < min_amount
-                    ):
+                    # Recompute the total from the locked rows, applying the
+                    # per-row base-currency fallback so mixed rows (some with a
+                    # null amount_base) total correctly.
+                    locked_total = sum(
+                        (base if base is not None else amount)
+                        for base, amount in commissions.values_list("amount_base", "amount")
+                    ) or Decimal("0.00")
+
+                    # Check if affiliate still has sufficient balance
+                    if locked_total < min_amount:
                         self.stdout.write(
                             self.style.WARNING(
                                 f"  ✗ Skipping {affiliate.user.username}: Insufficient balance"
@@ -141,17 +148,21 @@ class Command(BaseCommand):
                     settings = SiteSettings.get_settings()
                     payout = Payout.objects.create(
                         affiliate=affiliate,
-                        amount=item["total_amount"],
+                        amount=locked_total,
                         currency=settings.default_currency,
-                        amount_base=item["total_amount"],
+                        amount_base=locked_total,
                         base_currency=settings.default_currency,
                         status="pending",
-                        payment_method="bank_transfer",  # Default method
+                        method="bank_transfer",  # Default method
                         notes=f"Auto-generated payout for {item['commission_count']} commissions",
                     )
 
+                    # Associate the paid commissions with the payout before
+                    # marking them paid.
+                    payout.commissions.set(commissions)
+
                     # Update commissions to 'paid' status
-                    updated_count = commissions.update(status="paid", updated_at=timezone.now())
+                    updated_count = commissions.update(status="paid", paid_at=timezone.now())
 
                     self.stdout.write(
                         self.style.SUCCESS(

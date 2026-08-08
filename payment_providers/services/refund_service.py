@@ -3,6 +3,7 @@ Refund Service - Handles payment refunds
 Supports full and partial refunds
 """
 
+import inspect
 import logging
 import uuid
 from decimal import Decimal
@@ -16,7 +17,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 
 from payment_providers.models import PaymentIntent, PaymentTransaction
-from payment_providers.providers.registry import ProviderRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,23 @@ class RefundService:
     """
     Service for processing payment refunds
     """
+
+    @staticmethod
+    def _callable_accepts_kwarg(func: Any, name: str) -> bool:
+        """Return True if ``func`` can be called with keyword ``name``.
+
+        True when the signature declares a parameter of that name or accepts
+        arbitrary ``**kwargs``. Defaults to True if the signature can't be
+        introspected (e.g. a C-extension or heavily wrapped callable), so we
+        don't strip a kwarg a provider might actually accept.
+        """
+        try:
+            params = inspect.signature(func).parameters
+        except (TypeError, ValueError):
+            return True
+        if name in params:
+            return True
+        return any(p.kind is inspect.Parameter.VAR_KEYWORD for p in params.values())
 
     @staticmethod
     def validate_refund_amount(
@@ -87,15 +104,26 @@ class RefundService:
         refund_amount: Decimal | None = None,
         reason: str = "",
         metadata: dict[str, Any] | None = None,
+        idempotency_key: str | int | None = None,
     ) -> tuple[bool, PaymentTransaction | None, str]:
         """
-        Create a refund for a successful payment
+        Create a refund for a successful payment.
 
         Args:
             original_transaction: Original payment transaction to refund
             refund_amount: Amount to refund (None for full refund)
             reason: Reason for refund
             metadata: Additional metadata
+            idempotency_key: Stable identifier for THIS logical refund attempt.
+                Pass the caller's refund identity (e.g. the parent Refund pk) —
+                the SAME stance GiftCardTenderService/WalletTenderService take via
+                ``refund_ref``. When supplied it (a) makes the refund row's
+                ``transaction_id`` deterministic, so a retry collides on the
+                unique constraint instead of paying out again, and (b) is sent to
+                the PSP as its idempotency key, so a retry whose first row rolled
+                back after the PSP succeeded is de-duplicated by the PSP too.
+                Without it the id is random and the refund is NOT idempotent
+                across separate invocations — only within one PSP call.
 
         Returns:
             Tuple of (success: bool, refund_transaction: PaymentTransaction|None, message: str)
@@ -143,8 +171,17 @@ class RefundService:
         # provider_account is read from the row-locked transaction inside the
         # atomic block below (see the select_for_update note).
 
-        # Generate unique refund transaction ID
-        refund_transaction_id = f"rfnd_{uuid.uuid4().hex[:16]}"
+        # Refund-row id. With a caller idempotency key, derive it DETERMINISTICALLY
+        # from (capture, key) so a retry of the same logical refund reuses the id
+        # and collides on the unique `transaction_id` constraint instead of paying
+        # out a second time — mirroring the gift-card/wallet tender rails. Keying
+        # on the capture too keeps distinct legs of one multi-tender refund from
+        # colliding with each other. Without a key, fall back to a random id (no
+        # cross-invocation idempotency; see the docstring).
+        if idempotency_key is not None:
+            refund_transaction_id = f"rfnd:{original_transaction.transaction_id}:{idempotency_key}"
+        else:
+            refund_transaction_id = f"rfnd_{uuid.uuid4().hex[:16]}"
 
         try:
             # Serialize refunds against THIS capture row. Capacity is checked
@@ -171,25 +208,78 @@ class RefundService:
             if not is_valid:
                 return False, None, message
 
-            # Get provider instance
-            provider_class = ProviderRegistry.get_provider(provider_account.component.slug)
-            if not provider_class:
-                return False, None, _("Payment provider not found in registry")
+            # Idempotent short-circuit. With a caller key the refund-row id is
+            # deterministic, so a retry of an ALREADY-COMPLETED refund is caught
+            # here — under the parent row lock, so it can't race the original —
+            # and returns that row WITHOUT hitting the PSP again. (The random-id
+            # path can't dedupe and skips this.)
+            if idempotency_key is not None:
+                existing = PaymentTransaction.objects.filter(
+                    transaction_id=refund_transaction_id
+                ).first()
+                if existing is not None:
+                    return True, existing, _("Refund already processed")
 
-            provider_instance = provider_class(provider_account)
+            # Build the provider client the SAME way every live payment path
+            # does. PaymentProviderAccount.get_provider_instance() decrypts the
+            # stored credentials, applies the sandbox guard, and constructs the
+            # provider with `credentials=` — its actual __init__ contract.
+            #
+            # This path used to call `provider_class(provider_account)`, handing
+            # the account MODEL where the constructor expects a credentials dict.
+            # That raised TypeError inside _select_credentials ("argument of type
+            # 'PaymentProviderAccount' is not iterable"), the broad except below
+            # swallowed it, and every gateway refund came back as a generic
+            # "Refund processing error". The invariant tests missed it because
+            # they stub the provider with a MagicMock, which both accepts any
+            # constructor args and auto-vivifies whatever method is called.
+            provider_instance = provider_account.get_provider_instance()
 
-            # Check if provider supports partial refunds
-            # capabilities = provider_instance.get_capabilities()
-            # if is_partial and not capabilities.get('supports_partial_refunds'):
-            #     return False, None, _("Provider does not support partial refunds")
+            # Refund via the provider. The provider contract is `refund(...)`
+            # (there is no `create_refund` on the base class or any provider).
+            # Amount is a Decimal (not float — float risks money-precision drift
+            # converting to minor units).
+            #
+            # `refund_id` rides in the metadata so a provider can build a stable
+            # PSP idempotency key (Stripe/Square/PayPal/Revolut/RazorPay read
+            # `metadata['idempotency_key'] or metadata['refund_id']`). When the
+            # caller supplied an idempotency key we also set `idempotency_key`
+            # explicitly: that closes the window the DB collision can't — a retry
+            # whose first row rolled back AFTER the PSP succeeded is de-duplicated
+            # by the PSP itself. A caller-provided `metadata['idempotency_key']`
+            # still wins (we spread `metadata` first).
+            refund_metadata = {
+                **(metadata or {}),
+                "refund_id": refund_transaction_id,
+            }
+            if idempotency_key is not None:
+                refund_metadata.setdefault("idempotency_key", str(idempotency_key))
 
-            # Create refund via provider
-            refund_response = provider_instance.create_refund(
-                transaction_id=original_transaction.provider_transaction_id,
-                amount=float(refund_amount),
-                reason=reason,
-                metadata=metadata or {},
-            )
+            # Providers are pluggable and marketplace-distributed, so their
+            # `refund()` signatures can drift from the base contract. The base
+            # declares `metadata`, but a provider may omit it (Airwallex's
+            # wrapper historically did). Passing an unaccepted kwarg would raise
+            # TypeError, and the broad except below would turn a legitimate
+            # refund into a generic failure. Send `metadata` only when the
+            # callee actually accepts it; otherwise refund WITHOUT it (idempotency
+            # unavailable for that provider) and log loudly so the drift is
+            # visible rather than silently swallowed.
+            refund_kwargs: dict[str, Any] = {
+                "transaction_id": original_transaction.provider_transaction_id,
+                "amount": refund_amount,
+                "reason": reason,
+            }
+            if RefundService._callable_accepts_kwarg(provider_instance.refund, "metadata"):
+                refund_kwargs["metadata"] = refund_metadata
+            else:
+                logger.warning(
+                    "Provider %s refund() does not accept a `metadata` argument; "
+                    "sending refund without an idempotency key. Update the provider "
+                    "to the base refund(transaction_id, amount, reason, metadata) "
+                    "contract so retried refunds cannot double-pay.",
+                    provider_account.component.slug,
+                )
+            refund_response = provider_instance.refund(**refund_kwargs)
 
             if not refund_response.get("success"):
                 return False, None, refund_response.get("message", _("Refund failed"))
@@ -216,6 +306,11 @@ class RefundService:
                     **(metadata or {}),
                     "original_transaction_id": original_transaction.transaction_id,
                     "refund_reason": reason,
+                    **(
+                        {"idempotency_key": str(idempotency_key)}
+                        if idempotency_key is not None
+                        else {}
+                    ),
                 },
                 customer_name=original_transaction.customer_name,
                 customer_email=original_transaction.customer_email,
@@ -276,7 +371,15 @@ class RefundService:
     @staticmethod
     def get_refund_status(refund_transaction: PaymentTransaction) -> dict[str, Any]:
         """
-        Get refund status from provider
+        Return the recorded status of a refund.
+
+        Reads Spwig's own PaymentTransaction record rather than polling the
+        provider: no payment provider implements a refund-status endpoint, and
+        the refund row already carries the authoritative result written when the
+        refund was created. The previous version handed the account model to
+        ``provider_class(...)`` and then called a ``get_refund_status()`` that no
+        provider defines — so it raised on every call (TypeError at construction,
+        AttributeError if it had got that far).
 
         Args:
             refund_transaction: Refund transaction
@@ -287,29 +390,16 @@ class RefundService:
         if refund_transaction.transaction_type != "refund":
             return {"success": False, "error": _("Transaction is not a refund")}
 
-        try:
-            provider_class = ProviderRegistry.get_provider(
-                refund_transaction.provider_account.component.slug
-            )
-            provider_instance = provider_class(refund_transaction.provider_account)
-
-            # Get refund status from provider
-            status_response = provider_instance.get_refund_status(
-                refund_id=refund_transaction.provider_transaction_id
-            )
-
-            return {
-                "success": True,
-                "status": status_response.get("status"),
-                "amount": status_response.get("amount"),
-                "currency": status_response.get("currency"),
-                "reason": status_response.get("reason"),
-                "provider_data": status_response,
-            }
-
-        except Exception as e:
-            logger.error(f"Error getting refund status: {str(e)}", exc_info=True)
-            return {"success": False, "error": str(e)}
+        amount = refund_transaction.amount
+        return {
+            "success": True,
+            "status": refund_transaction.status,
+            "amount": amount.amount,
+            "currency": str(amount.currency),
+            "reason": (refund_transaction.metadata or {}).get("refund_reason", ""),
+            "provider_refund_id": refund_transaction.provider_transaction_id,
+            "provider_data": refund_transaction.provider_response,
+        }
 
     @staticmethod
     def get_refundable_amount(transaction: PaymentTransaction) -> Decimal:

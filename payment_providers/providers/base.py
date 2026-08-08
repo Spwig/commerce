@@ -927,6 +927,25 @@ class PaymentProviderBase(ABC):
             "raw_response": {},
         }
 
+    def get_client_publishable_key(self) -> str | None:
+        """
+        Return the provider's client-side publishable/public key, if any.
+
+        Providers whose front-end SDK needs a publishable key (e.g. Stripe's
+        publishable key, Revolut's public key) override this and return the
+        correct key for the active mode, reading from ``self.credentials``.
+        Server-side-only providers (PayPal, Square, Airwallex) keep the default
+        and return None.
+
+        This is the pluggable replacement for per-provider ``slug ==`` branches
+        in the account serializer — the key selection logic lives with the
+        provider, not in core.
+
+        Returns:
+            The publishable key string, or None if the provider has none.
+        """
+        return None
+
     # Helper methods (optional to override)
 
     def supports_capability(self, capability: str) -> bool:

@@ -103,14 +103,13 @@ def process_payout(self, payout_id: int, provider_account_id: int = None):
 
     # Build recipient info
     recipient = PayoutRecipient(
-        name=affiliate.company_name or str(affiliate.user),
+        affiliate_id=affiliate.id,
         email=affiliate.paypal_email or affiliate.user.email,
-        account_number=affiliate.bank_account_number,
-        routing_number=affiliate.bank_routing_code,
-        swift_code=affiliate.bank_swift_code,
-        country=affiliate.bank_country or affiliate.country,
-        bank_name=None,  # Not stored in current model
-        account_holder_name=affiliate.bank_account_holder,
+        bank_account_holder=affiliate.bank_account_holder,
+        bank_account_number=affiliate.bank_account_number,
+        bank_routing_code=affiliate.bank_routing_code,
+        bank_swift_code=affiliate.bank_swift_code,
+        bank_country=affiliate.bank_country or affiliate.country,
     )
 
     # Determine payout method
@@ -274,13 +273,13 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
         affiliate = payout.affiliate
 
         recipient = PayoutRecipient(
-            name=affiliate.company_name or str(affiliate.user),
+            affiliate_id=affiliate.id,
             email=affiliate.paypal_email or affiliate.user.email,
-            account_number=affiliate.bank_account_number,
-            routing_number=affiliate.bank_routing_code,
-            swift_code=affiliate.bank_swift_code,
-            country=affiliate.bank_country or affiliate.country,
-            account_holder_name=affiliate.bank_account_holder,
+            bank_account_holder=affiliate.bank_account_holder,
+            bank_account_number=affiliate.bank_account_number,
+            bank_routing_code=affiliate.bank_routing_code,
+            bank_swift_code=affiliate.bank_swift_code,
+            bank_country=affiliate.bank_country or affiliate.country,
         )
 
         reference = f"SPWIG-PAYOUT-{payout.id}"

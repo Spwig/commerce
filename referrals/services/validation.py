@@ -58,7 +58,7 @@ def validate_referral(order, identity, program):
         return False, reason, validation_data
 
     # Check new customer
-    is_valid, reason = check_new_customer(order.user, program)
+    is_valid, reason = check_new_customer(order.user, program, order)
     validation_data["new_customer_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
@@ -136,13 +136,14 @@ def check_self_referral(order, identity):
     return True, "ok"
 
 
-def check_new_customer(customer, program):
+def check_new_customer(customer, program, order):
     """
     Check if customer is new (first order).
 
     Args:
         customer (User): Customer instance
         program (ReferralProgram): Program configuration
+        order (Order): The order being validated, excluded from the count
 
     Returns:
         tuple: (is_valid: bool, reason: str)
@@ -151,14 +152,17 @@ def check_new_customer(customer, program):
     if not program.eligibility_rules.get("new_customer_only", True):
         return True, "ok"
 
-    # Check if customer has previous orders
+    # Check if customer has previous orders (excluding the current one so the
+    # result does not depend on the current order's status)
     from orders.models import Order
 
-    previous_orders = Order.objects.filter(
-        user=customer, status__in=["completed", "delivered", "shipped"]
-    ).count()
+    has_previous_orders = (
+        Order.objects.filter(user=customer, status__in=["completed", "delivered", "shipped"])
+        .exclude(pk=order.pk)
+        .exists()
+    )
 
-    if previous_orders > 1:  # > 1 because current order is already counted
+    if has_previous_orders:
         return False, "not_new_customer"
 
     return True, "ok"

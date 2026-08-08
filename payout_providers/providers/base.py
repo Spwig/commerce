@@ -59,6 +59,7 @@ class PayoutRequest:
     amount: Decimal
     currency: str
     reference: str  # Unique reference for idempotency
+    method: PayoutMethod
     note: str | None = None
     metadata: dict[str, Any] | None = None
 

@@ -35,8 +35,8 @@ portal_patterns = [
 
 # Tracking URLs (public, no auth required)
 tracking_patterns = [
-    path("<str:link_code>/", views.TrackingRedirectView.as_view(), name="track"),
     path("postback/", views.ConversionPostbackView.as_view(), name="postback"),
+    path("<str:link_code>/", views.TrackingRedirectView.as_view(), name="track"),
 ]
 
 # Main URL patterns
