@@ -8,6 +8,7 @@ Usage:
 """
 
 import csv
+import re
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -54,10 +55,11 @@ class Command(BaseCommand):
                 raise CommandError(f'Region with code "{region_code}" does not exist')
 
         if sku_pattern:
-            # Convert wildcard pattern to Django query
+            # Convert wildcard pattern to a case-insensitive regex, escaping any
+            # regex metacharacters in the literal portions and treating * as ".*".
             if "*" in sku_pattern:
-                django_pattern = sku_pattern.replace("*", "%")
-                queryset = queryset.filter(product__sku__ilike=django_pattern)
+                regex_pattern = "^" + re.escape(sku_pattern).replace("\\*", ".*") + "$"
+                queryset = queryset.filter(product__sku__iregex=regex_pattern)
             else:
                 queryset = queryset.filter(product__sku=sku_pattern)
             self.stdout.write(f"Filtering by SKU pattern: {sku_pattern}")

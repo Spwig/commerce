@@ -104,11 +104,13 @@
 
     <!-- Accounts Container -->
     {% if cl.result_list %}
+        {% include "admin/includes/bulk_actions_open.html" %}
         <div id="accounts-container" class="list-row-cards">
             {% for account in cl.result_list %}
                 {% include "admin/blog/socialconnectoraccount/partials/account_card.html" with account=account %}
             {% endfor %}
         </div>
+        {% include "admin/includes/bulk_actions_close.html" %}
 
         <!-- Pagination -->
         {% if cl.result_count > 0 and cl.result_count > cl.list_per_page %}

@@ -13,6 +13,7 @@ Workflows:
 
 import base64
 import logging
+from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
@@ -20,6 +21,7 @@ from .exceptions import (
     FedExDocumentError,
     FedExValidationError,
 )
+from .utils import format_fedex_date
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ class FedExDocumentUploader:
     DOCUMENT_TYPES = {
         "COMMERCIAL_INVOICE": "Commercial Invoice",
         "CERTIFICATE_OF_ORIGIN": "Certificate of Origin",
-        "USMCA_CERTIFICATE_OF_ORIGIN": "USMCA Certificate of Origin",
+        "USMCA_CERTIFICATION_OF_ORIGIN": "USMCA Certification of Origin",
         "PRO_FORMA_INVOICE": "Pro Forma Invoice",
         "OTHER": "Other Document",
     }
@@ -96,40 +98,14 @@ class FedExDocumentUploader:
         # Validate document
         self._validate_document(document_type, file_content, file_name)
 
-        # Encode file to base64
-        encoded_content = base64.b64encode(file_content).decode("utf-8")
-
-        # Build request payload
-        payload = {
-            "workflowName": workflow_name or "ETDPostshipment",
-            "carrierCode": "FDXE",  # FedEx Express
-            "documents": [
-                {
-                    "contentType": self._get_content_type(file_name),
-                    "workflowName": workflow_name or "ETDPostshipment",
-                    "documentType": document_type,
-                    "fileName": file_name,
-                    "documentContent": encoded_content,
-                }
-            ],
-        }
-
-        if reference_id:
-            payload["referenceId"] = reference_id
-
         try:
-            # Make API request
-            response = self.api_client._make_request(
-                "POST", "/documents/v1/etds/upload", json=payload
+            document_id = self._upload_document(
+                document_type=document_type,
+                file_content=file_content,
+                file_name=file_name,
+                workflow_name=workflow_name or "ETDPreshipment",
+                reference_id=reference_id,
             )
-
-            # Extract document ID from response
-            output = response.get("output", {})
-            meta = output.get("meta", {})
-            document_id = meta.get("documentId")
-
-            if not document_id:
-                raise FedExDocumentError("No document ID returned from upload")
 
             logger.info(f"Document uploaded successfully: {document_id}")
 
@@ -150,6 +126,7 @@ class FedExDocumentUploader:
         document_type: str,
         file_content: bytes,
         file_name: str,
+        shipment_date: datetime,
     ) -> dict[str, Any]:
         """
         Upload a document after shipment creation (post-shipment workflow).
@@ -161,6 +138,8 @@ class FedExDocumentUploader:
             document_type: Type of document (COMMERCIAL_INVOICE, CERTIFICATE_OF_ORIGIN, etc.)
             file_content: Binary file content
             file_name: Original filename
+            shipment_date: Date the shipment was created (required by FedEx to
+                associate a post-shipment document with the tracking number)
 
         Returns:
             {
@@ -179,38 +158,15 @@ class FedExDocumentUploader:
         # Validate document
         self._validate_document(document_type, file_content, file_name)
 
-        # Encode file to base64
-        encoded_content = base64.b64encode(file_content).decode("utf-8")
-
-        # Build request payload
-        payload = {
-            "workflowName": "ETDPostshipment",
-            "carrierCode": "FDXE",
-            "trackingNumber": tracking_number,
-            "documents": [
-                {
-                    "contentType": self._get_content_type(file_name),
-                    "workflowName": "ETDPostshipment",
-                    "documentType": document_type,
-                    "fileName": file_name,
-                    "documentContent": encoded_content,
-                }
-            ],
-        }
-
         try:
-            # Make API request
-            response = self.api_client._make_request(
-                "POST", "/documents/v1/etds/upload", json=payload
+            document_id = self._upload_document(
+                document_type=document_type,
+                file_content=file_content,
+                file_name=file_name,
+                workflow_name="ETDPostshipment",
+                tracking_number=tracking_number,
+                shipment_date=shipment_date,
             )
-
-            # Extract document ID from response
-            output = response.get("output", {})
-            meta = output.get("meta", {})
-            document_id = meta.get("documentId")
-
-            if not document_id:
-                raise FedExDocumentError("No document ID returned from upload")
 
             logger.info(f"Post-shipment document uploaded: {document_id}")
 
@@ -224,6 +180,65 @@ class FedExDocumentUploader:
         except Exception as e:
             logger.error(f"Post-shipment document upload failed: {e}")
             raise FedExDocumentError(f"Failed to upload post-shipment document: {e}")
+
+    def _upload_document(
+        self,
+        document_type: str,
+        file_content: bytes,
+        file_name: str,
+        workflow_name: str,
+        *,
+        reference_id: str | None = None,
+        tracking_number: str | None = None,
+        shipment_date: datetime | None = None,
+    ) -> str:
+        """
+        Upload an encoded document to the FedEx ETD service and return its docId.
+
+        Uses FedEx's encoded-document upload operation: the binary file is sent as
+        base64 (``fileContentBase64``) alongside document metadata keyed by
+        ``shipDocumentType``. Post-shipment uploads additionally carry the
+        tracking number and shipment date required to associate the document with
+        an existing shipment.
+        """
+        encoded_content = base64.b64encode(file_content).decode("utf-8")
+
+        meta: dict[str, Any] = {
+            "shipDocumentType": document_type,
+            "fileName": file_name,
+        }
+        if reference_id:
+            meta["referenceMessage"] = reference_id
+        if tracking_number:
+            meta["trackingNumber"] = tracking_number
+            meta["shipmentDate"] = format_fedex_date(shipment_date)
+
+        payload = {
+            "workflowName": workflow_name,
+            "carrierCode": "FDXE",  # FedEx Express
+            "document": {
+                "name": file_name,
+                "contentType": self._get_content_type(file_name),
+                "meta": meta,
+            },
+            "attachments": [
+                {
+                    "fileName": file_name,
+                    "fileContentBase64": encoded_content,
+                }
+            ],
+        }
+
+        response = self.api_client._make_request("POST", "/documents/v1/etds/upload", json=payload)
+
+        output = response.get("output", {})
+        response_meta = output.get("meta", {})
+        document_id = response_meta.get("docId")
+
+        if not document_id:
+            raise FedExDocumentError("No document ID returned from upload")
+
+        return document_id
 
     def generate_commercial_invoice_data(
         self,
@@ -257,6 +272,9 @@ class FedExDocumentUploader:
         for item in order_items:
             product = item.get("product")
             quantity = item.get("quantity", 1)
+
+            if product is None:
+                raise FedExValidationError("Order item is missing product data")
 
             # Get customs data from product
             if not product.is_international_shipping_ready():

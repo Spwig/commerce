@@ -26,14 +26,22 @@ class StaffMemberListSerializer(serializers.Serializer):
         return obj.is_superuser
 
     def _get_roles(self, obj):
-        """Return the user's StaffRole objects.
+        """Return the user's StaffRole objects without a per-user role query.
 
-        When the caller prefetched ``groups__staff_role`` (e.g. the staff
-        list view) this reuses that prefetch so serializing a page of staff
-        members issues no per-member role queries. Otherwise it falls back
-        to the cached ``get_user_roles`` lookup so callers that pass an
-        unprefetched user (e.g. ``staff_update``) don't trigger an N+1.
+        Resolution order, each avoiding an N+1 when serializing a page of
+        staff members:
+
+        1. A page-level bulk role map supplied by the view via the
+           ``roles_by_user`` context (built with
+           ``staff_roles.services.get_roles_for_users``).
+        2. A ``groups__staff_role`` prefetch on the object, reused directly.
+        3. The cached ``get_user_roles`` lookup, for callers that pass an
+           unprefetched user (e.g. ``staff_update``).
         """
+        roles_by_user = self.context.get("roles_by_user")
+        if roles_by_user is not None:
+            return roles_by_user.get(obj.pk, [])
+
         prefetched = getattr(obj, "_prefetched_objects_cache", None)
         if prefetched is not None and "groups" in prefetched:
             roles = [group.staff_role for group in obj.groups.all() if hasattr(group, "staff_role")]
@@ -42,9 +50,11 @@ class StaffMemberListSerializer(serializers.Serializer):
             roles.sort(key=lambda role: (role.sort_order, role.display_name))
             return roles
 
-        from staff_roles.services import get_user_roles
+        if not hasattr(obj, "_cached_staff_roles"):
+            from staff_roles.services import get_user_roles
 
-        return get_user_roles(obj)
+            obj._cached_staff_roles = list(get_user_roles(obj))
+        return obj._cached_staff_roles
 
     def get_groups(self, obj):
         roles = self._get_roles(obj)

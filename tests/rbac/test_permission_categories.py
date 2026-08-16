@@ -1,7 +1,7 @@
 """
 Permission Category Tests
 
-Validates the 16 permission categories:
+Validates the 17 permission categories:
 - Category structure and metadata
 - Permission resolution logic (view/full levels)
 - Sidebar category mapping
@@ -19,9 +19,9 @@ pytestmark = pytest.mark.integrity
 class TestPermissionCategoryStructure:
     """Validate category definition structure"""
 
-    # Expected categories (16 total — the original 13 + system, custom_fields,
+    # Expected categories (17 total — the original 13 + system, custom_fields,
     # translations added as the platform picked up dedicated admin areas for
-    # each).
+    # each, plus analytics for the Revenue Attribution / Insights dashboard).
     EXPECTED_CATEGORIES = [
         "catalog",
         "orders",
@@ -29,6 +29,7 @@ class TestPermissionCategoryStructure:
         "content",
         "design",
         "marketing",
+        "analytics",
         "media",
         "email",
         "payments",
@@ -46,7 +47,7 @@ class TestPermissionCategoryStructure:
     REQUIRED_PERMISSION_LEVELS = ["view", "full"]
 
     def test_all_expected_categories_present(self):
-        """Verify all 16 expected categories are defined"""
+        """Verify all 17 expected categories are defined"""
         actual_categories = set(PERMISSION_CATEGORIES.keys())
         expected_categories = set(self.EXPECTED_CATEGORIES)
 
@@ -56,8 +57,8 @@ class TestPermissionCategoryStructure:
         assert not missing, f"Missing expected categories: {missing}"
         assert not extra, f"Unexpected extra categories: {extra}"
 
-    def test_category_count_is_sixteen(self):
-        """Verify exactly 16 categories exist"""
+    def test_category_count_is_seventeen(self):
+        """Verify exactly 17 categories exist"""
         assert len(PERMISSION_CATEGORIES) == len(self.EXPECTED_CATEGORIES), (
             f"Expected {len(self.EXPECTED_CATEGORIES)} permission categories, "
             f"found {len(PERMISSION_CATEGORIES)}"

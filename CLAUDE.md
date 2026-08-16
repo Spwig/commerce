@@ -948,6 +948,41 @@ Review the change for the CSP / injection / auth pattern violations
 listed in the *Security & CSP hardening* section above. `/security-review`
 covers this if you have no other tooling.
 
+### Permissioning
+
+**Trigger** — you added or changed a staff-facing admin view or endpoint: a
+`@staff_member_required` function view, a custom admin AJAX endpoint, or a DRF
+admin viewset.
+
+`@staff_member_required` proves the caller is *a* staff user; it does not prove
+they may perform *this* action. Gate the view on a capability, using the helpers
+in `staff_roles/decorators.py`:
+
+- `@requires_category("orders", "full")` — the default. Resolves through the
+  `StaffRole` category model, the same way the mobile Admin API's
+  `category_permission()` and Django admin's `has_perm()` do. Pair it with
+  `@staff_member_required` (which still handles the login redirect); pass
+  `ajax=True` on XHR endpoints to return a JSON 403.
+- `@requires_permission("catalog.view_brand")` — when a precise Django model
+  permission fits better than a whole category.
+- `@any_staff` — only when a view is *intentionally* open to every staff user (a
+  shared dashboard, a non-sensitive lookup). It records the decision.
+
+Superusers and single-owner stores pass automatically, so this adds no friction
+to small installs while staying enforceable for multi-staff/enterprise ones.
+
+`scripts/permission_coverage.py` (run in pre-commit and CI) fails the build when
+a **new** staff view is added with no gate. It uses a baseline so the existing
+backlog doesn't block you — add a gate rather than a new baseline entry, and
+shrink the baseline (`--update-baseline`) whenever you fix an old one.
+
+**New admin models** must also be *delegatable*: slot each into a permission
+category in `staff_roles/categories.py` (so a merchant can grant it to a staff
+role) or, if it's genuinely superuser-only, add it to
+`staff_roles/category_coverage_allowlist.txt`. `./manage.py audit_category_coverage`
+(enforced by `tests/test_category_coverage.py`) fails when an admin-registered
+model is neither — otherwise it silently becomes superuser-only.
+
 ### Tests
 
 **Trigger** — after adding a new model, view, service, form, or

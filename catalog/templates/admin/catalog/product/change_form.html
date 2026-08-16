@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{% static 'catalog/css/admin_configurator_cards.css' %}">
 <link rel="stylesheet" href="{% static 'catalog/css/admin_booking_cards.css' %}">
 <link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
 <link rel="stylesheet" href="{% static 'seo_generator/admin/seo_generator.css' %}">
 <link rel="stylesheet" href="{% static 'core/admin/css/ckeditor_media_library.css' %}">
 <link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
@@ -296,6 +297,13 @@
                                     <p class="help">{{ adminform.form.hide_from_storefront.help_text }}</p>
                                 {% endif %}
                             </div>
+                            <div class="form-row">
+                                {{ adminform.form.region_restriction_mode.label_tag }}
+                                {{ adminform.form.region_restriction_mode }}
+                                {% if adminform.form.region_restriction_mode.help_text %}
+                                    <p class="help">{{ adminform.form.region_restriction_mode.help_text }}</p>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 
@@ -326,6 +334,18 @@
                         </div>
                     </div>
                     {% endif %}
+
+                    <!-- Tags Section -->
+                    <div class="form-card">
+                        <h2><i class="fas fa-tags"></i> {% trans "Tags" %}</h2>
+                        <div class="form-row">
+                            {{ adminform.form.tags.label_tag }}
+                            {{ adminform.form.tags }}
+                            {% if adminform.form.tags.help_text %}
+                                <p class="help">{{ adminform.form.tags.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
 
                     <!-- Product Descriptions Section -->
                     <div class="form-card">
@@ -358,6 +378,16 @@
                         </div>
                     </div>
                 </div>
+
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.formset.prefix == 'region_visibility' %}
+                        <div class="form-card">
+                            <h2><i class="fas fa-earth-americas"></i> {% trans "Region availability (selected regions)" %}</h2>
+                            <p class="help-text">{% trans "Applies only when Region availability above is set to “Only in selected regions” or “All regions except selected”." %}</p>
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <!-- Media Tab -->
@@ -676,6 +706,14 @@
                                 {% endif %}
                             </div>
 
+                            <div class="form-row">
+                                {{ adminform.form.out_of_stock_action_override.label_tag }}
+                                {{ adminform.form.out_of_stock_action_override }}
+                                {% if adminform.form.out_of_stock_action_override.help_text %}
+                                    <p class="help">{{ adminform.form.out_of_stock_action_override.help_text }}</p>
+                                {% endif %}
+                            </div>
+
                             <!-- Current Stock Display - Only for existing products in simple mode and not variable products -->
                             {% if not enable_multi_warehouse and original and not original.product_type == 'variable' %}
                                 <div class="form-row">
@@ -726,6 +764,55 @@
                                 {{ adminform.form.height }}
                                 {% if adminform.form.height.help_text %}
                                     <p class="help">{{ adminform.form.height.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-truck"></i> {% trans "Shipping" %}</h2>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.requires_shipping }}
+                        {{ adminform.form.requires_shipping.label_tag }}
+                        {% if adminform.form.requires_shipping.help_text %}
+                            <p class="help">{{ adminform.form.requires_shipping.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.preferred_shipping_package.label_tag }}
+                        {{ adminform.form.preferred_shipping_package }}
+                        {% if adminform.form.preferred_shipping_package.help_text %}
+                            <p class="help">{{ adminform.form.preferred_shipping_package.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Pre-order" %}</h2>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.is_preorder }}
+                        {{ adminform.form.is_preorder.label_tag }}
+                        {% if adminform.form.is_preorder.help_text %}
+                            <p class="help">{{ adminform.form.is_preorder.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.preorder_release_date.label_tag }}
+                                {{ adminform.form.preorder_release_date }}
+                                {% if adminform.form.preorder_release_date.help_text %}
+                                    <p class="help">{{ adminform.form.preorder_release_date.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.preorder_message.label_tag }}
+                                {{ adminform.form.preorder_message }}
+                                {% if adminform.form.preorder_message.help_text %}
+                                    <p class="help">{{ adminform.form.preorder_message.help_text }}</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -948,6 +1035,13 @@
             <div class="tab-panel" data-panel="advanced" role="tabpanel" id="panel-advanced" aria-labelledby="tab-advanced">
                 <div class="form-card">
                     <h2>{% trans "Product Page Settings" %}</h2>
+                    <div class="form-row">
+                        {{ adminform.form.page_template.label_tag }}
+                        {{ adminform.form.page_template }}
+                        {% if adminform.form.page_template.help_text %}
+                            <p class="help">{{ adminform.form.page_template.help_text }}</p>
+                        {% endif %}
+                    </div>
                     <div class="form-row checkbox-row">
                         {{ adminform.form.show_related_products }}
                         {{ adminform.form.show_related_products.label_tag }}
@@ -989,14 +1083,6 @@
                     </div>
                 </div>
 
-                {% for inline_admin_formset in inline_admin_formsets %}
-                    {% if inline_admin_formset.opts.verbose_name == 'Product Region Visibility' %}
-                        <div class="form-card">
-                            {{ inline_admin_formset.formset.management_form }}
-                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
             </div>
 
             <!-- Variations Tab (Variable Products) -->
@@ -2017,6 +2103,10 @@
 {{ block.super }}
 <!-- Sortable.js for drag-and-drop -->
 <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+<!-- Upload queue - must load before media-library.js so window.UploadQueueManager
+     exists when MediaLibrary wires up its progress popup -->
+<script src="{% static 'media_library/js/upload-queue.js' %}"></script>
 
 <!-- Media Library JavaScript - Must be loaded first for global wrapper functions -->
 <script src="{% static 'media_library/js/media-library.js' %}"></script>

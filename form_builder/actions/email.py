@@ -135,6 +135,11 @@ class AutoReplyAction(BaseAction):
         subject = self.render_template_string(
             self.config.get("subject", "Thank you for your submission"), context
         )
+        # Collapse any CR/LF so submitter-supplied context can't inject extra
+        # email headers via the subject (defence beyond the mail backend's own
+        # multi-line-header guard, which the hosted gateway may not enforce).
+        subject = " ".join(subject.splitlines()).strip()
+        to_email = " ".join(str(to_email).splitlines()).strip()
         body_message = self.render_template_string(self.config.get("body_template", ""), context)
 
         template_context = {

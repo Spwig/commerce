@@ -20,14 +20,18 @@ class AttributionEngine:
     Currently implements last-click attribution model.
     """
 
-    def __init__(self, order):
+    def __init__(self, order, user=None):
         """
         Initialize attribution engine for an order.
 
         Args:
             order: The order instance to attribute
+            user: The user who placed the order, if known. Passed by the
+                completed-order signal; stored for reference. Existing
+                attribution falls back to ``order.user`` where relevant.
         """
         self.order = order
+        self.user = user
         self.session = getattr(order, "session", None)
         self.request = getattr(order, "request", None)
 

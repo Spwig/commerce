@@ -238,6 +238,9 @@ class OrderRefundSerializer(serializers.Serializer):
         if not order:
             return value
 
+        if value is not None and value <= 0:
+            raise serializers.ValidationError(_("Refund amount must be greater than zero."))
+
         max_refundable = order.amount_paid.amount - order.amount_refunded.amount
         if value and value > max_refundable:
             raise serializers.ValidationError(f"Refund amount cannot exceed {max_refundable}.")

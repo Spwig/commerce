@@ -3,7 +3,9 @@ Catalog Views
 """
 
 from catalog.catalog_views import (
+    filter_brands,
     filter_categories,
+    filter_collections,
     filter_digital_assets,
     filter_external_sync,
     filter_license_keys,
@@ -23,7 +25,9 @@ __all__ = [
     "ProviderWizardStep2View",
     "ProviderWizardStep3View",
     "ProviderWizardStep4View",
+    "filter_brands",
     "filter_categories",
+    "filter_collections",
     "filter_promotions",
     "filter_license_keys",
     "filter_license_pools",

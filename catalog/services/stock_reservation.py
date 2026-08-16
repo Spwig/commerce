@@ -118,6 +118,16 @@ class StockReservationService:
             )
             return True, "Reservation updated", existing
 
+        # Verify the destination can satisfy the request before releasing any
+        # existing reservation elsewhere, so a failed move leaves the current
+        # reservation intact rather than dropping it.
+        if stock_item.available < quantity:
+            return (
+                False,
+                (f"Insufficient stock: need {quantity}, have {stock_item.available}"),
+                None,
+            )
+
         # Release any reservation at a different warehouse for this cart_item
         old_reservations = StockReservation.objects.filter(cart_item=cart_item).select_related(
             "stock_item"
@@ -129,13 +139,6 @@ class StockReservationService:
             old_res.delete()
 
         # Create new reservation
-        if stock_item.available < quantity:
-            return (
-                False,
-                (f"Insufficient stock: need {quantity}, have {stock_item.available}"),
-                None,
-            )
-
         StockItem.objects.filter(pk=stock_item.pk).update(allocated=F("allocated") + quantity)
 
         reservation = StockReservation.objects.create(

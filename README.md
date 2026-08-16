@@ -114,9 +114,17 @@ Community edition auto-activates on first boot — no licence server
 round-trip, no key required. Upgrade later with `git pull` and
 `docker compose build`.
 
+### Option 3 — From source, without Docker
+
+Prefer to run PostgreSQL, Redis, and the app natively on your machine — no
+containers? [DEVELOPMENT.md](DEVELOPMENT.md) is a step-by-step native setup
+for Ubuntu/WSL2, macOS, and Windows.
+
 <br />
 
 ## Features
+
+> 📋 **[Browse the complete feature list](features/FEATURES.md)** — every feature, auto-generated from the source code and kept current.
 
 <table>
   <tr>

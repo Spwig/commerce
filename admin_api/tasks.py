@@ -61,6 +61,49 @@ def send_low_stock_push_notification(self, product_id: int, current_stock: int):
         self.retry(exc=e)
 
 
+@shared_task(bind=True, max_retries=3, default_retry_delay=300)
+def send_low_stock_digest(self, cadence: str = "daily"):
+    """
+    Send a periodic digest of products that are low on stock.
+
+    Fired by Celery Beat on both a daily and a weekly schedule. It sends only
+    when the store has low-stock alerts enabled AND its configured
+    ``low_stock_alert_frequency`` matches this cadence — so exactly one cadence
+    is active at a time, and the realtime signal path stays quiet unless the
+    frequency is 'realtime'.
+
+    Args:
+        cadence: 'daily' or 'weekly' — which schedule invoked this run.
+    """
+    try:
+        from admin_api.services.inventory_service import InventoryService
+        from admin_api.services.push_service import PushNotificationService
+        from core.models import SiteSettings
+
+        site_settings = SiteSettings.get_settings()
+        if not site_settings.enable_low_stock_alerts:
+            return
+        if site_settings.low_stock_alert_frequency != cadence:
+            return
+
+        result = InventoryService.get_low_stock_products(page=1, page_size=100)
+        products = result.get("products", [])
+        if not products:
+            logger.info("Low-stock %s digest: nothing to report", cadence)
+            return
+
+        sent = PushNotificationService.send_low_stock_digest_notification(products, cadence=cadence)
+        logger.info(
+            "Sent %s low-stock %s digest notification(s) covering %s product(s)",
+            sent,
+            cadence,
+            len(products),
+        )
+    except Exception as e:
+        logger.error(f"Failed to send low stock digest: {e}")
+        self.retry(exc=e)
+
+
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
 def send_customer_message_push_notification(self, message_id: int, source: str = "contact_form"):
     """

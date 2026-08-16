@@ -246,7 +246,17 @@ class MediaAsset(SoftDeleteModel):
                 return self.poster_image.url
             return None
 
-        # For images, look for thumbnails
+        # For images, look for thumbnails. When the ``thumbnails`` relation was
+        # prefetched (list views), read from the prefetch cache instead of
+        # issuing a per-asset ``.get()`` query — a ``.get(size_preset=…)`` never
+        # uses the cache, which reintroduces an N+1 in card/list rendering.
+        cache = getattr(self, "_prefetched_objects_cache", None)
+        if cache is not None and "thumbnails" in cache:
+            thumbnail = next((t for t in cache["thumbnails"] if t.size_preset == size_preset), None)
+            if thumbnail is None:
+                return self.get_display_url()
+            return thumbnail.webp_file.url if thumbnail.webp_file else thumbnail.file.url
+
         try:
             thumbnail = self.thumbnails.get(size_preset=size_preset)
             if thumbnail.webp_file:

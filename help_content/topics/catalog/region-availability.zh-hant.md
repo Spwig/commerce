@@ -2,158 +2,104 @@
 title: 地區可用性
 ---
 
-地區可用性控制您的銷售地區中可以銷售的產品，以及這些地區以外的購物者如何體驗您的目錄。當您僅針對某些國家的產品進行許可，或者庫存保留給本地市場，或者您正在按地區逐步推出新產品時，請使用此功能。
+地區可用性控制您的銷售區域中哪些產品可以出售，以及這些產品在這些區域之外的購物者如何體驗您的目錄。當您僅有某些國家的許可證時，當庫存保留給本地市場時，或者當您按地區逐步推出新產品時，請使用此功能。
 
-這基於**銷售地區**，這些地區將國家分組為命名市場（請參閱銷售地區指南以了解設置方法）。一旦您的地區存在，您可以限制單個產品到這些地區，並決定無法購買它們的購物者看到的受限產品外觀。
+這基於**銷售區域**，它將國家分組為名稱市場（請參閱銷售區域指南以了解設置方法）。一旦您的區域存在，您可以限制單個產品到它們，並決定受限制的產品在無法購買它們的購物者面前如何顯示。
 
-## 將產品限制為特定地區
+## 將產品限制為特定區域
 
-每個產品在其編輯頁面上都有**地區可用性**設置。打開**產品 > 所有產品**，選擇一個產品，並在**狀態**部分中找到它，與**狀態**、**特色**和**從 storefront 隱藏**一起。
+每個產品在其編輯頁面上都有**地區可用性**設置。打開**產品 > 所有產品**，選擇一個產品，並在**狀態**部分中找到它，與**狀態**、**特色**和**從商店front hide**一起。
 
-<!-- screenshots-needed:
-- url: /en/admin/catalog/product/1/change/
-  filename: product-region-availability-field.webp
-  description: 產品編輯頁面滾動到狀態部分，其中區域可用性下拉菜單可見且設置為「僅在所選地區」
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: 如果可能，請使用至少已選擇2個地區的產品，以便在第二張截圖中內聯表格有可見的行。
--->
+![產品編輯表單的狀態部分，其中地區可用性下拉選單設置為「僅在所選區域」，與特色和從商店front hide一起](/static/core/admin/img/help/region-availability/product-region-availability-field.webp)
 
 | 選項 | 代表含義 |
 |--------|---------------|
-| **可在所有地區使用** | 沒有限制。產品可在所有地方銷售。這是每個產品的預設值。 |
-| **僅在所選地區** | 允許清單。產品僅在您在下方選擇的地區銷售——其他所有地區都被視為不可用。 |
-| **所有地區，除了所選地區** | 阻止清單。產品可在所有地區銷售，*除了*您在下方選擇的地區。 |
+| **在所有區域都可用** | 沒有限制。產品在所有地方都可出售。這是每個產品的預設值。 |
+| **僅在所選區域** | 允許清單。產品僅在您在下面選擇的區域中出售——其他所有地方，它都被視為不可用。 |
+| **所有區域，除了所選區域** | 阻止清單。產品在所有區域都可出售，*除了*您在下面選擇的區域。 |
 
-### 選擇地區
+### 選擇區域
 
-在狀態部分下方，標題為**地區可用性（所選地區）**的表格列出了上述模式適用的地區。
+在狀態部分下方，標題為**地區可用性（所選區域）**的表格列出了上述模式適用的區域。
 
-1.
+1. 將**地區可用性**設置為**僅在所選區域**或**所有區域，除了所選區域**。
+2. 在**地區可用性（所選區域）**表格中，點擊**新增另一個區域**並選擇一個銷售區域。
+3. 為每個您要新增的區域重複此步驟。
+4. 點擊**儲存**。
 
-將「區域可用性」設為「僅在所選區域」或「除所選區域外的所有區域」。
-2.
+[The "Region availability (selected regions)" inline table with North America and Europe rows added](/static/core/admin/img/help/region-availability/product-region-availability-inline.webp)
 
-在「區域可用性（所選區域）」表格中，點擊「新增另一個區域」並選擇一個銷售區域。
-3.
+如果 **Region availability** 設定為 **Available in all regions**，則此表格中的任何內容都會被忽略 —— 如果您想移除限制但不刪除欄位，請先清除模式下拉選單。
 
-重複此步驟以新增每個區域。
-4.
+若要查看目錄中所有產品的區域規則清單（便於審計多個產品），請前往 `/admin/catalog/productregionvisibility/` 的 **Product Region Visibility**。
 
-點擊「儲存」。
+## 顯示 shoppers 哪些產品無法運送到
 
-<!-- screenshots-needed:
-- url: /en/admin/catalog/product/1/change/
-  filename: product-region-availability-inline.webp
-  description: 「區域可用性（所選區域）」內聯表格，已新增兩到三個區域行
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
+當 shopper 的區域與產品的可用性規則不匹配時，您可以在 **Stock Display Settings** 的 **Region Availability** 節控製他們看到的內容。此頁目前還沒有側邊欄快捷方式 —— 請直接訪問 `/admin/catalog/stockdisplaysettings/` 開啟它。
 
-如果「區域可用性」設為「所有區域均可使用」，則此表格中的任何內容都會被忽略——如果您想移除限制而不刪除行，請先清除模式下拉選單。
+![Stock Display Settings，Region Availability 節 —— Region-restricted display 下拉選單，設定為「Show, marked as unavailable」](/static/core/admin/img/help/region-availability/stock-display-region-availability.webp)
 
-若要查看目錄中每個產品的區域規則清單（便於一次審核多個產品），請前往「產品區域可見性」位於「/admin/catalog/productregionvisibility/」。
-
-## 控制顧客在產品無法運送時的顯示
-
-當顧客的區域不符合產品的可用性規則時，您可以在「庫存顯示設定」下的「區域可用性」部分控制他們看到的內容。此頁目前還沒有側邊欄快捷方式——請直接在「/admin/catalog/stockdisplaysettings/」打開它。
-
-<!-- screenshots-needed:
-- url: /en/admin/catalog/stockdisplaysettings/1/change/
-  filename: stock-display-region-availability.webp
-  description: 「庫存顯示設定」變更表單捲到「區域可用性」欄位集，顯示「區域限制」顯示下拉選單
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
-
-| 選項 | 顧客看到的內容 |
+| 選項 | shoppers 看到的內容 |
 |--------|-------------------|
-| **顯示，標記為不可用**（預設） | 產品仍然出現在清單中，顯示「不可用」徽章，並在加入購物車按鈕的位置顯示「不運送到[地區]」訊息。清單頁面頂部也會顯示橫幅（「某些產品不運送到[目的地]」），並提供連結以過濾僅顯示可運送到該地區的產品。 |
-| **從清單中隱藏** | 顧客在該地區時，產品將完全從清單和搜尋結果中移除。 |
+| **Show, marked as unavailable**（預設） | 產品仍然出現在清單中，顯示「Unavailable」徽章，並在「Add to Cart」按鈕的位置顯示「Does not ship to [region]」訊息。清單頁面頂部也會顯示橫幅（「Some products don't ship to [destination]」），並包含連結以過濾出僅運送到那裡的產品。 |
+| **Hide from listings** | 針對該區域的 shopper，產品將從清單和搜尋結果中完全移除。 |
 
-<!-- screenshots-needed:
-- url: /en/products/
-  filename: storefront-region-restricted-listing.webp
-  description: 商店產品清單，頂部有地區橫幅，並至少有一個產品卡顯示「不可用」徽章和「不運送到[地區]」訊息
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: 需要一個即時運送到選擇（或GeoIP檢測）能解析到示範產品被限制的地區。
--->
+![Storefront 產品清單運送到歐洲 —— 網格上方的「Some products don't ship to Europe」橫幅，以及標記為「Unavailable」的產品卡和「Does not ship to Europe」訊息](/static/core/admin/img/help/region-availability/storefront-region-restricted-listing.webp)
 
-受限制的產品頁面始終會顯示「此產品不運送到[地區]」訊息，當顧客直接訪問該頁面時（例如，從共享連結或搜尋引擎結果）— 這適用於您以上選擇的任何清單選項，因為直接連結會繞過清單。
+一個受限制商品的專屬頁面在顧客直接訪問時（例如，從共享連結或搜尋引擎結果）始終會顯示「此商品不運送到[地區]」的提示——無論你選擇上方的哪個清單選項，都會套用，因為直接連結會完全跳過清單頁面。
 
 ## 允許顧客選擇或發現他們的地區
 
-Spwig可以自動檢測顧客的地區並提供切換選項，您可以新增選擇器，讓顧客隨時手動切換。
+Spwig 可以自動檢測顧客的地區並提供切換選項，你也可以新增選擇器，讓顧客隨時手動變更。
 
 ### 開始前
 
-您需要正確配置兩項以使地區檢測和切換功能正常運作：
+你需要設定兩項以正確運作地區檢測和切換：
 
-1. **銷售地區** — 每個地區的國家和每個地區的預設貨幣。
+1. **銷售區域** — 每個區域中的國家以及每個區域的預設貨幣。如果你在側邊欄的 **庫存** 下沒有看到 **銷售區域**，請在 **設定 > 商店設定 > 電商** 下啟用 **啟用多倉庫** 以顯示選單連結（你不需要實際使用多個倉庫——此設定僅解鎖選單項目）。你可以直接前往 `/admin/catalog/salesregion/`。
+2. **運送國家** — 你商店實際運送的國家。這些通常已經設置好了：你加入運送區域的每個國家也會自動加入這裡。要審查或手動調整清單，請直接打開 `/admin/shipping/shippingcountry/`（目前還沒有側邊欄連結）。
 
-保留所有markdown格式、圖片路徑、程式碼區塊和技術術語。
+### 自動地區確認
 
-如果在侧邊欄的 **庫存** 下沒有看到 **銷售區域**，請在 **設定 > 商店設定 > 電商** 下啟用 **啟用多倉庫** 以顯示選單連結（您不需要實際使用多個倉庫——此設定僅解鎖選單項目）。
+Spwig 從顧客的地理位置檢測其地區並自動套用。當這使他們處於你商店的預設（主要）市場以外的地區——且你有兩個或更多活躍的銷售區域——Spwig 會在他們第一次訪問時顯示確認訊息，讓他們知道他們所在的地區並可以切換：
 
-您也可以直接進入 /admin/catalog/salesregion/。
-2. **運送國家** —— 您的商店實際運送到的國家。
-
-這些通常已經設置好了：您加入運送區域的每個國家也會自動加入這裡。
-
-若要審查或手動調整清單，請直接打開 /admin/shipping/shippingcountry/（目前還沒有側邊欄連結）。
-
-### 自動區域確認
-
-Spwig 會從 shopper 的位置檢測其區域並自動套用。當這使他們處於您商店的預設（主要）市場 *以外* 的區域——且您有兩個或更多活躍的銷售區域——Spwig 會在他們第一次訪問時顯示確認訊息，讓他們知道自己處於哪個區域並可以切換：
-
-> **我們已將您的區域設為 [區域] **
-> 我們從您的位置中選擇了這個區域，以便您看到正確的產品和價格。不對？選擇您的國家。
+> **我們已將你的地區設為 [區域] **
+> 我們從你的位置中選擇了這個地區，以便你看到正確的產品和價格。不對？選擇你的國家。
 > 運送到：[國家選擇器]  **[繼續瀏覽] **
-
-<!-- screenshots-needed:
-- url: /en/
-  filename: region-confirmation-modal.webp
-  description: 店面首頁的「We've set your region to [Region]」確認對話方塊，包含國家選擇器和 Keep browsing 按鈕
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: 需要 GeoIP 解析到非預設區域且至少有 2 個活躍的銷售區域才能觸發。本地測試時，請將「geo_country」cookie 設定為非預設國家來模擬。
--->
-
-在選擇器中選擇不同的國家會立即切換他們的區域。關閉它或點擊 **繼續瀏覽** 會保留他們當前的區域，且他們在該瀏覽器上不會再被提示。已經處於預設區域的訪客完全不會看到確認訊息。
-
-### 在您的首頁或頁尾新增「運送到」選項器
-
-如果您希望顧客隨時切換地區（而不是僅依賴自動提示），請在首頁或頁尾新增 **運送到選項器** 小工具。
-
-1. 前往 **設計 > 首頁編輯器**（或 **頁尾編輯器**）。
-2. 從小工具資料庫中拖放 **運送到選項器** 小工具到一個欄位。
-3. 點擊 **儲存**。
-
-<!-- screenshots-needed:
-- url: /en/theme/header/builder/
-  filename: ship-to-selector-widget-library.webp
-  description: 首頁編輯器，小工具資料庫側邊欄已打開，並顯示/突出顯示「運送到選項器」小工具
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
-
-此小工具無需設定 —— 它會自動列出您啟用的運送國家，並顯示顧客目前的選擇（或他們的 GeoIP 掃描國家，如果他們尚未選擇）。
-切換到其他國家會立即更新其地區並重新整理頁面的產品可用性和定價。
-
-「運送到選項器」目前還沒有專門的設定表單。如果您想變更其按鈕樣式（輪廓、實心或透明）或隱藏「運送到」標籤，請在編輯器中開啟小工具的設定，並直接編輯 **自訂設定（JSON）** 欄位，使用 `button_style` 和 `show_label`。
-
-### 當地區變更時，貨幣也會跟著變更
-
-如果您商店支援多種貨幣（在 **設定 > 多幣別** 中設定），切換地區 —— 透過提示或「運送到選項器」—— 也會切換顯示的貨幣為該地區的預設貨幣。如果您的商店只有一種貨幣，或未明確啟用第二種貨幣，當顧客變更地區時，貨幣將不會變更。
-
-## 小技巧
 
 保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
 
-- 留下 **區域可用性** 為 **所有區域均可使用**，除非您有具體原因要限制某個產品 - 這是最簡單的選項，且在您之後新增區域時無需維護。
-- 使用 **僅限已選區域** 來設定小範圍的允許清單（例如：產品首先在一個國家發售）以及 **所有區域除外已選區域** 來設定小範圍的拒絕清單（例如：除了產品未取得許可的國家外的所有地方） - 選擇哪一種設定所需的列數較少。
-- 如果顧客回報某個應該可見的產品不存在，請檢查該產品的 **區域可用性** 設定，以及他們的國家是否被活躍的 **銷售區域** 和活躍的 **運輸國家** 覆蓋。
-- **從目錄中隱藏** 可以讓您的目錄看起來更整潔，讓無法購買某些商品的顧客瀏覽，但這也意味著在這些區域中，商品推廣和搜尋結果會看起來較少 - 如果您仍希望顧客在無法結帳的區域中瀏覽完整的目錄，通常 **顯示，標示為不可用** 是更好的選擇。
-- 透過在導覽列中加入「運送到」選項，親自切換國家來測試區域行為，再依賴 GeoIP 探測進行上線，以確保正確性。
-- 明確設定各區域的優先級值（在「銷售區域」頁面） - 最高優先級的活躍區域會作為無法探測到國家或國家不匹配的顧客的預設選擇。
+![The "We've set your region to North America" confirmation modal on the storefront, with a "Ship to" country picker and a Keep browsing button](/static/core/admin/img/help/region-availability/region-confirmation-modal.webp)
+
+Choosing a different country in the picker switches them immediately. Dismissing it or clicking **Keep browsing** keeps their current region, and they won't be asked again on that browser. Visitors who are already in your default region aren't shown the confirmation at all.
+
+### Adding a Ship-To Selector to your header or footer
+
+If you'd rather let shoppers change region themselves at any time (instead of relying only on the automatic prompt), add the **Ship-To Selector** widget to your header or footer.
+
+1. Navigate to **Design > Header Builder** (or **Footer Builder**).
+2. Drag the **Ship-To Selector** widget from the Widget Library into a row.
+3. Click **Save**.
+
+![The Header Builder widget library with the Shop group highlighted, showing the Ship-To Selector widget alongside Shopping Cart, Account Menu and Language Selector](/static/core/admin/img/help/region-availability/ship-to-selector-widget-library.webp)
+
+The widget needs no setup — it lists your active Shipping Countries automatically, and shows a shopper's current selection (or their GeoIP-detected country, if they haven't chosen one yet). Picking a different country updates their region immediately and reloads the page's product availability and pricing.
+
+The Ship-To Selector doesn't have a dedicated settings form yet. If you want to change its button style (outline, solid, or ghost) or hide the "Ship to" label, open the widget's settings in the builder and edit the **Custom Configuration (JSON)** field directly, using `button_style` and `show_label`.
+
+### Currency follows region
+
+Preserve all markdown formatting, image paths, code blocks, and technical terms.
+
+如果您的商店支持多种貨幣（在 **設定 > 多幣別** 中設置），則切換地區——無論是透過提示還是 Ship-To 選擇器——也會切換到該地區的預設貨幣。
+
+如果您的商店只有一種貨幣，或者未明確啟用第二種貨幣，當顧客更換地區時，貨幣將保持不變。
+
+## 小技巧
+
+- 除非您有具體原因要限制某個產品，否則請將 **地區可用性** 設為 **所有地區均可**——這是最簡單的選項，當您之後新增地區時也無需維護。
+- 若您需要小範圍的允許清單（例如某個產品首先在一個國家發售），請使用 **僅限所選地區**；若需要小範圍的拒絕清單（例如除了某個國家外的其他地區），請使用 **所有地區除外所選地區**——選擇其中一種，取決於哪一種設定所需的行數較少。
+- 如果顧客報告某個產品不見了卻應該可見，請檢查該產品的 **地區可用性** 設定，以及他們的國家是否被活躍的 **銷售地區** 和活躍的 **運送國家** 覆蓋。
+- **從目錄隱藏** 可以讓您的目錄看起來更整潔，讓無法購買某些商品的顧客瀏覽，但這也意味著在這些地區，商品推廣和搜尋結果會較少——如果仍希望顧客在無法結帳的地區瀏覽完整目錄，**顯示，標記為不可用** 通常是更好的選擇。
+- 透過在頁首加入 Ship-To 選擇器來測試地區行為，在依賴 GeoIP 檢測進行發佈前，親自切換國家進行測試。
+- 請明確設定各個地區的優先順序值（在銷售地區頁面中）——最高優先順序的活躍地區會作為無法檢測到或與任何地區不匹配的顧客的預設選擇。

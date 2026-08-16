@@ -301,3 +301,28 @@ class WalletDebitSerializer(serializers.Serializer):
     )
     description = serializers.CharField(max_length=500)
     reference_id = serializers.CharField(max_length=100, required=False, default="")
+
+
+class WalletAdjustSerializer(serializers.Serializer):
+    """
+    Input serializer for a manual staff balance adjustment.
+
+    A signed correction: ``direction`` sets whether the (always positive)
+    ``amount`` raises or lowers the balance. Recorded as a distinct
+    ``adjustment`` ledger row, separate from organic credits/debits.
+    """
+
+    amount = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+    )
+    direction = serializers.ChoiceField(
+        choices=[
+            ("increase", _("Increase balance")),
+            ("decrease", _("Decrease balance")),
+        ]
+    )
+    currency = serializers.CharField(max_length=3, default=get_default_currency)
+    description = serializers.CharField(max_length=500)
+    reference_id = serializers.CharField(max_length=100, required=False, default="")

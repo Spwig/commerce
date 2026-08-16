@@ -6,6 +6,7 @@ All API endpoints are consolidated here to be included outside i18n_patterns.
 from django.urls import include, path
 
 from . import api_views
+from .views import personalize_page
 
 app_name = "page_builder_api"
 
@@ -76,4 +77,6 @@ urlpatterns = [
     path("link-sources/", api_views.get_link_sources, name="link_sources"),
     # Product Picker API (enriched search for product grid element)
     path("product-search/", api_views.product_search, name="product_search"),
+    # Public storefront: resolve deferred per-visitor visibility placeholders.
+    path("personalize/", personalize_page, name="personalize"),
 ]

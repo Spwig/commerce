@@ -83,11 +83,15 @@ class ProviderAccountAdminForm(forms.ModelForm):
                                 self.instance.credentials_encrypted
                             )
                         except Exception as e:
-                            # If decryption fails, log but don't crash
+                            # If decryption fails, log and flag the form so that
+                            # clean() refuses to save. Overwriting the stored
+                            # ciphertext with empty values here would destroy the
+                            # credentials (e.g. after a SECRET_KEY change).
                             import logging
 
                             logger = logging.getLogger(__name__)
                             logger.error(f"Failed to decrypt credentials: {e}")
+                            self._credentials_decrypt_failed = True
 
                     # Store original credentials for disabled field preservation
                     self._original_credentials = decrypted_credentials.copy()
@@ -120,19 +124,32 @@ class ProviderAccountAdminForm(forms.ModelForm):
                                     for opt in choices_config
                                 ]
 
-                            # Make select fields disabled when editing (read-only reference)
-                            widget = forms.Select(
-                                attrs={"class": "form-control", "disabled": "disabled"}
+                            # Make select fields disabled when editing (read-only
+                            # reference). disabled=True on the field itself makes
+                            # Django ignore the omitted POST value and fall back to
+                            # the initial value, so the stored credential is
+                            # preserved rather than overwritten with an empty string.
+                            stored_value = decrypted_credentials.get(
+                                field_name, field_config.get("default")
                             )
+                            # A disabled ChoiceField still validates its initial
+                            # value against the choices. If the stored value was
+                            # dropped from a newer manifest it would make the whole
+                            # form invalid, so include it so the field stays valid
+                            # and the credential is preserved on save.
+                            if stored_value not in (None, "") and stored_value not in [
+                                choice[0] for choice in choices
+                            ]:
+                                choices = choices + [(stored_value, stored_value)]
+                            widget = forms.Select(attrs={"class": "form-control"})
                             self.fields[f"credential_{field_name}"] = forms.ChoiceField(
                                 label=field_label,
                                 choices=choices,
                                 required=False,  # Not required since it's disabled
+                                disabled=True,
                                 help_text=field_help,
                                 widget=widget,
-                                initial=decrypted_credentials.get(
-                                    field_name, field_config.get("default")
-                                ),
+                                initial=stored_value,
                             )
                         elif field_secret:
                             # Secret field - use password input with toggle
@@ -173,8 +190,23 @@ class ProviderAccountAdminForm(forms.ModelForm):
 
         # Don't process credentials if component/user are being edited (shouldn't happen due to disabled fields)
         if self.instance.pk:
-            # Collect credential fields
-            credentials = {}
+            # If the stored credentials could not be decrypted, refuse to save so
+            # that we never overwrite the retained ciphertext with empty values.
+            if getattr(self, "_credentials_decrypt_failed", False):
+                raise forms.ValidationError(
+                    _(
+                        "Stored credentials could not be decrypted, so saving is "
+                        "disabled to avoid destroying them. This usually means the "
+                        "encryption key changed or the stored data is corrupted. "
+                        "Restore the original key, or re-enter the credentials to "
+                        "replace them."
+                    )
+                )
+
+            # Seed from the original credentials so keys retained from an older
+            # manifest version (or other provider-specific keys not present in the
+            # currently loaded schema) are preserved instead of being dropped.
+            credentials = dict(getattr(self, "_original_credentials", {}))
             fields_to_remove = []
 
             for field_name in self.fields:
@@ -189,8 +221,6 @@ class ProviderAccountAdminForm(forms.ModelForm):
                         credentials[credential_key] = self._original_credentials.get(
                             credential_key, ""
                         )
-                    else:
-                        credentials[credential_key] = ""
 
                     fields_to_remove.append(field_name)
 

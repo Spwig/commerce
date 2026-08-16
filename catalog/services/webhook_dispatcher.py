@@ -10,6 +10,7 @@ import json
 import logging
 
 import requests
+from celery import shared_task
 from django.db import models as django_models
 from django.utils import timezone
 
@@ -55,7 +56,7 @@ class LicenseWebhookDispatcher:
             activation: Optional LicenseActivation instance (for device events)
 
         Returns:
-            int: Number of successful webhook deliveries
+            int: Number of webhook deliveries queued for delivery
         """
         from catalog.models import WebhookSubscription
 
@@ -121,37 +122,13 @@ class LicenseWebhookDispatcher:
                 "number": license_key.order_item.order.order_number,
             }
 
-        # Dispatch to all matching subscriptions
-        successful_count = 0
-
+        # Dispatch to all matching subscriptions via a background task so each
+        # subscription's configured retry policy (max_retries /
+        # retry_delay_seconds) is honored without blocking the caller.
         for subscription in subscriptions_with_filters:
-            try:
-                success = LicenseWebhookDispatcher._send_webhook(subscription, payload)
+            deliver_license_webhook.delay(subscription.id, payload)
 
-                if success:
-                    successful_count += 1
-                    subscription.successful_deliveries += 1
-                else:
-                    subscription.failed_deliveries += 1
-
-                subscription.total_deliveries += 1
-                subscription.last_delivery_at = timezone.now()
-                subscription.save(
-                    update_fields=[
-                        "total_deliveries",
-                        "successful_deliveries",
-                        "failed_deliveries",
-                        "last_delivery_at",
-                    ]
-                )
-
-            except Exception as e:
-                logger.exception(f"Exception dispatching webhook to {subscription.name}: {e}")
-                subscription.failed_deliveries += 1
-                subscription.total_deliveries += 1
-                subscription.save(update_fields=["total_deliveries", "failed_deliveries"])
-
-        return successful_count
+        return len(subscriptions_with_filters)
 
     @staticmethod
     def _send_webhook(subscription, payload):
@@ -231,3 +208,38 @@ class LicenseWebhookDispatcher:
 
         # Constant-time comparison to prevent timing attacks
         return hmac.compare_digest(provided_signature, expected_signature)
+
+
+@shared_task(bind=True, name="catalog.deliver_license_webhook", ignore_result=True)
+def deliver_license_webhook(self, subscription_id, payload):
+    """Deliver a single license webhook, honoring the subscription's retry policy.
+
+    Retries failed deliveries up to ``max_retries`` times, waiting
+    ``retry_delay_seconds`` between attempts, as configured on the subscription.
+    """
+    from catalog.models import WebhookSubscription
+
+    try:
+        subscription = WebhookSubscription.objects.get(pk=subscription_id, is_active=True)
+    except WebhookSubscription.DoesNotExist:
+        return
+
+    success = LicenseWebhookDispatcher._send_webhook(subscription, payload)
+
+    # Increment counters atomically with F() expressions so concurrent
+    # delivery tasks don't clobber each other's updates (lost updates).
+    update_fields = {
+        "total_deliveries": django_models.F("total_deliveries") + 1,
+        "last_delivery_at": timezone.now(),
+    }
+    if success:
+        update_fields["successful_deliveries"] = django_models.F("successful_deliveries") + 1
+    else:
+        update_fields["failed_deliveries"] = django_models.F("failed_deliveries") + 1
+    WebhookSubscription.objects.filter(pk=subscription.pk).update(**update_fields)
+
+    if not success and self.request.retries < subscription.max_retries:
+        raise self.retry(
+            countdown=subscription.retry_delay_seconds,
+            max_retries=subscription.max_retries,
+        )

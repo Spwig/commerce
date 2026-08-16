@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view, permission_classes, throttle_cla
 from rest_framework.response import Response
 
 from admin_api.models import CustomerMessage, MessageReadReceipt, MessageReply
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.messages import (
     MessageFilterSerializer,
@@ -622,7 +622,7 @@ def message_detail(request, source, message_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("customers", "full")])
 @throttle_classes([AdminAPIThrottle])
 def update_message_status(request, source, message_id):
     """
@@ -930,7 +930,7 @@ def message_counts(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("customers", "full")])
 @throttle_classes([AdminAPIThrottle])
 def reply_to_message(request, message_id):
     """

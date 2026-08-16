@@ -78,7 +78,22 @@ class Command(BaseCommand):
         if len(currency) != 3:
             raise CommandError("Currency code must be exactly 3 characters (e.g., USD, NZD)")
 
-        # Create or update SalesRegion
+        # Create or update SalesRegion.
+        # SalesRegion.name is unique. get_or_create only inserts (and thus only
+        # hits the name uniqueness constraint) when no region with region_code
+        # exists yet; an existing code is updated in place and ignores
+        # region_name. So only guard against a name already claimed by another
+        # code when we would actually create a new region.
+        if (
+            not SalesRegion.objects.filter(code=region_code).exists()
+            and SalesRegion.objects.filter(name=region_name).exists()
+        ):
+            raise CommandError(
+                f'A SalesRegion named "{region_name}" already exists under a '
+                "different code. Choose another --region-name, or target the "
+                "existing region with its --region-code."
+            )
+
         region, region_created = SalesRegion.objects.get_or_create(
             code=region_code,
             defaults={

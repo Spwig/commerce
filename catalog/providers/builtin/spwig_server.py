@@ -338,7 +338,7 @@ class SpwigLicenseServerAdapter(BaseLicenseProviderAdapter):
                 device_fingerprint = payload.get("device_fingerprint")
                 if device_fingerprint:
                     LicenseActivation.objects.filter(
-                        license_key=license_key, device_fingerprint=device_fingerprint
+                        license_key=license_key, device_identifier=device_fingerprint
                     ).update(is_active=False)
                     logger.info(f"Recorded deactivation for {license_key_str}")
 

@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static seo_tags %}
 
 <div class="list-row-cards">
     {% for page in pages %}
@@ -55,6 +55,7 @@
             </p>
 
             <div class="list-row-card-badges">
+                {% seo_badge page %}
                 {% if page.status == 'published' %}
                     <span class="list-row-card-badge list-row-card-badge-success">
                         <i class="fas fa-check-circle"></i> {% trans "Published" %}

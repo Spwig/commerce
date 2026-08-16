@@ -349,6 +349,7 @@ class AgentEvent(models.Model):
     EVENT_AGENT_SEEN = "agent_seen"
     EVENT_AGENT_BLOCKED = "agent_blocked"
     EVENT_AGENT_UNBLOCKED = "agent_unblocked"
+    EVENT_AGENT_VERIFIED = "agent_verified"
     EVENT_POLICY_CHANGED = "policy_changed"
     EVENT_CHOICES = [
         (EVENT_SIG_VERIFIED, _("Signature verified")),
@@ -356,6 +357,7 @@ class AgentEvent(models.Model):
         (EVENT_AGENT_SEEN, _("Agent seen (first use)")),
         (EVENT_AGENT_BLOCKED, _("Agent blocked")),
         (EVENT_AGENT_UNBLOCKED, _("Agent unblocked")),
+        (EVENT_AGENT_VERIFIED, _("Agent promoted to verified")),
         (EVENT_POLICY_CHANGED, _("Policy changed")),
     ]
 

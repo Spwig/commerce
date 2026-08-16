@@ -334,6 +334,49 @@ class TestNoShippingOrderCreation:
         assert order.shipping_cost.amount == Decimal("0")
         assert order.items.count() == 1
 
+    def test_double_complete_does_not_create_a_second_order(
+        self, digital_cart, provider_account, warehouse
+    ):
+        """Idempotency (oversell guard): create_order locks the cart and clears
+        it on success, so a second submission for the same cart — as a racing
+        double-submit hits once the winner committed — must NOT create a
+        duplicate order or re-allocate stock; it fails cleanly on the emptied
+        cart instead."""
+        from orders.models import Order
+
+        session = CheckoutService.get_or_create_session(digital_cart)
+        session.recalculate_totals()
+        CheckoutService.set_billing_address(
+            session,
+            same_as_shipping=False,
+            address_data={
+                "name": "Dana Digital",
+                "address1": "500 Market St",
+                "city": "LA",
+                "state": "CA",
+                "country": "US",
+                "postal_code": "90210",
+            },
+        )
+        session.payment_provider = provider_account
+        session.save(update_fields=["payment_provider"])
+
+        # Two separate session objects for the same checkout — what two
+        # concurrent /complete/ requests each hold (both fetched before either
+        # completed). The winner deletes the session row; the loser's session
+        # lock then finds it gone and must bail without creating a second order.
+        from cart.models import CheckoutSession
+
+        loser = CheckoutSession.objects.get(pk=session.pk)
+
+        ok1, _m1, order1 = CheckoutService.create_order(session)  # winner
+        assert ok1 is True and order1 is not None
+
+        ok2, _m2, order2 = CheckoutService.create_order(loser)  # loser
+        assert ok2 is False
+        assert order2 is None
+        assert Order.objects.count() == 1  # no duplicate
+
     def test_no_shipping_rejects_incomplete_billing(
         self, digital_cart, provider_account, warehouse
     ):

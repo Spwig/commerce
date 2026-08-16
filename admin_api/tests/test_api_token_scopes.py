@@ -47,6 +47,33 @@ def _client(token):
     return client
 
 
+def _grant_category(user, **categories):
+    """Give ``user`` a StaffRole granting the named permission categories.
+
+    The order-status mutation endpoints are gated on
+    ``category_permission("orders", "full")`` (added by the A1 mutation-gating
+    security hardening) in addition to the token scope. A bare ``is_staff`` user
+    holds no category grant, so without this the category gate — not the scope
+    gate — is what returns 403. Granting the category isolates the scope-gate
+    behaviour these tests mean to prove.
+    """
+    from django.contrib.auth.models import Group
+
+    from staff_roles.models import StaffRole
+    from staff_roles.services import invalidate_user_cache
+
+    group = Group.objects.create(name=f"role-{uuid.uuid4().hex[:8]}")
+    user.groups.add(group)
+    StaffRole.objects.create(
+        group=group,
+        display_name=group.name,
+        can_access_admin=True,
+        permission_categories=categories,
+    )
+    invalidate_user_cache(user)
+    return user
+
+
 # --------------------------------------------------------------------------- #
 # Scope map completeness (the fail-closed contract)
 # --------------------------------------------------------------------------- #
@@ -140,7 +167,9 @@ ORDER_STATUS = "/api/admin/orders/NOPE-404/status/"  # non-existent order
 
 
 def test_read_scope_allows_get_but_not_write_on_same_resource():
-    staff = UserFactory(is_staff=True)
+    # Grant the orders category so the category gate is satisfied and the token
+    # SCOPE is the only thing under test here.
+    staff = _grant_category(UserFactory(is_staff=True), orders="full")
     token = _token(staff, scopes={"orders": "read"})
     client = _client(token)
     # GET is a read → allowed by the read scope.
@@ -150,10 +179,11 @@ def test_read_scope_allows_get_but_not_write_on_same_resource():
 
 
 def test_write_scope_passes_scope_gate_on_write_method():
-    staff = UserFactory(is_staff=True)
+    # Category granted so only the token scope decides; the write scope clears the
+    # scope gate and the request then fails downstream for a missing order
+    # (404/400), NOT with a scope 403 — proving the gate opened.
+    staff = _grant_category(UserFactory(is_staff=True), orders="full")
     token = _token(staff, scopes={"orders": "write"})
-    # The write scope clears the scope gate; the request then fails downstream
-    # for a missing order (404/400), NOT with a scope 403. Proving the gate opened.
     resp = _client(token).post(ORDER_STATUS, {"status": "processing"}, format="json")
     assert resp.status_code != 403
 

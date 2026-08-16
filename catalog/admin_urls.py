@@ -18,6 +18,8 @@ app_name = "catalog_admin"
 urlpatterns = [
     # Admin AJAX Endpoints
     path("category/filter/", views.filter_categories, name="filter_categories"),
+    path("brand/filter/", views.filter_brands, name="filter_brands"),
+    path("collection/filter/", views.filter_collections, name="filter_collections"),
     path("promotion/filter/", views.filter_promotions, name="filter_promotions"),
     path("license-key/filter/", views.filter_license_keys, name="filter_license_keys"),
     path("license-pool/filter/", views.filter_license_pools, name="filter_license_pools"),

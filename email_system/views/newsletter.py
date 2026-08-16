@@ -16,7 +16,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -234,10 +234,9 @@ def newsletter_send(request, newsletter_id):
     # Get available customer segments
     segments = CustomerSegment.objects.filter(is_active=True).order_by("priority")
 
-    # Calculate total subscribers
-    total_subscribers = (
-        User.objects.filter(is_active=True, email__isnull=False).exclude(email="").count()
-    )
+    # Total marketing-opted-in subscribers (what a store-wide blast can reach),
+    # not every active account — keeps the figure honest post consent-gating.
+    total_subscribers = _calculate_recipient_count(post_data=QueryDict())
 
     context = {
         "title": _("Send Newsletter"),
@@ -316,12 +315,41 @@ def _calculate_recipient_count(post_data):
     elif customer_status == "no_orders":
         recipients = recipients.filter(orders__isnull=True)
 
-    return recipients.count()
+    # Only count customers who have opted into marketing (and confirmed, when the
+    # store requires double opt-in) so the preview matches what actually sends.
+    from accounts.models import CommunicationPreference
+
+    consenting = 0
+    for prefs in CommunicationPreference.objects.filter(user__in=recipients).select_related("user"):
+        if prefs.should_send_email("newsletter"):
+            consenting += 1
+    return consenting
+
+
+def _newsletter_consent_by_email(emails):
+    """Map lowercased email -> whether that user may receive the newsletter.
+
+    A newsletter is a marketing message, so ``should_send_email('newsletter')``
+    enforces marketing opt-in (and double opt-in confirmation when the store
+    requires it). Emails with no matching account are absent from the map.
+    """
+    from accounts.models import CommunicationPreference
+
+    consent = {}
+    prefs_qs = CommunicationPreference.objects.filter(user__email__in=emails).select_related("user")
+    for prefs in prefs_qs:
+        if prefs.user and prefs.user.email:
+            consent[prefs.user.email.lower()] = prefs.should_send_email("newsletter")
+    return consent
 
 
 def _get_recipients(post_data, files):
     """
-    Get list of recipients based on filters or CSV upload
+    Get list of recipients based on filters or CSV upload, filtered by consent.
+
+    Recipients without marketing consent (or, when the store requires double
+    opt-in, an unconfirmed address) are suppressed so newsletter blasts honour
+    the same opt-in rules as every other marketing email.
 
     Args:
         post_data: POST data with filter parameters
@@ -330,11 +358,15 @@ def _get_recipients(post_data, files):
     Returns:
         list: List of tuples (email, name)
     """
-    recipients = []
+    candidates = []
 
     # Check if CSV was uploaded
     csv_file = files.get("csv_file")
     if csv_file:
+        # Cap the upload so a huge file can't be read wholesale into memory.
+        max_bytes = 5 * 1024 * 1024  # 5 MB
+        if getattr(csv_file, "size", 0) and csv_file.size > max_bytes:
+            raise Exception(_("CSV file is too large (max 5 MB)."))
         # Parse CSV file
         try:
             decoded_file = csv_file.read().decode("utf-8")
@@ -344,10 +376,17 @@ def _get_recipients(post_data, files):
                 email = row.get("email", "").strip()
                 name = row.get("name", "").strip()
                 if email:
-                    recipients.append((email, name))
+                    candidates.append((email, name))
         except Exception as e:
             logger.error(f"Error parsing CSV: {e}", exc_info=True)
             raise Exception(_("Error parsing CSV file: %(error)s") % {"error": str(e)})
+
+        # Suppress uploaded emails that belong to an account which has opted out
+        # or not confirmed. Emails with no account are left to merchant judgement.
+        consent = _newsletter_consent_by_email([e for e, _n in candidates])
+        recipients = [
+            (email, name) for email, name in candidates if consent.get(email.lower(), True)
+        ]
     else:
         # Get recipients from database based on filters
         users = User.objects.filter(is_active=True, email__isnull=False).exclude(email="")
@@ -367,9 +406,23 @@ def _get_recipients(post_data, files):
         elif customer_status == "no_orders":
             users = users.filter(orders__isnull=True)
 
-        # Build recipient list
+        # Build recipient list, gated on marketing consent. Users with no
+        # preference record have never opted in, so they are excluded.
+        from accounts.models import CommunicationPreference
+
+        users = users.select_related("communication_preferences")
+        recipients = []
         for user in users:
-            name = user.get_full_name() or user.username
-            recipients.append((user.email, name))
+            try:
+                prefs = user.communication_preferences
+            except CommunicationPreference.DoesNotExist:
+                continue
+            if prefs.should_send_email("newsletter"):
+                name = user.get_full_name() or user.username
+                recipients.append((user.email, name))
+
+    suppressed = len(candidates) - len(recipients) if csv_file else None
+    if suppressed:
+        logger.info("Newsletter: suppressed %s recipient(s) without marketing consent", suppressed)
 
     return recipients

@@ -11,6 +11,7 @@ from rest_framework.routers import DefaultRouter
 from admin_api.views import (
     analytics,
     attributes,
+    attribution,
     auth,
     branding,
     brands,
@@ -81,6 +82,8 @@ urlpatterns = [
     path("analytics/export/", analytics.analytics_export, name="analytics_export"),
     # Web/visitor traffic analytics (wraps geoip.services.analytics_service)
     path("analytics/traffic/", traffic.traffic_analytics, name="traffic_analytics"),
+    # Revenue attribution (wraps attribution.services.dashboard_data)
+    path("analytics/attribution/", attribution.attribution_analytics, name="attribution_analytics"),
     # Inventory intelligence endpoints
     path("inventory/dashboard/", inventory.inventory_dashboard, name="inventory_dashboard"),
     path("inventory/low-stock/", inventory.inventory_low_stock, name="inventory_low_stock"),

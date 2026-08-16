@@ -13,6 +13,30 @@ from catalog.models import Product
 from translations.models import SiteLanguage
 
 
+def _validate_translations_structure(translations):
+    """
+    Validate the shape of a product translations payload.
+
+    Each language entry must be a dict of fields, every field value must be a
+    string, except the reserved ``_meta`` entry which is itself a dict. Returns
+    an error message string when invalid, or ``None`` when the structure is
+    well-formed and safe to persist.
+    """
+    for lang_code, fields in translations.items():
+        if not isinstance(fields, dict):
+            return f"Translation entry for '{lang_code}' must be a dictionary"
+
+        for field_name, field_value in fields.items():
+            if field_name == "_meta":
+                if not isinstance(field_value, dict):
+                    return f"'_meta' for '{lang_code}' must be a dictionary"
+                continue
+            if not isinstance(field_value, str):
+                return f"Field '{field_name}' for '{lang_code}' must be a string"
+
+    return None
+
+
 @staff_member_required
 @require_http_methods(["GET"])
 def get_product_translations(request, product_id):
@@ -139,6 +163,10 @@ def save_all_product_translations(request, product_id):
             return JsonResponse(
                 {"success": False, "error": "translations must be a dictionary"}, status=400
             )
+
+        structure_error = _validate_translations_structure(translations)
+        if structure_error:
+            return JsonResponse({"success": False, "error": structure_error}, status=400)
 
         # Auto-generate plain text from HTML for description fields
         for _lang_code, fields in translations.items():

@@ -99,11 +99,14 @@ def send_digital_receipt(request, order_id):
         )
 
     # Parse request
-    method = request.data.get("method", "").lower()
-    destination = request.data.get("destination", "").strip()
+    method = request.data.get("method")
+    destination = request.data.get("destination")
     language = request.data.get("language")
 
     # Validate method
+    if not isinstance(method, str):
+        method = ""
+    method = method.lower()
     if method not in ("email", "sms", "whatsapp"):
         return Response(
             {
@@ -117,6 +120,9 @@ def send_digital_receipt(request, order_id):
         )
 
     # Validate destination
+    if not isinstance(destination, str):
+        destination = ""
+    destination = destination.strip()
     if not destination:
         return Response(
             {

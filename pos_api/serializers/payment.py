@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -28,6 +30,7 @@ class POSGiftCardPaymentSerializer(serializers.Serializer):
     amount = serializers.DecimalField(
         max_digits=10,
         decimal_places=2,
+        min_value=Decimal("0.01"),
         required=False,
         help_text=_("Amount to charge. If not provided, charges the full remaining balance."),
     )
@@ -37,7 +40,7 @@ class POSSplitTenderItemSerializer(serializers.Serializer):
     """A single payment in a split tender."""
 
     method = serializers.ChoiceField(choices=["cash", "card", "terminal_card", "gift_card"])
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0.01"))
 
     # Cash fields
     amount_tendered = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)

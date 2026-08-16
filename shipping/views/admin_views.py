@@ -9,6 +9,7 @@ import logging
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -240,6 +241,7 @@ def test_provider_connection(request, provider_id):
         test_result = provider_instance.test_connection()
 
         # Update provider account status
+        provider.last_tested_at = timezone.now()
         if test_result.get("success"):
             provider.connection_status = "connected"
             provider.connection_error = None
@@ -337,6 +339,7 @@ def provider_bulk_action(request):
                         provider_instance = provider_class(credentials=credentials)
                         test_result = provider_instance.test_connection()
 
+                        provider.last_tested_at = timezone.now()
                         if test_result.get("success"):
                             provider.connection_status = "connected"
                             provider.connection_error = None

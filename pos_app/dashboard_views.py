@@ -1,11 +1,14 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import BooleanField, Case, Count, Q, Value, When
+from django.core.exceptions import ValidationError
+from django.db.models import BooleanField, Case, Count, Q, Sum, Value, When
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 
 from catalog.models import Warehouse
 
@@ -58,7 +61,7 @@ def pos_dashboard(request):
 
     # Today's sales from payments
     todays_payments = POSPayment.objects.filter(created_at__gte=today_start)
-    todays_sales = sum(float(p.amount) for p in todays_payments)
+    todays_sales = todays_payments.aggregate(total=Sum("amount"))["total"] or Decimal("0")
     todays_transactions = todays_payments.values("order").distinct().count()
 
     # Recent shifts (last 5 closed)
@@ -152,6 +155,15 @@ def filter_shifts(request):
     shift_status = request.GET.get("shift_status", "")
     date_from = request.GET.get("date_from", "")
     date_to = request.GET.get("date_to", "")
+
+    if date_from:
+        date_from = parse_date(date_from)
+        if date_from is None:
+            return JsonResponse({"error": "Invalid date_from"}, status=400)
+    if date_to:
+        date_to = parse_date(date_to)
+        if date_to is None:
+            return JsonResponse({"error": "Invalid date_to"}, status=400)
 
     queryset = POSShift.objects.select_related(
         "terminal", "terminal__warehouse", "cashier"
@@ -258,9 +270,13 @@ def filter_promo_slides(request):
     if scope:
         if scope.startswith("group:"):
             group_id = scope.split(":")[1]
+            if not group_id.isdigit():
+                return JsonResponse({"error": "Invalid scope"}, status=400)
             queryset = queryset.filter(store_group_id=group_id)
         elif scope.startswith("store:"):
             warehouse_id = scope.split(":")[1]
+            if not warehouse_id.isdigit():
+                return JsonResponse({"error": "Invalid scope"}, status=400)
             queryset = queryset.filter(warehouse_id=warehouse_id)
 
     if status == "active":
@@ -356,7 +372,7 @@ def filter_terminal_providers(request):
     elif connection == "error":
         queryset = queryset.filter(connection_status="error")
     elif connection == "not_tested":
-        queryset = queryset.filter(connection_status="not_tested")
+        queryset = queryset.filter(connection_status="unknown")
 
     html = render_to_string(
         "admin/pos_app/posterminalprovider/partials/provider_cards.html",
@@ -488,6 +504,8 @@ def quick_assign_reader(request):
         reader = POSTerminalReader.objects.get(id=reader_id)
     except POSTerminalReader.DoesNotExist:
         return JsonResponse({"error": "Reader not found"}, status=404)
+    except ValidationError:
+        return JsonResponse({"error": "Invalid reader ID"}, status=400)
 
     if terminal_id:
         try:
@@ -546,6 +564,9 @@ def refresh_reader_status(request, reader_id):
 
     # Skip for manual provider
     if reader.provider.provider_key == "manual":
+        reader.status = "online"
+        reader.last_seen_at = timezone.now()
+        reader.save(update_fields=["status", "last_seen_at"])
         return JsonResponse(
             {
                 "success": True,
@@ -647,6 +668,9 @@ def activate_license(request):
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         data = request.POST
+    else:
+        if not isinstance(data, dict):
+            return JsonResponse({"success": False, "error": "Invalid request body"}, status=400)
 
     license_key = data.get("license_key", "").strip().upper()
     if not license_key:

@@ -114,9 +114,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="preset-results">
         {% include "admin/media_library/imagesizepreset/partials/preset_cards.html" with presets=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <div id="list-filter-config"
      data-filter-url="{% url 'media_library_admin:imagesizepreset_filter' %}"

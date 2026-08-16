@@ -257,25 +257,25 @@ def validate_pos_license(self):
     Runs daily via Celery Beat. Updates the local license state and sends
     warning emails when the license is nearing expiration.
     """
-    from datetime import timedelta
-
-    from django.utils import timezone
-
-    from component_updates.models import UpdateServerConfig
-    from pos_app.license import (
-        POS_GRACE_PERIOD_DAYS,
-        _validate_against_server,
-        clear_pos_license_cache,
-    )
-
     try:
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from component_updates.models import UpdateServerConfig
+        from pos_app.license import (
+            POS_GRACE_PERIOD_DAYS,
+            clear_pos_license_cache,
+            pos_license_is_valid,
+        )
+
         config = UpdateServerConfig.get_instance()
 
         if not config.pos_license_key:
             logger.info("No POS license key configured, skipping validation")
             return {"success": True, "status": "not_configured"}
 
-        result = _validate_against_server(config)
+        result = pos_license_is_valid()
         clear_pos_license_cache()
 
         if result is True:

@@ -626,3 +626,57 @@ body {
   font-style: italic;
   padding: var(--theme-space-3, 0.75rem);
 }
+
+/* "Preview as visitor state" controls (auth pills + simulated cart) */
+.preview-visitor-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.preview-visitor-state .pvs-label {
+  color: var(--body-fg);
+  opacity: 0.7;
+  font-size: 14px;
+}
+.pvs-auth {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pvs-auth .pvs-btn {
+  padding: 6px 12px;
+  background: var(--secondary-bg, var(--body-bg));
+  color: var(--body-fg);
+  border: none;
+  border-left: 1px solid var(--border-color);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.pvs-auth .pvs-btn:first-child {
+  border-left: none;
+}
+.pvs-auth .pvs-btn:hover {
+  background: var(--darkened-bg);
+}
+.pvs-auth .pvs-btn.active {
+  background: var(--primary);
+  color: var(--primary-fg, white);
+}
+.pvs-cart {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--body-fg);
+  font-size: 13px;
+}
+.pvs-cart .pvs-cart-input {
+  width: 64px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--secondary-bg, var(--body-bg));
+  color: var(--body-fg);
+  font-size: 13px;
+}

@@ -10,14 +10,16 @@ All endpoints require staff authentication and a valid POS license.
 import logging
 from decimal import Decimal
 
-from django.db import transaction
-from django.db.models import Prefetch
+from django.db import connection, transaction
+from django.db.models import F, Prefetch
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
+from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from admin_api.authentication import MobileTokenAuthentication
@@ -48,6 +50,36 @@ def _get_pos_order_language():
         return SiteSettings.get_settings().default_language or "en"
     except Exception:
         return "en"
+
+
+def _get_pagination_params(request):
+    """Parse and validate the ``page`` / ``page_size`` query parameters.
+
+    Both must be positive integers; ``page_size`` is capped at 200. Invalid or
+    non-numeric values raise a DRF ValidationError (HTTP 400) instead of
+    crashing the endpoint (e.g. divide-by-zero or ValueError).
+    """
+    try:
+        page = int(request.query_params.get("page", 1))
+        page_size = int(request.query_params.get("page_size", 100))
+    except (TypeError, ValueError) as exc:
+        raise ValidationError({"detail": _("page and page_size must be integers.")}) from exc
+    if page < 1 or page_size < 1:
+        raise ValidationError({"detail": _("page and page_size must be positive integers.")})
+    return page, min(page_size, 200)
+
+
+def _advisory_xact_lock(key):
+    """Serialise concurrent transactions that share an idempotency key.
+
+    Takes a transaction-scoped Postgres advisory lock derived from ``key`` so a
+    check-then-create idempotency guard cannot be raced by a second upload of
+    the same key; the lock is released automatically when the surrounding
+    transaction ends. Must be called inside an open ``transaction.atomic()``
+    block.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT pg_advisory_xact_lock(hashtext(%s))", [key])
 
 
 @extend_schema(
@@ -119,8 +151,7 @@ def product_delta_sync(request):
     products = products.order_by("updated_at")
 
     # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 100)), 200)
+    page, page_size = _get_pagination_params(request)
     start = (page - 1) * page_size
     end = start + page_size
 
@@ -188,8 +219,7 @@ def customer_sync(request):
     users = users.order_by("date_joined")
 
     # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 100)), 200)
+    page, page_size = _get_pagination_params(request)
     start = (page - 1) * page_size
     end = start + page_size
 
@@ -260,13 +290,17 @@ def upload_offline_transactions(request):
     for txn in transactions:
         local_id = txn["local_id"]
 
-        # Idempotency check
-        if Order.objects.filter(external_id=local_id, channel="pos").exists():
-            processed += 1
-            continue
-
         try:
             with transaction.atomic():
+                # Claim the idempotency key atomically: the advisory lock stops a
+                # concurrent upload of the same local_id from also passing this
+                # check and creating a duplicate paid order (external_id is not
+                # unique — it is shared with imports/migrations).
+                _advisory_xact_lock(f"pos_offline_order:{local_id}")
+                if Order.objects.filter(external_id=local_id, channel="pos").exists():
+                    processed += 1
+                    continue
+
                 # Resolve terminal and its currency
                 terminal = POSTerminal.objects.get(uuid=txn["terminal_uuid"], is_active=True)
                 currency = terminal.effective_currency
@@ -290,7 +324,9 @@ def upload_offline_transactions(request):
                     product = Product.all_objects.get(id=item_data["product_id"])
                     variant = None
                     if item_data.get("variant_id"):
-                        variant = ProductVariant.objects.get(id=item_data["variant_id"])
+                        variant = ProductVariant.objects.get(
+                            id=item_data["variant_id"], product=product
+                        )
 
                     order_items_data.append(
                         {
@@ -311,9 +347,9 @@ def upload_offline_transactions(request):
                 User = get_user_model()
                 cashier_id = txn["cashier_id"]
                 if cashier_id != request.user.id:
-                    logger.warning(
-                        f"Offline sync cashier_id mismatch: payload has {cashier_id}, "
-                        f"authenticated user is {request.user.id}"
+                    raise PermissionError(
+                        f"cashier_id {cashier_id} does not match authenticated "
+                        f"user {request.user.id}"
                     )
                 cashier = User.objects.get(id=cashier_id)
                 order_user = cashier
@@ -386,11 +422,14 @@ def upload_offline_transactions(request):
 
                     POSPayment.objects.create(**pmt_kwargs)
 
-                # Update shift totals if shift exists
+                # Update shift totals atomically with F() expressions so two
+                # concurrent uploads for the same shift cannot read the same
+                # totals and overwrite one another (lost sales/transactions).
                 if shift:
-                    shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-                    shift.total_transactions = (shift.total_transactions or 0) + 1
-                    shift.save(update_fields=["total_sales", "total_transactions"])
+                    POSShift.objects.filter(pk=shift.pk).update(
+                        total_sales=F("total_sales") + order_total,
+                        total_transactions=F("total_transactions") + 1,
+                    )
 
                 processed += 1
 
@@ -514,17 +553,48 @@ def upload_offline_stock_adjustments(request):
     serializer.is_valid(raise_exception=True)
     adjustments = serializer.validated_data["adjustments"]
 
-    # Resolve terminal warehouse
+    # Resolve terminal warehouse. A valid, active terminal is required so every
+    # adjustment targets an explicit warehouse and never mutates an arbitrary
+    # matching stock item when a product is stocked in multiple warehouses.
     terminal_uuid = request.headers.get("X-Terminal-UUID")
-    warehouse_id = None
-    if terminal_uuid:
-        try:
-            terminal = POSTerminal.objects.select_related("warehouse").get(
-                uuid=terminal_uuid, is_active=True
-            )
-            warehouse_id = terminal.warehouse_id
-        except POSTerminal.DoesNotExist:
-            pass
+    if not terminal_uuid:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "TERMINAL_REQUIRED",
+                    "message": _("A valid X-Terminal-UUID header is required."),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    try:
+        terminal = POSTerminal.objects.select_related("warehouse").get(
+            uuid=terminal_uuid, is_active=True
+        )
+    except POSTerminal.DoesNotExist:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "TERMINAL_NOT_FOUND",
+                    "message": _("No active terminal matches the provided X-Terminal-UUID."),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    warehouse_id = terminal.warehouse_id
+    if not warehouse_id:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "TERMINAL_WAREHOUSE_MISSING",
+                    "message": _("The terminal has no warehouse configured."),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     TYPE_MAP = {
         "receive": "adjustment",
@@ -541,23 +611,29 @@ def upload_offline_stock_adjustments(request):
     for adj in adjustments:
         idem_key = adj["idempotency_key"]
 
-        # Idempotency check
-        if StockMovement.objects.filter(reference_key=idem_key).exists():
-            skipped += 1
-            processed += 1
-            continue
-
         try:
             with transaction.atomic():
+                # Claim the idempotency key atomically: the advisory lock stops a
+                # concurrent upload of the same key from also passing this check
+                # and applying the adjustment twice (reference_key is not unique
+                # — it is shared across the two legs of a stock transfer).
+                _advisory_xact_lock(f"pos_offline_stock:{idem_key}")
+                if StockMovement.objects.filter(reference_key=idem_key).exists():
+                    skipped += 1
+                    processed += 1
+                    continue
+
                 # Use all_objects to allow adjustments for soft-deleted products (offline adjustments)
                 product = Product.all_objects.get(id=adj["product_id"])
                 variant = None
                 if adj.get("variant_id"):
                     variant = ProductVariant.objects.get(id=adj["variant_id"], product=product)
 
-                stock_filter = {"product": product, "variant": variant}
-                if warehouse_id:
-                    stock_filter["warehouse_id"] = warehouse_id
+                stock_filter = {
+                    "product": product,
+                    "variant": variant,
+                    "warehouse_id": warehouse_id,
+                }
 
                 stock_item = StockItem.objects.select_for_update().filter(**stock_filter).first()
 
@@ -567,11 +643,7 @@ def upload_offline_stock_adjustments(request):
                 if adj_type == "receive" and not stock_item:
                     from catalog.models import Warehouse
 
-                    wh = (
-                        Warehouse.objects.get(id=warehouse_id)
-                        if warehouse_id
-                        else Warehouse.objects.first()
-                    )
+                    wh = Warehouse.objects.get(id=warehouse_id)
                     stock_item = StockItem.objects.create(
                         product=product,
                         variant=variant,
@@ -650,12 +722,10 @@ def _serialize_sync_order(order, currency):
                 "method": p.method,
                 "method_display": p.get_method_display(),
                 "amount": str(p.amount.amount) if hasattr(p.amount, "amount") else str(p.amount),
-                "amount_tendered": str(p.amount_tendered.amount)
-                if p.amount_tendered and hasattr(p.amount_tendered, "amount")
+                "amount_tendered": str(p.amount_tendered)
+                if p.amount_tendered is not None
                 else None,
-                "change_given": str(p.change_given.amount)
-                if p.change_given and hasattr(p.change_given, "amount")
-                else None,
+                "change_given": str(p.change_given) if p.change_given is not None else None,
                 "card_last_four": p.card_last_four or "",
             }
         )
@@ -665,7 +735,7 @@ def _serialize_sync_order(order, currency):
         from payment_providers.models import PaymentTransaction
 
         txns = PaymentTransaction.objects.filter(
-            order=order, transaction_type="charge", status="succeeded"
+            order=order, transaction_type="charge", status="completed"
         ).select_related("provider_account__component")
         for t in txns:
             payments.append(
@@ -758,8 +828,7 @@ def order_sync(request):
     since = parse_datetime(since_str) if since_str else None
     cutoff = timezone.now() - timedelta(days=sync_days)
 
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 100)), 200)
+    page, page_size = _get_pagination_params(request)
 
     base_qs = (
         Order.objects.filter(
@@ -782,21 +851,23 @@ def order_sync(request):
         orders = base_qs.filter(updated_at__gt=since).order_by("-updated_at")
         total = orders.count()
     else:
-        # Full sync: POS orders first, then web orders fill remaining slots
-        pos_orders = base_qs.filter(channel="pos").order_by("-created_at")
-        pos_count = pos_orders.count()
-
-        remaining = max(0, sync_limit - pos_count)
-        web_orders = (
-            base_qs.filter(channel="web").order_by("-created_at")[:remaining]
-            if remaining > 0
-            else Order.objects.none()
+        # Full sync: POS orders are always included in full, then web orders
+        # fill only the remaining capacity below the terminal's sync_limit.
+        # sync_limit caps web orders, never POS orders, so an offline terminal
+        # always caches its own sales even when they exceed the limit.
+        pos_ids = list(
+            base_qs.filter(channel="pos").order_by("-created_at").values_list("id", flat=True)
         )
-        web_orders.count()
-
-        # Build combined ordered ID list for pagination
-        pos_ids = list(pos_orders.values_list("id", flat=True))
-        web_ids = list(web_orders.values_list("id", flat=True))
+        remaining = max(0, sync_limit - len(pos_ids))
+        web_ids = (
+            list(
+                base_qs.filter(channel="web")
+                .order_by("-created_at")
+                .values_list("id", flat=True)[:remaining]
+            )
+            if remaining > 0
+            else []
+        )
         all_ids = pos_ids + web_ids
         total = len(all_ids)
 

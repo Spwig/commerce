@@ -1,6 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+# StockItem.on_hand/allocated and the StockMovement quantity columns are
+# Django IntegerFields, i.e. PostgreSQL signed 32-bit integers. Quantities are
+# bounded to this range so validation rejects values that would otherwise
+# raise an unhandled database range/overflow error on write.
+_INT_FIELD_MAX = 2147483647
+
 
 class POSStockItemSerializer(serializers.Serializer):
     """Stock level for a product in a warehouse."""
@@ -61,6 +67,7 @@ class POSStockAdjustmentSerializer(serializers.Serializer):
     )
     quantity = serializers.IntegerField(
         min_value=0,
+        max_value=_INT_FIELD_MAX,
         help_text=_(
             "For receive/return: units to add. "
             "For damage: units to remove. "

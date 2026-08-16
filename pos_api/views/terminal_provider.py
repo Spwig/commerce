@@ -37,29 +37,59 @@ from pos_api.views.utils import get_terminal
 logger = logging.getLogger(__name__)
 
 
+def _provider_unavailable_response():
+    """Structured 500 for a provider that is configured but cannot be built."""
+    return Response(
+        {
+            "success": False,
+            "error": {
+                "code": "PROVIDER_UNAVAILABLE",
+                "message": "The configured terminal provider is not usable.",
+            },
+        },
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+
 def _get_provider_instance(terminal):
     """
     Get the active terminal provider instance for the given terminal.
 
-    Looks for a POSTerminalReader assigned to this terminal,
-    then returns the provider instance from its POSTerminalProvider.
-    Falls back to 'manual' if no reader is assigned.
+    Looks for a POSTerminalReader assigned to this terminal, then returns the
+    provider instance from its POSTerminalProvider, otherwise falls back to the
+    active non-manual provider.
+
+    Returns a ``(provider_instance, provider_account, error)`` tuple. When no
+    integrated provider is configured all three are falsy, so callers emit their
+    own "no provider" response. When a provider is configured but cannot be
+    constructed (unknown key, undecryptable or rejected credentials), ``error``
+    is a structured 500 ``Response`` and ``provider_instance`` is ``None`` — the
+    initialization failure is never masked as a usable configuration.
     """
     from pos_app.models import POSTerminalProvider
 
     # Check if terminal has an assigned card reader
     reader = getattr(terminal, "card_reader", None)
     if reader and reader.provider and reader.provider.is_active:
-        return reader.provider.get_provider_instance(), reader.provider
+        provider_account = reader.provider
+    else:
+        # Fall back to active provider (prefer non-manual)
+        provider_account = (
+            POSTerminalProvider.objects.filter(is_active=True)
+            .exclude(provider_key="manual")
+            .first()
+        )
 
-    # Fall back to active provider (prefer non-manual)
-    provider_account = (
-        POSTerminalProvider.objects.filter(is_active=True).exclude(provider_key="manual").first()
-    )
-    if provider_account:
-        return provider_account.get_provider_instance(), provider_account
+    if not provider_account:
+        return None, None, None
 
-    return None, None
+    try:
+        return provider_account.get_provider_instance(), provider_account, None
+    except Exception as e:
+        logger.error(
+            "Terminal provider '%s' failed to initialize: %s", provider_account.provider_key, e
+        )
+        return None, provider_account, _provider_unavailable_response()
 
 
 @extend_schema(
@@ -91,15 +121,22 @@ def provider_config(request):
         provider_account = reader.provider
         try:
             provider_instance = provider_account.get_provider_instance()
-            integration_mode = provider_instance.integration_mode
-        except Exception:
-            integration_mode = "sdk"
+        except Exception as e:
+            # Surface initialization failures instead of masking them as a
+            # working "sdk" configuration (which sends the frontend down the
+            # SDK payment flow against a provider that cannot process payments).
+            logger.error(
+                "Terminal provider '%s' failed to initialize: %s",
+                provider_account.provider_key,
+                e,
+            )
+            return _provider_unavailable_response()
         return Response(
             {
                 "success": True,
                 "provider_key": provider_account.provider_key,
                 "provider_name": provider_account.display_name or provider_account.provider_key,
-                "integration_mode": integration_mode,
+                "integration_mode": provider_instance.integration_mode,
                 "has_reader": True,
                 "reader": {
                     "id": str(reader.id),
@@ -150,7 +187,9 @@ def connection_token(request):
     if err:
         return err
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -219,7 +258,9 @@ def list_readers(request):
     if err:
         return err
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response({"success": True, "readers": []})
 
@@ -267,7 +308,9 @@ def create_payment_intent(request):
     amount = serializer.validated_data["amount"]
     currency = serializer.validated_data.get("currency") or terminal.effective_currency
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -342,7 +385,9 @@ def capture_payment(request):
 
     payment_intent_id = serializer.validated_data["payment_intent_id"]
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -392,7 +437,9 @@ def cancel_payment(request):
 
     payment_intent_id = serializer.validated_data["payment_intent_id"]
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -450,7 +497,9 @@ def initiate_cloud_payment(request):
     currency = serializer.validated_data.get("currency") or terminal.effective_currency
     reader_id = serializer.validated_data["reader_id"]
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -551,7 +600,9 @@ def check_payment_status(request, transaction_id):
     if err:
         return err
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {
@@ -613,7 +664,9 @@ def cancel_cloud_payment(request):
 
     transaction_id = serializer.validated_data["transaction_id"]
 
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     if not provider_instance:
         return Response(
             {

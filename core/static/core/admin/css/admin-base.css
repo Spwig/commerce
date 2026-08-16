@@ -1107,6 +1107,35 @@ a.deletelink:hover {
   border-color: var(--primary);
 }
 
+/* Reusable, system-wide SEO status badge — rendered by {% seo_badge obj %}.
+   Self-contained (no card context needed) so it can sit on any list, card, or
+   detail surface. Complete = meta title + description set; incomplete = not. */
+.seo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid var(--border-color);
+}
+.seo-badge i {
+  font-size: 11px;
+}
+.seo-badge--complete {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border-color: var(--success-fg);
+}
+.seo-badge--incomplete {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border-color: var(--warning-fg);
+}
+
 /* Card stats/values */
 .list-row-card-stats {
   display: flex;
@@ -1187,6 +1216,88 @@ a.deletelink:hover {
 .list-row-card.disabled:hover {
   transform: none;
   box-shadow: none;
+}
+
+/* Compact variant — content flows across the row instead of stacking, so many
+   entries fit on screen at once (audit logs, activity feeds, change history).
+   Reuses every .list-row-card-* sub-element; only the flow and spacing change. */
+.list-row-cards.compact {
+  gap: 6px;
+}
+.list-row-card.compact {
+  padding: 8px 14px;
+  gap: 12px;
+}
+.list-row-card.compact:hover {
+  transform: none; /* no lift — rows are dense, a jump per hover is noisy */
+}
+.list-row-card.compact .list-row-card-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+.list-row-card.compact .list-row-card-content {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 14px;
+}
+.list-row-card.compact .list-row-card-title {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+.list-row-card.compact .list-row-card-subtitle {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 240px;
+}
+.list-row-card.compact .list-row-card-badges {
+  margin-top: 0;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+/* The description becomes the flexible middle column, on one line. */
+.list-row-card.compact .list-row-card-description {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Meta (timestamp / IP / agent) hugs the right edge. */
+.list-row-card.compact .list-row-card-meta {
+  margin-left: auto;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.list-row-card.compact .list-row-card-actions {
+  flex-direction: row; /* side-by-side keeps rows short */
+  /* bleed to top/bottom/right edge only — a negative left margin would
+     overlap and clip the meta column that sits just before it */
+  margin: -8px -14px -8px 0;
+  padding: 0.4rem 0.6rem;
+  gap: 0.5rem;
+  align-items: center;
+}
+.list-row-card.compact .list-row-card-action {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+/* Below tablet, let the row relax onto a second line rather than crush. */
+@media (max-width: 768px) {
+  .list-row-card.compact .list-row-card-content {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .list-row-card.compact .list-row-card-subtitle {
+    max-width: none;
+  }
+  .list-row-card.compact .list-row-card-meta {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
 }
 
 /* Responsive design */
@@ -4819,4 +4930,63 @@ body.popup .object-tools {
 
 .admin-account-suspended #changelist-form .actions {
   display: none !important;
+}
+
+/* ==========================================================================
+   Card-changelist bulk-actions bar (shared)
+   Rendered by admin/includes/bulk_actions_open.html; behaviour in
+   card-bulk-actions.js. Theme-token driven so it tracks light/dark.
+   ========================================================================== */
+.card-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--body-fg);
+}
+
+.card-bulk-actions__selectall {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--body-fg);
+}
+
+.card-bulk-actions__selectall input[type='checkbox'],
+.card-bulk-actions .action-select {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.card-bulk-actions__label {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--body-loud-color);
+}
+
+.card-bulk-actions select {
+  max-width: 320px;
+}
+
+.card-bulk-actions__counter {
+  margin-left: auto;
+  color: var(--body-quiet-color);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stack the bar on narrow screens; keep the counter from forcing a wide row. */
+@media (max-width: 640px) {
+  .card-bulk-actions__counter {
+    margin-left: 0;
+  }
 }

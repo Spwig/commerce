@@ -1,10 +1,11 @@
 import csv
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
-from django.db.models import Avg, Q, Sum
-from django.http import HttpResponse, JsonResponse
+from django.db.models import Avg, OuterRef, Prefetch, Q, Subquery, Sum
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -32,6 +33,7 @@ from core.api.authentication import HeadlessAPIMixin
 
 from .models import (
     AbandonedCart,
+    CohortMetrics,
     CustomerCohort,
     CustomerMetrics,
     CustomerNote,
@@ -54,6 +56,19 @@ from .services.cohort_service import CohortService
 from .services.probabilistic_ltv_service import ProbabilisticLTVService
 
 User = get_user_model()
+
+
+def _sanitize_csv_cell(value):
+    """Neutralize spreadsheet formula injection in an externally controlled cell.
+
+    Prefixes a leading formula trigger (=, +, -, @, tab, carriage return) with an
+    apostrophe so the value opens as text rather than executing as a formula in
+    common spreadsheet software. Non-string values pass through unchanged.
+    """
+    text = value if isinstance(value, str) else str(value)
+    if text and text[0] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + text
+    return value
 
 
 @staff_member_required
@@ -143,7 +158,9 @@ def filter_customers(request):
     if date_to:
         try:
             date_to_obj = datetime.strptime(date_to, "%Y-%m-%d")
-            profiles = profiles.filter(created_at__lte=date_to_obj)
+            # Inclusive end-of-day: match every record created on date_to,
+            # not just those at 00:00:00.
+            profiles = profiles.filter(created_at__date__lte=date_to_obj.date())
         except ValueError:
             pass
 
@@ -164,41 +181,47 @@ def filter_customers(request):
     min_spent = request.GET.get("min_spent", "").strip()
     max_spent = request.GET.get("max_spent", "").strip()
 
-    if min_spent or max_spent:
+    try:
+        min_spent_val = float(min_spent) if min_spent else None
+        max_spent_val = float(max_spent) if max_spent else None
+    except ValueError:
+        return JsonResponse({"error": _("Invalid spend filter value")}, status=400)
+
+    if min_spent_val is not None or max_spent_val is not None:
         filtered = []
         for profile in profiles_list:
-            try:
-                total = profile.total_spent
-                amount = total.amount if hasattr(total, "amount") else float(total or 0)
+            total = profile.total_spent
+            amount = total.amount if hasattr(total, "amount") else float(total or 0)
 
-                if min_spent and amount < float(min_spent):
-                    continue
-                if max_spent and amount > float(max_spent):
-                    continue
+            if min_spent_val is not None and amount < min_spent_val:
+                continue
+            if max_spent_val is not None and amount > max_spent_val:
+                continue
 
-                filtered.append(profile)
-            except Exception:
-                pass
+            filtered.append(profile)
         profiles_list = filtered
 
     # Order count filters (requires property evaluation)
     min_orders = request.GET.get("min_orders", "").strip()
     max_orders = request.GET.get("max_orders", "").strip()
 
-    if min_orders or max_orders:
+    try:
+        min_orders_val = int(min_orders) if min_orders else None
+        max_orders_val = int(max_orders) if max_orders else None
+    except ValueError:
+        return JsonResponse({"error": _("Invalid order-count filter value")}, status=400)
+
+    if min_orders_val is not None or max_orders_val is not None:
         filtered = []
         for profile in profiles_list:
-            try:
-                orders = profile.total_orders
+            orders = profile.total_orders
 
-                if min_orders and orders < int(min_orders):
-                    continue
-                if max_orders and orders > int(max_orders):
-                    continue
+            if min_orders_val is not None and orders < min_orders_val:
+                continue
+            if max_orders_val is not None and orders > max_orders_val:
+                continue
 
-                filtered.append(profile)
-            except Exception:
-                pass
+            filtered.append(profile)
         profiles_list = filtered
 
     # Render the partial template
@@ -248,13 +271,22 @@ def customer_dashboard(request):
 
     # Customer segments
     segments = CustomerSegment.objects.filter(is_active=True).order_by("-priority")
-    segment_data = []
-    for segment in segments:
-        count = 0
-        for user in User.objects.filter(is_active=True).exclude(username__startswith="guest_"):
-            if segment.determine_segment_for_user(user) == segment:
-                count += 1
-        segment_data.append({"name": segment.display_name, "count": count, "color": segment.color})
+    # Determine each user's segment once, then tally — determine_segment_for_user
+    # already returns the single best segment, so there is no need to re-evaluate
+    # it per segment (which produced an O(segments x users) query pattern).
+    segment_counts = defaultdict(int)
+    for user in User.objects.filter(is_active=True).exclude(username__startswith="guest_"):
+        user_segment = CustomerSegment.determine_segment_for_user(user)
+        if user_segment:
+            segment_counts[user_segment.pk] += 1
+    segment_data = [
+        {
+            "name": segment.display_name,
+            "count": segment_counts.get(segment.pk, 0),
+            "color": segment.color,
+        }
+        for segment in segments
+    ]
 
     # Recent abandoned carts
     recent_abandoned = (
@@ -281,13 +313,17 @@ def customer_dashboard(request):
     total_cohorts = CustomerCohort.objects.count()
     customers_in_cohorts = CustomerMetrics.objects.filter(cohort_month__isnull=False).count()
 
-    # Get best performing cohort (by LTV)
-    # Note: Can't order by property, so we get all and sort in Python
-    all_cohorts = list(CustomerCohort.objects.all())
+    # Get best performing cohort (by LTV). Annotate each cohort with its latest
+    # metric's average LTV via a single subquery so the sort does not trigger a
+    # per-cohort query through the average_ltv property (N+1).
+    latest_metric_ltv = (
+        CohortMetrics.objects.filter(cohort=OuterRef("pk"))
+        .order_by("-months_since_acquisition")
+        .values("average_ltv")[:1]
+    )
+    all_cohorts = list(CustomerCohort.objects.annotate(latest_ltv=Subquery(latest_metric_ltv)))
     if all_cohorts:
-        best_cohort = max(
-            all_cohorts, key=lambda c: float(c.average_ltv.amount) if c.average_ltv else 0
-        )
+        best_cohort = max(all_cohorts, key=lambda c: float(c.latest_ltv) if c.latest_ltv else 0)
     else:
         best_cohort = None
 
@@ -1147,13 +1183,15 @@ class CustomerDigitalProductsViewSet(HeadlessAPIMixin, viewsets.ViewSet):
         - Download history
         """
         try:
-            from catalog.models import DigitalAsset, DigitalDownload, LicenseKey
+            from catalog.models import DigitalAsset, DigitalDownload
             from orders.models import OrderItem
 
             from .serializers import CustomerDigitalProductSerializer
 
-            # Get all order items for completed orders with digital products
-            digital_order_items = (
+            # Get all order items for completed orders with digital products.
+            # Download history is ordered via a filtered Prefetch so the loop can
+            # reuse the cached collections instead of re-querying per item.
+            digital_order_items = list(
                 OrderItem.objects.filter(
                     order__user=request.user,
                     order__status__in=["processing", "completed", "delivered"],
@@ -1161,37 +1199,36 @@ class CustomerDigitalProductsViewSet(HeadlessAPIMixin, viewsets.ViewSet):
                 )
                 .select_related("order", "product")
                 .prefetch_related(
-                    "digital_downloads__digital_asset",
+                    Prefetch(
+                        "digital_downloads",
+                        queryset=DigitalDownload.objects.select_related(
+                            "digital_asset__product"
+                        ).order_by("-downloaded_at"),
+                    ),
                     "license_keys__digital_asset",
                     "license_keys__activations",
                 )
                 .order_by("-order__created_at")
             )
 
+            # Bulk-load active digital assets for every purchased product in a
+            # single query rather than one query per order item.
+            product_ids = {item.product_id for item in digital_order_items}
+            assets_by_product = defaultdict(list)
+            for asset in DigitalAsset.objects.filter(
+                product_id__in=product_ids, is_active=True
+            ).select_related("product"):
+                assets_by_product[asset.product_id].append(asset)
+
             # Build response data
             digital_products = []
             for item in digital_order_items:
-                # Get digital assets for this product
-                assets = DigitalAsset.objects.filter(product=item.product, is_active=True)
-
-                # Get license keys for this purchase
-                licenses = LicenseKey.objects.filter(order_item=item).prefetch_related(
-                    "activations"
-                )
-
-                # Get download history
-                downloads = (
-                    DigitalDownload.objects.filter(order_item=item)
-                    .select_related("digital_asset")
-                    .order_by("-downloaded_at")
-                )
-
                 product_data = {
                     "order": item.order,
                     "product": item.product,
-                    "digital_assets": assets,
-                    "license_keys": licenses,
-                    "digital_downloads": downloads,
+                    "digital_assets": assets_by_product.get(item.product_id, []),
+                    "license_keys": item.license_keys.all(),
+                    "digital_downloads": item.digital_downloads.all(),
                 }
 
                 digital_products.append(product_data)
@@ -1289,6 +1326,8 @@ class CustomerDigitalProductsViewSet(HeadlessAPIMixin, viewsets.ViewSet):
 
             return Response({"success": True, "data": serializer.data})
 
+        except Http404:
+            raise
         except Exception as e:
             return Response(
                 {
@@ -1317,28 +1356,19 @@ class CustomerDigitalProductsViewSet(HeadlessAPIMixin, viewsets.ViewSet):
             # Get all license keys for this customer
             licenses = (
                 LicenseKey.objects.filter(user=request.user)
+                .select_related("digital_asset__product")
                 .prefetch_related("activations")
                 .order_by("-issued_at")
             )
 
-            license_data = []
-            for license in licenses:
-                # Get active activations
-                active_activations = license.activations.filter(is_active=True)
-
-                license_info = {
-                    "license": license,
-                    "active_devices": active_activations,
-                }
-
-                license_data.append(license_info)
-
             serializer = LicenseKeySerializer(licenses, many=True)
 
-            # Include activation details in response
+            # Include activation details in response. Filter the prefetched
+            # activations in memory so we reuse the prefetch cache instead of
+            # issuing a fresh query per license.
             response_data = serializer.data
             for i, license in enumerate(licenses):
-                active_devices = license.activations.filter(is_active=True)
+                active_devices = [a for a in license.activations.all() if a.is_active]
                 response_data[i]["active_devices"] = LicenseActivationSerializer(
                     active_devices, many=True
                 ).data
@@ -1513,7 +1543,21 @@ def customer_profile_actions(request, object_id):
     - convert_to_affiliate: Convert customer to affiliate
     """
     customer_profile = get_object_or_404(CustomerProfile, pk=object_id)
-    action = request.GET.get("action") or request.POST.get("action")
+
+    # Read the action from POST first (the admin JS POSTs mutating actions),
+    # falling back to GET for the read-only ones (the CSV export link and the
+    # refresh_metrics AJAX call).
+    action = request.POST.get("action") or request.GET.get("action")
+
+    # Mutating actions must arrive via POST so CSRF protection applies (#345).
+    # Read-only actions (refresh_metrics, export) may use GET. An unknown action
+    # is a bad request, not a disallowed method, so it falls through to the 400.
+    mutating_actions = {"convert_to_affiliate", "send_account_invitation"}
+    if action in mutating_actions and request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": _("This action requires a POST request")},
+            status=405,
+        )
 
     if action == "refresh_metrics":
         try:
@@ -1534,10 +1578,11 @@ def customer_profile_actions(request, object_id):
 
         writer = csv.writer(response)
         writer.writerow(["Field", "Value"])
-        writer.writerow(["Username", customer_profile.user.username])
-        writer.writerow(["Email", customer_profile.user.email])
-        writer.writerow(["Name", customer_profile.user.get_full_name()])
-        writer.writerow(["Phone", customer_profile.phone or ""])
+        # User-controlled fields are sanitised to neutralise CSV formula injection.
+        writer.writerow(["Username", _sanitize_csv_cell(customer_profile.user.username)])
+        writer.writerow(["Email", _sanitize_csv_cell(customer_profile.user.email)])
+        writer.writerow(["Name", _sanitize_csv_cell(customer_profile.user.get_full_name())])
+        writer.writerow(["Phone", _sanitize_csv_cell(customer_profile.phone or "")])
         writer.writerow(["Total Orders", customer_profile.total_orders])
         writer.writerow(["Total Spent", customer_profile.total_spent])
         writer.writerow(["Average Order Value", customer_profile.average_order_value])
@@ -1876,6 +1921,16 @@ def recalculate_ltv(request):
                             status=500,
                         )
 
+                else:
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "message": _("Unknown LTV calculation method: %(method)s")
+                            % {"method": settings.calculation_method},
+                        },
+                        status=400,
+                    )
+
         else:
             # Recalculate for specific user
             user_id = int(scope)
@@ -1907,6 +1962,8 @@ def recalculate_ltv(request):
                     }
                 )
 
+    except Http404:
+        raise
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
 

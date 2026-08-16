@@ -95,10 +95,17 @@ def _pkcs8_pem(private_key) -> bytes:
     )
 
 
-def generate_transport_key():
-    """Create and persist an active Ed25519 transport key. Returns the AgentKey."""
+def generate_transport_key(*, status=None):
+    """
+    Create and persist an Ed25519 transport key. Returns the AgentKey.
+
+    Defaults to an ACTIVE key; pass ``status=AgentKey.STATUS_ROTATING`` to
+    pre-publish one ahead of a rotation (published in the JWKS, not yet signing).
+    A rotating key carries no ``activated_at`` until it is promoted.
+    """
     from agentic.models import AgentKey
 
+    status = status or AgentKey.STATUS_ACTIVE
     priv = ed25519.Ed25519PrivateKey.generate()
     x = priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
     required = {"crv": "Ed25519", "kty": "OKP", "x": _b64url(x)}
@@ -113,15 +120,22 @@ def generate_transport_key():
         kid=kid,
         public_jwk=public_jwk,
         private_key_encrypted=_encrypt(_pkcs8_pem(priv)),
-        status=AgentKey.STATUS_ACTIVE,
-        activated_at=timezone.now(),
+        status=status,
+        activated_at=timezone.now() if status == AgentKey.STATUS_ACTIVE else None,
     )
 
 
-def generate_ap2_key():
-    """Create and persist an active ECDSA P-256 mandate key. Returns the AgentKey."""
+def generate_ap2_key(*, status=None):
+    """
+    Create and persist an ECDSA P-256 mandate key. Returns the AgentKey.
+
+    Defaults to an ACTIVE key; pass ``status=AgentKey.STATUS_ROTATING`` to
+    pre-publish one ahead of a rotation. A rotating key carries no
+    ``activated_at`` until it is promoted.
+    """
     from agentic.models import AgentKey
 
+    status = status or AgentKey.STATUS_ACTIVE
     priv = ec.generate_private_key(ec.SECP256R1())
     nums = priv.public_key().public_numbers()
     required = {
@@ -141,8 +155,8 @@ def generate_ap2_key():
         kid=kid,
         public_jwk=public_jwk,
         private_key_encrypted=_encrypt(_pkcs8_pem(priv)),
-        status=AgentKey.STATUS_ACTIVE,
-        activated_at=timezone.now(),
+        status=status,
+        activated_at=timezone.now() if status == AgentKey.STATUS_ACTIVE else None,
     )
 
 

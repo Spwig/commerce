@@ -33,8 +33,12 @@ class FedExOAuthClient:
     SANDBOX_TOKEN_URL = "https://apis-sandbox.fedex.com/oauth/token"
     PRODUCTION_TOKEN_URL = "https://apis.fedex.com/oauth/token"
 
-    # Token lifetime (55 minutes - 5 minute buffer before 60 min expiration)
-    TOKEN_LIFETIME_SECONDS = 3300
+    # Fallback token lifetime if the OAuth response omits expires_in (60 minutes)
+    DEFAULT_EXPIRES_IN_SECONDS = 3600
+
+    # Safety buffer subtracted from the token lifetime before caching, so the
+    # cached token is refreshed shortly before FedEx actually expires it.
+    TOKEN_SAFETY_BUFFER_SECONDS = 300
 
     # Cache key prefix
     CACHE_KEY_PREFIX = "fedex_oauth_token"
@@ -101,22 +105,24 @@ class FedExOAuthClient:
 
             # Acquire new token
             logger.info("Acquiring new FedEx OAuth token")
-            token = self._acquire_token()
+            token, expires_in = self._acquire_token()
 
-            # Cache token with expiration
-            cache.set(cache_key, token, self.TOKEN_LIFETIME_SECONDS)
-            logger.info(f"FedEx OAuth token cached for {self.TOKEN_LIFETIME_SECONDS} seconds")
+            # Cache token, refreshing slightly before FedEx expires it so we
+            # never hand back a token that has already lapsed.
+            cache_lifetime = max(0, expires_in - self.TOKEN_SAFETY_BUFFER_SECONDS)
+            cache.set(cache_key, token, cache_lifetime)
+            logger.info(f"FedEx OAuth token cached for {cache_lifetime} seconds")
 
             return token
 
-    def _acquire_token(self) -> str:
+    def _acquire_token(self) -> tuple[str, int]:
         """
         Acquire new OAuth token from FedEx API.
 
         Makes POST request to /oauth/token endpoint with client credentials.
 
         Returns:
-            Access token string
+            Tuple of (access token string, token lifetime in seconds)
 
         Raises:
             ConnectionError: If API request fails
@@ -160,6 +166,12 @@ class FedExOAuthClient:
             response.raise_for_status()
             token_data = response.json()
 
+            # A 2xx response must carry a JSON object; a list/string/null body
+            # would break the .get() access below with an AttributeError.
+            if not isinstance(token_data, dict):
+                logger.error("FedEx OAuth response was not a JSON object")
+                raise ConnectionError(_("Invalid response from FedEx OAuth endpoint"))
+
             # Extract access token
             access_token = token_data.get("access_token")
             if not access_token:
@@ -168,12 +180,12 @@ class FedExOAuthClient:
 
             # Log token info (but not the actual token)
             token_type = token_data.get("token_type", "Bearer")
-            expires_in = token_data.get("expires_in", 3600)
+            expires_in = token_data.get("expires_in", self.DEFAULT_EXPIRES_IN_SECONDS)
             logger.info(
                 f"FedEx OAuth token acquired successfully (type={token_type}, expires_in={expires_in}s)"
             )
 
-            return access_token
+            return access_token, expires_in
 
         except requests.exceptions.Timeout:
             logger.error("FedEx OAuth token request timed out")

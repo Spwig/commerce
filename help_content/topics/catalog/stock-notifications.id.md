@@ -2,91 +2,90 @@
 title: Pemberitahuan Stok
 ---
 
-Pemberitahuan stok memungkinkan pelanggan mendaftar untuk menerima email ketika produk yang habis stok kembali tersedia. Pengaturan tampilan stok mengontrol apa yang pelanggan lihat di halaman produk — seperti label status stok, peringatan stok rendah, dan apa yang terjadi ketika produk habis.
+Pemberitahuan stok memungkinkan pelanggan untuk mendaftar agar menerima email ketika produk yang kehabisan stok kembali tersedia. Pengaturan tampilan stok mengontrol apa yang dilihat pelanggan di halaman produk — seperti label status stok, peringatan stok rendah, dan apa yang terjadi ketika produk kehabisan stok.
 
-## Pengaturan Tampilan Stok
+## Pengaturan tampilan stok
 
-Pengaturan tampilan stok adalah pengaturan default toko yang berlaku untuk semua produk kecuali diubah di tingkat kategori atau produk.
+Pengaturan tampilan stok adalah pengaturan default untuk seluruh toko yang berlaku untuk semua produk kecuali diatur ulang di tingkat kategori atau produk.
 
-Navigasikan ke **Katalog > Pengaturan Tampilan Stok** untuk mengonfigurasi opsi ini. Ada satu catatan pengaturan untuk toko Anda — klik untuk mengedit.
+Navigasi ke **Katalog > Pengaturan Tampilan Stok** untuk mengkonfigurasi opsi ini. Ada satu catatan pengaturan untuk toko Anda — klik untuk diedit.
 
-### Tampilan Status Stok
+### Penampilan status stok
 
-| Pengaturan | Deskripsi |
+| Pengaturan | Keterangan |
 |---------|-------------|
-| **Tampilkan Status Stok** | Tampilkan label "Tersedia" atau "Habis" di halaman produk |
-| **Tampilkan Peringatan Stok Rendah** | Tampilkan pesan "Hanya tersisa X" ketika stok sedang rendah |
-| **Ambang Batas Stok Rendah** | Jumlah stok di mana atau di bawahnya peringatan stok rendah muncul (default: 5) |
-| **Tampilkan Jumlah Persis** | Tampilkan jumlah yang tersisa secara spesifik (misalnya, "Hanya tersisa 3!") alih-alih peringatan umum |
+| **Tampilkan Status Stok** | Menampilkan label "Tersedia" atau "Habis" di halaman produk |
+| **Tampilkan Peringatan Stok Rendah** | Menampilkan pesan "Hanya X tersisa" ketika stok mulai habis |
+| **Ambang Batas Stok Rendah** | Jumlah di mana peringatan stok rendah muncul (default: 5) |
+| **Tampilkan Jumlah Pasti** | Menampilkan jumlah tersisa yang tepat (misalnya, "Hanya 3 tersisa!") daripada peringatan umum |
 
-### Perilaku Produk Habis Stok
+### Perilaku stok habis
 
-Pengaturan **Tindakan Habis Stok** menentukan apa yang pelanggan lihat ketika produk tidak memiliki stok yang tersedia:
+Pengaturan **Tindakan Stok Habis** menentukan apa yang dilihat pelanggan ketika produk kehabisan stok:
 
-| Tindakan | Apa yang pelanggan lihat |
+| Tindakan | Yang dilihat pelanggan |
 |--------|-------------------|
-| **Sembunyikan dari daftar** | Produk dihilangkan dari halaman kategori dan hasil pencarian |
+| **Sembunyikan dari daftar** | Produk dihapus dari halaman kategori dan hasil pencarian |
 | **Tampilkan sebagai tidak tersedia** | Produk terlihat tetapi tidak dapat ditambahkan ke keranjang |
-| **Tampilkan tombol "Beritahu Saya"** | Pelanggan dapat mendaftarkan alamat email mereka untuk diberitahu ketika stok kembali |
-| **Izinkan pemesanan ulang** | Pelanggan dapat membeli produk meskipun stok sedang habis |
+| **Tampilkan tombol "Beritahu Saya"** | Pelanggan dapat mendaftarkan alamat email mereka untuk menerima pemberitahuan ketika stok kembali |
+| **Izinkan pesanan kembali** | Pelanggan dapat membeli produk tersebut meskipun stok nol |
 
-Atur **Pesan Habis Stok** untuk menyesuaikan teks yang ditampilkan ketika produk tidak tersedia (default: `Habis Stok`).
+Atur **Pesan Stok Habis** untuk menyesuaikan teks yang ditampilkan ketika produk tidak tersedia (default: `Habis Stok`).
 
-Atur **Pesan Pemesanan Ulang** untuk menyesuaikan teks yang ditampilkan untuk produk yang dapat dipesan ulang (default: `Tersedia untuk pemesanan ulang`).
+Atur **Pesan Pesanan Kembali** untuk menyesuaikan teks yang ditampilkan untuk produk yang dapat dipesan kembali (default: `Tersedia untuk pesanan kembali`).
 
-### Tampilan Pengiriman dan Pengiriman
+### Penampilan pengiriman dan pengiriman
 
-| Pengaturan | Deskripsi |
+| Pengaturan | Keterangan |
 |---------|-------------|
-| **Tampilkan Lokasi "Dikirim Dari"** | Tampilkan nama gudang di halaman produk |
-| **Tampilkan Estimasi Pengiriman** | Tampilkan tanggal estimasi pengiriman yang dihitung dari lokasi gudang |
+| **Tampilkan lokasi "Dikirim dari"** | Menampilkan nama gudang di halaman produk |
+| **Tampilkan Pengiriman Terkira** | Menampilkan tanggal pengiriman terkira yang dihitung dari lokasi gudang |
 
-### Izinkan Pemesanan Ulang (Seluruh Situs)
+### Izinkan pesanan kembali (seluruh situs)
 
-Centang **Izinkan Pemesanan Ulang** untuk memungkinkan pelanggan membeli produk yang habis stok secara default. Produk dan kategori individu dapat mengubah pengaturan ini.
+Centang **Izinkan Pesanan Kembali** untuk memungkinkan pelanggan membeli produk yang kehabisan stok secara default. Produk dan kategori individu dapat mengganti pengaturan ini.
 
-## Pemberitahuan Kembali Tersedia
+## Pemberitahuan kembali stok
 
-Ketika Anda mengatur tindakan habis stok menjadi **Tampilkan tombol "Beritahu Saya"**, pelanggan dapat memasukkan alamat email mereka di halaman produk untuk menerima email ketika produk kembali tersedia.
+Ketika Anda mengatur tindakan stok habis menjadi **Tampilkan tombol "Beritahu Saya"**, pelanggan dapat memasukkan alamat email mereka di halaman produk untuk menerima email ketika produk tersebut kembali tersedia.
 
-### Melihat Permintaan Pemberitahuan
+### Melihat permintaan pemberitahuan
 
-Navigasikan ke **Katalog > Pemberitahuan Stok** untuk melihat semua permintaan pemberitahuan pelanggan. Setiap catatan menampilkan:
+Navigasi ke **Katalog > Pemberitahuan Stok** untuk melihat semua permintaan pemberitahuan pelanggan. Setiap catatan menunjukkan:
 - Alamat email pelanggan
 - Produk dan variasi (jika berlaku)
-- Gudang yang dipilih (jika pelanggan memilih preferensi regional)
+- Gudang pilihan (jika pelanggan memilih preferensi regional)
 - Kapan permintaan dibuat
 - Kapan pemberitahuan dikirim (kosong jika belum dikirim)
 
-### Kapan Pemberitahuan Dikirim
+### Kapan pemberitahuan dikirim
 
-Spwig mengirimkan email kembali tersedia secara otomatis ketika tingkat stok produk naik di atas nol. Bidang **Diberitahu Pada** mencatat kapan email dikirim.
+Spwig mengirim email kembali stok secara otomatis ketika tingkat stok produk melebihi nol. Kolom **Diberitahukan Pada** mencatat kapan email dikirim.
 
-Pelanggan menerima satu email pemberitahuan. Setelah diberitahu, mereka perlu mendaftar kembali jika produk kembali habis stok untuk kedua kalinya.
+Pelanggan menerima satu email pemberitahuan. Setelah diberitahu, mereka perlu mendaftar kembali jika produk habis stok untuk kedua kalinya.
 
-### Memfilter Permintaan Pemberitahuan
+### Menyaring permintaan pemberitahuan
 
 Gunakan filter admin untuk menemukan:
 - Permintaan untuk produk tertentu
-- Permintaan yang sudah diberitahu (untuk melihat siapa yang sudah dihubungi)
+- Permintaan yang sudah diberitahukan (untuk melihat siapa yang telah dihubungi)
 - Permintaan yang masih menunggu (pelanggan yang menunggu restok)
 
-## Pengaturan Per Produk
+## Pengaturan tingkat produk
 
-Pengaturan tampilan stok seluruh situs dapat diubah per produk atau kategori. Di formulir pengeditan produk, cari bagian **Stok** tempat Anda dapat mengatur **Tindakan Habis Stok** yang berbeda dari pengaturan default global.
+Pengaturan tampilan stok seluruh situs dapat diatur ulang per produk atau kategori. Pada formulir edit produk, carilah bagian **Stok** di mana Anda dapat menyetel **Tindakan Stok Habis** yang spesifik untuk produk tersebut yang berbeda dari default global.
 
-Ini berguna ketika Anda ingin sebagian besar produk mengizinkan pemesanan ulang tetapi menjaga beberapa produk tetap diatur ke "Beritahu Saya" — atau ketika produk tertentu harus disembunyikan ketika habis stok.
+Ini berguna ketika Anda ingin sebagian besar produk mengizinkan pesanan kembali tetapi menjaga beberapa produk tetap diatur menjadi "Beritahu Saya" — atau ketika produk tertentu harus disembunyikan ketika habis stok.
 
 ## Tips
 
 Jaga semua format markdown, jalur gambar, blok kode, dan istilah teknis.
 
+- Atur **Ambang Batas Stok Rendah** ke titik pemesanan ulang yang biasanya Anda gunakan, sehingga pelanggan diberi tahu tentang ketersediaan yang terbatas sebelum stok benar-benar habis.
+- Gunakan opsi **Tampilkan tombol "Beri Tahu Saya"** daripada menyembunyikan produk yang kehabisan stok — pelanggan yang mendaftar menunjukkan permintaan nyata yang dapat membenarkan pesanan ulang.
+- Aktifkan **Tampilkan Jumlah yang Tepat** secara hati-hati.
 
-- Atur **Low Stock Threshold** ke titik reorder yang biasanya Anda gunakan, sehingga pelanggan diingatkan tentang ketersediaan terbatas sebelum Anda habis sepenuhnya.
-- Gunakan opsi **Show "Notify Me" button** alih-alih menyembunyikan produk yang habis — pelanggan yang mendaftar mewakili permintaan nyata yang dapat membenarkan pesanan restok.
-- Aktifkan **Show Exact Quantity** secara terbatas.
-
-Untuk sebagian besar toko, menampilkan "Hanya tersisa 3!" bekerja lebih baik daripada menampilkan jumlah yang tepat, karena menciptakan urgensi tanpa mengungkap gambaran inventaris penuh Anda.
-- Periksa daftar notifikasi stok sebelum menempatkan pesanan baru — jumlah permintaan notifikasi yang tertunda memberi tahu Anda seberapa besar permintaan untuk produk tersebut.
-- Jika Anda menggunakan backorders, perbarui **Backorder Message** Anda untuk menetapkan ekspektasi yang akurat (misalnya, "Dikirim dalam 2-3 minggu — pesan sekarang untuk memesan tempat Anda").
-- Gabungkan notifikasi produk habis dengan pemasaran email: ketika Anda menambah stok produk populer, kirimkan kampanye kepada semua orang yang telah mendaftar, bukan hanya email notifikasi otomatis.
+Untuk sebagian besar toko, menampilkan "Hanya tersisa 3!" lebih baik daripada menampilkan jumlah yang tepat, karena menciptakan rasa urgensi tanpa mengungkap gambaran lengkap stok Anda.
+- Periksa daftar pemberitahuan stok sebelum memesan pesanan baru — jumlah permintaan pemberitahuan yang tertunda memberi tahu Anda seberapa besar permintaan yang ada untuk produk tersebut.
+- Jika Anda menggunakan pesanan terlebih dahulu, perbarui **Pesan Pesanan Terlebih Dahulu** untuk menetapkan ekspektasi yang akurat (misalnya, "Dikirim dalam 2-3 minggu — pesan sekarang untuk memesan tempat Anda").
+- Gabungkan pemberitahuan kehabisan stok dengan pemasaran email: ketika Anda stok kembali untuk produk yang populer, kirim kampanye kepada semua orang yang mendaftar, bukan hanya email pemberitahuan otomatis saja.

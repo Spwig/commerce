@@ -18,6 +18,7 @@ from django.views.decorators.http import require_GET
 
 from accounts.models import CommunicationPreference, PreferenceChangeLog
 from accounts.services.preference_analytics_service import PreferenceAnalyticsService
+from staff_roles.decorators import requires_permission
 
 
 @staff_member_required
@@ -78,6 +79,7 @@ def preference_analytics_dashboard(request):
 
 @staff_member_required
 @require_GET
+@requires_permission("accounts.view_communicationpreference", ajax=True)
 def filter_preferences(request):
     """AJAX filter endpoint for CommunicationPreference change list."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
@@ -130,6 +132,7 @@ def filter_preferences(request):
 
 @staff_member_required
 @require_GET
+@requires_permission("accounts.view_preferencechangelog", ajax=True)
 def filter_preference_changelogs(request):
     """AJAX filter endpoint for PreferenceChangeLog change list."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":

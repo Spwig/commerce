@@ -1,0 +1,12 @@
+{% comment %}
+Per-card selection checkbox for the shared card-changelist bulk actions.
+Usage inside a card partial:  {% include "admin/includes/action_checkbox.html" with pk=obj.pk %}
+Renders the standard `.list-row-card-checkbox` slot so it lines up with the
+existing card layout. `name="_selected_action"` is what Django's action
+framework reads; `.action-select` is what card-bulk-actions.js counts.
+{% endcomment %}
+{% load i18n %}
+<div class="list-row-card-checkbox">
+    <input type="checkbox" name="_selected_action" value="{{ pk }}" class="action-select"
+           aria-label="{% trans 'Select item for bulk action' %}">
+</div>

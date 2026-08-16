@@ -273,8 +273,11 @@ def test_confirm_hidden_when_dismissed(rf):
 
 
 def test_currency_switches_with_region_for_multi_currency_store(client, site_settings):
+    site_settings.enable_multi_currency = True
     site_settings.supported_currencies = ["USD", "SGD"]
-    site_settings.save()
+    # skip_validation avoids the exchange-rate-provider prerequisite in
+    # SiteSettings.full_clean(), which is unrelated to region currency switching.
+    site_settings.save(skip_validation=True)
     cache.clear()
 
     SalesRegionFactory(name="Singapore", code="SG", countries=["SG"], default_currency="SGD")
@@ -290,6 +293,29 @@ def test_currency_switches_with_region_for_multi_currency_store(client, site_set
     assert resp.json()["currency"] == "SGD"
     assert client.session["currency"] == "SGD"
     assert resp.cookies["selected_currency"].value == "SGD"
+
+
+def test_currency_untouched_when_multi_currency_disabled(client, site_settings):
+    # Several currencies are listed, but the merchant has NOT enabled
+    # multi-currency — the region switch must not silently change currency.
+    site_settings.enable_multi_currency = False
+    site_settings.supported_currencies = ["USD", "SGD"]
+    site_settings.save(skip_validation=True)
+    cache.clear()
+
+    SalesRegionFactory(name="Singapore", code="SG", countries=["SG"], default_currency="SGD")
+    ShippingCountryFactory(country_code="SG", is_active=True)
+
+    resp = client.post(
+        reverse("set_region"),
+        data=json.dumps({"country": "SG"}),
+        content_type="application/json",
+    )
+
+    assert resp.status_code == 200
+    assert resp.json()["currency"] is None
+    assert "currency" not in client.session
+    assert "selected_currency" not in resp.cookies
 
 
 def test_currency_untouched_for_single_currency_store(client, site_settings):

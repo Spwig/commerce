@@ -50,6 +50,7 @@
 {% block content %}
     <!-- Page content elements -->
     {% load element_tags %}
+    <div data-pb-page-id="{{ page.id }}" data-pb-personalize-url="{% url 'page_builder_api:personalize' %}"{% if category %} data-pb-category-slug="{{ category.slug }}"{% endif %}{% if product %} data-pb-product-slug="{{ product.slug }}"{% endif %} hidden></div>
     {% for element in elements %}
         {% render_element element %}
     {% empty %}
@@ -66,6 +67,9 @@
 {% endblock %}
 
 {% block extra_scripts %}
+    <!-- Resolve deferred per-visitor visibility placeholders -->
+    <script src="{% static 'page_builder/js/visibility-personalize.js' %}" defer></script>
+
     <!-- Page-specific JavaScript -->
     {% if page.page_type == 'product' and product %}
     <script src="{% static 'page_builder/js/product-page.js' %}" defer></script>

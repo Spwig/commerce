@@ -91,6 +91,11 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             "Accept": "application/vnd.api+json",
         }
 
+    @staticmethod
+    def _extract_error(response: dict) -> str:
+        """Return the first Keygen error detail, tolerating a missing/empty errors list."""
+        return (response.get("errors") or [{}])[0].get("detail", "Unknown error")
+
     def _get_policy_id(self, product) -> str:
         """
         Get Keygen policy ID for a product.
@@ -169,7 +174,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             )
             return True, external_id, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to create license in Keygen: {error}")
         return False, "", response
 
@@ -270,7 +275,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             )
             return True, activation_id, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to activate device in Keygen: {error}")
         return False, "", response
 
@@ -307,7 +312,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully deactivated device {device_fingerprint} in Keygen")
             return True, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to deactivate device in Keygen: {error}")
         return False, response
 
@@ -351,7 +356,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully suspended license {license_key.key} in Keygen")
             return True, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to suspend license in Keygen: {error}")
         return False, response
 
@@ -393,7 +398,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully revoked license {license_key.key} in Keygen")
             return True, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to revoke license in Keygen: {error}")
         return False, response
 
@@ -423,7 +428,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully retrieved license info for {external_id} from Keygen")
             return True, response
 
-        error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+        error = self._extract_error(response)
         logger.error(f"Failed to retrieve license info from Keygen: {error}")
         return False, response
 
@@ -477,7 +482,7 @@ class KeygenAdapter(BaseLicenseProviderAdapter):
                     "message": f"Connected to Keygen.sh (Account: {account_name})",
                 }
             else:
-                error = response.get("errors", [{}])[0].get("detail", "Unknown error")
+                error = self._extract_error(response)
                 return {"success": False, "error": f"Connection failed: {error}"}
 
         except Exception as e:

@@ -634,11 +634,17 @@ def verify_unlock_pin(request):
         except POSStaffDiscount.DoesNotExist:
             pass
     else:
-        manager_staff = (
-            POSStaffDiscount.objects.filter(is_manager=True, manager_pin=pin)
+        # manager_pin is hashed and cleared on save(), so it can't be matched
+        # in the query — verify each manager's stored hash via verify_pin().
+        candidates = (
+            POSStaffDiscount.objects.filter(is_manager=True)
+            .exclude(manager_pin_hash="")
             .select_related("user")
-            .first()
         )
+        for candidate in candidates:
+            if candidate.verify_pin(pin):
+                manager_staff = candidate
+                break
 
     if manager_staff:
         _log_lock_event(

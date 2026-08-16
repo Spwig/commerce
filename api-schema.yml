@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Spwig eCommerce API Documentation
-  version: 1.7.2
+  version: 1.7.3
   description: |-
     ## Spwig API Documentation
 
@@ -1174,6 +1174,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderAddress'
           description: ''
+  /api/admin/analytics/attribution/:
+    get:
+      operationId: api_admin_analytics_attribution_retrieve
+      description: "\n    Multi-touch revenue attribution for the store — the same\
+        \ data as the admin\n    Insights dashboard, so the mobile app can render\
+        \ the live model-flip.\n\n    Scope required: **analytics.attribution** (read).\
+        \ Reachable by an admin\n    session, the merchant mobile app, or a token\
+        \ holding that scope.\n\n    **Rate Limit:** 300 requests per minute\n\n \
+        \   Accepts a `period` (`last_7_days`, `last_14_days`, `last_30_days`,\n \
+        \   `last_90_days`, `month_to_date`, or `custom`). For `custom`, provide\n\
+        \    `start_date` and `end_date` (YYYY-MM-DD). Pass `model` to return only\
+        \ one\n    model's block (lighter payload); by default every model is returned\
+        \ so the\n    app can flip models instantly with no round-trip.\n\n    Returns,\
+        \ for the resolved range: totals + reconciliation flag, per-model\n    channel\
+        \ breakdown and time-series (`by_model`), the assisted `influenced`\n    lens,\
+        \ top journey `journeys`, and `campaigns`.\n    "
+      summary: Get revenue attribution
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+        description: Custom range end (YYYY-MM-DD); required when period=custom
+      - in: query
+        name: model
+        schema:
+          type: string
+        description: 'Return only this model''s block (default: all models)'
+      - in: query
+        name: period
+        schema:
+          type: string
+        description: last_7_days | last_14_days | last_30_days | last_90_days | month_to_date
+          | custom
+      - in: query
+        name: start_date
+        schema:
+          type: string
+        description: Custom range start (YYYY-MM-DD); required when period=custom
+      tags:
+      - Admin
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributionAnalyticsResponse'
+          description: ''
+        '400':
+          description: Invalid period or date range.
+        '401':
+          description: Authentication required
+        '403':
+          description: Permission denied
+        '429':
+          description: Rate limit exceeded
   /api/admin/analytics/brands/:
     get:
       operationId: api_admin_analytics_brands_retrieve
@@ -7346,6 +7405,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/UCPError'
           description: No such session.
+  /api/agentic/ucp/checkout-sessions/{checkout_id}/cancel/:
+    post:
+      operationId: agentic_ucp_checkout_cancel
+      description: Cancel an in-progress checkout session so it can no longer be paid.
+        Returns the session with status=canceled. Idempotent. A checkout that has
+        already completed cannot be canceled (409 already_completed); an unknown id
+        is 404.
+      summary: Cancel UCP checkout session
+      parameters:
+      - in: path
+        name: checkout_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Agentic Commerce
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UCPCheckoutSession'
+          description: The canceled UCP checkout session.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UCPError'
+          description: Signature required.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UCPError'
+          description: No such session.
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UCPError'
+          description: Already completed.
   /api/agentic/ucp/checkout-sessions/{checkout_id}/complete/:
     post:
       operationId: agentic_ucp_checkout_complete
@@ -18146,7 +18248,6 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/POSAddToCartRequest'
-        required: true
       responses:
         '200':
           content:
@@ -24337,6 +24438,60 @@ paths:
           description: Validation result
         '401':
           description: Invalid token
+  /api/visibility/attach/:
+    get:
+      operationId: api_visibility_attach_retrieve
+      description: |-
+        Read or set the RuleGroups attached to a target object.
+
+        GET  ?target_type=&target_id=            -> {rule_group_ids: [...]}
+        POST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_visibility_attach_create
+      description: |-
+        Read or set the RuleGroups attached to a target object.
+
+        GET  ?target_type=&target_id=            -> {rule_group_ids: [...]}
+        POST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/visibility/quick-rule/:
+    post:
+      operationId: api_visibility_quick_rule_create
+      description: |-
+        POST: create a single-rule RuleGroup in one call, for the editor's
+        'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup so the
+        engine evaluates it like any admin-authored group (never a throwaway JSON).
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/visibility/rule-groups/:
+    get:
+      operationId: api_visibility_rule_groups_retrieve
+      description: 'GET: list active, top-level RuleGroups for the editor''s picker.'
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
   /api/vouchers/applied/:
     get:
       operationId: api_vouchers_applied_list
@@ -24374,36 +24529,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedAppliedVoucherList'
           description: ''
-    post:
-      operationId: api_vouchers_applied_create
-      description: Apply a voucher to the user's cart. Validates voucher eligibility,
-        calculates discount, and adds to cart. Returns error if voucher is invalid
-        or already applied.
-      summary: Apply voucher to cart
-      tags:
-      - Vouchers
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppliedVoucher'
-          description: ''
   /api/vouchers/applied/{id}/:
     get:
       operationId: api_vouchers_applied_retrieve
@@ -24419,77 +24544,6 @@ paths:
         required: true
       tags:
       - Vouchers
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppliedVoucher'
-          description: ''
-    put:
-      operationId: api_vouchers_applied_update
-      description: Update an applied voucher in the cart. Can refresh discount calculation
-        if cart contents changed.
-      summary: Update applied voucher
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Applied Voucher.
-        required: true
-      tags:
-      - Vouchers
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AppliedVoucherRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppliedVoucher'
-          description: ''
-    patch:
-      operationId: api_vouchers_applied_partial_update
-      description: Update specific fields of an applied voucher. Useful for recalculating
-        discounts without full voucher reapplication.
-      summary: Partially update applied voucher
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Applied Voucher.
-        required: true
-      tags:
-      - Vouchers
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAppliedVoucherRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAppliedVoucherRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAppliedVoucherRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -25622,6 +25676,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomerWallet'
           description: ''
+  /api/wallet/wallets/{id}/adjust/:
+    post:
+      operationId: api_wallet_wallets_adjust_create
+      description: Apply a manual staff correction to a customer's wallet. `direction`
+        (increase/decrease) sets the sign of the positive `amount`. Recorded as a
+        distinct adjustment ledger entry. Fails if a decrease would take the balance
+        below zero, the currency does not match, or the wallet is frozen.
+      summary: Adjust a wallet balance
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Customer Wallet.
+        required: true
+      tags:
+      - Wallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletAdjustRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WalletAdjustRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WalletAdjustRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletTransaction'
+          description: ''
+        '400':
+          description: Insufficient balance, invalid input, or wallet frozen
   /api/wallet/wallets/{id}/credit/:
     post:
       operationId: api_wallet_wallets_credit_create
@@ -28140,9 +28235,11 @@ components:
           readOnly: true
         cart:
           type: integer
+          readOnly: true
           nullable: true
         voucher:
           type: integer
+          readOnly: true
         voucher_code:
           type: string
           readOnly: true
@@ -28159,6 +28256,7 @@ components:
           readOnly: true
       required:
       - applied_at
+      - cart
       - discount_amount
       - id
       - voucher
@@ -28168,23 +28266,46 @@ components:
       type: object
       description: Serializer for applied vouchers in cart
       properties:
-        cart:
-          type: integer
-          nullable: true
-        voucher:
-          type: integer
         discount_amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
       required:
       - discount_amount
-      - voucher
     ApplyToEnum:
       enum:
       - price
       type: string
       description: '* `price` - price'
+    AttrPeriod:
+      type: object
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+        preset:
+          type: string
+      required:
+      - end
+      - preset
+      - start
+    AttrTotals:
+      type: object
+      properties:
+        attributed:
+          type: number
+          format: double
+        orders:
+          type: integer
+        avg_touches:
+          type: number
+          format: double
+          nullable: true
+      required:
+      - attributed
+      - avg_touches
+      - orders
     AttributeAssignmentInputRequest:
       type: object
       description: Serializer for a single attribute assignment in the payload.
@@ -28327,6 +28448,67 @@ components:
       required:
       - slug
       - value
+    AttributionAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AttributionData'
+      required:
+      - data
+      - success
+    AttributionData:
+      type: object
+      description: The attribution payload (also returned verbatim by the admin dashboard).
+      properties:
+        period:
+          $ref: '#/components/schemas/AttrPeriod'
+        currency:
+          type: string
+        active_model:
+          type: string
+        models:
+          type: array
+          items:
+            type: string
+        totals:
+          $ref: '#/components/schemas/AttrTotals'
+        reconciles:
+          type: boolean
+        by_model:
+          type: object
+          additionalProperties: {}
+        influenced:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        journeys:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        campaigns:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        meta:
+          type: object
+          additionalProperties: {}
+      required:
+      - active_model
+      - by_model
+      - campaigns
+      - currency
+      - influenced
+      - journeys
+      - meta
+      - models
+      - period
+      - reconciles
+      - totals
     AutocompleteResponse:
       type: object
       description: Serializer for autocomplete API response.
@@ -33871,6 +34053,14 @@ components:
       required:
       - count
       - data
+    DirectionEnum:
+      enum:
+      - increase
+      - decrease
+      type: string
+      description: |-
+        * `increase` - Increase balance
+        * `decrease` - Decrease balance
     DiscountType45cEnum:
       enum:
       - percentage
@@ -35050,6 +35240,9 @@ components:
           description: Human-readable device name (e.g., 'John's MacBook Pro')
           maxLength: 255
         device_info:
+          type: object
+          additionalProperties:
+            nullable: true
           description: Additional device information (OS, version, etc.)
       required:
       - device_fingerprint
@@ -39077,6 +39270,7 @@ components:
       properties:
         product_id:
           type: integer
+          nullable: true
         variant_id:
           type: integer
           nullable: true
@@ -39106,8 +39300,6 @@ components:
             type: integer
           nullable: true
           description: List of optional BundleItem IDs to exclude
-      required:
-      - product_id
     POSApplyDiscountRequest:
       type: object
       description: Apply voucher/discount code.
@@ -39359,6 +39551,7 @@ components:
         email:
           type: string
           format: email
+          maxLength: 150
         first_name:
           type: string
           minLength: 1
@@ -39368,7 +39561,7 @@ components:
           maxLength: 150
         phone:
           type: string
-          maxLength: 50
+          maxLength: 20
       required:
       - first_name
     POSDailyReport:
@@ -40263,6 +40456,7 @@ components:
             * `return` - return
         quantity:
           type: integer
+          maximum: 2147483647
           minimum: 0
           description: 'For receive/return: units to add. For damage: units to remove.
             For recount: new absolute on_hand count.'
@@ -42014,19 +42208,6 @@ components:
           $ref: '#/components/schemas/PaymentMethodEnum'
         status:
           $ref: '#/components/schemas/StatusA22Enum'
-    PatchedAppliedVoucherRequest:
-      type: object
-      description: Serializer for applied vouchers in cart
-      properties:
-        cart:
-          type: integer
-          nullable: true
-        voucher:
-          type: integer
-        discount_amount:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
     PatchedBlogCategoryWriteRequest:
       type: object
       description: |-
@@ -42883,9 +43064,6 @@ components:
         component:
           type: integer
           description: Installed shipping provider component
-        user:
-          type: integer
-          description: User who owns this provider account
         display_name:
           type: string
           description: Friendly name for this connection (e.g., "My Easyship Account")
@@ -43379,6 +43557,8 @@ components:
       type: object
       description: Serializer for voucher restrictions
       properties:
+        voucher:
+          type: integer
         restriction_type:
           $ref: '#/components/schemas/RestrictionTypeEnum'
         restriction_value:
@@ -44231,7 +44411,6 @@ components:
           default: 5
         allow_backorders:
           type: boolean
-          default: false
         initial_stock:
           type: integer
           minimum: 0
@@ -45384,6 +45563,7 @@ components:
           readOnly: true
         user:
           type: integer
+          readOnly: true
           description: User who owns this provider account
         display_name:
           type: string
@@ -45456,9 +45636,6 @@ components:
         component:
           type: integer
           description: Installed shipping provider component
-        user:
-          type: integer
-          description: User who owns this provider account
         display_name:
           type: string
           description: Friendly name for this connection (e.g., "My Easyship Account")
@@ -45471,7 +45648,6 @@ components:
           description: Use this provider as default for API shipments
       required:
       - component
-      - user
     ProviderConfigResponse:
       type: object
       description: Response from terminal provider config endpoint.
@@ -49672,7 +49848,7 @@ components:
       properties:
         status:
           type: string
-          description: requires_payment | requires_action | completed
+          description: requires_payment | requires_action | completed | canceled
         continue_url:
           type: string
           format: uri
@@ -49714,6 +49890,14 @@ components:
         order:
           allOf:
           - $ref: '#/components/schemas/UCPCheckoutOrder'
+          nullable: true
+        mandate:
+          allOf:
+          - $ref: '#/components/schemas/UCPMandate'
+          nullable: true
+        payment_mandate:
+          allOf:
+          - $ref: '#/components/schemas/UCPMandate'
           nullable: true
       required:
       - buyer
@@ -49822,6 +50006,26 @@ components:
       - id
       - label
       - price
+    UCPMandate:
+      type: object
+      properties:
+        format:
+          type: string
+          description: ap2-checkout-mandate+sd-jwt | ap2-payment-mandate+sd-jwt
+        alg:
+          type: string
+          description: Signing algorithm (e.g. ES256).
+        kid:
+          type: string
+          description: Merchant AP2 key id (RFC 7638 thumbprint).
+        value:
+          type: string
+          description: The signed SD-JWT presentation.
+      required:
+      - alg
+      - format
+      - kid
+      - value
     UCPPrice:
       type: object
       properties:
@@ -50739,6 +50943,8 @@ components:
         id:
           type: integer
           readOnly: true
+        voucher:
+          type: integer
         restriction_type:
           $ref: '#/components/schemas/RestrictionTypeEnum'
         restriction_value:
@@ -50756,10 +50962,13 @@ components:
       - id
       - restriction_type
       - restriction_value
+      - voucher
     VoucherRestrictionRequest:
       type: object
       description: Serializer for voucher restrictions
       properties:
+        voucher:
+          type: integer
         restriction_type:
           $ref: '#/components/schemas/RestrictionTypeEnum'
         restriction_value:
@@ -50772,6 +50981,7 @@ components:
       required:
       - restriction_type
       - restriction_value
+      - voucher
     VoucherUsage:
       type: object
       description: Serializer for voucher usage tracking
@@ -50865,6 +51075,38 @@ components:
       - message
       - success
       - waitlist_id
+    WalletAdjustRequest:
+      type: object
+      description: |-
+        Input serializer for a manual staff balance adjustment.
+
+        A signed correction: ``direction`` sets whether the (always positive)
+        ``amount`` raises or lowers the balance. Recorded as a distinct
+        ``adjustment`` ledger row, separate from organic credits/debits.
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        direction:
+          $ref: '#/components/schemas/DirectionEnum'
+        currency:
+          type: string
+          minLength: 1
+          maxLength: 3
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        reference_id:
+          type: string
+          minLength: 1
+          default: ''
+          maxLength: 100
+      required:
+      - amount
+      - description
+      - direction
     WalletBalance:
       type: object
       description: Customer-facing wallet balance.

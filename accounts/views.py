@@ -8,8 +8,10 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
+from django_ratelimit.decorators import ratelimit
 
 from subscriptions.manager import SubscriptionManager
 from subscriptions.models import BillingCycleLog, CustomerSubscription, PaymentToken
@@ -908,6 +910,36 @@ def activate_guest_account(request, uidb64, token):
         return redirect("page_builder:home")  # Redirect to homepage
 
 
+@ratelimit(key="ip", rate="10/m", method="POST", block=True)
+def verify_email(request, token):
+    """Confirm a customer's email address for double opt-in marketing.
+
+    Public (no login) — the one-time token in the emailed link is the proof.
+    A GET renders a confirmation page with a button; the address is only marked
+    verified on the resulting POST, so mail-security link-prefetchers that GET
+    every URL in an inbound email can't silently auto-confirm consent.
+    """
+    from accounts.services.preference_service import PreferenceService
+
+    if request.method == "POST":
+        ip_address = request.META.get("REMOTE_ADDR")
+        user_agent = request.META.get("HTTP_USER_AGENT", "")
+        result = PreferenceService.verify_email(
+            token, ip_address=ip_address, user_agent=user_agent, request=request
+        )
+        context = {
+            "confirmed": True,
+            "success": bool(result.get("success")),
+        }
+        return render(request, "accounts/verify_email_result.html", context)
+
+    # GET: show the confirm button. Don't reveal whether the token is valid.
+    return render(
+        request, "accounts/verify_email_result.html", {"confirmed": False, "token": token}
+    )
+
+
+@ratelimit(key="ip", rate="20/m", method="POST", block=True)
 def unsubscribe(request, token):
     """
     One-click unsubscribe landing page.
@@ -918,7 +950,9 @@ def unsubscribe(request, token):
     """
     from django.contrib.auth import get_user_model
 
+    from accounts.constants import ALL_EMAIL_TYPES
     from accounts.models import CommunicationPreference
+    from accounts.services.preference_audit_service import PreferenceAuditService
     from accounts.services.preference_service import PreferenceService
 
     get_user_model()
@@ -928,39 +962,56 @@ def unsubscribe(request, token):
         prefs = CommunicationPreference.objects.get(unsubscribe_token=token)
         user = prefs.user
 
-        # Get message type from query param
+        # Message type from query param, validated against the known taxonomy so
+        # an arbitrary attacker-supplied string is never reflected or acted on.
         message_type = request.GET.get("type", "")
+        if message_type and message_type not in ALL_EMAIL_TYPES:
+            message_type = ""
+
+        ip_address = request.META.get("REMOTE_ADDR")
+        user_agent = request.META.get("HTTP_USER_AGENT", "")
 
         if request.method == "POST":
             action = request.POST.get("action")
 
-            if action == "unsubscribe_type":
-                # Unsubscribe from specific message type
-                from accounts.constants import get_message_type_category
-
-                category, app = get_message_type_category(message_type)
-
-                if category == "marketing":
-                    prefs.email_marketing = False
-                elif category == "app_specific" and app:
-                    if app in prefs.app_preferences:
-                        prefs.app_preferences[app]["enabled"] = False
-
-                prefs.save()
-
-                # Invalidate cache
-                PreferenceService.invalidate_cache(user.id, "email", message_type)
-
-                messages.success(
-                    request,
-                    _("You have been unsubscribed from {message_type} emails.").format(
-                        message_type=message_type.replace("_", " ").title()
-                    ),
+            if action == "unsubscribe_type" and message_type:
+                # Unsubscribe from a specific message type. Routed through the
+                # service so the change is written to the GDPR audit trail.
+                result = PreferenceService.update_preference(
+                    user,
+                    channel="email",
+                    message_type=message_type,
+                    enabled=False,
+                    ip_address=ip_address,
+                    user_agent=user_agent,
+                    request=request,
+                    source="unsubscribe",
                 )
+                if result.get("success"):
+                    messages.success(
+                        request,
+                        _("You have been unsubscribed from {message_type} emails.").format(
+                            message_type=message_type.replace("_", " ").title()
+                        ),
+                    )
+                else:
+                    messages.error(request, _("An error occurred. Please try again."))
 
             elif action == "unsubscribe_all":
-                # Unsubscribe from all marketing
-                reason = request.POST.get("reason", "")
+                # Unsubscribe from all marketing. Capture a structured reason only
+                # when the merchant has enabled reason collection.
+                reason = ""
+                from core.models import SiteSettings
+
+                if SiteSettings.get_settings().show_unsubscribe_reasons:
+                    from accounts.constants import UNSUBSCRIBE_REASON_VALUES
+
+                    reason_code = request.POST.get("reason", "").strip()
+                    if reason_code == "other":
+                        # Store the free-text detail, capped to a sane length.
+                        reason = ("other: " + request.POST.get("reason_other", "").strip())[:500]
+                    elif reason_code in UNSUBSCRIBE_REASON_VALUES:
+                        reason = reason_code
                 result = PreferenceService.unsubscribe_all(user, reason=reason)
 
                 if result["success"]:
@@ -970,11 +1021,20 @@ def unsubscribe(request, token):
                 else:
                     messages.error(request, _("An error occurred. Please try again."))
 
-            elif action == "resubscribe":
-                # Resubscribe to specific message type
+            elif action == "resubscribe" and message_type:
+                # Resubscribing is a *consent grant*. The unsubscribe token is
+                # distributed widely (email footers, mail proxies, history), so it
+                # must not silently re-arm a previously-confirmed address. When the
+                # store uses double opt-in we clear the confirmed flag and send a
+                # fresh confirmation, so nothing sends until the real inbox owner
+                # clicks through again.
                 from accounts.constants import get_message_type_category
 
                 category, app = get_message_type_category(message_type)
+                old_value = {
+                    "email_marketing": prefs.email_marketing,
+                    "email_verified": prefs.email_verified,
+                }
 
                 if category == "marketing":
                     prefs.email_marketing = True
@@ -985,17 +1045,43 @@ def unsubscribe(request, token):
                         )
                     prefs.app_preferences[app]["enabled"] = True
 
-                prefs.save()
+                reconfirm = CommunicationPreference._double_opt_in_required()
+                if reconfirm:
+                    prefs.email_verified = False
 
-                # Invalidate cache
+                prefs.save()
                 PreferenceService.invalidate_cache(user.id, "email", message_type)
 
-                messages.success(
-                    request,
-                    _("You have been resubscribed to {message_type} emails.").format(
-                        message_type=message_type.replace("_", " ").title()
-                    ),
+                PreferenceAuditService.log_change(
+                    preference=prefs,
+                    action=f"resubscribe.{message_type}",
+                    old_value=old_value,
+                    new_value={
+                        "email_marketing": prefs.email_marketing,
+                        "email_verified": prefs.email_verified,
+                    },
+                    request=request,
+                    source="unsubscribe",
+                    ip_address=ip_address,
+                    user_agent=user_agent,
                 )
+
+                if reconfirm:
+                    PreferenceService.request_marketing_confirmation(user, prefs)
+                    messages.info(
+                        request,
+                        _(
+                            "Almost there — check your inbox and confirm your email "
+                            "address to resume these messages."
+                        ),
+                    )
+                else:
+                    messages.success(
+                        request,
+                        _("You have been resubscribed to {message_type} emails.").format(
+                            message_type=message_type.replace("_", " ").title()
+                        ),
+                    )
 
             # Redirect back to unsubscribe page to show updated state
             return redirect("accounts:unsubscribe", token=token)
@@ -1012,12 +1098,26 @@ def unsubscribe(request, token):
         elif category == "app_specific" and app:
             is_subscribed = prefs.app_preferences.get(app, {}).get("enabled", False)
 
+        from django.urls import reverse
+
+        from accounts.constants import UNSUBSCRIBE_REASONS
+        from core.models import SiteSettings
+
+        site_settings = SiteSettings.get_settings()
+        show_reasons = site_settings.show_unsubscribe_reasons
+        preference_center_enabled = site_settings.preference_center_enabled
+
         context = {
             "user": user,
             "message_type": message_type,
             "message_type_display": message_type.replace("_", " ").title(),
             "is_subscribed": is_subscribed,
-            "preferences_url": "/accounts/preferences/",
+            "preferences_url": (
+                reverse("accounts:communication_preferences") if preference_center_enabled else ""
+            ),
+            "preference_center_enabled": preference_center_enabled,
+            "show_unsubscribe_reasons": show_reasons,
+            "unsubscribe_reasons": UNSUBSCRIBE_REASONS if show_reasons else [],
         }
 
         return render(request, "accounts/unsubscribe.html", context)
@@ -1035,6 +1135,11 @@ def communication_preferences(request):
     """
     from accounts.models import CommunicationPreference
     from accounts.services.preference_service import PreferenceService
+    from core.models import SiteSettings
+
+    # Merchant can switch off the self-service preference center entirely.
+    if not SiteSettings.get_settings().preference_center_enabled:
+        raise Http404("The preference center is not available.")
 
     # Get or create preferences
     prefs, created = PreferenceService.get_or_create_for_user(request.user)
@@ -1118,7 +1223,19 @@ def communication_preferences(request):
         # Invalidate cache
         PreferenceService.invalidate_cache(request.user.id)
 
+        # If they just opted into marketing and the store requires double opt-in,
+        # send the confirmation email (no-op otherwise).
+        confirmation_sent = PreferenceService.request_marketing_confirmation(request.user, prefs)
+
         messages.success(request, _("Your communication preferences have been updated."))
+        if confirmation_sent:
+            messages.info(
+                request,
+                _(
+                    "Please check your inbox and confirm your email address to start "
+                    "receiving marketing messages."
+                ),
+            )
         return redirect("accounts:communication_preferences")
 
     # GET request - display form

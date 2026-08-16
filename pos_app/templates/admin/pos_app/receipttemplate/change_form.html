@@ -12,7 +12,7 @@
   <div class="receipt-preview-col">
     <div class="receipt-preview-panel"
          id="receipt-preview"
-         data-warehouse-name="{{ original.warehouse.pos_display_name|default:original.warehouse.name|default:'Your Store' }}"
+         data-warehouse-name="{% if original.warehouse %}{{ original.warehouse.pos_display_name|default:original.warehouse.name }}{% else %}Your Store{% endif %}"
          data-warehouse-address="{{ original.get_effective_address|default:'123 Main Street, City' }}"
          data-warehouse-phone="{{ original.get_effective_phone|default:'+1 555-0123' }}"
          data-warehouse-email="{{ original.get_effective_email|default:'store@example.com' }}">

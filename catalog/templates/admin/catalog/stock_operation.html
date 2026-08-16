@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/stock_adjustment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="stock-adjustment-container">
+    <div class="stock-adjustment-header">
+        <h1>
+            <i class="fas {{ icon|default:'fa-boxes' }}"></i>
+            {{ title }}
+        </h1>
+        {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Selected Stock Items -->
+        <div class="form-card">
+            <h2>{% trans "Selected Stock Items" %} ({{ stock_items.count }})</h2>
+            <div class="stock-items-list">
+                {% for stock_item in stock_items %}
+                <div class="stock-item">
+                    <div>
+                        <div class="stock-item-product">{{ stock_item.product.name }}</div>
+                        <div class="stock-item-warehouse">
+                            <i class="fas fa-warehouse"></i> {{ stock_item.warehouse.name }}
+                        </div>
+                    </div>
+                    <div class="stock-item-current">
+                        {% blocktrans with on_hand=stock_item.on_hand allocated=stock_item.allocated available=stock_item.available %}Current: {{ on_hand }} on hand, {{ allocated }} allocated, {{ available }} available{% endblocktrans %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Operation Form -->
+        <div class="form-card">
+            <h2>{% if form_heading %}{{ form_heading }}{% else %}{% trans "Details" %}{% endif %}</h2>
+            {% for field in form %}
+            <div class="form-row">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                <span class="helptext">{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                <div class="errorlist">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Submit Row -->
+        <div class="submit-row">
+            <button type="submit" name="apply">
+                <i class="fas fa-check"></i> {% if submit_label %}{{ submit_label }}{% else %}{% trans "Apply" %}{% endif %}
+            </button>
+            <a href="{% url 'admin:catalog_stockitem_changelist' %}" class="cancel">
+                <i class="fas fa-times"></i> {% trans "Cancel" %}
+            </a>
+        </div>
+
+        <!-- Re-dispatch the same admin action, with the selected items, on submit -->
+        <input type="hidden" name="action" value="{{ action_name }}">
+        {% for item in stock_items %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ item.pk }}">
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}

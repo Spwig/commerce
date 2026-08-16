@@ -278,6 +278,7 @@ class ReferralIdentityAdmin(admin.ModelAdmin):
         "created_at",
     ]
     list_filter = ["created_at"]
+    list_select_related = ["customer"]
     search_fields = ["customer__email", "customer__first_name", "customer__last_name", "token"]
     readonly_fields = [
         "token",
@@ -375,6 +376,7 @@ class ReferralEventAdmin(admin.ModelAdmin):
         "created_at",
     ]
     list_filter = ["event_type", "created_at"]
+    list_select_related = ["referrer_identity__customer", "customer"]
     search_fields = ["referrer_identity__customer__email", "customer__email", "ip_address"]
     readonly_fields = [
         "program",
@@ -467,6 +469,7 @@ class ReferralAttributionAdmin(admin.ModelAdmin):
         "created_at",
     ]
     list_filter = ["status", "rejection_reason", RiskScoreFilter, "created_at"]
+    list_select_related = ["referrer_identity__customer", "referee_customer", "first_order"]
     search_fields = [
         "referrer_identity__customer__email",
         "referee_customer__email",
@@ -664,6 +667,7 @@ class ReferralRewardAdmin(admin.ModelAdmin):
         "get_expires_at",
     ]
     list_filter = ["status", "kind", "recipient_type", RewardExpiringFilter, "created_at"]
+    list_select_related = ["customer"]
     search_fields = [
         "customer__email",
         "customer__first_name",

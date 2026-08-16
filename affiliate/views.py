@@ -62,6 +62,9 @@ logger = logging.getLogger(__name__)
 # ============================================
 
 
+from staff_roles.decorators import requires_permission
+
+
 class AffiliateBrandingMixin:
     """Mixin to provide storefront branding context to affiliate views"""
 
@@ -675,6 +678,18 @@ class TrackingRedirectView(View):
             session_id=request.session.session_key or "",
             cookie_value=self.generate_cookie_value(link),
         )
+
+        # Mirror the click into the unified attribution touch stream so that
+        # affiliate revenue surfaces as its own channel in the store-wide
+        # attribution reporting. Consent-gated and best-effort — it must never
+        # affect the redirect or the affiliate cookie/commission path.
+        try:
+            from attribution.constants import CHANNEL_AFFILIATE
+            from attribution.services.capture import record_channel_touch
+
+            record_channel_touch(request, CHANNEL_AFFILIATE, affiliate_click=click)
+        except Exception:
+            logger.debug("attribution: affiliate touch emission skipped", exc_info=True)
 
         # Set affiliate cookie
         response = HttpResponseRedirect(link.destination_url)
@@ -1321,6 +1336,7 @@ def program_wizard(request):
 
 
 @staff_member_required
+@requires_permission("affiliate.view_affiliate", ajax=True)
 def filter_affiliates(request):
     """
     AJAX endpoint for filtering affiliates.
@@ -1672,6 +1688,7 @@ def update_program_status(request, program_id, new_status):
 
 
 @staff_member_required
+@requires_permission("affiliate.view_payout", ajax=True)
 def filter_payouts(request):
     """
     AJAX endpoint for filtering payouts.

@@ -167,9 +167,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="endpoint-results">
         {% include "admin/webhooks/partials/endpoint_cards.html" with endpoints=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count %}

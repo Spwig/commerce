@@ -90,6 +90,7 @@ urlpatterns = [
     # Communication Preferences
     path("preferences/", views.communication_preferences, name="communication_preferences"),
     path("preferences/history/", views.preference_history, name="preference_history"),
+    path("verify-email/<str:token>/", views.verify_email, name="verify_email"),
     path("unsubscribe/<str:token>/", views.unsubscribe, name="unsubscribe"),
     # Customer Bookings
     path("gift-cards/", views.gift_card_list, name="gift_card_list"),

@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.variants import (
     AdminVariantListSerializer,
@@ -123,7 +123,7 @@ def variant_list(request, product_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_variant(request, product_id):
     """Create a new variant for a product."""
@@ -274,7 +274,7 @@ def create_variant(request, product_id):
     },
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_variant(request, product_id, variant_id):
     """Partially update a variant."""
@@ -419,7 +419,7 @@ def update_variant(request, product_id, variant_id):
     responses={200: None, 404: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def delete_variant(request, product_id, variant_id):
     """Delete a variant."""

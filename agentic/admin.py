@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 
-from agentic.models import AgentEvent, AgenticSettings, AgentIdentity, Mandate
+from agentic.models import AgentEvent, AgenticSettings, AgentIdentity, AgentPolicy, Mandate
 
 
 @admin.register(AgenticSettings)
@@ -98,16 +98,43 @@ class AgenticSettingsAdmin(admin.ModelAdmin):
         return self.changeform_view(request, str(obj.pk), extra_context=extra_context or {})
 
 
+class AgentPolicyInline(admin.StackedInline):
+    """
+    Edit a calling agent's spend/tender/rate-limit policy in place.
+
+    The only editable surface on the otherwise read-only identity page. Saves are
+    routed through `agent_registry_service.change_agent_policy` (see
+    `AgentIdentityAdmin.save_formset`) so every change lands in the append-only
+    audit log — the admin never writes a policy field directly.
+    """
+
+    model = AgentPolicy
+    can_delete = False
+    max_num = 1
+    extra = 0
+    verbose_name_plural = _("Policy (limits & allowed tenders)")
+    fields = (
+        "max_order_amount",
+        "daily_spend_cap",
+        "allow_discount_codes",
+        "allow_gift_cards",
+        "allow_digital_goods",
+        "rate_limit_per_minute",
+    )
+
+
 @admin.register(AgentIdentity)
 class AgentIdentityAdmin(admin.ModelAdmin):
     """
     The registry of calling agents established by trust-on-first-use.
 
-    Read-only except for the block/unblock actions — identities are created by
-    the auth stack (a merchant never adds one), and the claimed fields are the
-    agent's own untrusted assertions, so nothing here should be hand-edited.
+    Read-only except for the block/unblock/verify actions and the policy inline —
+    identities are created by the auth stack (a merchant never adds one), and the
+    claimed fields are the agent's own untrusted assertions, so nothing else here
+    should be hand-edited.
     """
 
+    inlines = (AgentPolicyInline,)
     list_display = (
         "display_label",
         "directory",
@@ -118,7 +145,7 @@ class AgentIdentityAdmin(admin.ModelAdmin):
     list_filter = ("trust_state", "directory")
     search_fields = ("directory", "key_thumbprint", "claimed_name")
     ordering = ("-last_seen_at",)
-    actions = ("block_agents", "unblock_agents")
+    actions = ("verify_agents", "block_agents", "unblock_agents")
 
     readonly_fields = (
         "directory",
@@ -186,6 +213,59 @@ class AgentIdentityAdmin(admin.ModelAdmin):
             request,
             ngettext("%d assistant unblocked.", "%d assistants unblocked.", unblocked) % unblocked,
         )
+
+    @admin.action(description=_("Promote to verified (remove limits)"))
+    def verify_agents(self, request, queryset):
+        from agentic.services.agent_registry_service import verify_agent_identity
+
+        promoted = skipped = 0
+        for agent in queryset:
+            if agent.trust_state == AgentIdentity.TRUST_VERIFIED:
+                continue  # already verified — no change, no noise
+            try:
+                verify_agent_identity(agent, actor=request.user.get_username())
+                promoted += 1
+            except ValueError:
+                # A blocked agent can't be verified — unblock it first.
+                skipped += 1
+        msg = ngettext("%d assistant verified.", "%d assistants verified.", promoted) % promoted
+        if skipped:
+            msg += " " + (
+                ngettext(
+                    "%d skipped (blocked — unblock first).",
+                    "%d skipped (blocked — unblock first).",
+                    skipped,
+                )
+                % skipped
+            )
+        self.message_user(request, msg)
+
+    def save_formset(self, request, form, formset, change):
+        # Route AgentPolicy inline edits through the service so every change is
+        # recorded in the append-only audit log; never write the policy directly.
+        if formset.model is AgentPolicy:
+            from agentic.services import agent_registry_service as ars
+
+            agent = form.instance
+            for pform in formset.forms:
+                if not getattr(pform, "cleaned_data", None) or not pform.has_changed():
+                    continue
+                changes = {
+                    field: pform.cleaned_data[field]
+                    for field in pform.changed_data
+                    if field in ars.POLICY_FIELDS
+                }
+                if changes:
+                    ars.change_agent_policy(
+                        agent, changes=changes, actor=request.user.get_username()
+                    )
+            # We persisted through the service instead of formset.save(), so the
+            # admin's change-logging still expects these lists to exist.
+            formset.new_objects = []
+            formset.changed_objects = []
+            formset.deleted_objects = []
+            return
+        super().save_formset(request, form, formset, change)
 
 
 @admin.register(AgentEvent)

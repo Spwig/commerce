@@ -89,13 +89,28 @@ def check_low_stock_notification(sender, instance, **kwargs):
     Send push notification when stock drops below threshold.
 
     Only sends if:
+    - Low-stock alerts are enabled and set to real-time cadence
     - Product tracks inventory
     - Stock is at or below low_stock_threshold
     - Stock just dropped to this level (not already low)
+
+    Daily/weekly cadences are handled by the digest task
+    (``send_low_stock_digest``) instead; this realtime path stays quiet then.
     """
     try:
+        # Cheapest check first so untracked items don't pay for a settings read.
         product = instance.product
         if not product.track_inventory:
+            return
+
+        from core.models import SiteSettings
+
+        site_settings = SiteSettings.get_settings()
+        # Respect the merchant's alert switch and cadence. Only the realtime
+        # cadence sends per-change; daily/weekly go through the digest task.
+        if not site_settings.enable_low_stock_alerts:
+            return
+        if site_settings.low_stock_alert_frequency != "realtime":
             return
 
         # Calculate available stock

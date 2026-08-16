@@ -126,6 +126,15 @@ class Command(BaseCommand):
         # Get queryset
         queryset = model_class.objects.all()
         if auto_only:
+            # Some SEO-tracked models (e.g. Collection) don't carry the
+            # seo_auto_generated flag; they have no auto-generated items to
+            # re-process, so skip them instead of raising a FieldError.
+            model_field_names = {f.name for f in model_class._meta.get_fields()}
+            if "seo_auto_generated" not in model_field_names:
+                self.stdout.write(
+                    _("\nSkipping %(type)s: no seo_auto_generated field") % {"type": model_type}
+                )
+                return 0, 0, 0
             queryset = queryset.filter(seo_auto_generated=True)
 
         total_count = queryset.count()

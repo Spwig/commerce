@@ -233,7 +233,7 @@ def activate_license(request):
 
         # Check if device already activated
         existing_activation = LicenseActivation.objects.filter(
-            license_key=license_key, device_fingerprint=device_fingerprint, is_active=True
+            license_key=license_key, device_identifier=device_fingerprint, is_active=True
         ).first()
 
         if existing_activation:
@@ -267,7 +267,7 @@ def activate_license(request):
         # Create activation
         activation = LicenseActivation.objects.create(
             license_key=license_key,
-            device_fingerprint=device_fingerprint,
+            device_identifier=device_fingerprint,
             device_name=device_name or device_fingerprint[:50],
             ip_address=ip_address,
             device_info=device_info,
@@ -379,7 +379,7 @@ def deactivate_license(request):
 
         # Find activation
         activation = LicenseActivation.objects.filter(
-            license_key=license_key, device_fingerprint=device_fingerprint, is_active=True
+            license_key=license_key, device_identifier=device_fingerprint, is_active=True
         ).first()
 
         if not activation:

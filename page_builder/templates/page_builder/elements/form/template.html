@@ -260,6 +260,11 @@ style="{% base_styles element %}">
 {# Form data island - read by form-element.js loaded via config.json scripts #}
 <script type="application/json" id="fb-form-data-{{ element.id }}">{% form_data_json form_data %}</script>
 
+{# Google reCAPTCHA v3 (invisible), loaded only when the form uses it — only the public site key is exposed; the secret stays server-side. #}
+{% if form_data.spam_protection == 'recaptcha' and form_data.recaptcha_site_key %}
+<script nonce="{{ request.csp_nonce }}" src="https://www.google.com/recaptcha/api.js?render={{ form_data.recaptcha_site_key }}"></script>
+{% endif %}
+
 {% else %}
 {# No form selected - show placeholder #}
 <section class="fb-form-section fb-form-section--empty section" data-element-id="{{ element.id }}">

@@ -1,36 +1,17 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 
-/**
- * Order List Admin
- * Initializes flatpickr date pickers and admin table toggle for the order change list.
- */
+/* Orders changelist: auto-submit the filters form when a dropdown changes.
+   (Stat tiles and the quick search are plain GET links/forms; the bulk-actions
+   bar is handled by card-bulk-actions.js.) */
 (function () {
   'use strict';
-
-  function init() {
-    // Initialize date pickers
-    if (typeof flatpickr !== 'undefined') {
-      const dateFrom = document.getElementById('date-from');
-      const dateTo = document.getElementById('date-to');
-      if (dateFrom) flatpickr(dateFrom, { dateFormat: 'Y-m-d' });
-      if (dateTo) flatpickr(dateTo, { dateFormat: 'Y-m-d' });
-    }
-
-    // Show admin table view
-    const showAdminTableBtn = document.getElementById('show-admin-table-btn');
-    if (showAdminTableBtn) {
-      showAdminTableBtn.addEventListener('click', function () {
-        const container = document.querySelector('.orders-management-container');
-        const tableView = document.getElementById('admin-table-view');
-        if (container) container.classList.add('hidden');
-        if (tableView) tableView.classList.add('visible');
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('orders-filters');
+    if (!form) return;
+    form.querySelectorAll('select[data-autosubmit]').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        form.submit();
       });
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+    });
+  });
 })();

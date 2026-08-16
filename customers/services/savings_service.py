@@ -2,6 +2,7 @@
 Savings Service - Track and calculate customer savings
 """
 
+import logging
 from datetime import timedelta
 from decimal import Decimal
 from typing import Any
@@ -10,6 +11,8 @@ from django.db.models import Avg, Count, F, Q, Sum
 from django.utils import timezone
 
 from orders.models import Order
+
+logger = logging.getLogger(__name__)
 
 
 def _to_decimal(value):
@@ -370,7 +373,10 @@ class SavingsService:
                 elif v.discount_type == "percentage" and v.max_discount_amount:
                     potential_voucher_savings += _to_decimal(v.max_discount_amount)
         except Exception:
-            pass
+            # Never fabricate a zero-opportunity result from a real failure
+            # (DB / type / conversion errors) — surface it instead.
+            logger.exception("Failed to calculate potential voucher savings for user %s", user.pk)
+            raise
 
         # 2. Check wishlist items currently on sale
         wishlist_items_on_sale = 0

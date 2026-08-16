@@ -124,6 +124,21 @@ ALL_EMAIL_TYPES = (
 ALL_SMS_TYPES = TRANSACTIONAL_SMS_TYPES + MARKETING_SMS_TYPES
 
 
+# Predefined unsubscribe reasons offered when `show_unsubscribe_reasons` is on.
+# (value, human label) — value is stored on the audit trail; "other" pairs with a
+# free-text field. Keep values stable; they are analytics keys.
+UNSUBSCRIBE_REASONS = [
+    ("too_frequent", "I receive too many emails"),
+    ("not_relevant", "The content isn't relevant to me"),
+    ("never_signed_up", "I never signed up for this"),
+    ("no_longer_interested", "I'm no longer interested"),
+    ("other", "Other"),
+]
+
+# Valid reason values for server-side validation.
+UNSUBSCRIBE_REASON_VALUES = {value for value, _label in UNSUBSCRIBE_REASONS}
+
+
 def get_message_type_category(message_type):
     """
     Determine the category of a message type.

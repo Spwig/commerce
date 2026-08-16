@@ -36,6 +36,7 @@ MODEL_MAP = {
     "product": ("catalog", "Product"),
     "category": ("catalog", "Category"),
     "brand": ("catalog", "Brand"),
+    "collection": ("catalog", "Collection"),
     "page": ("page_builder", "Page"),
     "blogpost": ("blog", "BlogPost"),
     "blogcategory": ("blog", "BlogCategory"),

@@ -11,11 +11,12 @@ import os
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from catalog.models import DigitalAsset, LicenseKey, LicenseProvider
+from catalog.middleware import invalidate_region_cache
+from catalog.models import DigitalAsset, LicenseKey, LicenseProvider, SalesRegion
 from catalog.services.license_generator import LicenseKeyGenerator
 from catalog.services.license_sync import LicenseProviderService
 from catalog.services.webhook_dispatcher import LicenseWebhookDispatcher, LicenseWebhookEvents
@@ -25,6 +26,24 @@ from orders.models import Order, OrderItem
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+
+@receiver(post_save, sender=SalesRegion)
+@receiver(post_delete, sender=SalesRegion)
+def invalidate_region_cache_on_change(sender, **kwargs):
+    """Drop cached SalesRegion lookups whenever a region changes.
+
+    A priority bump, deactivation, or edit to a region's country list must take
+    effect immediately: without this, visitors keep being routed to a stale
+    region — and therefore its stock, availability, and currency — for up to the
+    one-hour cache timeout.
+
+    The bump is deferred to ``on_commit`` so it lands only after the write is
+    visible. Bumping mid-transaction would let a concurrent reader see the new
+    version, query the still-committed old priorities, and re-cache the former
+    default under the new version for another full hour.
+    """
+    transaction.on_commit(invalidate_region_cache)
 
 
 @receiver(post_save, sender=Order)
@@ -50,23 +69,28 @@ def process_licenses_on_payment_confirmed(sender, instance, created, **kwargs):
     if instance.payment_status != "paid":
         return
 
-    # Find items needing license generation on payment
+    # Find items needing license generation on payment. Exclude items that
+    # already have a license key so this stays per-item idempotent: an order
+    # mixing an on_order product (already keyed at creation) with an on_payment
+    # product must still key the second item, and a re-save of an already-paid
+    # order (e.g. an amount_paid write-back) becomes a no-op instead of
+    # regenerating keys or re-sending the delivery email.
     from django.db.models import Q
 
-    items_needing_license = instance.items.filter(
-        Q(product__requires_license=True, product__license_generation_trigger="on_payment")
-        | Q(product__digital_assets__requires_license=True, product__digital_assets__is_active=True)
-    ).distinct()
+    items_needing_license = (
+        instance.items.filter(
+            Q(product__requires_license=True, product__license_generation_trigger="on_payment")
+            | Q(
+                product__digital_assets__requires_license=True,
+                product__digital_assets__is_active=True,
+            )
+        )
+        .exclude(license_keys__isnull=False)
+        .distinct()
+    )
 
     if not items_needing_license.exists():
         logger.debug(f"Order {instance.order_number} has no items requiring license on payment")
-        return
-
-    # Check if we've already processed licenses for this order
-    existing_licenses = LicenseKey.objects.filter(order_item__order=instance).exists()
-
-    if existing_licenses:
-        logger.debug(f"Order {instance.order_number} already has license keys, skipping")
         return
 
     logger.info(f"Processing licenses (on_payment trigger) for order {instance.order_number}")
@@ -91,19 +115,25 @@ def process_licenses_on_order_created(sender, instance, created, **kwargs):
     if not created:
         return
 
-    # Find items needing license generation on order creation
-    items_needing_license = instance.items.filter(
-        product__requires_license=True, product__license_generation_trigger="on_order"
-    ).distinct()
+    # Checkout and POS create the Order first and its OrderItem rows afterward,
+    # all inside one transaction. At post_save time instance.items is still
+    # empty, so the work is deferred to on_commit — by then the items are
+    # committed and visible, and a rolled-back order never generates a key.
+    def _process():
+        items_needing_license = instance.items.filter(
+            product__requires_license=True, product__license_generation_trigger="on_order"
+        ).distinct()
 
-    if not items_needing_license.exists():
-        logger.debug(
-            f"Order {instance.order_number} has no items requiring license on order creation"
-        )
-        return
+        if not items_needing_license.exists():
+            logger.debug(
+                f"Order {instance.order_number} has no items requiring license on order creation"
+            )
+            return
 
-    logger.info(f"Processing licenses (on_order trigger) for order {instance.order_number}")
-    _process_order_licenses(instance, items_needing_license)
+        logger.info(f"Processing licenses (on_order trigger) for order {instance.order_number}")
+        _process_order_licenses(instance, items_needing_license)
+
+    transaction.on_commit(_process)
 
 
 def _process_order_licenses(instance, items_needing_license):
@@ -335,6 +365,10 @@ def generate_license_key(
         current_activations=0,
         status="active",
         expires_at=expires_at,
+        # LicenseKey.is_lifetime defaults to True and short-circuits is_expired,
+        # so a key with a calculated expiry must be marked non-lifetime or it
+        # would never expire (is_valid stays True forever).
+        is_lifetime=expires_at is None,
     )
 
     # Sync to product's configured provider (preferred) or fall back to global providers
@@ -480,6 +514,10 @@ def send_digital_product_delivery_email(order: Order):
             f"Failed to queue digital product delivery email for order {order.order_number}: {e}",
             exc_info=True,
         )
+        # Re-raise so _process_order_licenses runs its delivery-failure path
+        # (the "keys generated but email failed" OrderNote) instead of logging
+        # the order as successfully processed and losing the recovery signal.
+        raise
 
 
 # ============================================================================
@@ -489,128 +527,77 @@ def send_digital_product_delivery_email(order: Order):
 from catalog.models import StockItem, StockNotification
 
 
-@receiver(post_save, sender=StockItem)
-def check_and_send_back_in_stock_notifications(sender, instance, created, **kwargs):
-    """
-    Check if a product has come back in stock and send notifications to subscribers.
+@receiver(pre_save, sender=StockItem)
+def _cache_previous_availability(sender, instance, update_fields=None, **kwargs):
+    """Stash the pre-save available quantity so post_save can detect a genuine
+    out-of-stock -> in-stock transition, not fire on every save.
 
-    This signal is triggered when StockItem is updated (e.g., stock added).
-    It checks if the product now has available stock and sends notifications
-    to users who subscribed via the "Notify Me" feature.
-
-    Args:
-        sender: StockItem model class
-        instance: StockItem instance that was saved
-        created: Boolean indicating if this is a new stock item
-        **kwargs: Additional keyword arguments
+    Availability is ``on_hand - allocated``, so a transition can be caused by
+    ``on_hand`` rising (restock) *or* ``allocated`` falling (a released/expired
+    reservation). A save touching neither field cannot change availability
+    (e.g. threshold or timestamp updates) and is short-circuited here — no query
+    on those paths. ``_prev_available = None`` signals post_save to skip.
     """
-    # Skip if no stock available
-    if instance.available <= 0:
+    if update_fields is not None and not (
+        "on_hand" in update_fields or "allocated" in update_fields
+    ):
+        instance._prev_available = None
         return
-
-    # Get pending notifications for this product and variant
-    pending_notifications = StockNotification.objects.filter(
-        product=instance.product,
-        notified_at__isnull=True,  # Not yet notified
-    )
-
-    # Filter by variant if applicable
-    if instance.variant:
-        pending_notifications = pending_notifications.filter(variant=instance.variant)
+    if instance.pk:
+        prev = StockItem.objects.filter(pk=instance.pk).values("on_hand", "allocated").first()
+        instance._prev_available = max(0, prev["on_hand"] - prev["allocated"]) if prev else 0
     else:
-        # For base product stock, notify subscribers without variant
-        pending_notifications = pending_notifications.filter(variant__isnull=True)
+        instance._prev_available = 0
 
-    # Filter by warehouse preference if set
-    pending_notifications = pending_notifications.filter(
-        models.Q(preferred_warehouse__isnull=True)
-        | models.Q(preferred_warehouse=instance.warehouse)
-    )
 
-    if not pending_notifications.exists():
+@receiver(post_save, sender=StockItem)
+def check_and_send_back_in_stock_notifications(
+    sender, instance, created, update_fields=None, **kwargs
+):
+    """Dispatch back-in-stock notifications when a stock item crosses from zero
+    to positive availability.
+
+    The heavy work (finding subscribers, rendering, queuing email) runs in the
+    ``catalog.send_back_in_stock_notifications`` Celery task, dispatched only on
+    the 0 -> positive transition and only ``on_commit`` so a rolled-back stock
+    change never emails anyone and the task never reads a row that isn't there.
+    """
+    prev_available = getattr(instance, "_prev_available", 0)
+    if prev_available is None:  # save changed neither on_hand nor allocated
+        return
+    if prev_available > 0:
+        # Item was already in stock, so this save cannot be a 0 -> positive
+        # transition. Skip the second read/lookup — this is the hot allocation
+        # path (add-to-cart) where availability only ever drops.
         return
 
-    logger.info(
-        f"Sending back-in-stock notifications for {instance.product.name}: "
-        f"{pending_notifications.count()} subscribers"
-    )
+    # Read the just-saved quantities from the DB: callers mutate on_hand/
+    # allocated with F() expressions, so instance.available may hold an
+    # unresolved expression at signal time. The committed row has real integers.
+    row = StockItem.objects.filter(pk=instance.pk).values("on_hand", "allocated").first()
+    if not row:
+        return
+    curr_available = max(0, row["on_hand"] - row["allocated"])
+    if not (prev_available <= 0 < curr_available):
+        return
 
-    for notification in pending_notifications:
-        try:
-            send_back_in_stock_email(notification, instance)
-            notification.notified_at = timezone.now()
-            notification.save(update_fields=["notified_at"])
-            logger.info(f"Sent back-in-stock notification to {notification.email}")
-        except Exception as e:
-            logger.error(
-                f"Failed to send back-in-stock notification to {notification.email}: {e}",
-                exc_info=True,
-            )
+    # Only pay for the subscriber lookup on a real transition.
+    if not StockNotification.objects.filter(
+        product_id=instance.product_id, notified_at__isnull=True
+    ).exists():
+        return
 
+    stock_item_id = instance.pk
 
-def send_back_in_stock_email(notification: StockNotification, stock_item: StockItem):
-    """
-    Send a back-in-stock email notification to a subscriber.
+    def _dispatch():
+        from catalog.tasks import send_back_in_stock_notifications
 
-    Args:
-        notification: StockNotification instance
-        stock_item: StockItem that has come back in stock
-    """
-    from django.urls import reverse
+        send_back_in_stock_notifications.delay(stock_item_id)
 
-    product = notification.product
-    variant = notification.variant
-
-    # Build product URL
-    product_url = reverse("page_builder:product_detail", kwargs={"product_slug": product.slug})
-
-    # Get product image
-    image_url = None
-    if hasattr(product, "primary_image_url"):
-        image_url = product.primary_image_url
-    elif variant and variant.image_asset:
-        image_url = variant.image_asset.get_display_url()
-
-    # Prepare context
-    context = {
-        "product_name": product.name,
-        "variant_name": variant.name if variant else None,
-        "product_url": product_url,
-        "product_image_url": image_url,
-        "subscriber_email": notification.email,
-    }
-
-    try:
-        # Render email template
-        renderer = TemplateRenderer()
-        from core.translation_utils import get_primary_language
-
-        subject, html_body, plain_text_body = renderer.render(
-            template_type="back_in_stock",
-            context=context,
-            language=get_primary_language(),
-            enable_tracking=True,
-        )
-
-        # Queue email for sending
-        EmailSendingService.queue_email(
-            to_email=notification.email,
-            subject=subject,
-            html_body=html_body,
-            text_body=plain_text_body,
-            template_type="back_in_stock",
-        )
-
-    except Exception as e:
-        logger.error(
-            f"Failed to render/queue back-in-stock email for {notification.email}: {e}",
-            exc_info=True,
-        )
-        raise  # Re-raise to be caught by the caller
+    transaction.on_commit(_dispatch)
 
 
 # Import models at module level to avoid issues
-from django.db import models
 
 
 def _credit_captures_to_amount_paid(order, captures):

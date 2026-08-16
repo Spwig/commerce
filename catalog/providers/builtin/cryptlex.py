@@ -351,13 +351,20 @@ class CryptlexAdapter(BaseLicenseProviderAdapter):
         """
         from catalog.models import ExternalLicenseSync
 
-        try:
-            sync = ExternalLicenseSync.objects.get(
+        # The model does not enforce a single successful sync per
+        # license/provider, so select the most recent one deterministically
+        # instead of assuming exactly one exists (which would raise
+        # MultipleObjectsReturned).
+        sync = (
+            ExternalLicenseSync.objects.filter(
                 license_key=license_key, provider=self.provider, sync_status="success"
             )
-            cryptlex_license_id = sync.external_id
-        except ExternalLicenseSync.DoesNotExist:
+            .order_by("-synced_at")
+            .first()
+        )
+        if sync is None:
             return False, {"error": "License not synced to Cryptlex"}
+        cryptlex_license_id = sync.external_id
 
         endpoint = f"/licenses/{cryptlex_license_id}"
 

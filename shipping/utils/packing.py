@@ -121,8 +121,10 @@ class PackingAlgorithm:
             )
             return None
 
-        # Return smallest package by volume (already sorted)
-        return fitting_packages[0]
+        # Return the smallest package that fits by volume. self.packages is
+        # pre-sorted by descending priority, so min() keeps the highest-priority
+        # package as the tie-breaker when two packages share the same volume.
+        return min(fitting_packages, key=lambda package: package.get_volume())
 
     def pack_items(
         self,

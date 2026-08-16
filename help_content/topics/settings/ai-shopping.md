@@ -15,6 +15,10 @@ keywords:
   - emergency stop
   - kill switch
   - agent visibility
+  - agent policy
+  - verify assistant
+  - spend cap
+  - agent trust level
 url_patterns:
   - /admin/agentic/agenticsettings/
   - /admin/agentic/agentidentity/
@@ -62,9 +66,34 @@ Every product has a **Visible to AI shopping agents** setting (on by default). S
 
 ## Managing individual assistants
 
-When an assistant first buys — or tries to — Spwig records it under **AI Shopping → Agent Identities**. Each entry shows the assistant's verified home (the directory it signs with) and how many requests it has made. The name and logo an assistant presents are shown only as *claimed* details — treat them as a label, not proof of identity; the verified home is the part that can be trusted.
+When an assistant first buys — or tries to — Spwig records it under **AI Shopping → Agent Identities**. Each entry shows the assistant's verified home (the directory it signs with), its trust level, and how many requests it has made. The name and logo an assistant presents are shown only as *claimed* details — treat them as a label, not proof of identity; the verified home is the part that can be trusted.
 
-New assistants start **capped**: they can transact, but within limits. To stop one, select it and choose **Block selected assistants** — open checkouts end and the assistant can no longer buy, while any payment already taken is left untouched. **Unblock selected assistants** returns it to the capped state (never straight to unlimited — lifting limits is always a separate, deliberate step).
+Every assistant sits in one of three trust levels:
+
+| Trust level | What it means |
+|---|---|
+| **Capped (verified, limited)** | The default for a new assistant. Spwig has recorded its identity, and it carries the order-value cap, spend cap, and tender restrictions set on its policy (see below). |
+| **Verified (limits removed)** | A deliberate decision by you to trust this assistant fully. Its order-value and daily spend caps are cleared. |
+| **Blocked** | The assistant can no longer buy from your store. Open checkouts end, though any payment already taken is left untouched. |
+
+To stop an assistant, select it in the list and choose **Block selected assistants**. **Unblock selected assistants** always returns it to **Capped** — never straight to Verified — because lifting limits is a separate, deliberate step.
+
+To lift an assistant's limits entirely, select it and choose **Promote to verified (remove limits)**. This clears its max order value and daily spend cap and moves the assistant to the Verified state. A blocked assistant is skipped — unblock it first, then promote it. Treat this as a real trust decision: only promote an assistant you're confident about, since verification removes the guardrails a new assistant starts with.
+
+## Setting an assistant's limits
+
+Open an assistant's detail page and use the **Policy (limits & allowed tenders)** section to set what it's allowed to do:
+
+| Field | What it controls |
+|---|---|
+| **Max order value** | The largest single order this assistant can place. Leave blank for no cap. |
+| **Daily spend cap** | The most this assistant can spend across all orders in a day. Leave blank for no cap. |
+| **Allow discount codes** | Whether the assistant can apply voucher codes at checkout. |
+| **Allow gift cards** | Whether the assistant can redeem gift cards. |
+| **Allow digital goods** | Whether the assistant can buy digital products. |
+| **Rate limit (per minute)** | How many requests the assistant can make to your store per minute. |
+
+A new assistant starts capped with concrete order-value and spend caps, and with discount codes, gift cards, and digital goods switched off — the deliberately conservative default. Change any of these fields and save; every change is written to **Agent Events** with the before and after values, so you always have a record of who changed what, and when. Promoting an assistant to Verified clears its Max order value and Daily spend cap for you — you don't need to blank them out by hand first.
 
 ## The activity record
 

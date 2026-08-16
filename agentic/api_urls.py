@@ -41,6 +41,11 @@ urlpatterns = [
         name="ucp_checkout_complete",
     ),
     path(
+        "ucp/checkout-sessions/<str:checkout_id>/cancel/",
+        checkout_views.checkout_cancel,
+        name="ucp_checkout_cancel",
+    ),
+    path(
         "ucp/checkout-sessions/<str:checkout_id>/mandate/",
         checkout_views.checkout_mandate,
         name="ucp_checkout_mandate",

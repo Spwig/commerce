@@ -341,6 +341,94 @@ class RedemptionEngine:
         redemption.voucher_code = voucher
         return True, "Reward voucher issued"
 
+    def _revoke_discount_reward(self, redemption):
+        """
+        Reverse the monetary benefit a discount redemption already issued, so
+        the member cannot keep it after the points that bought it are refunded.
+
+        The inverse of :meth:`_issue_discount_reward`:
+          fixed      -> reverse the loyalty wallet credit.
+          percentage -> deactivate the issued single-use voucher.
+
+        Returns (success, message). A redemption that never issued anything (a
+        pending redemption, a non-discount reward) is a no-op success. A
+        benefit that has already been consumed cannot be revoked and returns
+        failure, so the caller must abort rather than refund the points on top
+        of a spent benefit.
+        """
+        reward = redemption.reward
+        if reward.reward_type != LoyaltyReward.TYPE_DISCOUNT:
+            return True, "No discount benefit to revoke"
+
+        if reward.discount_type == LoyaltyReward.DISCOUNT_TYPE_FIXED:
+            return self._revoke_wallet_credit(redemption)
+        if reward.discount_type == LoyaltyReward.DISCOUNT_TYPE_PERCENTAGE:
+            return self._revoke_percentage_voucher(redemption)
+
+        return True, "No discount benefit to revoke"
+
+    def _revoke_wallet_credit(self, redemption):
+        """
+        Reverse the loyalty wallet credit issued for a fixed-value redemption.
+
+        Matches on (source='loyalty', reference_id=redemption.uuid) — the same
+        key :meth:`_issue_wallet_credit` writes under. No live credit (a
+        pending redemption, or one already reversed) is a no-op success; a
+        credit already spent makes reverse_transaction raise, which surfaces as
+        failure so the caller does not refund on top of spent store credit.
+        """
+        from wallet.models import WalletTransaction
+        from wallet.services import WalletService
+
+        credit = (
+            WalletTransaction.objects.filter(
+                source=WalletTransaction.SOURCE_LOYALTY,
+                reference_id=str(redemption.uuid),
+                transaction_type=WalletTransaction.TYPE_CREDIT,
+            )
+            .exclude(status=WalletTransaction.STATUS_REVERSED)
+            .first()
+        )
+        if credit is None:
+            return True, "No wallet credit to revoke"
+
+        try:
+            WalletService.reverse_transaction(
+                credit,
+                reason=f"Reversal for redemption {redemption.redemption_code}",
+            )
+        except Exception as exc:  # already spent, frozen wallet, race loser
+            logger.warning(
+                f"Could not reverse wallet credit for redemption "
+                f"{redemption.redemption_code}: {exc}"
+            )
+            return False, f"Wallet credit could not be reversed: {exc}"
+
+        return True, "Wallet credit reversed"
+
+    def _revoke_percentage_voucher(self, redemption):
+        """
+        Deactivate the single-use voucher issued for a percentage redemption.
+
+        No voucher (a pending redemption) is a no-op success. A voucher that
+        has already been used cannot be clawed back, so it returns failure and
+        the caller must not refund the points.
+        """
+        from vouchers.models import VoucherCode
+
+        if not redemption.voucher_code_id:
+            return True, "No voucher to revoke"
+
+        voucher = VoucherCode.objects.select_for_update().get(pk=redemption.voucher_code_id)
+        if voucher.current_uses > 0:
+            return False, "Issued voucher has already been used and cannot be revoked"
+
+        if voucher.is_active:
+            voucher.is_active = False
+            voucher.save(update_fields=["is_active", "updated_at"])
+
+        return True, "Voucher deactivated"
+
     @db_transaction.atomic
     def fulfill_redemption(self, redemption, **kwargs):
         """
@@ -355,11 +443,32 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
+        # Lock and re-read before the status check. cancel_redemption and
+        # expire_redemption lock and finalize the row; without this lock a
+        # concurrent cancel/expire could finalize (refund points, restore
+        # stock) after this instance was loaded but before save(), and this
+        # method would overwrite that final status with fulfilled.
+        redemption = LoyaltyRedemption.objects.select_for_update().get(pk=redemption.pk)
+
         if redemption.status not in [
             LoyaltyRedemption.STATUS_PENDING,
             LoyaltyRedemption.STATUS_CONFIRMED,
         ]:
             return False, f"Cannot fulfill redemption with status: {redemption.status}"
+
+        # A discount reward's benefit (wallet credit or voucher) is only issued
+        # by confirm_redemption's _issue_discount_reward path. Fulfilling a
+        # still-pending discount would mark it final with the member's points
+        # spent but nothing issued, so confirm (and issue) first and only
+        # proceed once issuance has succeeded.
+        if (
+            redemption.reward.reward_type == LoyaltyReward.TYPE_DISCOUNT
+            and redemption.status == LoyaltyRedemption.STATUS_PENDING
+        ):
+            confirmed, confirm_message = self.confirm_redemption(redemption)
+            if not confirmed:
+                return False, confirm_message
+            redemption.refresh_from_db()
 
         # Update status
         redemption.status = LoyaltyRedemption.STATUS_FULFILLED
@@ -398,6 +507,13 @@ class RedemptionEngine:
         if not redemption.can_cancel():
             return False, f"Cannot cancel redemption with status: {redemption.status}"
 
+        # Revoke any already-issued discount benefit before returning the points
+        # that bought it, so the member cannot keep both. Fail the cancellation
+        # if the benefit cannot be revoked (e.g. a voucher already spent).
+        revoked, revoke_message = self._revoke_discount_reward(redemption)
+        if not revoked:
+            return False, revoke_message
+
         # Refund points if requested
         if refund_points:
             refunded, refund_message = self._refund_points(
@@ -405,6 +521,12 @@ class RedemptionEngine:
                 reason=f"Refund for cancelled redemption: {redemption.redemption_code}",
             )
             if not refunded:
+                # The revocation above already reversed the wallet credit /
+                # deactivated the voucher. A plain return commits that inside
+                # this atomic block, leaving the benefit revoked but the points
+                # unrefunded and the redemption uncancelled. Roll the whole
+                # cancellation back so revocation and refund stay all-or-nothing.
+                db_transaction.set_rollback(True)
                 return False, refund_message
 
         # Restore reward quantity
@@ -454,12 +576,26 @@ class RedemptionEngine:
         ]:
             return False, "Redemption is already in a final state"
 
+        # Revoke any already-issued discount benefit before refunding the points
+        # that bought it: a confirmed fixed reward holds a spendable wallet
+        # credit and a confirmed percentage reward holds an active voucher, so
+        # refunding without revoking would leave the member with both.
+        revoked, revoke_message = self._revoke_discount_reward(redemption)
+        if not revoked:
+            return False, revoke_message
+
         # Refund points for expired redemptions
         refunded, refund_message = self._refund_points(
             redemption,
             reason=f"Refund for expired redemption: {redemption.redemption_code}",
         )
         if not refunded:
+            # The revocation above already reversed the wallet credit /
+            # deactivated the voucher. A plain return commits that inside this
+            # atomic block, leaving the member with the benefit revoked but the
+            # points not returned and the redemption unexpired. Roll the whole
+            # expiry back so revocation and refund stay all-or-nothing.
+            db_transaction.set_rollback(True)
             return False, refund_message
 
         # Restore reward quantity

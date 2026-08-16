@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.categories import (
     AdminCategoryDetailSerializer,
@@ -221,7 +221,7 @@ def category_detail(request, category_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_category(request):
     """Create a new category."""
@@ -314,7 +314,7 @@ def create_category(request):
     },
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_category(request, category_id):
     """Partially update a category."""
@@ -442,7 +442,7 @@ def update_category(request, category_id):
     responses={200: None, 404: ErrorResponseSerializer, 409: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def delete_category(request, category_id):
     """Delete a category."""
@@ -532,7 +532,7 @@ def delete_category(request, category_id):
     responses={201: None, 400: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_create_categories(request):
     """Bulk create categories."""
@@ -832,7 +832,7 @@ def _delete_category_asset(request, category_id, field_name):
     responses={201: None, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 @parser_classes([MultiPartParser, FormParser])
 def upload_category_image(request, category_id):
@@ -852,7 +852,7 @@ def upload_category_image(request, category_id):
     responses={201: None, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 @parser_classes([MultiPartParser, FormParser])
 def upload_category_banner(request, category_id):
@@ -871,7 +871,7 @@ def upload_category_banner(request, category_id):
     responses={200: None, 404: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def delete_category_image(request, category_id):
     """Remove the main image from a category."""
@@ -889,7 +889,7 @@ def delete_category_image(request, category_id):
     responses={200: None, 404: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def delete_category_banner(request, category_id):
     """Remove the banner image from a category."""

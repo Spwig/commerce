@@ -304,12 +304,15 @@ class FedExProvider(ProviderBase):
             retry_after = response.headers.get("Retry-After")
             retry_after = int(retry_after) if retry_after else None
             raise FedExRateLimitError(error_message, retry_after=retry_after)
-        else:
-            raise exception_class(
+        elif exception_class is FedExAPIError:
+            # Only FedExAPIError accepts the error_code/error_details kwargs.
+            raise FedExAPIError(
                 f"{context} failed: {error_message}",
-                error_code=error_code if hasattr(exception_class, "error_code") else None,
-                error_details=error if hasattr(exception_class, "error_details") else None,
+                error_code=error_code,
+                error_details=error,
             )
+        else:
+            raise exception_class(f"{context} failed: {error_message}")
 
     def _make_api_request(
         self,
@@ -500,7 +503,8 @@ class FedExProvider(ProviderBase):
         )
 
         # Parse response
-        rates = self._parse_rate_response(data)
+        ship_date = (options or {}).get("ship_date")
+        rates = self._parse_rate_response(data, ship_date=ship_date)
 
         logger.info(f"Retrieved {len(rates)} FedEx rates")
         return rates
@@ -627,12 +631,15 @@ class FedExProvider(ProviderBase):
         logger.debug(f"Built rate request for {len(package_line_items)} packages")
         return payload
 
-    def _parse_rate_response(self, data: dict[str, Any]) -> list[dict[str, Any]]:
+    def _parse_rate_response(
+        self, data: dict[str, Any], ship_date: datetime | None = None
+    ) -> list[dict[str, Any]]:
         """
         Parse FedEx rate response into standard format.
 
         Args:
             data: FedEx API response data
+            ship_date: Requested shipment date used to measure transit days
 
         Returns:
             List of rate dictionaries
@@ -670,7 +677,7 @@ class FedExProvider(ProviderBase):
 
                 # Get delivery information
                 commit = detail.get("commit", {})
-                delivery_days = utils.calculate_delivery_days(commit)
+                delivery_days = utils.calculate_delivery_days(commit, ship_date=ship_date)
 
                 # Get delivery date
                 delivery_date = None

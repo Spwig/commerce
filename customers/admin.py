@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
 from django.urls import reverse
-from django.utils.html import format_html
+from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -92,11 +92,11 @@ class LTVConfidenceFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == "high":
-            return queryset.filter(ltv_confidence_score__gte=80)
+            return queryset.filter(ltv_confidence_score__gte=0.8)
         elif self.value() == "medium":
-            return queryset.filter(ltv_confidence_score__gte=50, ltv_confidence_score__lt=80)
+            return queryset.filter(ltv_confidence_score__gte=0.5, ltv_confidence_score__lt=0.8)
         elif self.value() == "low":
-            return queryset.filter(ltv_confidence_score__lt=50)
+            return queryset.filter(ltv_confidence_score__lt=0.5)
         return queryset
 
 
@@ -184,7 +184,13 @@ class EnhancedCustomerProfileAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .select_related("user", "preferred_theme", "user__communication_preferences")
+            .select_related(
+                "user",
+                "preferred_theme",
+                "user__communication_preferences",
+                "user__customer_metrics",
+                "user__affiliate_profile",
+            )
             .prefetch_related("user__orders", "user__customer_notes")
         )
 
@@ -349,10 +355,11 @@ class EnhancedCustomerProfileAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
             ltv_confidence = metrics.ltv_confidence_score
 
             if ltv_confidence is not None:
-                confidence_display = f"{ltv_confidence:.0f}%"
-                if ltv_confidence >= 80:
+                score = float(ltv_confidence) * 100
+                confidence_display = f"{score:.0f}%"
+                if score >= 80:
                     confidence_class = "ltv-confidence-high"
-                elif ltv_confidence >= 50:
+                elif score >= 50:
                     confidence_class = "ltv-confidence-medium"
                 else:
                     confidence_class = "ltv-confidence-low"
@@ -1113,11 +1120,15 @@ class AbandonedCartAdmin(admin.ModelAdmin):
             try:
                 name = cart.user.get_full_name() or cart.user.username
                 subject = str(_("%(name)s, you left items in your cart!") % {"name": name})
+                # Escape user-controlled values before embedding them in HTML.
+                safe_name = escape(name)
+                safe_value = escape(cart.total_value)
+                safe_site_name = escape(site_name)
                 html_body = (
-                    f"<p>{str(_('Hi %(name)s,') % {'name': name})}</p>"
-                    f"<p>{str(_('You left %(count)s item(s) worth %(value)s in your cart.') % {'count': cart.total_items, 'value': cart.total_value})}</p>"
+                    f"<p>{str(_('Hi %(name)s,') % {'name': safe_name})}</p>"
+                    f"<p>{str(_('You left %(count)s item(s) worth %(value)s in your cart.') % {'count': cart.total_items, 'value': safe_value})}</p>"
                     f"<p>{str(_('Complete your purchase today!'))}</p>"
-                    f"<p>{str(_('Best regards,'))}<br>{site_name}</p>"
+                    f"<p>{str(_('Best regards,'))}<br>{safe_site_name}</p>"
                 )
                 EmailSendingService.queue_email(
                     to_email=cart.user.email,
@@ -1170,6 +1181,9 @@ class CustomerNoteAdmin(admin.ModelAdmin):
     list_filter = ["note_type", "requires_follow_up", "completed", "is_internal", "created_at"]
     search_fields = ["customer__username", "customer__email", "title", "content"]
     readonly_fields = ["created_at", "updated_at"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("customer", "created_by")
 
     fieldsets = (
         (

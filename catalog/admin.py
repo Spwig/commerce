@@ -4,9 +4,10 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin.options import IS_POPUP_VAR
 from django.contrib.admin.widgets import AutocompleteSelect
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Count, Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import conditional_escape
@@ -75,6 +76,19 @@ from .models import (
     Warehouse,
     WebhookSubscription,
 )
+
+
+def _csv_safe_cell(value):
+    """Neutralise CSV/formula injection in an externally controlled cell.
+
+    A cell beginning with ``= + - @`` or a control char is executed as a formula
+    by Excel/Sheets. Product free-text fields (name, SKU, licence number) are
+    merchant-supplied, so prefix such cells with a single quote to keep them
+    inert as text. Non-string values pass through unchanged.
+    """
+    if isinstance(value, str) and value and value[0] in ("=", "+", "-", "@", "\t", "\r", "\n"):
+        return "'" + value
+    return value
 
 
 class ProductImageInline(admin.TabularInline):
@@ -592,19 +606,21 @@ class CustomizationOptionInline(admin.TabularInline):
     def choices_display(self, obj):
         """Display choices in a readable format for select/color options"""
         if obj.pk and obj.option_type in ("select", "color") and obj.choices:
-            from django.utils.safestring import mark_safe
+            from django.utils.html import format_html, format_html_join
 
-            choice_html = '<div class="customization-choices">'
-            for choice in obj.choices:
-                value = choice.get("value", "")
-                label = choice.get("label", value)
-                modifier = choice.get("price_modifier")
-
-                modifier_text = f" (+${modifier})" if modifier else ""
-                choice_html += f'<div class="choice-item"><strong>{label}</strong> [{value}]{modifier_text}</div>'
-
-            choice_html += "</div>"
-            return mark_safe(choice_html)
+            rows = format_html_join(
+                "",
+                '<div class="choice-item"><strong>{}</strong> [{}]{}</div>',
+                (
+                    (
+                        choice.get("label", choice.get("value", "")),
+                        choice.get("value", ""),
+                        f" (+${choice['price_modifier']})" if choice.get("price_modifier") else "",
+                    )
+                    for choice in obj.choices
+                ),
+            )
+            return format_html('<div class="customization-choices">{}</div>', rows)
         return "-"
 
     choices_display.short_description = _("Choices")
@@ -1054,6 +1070,7 @@ class CategoryAdmin(
     translatable_fields = ["name", "description", "meta_title", "meta_description"]
 
     list_display = ["name", "parent", "page_template", "is_active", "is_featured"]
+    list_select_related = ["parent"]
     list_filter = ["is_active", "is_featured", "page_template"]
     search_fields = ["name", "description"]
     prepopulated_fields = {"slug": ("name",)}
@@ -1171,9 +1188,12 @@ class CategoryAdmin(
 @admin.register(Brand)
 class BrandAdmin(SEOGeneratorAdminMixin, TranslationAdmin):
     change_form_template = "admin/catalog/brand/change_form.html"
+    change_list_template = "admin/catalog/brand/change_list.html"
+    list_per_page = 24
     list_display = ["name", "is_active", "is_featured"]
     list_filter = ["is_active", "is_featured"]
     search_fields = ["name", "description"]
+    actions = ["make_active", "make_inactive", "make_featured", "remove_featured"]
     prepopulated_fields = {"slug": ("name",)}
     fieldsets = (
         (_("Basic Information"), {"fields": ("name", "slug", "description", "website")}),
@@ -1193,6 +1213,31 @@ class BrandAdmin(SEOGeneratorAdminMixin, TranslationAdmin):
 
             extra_context["product_count"] = Product.objects.filter(brand=obj).count()
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(num_products=Count("products"))
+
+    @admin.action(description=_("Mark selected brands as active"))
+    def make_active(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, _("%(n)d brand(s) marked active.") % {"n": updated})
+
+    @admin.action(description=_("Mark selected brands as inactive"))
+    def make_inactive(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, _("%(n)d brand(s) marked inactive.") % {"n": updated})
+
+    @admin.action(description=_("Mark selected brands as featured"))
+    def make_featured(self, request, queryset):
+        updated = queryset.update(is_featured=True)
+        self.message_user(request, _("%(n)d brand(s) marked featured.") % {"n": updated})
+
+    @admin.action(description=_("Remove featured from selected brands"))
+    def remove_featured(self, request, queryset):
+        updated = queryset.update(is_featured=False)
+        self.message_user(request, _("%(n)d brand(s) unfeatured.") % {"n": updated})
 
 
 class ProductForm(forms.ModelForm):
@@ -1219,7 +1264,43 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = "__all__"
+        # Do NOT use fields="__all__". The custom change_form template
+        # hand-picks each field it renders, and any *bound* field the template
+        # does not submit is reset to empty on save (Django only spares fields
+        # that carry a model default). Everything below is either internal,
+        # analytics, soft-delete, or owned by another surface (the page
+        # builder), so it must never be managed by this form. Fields that are
+        # genuinely merchant-editable but not yet exposed (barcode, condition,
+        # sales_channel, agent_visible) are excluded too — that keeps them
+        # safe from the reset; render them here and drop them from this list
+        # to expose them. tests/test_product_change_form_fields.py guards the
+        # form ↔ template relationship.
+        exclude = (
+            # Soft-delete internals
+            "is_deleted",
+            "deleted_at",
+            "deleted_by",
+            # Import / migration internals
+            "external_id",
+            "imported_meta",
+            "migration_job",
+            # Analytics counters (written by live traffic, never edited here)
+            "sales_count",
+            "views_count",
+            # Product-page design/layout — owned by the page builder
+            "css_classes",
+            "style_overrides",
+            "layout_config",
+            "responsive_config",
+            "template_variant",
+            "inherit_parent_theme",
+            "product_sections",
+            # Merchant attributes not yet surfaced in the form (see note above)
+            "barcode",
+            "condition",
+            "sales_channel",
+            "agent_visible",
+        )
         widgets = {
             # Translatable text fields
             "name": TranslatableFieldWidget(
@@ -1279,6 +1360,20 @@ class ProductAdmin(
     change_list_template = "admin/catalog/product/change_list.html"
     list_per_page = 50
 
+    def get_changeform_initial_data(self, request):
+        """Seed the Add-product form's backorder toggle from the store default.
+
+        New products inherit ``SiteSettings.allow_backorders_by_default``; the
+        merchant still sees the checkbox and can override it before saving.
+        """
+        initial = super().get_changeform_initial_data(request)
+        from core.models import SiteSettings
+
+        initial.setdefault(
+            "allow_backorders", SiteSettings.get_settings().allow_backorders_by_default
+        )
+        return initial
+
     list_display = [
         "name",
         "sku",
@@ -1310,12 +1405,10 @@ class ProductAdmin(
         StockItemInline,
         ProductRegionVisibilityInline,
     ]
-    actions = [
-        "mark_international_ready",
-        "export_customs_data",
-        "delete_selected_products",
-        "restore_selected_products",
-    ]
+    # Bulk actions are surfaced through the custom change_list toolbar and
+    # handled by bulk_action_view(); the standard Django actions dropdown is
+    # not rendered by that template, so it carries no action entries.
+    actions = ["delete_selected_products"]
     readonly_fields = ["variant_stock_display"]
     filter_horizontal = ["tags"]
 
@@ -1761,12 +1854,13 @@ class ProductAdmin(
         if pricing_strategy:
             qs = qs.filter(pricing_strategy=pricing_strategy)
 
-        # On sale filter
+        # On sale filter (Product has no sale_price column; sales are modelled via
+        # sale_type/sale_value within an optional date window — reuse the manager helper)
         on_sale = request.GET.get("on_sale")
         if on_sale == "yes":
-            qs = qs.filter(sale_price__isnull=False)
+            qs = qs.on_sale()
         elif on_sale == "no":
-            qs = qs.filter(sale_price__isnull=True)
+            qs = qs.exclude(pk__in=qs.on_sale().values("pk"))
 
         # Subscription filter
         is_subscription = request.GET.get("is_subscription")
@@ -1867,28 +1961,45 @@ class ProductAdmin(
             except json.JSONDecodeError:
                 pass  # Keep existing translations if JSON is invalid
 
-        super().save_model(request, obj, form, change)
-
         # Handle simple stock quantity (only when multi-warehouse is disabled AND product is not variable)
         from core.models import SiteSettings
 
         settings = SiteSettings.get_settings()
 
-        if (
+        handle_simple_stock = (
             not settings.enable_multi_warehouse
             and obj.product_type != "variable"
             and "simple_stock_quantity" in request.POST
-        ):
+        )
+
+        # Parse the submitted quantity up front so bad input surfaces as a form
+        # validation error instead of being silently swallowed after the product
+        # is saved. Database errors are left to propagate so the surrounding
+        # transaction rolls back rather than committing a partial update.
+        quantity = None
+        if handle_simple_stock:
+            from decimal import Decimal, InvalidOperation
+
+            from django.core.exceptions import ValidationError
+
+            simple_stock_qty = request.POST.get("simple_stock_quantity", "0")
             try:
-                from decimal import Decimal
-
-                from catalog.models import SalesRegion, StockItem, Warehouse
-
-                simple_stock_qty = request.POST.get("simple_stock_quantity", "0")
                 quantity = Decimal(simple_stock_qty) if simple_stock_qty else Decimal("0")
+            except (InvalidOperation, ValueError, TypeError) as exc:
+                raise ValidationError(
+                    {"simple_stock_quantity": _("Enter a valid stock quantity.")}
+                ) from exc
+
+        from django.db import transaction
+
+        with transaction.atomic():
+            super().save_model(request, obj, form, change)
+
+            if handle_simple_stock:
+                from catalog.models import SalesRegion, StockItem, StockMovement, Warehouse
 
                 # Get or create default sales region (required for warehouse)
-                default_region, region_created = SalesRegion.objects.get_or_create(
+                default_region, _ = SalesRegion.objects.get_or_create(
                     code="DEFAULT",
                     defaults={
                         "name": "Default Region",
@@ -1898,11 +2009,10 @@ class ProductAdmin(
                         "priority": 0,
                     },
                 )
-                if region_created:
-                    print("[ProductAdmin.save_model] Created default sales region (DEFAULT)")
 
-                # Get or create default warehouse (code 'MAIN-WH' to match migration 0031 and SiteSettings validation)
-                default_warehouse, wh_created = Warehouse.objects.get_or_create(
+                # Get or create default warehouse (code 'MAIN-WH' to match
+                # migration 0031 and SiteSettings validation)
+                default_warehouse, _ = Warehouse.objects.get_or_create(
                     code="MAIN-WH",
                     defaults={
                         "name": "Main Warehouse",
@@ -1915,50 +2025,30 @@ class ProductAdmin(
                         "fulfillment_priority": 100,
                     },
                 )
-                if wh_created:
-                    print("[ProductAdmin.save_model] Created default warehouse (MAIN-WH)")
 
-                if default_warehouse:
-                    # Get or create stock item for this product in the default warehouse
-                    # Important: variant=None ensures we only get the parent product's stock item
-                    stock_item, created = StockItem.objects.get_or_create(
-                        product=obj,
-                        warehouse=default_warehouse,
-                        variant=None,  # Explicitly filter for parent product stock only
-                        defaults={"on_hand": quantity},
+                # Get or create stock item for this product in the default warehouse.
+                # variant=None ensures we only touch the parent product's stock item.
+                stock_item, created = StockItem.objects.get_or_create(
+                    product=obj,
+                    warehouse=default_warehouse,
+                    variant=None,
+                    defaults={"on_hand": quantity},
+                )
+
+                if not created and stock_item.on_hand != quantity:
+                    old_quantity = stock_item.on_hand
+                    stock_item.on_hand = quantity
+                    stock_item.save()
+
+                    # Record a stock movement for the audit trail.
+                    StockMovement.objects.create(
+                        stock_item=stock_item,
+                        movement_type="adjustment",
+                        quantity=quantity - old_quantity,
+                        previous_quantity=old_quantity,
+                        new_quantity=quantity,
+                        reason=f"Stock adjusted via product admin by {request.user.username}",
                     )
-
-                    if not created and stock_item.on_hand != quantity:
-                        # Update quantity if it changed
-                        old_quantity = stock_item.on_hand
-                        stock_item.on_hand = quantity
-                        stock_item.save()
-
-                        print(
-                            f"[ProductAdmin.save_model] Updated simple stock: {old_quantity} -> {quantity}"
-                        )
-
-                        # Optionally create a stock movement record for audit trail
-                        try:
-                            from catalog.models import StockMovement
-
-                            movement_qty = quantity - old_quantity
-                            StockMovement.objects.create(
-                                stock_item=stock_item,
-                                movement_type="adjustment",
-                                quantity=movement_qty,
-                                previous_quantity=old_quantity,
-                                new_quantity=quantity,
-                                reason=f"Stock adjusted via product admin by {request.user.username}",
-                            )
-                        except Exception as e:
-                            print(f"[ProductAdmin.save_model] Error creating stock movement: {e}")
-                    elif created:
-                        print(
-                            f"[ProductAdmin.save_model] Created simple stock item with on_hand: {quantity}"
-                        )
-            except Exception as e:
-                print(f"[ProductAdmin.save_model] Error updating simple stock quantity: {e}")
 
         print("[ProductAdmin.save_model] Completed")
 
@@ -2597,39 +2687,26 @@ class ProductAdmin(
 
     variant_stock_display.short_description = _("Variant Stock Summary")
 
-    def mark_international_ready(self, request, queryset):
-        """Admin action to check which products need customs data"""
-        from django.contrib import messages
+    def international_readiness_summary(self, queryset):
+        """Report which products are ready for international shipping and why not.
 
+        Returns (ready_count, missing) where missing is a list of
+        "<name> (missing: <fields>)" strings for products that are not ready.
+        """
         ready_count = 0
-        missing_count = 0
-        missing_products = []
+        missing = []
 
         for product in queryset:
             if product.is_international_shipping_ready():
                 ready_count += 1
             else:
-                missing_count += 1
                 missing_fields = product.get_missing_customs_fields()
-                missing_products.append(f"{product.name} (missing: {', '.join(missing_fields)})")
+                missing.append(f"{product.name} (missing: {', '.join(missing_fields)})")
 
-        if ready_count > 0:
-            messages.success(
-                request, f"{ready_count} product(s) are ready for international shipping."
-            )
-
-        if missing_count > 0:
-            messages.warning(
-                request,
-                f"{missing_count} product(s) are NOT ready for international shipping:\n"
-                + "\n".join(missing_products[:10])  # Show max 10
-                + (f"\n...and {missing_count - 10} more" if missing_count > 10 else ""),
-            )
-
-    mark_international_ready.short_description = _("Check international shipping readiness")
+        return ready_count, missing
 
     def export_customs_data(self, request, queryset):
-        """Admin action to export customs data as CSV"""
+        """Export customs data (HS code, origin, licence) for products as CSV."""
         import csv
 
         from django.http import HttpResponse
@@ -2654,20 +2731,18 @@ class ProductAdmin(
         for product in queryset:
             writer.writerow(
                 [
-                    product.sku,
-                    product.name,
-                    product.hs_code or "",
-                    product.country_of_origin or "",
+                    _csv_safe_cell(product.sku),
+                    _csv_safe_cell(product.name),
+                    _csv_safe_cell(product.hs_code or ""),
+                    _csv_safe_cell(product.country_of_origin or ""),
                     product.unit_price_for_customs or "",
-                    product.export_license_number or "",
+                    _csv_safe_cell(product.export_license_number or ""),
                     product.export_license_expiry or "",
                     "Yes" if product.is_international_shipping_ready() else "No",
                 ]
             )
 
         return response
-
-    export_customs_data.short_description = _("Export customs data to CSV")
 
     # ============================================================================
     # Soft-Delete Methods
@@ -2695,32 +2770,11 @@ class ProductAdmin(
 
     delete_selected_products.short_description = _("Delete selected products")
 
-    def restore_selected_products(self, request, queryset):
-        """Restore soft-deleted products"""
-        from django.contrib import messages
-        from django.core.exceptions import ValidationError
-
-        count = 0
-        errors = []
-
-        for product in queryset.filter(is_deleted=True):
-            try:
-                product.restore()
-                count += 1
-            except ValidationError as e:
-                errors.append(f"{product.name}: {str(e)}")
-
-        if count:
-            self.message_user(
-                request, f"{count} product(s) restored from recycle bin.", messages.SUCCESS
-            )
-
-        if errors:
-            self.message_user(
-                request, "Some products could not be restored: " + "; ".join(errors), messages.ERROR
-            )
-
-    restore_selected_products.short_description = _("Restore selected products")
+    # Restoring soft-deleted products is handled on the dedicated Product
+    # Recycle Bin page (catalog_product_recycle_bin), which is the only place
+    # deleted products are listed. The main change list uses the default
+    # manager, which excludes deleted products, so a restore action here would
+    # never match anything.
 
     def get_urls(self):
         from django.urls import path
@@ -2747,11 +2801,44 @@ class ProductAdmin(
         try:
             data = json.loads(request.body)
             action = data.get("action")
-            product_ids = data.get("product_ids", [])
+            raw_ids = data.get("product_ids", [])
 
-            if not action or not product_ids:
+            if not action or not raw_ids:
                 return JsonResponse(
                     {"success": False, "message": _("Action and product IDs required")}, status=400
+                )
+
+            # Validate the selection: it must be a bounded list of integer PKs.
+            # Guards against non-int values (500s), truthy strings that slip past
+            # the empty check, and oversized payloads (authenticated DoS).
+            if not isinstance(raw_ids, list) or len(raw_ids) > 1000:
+                return JsonResponse(
+                    {"success": False, "message": _("Invalid product selection.")}, status=400
+                )
+            try:
+                product_ids = [int(pk) for pk in raw_ids]
+            except (TypeError, ValueError):
+                return JsonResponse(
+                    {"success": False, "message": _("Invalid product selection.")}, status=400
+                )
+
+            # Enforce model-level permissions: admin_view only guarantees an
+            # active staff login, not change/delete rights on Product.
+            mutating_actions = {"publish", "draft", "feature", "unfeature"}
+            if action in mutating_actions and not self.has_change_permission(request):
+                return JsonResponse(
+                    {"success": False, "message": _("Permission denied.")}, status=403
+                )
+            if action == "delete" and not self.has_delete_permission(request):
+                return JsonResponse(
+                    {"success": False, "message": _("Permission denied.")}, status=403
+                )
+            # Exports and the readiness audit only read data, but that data is
+            # commercially sensitive, so require view rights.
+            read_only_actions = {"export", "export_customs", "international_ready"}
+            if action in read_only_actions and not self.has_view_permission(request):
+                return JsonResponse(
+                    {"success": False, "message": _("Permission denied.")}, status=403
                 )
 
             products = Product.objects.filter(id__in=product_ids)
@@ -2782,14 +2869,33 @@ class ProductAdmin(
                     writer.writerow(
                         [
                             p.id,
-                            p.name,
-                            p.sku or "",
+                            _csv_safe_cell(p.name),
+                            _csv_safe_cell(p.sku or ""),
                             p.status,
                             p.is_featured,
                             str(p.price) if p.price else "",
                         ]
                     )
                 return response
+
+            elif action == "export_customs":
+                return self.export_customs_data(request, products)
+
+            elif action == "international_ready":
+                ready_count, missing = self.international_readiness_summary(products)
+                if missing:
+                    preview = "; ".join(missing[:10])
+                    if len(missing) > 10:
+                        preview += _("; and %d more") % (len(missing) - 10)
+                    message = _(
+                        "%(ready)d ready for international shipping, "
+                        "%(missing)d not ready: %(list)s"
+                    ) % {"ready": ready_count, "missing": len(missing), "list": preview}
+                else:
+                    message = (
+                        _("All %d selected product(s) are ready for international shipping.")
+                        % ready_count
+                    )
 
             elif action == "delete":
                 deleted_count = 0
@@ -2862,9 +2968,12 @@ class ProductReviewAdmin(admin.ModelAdmin):
 @admin.register(Collection)
 class CollectionAdmin(TranslationAdmin):
     change_form_template = "admin/catalog/collection/change_form.html"
+    change_list_template = "admin/catalog/collection/change_list.html"
+    list_per_page = 24
     list_display = ["name", "collection_type", "is_active", "is_featured"]
     list_filter = ["collection_type", "is_active", "is_featured"]
     search_fields = ["name", "description"]
+    actions = ["make_active", "make_inactive", "make_featured", "remove_featured"]
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ["products"]
 
@@ -2935,6 +3044,36 @@ class CollectionAdmin(TranslationAdmin):
                 extra_context["product_count"] = 0
         return super().change_view(request, object_id, form_url, extra_context)
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["collection_types"] = Collection._meta.get_field("collection_type").choices
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(num_products=Count("products"))
+
+    @admin.action(description=_("Mark selected collections as active"))
+    def make_active(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, _("%(n)d collection(s) marked active.") % {"n": updated})
+
+    @admin.action(description=_("Mark selected collections as inactive"))
+    def make_inactive(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, _("%(n)d collection(s) marked inactive.") % {"n": updated})
+
+    @admin.action(description=_("Mark selected collections as featured"))
+    def make_featured(self, request, queryset):
+        updated = queryset.update(is_featured=True)
+        self.message_user(request, _("%(n)d collection(s) marked featured.") % {"n": updated})
+
+    @admin.action(description=_("Remove featured from selected collections"))
+    def remove_featured(self, request, queryset):
+        updated = queryset.update(is_featured=False)
+        self.message_user(request, _("%(n)d collection(s) unfeatured.") % {"n": updated})
+
 
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
@@ -3000,8 +3139,9 @@ class PromotionAdmin(admin.ModelAdmin):
 
         extra_context = extra_context or {}
 
-        # Get all promotions for counting
-        queryset = self.get_queryset(request)
+        # Get all promotions for counting. Use the unfiltered base queryset so the
+        # stat cards reflect totals regardless of any ?status= filter on the list.
+        queryset = super().get_queryset(request)
         now = timezone.now()
 
         # Calculate counts for stats cards
@@ -3080,8 +3220,13 @@ class PromotionAdmin(admin.ModelAdmin):
         from django.contrib import messages
         from django.shortcuts import redirect
 
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         promotion = self.get_object(request, object_id)
         if promotion:
+            if not self.has_change_permission(request, promotion):
+                raise PermissionDenied
             promotion.is_active = True
             promotion.save()
             messages.success(request, f'Promotion "{promotion.name}" has been activated.')
@@ -3093,8 +3238,13 @@ class PromotionAdmin(admin.ModelAdmin):
         from django.contrib import messages
         from django.shortcuts import redirect
 
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         promotion = self.get_object(request, object_id)
         if promotion:
+            if not self.has_change_permission(request, promotion):
+                raise PermissionDenied
             promotion.is_active = False
             promotion.save()
             messages.success(request, f'Promotion "{promotion.name}" has been deactivated.')
@@ -3330,13 +3480,34 @@ class SalesRegionAdmin(admin.ModelAdmin):
 
     change_list_template = "admin/catalog/salesregion/change_list.html"
     change_form_template = "admin/catalog/salesregion/change_form.html"
-    list_display = ["name", "code", "default_currency", "warehouse_count", "is_active", "priority"]
+    list_display = [
+        "name",
+        "code",
+        "slug",
+        "default_currency",
+        "warehouse_count",
+        "is_active",
+        "priority",
+    ]
     list_filter = ["is_active", "default_currency"]
-    search_fields = ["name", "code"]
+    search_fields = ["name", "code", "slug"]
     ordering = ["-priority", "name"]
 
     fieldsets = (
         (_("Basic Information"), {"fields": ("name", "code", "is_active", "priority")}),
+        (
+            _("Storefront Market"),
+            {
+                "fields": ("slug",),
+                "description": _(
+                    "Give this region its own storefront URL by setting a slug "
+                    '(e.g. "nz" serves it at /nz/en/…). Leave blank if the region '
+                    "is only used for stock/availability, not a separate storefront. "
+                    "The highest-priority region is the default market and is always "
+                    "served without a prefix."
+                ),
+            },
+        ),
         (
             _("Geographic Settings"),
             {
@@ -3604,6 +3775,7 @@ class StockItemAdmin(admin.ModelAdmin):
         "stock_status_icon",
         "updated_at",
     ]
+    list_select_related = ["product", "warehouse", "warehouse__region"]
     list_filter = [LowStockFilter, "warehouse", "warehouse__region", "updated_at"]
     search_fields = ["product__name", "product__sku", "warehouse__name", "warehouse__code"]
     readonly_fields = ["available", "created_at", "updated_at"]
@@ -3635,7 +3807,14 @@ class StockItemAdmin(admin.ModelAdmin):
         ),
     )
 
-    actions = ["adjust_stock_action", "export_stock_report", "mark_for_reorder"]
+    actions = [
+        "adjust_stock_action",
+        "transfer_stock_action",
+        "record_damage_action",
+        "recount_stock_action",
+        "export_stock_report",
+        "mark_for_reorder",
+    ]
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         """Add movement count for edit mode."""
@@ -3855,6 +4034,221 @@ class StockItemAdmin(admin.ModelAdmin):
 
     mark_for_reorder.short_description = _("Mark low stock items for reorder")
 
+    def transfer_stock_action(self, request, queryset):
+        """Bulk action: transfer stock from each selected item to a warehouse."""
+        from django import forms
+        from django.contrib import messages
+        from django.shortcuts import redirect, render
+
+        from catalog.services.stock_operations import (
+            StockOperationError,
+            transfer_stock,
+        )
+
+        class TransferForm(forms.Form):
+            destination = forms.ModelChoiceField(
+                queryset=Warehouse.objects.filter(is_active=True).order_by("name"),
+                label=_("Destination warehouse"),
+                help_text=_("Where the selected stock should be moved to."),
+            )
+            quantity = forms.IntegerField(
+                min_value=1,
+                label=_("Quantity per item"),
+                help_text=_("Units to transfer from each selected item's warehouse."),
+            )
+            reason = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                required=False,
+                label=_("Reason"),
+            )
+
+        if "apply" in request.POST:
+            form = TransferForm(request.POST)
+            if form.is_valid():
+                destination = form.cleaned_data["destination"]
+                quantity = form.cleaned_data["quantity"]
+                reason = form.cleaned_data["reason"]
+                moved, skipped = 0, 0
+                for item in queryset.select_related("product", "warehouse"):
+                    if item.warehouse_id == destination.id:
+                        skipped += 1
+                        continue
+                    try:
+                        transfer_stock(
+                            product=item.product,
+                            source_warehouse=item.warehouse,
+                            dest_warehouse=destination,
+                            quantity=quantity,
+                            variant=item.variant,
+                            user=request.user,
+                            reason=reason,
+                        )
+                        moved += 1
+                    except StockOperationError as e:
+                        messages.error(request, f"{item.product} @ {item.warehouse}: {e}")
+                if moved:
+                    messages.success(
+                        request,
+                        _("Transferred %(qty)d unit(s) each for %(n)d item(s) to %(wh)s.")
+                        % {"qty": quantity, "n": moved, "wh": destination.name},
+                    )
+                if skipped:
+                    messages.warning(
+                        request,
+                        _("%(n)d item(s) skipped (already at the destination warehouse).")
+                        % {"n": skipped},
+                    )
+                return redirect(request.get_full_path())
+        else:
+            form = TransferForm()
+
+        return render(
+            request,
+            "admin/catalog/stock_operation.html",
+            {
+                "form": form,
+                "stock_items": queryset,
+                "title": _("Transfer Stock"),
+                "icon": "fa-truck-ramp-box",
+                "subtitle": _("Move stock between warehouses"),
+                "form_heading": _("Transfer Details"),
+                "submit_label": _("Transfer Stock"),
+                "action_name": "transfer_stock_action",
+                "opts": self.model._meta,
+                "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            },
+        )
+
+    transfer_stock_action.short_description = _("Transfer stock to warehouse")
+
+    def record_damage_action(self, request, queryset):
+        """Bulk action: write off damaged/lost units from selected items."""
+        from django import forms
+        from django.contrib import messages
+        from django.shortcuts import redirect, render
+
+        from catalog.services.stock_operations import (
+            StockOperationError,
+            record_damage,
+        )
+
+        class DamageForm(forms.Form):
+            quantity = forms.IntegerField(
+                min_value=1,
+                label=_("Quantity to write off (per item)"),
+            )
+            reason = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                required=False,
+                label=_("Reason"),
+                help_text=_("Optional: explain the damage/loss."),
+            )
+
+        if "apply" in request.POST:
+            form = DamageForm(request.POST)
+            if form.is_valid():
+                quantity = form.cleaned_data["quantity"]
+                reason = form.cleaned_data["reason"]
+                done = 0
+                for item in queryset.select_related("product", "warehouse"):
+                    try:
+                        record_damage(item, quantity, user=request.user, reason=reason)
+                        done += 1
+                    except StockOperationError as e:
+                        messages.error(request, f"{item.product} @ {item.warehouse}: {e}")
+                if done:
+                    messages.success(
+                        request,
+                        _("Wrote off %(qty)d unit(s) each for %(n)d item(s).")
+                        % {"qty": quantity, "n": done},
+                    )
+                return redirect(request.get_full_path())
+        else:
+            form = DamageForm()
+
+        return render(
+            request,
+            "admin/catalog/stock_operation.html",
+            {
+                "form": form,
+                "stock_items": queryset,
+                "title": _("Record Damaged / Lost Stock"),
+                "icon": "fa-triangle-exclamation",
+                "subtitle": _("Write off damaged or lost units"),
+                "form_heading": _("Write-off Details"),
+                "submit_label": _("Record Write-off"),
+                "action_name": "record_damage_action",
+                "opts": self.model._meta,
+                "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            },
+        )
+
+    record_damage_action.short_description = _("Record damaged/lost stock")
+
+    def recount_stock_action(self, request, queryset):
+        """Bulk action: reconcile on-hand to a physically counted quantity."""
+        from django import forms
+        from django.contrib import messages
+        from django.shortcuts import redirect, render
+
+        from catalog.services.stock_operations import (
+            StockOperationError,
+            recount_stock,
+        )
+
+        class RecountForm(forms.Form):
+            counted_quantity = forms.IntegerField(
+                min_value=0,
+                label=_("Counted on-hand quantity (per item)"),
+                help_text=_("The physically counted quantity; on-hand is set to this."),
+            )
+            reason = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                required=False,
+                label=_("Reason"),
+            )
+
+        if "apply" in request.POST:
+            form = RecountForm(request.POST)
+            if form.is_valid():
+                counted = form.cleaned_data["counted_quantity"]
+                reason = form.cleaned_data["reason"]
+                done = 0
+                for item in queryset.select_related("product", "warehouse"):
+                    try:
+                        recount_stock(item, counted, user=request.user, reason=reason)
+                        done += 1
+                    except StockOperationError as e:
+                        messages.error(request, f"{item.product} @ {item.warehouse}: {e}")
+                if done:
+                    messages.success(
+                        request,
+                        _("Recounted %(n)d item(s) to %(qty)d on hand.")
+                        % {"n": done, "qty": counted},
+                    )
+                return redirect(request.get_full_path())
+        else:
+            form = RecountForm()
+
+        return render(
+            request,
+            "admin/catalog/stock_operation.html",
+            {
+                "form": form,
+                "stock_items": queryset,
+                "title": _("Recount Stock"),
+                "icon": "fa-clipboard-check",
+                "subtitle": _("Reconcile on-hand stock to a physical count"),
+                "form_heading": _("Recount Details"),
+                "submit_label": _("Apply Recount"),
+                "action_name": "recount_stock_action",
+                "opts": self.model._meta,
+                "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            },
+        )
+
+    recount_stock_action.short_description = _("Recount stock (physical count)")
+
     def changelist_view(self, request, extra_context=None):
         """Add summary statistics to the change list"""
         extra_context = extra_context or {}
@@ -4065,6 +4459,14 @@ class LicenseKeyAdmin(admin.ModelAdmin):
         (_("Expiration"), {"fields": ("expires_at",), "classes": ("collapse",)}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
     )
+
+    def get_queryset(self, request):
+        """Join the relations the changelist columns traverse to avoid N+1 queries."""
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("digital_asset__product", "user", "order_item__order")
+        )
 
     def key_display(self, obj):
         """Display license key with copy button"""
@@ -4320,8 +4722,11 @@ class LicenseKeyAdmin(admin.ModelAdmin):
             old_license.status = "revoked"
             old_license.save()
 
-            # Generate new license key
-            unique_string = f"{old_license.order_item.id}-{old_license.digital_asset.id}-{os.urandom(16).hex()}-regenerated"
+            # Generate new license key. order_item / digital_asset are nullable
+            # (the display methods guard for None), so read their ids defensively.
+            order_item_id = getattr(old_license.order_item, "id", "")
+            digital_asset_id = getattr(old_license.digital_asset, "id", "")
+            unique_string = f"{order_item_id}-{digital_asset_id}-{os.urandom(16).hex()}-regenerated"
             hash_digest = hashlib.sha256(unique_string.encode()).hexdigest()[:16].upper()
             new_key = "-".join([hash_digest[i : i + 4] for i in range(0, 16, 4)])
 
@@ -5189,11 +5594,14 @@ class LicensePoolAdmin(admin.ModelAdmin):
 
             try:
                 with transaction.atomic():
-                    for i in range(remaining):
+                    for _i in range(remaining):
                         context = {
                             "product_sku": pool.product.sku,
                             "pool_id": pool.id,
-                            "sequence": pool.keys_generated + i + 1,
+                            # keys_generated is incremented in-loop below, so it
+                            # already equals the count before this key; +1 yields
+                            # consecutive sequence numbers.
+                            "sequence": pool.keys_generated + 1,
                         }
 
                         key = generator.generate(template, context)
@@ -5514,7 +5922,7 @@ class DigitalAssetAdmin(admin.ModelAdmin):
             from django.utils import timezone
 
             thirty_days_ago = timezone.now() - timedelta(days=30)
-            recent_downloads = downloads.filter(download_date__gte=thirty_days_ago).count()
+            recent_downloads = downloads.filter(downloaded_at__gte=thirty_days_ago).count()
 
             return format_html(
                 '<div style="background: var(--darkened-bg, #f8f9fa); padding: 16px; '
@@ -6090,7 +6498,11 @@ class GiftCardAdmin(admin.ModelAdmin):
         total_count = all_gift_cards.count()
 
         # Active count (not expired, not fully redeemed, is_active=True)
-        active_count = all_gift_cards.filter(is_active=True).exclude(expires_at__lt=now).count()
+        active_count = (
+            all_gift_cards.filter(is_active=True, current_balance__gt=0)
+            .exclude(expires_at__lt=now)
+            .count()
+        )
 
         # Total balance across all active gift cards
         total_balance = (
@@ -6582,6 +6994,10 @@ class StockNotificationAdmin(admin.ModelAdmin):
 
     actions = ["send_notifications", "clear_sent_notifications"]
 
+    def get_queryset(self, request):
+        """Join product/variant so the list_display methods don't fire per-row queries."""
+        return super().get_queryset(request).select_related("product", "variant")
+
     def product_name(self, obj):
         """Display product name"""
         return obj.product.name
@@ -6927,6 +7343,10 @@ class BookingAdmin(admin.ModelAdmin):
     status_badge.admin_order_field = "status"
 
     def duration_display(self, obj):
+        # On the add form the unsaved instance has no start/end datetimes, so
+        # duration_minutes would subtract None from None.
+        if not (obj.start_datetime and obj.end_datetime):
+            return "-"
         mins = obj.duration_minutes
         if mins >= 1440:
             days = mins // 1440
@@ -7121,9 +7541,16 @@ class BookingAdmin(admin.ModelAdmin):
         extra_context["total_bookings"] = Booking.objects.count()
 
         now = timezone.now()
-        year = int(request.GET.get("year", now.year))
-        month = int(request.GET.get("month", now.month))
-        day_num = int(request.GET.get("day", now.day))
+        # Guard against non-numeric or out-of-range calendar params (e.g.
+        # ?month=abc or ?month=13): validate by constructing the requested date
+        # and fall back to today when anything is invalid.
+        try:
+            year = int(request.GET.get("year", now.year))
+            month = int(request.GET.get("month", now.month))
+            day_num = int(request.GET.get("day", now.day))
+            date(year, month, day_num)
+        except (ValueError, TypeError):
+            year, month, day_num = now.year, now.month, now.day
 
         # Store for JS config
         extra_context["calendar_year"] = year

@@ -362,7 +362,7 @@ def update_provider_ajax(request, provider_slug):
         latest_version = None
         for item in available:
             if item.get("slug") == provider_slug:
-                latest_version = item.get("current_version")
+                latest_version = item.get("current_version") or item.get("version")
                 break
 
         if not latest_version:

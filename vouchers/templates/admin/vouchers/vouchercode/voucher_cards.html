@@ -3,6 +3,7 @@
 <div class="list-row-cards">
     {% for voucher in vouchers %}
     <div class="list-row-card voucher-card {% if not voucher.is_active %}disabled{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=voucher.pk %}
         <div class="list-row-card-icon">
             <div class="voucher-type-icon {{ voucher.discount_type }}">
                 {% if voucher.discount_type == 'percentage' %}

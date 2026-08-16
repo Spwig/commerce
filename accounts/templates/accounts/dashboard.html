@@ -354,6 +354,7 @@
                     </a>
 
                     <!-- Communication Preferences -->
+                    {% if site_settings.preference_center_enabled %}
                     <a href="{% url 'accounts:communication_preferences' %}" class="account-link">
                         <div class="account-link__icon account-link__icon--notifications">
                             <i class="fas fa-envelope"></i>
@@ -364,6 +365,7 @@
                         </div>
                         <i class="fas fa-chevron-right account-link__arrow"></i>
                     </a>
+                    {% endif %}
 
                     <!-- Messages -->
                     <a href="{% url 'accounts:message_list' %}" class="account-link">

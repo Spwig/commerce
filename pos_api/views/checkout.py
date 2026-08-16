@@ -150,9 +150,82 @@ def _calculate_order_total(cart):
     return subtotal, discount, total
 
 
+def _calculate_pos_tax(cart_items, terminal):
+    """Calculate POS sales tax for the cart using the terminal's warehouse address.
+
+    Returns the tax amount as a Decimal (zero when no taxable jurisdiction applies
+    or the calculation fails).
+    """
+    tax_amount = Decimal("0")
+    try:
+        from cart.services.tax_service import TaxService
+
+        warehouse = terminal.warehouse
+        if warehouse and warehouse.country:
+            items = []
+            for item in cart_items:
+                unit_price = (
+                    item.unit_price.amount
+                    if hasattr(item.unit_price, "amount")
+                    else Decimal(str(item.unit_price))
+                )
+                line_total = unit_price * item.quantity
+                items.append((item.product, item.quantity, line_total))
+
+            tax_amount, _breakdown = TaxService.calculate_tax(
+                items=items,
+                shipping_cost=Decimal("0"),
+                country=warehouse.country,
+                state=warehouse.state_province or "",
+                city=warehouse.city or "",
+                postal_code=warehouse.postal_code or "",
+            )
+    except Exception:
+        import logging
+
+        logging.getLogger(__name__).warning("POS tax calculation failed", exc_info=True)
+    return tax_amount
+
+
+def _calculate_payable_total(cart, cart_items, terminal):
+    """Return the tax-inclusive total the customer must pay at POS.
+
+    Returns ``(subtotal, discount, tax_amount, payable_total)``. ``payable_total``
+    is the single source of truth every payment path validates and collects
+    against — it matches the ``Order.total_amount`` recorded by
+    :func:`_create_pos_order`, so tendered checks, change, POSPayment amounts and
+    shift totals all agree with what the order records.
+    """
+    subtotal, discount, pre_tax_total = _calculate_order_total(cart)
+    tax_amount = _calculate_pos_tax(cart_items, terminal)
+    return subtotal, discount, tax_amount, pre_tax_total + tax_amount
+
+
+def _record_shift_sale(shift, amount):
+    """Add one sale to the shift totals under a row lock to avoid lost updates.
+
+    Must be called inside an open ``transaction.atomic`` block. Reloads the shift
+    with ``select_for_update`` so concurrent checkouts cannot overwrite each
+    other's running totals.
+    """
+    from pos_app.models import POSShift
+
+    locked_shift = POSShift.objects.select_for_update().get(pk=shift.pk)
+    locked_shift.total_sales = (locked_shift.total_sales or Decimal("0")) + amount
+    locked_shift.total_transactions = (locked_shift.total_transactions or 0) + 1
+    locked_shift.save(update_fields=["total_sales", "total_transactions"])
+
+
 @transaction.atomic
 def _create_pos_order(
-    request, cart, cart_items, terminal, shift, customer_user=None, currency=None
+    request,
+    cart,
+    cart_items,
+    terminal,
+    shift,
+    tax_amount=None,
+    customer_user=None,
+    currency=None,
 ):
     """
     Create an Order from the POS cart.
@@ -169,36 +242,13 @@ def _create_pos_order(
 
     subtotal, discount, total = _calculate_order_total(cart)
 
-    # Calculate tax using terminal's warehouse address
-    tax_amount_decimal = Decimal("0")
-    try:
-        from cart.services.tax_service import TaxService
-
-        warehouse = terminal.warehouse
-        if warehouse and warehouse.country:
-            items = []
-            for item in cart_items:
-                unit_price = (
-                    item.unit_price.amount
-                    if hasattr(item.unit_price, "amount")
-                    else Decimal(str(item.unit_price))
-                )
-                line_total = unit_price * item.quantity
-                items.append((item.product, item.quantity, line_total))
-
-            tax_amount_decimal, tax_breakdown_list = TaxService.calculate_tax(
-                items=items,
-                shipping_cost=Decimal("0"),
-                country=warehouse.country,
-                state=warehouse.state_province or "",
-                city=warehouse.city or "",
-                postal_code=warehouse.postal_code or "",
-            )
-            total += tax_amount_decimal
-    except Exception:
-        import logging
-
-        logging.getLogger(__name__).warning("POS tax calculation failed", exc_info=True)
+    # Tax is added to the payable total. Callers compute it once via
+    # _calculate_payable_total and pass it in so the amount validated and
+    # collected matches Order.total_amount exactly; fall back to computing it
+    # here for any caller that does not.
+    if tax_amount is None:
+        tax_amount = _calculate_pos_tax(cart_items, terminal)
+    total += tax_amount
 
     from core.license import is_sandbox_mode
 
@@ -210,7 +260,7 @@ def _create_pos_order(
         pos_terminal=terminal,
         cashier=request.user,
         subtotal=Money(subtotal, currency),
-        tax_amount=Money(tax_amount_decimal, currency),
+        tax_amount=Money(tax_amount, currency),
         shipping_cost=Money(0, currency),
         discount_amount=Money(discount, currency),
         total_amount=Money(total, currency),
@@ -353,7 +403,7 @@ def _get_refund_methods(order):
         from payment_providers.models import PaymentTransaction
 
         for t in PaymentTransaction.objects.filter(
-            order=order, transaction_type="charge", status="succeeded"
+            order=order, transaction_type="charge", status="completed"
         ).select_related("provider_account__component"):
             key = f"provider_{t.provider_account.component.slug}"
             if key not in seen:
@@ -429,7 +479,7 @@ def _serialize_order(order):
         from payment_providers.models import PaymentTransaction
 
         txns = PaymentTransaction.objects.filter(
-            order=order, transaction_type="charge", status="succeeded"
+            order=order, transaction_type="charge", status="completed"
         ).select_related("provider_account__component")
         for t in txns:
             web_payments.append(
@@ -537,7 +587,7 @@ def checkout_cash(request):
     if err:
         return err
 
-    _, _, order_total = _calculate_order_total(cart)
+    _, _, tax_amount, order_total = _calculate_payable_total(cart, cart_items, terminal)
 
     if amount_tendered < order_total:
         return Response(
@@ -563,6 +613,7 @@ def checkout_cash(request):
             cart_items,
             terminal,
             shift,
+            tax_amount=tax_amount,
             customer_user=customer_user,
             currency=currency,
         )
@@ -576,9 +627,7 @@ def checkout_cash(request):
             change_given=change,
         )
 
-        shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-        shift.total_transactions = (shift.total_transactions or 0) + 1
-        shift.save(update_fields=["total_sales", "total_transactions"])
+        _record_shift_sale(shift, order_total)
 
         CartService.clear_cart(cart)
 
@@ -637,7 +686,7 @@ def checkout_card(request):
     if err:
         return err
 
-    _, _, order_total = _calculate_order_total(cart)
+    _, _, tax_amount, order_total = _calculate_payable_total(cart, cart_items, terminal)
     currency = terminal.effective_currency
 
     customer_user = _resolve_customer(request)
@@ -649,6 +698,7 @@ def checkout_card(request):
             cart_items,
             terminal,
             shift,
+            tax_amount=tax_amount,
             customer_user=customer_user,
             currency=currency,
         )
@@ -662,9 +712,7 @@ def checkout_card(request):
             card_reference=data.get("card_reference", ""),
         )
 
-        shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-        shift.total_transactions = (shift.total_transactions or 0) + 1
-        shift.save(update_fields=["total_sales", "total_transactions"])
+        _record_shift_sale(shift, order_total)
 
         CartService.clear_cart(cart)
 
@@ -706,7 +754,7 @@ def check_gift_card_balance(request):
     from catalog.services.gift_card_service import GiftCardService
     from pos_api.views.utils import get_terminal_currency
 
-    code = request.data.get("code", "").strip().upper()
+    code = (request.data.get("code") or "").strip().upper()
     if not code:
         return Response(
             {"success": False, "error": "Gift card code is required"},
@@ -786,7 +834,7 @@ def checkout_gift_card(request):
     if err:
         return err
 
-    _, _, order_total = _calculate_order_total(cart)
+    _, _, tax_amount, order_total = _calculate_payable_total(cart, cart_items, terminal)
     currency = terminal.effective_currency
 
     # A gift card cannot buy another gift card. POS never calls
@@ -830,8 +878,21 @@ def checkout_gift_card(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Determine amount to charge
-    charge_amount = payment_amount if payment_amount else order_total
+    # A single gift-card tender must settle the exact order total: only that
+    # amount is recorded as payment, so redeeming more would silently consume
+    # stored value. Partial gift-card payments go through split tender.
+    if payment_amount is not None and payment_amount != order_total:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_PAYMENT_AMOUNT",
+                    "message": "Gift card amount must equal the order total. Use split tender for partial payments.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    charge_amount = order_total
     if charge_amount > gc_balance:
         return Response(
             {
@@ -839,18 +900,6 @@ def checkout_gift_card(request):
                 "error": {
                     "code": "INSUFFICIENT_BALANCE",
                     "message": f"Gift card balance ({gc_balance}) is less than amount ({charge_amount}). Use split tender.",
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if charge_amount < order_total:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INSUFFICIENT_PAYMENT",
-                    "message": "Gift card amount does not cover the full order. Use split tender.",
                 },
             },
             status=status.HTTP_400_BAD_REQUEST,
@@ -866,6 +915,7 @@ def checkout_gift_card(request):
                 cart_items,
                 terminal,
                 shift,
+                tax_amount=tax_amount,
                 customer_user=customer_user,
                 currency=currency,
             )
@@ -885,9 +935,7 @@ def checkout_gift_card(request):
                 gift_card_code=gift_card_code,
             )
 
-            shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-            shift.total_transactions = (shift.total_transactions or 0) + 1
-            shift.save(update_fields=["total_sales", "total_transactions"])
+            _record_shift_sale(shift, order_total)
 
             CartService.clear_cart(cart)
     except ValueError as e:
@@ -950,8 +998,24 @@ def checkout_split(request):
     if err:
         return err
 
-    _, _, order_total = _calculate_order_total(cart)
+    _, _, tax_amount, order_total = _calculate_payable_total(cart, cart_items, terminal)
     currency = terminal.effective_currency
+
+    # Every tender must be a positive amount. A negative leg could otherwise be
+    # offset by a larger positive one and still pass the aggregate check, writing
+    # negative POSPayment ledger entries.
+    for pmt in payments_data:
+        if Decimal(str(pmt["amount"])) <= 0:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "INVALID_PAYMENT_AMOUNT",
+                        "message": "Each payment amount must be greater than zero.",
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     # Validate total payments cover order
     payment_sum = sum(Decimal(str(p["amount"])) for p in payments_data)
@@ -966,6 +1030,28 @@ def checkout_split(request):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    # Over-tender is only valid as cash change. The overage is deducted from the
+    # last cash payment, so that payment must exist and be large enough to absorb
+    # it; otherwise the recorded tenders would not sum to the order total (e.g. an
+    # over-paid card would be recorded as a negative cash leg).
+    overage = payment_sum - order_total
+    if overage > 0:
+        last_cash_amount = None
+        for pmt in payments_data:
+            if pmt["method"] == "cash":
+                last_cash_amount = Decimal(str(pmt["amount"]))
+        if last_cash_amount is None or last_cash_amount < overage:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "OVERPAYMENT_NOT_ALLOWED",
+                        "message": "Over-tender is only allowed as cash change, and the cash payment must cover the excess.",
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     # Same rule as the single gift card path — see checkout_gift_card.
     if any(p["method"] == "gift_card" for p in payments_data):
@@ -1039,6 +1125,7 @@ def checkout_split(request):
                 cart_items,
                 terminal,
                 shift,
+                tax_amount=tax_amount,
                 customer_user=customer_user,
                 currency=currency,
             )
@@ -1051,8 +1138,8 @@ def checkout_split(request):
                 if not gc_success:
                     raise ValueError(f"Gift card deduction failed for {gc_pmt['code']}: {gc_msg}")
 
-            # Calculate change on last cash payment if over-tendered
-            overage = payment_sum - order_total
+            # Change is returned on the last cash payment (validated above to
+            # cover the overage).
             change_given = Decimal("0")
 
             for i, pmt in enumerate(payments_data):
@@ -1089,9 +1176,7 @@ def checkout_split(request):
 
                 POSPayment.objects.create(**payment_kwargs)
 
-            shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-            shift.total_transactions = (shift.total_transactions or 0) + 1
-            shift.save(update_fields=["total_sales", "total_transactions"])
+            _record_shift_sale(shift, order_total)
 
             CartService.clear_cart(cart)
     except ValueError as e:
@@ -1163,11 +1248,13 @@ def checkout_terminal_card(request):
     if err:
         return err
 
-    _, _, order_total = _calculate_order_total(cart)
+    _, _, tax_amount, order_total = _calculate_payable_total(cart, cart_items, terminal)
     currency = terminal.effective_currency
 
     # Verify the payment actually succeeded via the provider
-    provider_instance, provider_account = _get_provider_instance(terminal)
+    provider_instance, provider_account, provider_err = _get_provider_instance(terminal)
+    if provider_err:
+        return provider_err
     card_last_four = data.get("card_last_four", "")
     card_brand = data.get("card_brand", "")
 
@@ -1212,6 +1299,7 @@ def checkout_terminal_card(request):
             cart_items,
             terminal,
             shift,
+            tax_amount=tax_amount,
             customer_user=customer_user,
             currency=currency,
         )
@@ -1226,9 +1314,7 @@ def checkout_terminal_card(request):
             card_brand=card_brand,
         )
 
-        shift.total_sales = (shift.total_sales or Decimal("0")) + order_total
-        shift.total_transactions = (shift.total_transactions or 0) + 1
-        shift.save(update_fields=["total_sales", "total_transactions"])
+        _record_shift_sale(shift, order_total)
 
         CartService.clear_cart(cart)
 

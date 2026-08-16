@@ -18,16 +18,61 @@ def render_element(context, element):
     Render an element using the new modular element system.
     Falls back to old templates if modular version doesn't exist.
     """
-    registry = get_registry()
-    element_config = registry.get_element(element.element_type)
-
-    # Check if we're in builder context
     request = context.get("request")
     is_builder = False
     if request and request.path:
         is_builder = (
             "/admin/page_builder/builder/" in request.path or "/visual-builder/" in request.path
         )
+
+    # Server-side visibility (storefront only — never in the builder, where the
+    # merchant must see every element to edit it). A container short-circuits
+    # here before its children render, so a hidden container omits its subtree.
+    #   hide  → omit from the HTML
+    #   defer → emit a content-less placeholder resolved by the personalization
+    #           pass (per-visitor rules are never evaluated into the cached shell)
+    #   show  → render normally
+    if request is not None and not is_builder:
+        if getattr(request, "_pb_full_visibility", False):
+            # Preview mode (staff-only, uncached): render the COMPLETE result for
+            # the simulated visitor — evaluate deferred rules in full rather than
+            # emitting a placeholder, so the merchant sees exactly what that
+            # visitor would. Fail open so nothing silently vanishes in preview.
+            try:
+                visible = element.is_renderable(request)
+            except Exception:
+                logger.exception(
+                    "Preview visibility check failed for element %s; showing", element.id
+                )
+                visible = True
+            if not visible:
+                return {"hidden": True}
+        else:
+            try:
+                from ..services.visibility_service import resolve_element_visibility
+
+                decision = resolve_element_visibility(element, request)
+            except Exception:
+                # Fail to defer: never expose or permanently hide on a broken
+                # check — let the personalization pass make the real decision.
+                logger.exception("Visibility check failed for element %s; deferring", element.id)
+                decision = "defer"
+            if decision == "hide":
+                return {"hidden": True}
+            if decision == "defer":
+                return {"deferred": True, "element": element}
+
+    return _render_element_content(context, element, request, is_builder)
+
+
+def _render_element_content(context, element, request, is_builder=False):
+    """Render an element to its wrapper context dict (no visibility gating).
+
+    Shared by ``render_element`` (storefront tag) and the personalization pass,
+    which renders individual deferred elements after visibility is resolved.
+    """
+    registry = get_registry()
+    element_config = registry.get_element(element.element_type)
 
     template_path = None
     use_modular = False
@@ -113,6 +158,75 @@ def render_element(context, element):
             "template_path": template_path,
             "error": str(e),
         }
+
+
+def _ancestor_visible(element, request):
+    """Every ancestor container must also be visible.
+
+    Visibility gates a container's subtree by omission: a hidden/deferred
+    container is never rendered, so its children get no placeholders. But the
+    personalization endpoint can be POSTed an arbitrary child id, so without this
+    check a child of a gated container (e.g. plain content inside a "members
+    only" container) would render for anyone. Full evaluation with the real
+    visitor context handles both shell and deferred ancestor rules.
+    """
+    node = element.parent_element
+    while node is not None:
+        if not node.is_renderable(request):
+            return False
+        node = node.parent_element
+    return True
+
+
+def _personalization_context(element, request, route_context=None):
+    """Base render context for a personalized element.
+
+    Always includes ``page``. When the personalization endpoint supplies the
+    page's route context (home / category / product — the client sends the route
+    slug so ``resolve_personalized_elements`` can rebuild it), it is merged so
+    elements that read ``product`` / ``category`` / ``products`` render correctly.
+    Falls back to reconstructing the route-independent home context.
+    """
+    data = {"request": request, "page": element.page}
+    if route_context:
+        data.update(route_context)
+        return data
+
+    page = element.page
+    if page is not None and page.page_type == "home":
+        try:
+            from catalog.models import Category, Product
+
+            data["featured_products"] = Product.objects.filter(
+                is_featured=True, status="published", hide_from_storefront=False
+            ).exclude(sales_channel="pos_only")[:8]
+            data["categories"] = Category.objects.filter(is_active=True, parent=None)[:6]
+        except Exception:
+            logger.exception("personalize: failed building home context for element %s", element.id)
+    return data
+
+
+def render_personalized_element(request, element, route_context=None):
+    """Render one deferred element for the personalization pass.
+
+    Evaluates FULL visibility (including per-visitor rules) with the real visitor
+    context — for the element AND its whole ancestor chain — and returns the
+    element's wrapper HTML if it should show, else None. Used by the
+    personalization endpoint to resolve ``data-pb-defer`` placeholders.
+    """
+    from django.template import Context
+    from django.template.loader import render_to_string
+
+    if not element.is_renderable(request) or not _ancestor_visible(element, request):
+        return None
+
+    ctx = Context(_personalization_context(element, request, route_context))
+    wrapper_ctx = _render_element_content(ctx, element, request, is_builder=False)
+    # Never return a hidden/deferred/errored wrapper: don't expose deferred
+    # content indirectly, and don't leak render-error internals to visitors.
+    if wrapper_ctx.get("hidden") or wrapper_ctx.get("deferred") or wrapper_ctx.get("error"):
+        return None
+    return render_to_string("page_builder/elements/element_wrapper.html", wrapper_ctx)
 
 
 @register.simple_tag(takes_context=True)

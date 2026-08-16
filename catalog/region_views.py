@@ -47,7 +47,13 @@ def set_region(request):
     """
     try:
         data = json.loads(request.body)
-        country_code = data.get("country", "").upper()
+        if not isinstance(data, dict):
+            return JsonResponse({"success": False, "error": "Invalid request body"}, status=400)
+
+        country = data.get("country", "")
+        if not isinstance(country, str):
+            return JsonResponse({"success": False, "error": "Country code is required"}, status=400)
+        country_code = country.upper()
 
         if not country_code:
             return JsonResponse({"success": False, "error": "Country code is required"}, status=400)
@@ -136,8 +142,9 @@ def switch_currency_for_region(request, region):
     target = (region.default_currency or "").upper()
     if not target:
         return None
-    supported = SiteSettings.get_settings().supported_currencies or []
-    if len(supported) > 1 and target in supported:
+    settings = SiteSettings.get_settings()
+    supported = settings.supported_currencies or []
+    if settings.enable_multi_currency and len(supported) > 1 and target in supported:
         request.session["currency"] = target
         return target
     return None

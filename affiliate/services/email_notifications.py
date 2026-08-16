@@ -13,6 +13,21 @@ from email_system.utils.language import get_user_email_language
 
 logger = logging.getLogger(__name__)
 
+# Outbox statuses that represent a successfully accepted send. Alongside the
+# async "pending"/"queued" states, this covers synchronous delivery ("sent"/
+# "success") and the delivery-mode outcomes recorded by log_only/paused/sandbox
+# modes ("logged"/"held"/"sandbox_logged"). Only "skipped" and explicit failure
+# statuses fall through to the error branch.
+SUCCESS_STATUSES = {
+    "pending",
+    "queued",
+    "sent",
+    "success",
+    "logged",
+    "held",
+    "sandbox_logged",
+}
+
 
 # ============================================================================
 # AFFILIATE ACCOUNT STATUS EMAILS
@@ -59,7 +74,7 @@ def send_affiliate_approved_email(affiliate):
                 f"Skipped affiliate_account_approved email to {affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_account_approved email to {affiliate.user.email}")
             return True
         else:
@@ -109,7 +124,7 @@ def send_affiliate_rejected_email(affiliate):
                 f"Skipped affiliate_account_rejected email to {affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_account_rejected email to {affiliate.user.email}")
             return True
         else:
@@ -158,7 +173,7 @@ def send_affiliate_suspended_email(affiliate):
                 f"Skipped affiliate_account_suspended email to {affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_account_suspended email to {affiliate.user.email}")
             return True
         else:
@@ -212,7 +227,7 @@ def send_affiliate_activated_email(affiliate):
                 f"Skipped affiliate_account_activated email to {affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_account_activated email to {affiliate.user.email}")
             return True
         else:
@@ -274,7 +289,7 @@ def send_program_membership_approved_email(membership):
                 f"Skipped affiliate_program_approved email to {membership.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_program_approved email to {membership.affiliate.user.email}"
             )
@@ -327,7 +342,7 @@ def send_program_membership_rejected_email(membership):
                 f"Skipped affiliate_program_rejected email to {membership.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_program_rejected email to {membership.affiliate.user.email}"
             )
@@ -394,7 +409,7 @@ def send_commission_earned_email(commission):
                 f"Skipped affiliate_commission_earned email to {commission.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_commission_earned email to {commission.affiliate.user.email}"
             )
@@ -459,7 +474,7 @@ def send_commission_approved_email(commission):
                 f"Skipped affiliate_commission_approved email to {commission.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_commission_approved email to {commission.affiliate.user.email}"
             )
@@ -516,7 +531,7 @@ def send_commission_rejected_email(commission):
                 f"Skipped affiliate_commission_rejected email to {commission.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_commission_rejected email to {commission.affiliate.user.email}"
             )
@@ -573,7 +588,7 @@ def send_commission_reversed_email(commission):
                 f"Skipped affiliate_commission_reversed email to {commission.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_commission_reversed email to {commission.affiliate.user.email}"
             )
@@ -638,7 +653,7 @@ def send_payout_processing_email(payout):
                 f"Skipped affiliate_payout_processing email to {payout.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(
                 f"Queued affiliate_payout_processing email to {payout.affiliate.user.email}"
             )
@@ -706,7 +721,7 @@ def send_payout_completed_email(payout):
                 f"Skipped affiliate_payout_completed email to {payout.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_payout_completed email to {payout.affiliate.user.email}")
             return True
         else:
@@ -761,7 +776,7 @@ def send_payout_failed_email(payout):
                 f"Skipped affiliate_payout_failed email to {payout.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_payout_failed email to {payout.affiliate.user.email}")
             return True
         else:
@@ -814,7 +829,7 @@ def send_payout_cancelled_email(payout):
                 f"Skipped affiliate_payout_cancelled email to {payout.affiliate.user.email} - user preference disabled"
             )
             return False
-        elif outbox.status in ["pending", "queued"]:
+        elif outbox.status in SUCCESS_STATUSES:
             logger.info(f"Queued affiliate_payout_cancelled email to {payout.affiliate.user.email}")
             return True
         else:

@@ -304,7 +304,7 @@ def poll_tracking(self, shipment_id=None, batch_size=100):
         else:
             # Batch mode: poll active shipments
             shipments = Shipment.objects.filter(
-                status__in=["label_created", "in_transit", "out_for_delivery"],
+                status__in=["labeled", "in_transit", "out_for_delivery"],
                 provider_account__isnull=False,  # Only poll API shipments
             ).select_related("provider_account", "carrier_preset")[:batch_size]
 

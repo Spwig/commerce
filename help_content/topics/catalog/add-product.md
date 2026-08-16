@@ -15,12 +15,18 @@ keywords:
   - media
   - images
   - SEO
+  - shipping
+  - requires shipping
+  - pre-order
+  - tags
+  - page template
 url_patterns:
   - /admin/catalog/product/
   - /admin/catalog/product/add/
   - /admin/catalog/product/\d+/change/
 related:
   - custom-fields
+  - product-tags
 published: true
 ---
 
@@ -58,7 +64,9 @@ Found in the **Status** section at the bottom of the form:
 ### Optional fields
 
 - **Brand** — Associate with a brand if applicable.
-- **Tags** — Assign tags for lightweight product organization and filtering.
+- **Tags** — Assign one or more tags in the **Tags** card further down this tab. Tags are separate from Collections — they're quick, free-form labels for organizing and filtering products rather than a merchandising grouping. Start typing to search for an existing tag, or type a new name to create one on the fly. See the **Product Tags** help topic for creating, renaming, and bulk-deleting tags directly.
+
+![The Tags card on the Basic Info tab, with two tags applied in the tag picker](/static/core/admin/img/help/add-product/tags-card.webp)
 
 ### Product descriptions
 
@@ -84,7 +92,7 @@ The **Media** section lets you manage product images using the integrated Media 
 2. Select existing images or upload new ones directly.
 3. Drag images to reorder them — the **first image** becomes the primary product image shown in listings and cards.
 
-The **Gallery Type** is configured under **Product Page Design** (see below).
+The **Gallery Type** field, in the **Gallery Settings** card below the image list, controls how images are displayed on the storefront: Standard Gallery, Carousel, Grid Layout, Zoom Gallery, or 360° View.
 
 ## Pricing
 
@@ -114,7 +122,7 @@ If multi-currency is enabled on your store, a **Pricing Strategy** field appears
 
 ## Inventory
 
-Manage stock levels and physical product attributes.
+Manage stock levels, shipping behavior, and physical product attributes.
 
 ![Inventory tab](/static/core/admin/img/help/add-product/inventory-tab.webp)
 
@@ -122,22 +130,27 @@ Manage stock levels and physical product attributes.
 
 - **Track Inventory** — Enable to track stock quantities (enabled by default).
 - **Low Stock Threshold** — Get alerts when stock drops below this number (default: 5).
-- **Allow Backorders** — Enable to accept orders even when out of stock.
+- **Allow Backorders** — Enable to accept orders even when out of stock. New products start with the **Allow Backorders by Default** value from **Settings > Store Settings > Commerce**, but you can override it per product here at any time.
 - **Out of Stock Action** — Override the site-wide or category behavior when this product runs out: hide it, show it as unavailable, show a "Notify Me" button, or allow backorders.
 
 Stock quantities are managed per warehouse. After saving the product, use the **Stock Items** section at the bottom of the form (or navigate to **Products > Stock Items**) to set quantities at each warehouse location.
 
-### Pre-order
-
-For products that are not yet available, expand the **Pre-Order** section:
-
-- **Is Pre-order** — Enable pre-order purchasing even when out of stock.
-- **Pre-order Release Date** — Expected availability date shown to customers.
-- **Pre-order Message** — Custom message (e.g., "Ships March 2026").
-
 ### Physical attributes
 
-Enter the product's weight (kg) and dimensions (length, width, height in cm) for accurate shipping calculations. You can also select a **Preferred Shipping Package** to use specific box dimensions when calculating shipping rates.
+Enter the product's weight (kg) and dimensions (length, width, height in cm) for accurate shipping calculations.
+
+### Shipping
+
+- **Requires Shipping** — Whether this product needs to be shipped to the customer. On by default for physical products; your storefront and checkout use it to decide whether to collect a shipping address and quote postage for the order. Spwig automatically turns it off for Digital, Booking, and Gift Card products, since those are never posted — you don't need to (and can't) turn it back on for those product types. Leave it checked for a physical product that happens to look digital-adjacent, such as a printed gift card that ships in a box.
+- **Preferred Shipping Package** — Optionally choose one of your configured shipping packages. When set, the package's own dimensions are used for shipping-rate calculations instead of this product's weight and dimensions above — useful when a product always ships in the same standard box or envelope. Leave it empty to use the product's own physical attributes. Manage available packages under **Shipping > Packages**.
+
+### Pre-order
+
+Use the **Pre-order** card to sell a product before it has any stock — useful for upcoming releases you want to start taking orders for ahead of launch:
+
+- **Is Pre-order** — Enable to let customers purchase this product even while it's out of stock.
+- **Pre-order Release Date** — The expected availability date, shown to customers.
+- **Pre-order Message** — A short custom message shown to customers, up to 200 characters (e.g., "Ships March 2026").
 
 ### Product identifiers
 
@@ -172,15 +185,18 @@ Optimize your product's search engine visibility.
 
 A live **Search Result Preview** shows exactly how your product will appear in Google search results.
 
-## Product page design
+## Product page settings
 
-The **Product Page Design** section lets you control how the product's storefront page looks:
+On the **Advanced** tab, the **Product Page Settings** card lets you control how this product's storefront page looks:
 
-- **Page Template** — Choose a layout template (Classic, Full Width, Gallery Focus, Digital) or leave empty to use the site default.
-- **Gallery Type** — How product images display: Standard Gallery, Carousel, Grid Layout, Zoom Gallery, or 360° View.
+- **Page Template** — Override the site default product page layout for this one product: Classic, Full Width, Gallery Focus, or Digital. Leave it set to **Use Site Default** to inherit whatever layout your Design settings specify — most products should stay on the default so template changes there apply automatically.
 - **Show Related Products** — Display related products at the bottom of the page.
 - **Show Reviews** — Display customer reviews.
 - **Show Specifications** — Display the specifications tab.
+
+The **Gallery Type** field — which controls how product images display (Standard Gallery, Carousel, Grid Layout, Zoom Gallery, or 360° View) — is set separately, on the **Media** tab.
+
+![Advanced tab showing the Product Page Settings card with a Page Template dropdown, and the Technical Details card below](/static/core/admin/img/help/add-product/advanced-tab.webp)
 
 ## Sales channel
 
@@ -204,3 +220,5 @@ When you're ready, use the save buttons in the top-right corner. Your product wi
 - Use **Categories**, **Brands**, and **Tags** to help customers navigate your catalog.
 - For variable products (e.g., different sizes or colors), choose the **Variable Product** type and add variants after saving.
 - Use **Features** and **Specifications** to add structured product data that displays in dedicated tabs on the product page.
+- If **Requires Shipping** won't stay checked, look at **Product Type** — Spwig turns shipping off automatically for Digital, Booking, and Gift Card products, since none of those are physically posted.
+- Set a **Preferred Shipping Package** for products that always ship in the same box — it saves you from having to keep that product's own weight and dimensions in sync with the box you actually use.

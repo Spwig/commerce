@@ -82,7 +82,10 @@ def track_user_signup(sender, instance, created, **kwargs):
 # =====================================================================
 
 
-@receiver(post_save, sender=Order)
+# Order handlers below are invoked (unchanged) by the unified order-completion
+# orchestrator in ``attribution.orchestrator`` rather than registered as
+# independent receivers, so referral rewards remain byte-for-byte identical
+# (invariant #5) while all order payout/reporting runs from one entry point.
 def handle_order_completion(sender, instance, created, **kwargs):
     """
     Handle order completion and referral attribution.
@@ -110,12 +113,12 @@ def handle_order_completion(sender, instance, created, **kwargs):
             )
 
 
-@receiver(pre_save, sender=Order)
 def track_order_status_change(sender, instance, **kwargs):
     """
     Track order status changes before save.
 
-    Stores previous status on instance for comparison in post_save.
+    Stores previous status on instance for comparison in post_save. Invoked by
+    the attribution orchestrator's pre_save hook.
     """
     if instance.pk:
         try:
@@ -329,10 +332,10 @@ def track_reward_status_change(sender, instance, **kwargs):
 # =====================================================================
 
 
-@receiver(post_save, sender=Order)
 def handle_order_cancellation(sender, instance, **kwargs):
     """
-    Handle order cancellation or refund.
+    Handle order cancellation or refund. Invoked by the attribution
+    orchestrator on order save.
 
     If an order with attribution is cancelled/refunded, mark attribution as rejected
     and revoke any issued rewards.

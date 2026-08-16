@@ -40,10 +40,20 @@ def rate_limit(max_requests=100, window_seconds=60, key_prefix="rate_limit"):
             # Create cache key
             cache_key = f"{key_prefix}:{hashlib.md5(ip_address.encode()).hexdigest()}"
 
-            # Get current request count
-            request_count = cache.get(cache_key, 0)
+            # Atomically initialise the counter for the first request in the
+            # window, then increment. cache.add is a no-op when the key already
+            # exists, so concurrent first requests can't overwrite each other's
+            # count (which previously let bursts slip past the limit).
+            cache.add(cache_key, 0, window_seconds)
+            try:
+                request_count = cache.incr(cache_key)
+            except ValueError:
+                # The key's TTL expired between add and incr; start a fresh
+                # window. cache.incr raises ValueError on a missing key.
+                cache.set(cache_key, 1, window_seconds)
+                request_count = 1
 
-            if request_count >= max_requests:
+            if request_count > max_requests:
                 logger.warning(
                     f"Rate limit exceeded for IP {ip_address}: "
                     f"{request_count} requests in {window_seconds}s"
@@ -53,14 +63,6 @@ def rate_limit(max_requests=100, window_seconds=60, key_prefix="rate_limit"):
                     status=429,
                     content_type="text/plain",
                 )
-
-            # Increment counter
-            if request_count == 0:
-                # First request in window - set with expiry
-                cache.set(cache_key, 1, window_seconds)
-            else:
-                # Increment existing counter
-                cache.incr(cache_key)
 
             return view_func(request, *args, **kwargs)
 

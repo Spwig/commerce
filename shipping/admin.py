@@ -89,6 +89,9 @@ class ShippingCountryAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ("shipping/css/admin_badges.css",)}
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("source_warehouse")
+
     def country_flag_and_name(self, obj):
         """Display country flag and full name"""
         from django_countries.fields import Country
@@ -629,10 +632,22 @@ class ShippingPackageAdmin(admin.ModelAdmin):
 
     external_dimensions_display.short_description = _("External Dimensions (for carriers)")
 
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                products__count=Count("products", distinct=True),
+                variants__count=Count("variants", distinct=True),
+            )
+        )
+
     def usage_count(self, obj):
         """Count how many products/variants use this package"""
-        product_count = obj.products.count()
-        variant_count = obj.variants.count()
+        product_count = obj.products__count
+        variant_count = obj.variants__count
         total = product_count + variant_count
 
         if total == 0:
@@ -880,6 +895,10 @@ class ProviderAccountAdmin(admin.ModelAdmin):
             # Get provider account
             provider_account = ProviderAccount.objects.select_related("component").get(pk=object_id)
 
+            # Require change permission before touching credentials or connection state
+            if not self.has_change_permission(request, provider_account):
+                return JsonResponse({"success": False, "error": _("Permission denied")}, status=403)
+
             # Decrypt credentials
             from .utils.encryption import decrypt_credentials
 
@@ -1033,6 +1052,18 @@ class ShipmentAdmin(admin.ModelAdmin):
         extra_context["cancelled_count"] = Shipment.objects.filter(status="canceled").count()
 
         return super().changelist_view(request, extra_context=extra_context)
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "order",
+                "carrier_preset",
+                "provider_account",
+                "provider_account__component",
+            )
+        )
 
     def id_short(self, obj):
         return str(obj.id)[:8]
@@ -1411,6 +1442,7 @@ class ShipmentAdmin(admin.ModelAdmin):
 
     def generate_customs_forms(self, request, queryset):
         """Admin action to generate customs forms for selected shipments"""
+        from exchange_rates.services.exchange_service import ExchangeRateService
         from shipping.services.document_service import DocumentService
 
         generated_count = 0
@@ -1418,11 +1450,17 @@ class ShipmentAdmin(admin.ModelAdmin):
 
         for shipment in queryset:
             try:
-                # Determine form type based on shipment characteristics
-                # CN22: up to 2kg and value <= 425 EUR
-                # CN23: over 2kg or value > 425 EUR
-                # For simplicity, we'll use CN23 as default (more comprehensive)
-                form_type = "CN23"
+                # Determine form type based on shipment weight and value:
+                # CN22 covers shipments up to 2kg and up to EUR 425; CN23 otherwise.
+                total_weight_g = sum(pkg.get("weight", 0) for pkg in (shipment.packages or []))
+                order_total = shipment.order.total_amount
+                value_eur = ExchangeRateService().convert(
+                    order_total.amount, str(order_total.currency), "EUR"
+                )
+                if total_weight_g <= 2000 and value_eur <= Decimal("425"):
+                    form_type = "CN22"
+                else:
+                    form_type = "CN23"
 
                 # Generate customs form
                 data_uri = DocumentService.generate_customs_form(shipment, form_type=form_type)
@@ -1454,7 +1492,7 @@ class ShipmentAdmin(admin.ModelAdmin):
             )
 
     generate_customs_forms.short_description = _(
-        "Generate customs forms (CN23) for selected shipments"
+        "Generate customs forms (CN22/CN23) for selected shipments"
     )
 
 
@@ -1498,6 +1536,9 @@ class TrackingEventAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("shipment")
 
     def id_short(self, obj):
         return str(obj.id)[:8]
@@ -1814,7 +1855,7 @@ class ShippingZoneAdmin(admin.ModelAdmin):
 
     def shipping_methods_count(self, obj):
         """Display count of shipping methods assigned to this zone"""
-        count = obj.shipping_methods.count()
+        count = obj.methods_count
         if count > 0:
             return format_html(
                 '<span class="methods-count active">{} {}</span>', count, _("methods")
@@ -1981,9 +2022,14 @@ class ShippingRateTableAdmin(admin.ModelAdmin):
 
     is_active_badge.short_description = _("Status")
 
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(tiers_count=Count("tiers"))
+
     def tier_count(self, obj):
         """Count of tiers in this table"""
-        count = obj.tiers.count()
+        count = obj.tiers_count
         if count == 0:
             return mark_safe('<span class="shipping-text-danger">&#9888; 0 tiers</span>')
         return format_html('<span class="shipping-text-success">{} tiers</span>', count)
@@ -2201,9 +2247,14 @@ class ShippingPromotionAdmin(admin.ModelAdmin):
 
     time_validity_display.short_description = _("Time Validity")
 
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(zones_count=Count("zones", distinct=True))
+
     def zones_display(self, obj):
         """Display number of zones"""
-        count = obj.zones.count()
+        count = obj.zones_count
         if count == 0:
             return _("All zones")
         return _("{count} zones").format(count=count)

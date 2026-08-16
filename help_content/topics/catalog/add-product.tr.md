@@ -2,137 +2,155 @@
 title: Ürün Ekleme
 ---
 
-# Ürün Ekleme
+Bu, daha uzun bir belgeden dört bölümden biridir.
 
-Bu kılavuz, mağazanıza yeni bir ürün oluşturmanıza yardımcı olur. Ürünler, Temel Bilgiler, Medya, Fiyatlandırma, Stok ve SEO olmak üzere birkaç sekmede organize edilir, böylece her şeyi tek seferde doldurabilir ya da daha sonra tamamlamak için geri dönebilirsiniz.
+İçerik:
+
+<!-- ekran görüntüleri gerekli:
+- url: /admin/catalog/product/<id>/change/
+  filename: envanter-sekmesi.webp
+  açıklama: Fiziksel Özellikler, Nakliye,
+    ve Gelecek Tarihli Sipariş kartlarını birlikte gösteren envanter sekmesi (Nakliye seçili, Tercihi Nakliye Paketi seçili ve Gelecek Tarihli Sipariş seçili ve bir teslim tarihi ve mesajı girilmiş, bu nedenle tüm yeni alanlar tek seferde görünür).
+  kaydet: core/static/core/admin/img/help/add-product/
+  görünüm alanı: 1440x900
+  notlar: Daha önceki envanter-sekmesi.webp'yi değiştirir, Nakliye
+    ve Gelecek Tarihli Sipariş kartları ile eşleşmiyor ve artık canlı form ile eşleşmiyor.
+- url: /admin/catalog/product/<id>/change/
+  filename: etiket-kartı.webp
+  açıklama: Temel Bilgi sekmesi, etiket kartına sahip ve ürün için etiket seçiciye zaten birkaç etiket eklenmiş.
+  kaydet: core/static/core/admin/img/help/add-product/
+  görünüm alanı: 1440x900
+- url: /admin/catalog/product/<id>/change/
+  filename: gelişmiş-sekmesi.webp
+  açıklama: Gelişmiş sekmesi, Ürün Sayfası Ayarları kartını (Sayfa Şablonu
+    açılır menüsünde varsayılan olmayan bir seçenek seçili) ve altında
+    Teknik Detaylar kartını gösterir.
+  kaydet: core/static/core/admin/img/help/add-product/
+  görünüm alanı: 1440x900
+-->
+
+Bu kılavuz, mağazanızaki yeni bir ürün oluşturmanıza yardımcı olur. Ürün formu, temel bilgi, medya, fiyat, envanter, SEO ve daha fazlasını kapsayan bölümler halinde düzenlenmiştir. - hepsini bir seferde doldurabilir ya da daha sonra bölümleri tamamlamak için geri dönebilirsiniz.
 
 ## Başlangıç
 
-Yan menüden **Ürünler > Tüm Ürünler** sekmesine giderek ürün kataloğunuza bakabilirsiniz. Ürünlere giriş formunu açmak için sağ üst köşedeki **+ Ürün Ekle** butonuna tıklayın.
+Yan menüden, ürün kataloğunuza bakmak için **Ürünler > Tüm Ürünler**'e gidin. Üst sağ köşede **+ Ürün Ekle** butonuna tıklayarak ürün oluşturma formunu açın.
 
 ![Ürün listesi sayfası](/static/core/admin/img/help/add-product/product-list-page.webp)
 
-## Temel Bilgiler Sekmesi
+## Temel Bilgiler
 
-**Temel Bilgiler** sekmesi, ürününüzün temel detaylarını tanımlamak için kullanılır.
+**Temel Bilgiler** kısmı, ürününüzün temel kimliğini tanımladığınız bölümdür.
 
 ![Ürün ekleme formu](/static/core/admin/img/help/add-product/add-product-form.webp)
 
-### Gerekli Alanlar
+### Zorunlu alanlar
 
-- **Adı** — Müşterilere gösterilen ürün adı. Diğer diller için çeviriler eklemek için küresel simgeye tıklayın.
-- **Slug** — Adın URL dostu sürümü (otomatik olarak oluşturulur). "Otomatik" seçeneğini kapatın ve özelleştirebilirsiniz.
-- **SKU** — İç stok takip birim kodunuz.
-- **Ürün Tipi** — Seçenekler: Basit, Değişken, Dijital, Takviye, Hediye Kartı, Özelleştirilebilir veya Yapılandırılabilir.
-- **Durum** — Çalışırken Taslak olarak ayarlayın, hazırsanız **Yayınla** olarak değiştirin.
+- **İsim** — Müşterilere gösterilen ürün adı. Diğer diller için çeviri eklemek için küresel ikonuna tıklayın.
+- **Slug** — İsimle aynı URL'ye uygun hali (otomatik olarak üretilir). Gerekirse özelleştirin.
+- **SKU** — İçsel stok takip birimi kodunuz.
+- **Ürün Türü** — Aşağıdakilerden birini seçin: Basit, Değişken, Dijital, Paket, Hediye Kartı, Özelleştirilebilir, Yapılandırılamaz, veya Rezervasyon.
+- **Kategori** — Ürünü organize etme ve mağaza arayüzünde navigasyon için bir kategoriye atayın.
 
-### Opsiyonel Alanlar
+### Durum ve görünürlük
 
-- **Kategori** — Ürünü organize etmek ve mağaza ön yüzü gezintisini kolaylaştırmak için bir kategoriye atayın.
+Formun en altında bulunan **Durum** bölümünde:
+
+- **Durum** — Çalışırken **Taslak** olarak ayarlayın, satılmaya hazır iken **Yayında** yapın, ya da artık sunulmayan ürünleri için **Kaldırıldı** olarak ayarlayın.
+- **Öne Çıkarılmış** — Mağaza arayüzünde bu ürünü vurgulamak için işaretleyin.
+- **Dijital Ürün** — Bu ürünün dijital indirilmeleri (dosyalar, lisanslar) içerip içermediğini belirtin. Herhangi bir ürün türüyle birlikte olabilir.
+- **Mağaza Arayüzünden Kaldır** — Ürünü katalog listelerinden gizleyin, ancak yapılandırıcı seçeneği ya da paket bileşeni olarak hâlâ mevcut tutun.
+
+### Opsiyonel alanlar
+
 - **Marka** — Uygunsa bir marka ile ilişkilendirin.
-- **Öne Çıkan** — Ürününüzü mağaza ön yüzünde öne çıkarın.
-- **Dijital Ürün** — Bu ürün dijital indirme içeriyorsa işaretleyin (dosyalar, lisanslar).
-- **Ön Yüzden Gizle** — Ürün kataloğunda görünmez hale getirirken yapılandırıcı bir seçenek veya paket bileşeni olarak hâlâ kullanılabilir.
+- **Etiketler** — Bu sekmedeki **Etiketler** kartında bir ya da daha fazla etiket atayın. Etiketler, koleksiyonlardan farklıdır - ürünleri organize etme ve filtreleme için hızlı, serbest formlu etiketlerdir, ancak ticari gruplandırma değildir. Zaten mevcut bir etiket aramak için yazmaya başlayın, ya da anında yeni bir isim girerek bir tane oluşturun. Bkz. **Ürün Etiketleri** yardım konusu, etiketleri doğrudan oluşturmak, yeniden adlandırmak ve toplu olarak silmek için.
 
-### Ürün Açıklamaları
+### Ürün tanımlamaları
 
-- **Kısa Açıklama** — Ürün listeleri ve kartlarda görünür. Kısaca ve etkileyici olun.
-- **Detaylı Açıklama** — Ürün detay sayfasında gösterilen detaylı açıklama. Zengin metin düzenleyiciyi kullanarak biçimlendirme, resimler, videolar ve tablolar ekleyin.
+- **Kısa Açıklama** — Ürün listelerinde ve kartlarında görünür. Kısa ve yaratıcı tutun.
+- **Tam Açıklama** — Ürün detay sayfasında gösterilen detaylı ürün açıklaması. Zengin metin düzenleyicisini kullanarak biçimlendirme, resim, video ve tablo ekleyin.
 
-Her iki açıklama alanı da çeviri özelliğini destekler — diğer diller için içerik eklemek için küresel simgeye tıklayın.
+Her iki açıklama alanı da çeviri özelliğini destekler - diğer dillerde içerik sağlamak için küresel ikona tıklayın.
 
-## Medya Sekmesi
+### Özellikler ve spesifikasyonlar
 
-**Medya** sekmesi, entegre Medya Kütüphanesi kullanarak ürün resimlerini yönetmenizi sağlar.
+Tüm markdown formatlamasını, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
 
-![Medya sekmesi](/static/core/admin/img/help/add-product/media-tab.webp)
+Ürün Detayları
 
-1. **+ Medya Kütüphanesinden Görsel Ekle** butonuna tıklayarak medya seçiciyi açın.
-2. Mevcut görseller seçin veya doğrudan yeni görseller yükleyin.
-3. Görselleri sıralamak için sürükleyin — **ilk görsel**, ürün listeleri ve kartlarda gösterilen ana ürün görseli olur.
-4. Ürün sayfasında görsellerin nasıl görüntüleneceğini kontrol etmek için **Galeri Türünü** seçin: Standart Galeri, Karuzel, Ağaç Düzeni, Yakınlaştırma Galeri veya 360° Görünüm.
+Ürün stokta olmadığı sürece bir ürünü satmak için **Ön Sipariş** kartını kullanın - ürününüzün tanıtımından önce sipariş almak istediğiniz yeni bir ürün için yararlıdır:
 
-## Fiyatlandırma Sekmesi
+- **Ön Sipariş** — Ürün stokta değilken de müşterilerin bu ürünü satın almasına izin verin.
+- **Ön Sipariş Açılış Tarihi** — Müşterilere gösterilecek olan beklenen mevcut tarihi.
+- **Ön Sipariş Mesajı** — Müşterilere kısa bir özel mesaj gösterin, 200 karaktere kadar (örneğin: "Mart 2026'da kargo verilecek").
 
-Ürününüzün fiyatlandırmasını ayarlayıp satışları yapılandırın.
+### Ürün tanımlayıcıları
 
-![Fiyatlandırma sekmesi](/static/core/admin/img/help/add-product/pricing-tab.webp)
+Pazarlık listeleri ve envanter sistemleri için standart ürün kodları:
 
-### Standart Fiyatlandırma
-
-- **Standart Fiyat** — Müşterilerin göreceği standart perakende fiyatı.
-- **Para Birimi** — Para birimi seçin (mağazanızın varsayılan para birimi önceden seçili olarak ayarlanmıştır).
-- **Maliyet** — Ürün maliyetiniz, kâr hesaplamalarında kullanılır. Bu, müşterilere asla gösterilmez.
-
-### Satış Ayarları
-
-Geçici indirimleri yapılandırın:
-
-- **Satış Türü** — Seçenekler: Satış Yok, Sabit Satış Fiyatı, Tutar İndirimi veya Yüzde İndirimi.
-- **Satış Değeri** — İndirim tutarı veya yüzdesi.
-- **Başlangıç/Zaman Sonu Tarihleri** — Satışın etkinleşeceği ve sona ereceği tarihleri planlayın. Hemen başlamak veya son tarih olmadan boş bırakın.
-
-## Stok Sekmesi
-
-Stok seviyelerini ve fiziksel ürün özelliklerini yönetin.
-
-![Stok sekmesi](/static/core/admin/img/help/add-product/inventory-tab.webp)
-
-### Stok Yönetimi
-
-- **Stok Takibi** — Stok miktarlarını izlemek için etkinleştirin (varsayılan olarak etkinleştirilir).
-- **Düşük Stok Seviyesi** — Stok, bu sayıya düştüğünde uyarı alırsınız (varsayılan: 5).
-- **Stok Miktarı** — Mevcut birim sayısı.
-- **Stok Yoksa Sipariş Kabul Et** — Stokta ürün yoksa bile siparişleri kabul etmek için etkinleştirin.
-
-### Fiziksel Özellikler
-
-Doğru kargo hesaplamaları için ürünün ağırlığını (kg) ve boyutlarını (uzunluk, genişlik, yükseklik cm) girin.
-
-### Ürün Tanımlayıcıları
-
-Pazar yerinde ürün listeleri ve stok sistemleri için standart ürün kodları:
-
-- **GTIN** — Global Trade Item Number
+- **GTIN** — Küresel Ticaret Ürün Numarası
 - **EAN** — Avrupa Ürün Numarası
-- **UPC** — Ulusal Ürün Kodu (ABD)
-- **ISBN** — Kitaplara ait
-- **ASIN** — Amazon tanımlayıcısı
+- **UPC** — Evrensel Ürün Kodu (ABD)
+- **ISBN** — Kitaplar için
+- **ASIN** — Amazon kimliği
 - **MPN** — Üretici Parça Numarası
 
-### Uluslararası Kargo / Gümrük
+### Uluslararası kargo / gümrük
 
-Uluslararası kargo için gerekli:
+Uluslararası kargo için gerekli (**Uluslararası Kargo / Gümrük** bölümünü genişletin):
 
 - **HS Kodu** — Harmonize Sistem sınıflandırma kodu
-- **Üretim Ülkesi** — Ürünün üretildiği yer
-- **Gümrük Birim Fiyatı** — Gümrük için birim başına bildirilen değer
+- **Menşei Ülkesi** — Ürünün üretildiği yer
+- **Gümrük Birim Fiyatı** — Gümrük için bildirilen birim başına fiyat
+- **İhracat Lisans Numarası** — Sadece kontrol edilen ya da sınırlı ürünler için gerekli
+- **İhracat Lisans Süresi** — İhracat lisanslarının sona erme tarihi
 
-## SEO Sekmesi
+## SEO
 
-Ürününüzün arama motoru görünürlüğünü optimize edin.
+Ürününüzün arama motoru görünümünü optimize edin.
 
 ![SEO sekmesi](/static/core/admin/img/help/add-product/seo-tab.webp)
 
-- **Meta Başlık** — Arama motoru sonuçlarında görünen başlık. Diğer diller için çeviri yapmak için küresel simgeye tıklayın.
-- **Meta Açıklama** — Arama sonuçları için kısaca açıklama (maksimum 160 karakter). Diğer diller için çeviri yapmak için küresel simgeye tıklayın.
-- **SEO Otomatik Oluşturma** — Ürün kaydedildiğinde SEO içeriğini otomatik olarak oluşturmak için işaretleyin.
+- **Meta Başlığı** — Arama motoru sonuçlarında gösterilen başlık. Çevirmek için dünya simgesine tıklayın.
+- **Meta Açıklaması** — Arama sonuçları için kısa bir açıklama (en fazla 160 karakter). Çevirmek için dünya simgesine tıklayın.
+- **Otomatik SEO Oluştur** — Ürün kaydedildiğinde SEO içeriğini otomatik olarak oluşturmak için kontrol edin.
 
-**Arama Sonucu Önizlemesi** (canlı), ürününüzün Google arama sonuçlarında nasıl görüneceğini tam olarak gösterir.
+Google arama sonuçlarında ürününüzün nasıl görüneceğini gösteren canlı bir **Arama Sonucu Örneği** vardır.
 
-## Ürününüzü Kaydetme
+## Ürün sayfası ayarları
 
-Hazırsanız, sağ üst köşedeki kaydetme butonlarını kullanın:
+**Gelişmiş** sekmesindeki **Ürün Sayfası Ayarları** kartı, bu ürünün mağaza sayfasının nasıl görüneceğini kontrol etmenize olanak tanır:
 
-- **Kaydet** (onay işareti) — Ürün sayfasında kalmak üzere kaydedin.
-- **Kaydet ve Düzenlemeye Devam Et** — Kaydedin ve formda kalmak üzere devam edin.
+- **Sayfa Şablonu** — Bu ürün için sitenin varsayılan ürün sayfası düzenini geçersiz kılın: Klasik, Tam Genişlik, Galeri Vurgusu, ya da Dijital. Tasarım ayarlarınızın belirttiği herhangi bir düzenin devralınmasını sağlamak için **Site Varsayılanını Kullan**'ı tercih edin — çoğu ürün varsayılan üzerinde kalmalıdır, böylece şablon değişiklikleri orada otomatik olarak uygulanır.
+- **İlgili Ürünleri Göster** — sayfanın altına ilgili ürünleri gösterin.
+- **Yorumları Göster** — müşteri yorumlarını gösterin.
+- **Özellikleri Göster** — Özellikler sekmesini gösterin.
 
-Ürün, durumu **Yayınla** olarak ayarlandığında mağaza ön yüzünde görünecektir.
+**Galery Türü** alanı — ürün resimlerinin nasıl görüntüleneceğini kontrol eder (Standart Galeri, Karousel, Grid Yapısı, Zoom Galerisi, ya da 360° Görünüm) — ayrı bir **Medya** sekmesinde ayarlanır.
+
+## Satış kanalı
+
+**Satış Kanalı** alanı (Durum bölümünde), ürünün nerede satılabileceğini kontrol eder:
+
+- **Tüm Kanallar** — Online ve mağaza içi (POS) olarak mevcut.
+- **Sadece Online** — POS terminallerinden satış yapılmaz.
+- **Sadece Mağaza** — Online olarak listelenmez; sadece fiziksel mağazanızda mevcuttur.
+
+POS barkod okuma alanı için bir **Barkod** alanı da mevcuttur.
+
+## Ürününüzü Kaydedin
+
+Hazır olduğunuzda, sağ üst köşedeki kaydet butonlarını kullanın. Ürününüzün durumu **Yayında** olarak ayarlandığında mağaza üzerinde görünecektir.
 
 ## İpuçları
 
-- İlk olarak **Taslak** durumunu kullanın, ürününüzü müşterilerin görmesinden önce tamamlayabilirsiniz.
-- Birden fazla görsel yükleme — birkaç fotoğrafı olan ürünler daha iyi dönüşüm sağlar.
-- **SEO** alanlarını doldurun, arama motorlarında daha iyi bulunabilirlik için.
-- **Kategoriler** ve **Markalar** kullanın, müşterilerin kataloğunuza kolayca erişmesine yardımcı olun.
-- Değişken ürünler için (örneğin, farklı boyutlar veya renkler), **Değişken Ürün** tipini seçin ve kaydetme işleminden sonra varyasyonlar ekleyin.
+Tüm markdown formatlamasını, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
+
+- **Taslak** durumu ile başlayın, böylece müşterilerinize göstermeden önce ürününüzü geliştirin.
+- Farklı fotoğraflara sahip ürünler daha fazla dönüşüm sağlar, bu nedenle birden fazla resim yükleyin.
+- Arama motorlarında tanımlanabilirliği artırmak için **SEO** alanlarını doldurun.
+- Müşterilerin katalogunuza erişimini kolaylaştırmak için **Kategoriler**, **Markalar** ve **Etiketler** kullanın.
+- Değişken ürünler (örneğin, farklı boyutlar veya renkler) için **Değişken Ürün** türünü seçin ve kaydettikten sonra varyant ekleyin.
+- Ürün sayfasındaki özel sekme olarak görünen yapılandırılmış ürün verilerini eklemek için **Özellikler** ve **Özellikler** kullanın.
+- **Kargo Gerektirir** seçili kalmazsa, **Ürün Türü** ne bakın - Spwig, fiziksel olarak gönderilmeyen dijital, rezervasyon ve hediye kartı ürünlerinde kargoyu otomatik olarak kapatır.
+- Her zaman aynı kutuda sevk edilen ürünler için bir **İlk Sıra Kargo Paketi** belirleyin - bu, ürününüzün ağırlığını ve boyutlarını aslında kullandığınız kutu ile senkronize etmekten kurtulmanıza yardımcı olur.

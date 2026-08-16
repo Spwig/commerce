@@ -25,9 +25,11 @@ Recommended cron schedule:
     0 * * * * cd /path/to/shop && ./shop_venv/bin/python manage.py update_shipment_tracking
 """
 
+import json
 import logging
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.core.serializers.json import DjangoJSONEncoder
 
 from shipping.models import Shipment, TrackingEvent
 from shipping.providers.registry import ProviderRegistry
@@ -61,6 +63,9 @@ class Command(BaseCommand):
         provider_filter = options["provider"]
         limit = options["limit"]
         dry_run = options["dry_run"]
+
+        if limit < 0:
+            raise CommandError("--limit must be a non-negative integer")
 
         if dry_run:
             self.stdout.write(self.style.WARNING("[DRY RUN MODE - No changes will be saved]"))
@@ -164,6 +169,13 @@ class Command(BaseCommand):
         old_status = shipment.status
         new_status = tracking_info["status"]
 
+        # Guard against backward transitions that would drop the shipment out of
+        # the active polling set. Some carriers (e.g. FedEx "OC") map to "created";
+        # saving that on an already-labeled shipment would exclude it from future
+        # polls, permanently stopping tracking updates.
+        if new_status == "created" and old_status != "created":
+            new_status = old_status
+
         if old_status != new_status:
             self.stdout.write(f"[UPDATE] {shipment.tracking_id}: {old_status} -> {new_status}")
             if not dry_run:
@@ -176,25 +188,43 @@ class Command(BaseCommand):
             )
 
         # Process tracking events
-        # Get existing event timestamps to avoid duplicates
+        # Deduplicate on a stable composite identity (timestamp, status, location,
+        # description) so distinct checkpoints that share a timestamp are kept and
+        # true duplicates within a single response are dropped.
         existing_events = set(
-            TrackingEvent.objects.filter(shipment=shipment).values_list("occurred_at", flat=True)
+            TrackingEvent.objects.filter(shipment=shipment).values_list(
+                "occurred_at", "status", "location", "description"
+            )
         )
 
         for event_data in tracking_info.get("events", []):
             event_time = event_data["timestamp"]
-            if event_time and event_time not in existing_events:
-                self.stdout.write(f"  [NEW EVENT] {event_time}: {event_data['description']}")
-                if not dry_run:
-                    TrackingEvent.objects.create(
-                        shipment=shipment,
-                        status=event_data["status"],
-                        description=event_data["description"],
-                        location=event_data["location"],
-                        occurred_at=event_time,
-                        raw={"event_data": event_data},
-                    )
-                result["new_events"] += 1
+            if not event_time:
+                continue
+
+            event_identity = (
+                event_time,
+                event_data["status"],
+                event_data["location"],
+                event_data["description"],
+            )
+            if event_identity in existing_events:
+                continue
+            existing_events.add(event_identity)
+
+            self.stdout.write(f"  [NEW EVENT] {event_time}: {event_data['description']}")
+            if not dry_run:
+                TrackingEvent.objects.create(
+                    shipment=shipment,
+                    status=event_data["status"],
+                    description=event_data["description"],
+                    location=event_data["location"],
+                    occurred_at=event_time,
+                    # Round-trip through DjangoJSONEncoder so datetime values in the
+                    # raw event (e.g. the timestamp) are JSON-serializable.
+                    raw={"event_data": json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))},
+                )
+            result["new_events"] += 1
 
         # Update order tracking number if not set
         if not dry_run and shipment.order and not shipment.order.tracking_number:

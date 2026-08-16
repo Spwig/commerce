@@ -4,12 +4,12 @@ REST API endpoints for voucher management
 """
 
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Avg, Q, Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import status, viewsets
+from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -128,7 +128,14 @@ class VoucherCodeViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         Admin-only for create/update/delete
         Authenticated required for all other operations (security best practice)
         """
-        if self.action in ["create", "update", "partial_update", "destroy", "bulk_generate"]:
+        if self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+            "bulk_generate",
+            "usage_stats",
+        ]:
             return [IsAdminUser()]
         # All voucher operations now require authentication to prevent enumeration attacks
         return [IsAuthenticated()]
@@ -289,10 +296,13 @@ class VoucherCodeViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             "unique_customers": usage.filter(user__isnull=False).values("user").distinct().count(),
             "total_discount_given": usage.aggregate(total=Sum("discount_amount"))["total"]
             or Money(0, get_default_currency()),
-            "average_discount": usage.aggregate(avg=Sum("discount_amount"))["avg"]
+            "average_discount": usage.aggregate(avg=Avg("discount_amount"))["avg"]
             or Money(0, get_default_currency()),
             "uses_remaining": voucher.uses_remaining,
-            "recent_uses": VoucherUsageSerializer(usage.order_by("-used_at")[:10], many=True).data,
+            "recent_uses": VoucherUsageSerializer(
+                usage.select_related("voucher", "user", "order").order_by("-used_at")[:10],
+                many=True,
+            ).data,
         }
 
         return Response(stats)
@@ -310,12 +320,11 @@ class VoucherCodeViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             ...
         }
         """
-        count = request.data.get("count", 1)
-        if count > 1000:
-            return Response(
-                {"error": "Cannot generate more than 1000 vouchers at once"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        count_field = serializers.IntegerField(min_value=1, max_value=1000)
+        try:
+            count = count_field.run_validation(request.data.get("count", 1))
+        except serializers.ValidationError as exc:
+            return Response({"count": exc.detail}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             with transaction.atomic():
@@ -601,32 +610,11 @@ class VoucherRestrictionViewSet(viewsets.ModelViewSet):
             "Get all vouchers currently applied to the authenticated user's cart. Shows voucher codes, discount amounts, and application status."
         ),
     ),
-    create=extend_schema(
-        tags=["Vouchers"],
-        summary=_("Apply voucher to cart"),
-        description=_(
-            "Apply a voucher to the user's cart. Validates voucher eligibility, calculates discount, and adds to cart. Returns error if voucher is invalid or already applied."
-        ),
-    ),
     retrieve=extend_schema(
         tags=["Vouchers"],
         summary=_("Get applied voucher details"),
         description=_(
             "Get detailed information about a specific voucher applied to cart including discount amount, voucher code, and application timestamp."
-        ),
-    ),
-    update=extend_schema(
-        tags=["Vouchers"],
-        summary=_("Update applied voucher"),
-        description=_(
-            "Update an applied voucher in the cart. Can refresh discount calculation if cart contents changed."
-        ),
-    ),
-    partial_update=extend_schema(
-        tags=["Vouchers"],
-        summary=_("Partially update applied voucher"),
-        description=_(
-            "Update specific fields of an applied voucher. Useful for recalculating discounts without full voucher reapplication."
         ),
     ),
     destroy=extend_schema(
@@ -644,9 +632,20 @@ class VoucherRestrictionViewSet(viewsets.ModelViewSet):
         ),
     ),
 )
-class AppliedVoucherViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
+class AppliedVoucherViewSet(
+    HeadlessAPIMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     """
-    ViewSet for managing vouchers applied to carts
+    ViewSet for managing vouchers applied to carts.
+
+    Direct create/update are intentionally not exposed: applied-voucher rows
+    carry a server-calculated discount and are bound to the requester's own
+    cart. Use the ``apply`` action, which enforces cart ownership and full
+    voucher validation, to add a voucher.
     """
 
     queryset = AppliedVoucher.objects.all()
@@ -683,40 +682,20 @@ class AppliedVoucherViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         cart = request.user.cart
 
-        try:
-            voucher = VoucherCode.objects.get(code=code.upper())
+        # Delegate to Cart.apply_voucher, which enforces currency, combination,
+        # sale-item, minimum-value, and eligibility-scope checks, calculates the
+        # discount server-side, and creates the AppliedVoucher record.
+        success, message, _discount = cart.apply_voucher(code, request.user)
+        if not success:
+            return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if already applied
-            if AppliedVoucher.objects.filter(cart=cart, voucher=voucher).exists():
-                return Response(
-                    {"error": "This voucher is already applied to your cart"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        applied = cart.applied_vouchers.get(voucher__code=code)
 
-            # Check eligibility
-            can_use, message = voucher.can_be_used_by_customer(request.user)
-            if not can_use:
-                return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Calculate discount
-            cart_total = cart.get_total()  # Assumes cart has get_total() method
-            discount = voucher.calculate_discount(cart_total)
-
-            # Apply voucher
-            applied = AppliedVoucher.objects.create(
-                cart=cart, voucher=voucher, discount_amount=discount
-            )
-
-            return Response(
-                {
-                    "success": True,
-                    "message": "Voucher applied successfully",
-                    "applied_voucher": AppliedVoucherSerializer(applied).data,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-
-        except VoucherCode.DoesNotExist:
-            return Response({"error": "Invalid voucher code"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": True,
+                "message": message,
+                "applied_voucher": AppliedVoucherSerializer(applied).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )

@@ -37,17 +37,28 @@ def sync_tracking_to_order(sender, instance, created, **kwargs):
 
     Guards against infinite loops by using update() instead of save()
     """
-    if instance.tracking_id and instance.order:
-        # Only update if tracking number actually changed
-        if instance.order.tracking_number != instance.tracking_id:
-            # Use update() to avoid triggering signals
-            from orders.models import Order
+    if not (instance.tracking_id and instance.order):
+        return
 
-            Order.objects.filter(pk=instance.order.pk).update(tracking_number=instance.tracking_id)
-            logger.info(
-                f"Synced tracking {instance.tracking_id} from Shipment {instance.pk} "
-                f"to Order {instance.order.order_number}"
-            )
+    from shipping.models import Shipment
+
+    # Only the order's current (latest) shipment owns the order-level tracking
+    # number. Mirror the ordering sync_tracking_from_order uses to pick the
+    # canonical shipment so saving an older shipment can't clobber a newer one.
+    latest_shipment = Shipment.objects.filter(order=instance.order).order_by("-created_at").first()
+    if latest_shipment and latest_shipment.pk != instance.pk:
+        return
+
+    # Only update if tracking number actually changed
+    if instance.order.tracking_number != instance.tracking_id:
+        # Use update() to avoid triggering signals
+        from orders.models import Order
+
+        Order.objects.filter(pk=instance.order.pk).update(tracking_number=instance.tracking_id)
+        logger.info(
+            f"Synced tracking {instance.tracking_id} from Shipment {instance.pk} "
+            f"to Order {instance.order.order_number}"
+        )
 
 
 @receiver(pre_save, sender="orders.Order")

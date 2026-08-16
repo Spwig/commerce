@@ -9,10 +9,13 @@ Handles secure file streaming for digital product downloads with:
 - File streaming from MinIO
 """
 
+import ipaddress
 import logging
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.db import transaction
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
@@ -78,30 +81,71 @@ def check_rate_limit(ip_address: str, asset_id: int) -> bool:
     """
     cache_key = f"download_rate_limit:{ip_address}:{asset_id}"
 
-    # Get current request count
-    request_count = cache.get(cache_key, 0)
+    # Seed the counter without clobbering an existing value or its TTL, then
+    # increment atomically. cache.add() is a no-op when the key already exists,
+    # and cache.incr() is atomic on the backend, so concurrent requests can't
+    # read-modify-write over each other and lose increments.
+    cache.add(cache_key, 0, 3600)  # 1 hour TTL
+    try:
+        request_count = cache.incr(cache_key)
+    except ValueError:
+        # The key expired between add() and incr(); this request is the first
+        # of a new window, so re-seed and count it.
+        cache.add(cache_key, 1, 3600)
+        request_count = 1
 
-    # Check if exceeded
-    if request_count >= 10:
+    # Allow 10 downloads per window; block the 11th and beyond.
+    if request_count > 10:
         logger.warning(
             f"Rate limit exceeded for IP {ip_address} on asset {asset_id} "
             f"({request_count} requests)"
         )
         return True
 
-    # Increment counter
-    cache.set(cache_key, request_count + 1, 3600)  # 1 hour TTL
     return False
 
 
 def get_client_ip(request) -> str:
-    """Extract client IP address from request"""
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0].strip()
-    else:
-        ip = request.META.get("REMOTE_ADDR", "0.0.0.0")
-    return ip
+    """Extract the client IP address used for rate limiting.
+
+    REMOTE_ADDR is set by the server from the socket peer and cannot be
+    forged by the client, so it is the trustworthy default. The
+    X-Forwarded-For header is client-controllable and is only honoured when
+    the direct peer is a configured trusted proxy (``settings.TRUSTED_PROXIES``,
+    empty by default). Whatever address is selected is validated with the
+    ``ipaddress`` module so a spoofed/overlong value can't skip the rate
+    limit or overflow the GenericIPAddressField when persisted.
+    """
+
+    def normalise(value):
+        # Returns the canonical string form of a valid IP, or None. Scoped
+        # IPv6 (e.g. "fe80::1%scope") is rejected: the scope id is meaningless
+        # for rate limiting and can push the string past the 39-char limit of
+        # GenericIPAddressField, causing a 500 on persistence.
+        try:
+            parsed = ipaddress.ip_address(value)
+        except ValueError:
+            return None
+        if getattr(parsed, "scope_id", None):
+            return None
+        return str(parsed)
+
+    remote_addr = request.META.get("REMOTE_ADDR", "")
+    trusted_proxies = getattr(settings, "TRUSTED_PROXIES", ())
+
+    if remote_addr in trusted_proxies:
+        forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
+        if forwarded:
+            candidate = forwarded.split(",")[0].strip()
+            normalised = normalise(candidate)
+            if normalised is not None:
+                return normalised
+            logger.warning("Ignoring malformed X-Forwarded-For value: %r", candidate)
+
+    normalised = normalise(remote_addr)
+    if normalised is not None:
+        return normalised
+    return "0.0.0.0"
 
 
 def file_iterator(file_handle, chunk_size=8192):
@@ -207,17 +251,6 @@ def download_digital_asset(request, token):
             )
             return HttpResponse("This order is not eligible for download yet.", status=403)
 
-        # Check download limit
-        if asset.is_download_limit_exceeded(order_item):
-            download_count = asset.downloads.filter(order_item=order_item).count()
-            logger.warning(
-                f"Download limit exceeded for asset {asset_id} "
-                f"({download_count}/{asset.download_limit})"
-            )
-            return HttpResponse(
-                f"Download limit exceeded ({asset.download_limit} downloads allowed).", status=403
-            )
-
         # Check expiration
         if asset.is_download_expired(order_item.order.created_at):
             logger.warning(
@@ -228,14 +261,32 @@ def download_digital_asset(request, token):
                 status=410,  # Gone
             )
 
-        # Create or get download record
-        download = DigitalDownload.create_download_record(
-            digital_asset=asset,
-            order_item=order_item,
-            user=order_item.order.user,
-            ip_address=client_ip,
-            user_agent=request.META.get("HTTP_USER_AGENT", ""),
-        )
+        # Enforce the per-purchase download limit and reserve a slot atomically.
+        # Locking the OrderItem serialises concurrent download attempts, so two
+        # requests can't both observe the count below the limit and each create
+        # a record, which would exceed download_limit.
+        with transaction.atomic():
+            locked_item = OrderItem.objects.select_for_update().get(pk=order_item.pk)
+            if asset.is_download_limit_exceeded(locked_item):
+                download_count = asset.downloads.filter(order_item=locked_item).count()
+                logger.warning(
+                    f"Download limit exceeded for asset {asset_id} "
+                    f"({download_count}/{asset.download_limit})"
+                )
+                return HttpResponse(
+                    f"Download limit exceeded ({asset.download_limit} downloads allowed).",
+                    status=403,
+                )
+
+            # Create the download record (status "initiated") while holding the
+            # lock so it counts against subsequent concurrent limit checks.
+            download = DigitalDownload.create_download_record(
+                digital_asset=asset,
+                order_item=locked_item,
+                user=order_item.order.user,
+                ip_address=client_ip,
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+            )
 
         logger.info(
             f"Starting download: asset={asset_id}, order={order_item.order.order_number}, "

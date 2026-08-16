@@ -1081,6 +1081,12 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
 
         is_valid, errors = CheckoutService.validate_checkout(session)
 
+        # A passing validate() is the order-review step the customer reaches
+        # before placing the order — record it (informational; nothing gates on
+        # it server-side). Monotonic: only advance, never regress.
+        if is_valid and CheckoutService._advance_step(session, "review"):
+            session.save(update_fields=["step_completed", "updated_at"])
+
         return Response({"is_valid": is_valid, "errors": [str(e) for e in errors]})
 
     @action(detail=False, methods=["get"], url_path="tenders")

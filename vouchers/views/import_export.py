@@ -175,13 +175,15 @@ class VoucherImportSettingsForm(forms.Form):
 
 
 def _store_default_currency() -> str:
-    """Best-effort default currency lookup for batch money settings."""
-    try:
-        from core.utils import get_default_currency
+    """Resolve the store's configured default currency for batch money settings.
 
-        return str(get_default_currency())
-    except Exception:
-        return "USD"
+    Any failure while resolving the store currency is allowed to propagate, so a
+    misconfigured or broken install never silently issues USD-denominated
+    vouchers instead of the merchant's actual currency.
+    """
+    from core.utils import get_default_currency
+
+    return str(get_default_currency())
 
 
 # ---------------------------------------------------------------------------

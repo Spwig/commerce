@@ -710,3 +710,181 @@ class TestGetBalance:
         _wallet_for(user, "37.50")
 
         assert WalletService.get_balance(user) == Money(Decimal("37.50"), "USD")
+
+
+# ============================================================
+# record_refund_transaction — the TYPE_REFUND writer
+# ============================================================
+
+
+class TestRecordRefundTransaction:
+    def test_a_refund_credits_the_balance_as_a_refund_typed_row(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "10.00")
+
+        txn = WalletService.record_refund_transaction(
+            user, Decimal("15.00"), "USD", "Refund of order #1", reference_id="ref-1"
+        )
+
+        assert txn.transaction_type == WalletTransaction.TYPE_REFUND
+        assert txn.source == WalletTransaction.SOURCE_REFUND
+        assert txn.amount == Money(Decimal("15.00"), "USD")
+        assert _reread(wallet).available_balance == Money(Decimal("25.00"), "USD")
+
+    def test_a_refund_bumps_lifetime_credited_like_a_credit(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "0.00")
+        WalletService.record_refund_transaction(user, Decimal("20.00"), "USD", "Refund")
+        wallet = _reread(wallet)
+        assert wallet.lifetime_credited == Money(Decimal("20.00"), "USD")
+        assert wallet.lifetime_used == Money(Decimal("0.00"), "USD")
+
+    def test_a_cross_currency_refund_is_refused_and_writes_nothing(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "100.00", "USD")
+        with pytest.raises(WalletCurrencyMismatch):
+            WalletService.record_refund_transaction(user, Decimal("5.00"), "EUR", "EUR refund")
+        assert _reread(wallet).available_balance == Money(Decimal("100.00"), "USD")
+        assert WalletTransaction.objects.filter(wallet=wallet).count() == 0
+
+    def test_a_refund_on_a_frozen_wallet_is_refused(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "10.00", is_active=False)
+        with pytest.raises(WalletFrozen):
+            WalletService.record_refund_transaction(user, Decimal("5.00"), "USD", "Refund")
+        assert _reread(wallet).available_balance == Money(Decimal("10.00"), "USD")
+
+    @pytest.mark.parametrize("bad_amount", [Decimal("0.00"), Decimal("-1.00")])
+    def test_a_non_positive_refund_is_refused(self, bad_amount):
+        user = UserFactory()
+        wallet = _wallet_for(user, "40.00")
+        with pytest.raises(ValueError):
+            WalletService.record_refund_transaction(user, bad_amount, "USD", "Nonsense")
+        assert _reread(wallet).available_balance == Money(Decimal("40.00"), "USD")
+
+
+# ============================================================
+# adjust_balance — the signed TYPE_ADJUSTMENT writer
+# ============================================================
+
+
+class TestAdjustBalance:
+    def _staff(self):
+        return UserFactory(staff=True)
+
+    def test_an_increase_raises_the_balance_as_an_adjustment_row(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "20.00")
+        staff = self._staff()
+
+        txn = WalletService.adjust_balance(
+            user, Decimal("5.00"), "increase", "USD", "Goodwill correction", created_by=staff
+        )
+
+        assert txn.transaction_type == WalletTransaction.TYPE_ADJUSTMENT
+        assert txn.source == WalletTransaction.SOURCE_MANUAL
+        assert txn.amount == Money(Decimal("5.00"), "USD")  # positive; direction carries the sign
+        assert txn.balance_after == Money(Decimal("25.00"), "USD")
+        assert txn.created_by_id == staff.pk
+        assert _reread(wallet).available_balance == Money(Decimal("25.00"), "USD")
+
+    def test_a_decrease_lowers_the_balance(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "20.00")
+
+        txn = WalletService.adjust_balance(
+            user, Decimal("8.00"), "decrease", "USD", "Clawback", created_by=self._staff()
+        )
+
+        assert txn.amount == Money(Decimal("8.00"), "USD")
+        assert txn.balance_after == Money(Decimal("12.00"), "USD")
+        assert _reread(wallet).available_balance == Money(Decimal("12.00"), "USD")
+
+    def test_adjustments_do_not_move_lifetime_counters(self):
+        # A correction is neither organic credit nor spend.
+        user = UserFactory()
+        wallet = _wallet_for(user, "50.00")
+        WalletService.adjust_balance(
+            user, Decimal("10.00"), "increase", "USD", "c", created_by=self._staff()
+        )
+        WalletService.adjust_balance(
+            user, Decimal("5.00"), "decrease", "USD", "c", created_by=self._staff()
+        )
+        wallet = _reread(wallet)
+        assert wallet.lifetime_credited == Money(Decimal("0.00"), "USD")
+        assert wallet.lifetime_used == Money(Decimal("0.00"), "USD")
+
+    def test_a_decrease_below_zero_is_refused(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "5.00")
+        with pytest.raises(InsufficientBalance):
+            WalletService.adjust_balance(
+                user, Decimal("5.01"), "decrease", "USD", "Over", created_by=self._staff()
+            )
+        assert _reread(wallet).available_balance == Money(Decimal("5.00"), "USD")
+        assert WalletTransaction.objects.filter(wallet=wallet).count() == 0
+
+    def test_a_missing_author_is_a_programming_error(self):
+        user = UserFactory()
+        _wallet_for(user, "5.00")
+        with pytest.raises(ValueError, match="created_by"):
+            WalletService.adjust_balance(
+                user, Decimal("1.00"), "increase", "USD", "x", created_by=None
+            )
+
+    def test_an_unknown_direction_is_refused(self):
+        user = UserFactory()
+        _wallet_for(user, "5.00")
+        with pytest.raises(ValueError, match="direction"):
+            WalletService.adjust_balance(
+                user, Decimal("1.00"), "sideways", "USD", "x", created_by=self._staff()
+            )
+
+    @pytest.mark.parametrize("bad_amount", [Decimal("0.00"), Decimal("-1.00")])
+    def test_a_non_positive_adjustment_is_refused(self, bad_amount):
+        user = UserFactory()
+        _wallet_for(user, "5.00")
+        with pytest.raises(ValueError):
+            WalletService.adjust_balance(
+                user, bad_amount, "increase", "USD", "x", created_by=self._staff()
+            )
+
+    def test_a_cross_currency_adjustment_is_refused_and_writes_nothing(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "100.00", "USD")
+        with pytest.raises(WalletCurrencyMismatch):
+            WalletService.adjust_balance(
+                user, Decimal("5.00"), "increase", "EUR", "x", created_by=self._staff()
+            )
+        assert _reread(wallet).available_balance == Money(Decimal("100.00"), "USD")
+        assert WalletTransaction.objects.filter(wallet=wallet).count() == 0
+
+    def test_an_adjustment_on_a_frozen_wallet_is_refused(self):
+        user = UserFactory()
+        wallet = _wallet_for(user, "10.00", is_active=False)
+        with pytest.raises(WalletFrozen):
+            WalletService.adjust_balance(
+                user, Decimal("1.00"), "increase", "USD", "x", created_by=self._staff()
+            )
+        assert _reread(wallet).available_balance == Money(Decimal("10.00"), "USD")
+
+    def test_an_adjustment_cannot_be_reversed(self):
+        # reverse_transaction only ever subtracts, so it would move a decrease
+        # adjustment the wrong way and destroy funds. Undo an adjustment with an
+        # opposite adjustment instead; reversing one is refused outright.
+        user = UserFactory()
+        wallet = _wallet_for(user, "100.00")
+        adj = WalletService.adjust_balance(
+            user, Decimal("30.00"), "decrease", "USD", "clawback", created_by=self._staff()
+        )
+        assert _reread(wallet).available_balance == Money(Decimal("70.00"), "USD")
+
+        with pytest.raises(ValueError, match="Cannot reverse"):
+            WalletService.reverse_transaction(adj, reason="oops")
+
+        # Balance untouched; the correct undo is an opposite (increase) adjustment.
+        assert _reread(wallet).available_balance == Money(Decimal("70.00"), "USD")
+        WalletService.adjust_balance(
+            user, Decimal("30.00"), "increase", "USD", "undo clawback", created_by=self._staff()
+        )
+        assert _reread(wallet).available_balance == Money(Decimal("100.00"), "USD")

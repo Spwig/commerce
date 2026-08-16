@@ -22,6 +22,7 @@ from rest_framework.decorators import (
     permission_classes,
     throttle_classes,
 )
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -84,6 +85,19 @@ SHIP_ONLY_PARAM = OpenApiParameter(
         "`ships_to_region` field so clients can mark them."
     ),
 )
+
+
+def parse_bounded_int(raw, default, maximum, minimum=0):
+    """Parse a query-param integer, clamping it to ``[minimum, maximum]``.
+
+    Falls back to ``default`` when the value is missing or not a valid integer,
+    so public endpoints never raise on malformed or negative input.
+    """
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        return default
+    return max(minimum, min(value, maximum))
 
 
 def region_filtered_products(queryset, region, request=None):
@@ -200,7 +214,7 @@ class CategoryViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                 is_deleted=False,
             )
             .select_related("category", "brand")
-            .prefetch_related("images")
+            .prefetch_related("images", "reviews")
         )
 
         # Apply region filtering
@@ -289,7 +303,7 @@ class BrandViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         products = (
             Product.objects.filter(brand=brand, status="published", is_deleted=False)
             .select_related("category", "brand")
-            .prefetch_related("images")
+            .prefetch_related("images", "reviews")
         )
 
         # Apply region filtering
@@ -530,7 +544,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         # Base search
         products = self.get_queryset().filter(
             Q(name__icontains=query)
-            | Q(description__icontains=query)
+            | Q(full_description__icontains=query)
             | Q(short_description__icontains=query)
             | Q(sku__icontains=query)
             | Q(category__name__icontains=query)
@@ -598,7 +612,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         products = (
             Product.objects.filter(id__in=recently_viewed_ids, status="published", is_deleted=False)
             .select_related("category", "brand")
-            .prefetch_related("images")
+            .prefetch_related("images", "reviews")
         )
 
         # Sort by recently_viewed order
@@ -652,10 +666,12 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         attributes = ProductAttribute.objects.filter(slug__in=attribute_slugs)
         attribute_map = {attr.slug: attr.id for attr in attributes}
 
-        # Get value IDs from slugs
+        # Get value IDs from slugs, keyed by (attribute slug, value slug) so a value
+        # slug shared across attributes (e.g. "large") always resolves within the
+        # attribute it was requested for.
         value_slugs = list(selected_attrs.values())
-        values = AttributeValue.objects.filter(slug__in=value_slugs)
-        value_map = {val.slug: val.id for val in values}
+        values = AttributeValue.objects.filter(slug__in=value_slugs).select_related("attribute")
+        value_map = {(val.attribute.slug, val.slug): val.id for val in values}
 
         # Build the expected set of attribute value IDs
         try:
@@ -666,11 +682,11 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                         {"error": f"Unknown attribute: {attr_slug}"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                if val_slug not in value_map:
+                if (attr_slug, val_slug) not in value_map:
                     return Response(
                         {"error": f"Unknown value: {val_slug}"}, status=status.HTTP_400_BAD_REQUEST
                     )
-                expected_value_ids.add(value_map[val_slug])
+                expected_value_ids.add(value_map[(attr_slug, val_slug)])
         except Exception as e:
             return Response(
                 {"error": f"Invalid attribute selection: {str(e)}"},
@@ -799,7 +815,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         Returns products with highest views_count, filtered by recent activity.
         """
-        limit = min(int(request.query_params.get("limit", 12)), 50)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
 
         # Get products ordered by views (proxy for trending)
         products = self.get_queryset().order_by("-views_count")[:limit]
@@ -825,7 +841,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         """
         Get bestselling products based on sales count.
         """
-        limit = min(int(request.query_params.get("limit", 12)), 50)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
 
         # Get products ordered by sales count
         products = self.get_queryset().order_by("-sales_count")[:limit]
@@ -855,8 +871,8 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         from django.utils import timezone
 
-        limit = min(int(request.query_params.get("limit", 12)), 50)
-        days = min(int(request.query_params.get("days", 30)), 90)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
+        days = parse_bounded_int(request.query_params.get("days"), 30, 90)
 
         cutoff_date = timezone.now() - timedelta(days=days)
 
@@ -884,7 +900,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         Returns products where sale_price is set and lower than regular price.
         """
-        limit = min(int(request.query_params.get("limit", 24)), 100)
+        limit = parse_bounded_int(request.query_params.get("limit"), 24, 100)
 
         # Filter products that have a sale price
         products = (
@@ -920,7 +936,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         Returns products marked as clearance or with significant discounts.
         """
-        limit = min(int(request.query_params.get("limit", 24)), 100)
+        limit = parse_bounded_int(request.query_params.get("limit"), 24, 100)
 
         # Look for clearance tagged products or deeply discounted items
         products = (
@@ -952,7 +968,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         """
         Get bundle products.
         """
-        limit = min(int(request.query_params.get("limit", 12)), 50)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
 
         products = self.get_queryset().filter(product_type="bundle").order_by("-created_at")[:limit]
 
@@ -974,7 +990,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         """
         Get digital products.
         """
-        limit = min(int(request.query_params.get("limit", 12)), 50)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
 
         products = (
             self.get_queryset().filter(product_type="digital").order_by("-created_at")[:limit]
@@ -998,7 +1014,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         """
         Get gift card products.
         """
-        limit = min(int(request.query_params.get("limit", 12)), 50)
+        limit = parse_bounded_int(request.query_params.get("limit"), 12, 50)
 
         products = (
             self.get_queryset().filter(product_type="gift_card").order_by("-created_at")[:limit]
@@ -1027,7 +1043,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         Returns products in the same category or brand, excluding the current product.
         """
         product = self.get_object()
-        limit = min(int(request.query_params.get("limit", 8)), 20)
+        limit = parse_bounded_int(request.query_params.get("limit"), 8, 20)
 
         # Find related products by category and brand
         related = (
@@ -1060,7 +1076,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         from decimal import Decimal
 
         product = self.get_object()
-        limit = min(int(request.query_params.get("limit", 8)), 20)
+        limit = parse_bounded_int(request.query_params.get("limit"), 8, 20)
 
         # Find similar products by price range (within 20% of current product price)
         price_min = product.price.amount * Decimal("0.8")
@@ -1096,7 +1112,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         from orders.models import OrderItem
 
         product = self.get_object()
-        limit = min(int(request.query_params.get("limit", 4)), 10)
+        limit = parse_bounded_int(request.query_params.get("limit"), 4, 10)
 
         # Find orders containing this product
         order_ids = OrderItem.objects.filter(product=product).values_list("order_id", flat=True)
@@ -1116,7 +1132,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
             products = (
                 Product.objects.filter(id__in=product_ids, status="published")
                 .select_related("category", "brand")
-                .prefetch_related("images")
+                .prefetch_related("images", "reviews")
             )
         else:
             # Fallback to related products if no purchase history
@@ -1145,7 +1161,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         Returns higher-priced products in the same category as upgrade options.
         """
         product = self.get_object()
-        limit = min(int(request.query_params.get("limit", 4)), 10)
+        limit = parse_bounded_int(request.query_params.get("limit"), 4, 10)
 
         # Find higher-priced products in same category
         upsells = (
@@ -1176,7 +1192,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         Returns products from different categories that complement this product.
         """
         product = self.get_object()
-        limit = min(int(request.query_params.get("limit", 4)), 10)
+        limit = parse_bounded_int(request.query_params.get("limit"), 4, 10)
 
         # Find products from different categories (potential accessories/complements)
         cross_sells = (
@@ -1372,24 +1388,30 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                 try:
                     option = ConfigurationSlotOption.objects.select_related(
                         "option_product", "option_variant"
-                    ).get(pk=option_id)
-                    resolved_options.append((option, option.option_variant))
-
-                    if product.configurator_pricing_strategy == "base_plus_adjustments":
-                        adj = option.price_adjustment
-                        slot_total += (
-                            adj.amount if adj and hasattr(adj, "amount") else Decimal("0.00")
-                        )
-                    else:
-                        if option.option_variant:
-                            p = option.option_variant.get_price()
-                        else:
-                            p = option.option_product.price
-                        slot_total += (
-                            p.amount if p and hasattr(p, "amount") else Decimal("0.00")
-                        ) * option.quantity
+                    ).get(pk=option_id, slot__product=product, slot_id=slot_id_str)
                 except ConfigurationSlotOption.DoesNotExist:
-                    continue
+                    return Response(
+                        {
+                            "error": (
+                                f"Invalid configuration option {option_id} for slot {slot_id_str}"
+                            )
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                resolved_options.append((option, option.option_variant))
+
+                if product.configurator_pricing_strategy == "base_plus_adjustments":
+                    adj = option.price_adjustment
+                    slot_total += adj.amount if adj and hasattr(adj, "amount") else Decimal("0.00")
+                else:
+                    if option.option_variant:
+                        p = option.option_variant.get_price()
+                    else:
+                        p = option.option_product.price
+                    slot_total += (
+                        p.amount if p and hasattr(p, "amount") else Decimal("0.00")
+                    ) * option.quantity
 
             slot_subtotals[slot_id_str] = str(slot_total)
 
@@ -1480,7 +1502,9 @@ class CollectionViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
             # This is a basic implementation - can be enhanced
             products = collection.products.filter(status="published", hide_from_storefront=False)
 
-        products = products.select_related("category", "brand").prefetch_related("images")
+        products = products.select_related("category", "brand").prefetch_related(
+            "images", "reviews"
+        )
 
         # Apply filters
         filterset = ProductFilter(request.query_params, queryset=products)
@@ -1567,17 +1591,13 @@ class ProductReviewViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
     def perform_update(self, serializer):
         """Only allow users to update their own reviews"""
         if serializer.instance.user != self.request.user and not self.request.user.is_staff:
-            return Response(
-                {"error": "You can only edit your own reviews"}, status=status.HTTP_403_FORBIDDEN
-            )
+            raise PermissionDenied(_("You can only edit your own reviews"))
         serializer.save()
 
     def perform_destroy(self, instance):
         """Only allow users to delete their own reviews"""
         if instance.user != self.request.user and not self.request.user.is_staff:
-            return Response(
-                {"error": "You can only delete your own reviews"}, status=status.HTTP_403_FORBIDDEN
-            )
+            raise PermissionDenied(_("You can only delete your own reviews"))
         instance.delete()
 
     @action(detail=True, methods=["post"])
@@ -1690,12 +1710,19 @@ def product_recommendations(request):
     """
     from django.urls import reverse
 
-    limit = int(request.query_params.get("limit", 4))
-    limit = min(limit, 10)  # Cap at 10
+    limit = parse_bounded_int(request.query_params.get("limit"), 4, 10)
 
-    # Get featured products first, then fall back to latest
+    # Get featured products first, then fall back to latest. Both queries apply the
+    # same storefront visibility predicates as ProductViewSet.get_queryset so hidden
+    # or POS-only products never reach the storefront client.
     products = (
-        Product.objects.filter(status="published", is_featured=True, is_deleted=False)
+        Product.objects.filter(
+            status="published",
+            is_featured=True,
+            is_deleted=False,
+            hide_from_storefront=False,
+        )
+        .exclude(sales_channel="pos_only")
         .select_related("category")
         .prefetch_related("images__media_asset")[:limit]
     )
@@ -1704,7 +1731,12 @@ def product_recommendations(request):
         # Fill with latest products
         featured_ids = list(products.values_list("id", flat=True))
         additional = (
-            Product.objects.filter(status="published")
+            Product.objects.filter(
+                status="published",
+                is_deleted=False,
+                hide_from_storefront=False,
+            )
+            .exclude(sales_channel="pos_only")
             .exclude(id__in=featured_ids)
             .select_related("category")
             .prefetch_related("images__media_asset")
@@ -2200,6 +2232,7 @@ def product_availability(request, product_slug):
 
     # Calculate stock status
     total_available = 0
+    warehouse = None
     if not product.track_inventory:
         # Not tracking inventory - always available
         stock_status = "in_stock"
@@ -2212,7 +2245,6 @@ def product_availability(request, product_slug):
             stock_items = stock_items.filter(variant=variant)
 
         # If country specified, try to get regional stock first
-        warehouse = None
         if country_code:
             try:
                 shipping_country = ShippingCountry.objects.get(
@@ -2369,7 +2401,10 @@ def stock_notification_subscribe(request, product_slug):
 
     product = get_object_or_404(Product, slug=product_slug, status="published")
 
-    email = request.data.get("email", "").strip().lower()
+    email = request.data.get("email", "")
+    if not isinstance(email, str):
+        return Response({"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST)
+    email = email.strip().lower()
     variant_id = request.data.get("variant_id")
 
     # Validate email
@@ -2427,14 +2462,21 @@ def list_product_attributes(request, product_id):
     assignments = (
         ProductAttributeAssignment.objects.filter(product=product)
         .select_related("attribute")
-        .prefetch_related("allowed_values", "attribute__values")
+        .prefetch_related(
+            Prefetch("allowed_values", to_attr="allowed_values_list"),
+            Prefetch(
+                "attribute__values",
+                queryset=AttributeValue.objects.order_by("sort_order", "value"),
+                to_attr="ordered_values",
+            ),
+        )
         .order_by("sort_order", "attribute__name")
     )
 
     result = []
     for assignment in assignments:
-        allowed_ids = set(assignment.allowed_values.values_list("id", flat=True))
-        all_values = assignment.attribute.values.all().order_by("sort_order", "value")
+        allowed_ids = {v.id for v in assignment.allowed_values_list}
+        all_values = assignment.attribute.ordered_values
 
         result.append(
             {
@@ -2629,6 +2671,11 @@ def update_attribute_values(request, product_id, assignment_id):
     if allowed_value_ids is None:
         return Response(
             {"success": False, "error": "allowed_value_ids is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if not isinstance(allowed_value_ids, list):
+        return Response(
+            {"success": False, "error": "allowed_value_ids must be a list"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

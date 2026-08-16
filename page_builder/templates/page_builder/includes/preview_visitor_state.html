@@ -1,0 +1,22 @@
+{% load i18n static %}
+{% comment %}"Preview as visitor state" — simulate auth / cart so deferred (per-visitor)
+   visibility rules can be previewed. The preview renders these server-side
+   (staff-only, uncached), so no personalization round-trip is needed.{% endcomment %}
+<div class="preview-visitor-state" id="preview-visitor-state">
+    <span class="pvs-label" title="{% trans 'Preview as visitor' %}"><i class="fas fa-user-tag"></i></span>
+    <div class="pvs-auth" role="group" aria-label="{% trans 'Preview as visitor' %}">
+        <button type="button" class="pvs-btn active" data-action="set-preview-auth" data-auth=""
+                title="{% trans 'Your own state' %}">{% trans "Me" %}</button>
+        <button type="button" class="pvs-btn" data-action="set-preview-auth" data-auth="guest"
+                title="{% trans 'Logged-out visitor' %}">{% trans "Guest" %}</button>
+        <button type="button" class="pvs-btn" data-action="set-preview-auth" data-auth="member"
+                title="{% trans 'Logged-in visitor' %}">{% trans "Member" %}</button>
+    </div>
+    <label class="pvs-cart" title="{% trans 'Simulated cart value' %}">
+        <i class="fas fa-shopping-cart"></i>
+        <input type="number" min="0" step="1" inputmode="numeric" placeholder="0"
+               class="pvs-cart-input" data-action="set-preview-cart">
+    </label>
+</div>
+
+<script src="{% static 'page_builder/js/preview-visitor-state.js' %}" defer></script>

@@ -21,7 +21,9 @@ def filter_store_groups(request):
     is_active = request.GET.get("is_active", "").strip()
 
     # Build queryset
-    queryset = StoreGroup.objects.annotate(store_count=Count("warehouses")).all()
+    queryset = StoreGroup.objects.annotate(
+        store_count_annotated=Count("warehouses", filter=Q(warehouses__is_retail_location=True))
+    ).all()
 
     # Apply filters
     if search:

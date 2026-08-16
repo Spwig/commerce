@@ -4,6 +4,7 @@
 <div class="list-row-cards">
     {% for affiliate in affiliates %}
     <div class="list-row-card affiliate-card {% if affiliate.status == 'suspended' or affiliate.status == 'rejected' %}inactive{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=affiliate.pk %}
         <!-- Affiliate Icon -->
         <div class="list-row-card-icon affiliate {{ affiliate.status }}">
             <i class="fas fa-user-tie"></i>

@@ -82,12 +82,15 @@ class CommaSeparatedDecimalField(forms.CharField):
             try:
                 # Try to convert to Decimal first for precision
                 decimal_val = Decimal(part)
+                # Reject non-finite values (Infinity, NaN) that parse as Decimal
+                if not decimal_val.is_finite():
+                    raise InvalidOperation
                 # Convert to int if it's a whole number, otherwise float
                 if decimal_val == int(decimal_val):
                     result.append(int(decimal_val))
                 else:
                     result.append(float(decimal_val))
-            except (InvalidOperation, ValueError):
+            except (InvalidOperation, ValueError, OverflowError):
                 raise forms.ValidationError(
                     _('Invalid value "%(value)s". Please enter numbers only, separated by commas.'),
                     code="invalid",

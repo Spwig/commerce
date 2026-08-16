@@ -155,6 +155,11 @@ def get_form_data(context, form_slug):
         "is_multi_step": form.is_multi_step,
         "require_login": form.require_login,
         "spam_protection": form.spam_protection,
+        # Site key only (public); the secret stays server-side. Enables the v3
+        # widget in dynamic_form.js when reCAPTCHA is the configured protection.
+        "recaptcha_site_key": (
+            form.recaptcha_site_key if form.spam_protection == "recaptcha" else ""
+        ),
         "save_partial_responses": form.save_partial_responses,
         "steps": steps_data,
         "fields": fields_data,

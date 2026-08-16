@@ -14,6 +14,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import SoftDeleteModel
+from form_builder.fields import EncryptedCharField
 
 
 class Form(SoftDeleteModel):
@@ -82,9 +83,9 @@ class Form(SoftDeleteModel):
         blank=True,
         help_text=_("Required when using reCAPTCHA protection"),
     )
-    recaptcha_secret_key = models.CharField(
+    recaptcha_secret_key = EncryptedCharField(
         _("reCAPTCHA Secret Key"),
-        max_length=255,
+        max_length=512,  # widened: stores the Fernet ciphertext, not the raw key
         blank=True,
         help_text=_("Required when using reCAPTCHA protection"),
     )

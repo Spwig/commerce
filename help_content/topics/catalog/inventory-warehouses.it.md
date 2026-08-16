@@ -1,128 +1,145 @@
 ---
-title: Inventario e Magazzini
+title: Inventario & Magazzini
 ---
 
-Il sistema dei magazzini consente di gestire l'inventario in diverse ubicazioni, impostare le priorità di soddisfazione degli ordini e monitorare i livelli di stock in tempo reale. Naviga verso **Impostazioni > Gestione Licenze** nel menu laterale, o accedi ai magazzini dalla scheda **Inventario del prodotto**.
+Il sistema dei magazzini ti permette di gestire l'inventario in più posizioni, impostare le priorità di evasione e tenere traccia dei livelli di scorta in tempo reale. Vai a **Prodotti > Magazzini** nel lato amministrativo per gestire le tue posizioni di magazzino.
 
-![Elenco dei magazzini](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
+![Elenchi di magazzino](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
 
 ## Magazzini
 
-### Elenco dei magazzini
+### Elenchi di magazzino
 
-La pagina dei magazzini mostra tutte le ubicazioni dell'inventario come schede con:
+La pagina del magazzino mostra tutte le tue posizioni di inventario come schede con:
 
-- **Nome e codice** — Identificatore del magazzino (es. "Main Warehouse", codice "MAIN-WH")
-- **Regione di vendita** — Assegnazione a una regione geografica
-- **Sfogliatori di stato** — Attivo/Non attivo, ubicazione retail
-- **Statistiche** — Prodotti in stock, priorità di soddisfazione, percentuale di buffer di stock
-- **Ubicazione** — Città e paese
-- **Ultimo aggiornamento** — Quando i livelli di stock sono stati ultimamente modificati
+- **Nome e codice** — Identificatore del magazzino (es. "Magazzino principale", codice "MAIN-WH")
+- **Area di vendita** — Assegnazione della regione geografica
+- **Badge di stato** — Attivo/inattivo, posizione di vendita al dettaglio
+- **Statistiche** — Prodotti in magazzino, priorità di evasione, percentuale di buffer di scorta
+- **Posizione** — Città e paese
+- **Ultimo aggiornamento** — Quando i livelli di scorta sono stati modificati l'ultima volta
 
-### Creare un magazzino
+### Creazione di un magazzino
 
-1. Fare clic su **+ Aggiungi magazzino**
-2. Inserisci i dettagli del magazzino:
-   - **Nome** — Etichetta descrittiva (es. "US East Warehouse")
-   - **Codice** — Identificatore univoco breve (es. "US-EAST")
-   - **Regione di vendita** — Assegna a una regione geografica per il routing della soddisfazione degli ordini
-   - **Indirizzo** — Indirizzo completo del magazzino per i calcoli di spedizione
-3. Configura le impostazioni:
-   - **Attivo** — Abilita per includerlo nella soddisfazione degli ordini
-   - **Ubicazione retail** — Contrassegna se questo magazzino funziona anche come negozio fisico
-   - **Priorità di soddisfazione** — Numeri più alti = priorità più alta per la soddisfazione degli ordini
-   - **Buffer di stock** — Percentuale di stock da riservare come buffer di sicurezza
-4. Fare clic su **Salva**
+1. Clicca **+ Aggiungi Magazzino**
+2. Compila le **Informazioni base**:
+   - **Nome** — Etichetta descrittiva (es. "Magazzino Est USA")
+   - **Codice** — Identificatore unico breve (es. "US-EAST") — deve essere unico rispetto a tutti i magazzini
+   - **Area di vendita** — Assegna a una regione geografica per il routing dell'evasione
+   - **Attivo** — Abilita per includerlo nell'evasione
+3. Compila la sezione **Indirizzo** con l'indirizzo completo del magazzino
+4. Configura le **Impostazioni per l'evasione**:
+   - **Priorità di evasione** — I numeri più alti = priorità maggiore per l'evasione degli ordini
+   - **Percentuale del buffer di scorta** — Percentuale di scorta da riservare come buffer di sicurezza (0–100)
+   - **Posizione di spedizione** — Opzionalmente collega a una posizione di ritiro se questo magazzino supporta il ritiro da parte del cliente
+5. Configura la **Visualizzazione per il cliente** (opzionale):
+   - **Nome visualizzato** — Etichetta visibile al cliente (es. "Spedisci dall'Australia"). Lascia vuoto per utilizzare il nome del magazzino.
+   - **Mostra sulla homepage** — Visualizza l'origine di questo magazzino ai clienti sulle pagine dei prodotti
+6. Configura **POS / Negozio al dettaglio** (opzionale):
+   - **Posizione di vendita** — Seleziona se questo magazzino funge anche da negozio fisico con terminali POS
+   - **Nome visualizzato in POS** — Nome breve visualizzato nell'interfaccia POS
+   - **Gruppo di negozi** — Assegna a un gruppo di negozi POS per l'eredità delle impostazioni
+7. Aggiungi le **Informazioni di contatto** se necessario (nome, email, telefono)
+8. Clicca **Salva**
 
-### Priorità di soddisfazione
+### Priorità di evasione
 
-Quando un ordine arriva, il sistema seleziona il miglior magazzino in base a:
+Quando arriva un ordine, il sistema seleziona il miglior magazzino in base a:
 
-1. **Valore di priorità** — I magazzini con priorità più alta sono preferiti
-2. **Disponibilità di stock** — Deve avere stock sufficiente
-3. **Corrispondenza regionale** — I magazzini nella regione del cliente sono preferiti
+1. **Valore della priorità** — I magazzini con priorità più alta vengono preferiti
+2. **Disponibilità dello stock** — Deve avere abbastanza scorte
+3. **Corrispondenza della regione** — I magazzini nella regione del cliente vengono preferiti
 
-Per esempio, se hai un magazzino USA (priorità 100) e un magazzino UE (priorità 60), gli ordini USA verranno soddisfatti prima dal magazzino USA.
+Ad esempio, se hai un magazzino USA (priorità 100) e un magazzino UE (priorità 60), gli ordini USA saranno evasi dal magazzino USA per primi.
 
-### Buffer di stock
+### Buffer di scorta
 
-Il buffer di stock riserva una percentuale dell'inventario che non verrà venduta online. Questo è utile per:
-- Negozio fisico che necessita di stock disponibile in sede
-- Stock di sicurezza per prevenire la vendita di prodotti esauriti
-- Inventario riservato per ordini al dettaglio
+Il buffer di scorta riserva una percentuale dell'inventario che non verrà venduta online. Questo è utile per:
+
+- Negozi al dettaglio fisici che hanno bisogno di scorte in esposizione
+- Scorte di sicurezza per evitare di vendere troppo
+- Inventario riservato per ordini all'ingrosso
 
 Un buffer del 10% su 100 unità significa che solo 90 unità sono disponibili per gli ordini online.
 
-## Elementi di stock
+## Oggetti di scorta
 
-Gli elementi di stock rappresentano l'inventario effettivo di un prodotto specifico in un magazzino specifico.
+Gli oggetti di scorta rappresentano l'inventario effettivo di un prodotto specifico in un magazzino specifico.
 
-### Visualizzare i livelli di stock
+### Visualizzazione dei livelli di scorta
 
-1. Fare clic sull'icona **stock** su qualsiasi scheda del magazzino per visualizzare gli elementi di stock
-2. Oppure naviga verso la scheda **Inventario** di un prodotto per visualizzare lo stock in tutti i magazzini
+1. Clicca sull'**icona della scorta** su qualsiasi scheda del magazzino per vedere i suoi oggetti di scorta
+2. Oppure vai alla scheda **Inventario** di un prodotto per vedere lo stock in tutti i magazzini
 
-Ogni elemento di stock mostra:
+Ogni oggetto di scorta mostra:
+
 - **Nome del prodotto** e variante (se applicabile)
-- **Disponibile** — Totale dell'inventario fisico
-- **Allocato** — Quantità riservata per ordini pendenti
-- **Disponibile** — Disponibile meno allocato (quello che può essere venduto)
+- **A disposizione** — Inventario fisico totale
+- **Assegnato** — Quantità riservata per gli ordini in sospeso
+- **Disponibile** — A disposizione meno assegnato (ciò che può essere venduto)
 
-### Aggiungere stock
+### Aggiunta di scorte
 
-1. Dalla vista dello stock del magazzino, fare clic su **Aggiungi elemento di stock**
-2. Seleziona il prodotto e la variante
-3. Inserisci la quantità **disponibile**
-4. Salva
+1. Vai a **Prodotti > Oggetti di scorta** e clicca **+ Aggiungi Oggetto di scorta**, oppure
+2. Apri la finestra di modifica di un prodotto e usa la sezione **Oggetti di scorta** in fondo
+3. Seleziona il **prodotto** e il **magazzino** (e opzionalmente una **variante** per i prodotti variabili)
+4. Inserisci la quantità **a disposizione**
+5. Imposta la ** soglia di scorta bassa** — questo valore per oggetto attiva un avviso di scorta bassa
+6. Salva
 
-### Movimenti di stock
+### Movimenti di scorta
 
-Ogni modifica all'inventario viene registrata come **movimento di stock**:
+Ogni modifica all'inventario viene registrata come **movimento di scorta**:
 
 | Tipo di movimento | Descrizione |
-|------------------|-------------|
-| **Ricevimento** | Nuovo stock ricevuto dal fornitore |
-| **Vendita** | Stock detratto per un ordine soddisfatto |
-| **Rimborso** | Stock restituito da un cliente |
-| **Correzione** | Correzione manuale (discrepanza di conteggio) |
-| **Trasferimento** | Trasferito tra magazzini |
-| **Riserva** | Temporaneamente bloccato per un carrello attivo |
+|--------------|-------------|
+| **Carico** | Nuovo stock ricevuto dal fornitore |
+| **Vendita** | Stock sottratto per un ordine completato |
+| **Ritorno** | Stock reso da un cliente |
+| **Aggiustamento** | correzione manuale (differenza nel conteggio) |
+| **Trasferimento** | Spostato tra magazzini |
+| **Riserva** | Tenuto temporaneamente per un carrello attivo |
+| **Danni** | Scartato come danneggiato o perso |
+| **Conteggio** | Corretto per corrispondere a un conteggio fisico |
 
-I movimenti di stock forniscono un registro completo delle modifiche all'inventario.
+I movimenti di magazzino forniscono una tracciabilità completa dei cambiamenti dell'inventario. Oltre all'azione **Aggiorna i livelli di magazzino**, Spwig offre inoltre azioni in bulk sulla lista degli articoli di magazzino per trasferire, scartare e contare nuovamente lo stock su molti articoli contemporaneamente — vedi [Azioni di stock in bulk](/help/stock-bulk-actions).
 
 ## Tracciamento dell'inventario sui prodotti
 
 ### Abilitare il tracciamento dell'inventario
 
-Nella scheda **Inventario** di un prodotto:
+Nella sezione **Inventario** di un prodotto:
 
-1. Attiva **Tracciamento dell'inventario** per abilitare la gestione dello stock
-2. Imposta la **Soglia di stock basso** — attiva alert quando lo stock scende al di sotto di questo livello
-3. Configura **Consenti ordini in attesa** se si desidera accettare ordini quando lo stock è esaurito
+1. Attiva **Traccia l'inventario** per abilitare la gestione dello stock per questo prodotto
+2. Imposta la ** soglia di stock basso ** — attiva gli avvisi del pannello quando lo stock in qualsiasi magazzino scende al di sotto di questo livello
+3. Configura **Consenti ordinazioni in ritardo** se si desidera accettare gli ordini quando non è disponibile lo stock
+4. Imposta in modo opzionale un'**azione per esaurito** per sovrascrivere il comportamento del sito o della categoria per questo prodotto specifico
 
-### Stock multi-magazzino
+Dopo aver abilitato il tracciamento, gestisci le quantità effettive dello stock utilizzando la sezione **Articoli di magazzino** incorporata nella parte inferiore del modulo del prodotto, oppure tramite **Prodotti > Articoli di magazzino**.
 
-Quando il tracciamento dell'inventario è abilitato, la scheda Inventario mostra i livelli di stock in tutte le ubicazioni in una tabella di riepilogo:
+### Stock su più magazzini
 
-- Totale disponibile in tutte le ubicazioni
-- Scomposizione per magazzino
-- Quantità disponibili dopo riserve e allocazioni
+Quando il tracciamento dell'inventario è abilitato, la scheda Inventario mostra i livelli dello stock in un tavolo riassuntivo:
 
-## Alert di stock basso
+- Totale disponibile in tutte le località
+- Panoramica per magazzino
+- Quantità disponibili dopo le riserve e gli assegni
 
-Il sistema monitora automaticamente i livelli di stock e ti avvisa quando:
-- Un prodotto scende al di sotto della sua **soglia di stock basso**
+## Avvisi di stock basso
+
+Il sistema monitora automaticamente i livelli dello stock e ti avvisa quando:
+- Un prodotto scende sotto la **soglia di stock basso**
 - Un prodotto raggiunge **zero stock disponibile**
 
-Gli alert di stock basso appaiono in:
-- Il **Pannello di controllo del negozio** nella sezione Richieste
-- L'elenco dei prodotti con un indicatore visivo
+Gli avvisi di stock basso appaiono su:
+- Il **pulsante del negozio** nella sezione Azioni richieste
+- La lista dei prodotti con un indicatore visivo
 
-## Consigli
+## Suggerimenti
 
-- Iniziare con un singolo magazzino e aggiungere di più man mano che l'azienda cresce.
-- Impostare le priorità di soddisfazione degli ordini in base alla velocità e al costo di spedizione per ogni regione.
-- Utilizzare i buffer di stock per le ubicazioni retail per garantire la disponibilità di stock in sede.
-- Controllare regolarmente i movimenti di stock per identificare eventuali perdite o discrepanze.
-- Impostare le soglie di stock basso in base al tempo di riordino — se ci vogliono 2 settimane per rifornire, impostare la soglia per coprire 2 settimane di vendite.
-- Abilitare il tracciamento dell'inventario prima di andare online per evitare la vendita di prodotti esauriti.
+- Inizia con un unico magazzino e aggiungine di più mentre la tua azienda cresce.
+- Imposta le priorità di evasione in base alla velocità e al costo della spedizione per ogni area.
+- Usa buffer di stock per i punti vendita al dettaglio per garantire la disponibilità dello stock in negozio.
+- Controlla regolarmente i movimenti dello stock per identificare scompensi o discrepanze.
+- Imposta le soglie di stock basso in base al tuo tempo di rifornimento — se ci vogliono 2 settimane per rifornire, imposta la soglia per coprire 2 settimane di vendite.
+- Abilita il tracciamento dell'inventario prima del lancio per evitare di vendere troppo.

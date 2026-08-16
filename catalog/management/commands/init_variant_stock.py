@@ -85,7 +85,8 @@ class Command(BaseCommand):
 
         self.stdout.write("")
         self.stdout.write(self.style.SUCCESS("Summary:"))
-        self.stdout.write(f"  - Created: {created_count}")
+        created_label = "Would create" if dry_run else "Created"
+        self.stdout.write(f"  - {created_label}: {created_count}")
         self.stdout.write(f"  - Skipped (already exist): {skipped_count}")
 
         if dry_run:

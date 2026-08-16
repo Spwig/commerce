@@ -3,6 +3,7 @@ Celery Tasks for Subscription Billing
 Handles recurring billing for fallback providers.
 """
 
+import json
 import logging
 from datetime import timedelta
 
@@ -11,6 +12,18 @@ from django.db.models import Q
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+
+def _json_safe(result):
+    """
+    Make a provider charge result safe for the ``provider_response`` JSONField.
+
+    Providers return Decimal / date objects in the raw result; a JSONField save
+    raises TypeError on those. ``process_billing_cycle`` sanitises the same way —
+    keep it identical so a retry (or the sweep) can never crash on a value the
+    initial cycle would have stored fine, silently losing a recovered payment.
+    """
+    return json.loads(json.dumps(result, default=str))
 
 
 def _emit_fallback_event(subscription, event_type, **kwargs):
@@ -196,8 +209,13 @@ def retry_billing_cycle(billing_log_id: int):
         if charge_result["status"] == "succeeded":
             # Success! Update billing log and subscription
             billing_log.status = "successful"
-            billing_log.provider_response = charge_result
+            billing_log.provider_response = _json_safe(charge_result)
             billing_log.save()
+
+            # The initial (failed) attempt did not consume the once/repeating
+            # discounts that priced this cycle; the recovered charge must, or they
+            # would apply again next cycle and undercharge the customer.
+            manager.consume_cycle_discounts(subscription, billing_log)
 
             subscription.billing_cycle_count = billing_log.cycle_number
             subscription.last_billing_date = timezone.now()
@@ -233,7 +251,7 @@ def retry_billing_cycle(billing_log_id: int):
             billing_log.status = "failed"
             billing_log.error_message = charge_result.get("error_message", "")
             billing_log.error_code = charge_result.get("error_code", "")
-            billing_log.provider_response = charge_result
+            billing_log.provider_response = _json_safe(charge_result)
             billing_log.save()
 
             # Check if we should retry again
@@ -776,7 +794,7 @@ def process_dunning_retries():
             if charge_result["status"] == "succeeded":
                 # Payment recovered — update existing billing log
                 last_log.status = "successful"
-                last_log.provider_response = charge_result
+                last_log.provider_response = _json_safe(charge_result)
                 last_log.billing_date = now
                 last_log.save(
                     update_fields=[
@@ -785,6 +803,11 @@ def process_dunning_retries():
                         "billing_date",
                     ]
                 )
+
+                # Burn the once/repeating discounts that priced this cycle — the
+                # failed attempt did not, so a dunning recovery must (else they
+                # re-apply next cycle and undercharge).
+                manager.consume_cycle_discounts(subscription, last_log)
 
                 # Update subscription — clear grace period, restore active
                 cycle_number = last_log.cycle_number
@@ -820,7 +843,7 @@ def process_dunning_retries():
                 last_log.billing_date = now
                 last_log.error_message = charge_result.get("error_message", "")
                 last_log.error_code = charge_result.get("error_code", "")
-                last_log.provider_response = charge_result
+                last_log.provider_response = _json_safe(charge_result)
                 last_log.save(
                     update_fields=[
                         "billing_date",

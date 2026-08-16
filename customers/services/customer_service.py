@@ -326,10 +326,10 @@ class CustomerService:
             for month, amount in sorted(monthly_data.items())
         ]
 
-        # Determine spending trend
-        if len(monthly_spending) >= 3:
+        # Determine spending trend (needs two non-overlapping three-month windows)
+        if len(monthly_spending) >= 6:
             recent_avg = sum(Decimal(m["amount"]) for m in monthly_spending[-3:]) / 3
-            earlier_avg = sum(Decimal(m["amount"]) for m in monthly_spending[:3]) / 3
+            earlier_avg = sum(Decimal(m["amount"]) for m in monthly_spending[-6:-3]) / 3
 
             if recent_avg > earlier_avg * Decimal("1.1"):
                 trend = "increasing"
@@ -361,7 +361,7 @@ class CustomerService:
         category_spending = {}
         order_items = OrderItem.objects.filter(
             order__user=user, order__status__in=["processing", "shipped", "delivered"]
-        ).select_related("product")
+        ).select_related("product__category")
 
         for item in order_items:
             if item.product and item.product.category:
@@ -490,8 +490,9 @@ class CustomerService:
 
         # Get confidence score
         if metrics.ltv_confidence_score is not None:
-            # Use the confidence from probabilistic calculation (0-100)
-            confidence_score = float(metrics.ltv_confidence_score)
+            # Stored score is on a 0.0-1.0 scale; normalise to 0-100 to match the
+            # thresholds and the simple/cohort branch below.
+            confidence_score = float(metrics.ltv_confidence_score) * 100
             if confidence_score >= 80:
                 confidence_level = "high"
             elif confidence_score >= 50:
@@ -771,8 +772,13 @@ class CustomerService:
 
         default_currency = get_default_currency()
 
-        # Get active segments from database
-        active_segments = CustomerSegment.objects.filter(is_active=True).exclude(name="guest")
+        # Get active segments from database once, in priority order, so each user's
+        # segment is resolved against this in-memory list instead of re-querying.
+        active_segments = list(
+            CustomerSegment.objects.filter(is_active=True)
+            .exclude(name="guest")
+            .order_by("-priority", "name")
+        )
 
         # Build segment data by iterating through users
         segment_totals = {}  # {segment_name: {'revenue': Decimal, 'count': int, 'display_name': str, 'color': str}}
@@ -802,19 +808,21 @@ class CustomerService:
         )
 
         for user in users_with_metrics:
-            try:
-                metrics = user.customer_metrics
-                user_segment = CustomerSegment.determine_segment_for_user(user)
+            metrics = user.customer_metrics
+            # matches_user applies the same criteria (and currency conversion) that
+            # determine_segment_for_user would, against the preloaded segment list.
+            user_segment = next(
+                (segment for segment in active_segments if segment.matches_user(metrics)),
+                None,
+            )
 
-                if user_segment and user_segment.name in segment_totals:
-                    segment_key = user_segment.name
-                else:
-                    segment_key = "unsegmented"
+            if user_segment and user_segment.name in segment_totals:
+                segment_key = user_segment.name
+            else:
+                segment_key = "unsegmented"
 
-                segment_totals[segment_key]["revenue"] += metrics.total_spent.amount
-                segment_totals[segment_key]["count"] += 1
-            except Exception:
-                continue
+            segment_totals[segment_key]["revenue"] += metrics.total_spent.amount
+            segment_totals[segment_key]["count"] += 1
 
         # Convert to list format
         segments_data = []
@@ -1037,8 +1045,10 @@ class CustomerService:
             },
         }
 
+        # Only rows that actually ran the probabilistic model have a meaningful
+        # probability_alive; the field defaults to 0.0 for everyone else.
         metrics = CustomerMetrics.objects.exclude(user__username__startswith="guest_").filter(
-            probability_alive__isnull=False
+            ltv_calculation_method="probabilistic", ltv_last_calculated__isnull=False
         )
 
         for metric in metrics:
@@ -1161,7 +1171,9 @@ class CustomerService:
         )
 
         for metric in metrics:
-            freq = metric.purchase_frequency
+            # purchase_frequency stores average days between purchases; the buckets
+            # are defined in purchases per month, so convert before bucketing.
+            freq = 30 / metric.purchase_frequency
             for bucket in buckets:
                 if bucket["min"] <= freq < bucket["max"]:
                     bucket["count"] += 1
@@ -1261,9 +1273,15 @@ class CustomerService:
 
         comparison_data = []
         for metric in metrics[:50]:  # Limit for performance
-            # Calculate actual purchases in the 12 months after prediction
-            # This is simplified - in production you'd query actual orders
-            actual = metric.completed_orders  # Simplified assumption
+            # Count actual delivered orders in the 12 months following the prediction,
+            # not the customer's lifetime order count.
+            prediction_time = metric.ltv_last_calculated
+            actual = Order.objects.filter(
+                user=metric.user,
+                status="delivered",
+                created_at__gt=prediction_time,
+                created_at__lte=prediction_time + relativedelta(months=12),
+            ).count()
 
             comparison_data.append(
                 {

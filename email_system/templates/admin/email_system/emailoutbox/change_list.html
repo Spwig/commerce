@@ -119,6 +119,7 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="outbox-results">
         <div class="list-row-cards">
             <div class="list-row-card loading-state">
@@ -127,6 +128,7 @@
             </div>
         </div>
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <div id="list-filter-config"
      data-filter-url="{% url 'email_system_admin:outbox_filter' %}"

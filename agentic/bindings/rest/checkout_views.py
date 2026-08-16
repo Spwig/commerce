@@ -258,6 +258,42 @@ def checkout_update(request, checkout_id: str):
 
 @extend_schema(
     tags=[_TAG],
+    operation_id="agentic_ucp_checkout_cancel",
+    summary="Cancel UCP checkout session",
+    description=(
+        "Cancel an in-progress checkout session so it can no longer be paid. "
+        "Returns the session with status=canceled. Idempotent. A checkout that "
+        "has already completed cannot be canceled (409 already_completed); an "
+        "unknown id is 404."
+    ),
+    request=None,
+    responses={
+        200: OpenApiResponse(
+            response=UCPCheckoutSessionSerializer, description="The canceled UCP checkout session."
+        ),
+        401: OpenApiResponse(response=UCPErrorSerializer, description="Signature required."),
+        404: OpenApiResponse(response=UCPErrorSerializer, description="No such session."),
+        409: OpenApiResponse(response=UCPErrorSerializer, description="Already completed."),
+    },
+)
+@api_view(["POST"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+@throttle_classes([AgenticCheckoutThrottle])
+def checkout_cancel(request, checkout_id: str):
+    _require_ucp()
+    ctx, denied = _gate(request)
+    if denied is not None:
+        return denied
+    try:
+        body = acs.cancel_checkout_session(checkout_id, _agent_identity(ctx))
+    except acs.CheckoutError as exc:
+        return _error(exc)
+    return Response(body)
+
+
+@extend_schema(
+    tags=[_TAG],
     operation_id="agentic_ucp_checkout_complete",
     summary="Complete (pay) UCP checkout session",
     description=(

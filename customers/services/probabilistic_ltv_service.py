@@ -222,6 +222,9 @@ class ProbabilisticLTVService:
         first_order = orders.first()
         last_order = orders.last()
 
+        if first_order is None or last_order is None:
+            return {"success": False, "error": "Customer has no completed orders"}
+
         frequency = orders.count() - 1
         recency = (last_order.created_at - first_order.created_at).days if frequency > 0 else 0
         T = (timezone.now() - first_order.created_at).days

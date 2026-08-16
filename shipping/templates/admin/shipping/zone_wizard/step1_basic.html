@@ -30,6 +30,7 @@
                    required
                    maxlength="200"
                    placeholder="{% trans 'e.g., North America, European Union, Domestic' %}">
+            {% if form.name.errors %}{{ form.name.errors }}{% endif %}
             <p class="help-text">
                 <i class="fas fa-info-circle"></i>
                 {% trans "A descriptive name for this shipping zone" %}
@@ -69,6 +70,7 @@
                    min="0"
                    max="100"
                    required>
+            {% if form.priority.errors %}{{ form.priority.errors }}{% endif %}
             <p class="help-text">
                 <i class="fas fa-info-circle"></i>
                 {% trans "Zone priority (0 = highest). When an address matches multiple zones, the highest priority zone is used." %}

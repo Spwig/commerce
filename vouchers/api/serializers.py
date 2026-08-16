@@ -17,6 +17,7 @@ class VoucherRestrictionSerializer(serializers.ModelSerializer):
         model = VoucherRestriction
         fields = [
             "id",
+            "voucher",
             "restriction_type",
             "restriction_value",
             "is_inclusive",
@@ -234,7 +235,15 @@ class AppliedVoucherSerializer(serializers.ModelSerializer):
             "discount_amount",
             "applied_at",
         ]
-        read_only_fields = ["id", "voucher_code", "voucher_name", "applied_at"]
+        read_only_fields = [
+            "id",
+            "cart",
+            "voucher",
+            "voucher_code",
+            "voucher_name",
+            "discount_amount",
+            "applied_at",
+        ]
 
 
 class VoucherValidationSerializer(serializers.Serializer):

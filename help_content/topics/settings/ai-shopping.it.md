@@ -1,57 +1,85 @@
 ---
-title: Acquisto con AI
+title: Acquisto con l'AI
 ---
 
-L'Acquisto con AI permette agli assistenti di acquisto basati sull'intelligenza artificiale di trovare i tuoi prodotti e, quando ne autorizzi l'accesso, di effettuare acquisti per conto dei clienti. È **disattivato di default** — attivarlo è una scelta deliberata, e finché non lo farai, il tuo negozio non espone nulla a questi assistenti.
+L'acquisto con l'AI consente agli assistenti di acquisto AI di trovare i tuoi prodotti e, quando lo permetti, di acquistare dai tuoi negozi a favore di un cliente. È **disattivato per impostazione predefinita** - attivarlo è una scelta deliberata, e finché non lo fai, il tuo negozio non espone nulla a questi assistenti.
 
-## Attivazione
+## Attivarlo
 
-Apri **Impostazioni → Acquisto con AI** e attiva **Commercio agente abilitato**. A partire da quel momento, gli assistenti che supportano il Protocollo del Commercio Universale potranno scoprire il tuo negozio e leggere il tuo catalogo. Nulla cambia riguardo al tuo negozio normale.
+Apri **Impostazioni → Acquisto con l'AI** e attiva **Agentic commerce**. Da quel momento in poi, gli assistenti che supportano il protocollo universale per gli acquisti possono scoprire il tuo negozio e leggere il tuo catalogo. Nulla del tuo normale negozio cambia.
 
-## Dashboard di prontezza
+## Il pannello di preparazione
 
-L'inizio della pagina Acquisto con AI risponde a una domanda in una singola frase: **i sistemi AI possono effettivamente acquistare dal tuo negozio in questo momento?**
+La parte in alto della pagina Acquisto con l'AI risponde a una domanda in una frase: **gli assistenti AI possono acquistare dal tuo negozio adesso?**
 
-- **"I sistemi AI possono acquistare dal tuo negozio"** — tutto ciò necessario per un acquisto è a posto.
-- **"I sistemi AI possono navigare nel tuo negozio, ma non possono acquistare ancora"** — il tuo negozio è accessibile, ma manca qualcosa per completare un acquisto (di solito un fornitore di pagamenti connesso).
-- **"Interruzione d'emergenza attiva"** o **"Commercio agente disattivato"** — nulla viene fornito agli assistenti.
+- **"Gli assistenti AI possono acquistare dal tuo negozio"** - tutto ciò che serve per un acquisto è a posto.
+- **"Gli assistenti AI possono sfogliare il tuo negozio, ma non possono ancora acquistare"** - il tuo negozio è individuabile, ma manca qualcosa prima che un acquisto possa completarsi (di solito un fornitore di pagamenti connesso).
+- **"Emergency stop attivo"** o **"Agentic commerce disattivato"** - nulla viene fornito agli assistenti.
 
-Sotto il verdetto vedrai una breve checklist — fornitore di pagamenti connesso, spedizione può essere quotata, prodotti visibili agli assistenti — con un suggerimento accanto a qualsiasi elemento che richiede ancora attenzione. I contatori mostrano quanti prodotti gli assistenti possono vendere, quanti hai nascosto da loro, quanti assistenti hanno visitato e quanti hai bloccato.
+Sotto la valutazione vedrai un breve elenco di controllo - fornitore di pagamenti connesso, la consegna può essere preventivata, i prodotti sono visibili agli assistenti - con un suggerimento accanto a qualsiasi elemento che necessita ancora di attenzione. I contatori mostrano quanti prodotti gli assistenti possono vendere, quanti hai nascosti loro, quanti assistenti hanno visitato e quanti hai bloccato.
 
-La checklist riflette la tua **configurazione attiva**: collega un fornitore di pagamenti o aggiungi un metodo di spedizione e il verdetto si aggiorna la prossima volta che apri la pagina.
+L'elenco di controllo riflette la tua configurazione **attiva**: connetti un fornitore di pagamenti o aggiungi un metodo di spedizione e la valutazione si aggiorna la prossima volta che apri la pagina.
 
-## Interruzione d'emergenza
+## La funzione di emergenza
 
-L'**Interruzione d'emergenza** è un interruttore separato dal principale. Utilizzalo per fermare immediatamente tutte le attività degli assistenti — ad esempio, se noti qualcosa di anomalo — senza dover modificare la tua configurazione. Puliscilo per riprendere. Considera l'interruttore principale come "questa funzione è configurata" e l'interruzione d'emergenza come "ferma tutto immediatamente".
+La **funzione di emergenza** è un interruttore separato da quello principale. Usalo per fermare immediatamente tutte le attività degli assistenti - ad esempio, se qualcosa sembra sbagliato - senza modificare la tua configurazione. Cancialo per riprendere. Immagina che l'interruttore principale sia "questa funzione è configurata" e la funzione di emergenza sia "ferma tutto adesso".
 
 ## Cosa possono fare gli assistenti
 
-Due livelli di accesso, controllati separatamente:
+Due livelli di accesso, gestiti separatamente:
 
-- **Lettura** (scoperta e navigazione) è a rischio minore. Un assistente può trovare il tuo negozio e leggere i dettagli del prodotto.
-- **Checkout** (effettuare un acquisto) è a rischio maggiore e rimane chiuso per gli assistenti non verificati, a meno che non ne autorizzi l'accesso.
+- **Lettura** (individuazione e navigazione) è a basso rischio. Un assistente può trovare il tuo negozio e leggere i dettagli del prodotto.
+- **Acquisto** (acquistare veramente) è a maggiore rischio e rimane chiuso agli assistenti non verificati, a meno che non lo permetti tu.
 
-Un negozio può essere accessibile senza essere acquistabile — un modo utile per iniziare.
+Un negozio può essere individuabile senza essere acquistabile - un modo utile per iniziare.
 
 ## Nascondere prodotti specifici
 
-Ogni prodotto ha un'impostazione **Visibile agli agenti di acquisto AI** (abilitata di default). Disattivala per nascondere un prodotto specifico agli assistenti, mantenendolo comunque visibile sul tuo negozio — utile per articoli che preferisci vendere solo attraverso il tuo sito.
+Ogni prodotto ha un'impostazione **Visibile agli agenti di acquisto con l'AI** (attivato per impostazione predefinita). Spegnilo per mantenere un prodotto specifico lontano dagli assistenti mentre rimane nel tuo negozio - utile per gli articoli che preferisci vendere solo attraverso il tuo sito.
 
-## Gestione degli assistenti individuali
+## Gestire singoli assistenti
 
-Quando un assistente effettua il primo acquisto — o tenta di farlo — Spwig lo registra sotto **Acquisto con AI → Identità degli agenti**. Ogni voce mostra la casa verificata dell'assistente (il directory con cui firma) e il numero di richieste effettuate. Il nome e il logo che un assistente presenta vengono mostrati solo come *dettagli dichiarati* — trattali come un'etichetta, non come prova di identità; la casa verificata è la parte che può essere considerata attendibile.
+Quando un assistente effettua un acquisto - o prova a farlo - Spwig lo registra sotto **Acquisto con l'AI → Identità degli agenti**. Ogni voce mostra la casa verificata dell'assistente (la directory con cui si firma), il suo livello di fiducia e il numero di richieste che ha effettuato. Il nome e il logo che l'assistente presenta vengono visualizzati solo come dettagli *asseriti* - trattali come un'etichetta, non come prova d'identità; la casa verificata è la parte che può essere fidata.
 
-I nuovi assistenti iniziano **limitati**: possono effettuare transazioni, ma entro limiti. Per bloccarne uno, selezionalo e scegli **Blocca gli assistenti selezionati** — le checkout aperte vengono interrotte e l'assistente non può più acquistare, mentre eventuali pagamenti già effettuati rimangono intatti. **Sblocca gli assistenti selezionati** lo riporta allo stato limitato (mai direttamente a illimitato — rimuovere i limiti è sempre un passo separato e deliberato).
+Ogni assistente si trova in uno dei tre livelli di fiducia:
 
-## Registri delle attività
+| Livello di fiducia | Cosa significa |
+|---|---|
+| **Limitato (verificato, limitato)** | Il default per un nuovo assistente. Spwig ha registrato la sua identità, e ha i vincoli di importo massimo, di spesa giornaliera e di restrizioni sui pagamenti imposti sulla sua policy (vedi sotto). |
+| **Verificato (vincoli rimossi)** | Una decisione deliberata da parte tua di fidarti completamente di questo assistente. I vincoli di importo massimo e di spesa giornaliera vengono rimossi. |
+| **Bloccato** | L'assistente non può più acquistare dal tuo negozio. Le aperture di acquisto in sospeso vengono chiuse, anche se qualsiasi pagamento già effettuato rimane intatto. |
 
-**Acquisto con AI → Eventi degli agenti** è un registro a prova di manipolazione di ciò che hanno fatto gli assistenti — ogni richiesta verificata, ogni tentativo bloccato, ogni modifica che hai effettuato. È solo in lettura e non può essere modificato o eliminato, quindi rappresenta il tuo percorso delle prove se un acquisto effettuato da un assistente dovesse mai essere contestato.
+Per fermare un assistente, selezionalo nell'elenco e scegli **Blocca gli assistenti selezionati**. **Sblocca gli assistenti selezionati** li rimette sempre nel **Limitato** - mai direttamente nel **Verificato** - perché rimuovere i vincoli è un passo separato, deliberato.
 
-## Una nota sulle piattaforme degli assistenti
+Per rimuovere completamente i vincoli di un assistente, selezionalo e scegli **Promuovi a verificato (rimuovi i vincoli)**.
 
-Le aziende che gestiscono questi assistenti (e le regole per apparire in esse) sono nuove e cambiano spesso.
+Questo elimina il valore massimo dell'ordine e il tetto giornaliero di spesa e passa lo stato dell'assistente a Verificato.
 
-Alcune richiedono che tu ti candidi o soddisfi condizioni regionali prima che i tuoi prodotti possano essere acquistati attraverso di esse.
+Un assistente bloccato viene saltato: sblocalo prima, poi promuovilo.
 
+Trattalo come una decisione di fiducia reale: promuovi solo un assistente del quale sei sicuro, poiché la verifica rimuove i vincoli di sicurezza con cui un nuovo assistente inizia.
 
-Spwig rende pronta la tua negozio; se un determinato assistente ti elenca o no dipende da quell'assistente.
+## Impostare i limiti di un assistente
+
+Apri la pagina dettagliata di un assistente e usa la sezione **Policy (limiti e offerte accettate)** per impostare ciò che è autorizzato a fare:
+
+| Campo | Cosa controlla |
+|---|---|
+| **Valore massimo dell'ordine** | Il massimo singolo ordine che questo assistente può effettuare. Lascia vuoto per nessun limite. |
+| **Tetto giornaliero di spesa** | Il massimo che questo assistente può spendere su tutti gli ordini in un giorno. Lascia vuoto per nessun limite. |
+| **Consenti codici sconto** | Se l'assistente può applicare codici sconto al checkout. |
+| **Consenti carte regalo** | Se l'assistente può riscattare le carte regalo. |
+| **Consenti prodotti digitali** | Se l'assistente può acquistare prodotti digitali. |
+| **Limite di richieste (al minuto)** | Quante richieste l'assistente può effettuare al tuo negozio al minuto. |
+
+Un nuovo assistente inizia con limiti fissi sul valore dell'ordine e sul tetto giornaliero di spesa, e con l'abilitazione di codici sconto, carte regalo e prodotti digitali disattivati - il default deliberatamente conservatore. Modifica uno di questi campi e salva; ogni modifica viene registrata in **Agent Events** con i valori prima e dopo, quindi hai sempre un registro di chi ha modificato cosa e quando. Promuovere un assistente a Verificato elimina il valore massimo dell'ordine e il tetto giornaliero di spesa per te - non devi cancellarli manualmente.
+
+## Il registro delle attività
+
+**AI Shopping → Agent Events** è un registro invariabile di ciò che hanno fatto gli assistenti - ogni richiesta verificata, ogni tentativo bloccato, ogni modifica che hai effettuato. È visibile solo e non può essere modificato o eliminato, quindi rappresenta la tua traccia di prove se un acquisto effettuato da un assistente dovesse mai essere contestato.
+
+## Un avvertimento sui piattaforme degli assistenti
+
+Le aziende che gestiscono questi assistenti (e le regole per apparire in essi) sono nuove e cambiano spesso. Alcuni richiedono di inviare una domanda o di soddisfare condizioni regionali prima che i tuoi prodotti possano essere acquistati attraverso di essi. Spwig rende il tuo negozio pronto; se un determinato assistente ti elenca dipende dall'assistente stesso.
+
+Mantieni tutta la formattazione markdown, i percorsi delle immagini, i blocchi di codice e i termini tecnici.

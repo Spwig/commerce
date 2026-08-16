@@ -101,20 +101,22 @@ def check_ip_similarity(identity, order):
     """
     from ..models import ReferralEvent
 
-    # Get referrer's recent IP addresses
+    # Get referrer's recent IP addresses (ignore events without a captured IP)
     referrer_events = (
         ReferralEvent.objects.filter(
             referrer_identity=identity, created_at__gte=timezone.now() - timedelta(days=30)
         )
+        .exclude(ip_address="")
         .values_list("ip_address", flat=True)
         .distinct()
     )
 
-    # Get referee's recent IP addresses
+    # Get referee's recent IP addresses (ignore events without a captured IP)
     referee_events = (
         ReferralEvent.objects.filter(
             customer=order.user, created_at__gte=timezone.now() - timedelta(days=30)
         )
+        .exclude(ip_address="")
         .values_list("ip_address", flat=True)
         .distinct()
     )
@@ -146,20 +148,22 @@ def check_device_fingerprint(identity, order):
     """
     from ..models import ReferralEvent
 
-    # Get referrer's device fingerprints
+    # Get referrer's device fingerprints (ignore events without a captured fingerprint)
     referrer_fingerprints = (
         ReferralEvent.objects.filter(
             referrer_identity=identity, created_at__gte=timezone.now() - timedelta(days=30)
         )
+        .exclude(device_fingerprint="")
         .values_list("device_fingerprint", flat=True)
         .distinct()
     )
 
-    # Get referee's device fingerprints
+    # Get referee's device fingerprints (ignore events without a captured fingerprint)
     referee_fingerprints = (
         ReferralEvent.objects.filter(
             customer=order.user, created_at__gte=timezone.now() - timedelta(days=30)
         )
+        .exclude(device_fingerprint="")
         .values_list("device_fingerprint", flat=True)
         .distinct()
     )

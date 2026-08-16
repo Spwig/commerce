@@ -131,7 +131,7 @@ class Announcement(models.Model):
 
     # Visibility rules (advanced conditional display)
     visibility_rules = models.ManyToManyField(
-        "page_builder.RuleGroup",
+        "visibility.RuleGroup",
         blank=True,
         related_name="announcements",
         help_text=_("Visibility rules for conditional display"),

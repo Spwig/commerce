@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>
         {% if builder_type == 'header' %}
             {% trans "Header Builder" %} - {{ header.name }}
@@ -38,6 +39,7 @@
     <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
     <link rel="stylesheet" href="{% static 'utilities/color_picker/current/color_picker.css' %}">
     <link rel="stylesheet" href="{% static 'utilities/typography_editor/current/typography_editor.css' %}">
+    <link rel="stylesheet" href="{% static 'utilities/visibility_rules_editor/current/visibility_rules_editor.css' %}">
 
     <!-- Media Library Styles -->
     <link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
@@ -281,6 +283,7 @@
     <!-- Utility Editors for Color and Typography Fields -->
     <script src="{% static 'utilities/color_picker/current/color_picker.js' %}"></script>
     <script src="{% static 'utilities/typography_editor/current/typography_editor.js' %}"></script>
+    <script src="{% static 'utilities/visibility_rules_editor/current/visibility_rules_editor.js' %}"></script>
 
     <!-- Header/Footer Builder JavaScript -->
     <script src="{% static 'design/js/hf-css-loader.js' %}"></script>

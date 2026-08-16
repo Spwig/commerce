@@ -2,7 +2,7 @@
 Management command to import stock data from CSV
 
 CSV Format:
-    Product SKU, Warehouse Code, On Hand, [Low Stock Threshold]
+    Product SKU, Warehouse Code, On Hand, [Variant SKU], [Low Stock Threshold]
 
 Usage:
     ./manage.py import_stock --input stock_data.csv
@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from catalog.models import Product, StockItem, StockMovement, Warehouse
+from catalog.models import Product, ProductVariant, StockItem, StockMovement, Warehouse
 
 User = get_user_model()
 
@@ -58,6 +58,8 @@ class Command(BaseCommand):
                 reader = csv.DictReader(csvfile)
 
                 # Validate CSV headers
+                if not reader.fieldnames:
+                    raise CommandError("CSV file is empty")
                 required_fields = ["Product SKU", "Warehouse Code", "On Hand"]
                 for field in required_fields:
                     if field not in reader.fieldnames:
@@ -74,7 +76,11 @@ class Command(BaseCommand):
         with transaction.atomic():
             for i, row in enumerate(rows, 1):
                 try:
-                    result = self._process_row(row, mode, create_missing, dry_run)
+                    # Per-row savepoint so a database error on one row (e.g. a
+                    # value out of range) doesn't poison the outer transaction
+                    # and cascade failures onto every subsequent row.
+                    with transaction.atomic():
+                        result = self._process_row(row, mode, create_missing, dry_run)
                     stats[result] += 1
 
                 except Exception as e:
@@ -99,6 +105,13 @@ class Command(BaseCommand):
                     )
                 )
 
+    @staticmethod
+    def _parse_optional_int(value):
+        """Return int for a supplied value (including "0"), or None when absent/blank."""
+        if value is None or value.strip() == "":
+            return None
+        return int(value)
+
     def _process_row(self, row, mode, create_missing, dry_run):
         """
         Process a single CSV row.
@@ -109,7 +122,14 @@ class Command(BaseCommand):
         sku = row["Product SKU"].strip()
         warehouse_code = row["Warehouse Code"].strip()
         on_hand = int(row["On Hand"])
-        low_stock_threshold = int(row.get("Low Stock Threshold", 0))
+        # Optional columns: distinguish an absent/blank cell (leave unchanged)
+        # from a supplied value (apply it, including a valid 0).
+        low_stock_threshold = self._parse_optional_int(row.get("Low Stock Threshold"))
+        if low_stock_threshold is not None and low_stock_threshold < 0:
+            raise ValueError(
+                f'Low Stock Threshold for "{sku}" cannot be negative ({low_stock_threshold})'
+            )
+        variant_sku = (row.get("Variant SKU") or "").strip()
 
         # Validate product exists
         try:
@@ -123,9 +143,21 @@ class Command(BaseCommand):
         except Warehouse.DoesNotExist:
             raise ValueError(f'Warehouse with code "{warehouse_code}" not found')
 
-        # Check if StockItem exists
+        # Resolve optional variant so products with variant-specific stock in a
+        # single warehouse can be imported unambiguously.
+        variant = None
+        if variant_sku:
+            try:
+                variant = ProductVariant.objects.get(product=product, sku=variant_sku)
+            except ProductVariant.DoesNotExist:
+                raise ValueError(f'Variant with SKU "{variant_sku}" not found for product "{sku}"')
+
+        # Check if StockItem exists. Lock the row with select_for_update() so the
+        # read-modify-write below can't clobber a concurrent stock change.
         try:
-            stock_item = StockItem.objects.get(product=product, warehouse=warehouse)
+            stock_item = StockItem.objects.select_for_update().get(
+                product=product, warehouse=warehouse, variant=variant
+            )
             existed = True
         except StockItem.DoesNotExist:
             if not create_missing:
@@ -135,24 +167,42 @@ class Command(BaseCommand):
                     )
                 )
                 return "skipped"
-            stock_item = StockItem(product=product, warehouse=warehouse)
+            stock_item = StockItem(product=product, warehouse=warehouse, variant=variant)
             existed = False
 
         # Store old values for stock movement
         old_on_hand = stock_item.on_hand if existed else 0
 
-        # Update values
-        if mode == "replace":
-            stock_item.on_hand = on_hand
-        else:  # mode == 'update'
-            stock_item.on_hand += on_hand
+        # Compute the resulting on_hand and enforce the non-negative invariant
+        # (save() does not run model validators).
+        resulting_on_hand = on_hand if mode == "replace" else old_on_hand + on_hand
+        if resulting_on_hand < 0:
+            raise ValueError(
+                f"Resulting on-hand quantity for {sku} @ {warehouse_code} "
+                f"would be negative ({resulting_on_hand})"
+            )
 
-        if low_stock_threshold > 0:
+        # Apply only the fields this row intentionally changes.
+        updated_fields = []
+        if stock_item.on_hand != resulting_on_hand:
+            stock_item.on_hand = resulting_on_hand
+            updated_fields.append("on_hand")
+        if (
+            low_stock_threshold is not None
+            and stock_item.low_stock_threshold != low_stock_threshold
+        ):
             stock_item.low_stock_threshold = low_stock_threshold
+            updated_fields.append("low_stock_threshold")
 
         # Save (unless dry run)
         if not dry_run:
-            stock_item.save()
+            if existed:
+                if updated_fields:
+                    # Include updated_at so its auto_now timestamp refreshes;
+                    # a partial save() only touches fields in update_fields.
+                    stock_item.save(update_fields=updated_fields + ["updated_at"])
+            else:
+                stock_item.save()
 
             # Record stock movement if quantity changed
             if stock_item.on_hand != old_on_hand:

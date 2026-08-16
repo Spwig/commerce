@@ -18,6 +18,16 @@ from shipping.models import (
 )
 
 
+def validate_owned_by_request_user(user, resource, resource_name):
+    """Reject a resource whose owner is not the acting user (staff exempt)."""
+    if resource is None or user is None or user.is_staff:
+        return
+    if getattr(resource, "user", None) != user:
+        raise serializers.ValidationError(
+            f"You do not have permission to use this {resource_name}."
+        )
+
+
 class CarrierPresetSerializer(serializers.ModelSerializer):
     """Serializer for CarrierPreset model"""
 
@@ -155,19 +165,29 @@ class ShipmentCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Validate shipment data"""
-        # Must have either carrier_preset or provider_account
-        if not data.get("carrier_preset") and not data.get("provider_account"):
+        carrier_preset = data.get("carrier_preset")
+        provider_account = data.get("provider_account")
+
+        # A shipment uses exactly one provider type: manual preset XOR API account.
+        if not carrier_preset and not provider_account:
             raise serializers.ValidationError(
                 "Either carrier_preset or provider_account must be provided."
             )
+        if carrier_preset and provider_account:
+            raise serializers.ValidationError(
+                "Provide either carrier_preset or provider_account, not both."
+            )
 
-        # If provider_account, tracking_id is optional (will be generated)
-        # If carrier_preset only, tracking_id is required
-        if data.get("carrier_preset") and not data.get("provider_account"):
-            if not data.get("tracking_id"):
-                raise serializers.ValidationError(
-                    "tracking_id is required when using manual carrier preset."
-                )
+        # If carrier_preset only, tracking_id is required (API providers generate it).
+        if carrier_preset and not data.get("tracking_id"):
+            raise serializers.ValidationError(
+                "tracking_id is required when using manual carrier preset."
+            )
+
+        # The submitted order and provider account must belong to the caller.
+        user = getattr(self.context.get("request"), "user", None)
+        validate_owned_by_request_user(user, data.get("order"), "order")
+        validate_owned_by_request_user(user, provider_account, "provider account")
 
         return data
 
@@ -216,6 +236,7 @@ class ProviderAccountSerializer(serializers.ModelSerializer):
             "id",
             "component_name",
             "provider_type",
+            "user",
             "connection_status",
             "last_tested_at",
             "created_at",
@@ -223,6 +244,11 @@ class ProviderAccountSerializer(serializers.ModelSerializer):
         ]
 
     # Note: credentials_encrypted is explicitly excluded for security
+
+    def create(self, validated_data):
+        """Assign ownership to the authenticated user on creation."""
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
 
 
 class ProviderAccountListSerializer(serializers.ModelSerializer):
@@ -384,7 +410,7 @@ class ShippingRateTableSerializer(serializers.ModelSerializer):
 
     def get_tier_count(self, obj):
         """Get number of rate tiers"""
-        return len(obj.tiers) if obj.tiers else 0
+        return obj.tiers.count()
 
 
 # Phase 4: Pickup Locations

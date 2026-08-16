@@ -97,20 +97,29 @@ class SplashScreenService:
 
         return gradient
 
+    def _load_asset_image(self, asset) -> Image.Image | None:
+        """Load a fully-decoded PIL image from a MediaAsset.
+
+        Reads the file through Django's storage backend so it works with both
+        local and S3-backed storage. S3 FieldFiles raise ``NotImplementedError``
+        on ``.path``, so the stream is opened explicitly and the image is fully
+        loaded into memory before the storage stream closes.
+        """
+        if not asset or not getattr(asset, "original_file", None):
+            return None
+        with asset.original_file.open("rb") as file:
+            image = Image.open(file)
+            image.load()
+            return image
+
     def load_merchant_logo(self, logo_asset) -> Image.Image | None:
         """Load merchant logo from MediaAsset."""
-        if not logo_asset:
-            return None
-
         try:
-            # Get the file path or URL
-            if hasattr(logo_asset, "original_file") and logo_asset.original_file:
-                logo_path = logo_asset.original_file.path
-                return Image.open(logo_path).convert("RGBA")
+            logo = self._load_asset_image(logo_asset)
+            return logo.convert("RGBA") if logo else None
         except Exception as e:
             logger.warning(f"Could not load merchant logo: {e}")
-
-        return None
+            return None
 
     def resize_logo_to_fit(self, logo: Image.Image, max_width: int, max_height: int) -> Image.Image:
         """Resize logo to fit within bounds while preserving aspect ratio."""
@@ -288,77 +297,161 @@ class SplashScreenService:
         if not force and reader.splash_generated_at and not reader.splash_override_image:
             return {"success": True, "skipped": True, "reason": "Already generated"}
 
-        # Get logo source
+        try:
+            provider_instance = reader.provider.get_provider_instance()
+        except Exception as e:
+            logger.error(f"Failed to load terminal provider: {e}")
+            return {"success": False, "error": str(e)}
+
+        # Stripe Terminal applies a splash configuration to a whole location, not
+        # a single reader, so every reader sharing the location is one group. A
+        # location can only show one splash, so conflicting per-reader overrides
+        # are rejected instead of silently clobbering each other.
+        # If we can't confirm which readers share the location, abort: Stripe
+        # would still change the whole location while only this reader's record
+        # is updated, leaving the other readers' saved config ids stale.
+        location_id, location_readers = self._resolve_location_readers(reader, provider_instance)
+        if location_id is None:
+            error = (
+                "Could not resolve the Stripe location for this reader; refusing "
+                "to update the splash screen to avoid an inconsistent "
+                "location-wide change."
+            )
+            logger.warning(
+                f"Refusing splash update for reader {reader.provider_reader_id}: {error}"
+            )
+            return {"success": False, "error": error}
+
+        conflict = self._find_override_conflict(location_readers)
+        if conflict:
+            logger.warning(f"Refusing splash update for location {location_id}: {conflict}")
+            return {"success": False, "error": conflict}
+
+        # Get image source (shared by every reader at this location)
         if reader.splash_override_image:
-            logo_asset = reader.splash_override_image
-            custom_image = None
             try:
-                # Load the custom image directly
-                custom_image = Image.open(reader.splash_override_image.original_file.path)
+                custom_image = self._load_asset_image(reader.splash_override_image)
             except Exception as e:
                 logger.error(f"Failed to load custom splash image: {e}")
                 return {"success": False, "error": str(e)}
+            logo_asset = None
         else:
             # Use site logo
             site_settings = SiteSettings.get_settings()
             logo_asset = site_settings.site_logo
             custom_image = None
 
-        # Generate PNG
+        # A location can host several reader types, and each type has its own
+        # screen size. Generate one correctly sized splash per reader type,
+        # bundle them into a single location-level configuration, and assign it.
         try:
-            png_bytes = self.generate_splash_png(
-                reader_type=reader.reader_type,
-                logo_asset=logo_asset if not custom_image else None,
-                custom_image=custom_image,
+            result = self._upload_to_stripe(
+                location_readers, logo_asset, custom_image, provider_instance
             )
-        except Exception as e:
-            logger.error(f"Failed to generate splash screen: {e}")
-            return {"success": False, "error": str(e)}
-
-        # Upload to Stripe
-        try:
-            result = self._upload_to_stripe(reader, png_bytes)
         except Exception as e:
             logger.error(f"Failed to upload splash screen to Stripe: {e}")
             return {"success": False, "error": str(e)}
 
-        # Update reader record
-        reader.stripe_splash_file_id = result.get("file_id", "")
-        reader.stripe_splash_config_id = result.get("config_id", "")
-        reader.splash_generated_at = timezone.now()
-        reader.save(
-            update_fields=[
-                "stripe_splash_file_id",
-                "stripe_splash_config_id",
-                "splash_generated_at",
-            ]
-        )
+        # Update every reader record affected by the location-level configuration,
+        # each pointing at the splash file generated for its own reader type.
+        generated_at = timezone.now()
+        config_id = result.get("config_id", "")
+        file_id_by_type = result.get("file_id_by_type", {})
+        for affected in location_readers:
+            affected.stripe_splash_file_id = file_id_by_type.get(affected.reader_type, "")
+            affected.stripe_splash_config_id = config_id
+            affected.splash_generated_at = generated_at
+            affected.save(
+                update_fields=[
+                    "stripe_splash_file_id",
+                    "stripe_splash_config_id",
+                    "splash_generated_at",
+                ]
+            )
 
-        logger.info(f"Splash screen updated for reader {reader.pk}: file={result.get('file_id')}")
+        logger.info(
+            f"Splash screen updated for {len(location_readers)} reader(s) at "
+            f"location {location_id}: config={config_id}, "
+            f"files={file_id_by_type}"
+        )
         return {"success": True, **result}
 
-    def _upload_to_stripe(self, reader, png_bytes: bytes) -> dict:
-        """Upload PNG to Stripe and configure the reader."""
-        provider_instance = reader.provider.get_provider_instance()
+    def _resolve_location_readers(self, reader, provider_instance) -> tuple:
+        """Resolve the Stripe location and all reader records that share it.
 
+        Splash configurations are location-scoped, so return the reader's
+        location id together with every ``POSTerminalReader`` at that location.
+        Returns ``(None, [reader])`` when the location can't be resolved so the
+        caller can abort rather than apply a location-wide change it can't
+        reconcile against the other readers' records.
+        """
+        location_map = {}
+        try:
+            listed = provider_instance.list_readers()
+            if listed.get("success"):
+                location_map = {r["id"]: r.get("location") for r in listed.get("readers", [])}
+        except Exception as e:
+            logger.warning(f"Could not list readers to resolve splash location: {e}")
+
+        location_id = location_map.get(reader.provider_reader_id)
+        if not location_id:
+            return None, [reader]
+
+        location_readers = [reader]
+        for other in reader.provider.readers.exclude(pk=reader.pk):
+            if location_map.get(other.provider_reader_id) == location_id:
+                location_readers.append(other)
+        return location_id, location_readers
+
+    def _find_override_conflict(self, location_readers) -> str | None:
+        """Return an error message if readers at one location want different splashes."""
+        override_ids = {r.splash_override_image_id for r in location_readers}
+        if len(override_ids) > 1:
+            return (
+                "Readers at the same Stripe location have conflicting splash "
+                "overrides; a location can only display one splash screen."
+            )
+        return None
+
+    def _upload_to_stripe(
+        self, location_readers, logo_asset, custom_image, provider_instance
+    ) -> dict:
+        """Upload a correctly sized splash for each reader type at the location.
+
+        A Stripe location can contain several reader types, each with its own
+        screen size. Generate and upload one PNG per distinct reader type, then
+        bundle them into a single location-level configuration so every reader
+        shows an appropriately sized splash rather than one sized for whichever
+        reader happened to trigger the update.
+        """
         if not provider_instance:
             raise ValueError("No provider instance available")
 
         if not hasattr(provider_instance, "upload_splash_screen"):
             raise ValueError(
-                f"Provider {reader.provider.provider_key} does not support splash screens"
+                f"Provider {location_readers[0].provider.provider_key} does not "
+                "support splash screens"
             )
 
-        # Upload file
-        file_id = provider_instance.upload_splash_screen(png_bytes)
+        # One appropriately sized splash per distinct reader type at the location.
+        file_id_by_type = {}
+        for reader_type in {r.reader_type for r in location_readers}:
+            png_bytes = self.generate_splash_png(
+                reader_type=reader_type,
+                logo_asset=logo_asset if not custom_image else None,
+                custom_image=custom_image,
+            )
+            file_id_by_type[reader_type] = provider_instance.upload_splash_screen(png_bytes)
 
-        # Create configuration
-        config_id = provider_instance.create_splash_configuration(file_id, reader.reader_type)
+        # Bundle every reader type's splash into one location-level configuration.
+        config_id = provider_instance.create_splash_configuration(file_id_by_type)
 
-        # Assign to reader
-        provider_instance.assign_configuration_to_reader(reader.provider_reader_id, config_id)
+        # Assign to the location (affects every reader at that location).
+        provider_instance.assign_configuration_to_reader(
+            location_readers[0].provider_reader_id, config_id
+        )
 
-        return {"file_id": file_id, "config_id": config_id}
+        return {"config_id": config_id, "file_id_by_type": file_id_by_type}
 
 
 # Singleton instance

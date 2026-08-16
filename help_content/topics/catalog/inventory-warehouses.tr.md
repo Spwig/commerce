@@ -2,7 +2,7 @@
 title: Stok & Depolar
 ---
 
-Depo sistemi, birden fazla konumda stokları yönetmenize, teslimat önceliklerini ayarlamanıza ve stok seviyelerini gerçek zamanlı olarak izlemenize olanak tanır. Yan menüde **Ayarlar > Lisans Yönetimi**'ne gidin veya ürün stok sekmesinden depolara erişin.
+Depo sistemi, birden fazla konumda stok yönetmenizi, yerine getirme önceliklerini ayarlamanızı ve stok seviyelerini anlık olarak takip etmenizi sağlar. Depo konumlarınızı yönetmek için admin yan menüsündeki **Ürünler > Depolar** sayfasına gidin.
 
 ![Depo listesi](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
 
@@ -10,119 +10,134 @@ Depo sistemi, birden fazla konumda stokları yönetmenize, teslimat öncelikleri
 
 ### Depo Listesi
 
-Depo sayfası, tüm stok konumlarınızı aşağıdaki bilgilerle birlikte kartlar şeklinde gösterir:
+Depo sayfası, aşağıdaki bilgilerle tüm stok konumlarınızı kart şeklinde gösterir:
 
-- **Ad ve kod** — Depo tanımlayıcısı (örneğin, "Ana Depo", kod "MAIN-WH")
+- **İsim ve kod** — Depo tanımlayıcısı (örneğin, "Ana Depo", kod "ANA-DEPO")
 - **Satış bölgesi** — Coğrafi bölge ataması
-- **Durum etiketleri** — Aktif/etkin olmayan, mağaza konumu
-- **İstatistikler** — Stokta olan ürünler, teslimat önceliği, stok tampon yüzdesi
+- **Durum etiketleri** — Aktif/pasif, perakende mağazası
+- **İstatistikler** — Stoktaki ürün sayısı, yerine getirme önceliği, stok yedekleme yüzdesi
 - **Konum** — Şehir ve ülke
-- **Son güncelleme** — Stok seviyelerinin son değiştirildiği zaman
+- **Son güncelleme** — Stok seviyelerinin son olarak değiştirilme tarihi
 
-### Depo Oluşturma
+### Bir depo oluşturma
 
-1. **+ Depo Ekle**'ye tıklayın
-2. Depo ayrıntılarını doldurun:
-   - **Ad** — Açıklamalı etiket (örneğin, "ABD Doğu Deposu")
-   - **Kod** — Kısa ve benzersiz tanımlayıcı (örneğin, "US-EAST")
-   - **Satış Bölgesi** — Teslimat yönlendirme için coğrafi bir bölgeye atayın
-   - **Adres** — Teslimat hesaplamaları için tam depo adresi
-3. Ayarları yapılandırın:
-   - **Aktif** — Teslimat için aktif yapın
-   - **Mağaza Konumu** — Bu depo aynı zamanda fiziksel bir mağaza olarak işlev görürse işaretleyin
-   - **Teslimat Önceliği** — Daha yüksek sayılar, sipariş teslimatı için daha yüksek öncelik anlamına gelir
-   - **Stok Tamponu** — Satın alma için ayrılan güvenlik tamponu yüzdesi
-4. **Kaydet**'e tıklayın
+1. **+ Depo Ekle** butonuna tıklayın
+2. **Temel Bilgileri** doldurun:
+   - **İsim** — Tanımlayıcı etiket (örneğin, "Kuzey Amerika Deposu")
+   - **Kod** — Kısa benzersiz tanımlayıcı (örneğin, "KUZEY-AMERİKA") — Tüm depolar arasında benzersiz olmalıdır
+   - **Satış Bölgesi** — Yerine getirme yönlendirme için coğrafi bölgeye atama yapın
+   - **Aktif** — Yerine getirme için dahil etmek için etkinleştirin
+3. Depo adresini tam olarak girin
+4. **Yerine Getirme Ayarlarını** yapılandırın:
+   - **Yerine Getirme Önceliği** — Yüksek sayılar = sipariş yerine getirme için daha yüksek öncelik
+   - **Stok Yedekleme Yüzdesi** — Online satış için rezerve edilecek stok yüzdesi (0-100)
+   - **Kargo Konumu** — Bu deponun müşteri toplama noktasına sahip olup olmadığına göre isteğe bağlı olarak bir toplama konumuna bağlanın
+5. **Müşteri Görsüni** ayarlarını yapılandırın (opsiyonel):
+   - **Gösterilen İsim** — Müşteriye açıklayan etiket (örneğin, "Avrupa'dan kargo") — Depo adını kullanmak için boş bırakın.
+   - **Frontend'de Göster** — Ürün sayfalarında müşterilere bu deponun originini gösterin
+6. **POS / Perakende Mağazası** ayarlarını yapılandırın (opsiyonel):
+   - **Perakende Konumu** — Bu deponun fiziksel bir mağaza olarak da işlev gördüğüne dair kontrol yapın
+   - **POS Gösterilen İsim** — POS arayüzünde gösterilen kısa isim
+   - **Mağaza Grubu** — Ayar kalıtımları için POS mağaza grubuna atama yapın
+7. Gerekirse **İletişim Bilgileri** ekleyin (isim, e-posta, telefon)
+8. **Kaydet**'e tıklayın
 
-### Teslimat Önceliği
+### Yerine Getirme Önceliği
 
-Bir sipariş gelirken, sistem aşağıdaki kriterlere göre en iyi depoyu seçer:
+Bir sipariş geldiğinde sistem, en iyi depoyu aşağıdaki değerlere göre seçer:
 
 1. **Öncelik değeri** — Daha yüksek öncelikli depolar tercih edilir
-2. **Stok mevcudiyeti** — Yeterli stok bulunması gerekir
-3. **Bölge eşleşmesi** — Müşterinin bölgesine ait depolar tercih edilir
+2. **Stok mevcudiyeti** — Yeterli stok olmalıdır
+3. **Bölge eşleşmesi** — Müşteri bölgesine ait depolar tercih edilir
 
-Örneğin, ABD deposu (öncelik 100) ve AB deposu (öncelik 60) olduğunda, ABD siparişleri önce ABD deposundan teslim edilir.
+Örneğin, ABD deponuz (öncelik 100) ve Avrupa deponuz (öncelik 60) varsa, ABD siparişleri önce ABD deponuzdan yerine getirilir.
 
-### Stok Tamponu
+### Stok Yedekleme
 
-Stok tamponu, online satışta ayrılmayacak şekilde bir stok yüzdesini ayırır. Bu, aşağıdaki durumlarda faydalıdır:
-- Fiziksel mağazalar için zemin stoku gerekir
-- Aşırı satışları önlemek için güvenlik stoku
-- Wholesale siparişleri için ayrılmış stok
+Stok yedeklemesi, online satış için satılmayacak envanterin bir yüzdesini korur. Bu, şu gibi durumlarda yararlıdır:
+- Fiziksel perakende mağazalarının zemin stoklarına ihtiyacı vardır
+- Overselling'i önlemek için güvenlik stokları
+- Toptancı siparişleri için rezerve envanter
 
-100 birim için 10% bir tampon, yalnızca 90 birim online siparişler için kullanılabilir anlamına gelir.
+100 birimde %10'luk bir yedekleme, sadece 90 birim online siparişler için mevcut olur.
 
-## Stok Öğeleri
+## Stok Ürünleri
 
-Stok öğeleri, belirli bir ürünün belirli bir depoda olan gerçek stoklarını temsil eder.
+Stok ürünleri, belirli bir ürünün belirli bir deponundaki gerçek envanterini temsil eder.
 
-### Stok Seviyelerini Görüntüleme
+### Stok Seviyelerini Görme
 
-1. Herhangi bir depo kartındaki **stok ikonu**'na tıklayarak stok öğelerini görün
-2. Ya da bir ürünün **Stok** sekmesine giderek tüm depolardaki stokları görün
+1. Herhangi bir deponun kartındaki **stok simgesine** tıklayın ve stok ürünlerini görün
+2. Veya bir ürünün **Envanter** tabını açın ve tüm depolar arasındaki envanteri görün
 
-Her stok öğesi aşağıdaki bilgileri gösterir:
-- **Ürün adı** ve varyant (uygunsa)
-- **Mevcut** — Toplam fiziksel stok
-- **Rezervasyon** — Bekleyen siparişler için ayrılan miktar
-- **Kullanılabilir** — Mevcut - rezervasyon (satışa açık olan)
+Her stok ürünü şunları gösterir:
+- **Ürün adı** ve (varsa) varyant
+- **Mevcut** — Toplam fiziksel envanter
+- **Atanmış** — Bekleyen siparişler için ayrılmış miktar
+- **Mevcut** — Mevcut - atanmış (satılabilir olan)
 
 ### Stok Ekleme
 
-1. Depo stok görünümünden **Stok Öğesi Ekle**'ye tıklayın
-2. Ürün ve varyantı seçin
-3. **Mevcut** miktarını girin
-4. Kaydedin
+1. **Ürünler > Stok Ürünleri**'ne gidin ve **+ Stok Ürünü Ekle**'ye tıklayın, veya
+2. Bir ürünün düzenleme formunu açın ve en alttaki **Stok Ürünleri** aralığını kullanın
+3. **Ürün** ve **Depo** seçin (değişken ürünler için isteğe bağlı olarak **Varyant** da seçin)
+4. **Mevcut** miktarını girin
+5. **Düşük Stok Eşiği**'ni ayarlayın — bu ürün için bu eşik, düşük stok uyarısı tetikler
+6. Kaydet
 
 ### Stok Hareketleri
 
-Herhangi bir stok değişikliği, bir **stok hareketi** olarak izlenir:
+Envanterdeki her değişiklik bir **stok hareketi** olarak takip edilir.
 
 | Hareket Türü | Açıklama |
 |--------------|-------------|
-| **Alım** | Tedarikçiden yeni stok alınması |
-| **Satış** | Teslim edilen sipariş için stok eksiltme |
-| **İade** | Müşteriden iade alınan stok |
-| **Ayarlama** | Manuel düzeltme (sayım farklılığı) |
-| **Transfer** | Depolar arasında taşınma |
-| **Rezervasyon** | Aktif bir sepet için geçici olarak tutulan |
+| **Giriş** | Satıcıdan alınan yeni stok |
+| **Satış** | Tamamlanmış bir sipariş için stok azaltılması |
+| **İade** | Bir müşteriden dönen stok |
+| **Düzeltme** | Manuel düzeltme (sayım eksikliği) |
+| **Transfer** | Depolar arası hareket |
+| **Rezervasyon** | Aktif bir sepet için geçici olarak tutuldu |
+| **Hasar** | Hasarlı veya kaybolmuş olarak yazılmış |
+| **Yeniden Sayım** | Fiziksel stok sayımına göre düzeltilmiş |
 
-Stok hareketleri, stok değişikliklerinin tam bir denetim kaydını sağlar.
+Stok hareketleri, envanter değişikliklerinin tam bir denetim izini sağlar. **Stok seviyelerini** eylemlemekten başka, Spwig, Stock Items listesinde çoklu eylemler sunar ve birçok ürün için aynı anda stok transferi, yazdırma ve yeniden sayım yapmanı sağlar — [Çoklu Stok Eylemleri](/help/stock-bulk-actions)"e bakınız.
 
-## Ürünlerde Stok Takibi
+## Ürünlerde Envanter Takibi
 
-### Stok Takibi Aktif Etme
+### Envanter takibini etkinleştirme
 
-Bir ürünün **Stok** sekmesinde:
+Bir ürünün **Envanter** bölümünde:
 
-1. **Stok Takibi** anahtarını açarak stok yönetimi etkinleştirin
-2. **Düşük Stok Seviyesi** ayarlayın — stok bu seviyenin altına inerse uyarı tetikler
-3. Stokta ürün yoksa siparişleri kabul etmek istiyorsanız **Gerçekleşmeyen Siparişleri Kabul Et** ayarlayabilirsiniz
+1. Bu ürün için stok yönetimi için **Envanteri Takip Et** kipini açın
+2. **Düşük Stok Eşiği**'ni ayarlayın — herhangi bir depoda stok bu seviyenin altında olduğunda panoda uyarılar oluşturur
+3. Stokta kalmadığında emri kabul etmek istiyorsanız **Gerçekleştirilebilir Siparişleri Aç** ayarını yapılandırın
+4. Bu ürün için site genelinde veya kategori davranışını geçersiz kılmak üzere isteğe bağlı olarak **Stokta Kalmadığında Eylemi** ayarlayabilirsiniz
 
-### Çok Depolama Stokları
+Takip etmeyi etkinleştirdikten sonra, ürün formunun altındaki **Stock Items** inline bölümünü kullanarak gerçek stok miktarlarını yönetin, ya da **Ürünler > Stock Items** üzerinden yapın.
 
-Stok takibi etkinleştirildiğinde, Stok sekmesi tüm depolarda stok seviyelerini özet tabloyla gösterir:
+### Çoklu Depo Stokları
+
+Envanter takibi etkinleştirildiğinde, Envanter sekmesi tüm depolar arasındaki stok seviyelerini bir özet tablosunda gösterir:
 
 - Tüm konumlardaki toplam mevcut stok
-- Depo bazlı ayrıntılı kırılım
-- Rezervasyonlar ve ayırımlar sonrası kullanılabilir miktarlar
+- Depo bazında bölünmüş stok
+- Rezervasyonlar ve tahsisler sonrası mevcut miktarlar
 
 ## Düşük Stok Uyarıları
 
-Sistem, stok seviyelerini otomatik olarak izler ve aşağıdaki durumlarda size uyarır:
-- Bir ürün, **düşük stok seviyesi** altında kalırsa
-- Bir ürün, **kullanılabilir stok** sıfıra ulaşır
+Sistem, stok seviyelerini otomatik olarak takip eder ve şunlarda uyarılar verir:
+- Ürün **düşük stok eşiğinin** altına düştüğünde
+- Ürün **sıfır mevcut stok** seviyesine ulaştığında
 
-Düşük stok uyarıları şu yerlerde görünür:
-- **Mağaza Gösterge Paneli**'nde Gerekli Eylemler bölümünde
-- Ürün listede görsel bir gösterge ile
+Düşük stok uyarıları şunlarda görünür:
+- **Mağaza Dashboard**'daki Eylem Gerektiren bölümde
+- Ürün listesinde görsel bir uyarı ile
 
 ## İpuçları
 
-- İşiniz büyüdükçe ekleyebileceğiniz tek bir depo ile başlayın.
-- Her bölgeye göre teslimat hızı ve maliyetine göre teslimat önceliklerini ayarlayın.
-- Fiziksel mağazalar için stok tamponlarını kullanın ve zemin stokunun kullanılabilirliğini sağlayın.
-- Stok hareketlerini düzenli olarak inceleyin ve eksiklik veya farklılıklar tespit edin.
-- Stokunuzun yeniden doldurulma süresine göre düşük stok seviyelerini ayarlayın — yeniden doldurmak 2 hafta sürüyorsa, 2 haftalık satışları kapsayan bir eşik ayarlayın.
-- Hizmete açılmadan önce stok takibini etkinleştirin ve aşırı satışlardan kaçının.
+- İşiniz büyüdükçe tek bir depo ile başlayın ve daha fazlasını ekleyin.
+- Her bölgeye olan kargo hızı ve maliyetine göre tamamlama önceliklerini belirleyin.
+- Satış noktaları için stok buffer'ları kullanarak zemin stok mevcudiyetini sağlayın.
+- Stok hareketlerini düzenli olarak inceleyerek, çalınma veya eksiklikleri belirleyin.
+- Stok yeniden sipariş zamanınıza göre düşük stok eşikleri ayarlayın — 2 hafta içinde tedarik edilebiliyorsa, eşik 2 haftalık satışları kaplayacak şekilde ayarlanmalıdır.
+- Overselling olmaması için, etkinleştirmeden önce envanter takibini etkinleştirin.

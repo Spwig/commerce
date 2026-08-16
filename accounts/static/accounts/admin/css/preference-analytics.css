@@ -1,210 +1,226 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 /* Preference Analytics Dashboard Admin Page Styles */
+/*
+ * All colours come from the admin theme tokens defined in
+ * core/static/core/admin/css/themes/{light,dark}.css, so this page follows
+ * the light/dark theming system automatically. Selectors are scoped under
+ * .analytics-container to avoid leaking into the rest of the admin.
+ */
 
 .analytics-container {
   padding: 20px;
-  background: #f8f9fa;
+  background: var(--darkened-bg);
 }
 
-.filter-bar {
-  background: white;
+/* Shared card surface */
+.analytics-container .filter-bar,
+.analytics-container .action-card,
+.analytics-container .metric-card,
+.analytics-container .chart-container {
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px var(--shadow-light);
+}
+
+/* Filter bar */
+.analytics-container .filter-bar {
   padding: 20px;
   margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.filter-bar form {
+.analytics-container .filter-bar form {
   display: flex;
   gap: 15px;
   align-items: flex-end;
   flex-wrap: wrap;
 }
 
-.filter-group {
+.analytics-container .filter-group {
   display: flex;
   flex-direction: column;
 }
 
-.filter-group label {
+.analytics-container .filter-group label {
   font-weight: 600;
   margin-bottom: 5px;
   font-size: 13px;
-  color: #333;
+  color: var(--body-fg);
 }
 
-.filter-group select,
-.filter-group input[type='date'] {
+.analytics-container .filter-group select,
+.analytics-container .filter-group input[type='date'] {
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 14px;
+  background: var(--body-bg);
+  color: var(--body-fg);
 }
 
-.filter-group button {
+.analytics-container .filter-group button {
   padding: 8px 20px;
-  background: #417690;
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-fg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
 }
 
-.filter-group button:hover {
-  background: #2e5568;
+.analytics-container .filter-group button:hover {
+  background: var(--button-hover-bg);
 }
 
-.action-cards {
+/* Hidden utility for conditional visibility */
+.analytics-container .filter-group.hidden {
+  display: none;
+}
+
+/* Action cards */
+.analytics-container .action-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
-.action-card {
-  background: white;
+.analytics-container .action-card {
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.action-card h3 {
+.analytics-container .action-card h3 {
   margin: 0 0 10px 0;
   font-size: 14px;
-  color: #666;
+  color: var(--body-quiet-color);
   font-weight: 500;
 }
 
-.action-card .value {
+.analytics-container .action-card .value {
   font-size: 32px;
   font-weight: 700;
-  color: #333;
+  color: var(--body-fg);
   margin-bottom: 5px;
 }
 
-.action-card .link {
+.analytics-container .action-card .link {
   font-size: 13px;
-  color: #417690;
+  color: var(--link-color);
   text-decoration: none;
 }
 
-.action-card .link:hover {
+.analytics-container .action-card .link:hover {
   text-decoration: underline;
 }
 
-.action-card__subtitle {
+.analytics-container .action-card__subtitle {
   font-size: 12px;
-  color: #666;
+  color: var(--body-quiet-color);
   margin: 0;
 }
 
-/* Hidden utility for conditional visibility */
-.filter-group.hidden {
-  display: none;
-}
-
-/* Analytics dashboard link button (used on change_list) */
-.analytics-dashboard-link {
-  background: #417690;
-  padding: 10px 15px;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.metric-cards {
+/* Metric cards */
+.analytics-container .metric-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
-.metric-card {
-  background: white;
+.analytics-container .metric-card {
   padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.metric-card h3 {
+.analytics-container .metric-card h3 {
   margin: 0 0 20px 0;
   font-size: 16px;
-  color: #333;
+  color: var(--body-fg);
   font-weight: 600;
 }
 
-.metric-item {
+.analytics-container .metric-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--hairline-color);
 }
 
-.metric-item:last-child {
+.analytics-container .metric-item:last-child {
   border-bottom: none;
 }
 
-.metric-label {
+.analytics-container .metric-label {
   font-size: 14px;
-  color: #666;
+  color: var(--body-quiet-color);
 }
 
-.metric-value {
+.analytics-container .metric-value {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--body-fg);
 }
 
-.metric-change {
+.analytics-container .metric-change {
   font-size: 12px;
   margin-left: 8px;
+  color: var(--body-quiet-color);
 }
 
-.metric-change.positive {
-  color: #10b981;
+.analytics-container .metric-change.positive {
+  color: var(--success-color);
 }
 
-.metric-change.negative {
-  color: #ef4444;
+.analytics-container .metric-change.negative {
+  color: var(--error-color);
 }
 
-.chart-section {
+/* Charts */
+.analytics-container .chart-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
-.chart-container {
-  background: white;
+.analytics-container .chart-container {
   padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.chart-container h3 {
+.analytics-container .chart-container h3 {
   margin: 0 0 20px 0;
   font-size: 16px;
-  color: #333;
+  color: var(--body-fg);
   font-weight: 600;
 }
 
-.chart-wrapper {
+.analytics-container .chart-wrapper {
   position: relative;
   height: 300px;
 }
 
+/* Analytics dashboard link button (used from the change_list object-tools) */
+.analytics-dashboard-link {
+  background: var(--button-bg);
+  padding: 10px 15px;
+  color: var(--button-fg);
+  text-decoration: none;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.analytics-dashboard-link:hover {
+  background: var(--button-hover-bg);
+}
+
 @media (max-width: 768px) {
-  .action-cards,
-  .metric-cards,
-  .chart-section {
+  .analytics-container .action-cards,
+  .analytics-container .metric-cards,
+  .analytics-container .chart-section {
     grid-template-columns: 1fr;
   }
 
-  .filter-bar form {
+  .analytics-container .filter-bar form {
     flex-direction: column;
     align-items: stretch;
   }

@@ -717,6 +717,23 @@ class DynamicForm {
         formData.delete(fieldName);
       });
 
+      // reCAPTCHA v3 (invisible): fetch a fresh token and attach it so the
+      // server can verify the submission. Non-blocking on failure — the server
+      // falls back to the honeypot when no token is present.
+      const siteKey = this.formData && this.formData.recaptcha_site_key;
+      if (siteKey && window.grecaptcha) {
+        try {
+          const token = await new Promise((resolve, reject) => {
+            window.grecaptcha.ready(() => {
+              window.grecaptcha.execute(siteKey, { action: 'submit' }).then(resolve, reject);
+            });
+          });
+          if (token) formData.set('g-recaptcha-response', token);
+        } catch (e) {
+          console.error('reCAPTCHA execution failed', e);
+        }
+      }
+
       // Submit via AJAX
       const response = await fetch(this.form.action, {
         method: 'POST',

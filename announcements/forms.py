@@ -3,7 +3,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 
 from core.widgets import TranslatableFieldWidget
 from media_library.widgets import MediaLibrarySelectWidget
-from page_builder.models import RuleGroup
+from visibility.models import RuleGroup
 
 from .models import Announcement
 

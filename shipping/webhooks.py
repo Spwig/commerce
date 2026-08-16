@@ -73,6 +73,13 @@ def provider_webhook(request, provider_key):
     except json.JSONDecodeError:
         payload = {"raw_body": request.body.decode("utf-8", errors="replace")}
 
+    # Valid JSON is not necessarily an object: `[]`, `null` and `"event"` all
+    # decode successfully but are not dicts. Wrap them so the rest of the
+    # handler (and the WebhookLog JSONField) can rely on a mapping instead of
+    # raising AttributeError on `.get()`.
+    if not isinstance(payload, dict):
+        payload = {"raw_body": payload}
+
     headers = {
         key: value
         for key, value in request.META.items()

@@ -20,6 +20,7 @@ related:
   - add-product
   - product-variants
   - manage-orders
+  - stock-bulk-actions
 published: true
 ---
 
@@ -118,8 +119,10 @@ Every change to inventory is tracked as a **stock movement**:
 | **Adjustment** | Manual correction (count discrepancy) |
 | **Transfer** | Moved between warehouses |
 | **Reservation** | Temporarily held for an active cart |
+| **Damage** | Written off as damaged or lost |
+| **Recount** | Corrected to match a physical stock count |
 
-Stock movements provide a complete audit trail of inventory changes.
+Stock movements provide a complete audit trail of inventory changes. Beyond the **Adjust stock levels** action, Spwig also offers bulk actions on the Stock Items list to transfer, write off, and recount stock across many items at once — see [Bulk Stock Actions](/help/stock-bulk-actions).
 
 ## Inventory Tracking on Products
 

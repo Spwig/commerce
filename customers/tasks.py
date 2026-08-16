@@ -49,8 +49,9 @@ def calculate_customer_ltv_task(user_id):
                 # Build/update cohort if needed
                 CohortService.build_all_cohorts()
 
-                # Update customer's LTV based on cohort
-                result = CohortService.update_customer_cohort_ltv()
+                # Recalculate this customer's cohort metrics and update only
+                # their cohort-based LTV (never other customers').
+                result = CohortService.refresh_customer_cohort_ltv(user)
                 return {
                     "success": True,
                     "method": "cohort",

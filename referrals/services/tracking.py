@@ -94,9 +94,20 @@ def track_click(token, request):
     tracking_data = _extract_tracking_data(request)
 
     # Log click event
-    ReferralEvent.log_event(
+    event = ReferralEvent.log_event(
         event_type="click", program=program, referrer_identity=identity, **tracking_data
     )
+
+    # Mirror into the unified attribution touch stream so refer-a-friend revenue
+    # surfaces as its own channel in store-wide reporting. Consent-gated and
+    # best-effort — never affects referral tracking or rewards.
+    try:
+        from attribution.constants import CHANNEL_REFERRAL
+        from attribution.services.capture import record_channel_touch
+
+        record_channel_touch(request, CHANNEL_REFERRAL, referral_event=event)
+    except Exception:
+        pass  # best-effort; never affects referral tracking
 
     # Increment click counter
     identity.increment_clicks()

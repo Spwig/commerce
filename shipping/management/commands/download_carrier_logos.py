@@ -16,7 +16,8 @@ from io import BytesIO
 
 import requests
 from django.core.files.base import ContentFile
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 from PIL import Image
 
 from shipping.models import CarrierPreset
@@ -155,9 +156,11 @@ class Command(BaseCommand):
             queryset = queryset.filter(slug=slug_filter)
 
         if skip_existing:
-            queryset = queryset.filter(logo="")
+            queryset = queryset.filter(Q(logo="") | Q(logo__isnull=True))
 
-        if limit:
+        if limit is not None:
+            if limit < 0:
+                raise CommandError("--limit must be zero or a positive integer")
             queryset = queryset[:limit]
 
         total = queryset.count()
@@ -191,12 +194,19 @@ class Command(BaseCommand):
             try:
                 logo_content = self.download_logo(logo_id)
 
-                if logo_content:
-                    # Process the logo (resize, add padding)
-                    processed_logo = self.process_logo(logo_content)
+                # Process the logo (resize, add padding); may return None on failure
+                processed_logo = self.process_logo(logo_content) if logo_content else None
+
+                if processed_logo:
+                    # Choose the extension based on the actual payload type so an
+                    # SVG isn't mislabelled as .webp.
+                    if processed_logo.startswith(b"<?xml") or processed_logo.startswith(b"<svg"):
+                        extension = "svg"
+                    else:
+                        extension = "webp"
 
                     # Save to carrier
-                    filename = f"{carrier.slug}.webp"
+                    filename = f"{carrier.slug}.{extension}"
                     carrier.logo.save(filename, ContentFile(processed_logo), save=True)
 
                     self.stdout.write(

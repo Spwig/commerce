@@ -107,8 +107,10 @@ class LicenseActivationRequestSerializer(serializers.Serializer):
         allow_blank=True,
         help_text=_("Human-readable device name (e.g., 'John's MacBook Pro')"),
     )
-    device_info = serializers.JSONField(
-        required=False, help_text=_("Additional device information (OS, version, etc.)")
+    device_info = serializers.DictField(
+        required=False,
+        child=serializers.JSONField(allow_null=True),
+        help_text=_("Additional device information (OS, version, etc.)"),
     )
 
 

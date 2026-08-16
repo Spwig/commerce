@@ -6,10 +6,12 @@ Handles loading and validating shipping provider component packages.
 
 import json
 import logging
+from importlib import metadata
 from pathlib import Path
 from typing import Any
 
 from packaging import version
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
 
 logger = logging.getLogger(__name__)
 
@@ -143,12 +145,24 @@ def check_dependencies(manifest: dict[str, Any]) -> list[str]:
     missing = []
 
     for dep_name, dep_version in manifest["dependencies"].items():
+        # Resolve the installed distribution by its package/distribution name.
+        # This differs from the import module name (e.g. "python-dateutil"
+        # installs the "dateutil" module), so importing the name is unreliable.
         try:
-            # Try to import the package
-            importlib.import_module(dep_name)
-            # TODO: Could add version checking here
-        except ImportError:
+            installed_version = metadata.version(dep_name)
+        except metadata.PackageNotFoundError:
             missing.append(f"{dep_name} {dep_version}")
+            continue
+
+        # Enforce the declared version constraint (e.g. ">=2.28.0").
+        try:
+            specifier = SpecifierSet(dep_version)
+        except InvalidSpecifier:
+            logger.warning(f"Invalid version specifier for {dep_name}: {dep_version}")
+            continue
+
+        if installed_version not in specifier:
+            missing.append(f"{dep_name} {dep_version} (installed: {installed_version})")
 
     if missing:
         logger.warning(f"Missing dependencies: {', '.join(missing)}")
@@ -188,7 +202,3 @@ def get_provider_metadata(component_dir: Path) -> dict[str, Any]:
         "entry_point": manifest.get("entry_point"),
         "class_name": manifest.get("class_name"),
     }
-
-
-# Import at bottom to avoid circular imports
-import importlib

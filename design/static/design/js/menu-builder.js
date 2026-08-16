@@ -1864,7 +1864,40 @@ class MenuBuilder {
 
     const devices = deviceRule.value || ['desktop', 'tablet', 'mobile'];
 
+    // The shared visibility engine (rule groups) is authored here for saved
+    // items. New/unsaved items don't have a database id yet, so their rules
+    // can't be attached until the menu is saved.
+    const persisted = /^\d+$/.test(String(item.id));
+    const ruleGroupsSection = persisted
+      ? `
+            <div class="property-section">
+                <h4 class="property-section-title">
+                    <i class="fas fa-eye"></i>
+                    Visibility Rule Groups
+                </h4>
+                <div class="form-group">
+                    <p style="font-size: 0.8125rem; color: var(--mb-text-secondary); margin-bottom: 0.75rem;">
+                        Show this item by market/region, language, currency, time, or
+                        per-visitor conditions using reusable rule groups.
+                    </p>
+                    <input type="hidden" id="mb-visibility-rule-groups">
+                </div>
+            </div>`
+      : `
+            <div class="property-section">
+                <h4 class="property-section-title">
+                    <i class="fas fa-eye"></i>
+                    Visibility Rule Groups
+                </h4>
+                <div class="form-group">
+                    <p style="font-size: 0.8125rem; color: var(--mb-text-secondary);">
+                        Save the menu to attach visibility rule groups to this item.
+                    </p>
+                </div>
+            </div>`;
+
     return `
+            ${ruleGroupsSection}
             <div class="property-section">
                 <h4 class="property-section-title">
                     <i class="fas fa-desktop"></i>
@@ -2129,6 +2162,26 @@ class MenuBuilder {
 
   bindVisibilityEvents(item) {
     if (!item.visibility_rules) item.visibility_rules = [];
+
+    // Mount the shared visibility-rule-group editor for saved items. It reads and
+    // writes the menu item's rule_groups M2M directly via /api/visibility/, so no
+    // menu-builder save path is involved. Tear down any previous instance first.
+    if (this._visEditor && typeof this._visEditor.destroy === 'function') {
+      try {
+        this._visEditor.destroy();
+      } catch (e) {
+        /* ignore */
+      }
+      this._visEditor = null;
+    }
+    const rgInput = document.getElementById('mb-visibility-rule-groups');
+    if (rgInput && window.VisibilityRulesEditor && /^\d+$/.test(String(item.id))) {
+      this._visEditor = new window.VisibilityRulesEditor({
+        targetType: 'menuitem',
+        targetId: item.id,
+      });
+      this._visEditor.attach(rgInput, '');
+    }
 
     // Device checkboxes
     ['desktop', 'tablet', 'mobile'].forEach(device => {

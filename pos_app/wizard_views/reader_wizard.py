@@ -12,8 +12,11 @@ import uuid
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -51,7 +54,7 @@ class ReaderWizardSessionMixin:
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class ReaderWizardStep1View(ReaderWizardSessionMixin, View):
+class ReaderWizardStep1View(PermissionRequiredMixin, ReaderWizardSessionMixin, View):
     """
     Step 1: Select Provider & Method
 
@@ -61,6 +64,7 @@ class ReaderWizardStep1View(ReaderWizardSessionMixin, View):
     """
 
     template_name = "admin/pos_app/wizard/reader_step1_select.html"
+    permission_required = "pos_app.add_posterminalreader"
 
     def get(self, request):
         """Display provider and method selection."""
@@ -100,16 +104,19 @@ class ReaderWizardStep1View(ReaderWizardSessionMixin, View):
 
         try:
             provider = POSTerminalProvider.objects.get(id=provider_id, is_active=True)
-        except POSTerminalProvider.DoesNotExist:
+        except (POSTerminalProvider.DoesNotExist, ValidationError):
             messages.error(request, _("Invalid provider selected."))
             return redirect("pos_admin:reader_wizard_step1")
 
-        # Store selection in session
-        self.update_wizard_data(
-            provider_id=str(provider_id),
-            provider_name=provider.display_name,
-            provider_key=provider.provider_key,
-            method=method,
+        # Replace any prior wizard state so a stale reader_id from a previous
+        # provider selection cannot leak into this fresh registration.
+        self.set_wizard_data(
+            {
+                "provider_id": str(provider_id),
+                "provider_name": provider.display_name,
+                "provider_key": provider.provider_key,
+                "method": method,
+            }
         )
 
         # Manual provider skips to step 3
@@ -120,7 +127,7 @@ class ReaderWizardStep1View(ReaderWizardSessionMixin, View):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class ReaderWizardStep2View(ReaderWizardSessionMixin, View):
+class ReaderWizardStep2View(PermissionRequiredMixin, ReaderWizardSessionMixin, View):
     """
     Step 2: Register or Discover
 
@@ -129,6 +136,7 @@ class ReaderWizardStep2View(ReaderWizardSessionMixin, View):
     """
 
     template_name = "admin/pos_app/wizard/reader_step2_register.html"
+    permission_required = "pos_app.add_posterminalreader"
 
     def get(self, request):
         """Display registration code input or discovery results."""
@@ -350,8 +358,7 @@ class ReaderWizardStep2View(ReaderWizardSessionMixin, View):
                             "type": reader.reader_type,
                             "serial_number": reader.serial_number,
                         },
-                        "redirect_url": str(request.build_absolute_uri("/").rstrip("/"))
-                        + "/en/admin/pos/reader/wizard/step3/",
+                        "redirect_url": reverse("pos_admin:reader_wizard_step3"),
                     }
                 )
             else:
@@ -374,7 +381,7 @@ class ReaderWizardStep2View(ReaderWizardSessionMixin, View):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class ReaderWizardStep3View(ReaderWizardSessionMixin, View):
+class ReaderWizardStep3View(PermissionRequiredMixin, ReaderWizardSessionMixin, View):
     """
     Step 3: Assign to Terminal & Save
 
@@ -382,6 +389,10 @@ class ReaderWizardStep3View(ReaderWizardSessionMixin, View):
     """
 
     template_name = "admin/pos_app/wizard/reader_step3_assign.html"
+    permission_required = (
+        "pos_app.add_posterminalreader",
+        "pos_app.change_posterminalreader",
+    )
 
     def get(self, request):
         """Display assignment form."""
@@ -486,7 +497,7 @@ class ReaderWizardStep3View(ReaderWizardSessionMixin, View):
                 reader.terminal = terminal
                 reader.save(update_fields=["terminal"])
 
-            except POSTerminal.DoesNotExist:
+            except (POSTerminal.DoesNotExist, ValueError, ValidationError):
                 messages.warning(request, _("Selected terminal not found."))
 
         # Clear wizard data

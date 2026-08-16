@@ -137,12 +137,14 @@ class TestAdminAccessMiddleware:
         assert response.status_code == 302
         assert response.url == "/"
 
-    def test_staff_with_no_roles_has_access(
+    def test_staff_with_no_roles_denied_access(
         self, request_factory, staff_user, add_session_to_request
     ):
         """
-        Verify staff with no roles get admin access (backwards compatibility).
-        This ensures existing staff users aren't locked out.
+        Verify staff with no roles are denied admin access (deny-by-default).
+
+        Role-less staff must be assigned a role before they can reach the admin;
+        the middleware redirects them to the storefront rather than letting them in.
         """
         # staff_user has is_staff=True but no roles
         request = request_factory.get("/admin/")
@@ -152,8 +154,10 @@ class TestAdminAccessMiddleware:
         middleware = AdminAccessMiddleware(lambda r: None)
         response = middleware(request)
 
-        # Should return None (allow access)
-        assert response is None
+        # Should redirect to the storefront (deny-by-default)
+        assert response is not None
+        assert response.status_code == 302
+        assert response.url == "/"
 
     def test_non_staff_not_checked_by_middleware(self, request_factory, add_session_to_request):
         """Verify non-staff users pass through middleware (handled by Django)"""

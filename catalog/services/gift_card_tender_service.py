@@ -85,6 +85,18 @@ class GiftCardTenderService:
     def _capture_txn_id(order_id, card_id):
         return f"gc-cap:{order_id}:{card_id}"
 
+    @staticmethod
+    def _refund_txn_id(capture, refund_ref, positional):
+        """
+        Idempotency key for one refund leg of a capture.
+
+        Prefers the caller's stable ``refund_ref`` so a retried refund resolves
+        to the same id; falls back to a positional counter, which is only safe
+        for a first attempt.
+        """
+        suffix = refund_ref if refund_ref is not None else positional
+        return f"gc-ref:{capture.transaction_id}:{suffix}"
+
     # ------------------------------------------------------------------
     # authorize
     # ------------------------------------------------------------------
@@ -419,7 +431,7 @@ class GiftCardTenderService:
     # ------------------------------------------------------------------
 
     @classmethod
-    def _mint_replacement(cls, capture, dead_card, amount, reason="", refund_ref=None):
+    def _mint_replacement(cls, capture, dead_card, amount, reason="", txn_id=None):
         """
         Issue a fresh card carrying a refund the original can no longer hold.
 
@@ -465,11 +477,7 @@ class GiftCardTenderService:
         )
 
         return PaymentTransaction.objects.create(
-            transaction_id=(
-                f"gc-ref:{capture.transaction_id}:{refund_ref}"
-                if refund_ref is not None
-                else f"gc-ref:{capture.transaction_id}:replacement"
-            ),
+            transaction_id=txn_id,
             tender_type=PaymentTransaction.TENDER_GIFT_CARD,
             transaction_type="refund",
             status="completed",
@@ -505,9 +513,22 @@ class GiftCardTenderService:
         if capture.transaction_type not in ("capture", "charge"):
             raise GiftCardTenderError(f"Cannot refund a {capture.transaction_type} transaction")
 
-        amount = amount or capture.amount
+        # Default only when the caller passed nothing. `amount or capture.amount`
+        # treated Money(0) as falsy — silently turning a zero refund into a full
+        # one — and never rejected negatives, which would DEBIT the card.
+        if amount is None:
+            amount = capture.amount
+        if amount.amount <= 0:
+            raise GiftCardTenderError("Refund amount must be a positive value")
         if amount.currency != capture.amount.currency:
             raise GiftCardTenderError("Refund currency must match the capture")
+
+        # Serialize refunds of the same capture. Locking the capture row means
+        # the capacity read, balance move and refund-row write below cannot
+        # interleave with a concurrent refund of the same capture — otherwise
+        # two refunds with different refs both read the same prior total, both
+        # pass the limit check, and jointly exceed what was captured.
+        capture = PaymentTransaction.objects.select_for_update().get(pk=capture.pk)
 
         # Pending counts as well as completed, or two concurrent refunds are
         # each told the same capacity is free.
@@ -516,6 +537,16 @@ class GiftCardTenderService:
             transaction_type="refund",
             status__in=("pending", "completed"),
         )
+
+        # Resolve the idempotency key BEFORE moving any balance and return the
+        # existing leg if this refund already ran. Crediting first and creating
+        # the uniquely keyed row second meant a retry with the same refund_ref
+        # re-credited the card and then died on the unique constraint.
+        txn_id = cls._refund_txn_id(capture, refund_ref, already.count() + 1)
+        existing = PaymentTransaction.objects.filter(transaction_id=txn_id).first()
+        if existing:
+            return existing
+
         refunded = sum((t.amount for t in already), Money(Decimal("0"), capture.amount.currency))
         if refunded + amount > capture.amount:
             raise GiftCardTenderError(
@@ -539,9 +570,7 @@ class GiftCardTenderService:
         # instrument — so auto-minting a spendable replacement would hand back
         # exactly the value the merchant froze. Refuse it and require a human.
         if card.is_expired and card.is_active:
-            return cls._mint_replacement(
-                capture, card, amount, reason=reason, refund_ref=refund_ref
-            )
+            return cls._mint_replacement(capture, card, amount, reason=reason, txn_id=txn_id)
         if not card.is_active:
             raise GiftCardTenderError(
                 f"Gift card {card.code} is deactivated; refusing to auto-mint a "
@@ -555,19 +584,8 @@ class GiftCardTenderService:
             raise GiftCardTenderError(str(exc)) from exc
 
         return PaymentTransaction.objects.create(
-            # Keyed off the CALLER's refund identity, not a positional counter.
-            #
-            # `already.count() + 1` is not idempotent: a retry of the same
-            # refund sees a different count, computes a different id, and the
-            # unique constraint never fires — so the card is credited twice.
-            # Full refunds only escaped this because the capacity check above
-            # had no headroom left on the second attempt, which is protection
-            # by accident. Partial refunds had none.
-            transaction_id=(
-                f"gc-ref:{capture.transaction_id}:{refund_ref}"
-                if refund_ref is not None
-                else f"gc-ref:{capture.transaction_id}:{already.count() + 1}"
-            ),
+            # Idempotency key resolved above, before the balance was moved.
+            transaction_id=txn_id,
             tender_type=PaymentTransaction.TENDER_GIFT_CARD,
             transaction_type="refund",
             status="completed",

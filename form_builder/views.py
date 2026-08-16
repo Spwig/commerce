@@ -136,6 +136,15 @@ def reorder_fields(request, pk):
         return JsonResponse({"error": "Invalid data"}, status=400)
 
 
+def csv_safe_cell(value):
+    """Neutralise CSV/formula injection: a cell beginning with = + - @ or a
+    control char is executed as a formula by Excel/Sheets. Submitted values are
+    attacker-controlled, so prefix such cells with a single quote."""
+    if isinstance(value, str) and value and value[0] in ("=", "+", "-", "@", "\t", "\r", "\n"):
+        return "'" + value
+    return value
+
+
 @staff_member_required
 @require_GET
 def export_responses(request, form_pk):
@@ -177,7 +186,7 @@ def export_responses(request, form_pk):
                 value = ", ".join(str(v) for v in value)
             row.append(value)
 
-        writer.writerow(row)
+        writer.writerow([csv_safe_cell(c) for c in row])
 
     return response
 

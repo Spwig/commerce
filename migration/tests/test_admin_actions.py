@@ -35,6 +35,13 @@ class MigrationAdminActionTestCase(TestCase):
     """Shared fixtures for the three action endpoints."""
 
     def setUp(self):
+        # Role/read-only decisions are cached in the process-wide cache, which
+        # (unlike the DB) isn't rolled back between tests — clear it so a pk
+        # reused across tests doesn't inherit a stale access decision.
+        from django.core.cache import cache
+
+        cache.clear()
+
         # The currency middleware calls SiteSettings.get_settings(), which
         # get_or_create(pk=1)s and then full_clean()s on save. Without a row
         # carrying a non-blank admin_email every request in this module would
@@ -62,12 +69,34 @@ class MigrationAdminActionTestCase(TestCase):
 
         # Staff, can reach the admin at all, but holds no migration
         # permissions. This is the user the permission gate must stop.
+        #
+        # Under deny-by-default (AdminAccessMiddleware + AdminReadOnlyMiddleware)
+        # a role-less staff user is redirected off the admin and blocked from
+        # every write, which would stop these POSTs before the per-model
+        # permission gate we're actually testing ever runs. Give them a role
+        # that grants admin access and write (so they reach the gate) but that
+        # carries no migration permissions — the gate must still stop them until
+        # the specific migration perm is granted per-test.
+        from django.contrib.auth.models import Group
+
+        from staff_roles.models import StaffRole
+        from staff_roles.services import invalidate_user_cache
+
         self.staff_without_perms = User.objects.create_user(
             "test-staff-noperms",
             "staff@test.spwig.invalid",
             "not-a-real-password",
             is_staff=True,
         )
+        admin_access_group = Group.objects.create(name="test-admin-access-nomigration")
+        StaffRole.objects.create(
+            group=admin_access_group,
+            display_name="Admin Access (no migration perms)",
+            can_access_admin=True,
+            permission_categories={"orders": "full"},
+        )
+        self.staff_without_perms.groups.add(admin_access_group)
+        invalidate_user_cache(self.staff_without_perms)
 
         self.owner = User.objects.create_user(
             "test-job-owner", "owner@test.spwig.invalid", "not-a-real-password"

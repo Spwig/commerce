@@ -14,7 +14,9 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
-from .models import Page, PageTemplate, RuleGroup, RuleGroupMember, VisibilityRule
+from visibility.models import RuleGroup, RuleGroupMember, VisibilityRule
+
+from .models import Page, PageTemplate
 
 
 @staff_member_required
@@ -536,7 +538,9 @@ def rule_builder_view(request, group_id=None):
 
 def _build_rules_tree(group):
     """Build a nested tree structure for a rule group"""
-    members = RuleGroupMember.objects.filter(group=group).select_related("rule").order_by("order")
+    members = (
+        RuleGroupMember.objects.filter(rule_group=group).select_related("rule").order_by("order")
+    )
 
     tree = {
         "id": group.id,
@@ -780,7 +784,7 @@ def visibility_rule_wizard_view(request, rule_id=None):
                 messages.success(request, _('Rule "{}" created successfully.').format(name))
 
             # Redirect to change list
-            return redirect("admin:page_builder_visibilityrule_changelist")
+            return redirect("admin:visibility_visibilityrule_changelist")
 
         except ValueError as e:
             messages.error(request, str(e))

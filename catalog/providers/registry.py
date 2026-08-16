@@ -353,6 +353,8 @@ class LicenseProviderRegistry:
         """
         if not cls._discovered:
             cls.discover_providers()
+        elif cls._cache_is_stale():
+            cls.reload_providers()
 
         return provider_type in cls._providers
 
@@ -366,5 +368,7 @@ class LicenseProviderRegistry:
         """
         if not cls._discovered:
             cls.discover_providers()
+        elif cls._cache_is_stale():
+            cls.reload_providers()
 
         return len(cls._providers)

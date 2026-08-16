@@ -1,3 +1,5 @@
+import uuid
+
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -13,6 +15,13 @@ from rest_framework.response import Response
 
 from core.api.throttling import POSAuthThrottle
 from pos_api.permissions import IsStaffUser
+
+
+def _user_has_pos_access(user):
+    """Return whether a user may currently access POS (active staff with a POS role)."""
+    from staff_roles.services import can_access_pos
+
+    return bool(user and user.is_active and user.is_staff and can_access_pos(user))
 
 
 @extend_schema(
@@ -74,11 +83,16 @@ def pos_login(request):
         from django.contrib.auth import get_user_model
 
         User = get_user_model()
+        # The default auth.User does not enforce email uniqueness. Treat both no
+        # match and a duplicate email as ambiguous credentials: authenticating one
+        # arbitrarily chosen duplicate would be a security risk, and an uncaught
+        # MultipleObjectsReturned would surface a 500 instead of INVALID_CREDENTIALS.
         try:
             user_obj = User.objects.get(email=email)
+        except (User.DoesNotExist, User.MultipleObjectsReturned):
+            user_obj = None
+        if user_obj is not None:
             user = authenticate(request, username=user_obj.username, password=password)
-        except User.DoesNotExist:
-            pass
 
     if user is None:
         return Response(
@@ -113,6 +127,47 @@ def pos_login(request):
             status=status.HTTP_403_FORBIDDEN,
         )
 
+    # Resolve and authorize the terminal (if provided) BEFORE issuing any tokens, so a
+    # malformed UUID or an unauthorized user never leaves valid tokens persisted.
+    terminal = None
+    if terminal_uuid:
+        from pos_app.models import POSTerminal
+
+        try:
+            parsed_uuid = uuid.UUID(str(terminal_uuid))
+        except (ValueError, TypeError, AttributeError):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "INVALID_TERMINAL",
+                        "message": "Invalid terminal identifier.",
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            terminal = POSTerminal.objects.select_related("warehouse").get(
+                uuid=parsed_uuid, is_active=True
+            )
+        except POSTerminal.DoesNotExist:
+            terminal = None
+
+        if terminal is not None:
+            assigned_ids = set(terminal.assigned_users.values_list("id", flat=True))
+            if assigned_ids and user.id not in assigned_ids:
+                return Response(
+                    {
+                        "success": False,
+                        "error": {
+                            "code": "TERMINAL_NOT_AUTHORIZED",
+                            "message": "You are not authorized to use this terminal.",
+                        },
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
     # Create tokens using Admin API token system
     from admin_api.models import MobileAuthToken
 
@@ -122,27 +177,19 @@ def pos_login(request):
         device_name=f"POS Terminal {terminal_uuid or 'unknown'}",
     )
 
-    # Get terminal config if UUID provided
+    # Build terminal config and update the heartbeat only for an authorized terminal.
     terminal_data = None
-    if terminal_uuid:
-        from pos_app.models import POSTerminal
-
-        try:
-            terminal = POSTerminal.objects.select_related("warehouse").get(
-                uuid=terminal_uuid, is_active=True
-            )
-            terminal.last_heartbeat = timezone.now()
-            terminal.save(update_fields=["last_heartbeat"])
-            terminal_data = {
-                "uuid": str(terminal.uuid),
-                "name": terminal.name,
-                "warehouse_id": terminal.warehouse_id,
-                "warehouse_name": terminal.warehouse.pos_display_name or terminal.warehouse.name,
-                "hardware_config": terminal.hardware_config,
-                "currency": terminal.effective_currency,
-            }
-        except POSTerminal.DoesNotExist:
-            pass
+    if terminal is not None:
+        terminal.last_heartbeat = timezone.now()
+        terminal.save(update_fields=["last_heartbeat"])
+        terminal_data = {
+            "uuid": str(terminal.uuid),
+            "name": terminal.name,
+            "warehouse_id": terminal.warehouse_id,
+            "warehouse_name": terminal.warehouse.pos_display_name or terminal.warehouse.name,
+            "hardware_config": terminal.hardware_config,
+            "currency": terminal.effective_currency,
+        }
 
     # Get merged POS permissions for the frontend
     from staff_roles.services import get_user_pos_permissions_summary
@@ -231,6 +278,21 @@ def pos_refresh_token(request):
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
+    # Re-verify POS authorization: a still-valid refresh token must not mint new access
+    # tokens once the user has lost active/staff status or their POS role.
+    if not _user_has_pos_access(token_obj.user):
+        token_obj.revoke(reason="POS access revoked")
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "NO_POS_ACCESS",
+                    "message": "Your role no longer has POS access.",
+                },
+            },
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
     # Create a new access token for the same device
     from django.conf import settings as django_settings
 
@@ -267,8 +329,14 @@ def pos_refresh_token(request):
 @permission_classes([IsStaffUser])
 def pos_logout(request):
     """Logout and invalidate tokens."""
+    from admin_api.models import MobileAuthToken
+
     # The MobileTokenAuthentication sets request.auth to the token
     if hasattr(request, "auth") and request.auth:
-        request.auth.delete()
+        token = request.auth
+        # Revoke the paired refresh token(s) for this user/device so logout can't be
+        # defeated by exchanging a still-valid refresh token for a new access token.
+        MobileAuthToken.revoke_all_for_device(token.user, token.device_id, reason="POS logout")
+        token.delete()
 
     return Response({"success": True, "message": "Logged out successfully."})

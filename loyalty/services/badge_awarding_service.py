@@ -13,6 +13,11 @@ from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
+# Order statuses that count as a completed purchase for badge criteria.
+# Mirrors the terminal/fulfilment values in orders.models.Order.STATUS_CHOICES
+# ("completed" is not a valid status; "delivered" is the terminal one).
+PURCHASED_ORDER_STATUSES = ["processing", "shipped", "delivered"]
+
 
 class BadgeAwardingService:
     """
@@ -117,7 +122,7 @@ class BadgeAwardingService:
         from orders.models import Order
 
         order_count = Order.objects.filter(
-            user=member.customer, status__in=["processing", "completed", "shipped"]
+            user=member.customer, status__in=PURCHASED_ORDER_STATUSES
         ).count()
 
         return order_count >= 1
@@ -127,7 +132,7 @@ class BadgeAwardingService:
         from orders.models import Order
 
         order_count = Order.objects.filter(
-            user=member.customer, status__in=["processing", "completed", "shipped"]
+            user=member.customer, status__in=PURCHASED_ORDER_STATUSES
         ).count()
 
         return order_count >= criteria_value
@@ -137,7 +142,7 @@ class BadgeAwardingService:
         from orders.models import Order
 
         total_spend = Order.objects.filter(
-            user=member.customer, status__in=["processing", "completed", "shipped"]
+            user=member.customer, status__in=PURCHASED_ORDER_STATUSES
         ).aggregate(total=Sum("total_amount"))["total"] or Decimal("0")
 
         return total_spend >= Decimal(str(criteria_value))
@@ -175,9 +180,7 @@ class BadgeAwardingService:
 
         # Get orders grouped by month
         monthly_orders = (
-            Order.objects.filter(
-                user=member.customer, status__in=["processing", "completed", "shipped"]
-            )
+            Order.objects.filter(user=member.customer, status__in=PURCHASED_ORDER_STATUSES)
             .annotate(month=TruncMonth("created_at"))
             .values("month")
             .annotate(count=Count("id"))
@@ -241,7 +244,7 @@ class BadgeAwardingService:
         # Check for orders on birthday
         birthday_orders = Order.objects.filter(
             user=member.customer,
-            status__in=["processing", "completed", "shipped"],
+            status__in=PURCHASED_ORDER_STATUSES,
             created_at__month=birthday_month,
             created_at__day=birthday_day,
         ).count()
@@ -265,7 +268,7 @@ class BadgeAwardingService:
 
         early_morning_count = Order.objects.filter(
             user=member.customer,
-            status__in=["processing", "completed", "shipped"],
+            status__in=PURCHASED_ORDER_STATUSES,
             created_at__hour__lt=9,
         ).count()
 
@@ -277,7 +280,7 @@ class BadgeAwardingService:
 
         late_night_count = Order.objects.filter(
             user=member.customer,
-            status__in=["processing", "completed", "shipped"],
+            status__in=PURCHASED_ORDER_STATUSES,
             created_at__hour__gte=21,
         ).count()
 
@@ -290,7 +293,7 @@ class BadgeAwardingService:
         # Django week_day: 1=Sunday, 2=Monday, ..., 7=Saturday
         weekend_count = Order.objects.filter(
             user=member.customer,
-            status__in=["processing", "completed", "shipped"],
+            status__in=PURCHASED_ORDER_STATUSES,
             created_at__week_day__in=[1, 7],  # Sunday=1, Saturday=7
         ).count()
 
@@ -304,9 +307,7 @@ class BadgeAwardingService:
 
         # Get all completed orders sorted by date
         orders = (
-            Order.objects.filter(
-                user=member.customer, status__in=["processing", "completed", "shipped"]
-            )
+            Order.objects.filter(user=member.customer, status__in=PURCHASED_ORDER_STATUSES)
             .order_by("created_at")
             .values_list("created_at", flat=True)
         )
@@ -331,7 +332,7 @@ class BadgeAwardingService:
 
         high_value_orders = Order.objects.filter(
             user=member.customer,
-            status__in=["processing", "completed", "shipped"],
+            status__in=PURCHASED_ORDER_STATUSES,
             total_amount__gte=Decimal(str(criteria_value)),
         ).exists()
 
@@ -343,7 +344,7 @@ class BadgeAwardingService:
 
         # Check if any order has enough items
         orders = Order.objects.filter(
-            user=member.customer, status__in=["processing", "completed", "shipped"]
+            user=member.customer, status__in=PURCHASED_ORDER_STATUSES
         ).prefetch_related("items")
 
         for order in orders:
@@ -362,9 +363,7 @@ class BadgeAwardingService:
 
         # Group orders by month and count them
         monthly_orders = (
-            Order.objects.filter(
-                user=member.customer, status__in=["processing", "completed", "shipped"]
-            )
+            Order.objects.filter(user=member.customer, status__in=PURCHASED_ORDER_STATUSES)
             .annotate(month=TruncMonth("created_at"))
             .values("month")
             .annotate(count=Count("id"))

@@ -104,7 +104,10 @@ def customer_search(request):
 
     users = (
         User.objects.filter(
-            Q(email__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q)
+            Q(email__icontains=q)
+            | Q(first_name__icontains=q)
+            | Q(last_name__icontains=q)
+            | Q(profile__phone__icontains=q)
         )
         .filter(
             is_active=True,

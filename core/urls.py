@@ -34,6 +34,7 @@ from core.currency_views import set_currency
 from core.e2e_inspection import inspect_order
 from core.error_reporting import views as error_reporting_views
 from core.sandbox.views import tamper_report
+from design.nav_personalize import personalize_nav
 from pos_app import views as pos_views
 
 # Health check endpoints (must be accessible without auth, before any middleware)
@@ -206,6 +207,10 @@ urlpatterns += [
     path("api/vouchers/", include("vouchers.api.urls")),
     # Page Builder API (non-i18n as it's an API)
     path("api/page-builder/", include("page_builder.api_urls")),
+    # Visibility engine API — shared rule-group attach/list/quick-create (non-i18n)
+    path("api/visibility/", include("visibility.api_urls")),
+    # Deferred (per-visitor) navigation resolver — storefront, read-only (non-i18n)
+    path("api/design/personalize-nav/", personalize_nav, name="personalize_nav"),
     # Subscriptions API (non-i18n as it's an API)
     path("api/subscriptions/", include("subscriptions.api_urls")),
     # SEO Generator API (non-i18n as it's an API)
@@ -365,6 +370,7 @@ urlpatterns += i18n_patterns(
     path("admin/loyalty/", include("loyalty.urls")),
     path("admin/social_sharing/", include("social_sharing.urls")),
     path("admin/referrals/", include("referrals.urls")),
+    path("admin/insights/", include("attribution.admin_urls")),
     path("admin/orders/", include("orders.admin_urls")),
     path("admin/cart/", include("cart.admin_urls")),
     path("admin/catalog/", include("catalog.admin_urls")),

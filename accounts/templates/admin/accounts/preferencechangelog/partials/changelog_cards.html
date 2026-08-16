@@ -1,8 +1,10 @@
 {% load i18n %}
 
-<div class="list-row-cards">
+<div class="list-row-cards compact">
     {% for log in logs %}
-    <div class="list-row-card">
+    <div class="list-row-card compact">
+        {% include "admin/includes/action_checkbox.html" with pk=log.pk %}
+
         <div class="list-row-card-icon">
             {% if log.source == 'user' %}
                 <i class="fas fa-user"></i>
@@ -31,42 +33,37 @@
                     {{ log.action }}
                 </a>
             </h3>
-            <p class="list-row-card-subtitle">
+
+            <p class="list-row-card-subtitle" title="{{ log.user.email }}">
                 <i class="fas fa-user"></i> {{ log.user.email }}
             </p>
 
             <div class="list-row-card-badges">
                 {% if log.source == 'user' %}
-                <span class="list-row-card-badge primary">
-                    {{ log.get_source_display }}
-                </span>
+                <span class="list-row-card-badge primary">{{ log.get_source_display }}</span>
                 {% elif log.source == 'admin' %}
-                <span class="list-row-card-badge warning">
-                    {{ log.get_source_display }}
-                </span>
+                <span class="list-row-card-badge warning">{{ log.get_source_display }}</span>
                 {% elif log.source == 'unsubscribe' %}
-                <span class="list-row-card-badge error">
-                    {{ log.get_source_display }}
-                </span>
+                <span class="list-row-card-badge error">{{ log.get_source_display }}</span>
                 {% elif log.source == 'system' %}
-                <span class="list-row-card-badge">
-                    {{ log.get_source_display }}
-                </span>
+                <span class="list-row-card-badge">{{ log.get_source_display }}</span>
                 {% else %}
-                <span class="list-row-card-badge success">
-                    {{ log.get_source_display }}
-                </span>
+                <span class="list-row-card-badge success">{{ log.get_source_display }}</span>
                 {% endif %}
             </div>
 
-            {% if log.change_summary %}
             <div class="list-row-card-description">
-                {{ log.change_summary }}
+                {% if log.change_summary %}
+                    {{ log.change_summary }}
+                {% else %}
+                    <span class="changelog-diff">{{ log.old_value|default:"—" }}</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="changelog-diff">{{ log.new_value|default:"—" }}</span>
+                {% endif %}
             </div>
-            {% endif %}
 
             <div class="list-row-card-meta">
-                <div class="list-row-card-meta-item">
+                <div class="list-row-card-meta-item" title="{{ log.timestamp|date:"M d, Y H:i:s" }}">
                     <i class="fas fa-clock"></i>
                     <span>{{ log.timestamp|date:"M d, Y H:i" }}</span>
                 </div>
@@ -74,12 +71,6 @@
                 <div class="list-row-card-meta-item">
                     <i class="fas fa-globe"></i>
                     <span>{{ log.ip_address }}</span>
-                </div>
-                {% endif %}
-                {% if log.user_agent %}
-                <div class="list-row-card-meta-item">
-                    <i class="fas fa-desktop"></i>
-                    <span>{{ log.user_agent|truncatechars:40 }}</span>
                 </div>
                 {% endif %}
             </div>

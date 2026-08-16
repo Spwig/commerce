@@ -105,7 +105,9 @@ class UCPCheckoutTotalsSerializer(serializers.Serializer):
 
 
 class UCPCheckoutPaymentSerializer(serializers.Serializer):
-    status = serializers.CharField(help_text="requires_payment | requires_action | completed")
+    status = serializers.CharField(
+        help_text="requires_payment | requires_action | completed | canceled"
+    )
     continue_url = serializers.URLField(
         allow_null=True, help_text="Storefront URL a human can use to finish checkout."
     )
@@ -115,6 +117,15 @@ class UCPCheckoutOrderSerializer(serializers.Serializer):
     id = serializers.CharField()
     number = serializers.CharField()
     status = serializers.CharField()
+
+
+class UCPMandateSerializer(serializers.Serializer):
+    format = serializers.CharField(
+        help_text="ap2-checkout-mandate+sd-jwt | ap2-payment-mandate+sd-jwt"
+    )
+    alg = serializers.CharField(help_text="Signing algorithm (e.g. ES256).")
+    kid = serializers.CharField(help_text="Merchant AP2 key id (RFC 7638 thumbprint).")
+    value = serializers.CharField(help_text="The signed SD-JWT presentation.")
 
 
 class UCPCheckoutSessionSerializer(serializers.Serializer):
@@ -130,6 +141,10 @@ class UCPCheckoutSessionSerializer(serializers.Serializer):
     payment = UCPCheckoutPaymentSerializer()
     messages = serializers.ListField(child=serializers.CharField())
     order = UCPCheckoutOrderSerializer(required=False, allow_null=True)
+    # Present only on a completed checkout when the store has an AP2 key: the
+    # merchant-signed AP2 Checkout Mandate and Payment Mandate (SD-JWTs).
+    mandate = UCPMandateSerializer(required=False, allow_null=True)
+    payment_mandate = UCPMandateSerializer(required=False, allow_null=True)
 
 
 # --- Checkout request bodies (documentation only) -----------------------------

@@ -1,0 +1,52 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Confirm Email" %}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-header__title">{% trans "Email Confirmation" %}</h1>
+        <p class="page-header__subtitle">{% trans "Marketing email subscription" %}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                {% if not confirmed %}
+                    {# GET: ask for an explicit click so link-prefetchers can't auto-confirm. #}
+                    <h2 class="text-xl font-semibold mb-2">{% trans "Confirm your subscription" %}</h2>
+                    <p class="mb-4">
+                        {% trans "Click the button below to confirm your email address and start receiving the marketing messages you opted into." %}
+                    </p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            {% trans "Confirm my email" %}
+                        </button>
+                    </form>
+                {% elif success %}
+                    <h2 class="text-xl font-semibold mb-2">{% trans "You're all set!" %}</h2>
+                    <p class="mb-4">
+                        {% trans "Your email address has been confirmed. You'll now receive the marketing messages you opted into. You can update your choices at any time from your preference center." %}
+                    </p>
+                    <a href="{% url 'accounts:communication_preferences' %}" class="btn btn-primary">
+                        {% trans "Manage preferences" %}
+                    </a>
+                {% else %}
+                    <h2 class="text-xl font-semibold mb-2">{% trans "This link is no longer valid" %}</h2>
+                    <p class="mb-4">
+                        {% trans "This confirmation link is invalid or has expired. Confirmation links are valid for 24 hours. You can request a new one from your preference center." %}
+                    </p>
+                    <a href="{% url 'accounts:communication_preferences' %}" class="btn btn-secondary">
+                        {% trans "Go to preference center" %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

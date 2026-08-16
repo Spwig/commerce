@@ -123,8 +123,9 @@ class SSOProviderConfigAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
-        # Singleton — only allow adding if no config exists
-        return not SSOProviderConfig.objects.exists()
+        # Singleton — only allow adding if the user has the add permission
+        # and no config exists yet.
+        return super().has_add_permission(request) and not SSOProviderConfig.objects.exists()
 
     def has_delete_permission(self, request, obj=None):
         return False

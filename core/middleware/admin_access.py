@@ -4,10 +4,10 @@ Admin Access Control Middleware
 Prevents POS-only staff (and any staff without admin-access roles) from
 accessing the Django admin panel.
 
-Rules:
+Rules (deny-by-default):
 - Superusers always pass
 - Staff with at least one role that has can_access_admin=True pass
-- Staff with NO roles assigned pass (backwards compatibility)
+- Staff with NO roles assigned are denied — they must be given a role
 - Staff whose only roles have can_access_admin=False get redirected
 - Non-staff users are handled by Django's built-in admin auth
 """
@@ -16,6 +16,7 @@ import logging
 import re
 
 from django.contrib import messages
+from django.contrib.messages.storage import default_storage
 from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 
@@ -56,14 +57,22 @@ class AdminAccessMiddleware:
         from staff_roles.services import can_access_admin
 
         if not can_access_admin(user):
-            messages.error(
-                request,
+            # This middleware runs before MessageMiddleware, so request._messages
+            # isn't set up yet — and returning the redirect here short-circuits
+            # MessageMiddleware entirely, so it never gets to persist a message
+            # either. Build a fresh storage and write the message onto the
+            # redirect ourselves: the denied user still gets the explanation on
+            # the storefront, with no MessageFailure 500.
+            response = redirect("/")
+            storage = default_storage(request)
+            storage.add(
+                messages.ERROR,
                 _(
-                    "Your account does not have admin panel access. "
-                    "Contact your store owner if you believe this is an error."
+                    "Your account doesn't have admin access yet. "
+                    "Ask your store owner to assign you a staff role."
                 ),
             )
-            # Redirect to the storefront home page
-            return redirect("/")
+            storage.update(response)
+            return response
 
         return self.get_response(request)

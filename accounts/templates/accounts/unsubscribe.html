@@ -76,14 +76,24 @@
                                     {% trans "This will unsubscribe you from all marketing communications. You will still receive transactional emails (order confirmations, shipping updates, etc.)." %}
                                 </p>
 
-                                <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">
-                                    {% trans "Reason (optional):" %}
-                                </label>
-                                <textarea id="reason"
-                                          name="reason"
-                                          rows="2"
-                                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                          placeholder="{% trans 'Help us improve by telling us why you\'re unsubscribing' %}"></textarea>
+                                {% if show_unsubscribe_reasons %}
+                                <fieldset class="mb-3">
+                                    <legend class="block text-sm font-medium text-gray-700 mb-2">
+                                        {% trans "Reason (optional):" %}
+                                    </legend>
+                                    {% for value, label in unsubscribe_reasons %}
+                                    <label class="flex items-center gap-2 text-sm text-gray-700 mb-1">
+                                        <input type="radio" name="reason" value="{{ value }}">
+                                        <span>{{ label }}</span>
+                                    </label>
+                                    {% endfor %}
+                                    <input type="text"
+                                           name="reason_other"
+                                           maxlength="500"
+                                           class="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                           placeholder="{% trans 'If “Other”, please tell us more' %}">
+                                </fieldset>
+                                {% endif %}
 
                                 <button type="submit"
                                         class="mt-3 w-full px-4 py-2 bg-red-600 text-white font-medium text-sm rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
@@ -96,6 +106,7 @@
             </div>
 
             <!-- Preference Center Link -->
+            {% if preference_center_enabled %}
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
                 <h3 class="text-lg font-semibold text-blue-900 mb-2">
                     {% trans "Want more control?" %}
@@ -108,6 +119,7 @@
                     {% trans "Go to Preference Center" %}
                 </a>
             </div>
+            {% endif %}
 
             <!-- Help Text -->
             <div class="mt-6 text-center text-sm text-gray-600">

@@ -7,6 +7,7 @@ Background tasks for affiliate program automation.
 import logging
 from datetime import timedelta
 from decimal import Decimal
+from urllib.parse import urljoin
 
 from celery import shared_task
 from django.contrib.sites.models import Site
@@ -32,6 +33,7 @@ def send_affiliate_monthly_reports():
         dict: Summary of emails sent and skipped
     """
     from affiliate.models import Affiliate, AffiliateReportSettings, Commission
+    from core.models import SiteSettings
     from email_system.services.email_sender import EmailSendingService
 
     # Get settings
@@ -69,6 +71,12 @@ def send_affiliate_monthly_reports():
 
     # Get site
     site = Site.objects.get(pk=1)
+
+    # Build the affiliate portal URL from the merchant's configured canonical
+    # store URL (which carries the correct scheme/host) rather than hardcoding
+    # https:// against the raw Sites-framework domain.
+    site_settings = SiteSettings.get_settings()
+    portal_url = urljoin(site_settings.site_url.rstrip("/") + "/", "affiliate/dashboard/")
 
     # Get all active affiliates
     affiliates = Affiliate.objects.filter(status="active").select_related("user")
@@ -164,7 +172,7 @@ def send_affiliate_monthly_reports():
                 "pending_balance": f"${pending_balance:.2f}",
                 "payment_status": payment_status,
                 "next_payout_date": next_payout_date,
-                "portal_url": f"https://{site.domain}/affiliate/dashboard/",
+                "portal_url": portal_url,
                 "shop_name": site.name,
                 "support_email": f"support@{site.domain}",
             }

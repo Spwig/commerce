@@ -22,6 +22,7 @@ url_patterns:
 related:
   - inventory-warehouses
   - add-product
+  - stock-bulk-actions
 published: true
 ---
 

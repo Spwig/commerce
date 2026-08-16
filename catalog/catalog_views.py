@@ -4,14 +4,27 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
 
+from staff_roles.decorators import requires_permission
+
 from .models import (
+    Brand,
     Category,
+    Collection,
     DigitalAsset,
     ExternalLicenseSync,
     LicenseKey,
     LicensePool,
     Product,
     Promotion,
+)
+
+# Q matching a fully-populated SEO record (title + description), shared by the
+# brand/collection filter endpoints so "SEO complete" agrees with {% seo_badge %}.
+_SEO_COMPLETE_Q = (
+    Q(meta_title__isnull=False)
+    & ~Q(meta_title="")
+    & Q(meta_description__isnull=False)
+    & ~Q(meta_description="")
 )
 
 
@@ -177,6 +190,7 @@ def filter_promotions(request):
 
 
 @staff_member_required
+@requires_permission("catalog.view_licensekey", ajax=True)
 def filter_license_keys(request):
     """
     AJAX endpoint for filtering license keys in admin
@@ -246,6 +260,7 @@ def filter_license_keys(request):
 
 
 @staff_member_required
+@requires_permission("catalog.view_licensepool", ajax=True)
 def filter_license_pools(request):
     """
     AJAX endpoint for filtering license pools in admin
@@ -304,6 +319,7 @@ def filter_license_pools(request):
 
 
 @staff_member_required
+@requires_permission("catalog.view_externallicensesync", ajax=True)
 def filter_external_sync(request):
     """
     AJAX endpoint for filtering external license syncs in admin
@@ -368,6 +384,7 @@ def filter_external_sync(request):
 
 
 @staff_member_required
+@requires_permission("catalog.view_digitalasset", ajax=True)
 def filter_digital_assets(request):
     """
     AJAX endpoint for filtering digital assets in admin
@@ -584,3 +601,109 @@ def filter_products(request):
     )
 
     return JsonResponse({"html": html, "count": count})
+
+
+@staff_member_required
+def filter_brands(request):
+    """
+    AJAX endpoint for filtering brands in admin.
+
+    Query Parameters:
+    - search: Search by name or description
+    - status: active / inactive
+    - featured: '1' → featured only
+    - seo: complete / incomplete (meta_title + meta_description)
+    """
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    if not (
+        request.user.has_perm("catalog.view_brand") or request.user.has_perm("catalog.change_brand")
+    ):
+        return JsonResponse({"error": "Forbidden"}, status=403)
+
+    brands = Brand.objects.annotate(num_products=Count("products"))
+
+    search = request.GET.get("search", "").strip()
+    if search:
+        brands = brands.filter(Q(name__icontains=search) | Q(description__icontains=search))
+
+    status_filter = request.GET.get("status", "")
+    if status_filter == "active":
+        brands = brands.filter(is_active=True)
+    elif status_filter == "inactive":
+        brands = brands.filter(is_active=False)
+
+    if request.GET.get("featured", "") == "1":
+        brands = brands.filter(is_featured=True)
+
+    seo_filter = request.GET.get("seo", "")
+    if seo_filter == "complete":
+        brands = brands.filter(_SEO_COMPLETE_Q)
+    elif seo_filter == "incomplete":
+        brands = brands.exclude(_SEO_COMPLETE_Q)
+
+    brands = brands.order_by("name")
+
+    html = render_to_string(
+        "admin/catalog/brand/partials/brand_cards.html",
+        {"brands": brands, "request": request},
+    )
+    return JsonResponse({"html": html, "count": brands.count()})
+
+
+@staff_member_required
+def filter_collections(request):
+    """
+    AJAX endpoint for filtering collections in admin.
+
+    Query Parameters:
+    - search: Search by name or description
+    - type: collection_type (manual/auto/...)
+    - status: active / inactive
+    - featured: '1' → featured only
+    - seo: complete / incomplete (meta_title + meta_description)
+    """
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    if not (
+        request.user.has_perm("catalog.view_collection")
+        or request.user.has_perm("catalog.change_collection")
+    ):
+        return JsonResponse({"error": "Forbidden"}, status=403)
+
+    collections = Collection.objects.annotate(num_products=Count("products"))
+
+    search = request.GET.get("search", "").strip()
+    if search:
+        collections = collections.filter(
+            Q(name__icontains=search) | Q(description__icontains=search)
+        )
+
+    type_filter = request.GET.get("type", "")
+    if type_filter:
+        collections = collections.filter(collection_type=type_filter)
+
+    status_filter = request.GET.get("status", "")
+    if status_filter == "active":
+        collections = collections.filter(is_active=True)
+    elif status_filter == "inactive":
+        collections = collections.filter(is_active=False)
+
+    if request.GET.get("featured", "") == "1":
+        collections = collections.filter(is_featured=True)
+
+    seo_filter = request.GET.get("seo", "")
+    if seo_filter == "complete":
+        collections = collections.filter(_SEO_COMPLETE_Q)
+    elif seo_filter == "incomplete":
+        collections = collections.exclude(_SEO_COMPLETE_Q)
+
+    collections = collections.order_by("sort_order", "name")
+
+    html = render_to_string(
+        "admin/catalog/collection/partials/collection_cards.html",
+        {"collections": collections, "request": request},
+    )
+    return JsonResponse({"html": html, "count": collections.count()})

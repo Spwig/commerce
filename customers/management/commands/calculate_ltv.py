@@ -84,12 +84,20 @@ class Command(BaseCommand):
             "Please specify either --user <id>, --all, --check-quality, or --rebuild-cohorts"
         )
 
+    @staticmethod
+    def _is_guest(user):
+        """Guest accounts never have a CustomerMetrics row (see calculate_for_user)."""
+        return not user.is_authenticated or user.username.startswith("guest_")
+
     def calculate_single_user(self, user_id, method, use_async):
         """Calculate LTV for a single user"""
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             raise CommandError(f"User with ID {user_id} not found")
+
+        if self._is_guest(user):
+            raise CommandError(f"User {user_id} is a guest account and has no LTV to calculate")
 
         self.stdout.write(f"Calculating LTV for user {user_id} using {method} method...")
 

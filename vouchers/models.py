@@ -47,6 +47,19 @@ class VoucherCode(models.Model):
         db_index=True,
         help_text=_("Original coupon ID from source platform"),
     )
+
+    # Revenue attribution: tie a code to a campaign (e.g. an influencer or
+    # partner code) so redeeming it credits that campaign in the attribution
+    # engine, even when link-based tracking never fired.
+    attribution_campaign = models.ForeignKey(
+        "attribution.Campaign",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="voucher_codes",
+        verbose_name=_("attribution campaign"),
+        help_text=_("Redeeming this code credits this campaign in revenue attribution."),
+    )
     migration_job = models.ForeignKey(
         "migration.MigrationJob",
         on_delete=models.SET_NULL,

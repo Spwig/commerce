@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Spwig eCommerce API Documentation",
-        "version": "1.7.1",
+        "version": "1.7.3",
         "description": "## Spwig API Documentation\n\nWelcome to the Spwig eCommerce Platform API documentation. This API enables you to build custom headless storefronts, mobile apps, and integrations.\n\n### Authentication\n\nMost endpoints require authentication using one of these methods:\n\n- **Token Authentication**: Include `Authorization: Token <your-token>` header\n- **Session Authentication**: Use Spwig session cookies (for browser-based apps)\n\nPublic endpoints (like product catalog) allow anonymous access.\n\n### API Standards\n\n- **Pagination**: List endpoints return 20 items per page by default. Use `?page=N` to navigate.\n- **Filtering**: Most list endpoints support query parameter filtering\n- **Multi-language**: Set `Accept-Language` header for localized responses\n- **Multi-currency**: Currency information included in price responses\n\n### Response Format\n\nAll endpoints return JSON with a consistent format:\n```json\n{\n  \"success\": true,\n  \"data\": { ... },\n  \"message\": \"Optional status message\"\n}\n```\n\n### Rate Limiting\n\nPublic endpoints may be rate-limited. Authenticated requests have higher limits."
     },
     "paths": {
@@ -1826,6 +1826,82 @@
                             }
                         },
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/api/admin/analytics/attribution/": {
+            "get": {
+                "operationId": "api_admin_analytics_attribution_retrieve",
+                "description": "\n    Multi-touch revenue attribution for the store — the same data as the admin\n    Insights dashboard, so the mobile app can render the live model-flip.\n\n    Scope required: **analytics.attribution** (read). Reachable by an admin\n    session, the merchant mobile app, or a token holding that scope.\n\n    **Rate Limit:** 300 requests per minute\n\n    Accepts a `period` (`last_7_days`, `last_14_days`, `last_30_days`,\n    `last_90_days`, `month_to_date`, or `custom`). For `custom`, provide\n    `start_date` and `end_date` (YYYY-MM-DD). Pass `model` to return only one\n    model's block (lighter payload); by default every model is returned so the\n    app can flip models instantly with no round-trip.\n\n    Returns, for the resolved range: totals + reconciliation flag, per-model\n    channel breakdown and time-series (`by_model`), the assisted `influenced`\n    lens, top journey `journeys`, and `campaigns`.\n    ",
+                "summary": "Get revenue attribution",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "end_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Custom range end (YYYY-MM-DD); required when period=custom"
+                    },
+                    {
+                        "in": "query",
+                        "name": "model",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Return only this model's block (default: all models)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "period",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "last_7_days | last_14_days | last_30_days | last_90_days | month_to_date | custom"
+                    },
+                    {
+                        "in": "query",
+                        "name": "start_date",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Custom range start (YYYY-MM-DD); required when period=custom"
+                    }
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AttributionAnalyticsResponse"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Invalid period or date range."
+                    },
+                    "401": {
+                        "description": "Authentication required"
+                    },
+                    "403": {
+                        "description": "Permission denied"
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded"
                     }
                 }
             }
@@ -11565,6 +11641,71 @@
                             }
                         },
                         "description": "No such session."
+                    }
+                }
+            }
+        },
+        "/api/agentic/ucp/checkout-sessions/{checkout_id}/cancel/": {
+            "post": {
+                "operationId": "agentic_ucp_checkout_cancel",
+                "description": "Cancel an in-progress checkout session so it can no longer be paid. Returns the session with status=canceled. Idempotent. A checkout that has already completed cannot be canceled (409 already_completed); an unknown id is 404.",
+                "summary": "Cancel UCP checkout session",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "checkout_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Agentic Commerce"
+                ],
+                "security": [
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UCPCheckoutSession"
+                                }
+                            }
+                        },
+                        "description": "The canceled UCP checkout session."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UCPError"
+                                }
+                            }
+                        },
+                        "description": "Signature required."
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UCPError"
+                                }
+                            }
+                        },
+                        "description": "No such session."
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UCPError"
+                                }
+                            }
+                        },
+                        "description": "Already completed."
                     }
                 }
             }
@@ -28266,8 +28407,7 @@
                                 "$ref": "#/components/schemas/POSAddToCartRequest"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "responses": {
                     "200": {
@@ -35872,7 +36012,7 @@
             },
             "post": {
                 "operationId": "api_subscriptions_subscriptions_create",
-                "description": "Create a new subscription.\n\n        **Required Fields**:\n        - `plan_id`: UUID of subscription plan\n        - `payment_token_id`: UUID of saved payment token\n\n        **Optional Fields**:\n        - `product_id`: Link subscription to specific product\n        - `variant_id`: Link subscription to specific product variant\n        - `trial_override_days`: Override plan's default trial period\n\n        **Use Case**: Subscribe user to a plan during checkout or from pricing page.\n\n        **Security**: Requires authentication. Creates subscription for authenticated user.",
+                "description": "Create a new subscription.\n\n        **Required Fields**:\n        - `plan_id`: UUID of subscription plan\n        - `payment_token_id`: UUID of saved payment token\n\n        **Optional Fields**:\n        - `product_id`: Link subscription to specific product\n        - `variant_id`: Link subscription to specific product variant\n\n        **Use Case**: Subscribe user to a plan during checkout or from pricing page.\n\n        **Security**: Requires authentication. Creates subscription for authenticated user.",
                 "summary": "Create subscription",
                 "tags": [
                     "Subscriptions"
@@ -37712,54 +37852,6 @@
                         "description": ""
                     }
                 }
-            },
-            "post": {
-                "operationId": "api_vouchers_applied_create",
-                "description": "Apply a voucher to the user's cart. Validates voucher eligibility, calculates discount, and adds to cart. Returns error if voucher is invalid or already applied.",
-                "summary": "Apply voucher to cart",
-                "tags": [
-                    "Vouchers"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "tokenAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AppliedVoucher"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
             }
         },
         "/api/vouchers/applied/{id}/": {
@@ -37781,123 +37873,6 @@
                 "tags": [
                     "Vouchers"
                 ],
-                "security": [
-                    {
-                        "tokenAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AppliedVoucher"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "put": {
-                "operationId": "api_vouchers_applied_update",
-                "description": "Update an applied voucher in the cart. Can refresh discount calculation if cart contents changed.",
-                "summary": "Update applied voucher",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this Applied Voucher.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "Vouchers"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AppliedVoucherRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "security": [
-                    {
-                        "tokenAuth": []
-                    },
-                    {
-                        "cookieAuth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AppliedVoucher"
-                                }
-                            }
-                        },
-                        "description": ""
-                    }
-                }
-            },
-            "patch": {
-                "operationId": "api_vouchers_applied_partial_update",
-                "description": "Update specific fields of an applied voucher. Useful for recalculating discounts without full voucher reapplication.",
-                "summary": "Partially update applied voucher",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "A unique integer value identifying this Applied Voucher.",
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "Vouchers"
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedAppliedVoucherRequest"
-                            }
-                        },
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedAppliedVoucherRequest"
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/PatchedAppliedVoucherRequest"
-                            }
-                        }
-                    }
-                },
                 "security": [
                     {
                         "tokenAuth": []
@@ -39710,6 +39685,70 @@
                             }
                         },
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/api/wallet/wallets/{id}/adjust/": {
+            "post": {
+                "operationId": "api_wallet_wallets_adjust_create",
+                "description": "Apply a manual staff correction to a customer's wallet. `direction` (increase/decrease) sets the sign of the positive `amount`. Recorded as a distinct adjustment ledger entry. Fails if a decrease would take the balance below zero, the currency does not match, or the wallet is frozen.",
+                "summary": "Adjust a wallet balance",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this Customer Wallet.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Wallet"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WalletAdjustRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WalletAdjustRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WalletAdjustRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WalletTransaction"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Insufficient balance, invalid input, or wallet frozen"
                     }
                 }
             }
@@ -43096,8 +43135,7 @@
                     }
                 },
                 "required": [
-                    "payment_email",
-                    "user_id"
+                    "payment_email"
                 ]
             },
             "AffiliateRegistrationRequest": {
@@ -43128,8 +43166,7 @@
                     }
                 },
                 "required": [
-                    "payment_email",
-                    "user_id"
+                    "payment_email"
                 ]
             },
             "AppSettings": {
@@ -43192,10 +43229,12 @@
                     },
                     "cart": {
                         "type": "integer",
+                        "readOnly": true,
                         "nullable": true
                     },
                     "voucher": {
-                        "type": "integer"
+                        "type": "integer",
+                        "readOnly": true
                     },
                     "voucher_code": {
                         "type": "string",
@@ -43218,6 +43257,7 @@
                 },
                 "required": [
                     "applied_at",
+                    "cart",
                     "discount_amount",
                     "id",
                     "voucher",
@@ -43229,13 +43269,6 @@
                 "type": "object",
                 "description": "Serializer for applied vouchers in cart",
                 "properties": {
-                    "cart": {
-                        "type": "integer",
-                        "nullable": true
-                    },
-                    "voucher": {
-                        "type": "integer"
-                    },
                     "discount_amount": {
                         "type": "string",
                         "format": "decimal",
@@ -43243,8 +43276,7 @@
                     }
                 },
                 "required": [
-                    "discount_amount",
-                    "voucher"
+                    "discount_amount"
                 ]
             },
             "ApplyToEnum": {
@@ -43253,6 +43285,47 @@
                 ],
                 "type": "string",
                 "description": "* `price` - price"
+            },
+            "AttrPeriod": {
+                "type": "object",
+                "properties": {
+                    "start": {
+                        "type": "string"
+                    },
+                    "end": {
+                        "type": "string"
+                    },
+                    "preset": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "end",
+                    "preset",
+                    "start"
+                ]
+            },
+            "AttrTotals": {
+                "type": "object",
+                "properties": {
+                    "attributed": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "orders": {
+                        "type": "integer"
+                    },
+                    "avg_touches": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "attributed",
+                    "avg_touches",
+                    "orders"
+                ]
             },
             "AttributeAssignmentInputRequest": {
                 "type": "object",
@@ -43435,6 +43508,90 @@
                 "required": [
                     "slug",
                     "value"
+                ]
+            },
+            "AttributionAnalyticsResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/AttributionData"
+                    }
+                },
+                "required": [
+                    "data",
+                    "success"
+                ]
+            },
+            "AttributionData": {
+                "type": "object",
+                "description": "The attribution payload (also returned verbatim by the admin dashboard).",
+                "properties": {
+                    "period": {
+                        "$ref": "#/components/schemas/AttrPeriod"
+                    },
+                    "currency": {
+                        "type": "string"
+                    },
+                    "active_model": {
+                        "type": "string"
+                    },
+                    "models": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "totals": {
+                        "$ref": "#/components/schemas/AttrTotals"
+                    },
+                    "reconciles": {
+                        "type": "boolean"
+                    },
+                    "by_model": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "influenced": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "journeys": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "campaigns": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "meta": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    }
+                },
+                "required": [
+                    "active_model",
+                    "by_model",
+                    "campaigns",
+                    "currency",
+                    "influenced",
+                    "journeys",
+                    "meta",
+                    "models",
+                    "period",
+                    "reconciles",
+                    "totals"
                 ]
             },
             "AutocompleteResponse": {
@@ -45868,37 +46025,31 @@
                 "properties": {
                     "line1": {
                         "type": "string",
-                        "default": "",
                         "description": "Street address line 1.",
                         "maxLength": 255
                     },
                     "line2": {
                         "type": "string",
-                        "default": "",
                         "description": "Street address line 2.",
                         "maxLength": 255
                     },
                     "city": {
                         "type": "string",
-                        "default": "",
                         "description": "City.",
                         "maxLength": 100
                     },
                     "state": {
                         "type": "string",
-                        "default": "",
                         "description": "State or province.",
                         "maxLength": 100
                     },
                     "postal_code": {
                         "type": "string",
-                        "default": "",
                         "description": "ZIP or postal code.",
                         "maxLength": 20
                     },
                     "country": {
                         "type": "string",
-                        "default": "",
                         "description": "Country.",
                         "maxLength": 100
                     }
@@ -45910,37 +46061,31 @@
                 "properties": {
                     "line1": {
                         "type": "string",
-                        "default": "",
                         "description": "Street address line 1.",
                         "maxLength": 255
                     },
                     "line2": {
                         "type": "string",
-                        "default": "",
                         "description": "Street address line 2.",
                         "maxLength": 255
                     },
                     "city": {
                         "type": "string",
-                        "default": "",
                         "description": "City.",
                         "maxLength": 100
                     },
                     "state": {
                         "type": "string",
-                        "default": "",
                         "description": "State or province.",
                         "maxLength": 100
                     },
                     "postal_code": {
                         "type": "string",
-                        "default": "",
                         "description": "ZIP or postal code.",
                         "maxLength": 20
                     },
                     "country": {
                         "type": "string",
-                        "default": "",
                         "description": "Country.",
                         "maxLength": 100
                     }
@@ -48463,11 +48608,6 @@
                         "type": "integer",
                         "minimum": 1,
                         "default": 1
-                    },
-                    "trial_override_days": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "nullable": true
                     }
                 },
                 "required": [
@@ -50393,6 +50533,14 @@
                     "data"
                 ]
             },
+            "DirectionEnum": {
+                "enum": [
+                    "increase",
+                    "decrease"
+                ],
+                "type": "string",
+                "description": "* `increase` - Increase balance\n* `decrease` - Decrease balance"
+            },
             "DiscountType45cEnum": {
                 "enum": [
                     "percentage",
@@ -51796,6 +51944,10 @@
                         "maxLength": 255
                     },
                     "device_info": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "nullable": true
+                        },
                         "description": "Additional device information (OS, version, etc.)"
                     }
                 },
@@ -56749,7 +56901,8 @@
                 "description": "Add item to POS cart.",
                 "properties": {
                     "product_id": {
-                        "type": "integer"
+                        "type": "integer",
+                        "nullable": true
                     },
                     "variant_id": {
                         "type": "integer",
@@ -56789,10 +56942,7 @@
                         "nullable": true,
                         "description": "List of optional BundleItem IDs to exclude"
                     }
-                },
-                "required": [
-                    "product_id"
-                ]
+                }
             },
             "POSApplyDiscountRequest": {
                 "type": "object",
@@ -57128,7 +57278,8 @@
                 "properties": {
                     "email": {
                         "type": "string",
-                        "format": "email"
+                        "format": "email",
+                        "maxLength": 150
                     },
                     "first_name": {
                         "type": "string",
@@ -57141,7 +57292,7 @@
                     },
                     "phone": {
                         "type": "string",
-                        "maxLength": 50
+                        "maxLength": 20
                     }
                 },
                 "required": [
@@ -60641,24 +60792,6 @@
                     }
                 }
             },
-            "PatchedAppliedVoucherRequest": {
-                "type": "object",
-                "description": "Serializer for applied vouchers in cart",
-                "properties": {
-                    "cart": {
-                        "type": "integer",
-                        "nullable": true
-                    },
-                    "voucher": {
-                        "type": "integer"
-                    },
-                    "discount_amount": {
-                        "type": "string",
-                        "format": "decimal",
-                        "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$"
-                    }
-                }
-            },
             "PatchedBlogCategoryWriteRequest": {
                 "type": "object",
                 "description": "Category write serializer for staff create/update operations.\nSlug is auto-generated from name if not provided.",
@@ -61769,10 +61902,6 @@
                         "type": "integer",
                         "description": "Installed shipping provider component"
                     },
-                    "user": {
-                        "type": "integer",
-                        "description": "User who owns this provider account"
-                    },
                     "display_name": {
                         "type": "string",
                         "description": "Friendly name for this connection (e.g., \"My Easyship Account\")",
@@ -61988,10 +62117,6 @@
                 "type": "object",
                 "description": "Serializer for return request details",
                 "properties": {
-                    "order": {
-                        "type": "integer",
-                        "description": "Order being returned"
-                    },
                     "reason": {
                         "allOf": [
                             {
@@ -62401,6 +62526,9 @@
                 "type": "object",
                 "description": "Serializer for voucher restrictions",
                 "properties": {
+                    "voucher": {
+                        "type": "integer"
+                    },
                     "restriction_type": {
                         "$ref": "#/components/schemas/RestrictionTypeEnum"
                     },
@@ -63026,7 +63154,6 @@
                     }
                 },
                 "required": [
-                    "affiliate_id",
                     "amount"
                 ]
             },
@@ -63050,7 +63177,6 @@
                     }
                 },
                 "required": [
-                    "affiliate_id",
                     "amount"
                 ]
             },
@@ -64826,6 +64952,7 @@
                     },
                     "user": {
                         "type": "integer",
+                        "readOnly": true,
                         "description": "User who owns this provider account"
                     },
                     "display_name": {
@@ -64922,10 +65049,6 @@
                         "type": "integer",
                         "description": "Installed shipping provider component"
                     },
-                    "user": {
-                        "type": "integer",
-                        "description": "User who owns this provider account"
-                    },
                     "display_name": {
                         "type": "string",
                         "description": "Friendly name for this connection (e.g., \"My Easyship Account\")",
@@ -64941,8 +65064,7 @@
                     }
                 },
                 "required": [
-                    "component",
-                    "user"
+                    "component"
                 ]
             },
             "ProviderConfigResponse": {
@@ -66581,6 +66703,7 @@
                     },
                     "order": {
                         "type": "integer",
+                        "readOnly": true,
                         "description": "Order being returned"
                     },
                     "order_number": {
@@ -66752,10 +66875,6 @@
                 "type": "object",
                 "description": "Serializer for return request details",
                 "properties": {
-                    "order": {
-                        "type": "integer",
-                        "description": "Order being returned"
-                    },
                     "reason": {
                         "allOf": [
                             {
@@ -66770,7 +66889,6 @@
                     }
                 },
                 "required": [
-                    "order",
                     "reason"
                 ]
             },
@@ -70072,7 +70190,7 @@
                 "properties": {
                     "status": {
                         "type": "string",
-                        "description": "requires_payment | requires_action | completed"
+                        "description": "requires_payment | requires_action | completed | canceled"
                     },
                     "continue_url": {
                         "type": "string",
@@ -70137,6 +70255,22 @@
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/UCPCheckoutOrder"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "mandate": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/UCPMandate"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "payment_mandate": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/UCPMandate"
                             }
                         ],
                         "nullable": true
@@ -70306,6 +70440,33 @@
                     "id",
                     "label",
                     "price"
+                ]
+            },
+            "UCPMandate": {
+                "type": "object",
+                "properties": {
+                    "format": {
+                        "type": "string",
+                        "description": "ap2-checkout-mandate+sd-jwt | ap2-payment-mandate+sd-jwt"
+                    },
+                    "alg": {
+                        "type": "string",
+                        "description": "Signing algorithm (e.g. ES256)."
+                    },
+                    "kid": {
+                        "type": "string",
+                        "description": "Merchant AP2 key id (RFC 7638 thumbprint)."
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The signed SD-JWT presentation."
+                    }
+                },
+                "required": [
+                    "alg",
+                    "format",
+                    "kid",
+                    "value"
                 ]
             },
             "UCPPrice": {
@@ -71469,6 +71630,9 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "voucher": {
+                        "type": "integer"
+                    },
                     "restriction_type": {
                         "$ref": "#/components/schemas/RestrictionTypeEnum"
                     },
@@ -71490,13 +71654,17 @@
                     "created_at",
                     "id",
                     "restriction_type",
-                    "restriction_value"
+                    "restriction_value",
+                    "voucher"
                 ]
             },
             "VoucherRestrictionRequest": {
                 "type": "object",
                 "description": "Serializer for voucher restrictions",
                 "properties": {
+                    "voucher": {
+                        "type": "integer"
+                    },
                     "restriction_type": {
                         "$ref": "#/components/schemas/RestrictionTypeEnum"
                     },
@@ -71512,7 +71680,8 @@
                 },
                 "required": [
                     "restriction_type",
-                    "restriction_value"
+                    "restriction_value",
+                    "voucher"
                 ]
             },
             "VoucherUsage": {
@@ -71635,6 +71804,41 @@
                     "message",
                     "success",
                     "waitlist_id"
+                ]
+            },
+            "WalletAdjustRequest": {
+                "type": "object",
+                "description": "Input serializer for a manual staff balance adjustment.\n\nA signed correction: ``direction`` sets whether the (always positive)\n``amount`` raises or lowers the balance. Recorded as a distinct\n``adjustment`` ledger row, separate from organic credits/debits.",
+                "properties": {
+                    "amount": {
+                        "type": "string",
+                        "format": "decimal",
+                        "pattern": "^-?\\d{0,10}(?:\\.\\d{0,2})?$"
+                    },
+                    "direction": {
+                        "$ref": "#/components/schemas/DirectionEnum"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 3
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                    },
+                    "reference_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "default": "",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "amount",
+                    "description",
+                    "direction"
                 ]
             },
             "WalletBalance": {

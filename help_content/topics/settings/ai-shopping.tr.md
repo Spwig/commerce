@@ -1,58 +1,85 @@
 ---
-title: AI Alışveriş
+title: AI Alışverişi
 ---
 
-AI Alışveriş, AI alışveriş asistanlarının ürünleri bulmasına ve sizin onlar adına mağazanızdan satın almasına olanak tanır. Bu özellik **varsayılan olarak kapatılmıştır** — bunu açmak bir amaçlı seçimdir ve bunu yapmadığınız sürece mağazanız bu asistanlara hiçbir şey ifşa etmez.
+AI Alışverişi, AI alışveriş asistanlarının ürünleri bulmanıza ve izin verdiğinizde, bir müşterinin adına mağazanızdan satın almasına olanak tanır. Bu özellik **varsayılan olarak kapalıdır** — açmak bilinçli bir tercihtir ve bunu yapana kadar, mağazanız bu asistanlar için hiçbir şey sunmaz.
 
-## Açma
+## Açmak
 
-**Ayarlar → AI Alışveriş** menüsünü açın ve **Ajentik ticaret etkin** anahtarını açın. Bu noktadan sonra Universal Commerce Protocol'u destekleyen asistanlar mağazanızı bulabilir ve kataloğunuzu okuyabilir. Normal mağazanızla ilgili hiçbir şey değişmez.
+**Ayarlar → AI Alışverişi**'i açın ve **Agensiyel ticaret etkin**'i açın. Bu noktadan sonra, Universal Commerce Protocol'u destekleyen asistanlar mağazanızı bulabilir ve kataloğunu okuyabilir. Kullanıcının normal mağazası hakkında hiçbir şey değişmez.
 
-## Hazırlık paneli
+## Hazır olma panosu
 
-AI Alışveriş sayfasının üst kısmı, şu an bir cümle ile tek bir soruyu yanıtlar: **AI asistanlarının şu anda mağazanızdan gerçekten satın alabiliyor mu?**
+AI Alışverişi sayfasının üst kısmı, tek bir cümlede bir soruya cevap verir: **AI asistanları, mağazanızdan şu an satın alabilir mi?**
 
-- **"AI asistanları mağazanızdan satın alabilir"** — satın alma için gereken her şey yerinde.
-- **"AI asistanları mağazanızı tarayabilir, ancak henüz satın alamaz"** — mağazanız keşfedilebilir, ancak satın alma tamamlanabilmesi için bir şey eksik (genellikle bağlı bir ödeme sağlayıcısı).
-- **"Acil durum durdurma açık"** ya da **"Ajentik ticaret kapatık"** — asistanlara hiçbir şey sunulmuyor.
+- **"AI asistanları mağazanızdan satın alabilir"** — bir satın alma için gerekli her şey mevcut.
+- **"AI asistanları mağazanızı inceleyebilir, ancak henüz satın alamaz"** - mağazanız mevcuttur, ancak bir satın alma tamamlanmadan önce bir şey eksik olabilir (genellikle bağlı bir ödeme sağlayıcısı).
+- **"Acil durum kapatma (Emergency stop) açık"** veya **"Agensiyel ticaret kapalıdır"** - asistanlar için hiçbir şey sunulmuyor.
 
-Karar vermenin altına kısa bir kontrol listesi yer alır — ödeme sağlayıcısı bağlı, kargo ücreti verilebilir, ürünler asistanlara görünür — herhangi bir dikkat gerektiren şeyin yanında bir ipucu vardır. Sayıcılar, asistanların satabileceği ürün sayısı, onlardan gizlediğiniz ürün sayısı, ziyaret eden asistan sayısı ve engellediğiniz asistan sayısını gösterir.
+Yargıdan sonra kısa bir kontrol listesi görürsünüz - ödeme sağlayıcısı bağlı, kargo fiyatlandırması yapılabilir, ürünler asistanlar için görünür - herhangi birinin hâlâ dikkat çekerken bir ipucu var. Sayılar, asistanların satabileceği ürün sayısını, onlardan gizlediğiniz ürün sayısını, ziyaret eden asistan sayısını ve bloke ettiğiniz asistan sayısını gösterir.
 
-Kontrol listesi, **yaşanılan** yapılandırmayı yansıtır: bir ödeme sağlayıcısı bağlayın veya bir kargo yöntemi ekleyin ve karar verme, sayfayı tekrar açtığınızda güncellenir.
+Kontrol listesi, **canlı** kurulumunuzu yansıtır: bir ödeme sağlayıcısı bağlayın veya bir kargo yöntemi ekleyin ve bir sonraki seyahat ettiğinizde yargı güncellenir.
 
-## Acil durum durdurma
+## Acil durum kapatması
 
-**Acil durum durdurma**, ana anahtardan ayrı bir anahtardır. Onu kullanarak, yapılandırmayı bozmadan tüm asistan etkinliklerini hemen durdurabilirsiniz — örneğin bir şeyin yanlış gibi görünmesi durumunda. Temizleyerek tekrar başlatılabilir. Ana anahtarı "bu özellik yapılandırılmış mı?" olarak düşünün ve acil durum durdurmayı "şimdi her şeyi durdur" olarak düşünün.
+**Acil durum kapatması**, ana anahtardan ayrı bir anahtardır. Herhangi bir şeyin yanlış göründüğü bir durumda, yapılandırmanızı çözmeden hemen tüm asistan aktivitesini durdurmak için kullanın. Temizlemek için yeniden başlatın. Ana anahtarı "bu özellik ayarlandı mı" olarak düşünün ve acil durum kapatmasını "hemen her şeyi durdur" olarak düşünün.
 
-## Asistanların ne yapabileceği
+## Asistanların yapabileceğiler
 
-İki seviye erişim, ayrı ayrı kontrol edilir:
+İkisi de ayrı ayrı kontrol edilen iki erişim seviyesi:
 
-- **Okuma** (keşif ve tarayış) daha düşük risklidir. Bir asistan, mağazanızı bulabilir ve ürün detaylarını okuyabilir.
-- **Ödeme** (aslında satın alma) daha yüksek risklidir ve doğrulanmamış asistanlar için kapatlı kalır, bunu izin vermeden.
+- **Okuma** (keşfetme ve inceleme) daha düşük risklidir. Bir asistan mağazanızı bulabilir ve ürün detaylarını okuyabilir.
+- **Ödeme** (aslında satın alma) daha yüksek maliyetlidir ve doğrulanmamış asistanlar için açık kalmaz, sadece izin verdiğinizler için açılır.
 
-Bir mağaza keşfedilebilir ama satın alınabilir olmayabilir — bu, başlamak için yararlı bir yoldur.
+Bir mağaza, satın alma olanağı olmayan bir şekilde keşfedilebilir - bu, başlamak için yararlı bir yoldur.
 
-## Belirli ürünlerin gizlenmesi
+## Belirli Ürünleri Gizleme
 
-Her ürünün **AI alışveriş ajentlerine görünür** ayarı vardır (varsayılan olarak açık). Bunun kapatılması, bir ürünün mağazanızda görünmesine rağmen asistanlardan gizlenmesini sağlar — kendi sitenizden sadece satmak istediğiniz ürünler için kullanışlıdır.
+Her ürünün bir **AI alışveriş ajansları için görünür** ayarı vardır (varsayılan olarak açıktır). Ürünü asistanlardan uzaklaştırmak için kapatın, fakat mağazanızan devam ederken - kendi web sitemiz aracılığıyla satarak tercih ettiğiniz ürünler için yararlıdır.
 
-## Bireysel asistanları yönetme
+## Bireysel Asistanları Yönetme
 
-Bir asistan ilk satın alır ya da denemeye çalışırsa, Spwig bunu **AI Alışveriş → Ajent Kimlikleri** altında kaydeder. Her girdi, asistanın doğrulanmış evini (imza ettiği dizin) ve yaptığı istek sayısını gösterir. Asistanın sunduğu isim ve logoda yalnızca *iddia edilen* detaylar yer alır — bunları bir etiket olarak, kimlik kanıtı olarak değil, düşünün; doğrulanmış ev, güvenilir olan kısım.
+Bir asistan ilk kez satın alırsa - ya da deneseydi - Spwig bunu **AI Alışverişi → Ajans Kimlikleri** altında kaydeder. Her giriş, asistanın doğrulanmış evi (kimlik doğrulaması yapan dizin), güven seviyesi ve ne kadar istek yapmış olduğuna dair bilgileri gösterir. Bir asistanın sunduğu isim ve logo, sadece *konusu* bilgileridir - kimlik doğrulaması olarak değil, bir etiket olarak kabul edin; doğrulanmış ev, güvenilir olan kısımdır.
 
-Yeni asistanlar başlangıçta **sınırlı** olarak başlatılır: satın alım yapabilirler, ancak sınırlar içinde. Birini durdurmak için onu seçin ve **Seçili asistanları engelle**'yi seçin — açık ödeme işlemlerini sonlandırır ve asistan artık satın alamaz, ancak alınan ödemeler aksatılmaz. **Seçili asistanları engellemeyi kaldır** onu sınırlı duruma geri döndürür (asla doğrudan sınırsız olmaz — sınırları kaldırma her zaman ayrı ve amaçlı bir adımdır).
+Her asistan, üç güven seviyesinden birinde yer alır:
 
-## Aktivite kaydı
+| Güven seviyesi | Ne anlama gelir |
+|---|---|
+| **Sınırlı (doğrulanmış, sınırlı)** | Yeni bir asistan için varsayılan. Spwig, kimliğini kaydetti ve politikasında belirtilen sıralama değeri sınırı, harcama sınırı ve ödeme kısıtlamalarını taşır (aşağıya bakınız). |
+| **Doğrulanmış (sınırlar kaldırıldı)** | Bu asistanı tamamen güvence altına almak için sizi bir tercih. Sıralama değeri ve günlük harcama sınırları temizlenir. |
+| **Engellenmiş** | Asistan, mağazanızdan satın alamaz. Açık ödeme işlemleri sona erer, ancak zaten alınan ödeme hiçbir şey değişmeden kalır. |
 
-**AI Alışveriş → Ajent Olayları**, asistanların ne yaptığını gösteren bir manipülasyon izi olan kayıttır — her doğrulanmış istek, her engellenen deneme, her değişiklik. Sadece okunabilir ve düzenlenemez veya silinemez, bu nedenle bir asistanın yaptığı bir satın alma her zaman için kanıt iziniz olarak kalır.
+Bir asistanı durdurmak için listede onu seçin ve **Seçilen Ajansları Engelle**'yi seçin. **Seçilen Ajansları Aç** her zaman onu **Sınırlı**'ya döndürür - doğrulanmış olmaya - çünkü sınırların kaldırılması ayrı bir, bilinçli adımdır.
+
+Bir asistanın sınırlarını tamamen kaldırmak için, onu seçin ve **Doğrulanmış (sınırlar kaldırıldı) olarak yukarı çıkar**'ı seçin.
+
+Bu, maksimum sipariş değerini ve günlük harcama sınırını kaldırır ve asistanı Verified (Doğrulanmış) durumuna geçirir.
+
+Engellenmiş bir asistan atlanır — önce onu engelini kaldırın, ardından ilerletin.
+
+Bu, gerçek bir güven kararı olarak kabul edilmelidir: doğrulama, yeni bir asistanın sahip olduğu koruyucu kriterleri kaldıracağı için, güvenip güvenemeyeceğiniz konusunda emin olduğunuz bir asistanı ilerletin.
+
+## Bir asistanın sınırlarını ayarlamak
+
+Bir asistanın ne yapmaya ne izin verdiğini ayarlamak için asistanın detay sayfasını açın ve **Politika (sınırlar ve izin verilen teklifler)** bölümünü kullanın:
+
+| Alan | Neyi kontrol eder |
+|---|---|
+| **Maksimum sipariş değeri** | Bu asistanın yapabileceği en büyük tek seferdeki sipariş. Sınır koymamak için boş bırakın. |
+| **Günlük harcama sınırı** | Bu asistanın bir günde tüm siparişler üzerinden harcayabileceği en fazla miktar. Sınır koymamak için boş bırakın. |
+| **İndirim kodlarını kabul et** | Mağaza çıkışında kupon kodlarını uygulayabilir mi? |
+| **Hediye kartlarını kabul et** | Hediye kartlarını kullanabilir mi? |
+| **Dijital ürünler** | Dijital ürünler alabilir mi? |
+| **Sorgu hızı (dakika başına)** | Mağazanıza olan sorgu sayısı (dakika başına). |
+
+Yeni bir asistan, somut sipariş değeri ve harcama sınırlarıyla başlar ve indirim kodları, hediye kartları ve dijital ürünler kapalı olur — kasten tutucu varsayılan. Bu alanlardan herhangi birini değiştirin ve kaydedin; her değişiklik **Agent Events**'e kaydedilir ve önceki ve sonraki değerlerle birlikte, kimin neyi ve ne zaman değiştirdiğine dair her zaman bir kayıt olur. Bir asistanı Verified (Doğrulanmış) durumuna getirmek, onun Maksimum sipariş değerini ve Günlük harcama sınırını sizi için kaldırır — onları elle boşaltmak zorunda kalmazsınız.
+
+## Etkinlik kaydı
+
+**AI Shopping → Agent Events**, asistanların ne yaptığının, doğrulanmış her talep, engellenen her girişim, ve hangi değişikliği yaptığınızın kanıtlarını içeren, değiştirilemeyen ve silinemeyen bir kayıttır. Bir asistanın yaptığı bir satın alma asla tartışılmasa da, bu kanıt izni olur.
 
 ## Asistan platformları hakkında bir not
 
-Bu asistanları işleten şirketler (ve onlarda görünmek için gereken kurallar) yeni ve sık sık değişmektedir.
+Bu asistanları çalıştıran şirketler (ve onlarda yer almak için gerekli kurallar) yeni ve sık sık değişir. Ürünlerinizin onlar aracılığıyla alınmasına izin verilmesi için bazılarının sizin bir başvuru yapmanızı veya bölgesel koşulları karşılamanızı gerektirebilir. Spwig, mağazanızı hazırlar; belirli bir asistanın sizi listelemesi onun sorumluluğundadır.
 
-Bazıları, ürünlerin onlar aracılığıyla satın alınabilmesi için başvurmanızı veya bölgesel koşulları karşılamanızı gerektirir.
-
-
-
-Spwig mağazanızı hazır hale getirir; bir asistanın size listeleme yapıp yapmaması o asistanın kararına bağlıdır.
+Tüm markdown biçimlendirmesini, resim yollarını, kod bloklarını ve teknik terimleri koruyun.

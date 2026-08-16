@@ -5,6 +5,7 @@
 <div class="list-row-cards">
     {% for email in emails %}
     <div class="list-row-card">
+        {% include "admin/includes/action_checkbox.html" with pk=email.pk %}
         <div class="list-row-card-icon">
             <i class="fas fa-envelope"></i>
         </div>

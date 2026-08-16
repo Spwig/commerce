@@ -25,7 +25,7 @@ def country_name(country_code):
 
 
 @register.filter
-def shipping_zone(country_code, origin="US"):
+def shipping_zone(country_code, origin=None):
     """
     Get shipping zone for a country code.
 
@@ -35,6 +35,10 @@ def shipping_zone(country_code, origin="US"):
     """
     if not country_code:
         return "international"
+    if origin is None:
+        from core.utils import get_shipping_origin_country
+
+        origin = get_shipping_origin_country()
     return get_shipping_zone(country_code, origin)
 
 

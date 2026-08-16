@@ -59,6 +59,7 @@
             {% has_category user 'email' as can_email %}
             {% has_category user 'payments' as can_payments %}
             {% has_category user 'search' as can_search %}
+            {% has_category user 'analytics' as can_analytics %}
             {% has_category user 'settings' as can_settings %}
             {% has_category user 'pos_admin' as can_pos_admin %}
             {% has_category user 'users' as can_users %}
@@ -82,6 +83,17 @@
                     <span class="menu-text">{% trans "Marketplace" %}</span>
                 </a>
             </div>
+
+            <!-- Insights -->
+            {% if can_analytics %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Insights" %}</div>
+                <a href="{% url 'attribution:dashboard' %}" class="menu-item {% if 'insights/attribution' in request.path %}active{% endif %}" data-tooltip="{% trans 'See where your revenue comes from, across the whole journey' %}">
+                    <span class="menu-icon"><i class="fas fa-diagram-project"></i></span>
+                    <span class="menu-text">{% trans "Revenue Attribution" %}</span>
+                </a>
+            </div>
+            {% endif %}
 
             <!-- Products -->
             {% if can_catalog %}

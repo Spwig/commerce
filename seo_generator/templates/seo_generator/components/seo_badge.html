@@ -1,0 +1,5 @@
+{% load i18n %}{% if applicable %}<span class="seo-badge {% if complete %}seo-badge--complete{% else %}seo-badge--incomplete{% endif %}"
+      title="{% if complete %}{% trans 'SEO complete — meta title and description are set' %}{% else %}{% trans 'SEO incomplete — add a meta title and description' %}{% endif %}">
+    <i class="fas {% if complete %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}" aria-hidden="true"></i>
+    {% if show_label %}<span class="seo-badge__label">{% if complete %}{% trans 'SEO' %}{% else %}{% trans 'No SEO' %}{% endif %}</span>{% endif %}
+</span>{% endif %}

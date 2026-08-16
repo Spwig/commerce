@@ -36,6 +36,12 @@ class CustomerWallet(models.Model):
         help_text=_("Current spendable balance"),
     )
 
+    # RESERVED — not yet wired. No writer moves pending_balance beyond its zero
+    # initialisation, and STATUS_PENDING is excluded from all balance math. The
+    # "hold pending, release when available" behaviour (e.g. a pending-refund
+    # window) is planned-not-built; see the skipped
+    # test_hold_pending_balance_not_yet_implemented for the intended contract.
+    # Kept so the field/status exist for that future work, NOT a shipped feature.
     pending_balance = MoneyField(
         max_digits=12,
         decimal_places=2,

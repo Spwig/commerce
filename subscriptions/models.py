@@ -114,6 +114,15 @@ class SubscriptionPlan(models.Model):
     )
 
     # Setup Fee (one-time charge at subscription start)
+    #
+    # NOT YET WIRED. A setup fee is a one-time charge at subscription START, which
+    # in this architecture is the storefront checkout that charges cycle 1 (the
+    # recurring engine only bills cycle 2+). Charging it therefore belongs in the
+    # checkout/cart total, not the recurring engine — a surface still being
+    # hardened. Until that lands, no code charges setup_fee; the recurring engine
+    # deliberately does NOT (it would bill it every cycle). See the skipped
+    # test_charge_setup_fee_not_yet_implemented for the intended contract. The same
+    # applies to `one_time` PlanAddons (charged once at start, not per cycle).
     setup_fee = MoneyField(
         max_digits=10,
         decimal_places=2,

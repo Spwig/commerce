@@ -51,6 +51,7 @@ SCOPE_MAP = {
     "analytics_export": "analytics",
     # --- Web analytics (new) ---
     "traffic_analytics": "analytics.traffic",
+    "attribution_analytics": "analytics.attribution",
     # --- Inventory ---
     "inventory_dashboard": "inventory",
     "inventory_low_stock": "inventory",

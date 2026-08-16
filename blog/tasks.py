@@ -538,7 +538,7 @@ def process_auto_share(self, auto_share_pk):
         result = connector.post(
             account=account,
             text=content,
-            link=f"https://{Site.objects.get(pk=1).domain}{post.get_absolute_url()}",
+            link=_social_share_url(post, account),
             image_url=image_url,
         )
 
@@ -639,6 +639,28 @@ def _load_social_connector(account):
         return None
 
 
+def _social_share_url(post, account):
+    """Absolute blog-post URL tagged with social attribution UTM.
+
+    So revenue from an auto-shared post is attributed to the social channel:
+    utm_source = the connected provider (e.g. facebook_page), utm_medium=social,
+    utm_campaign = blog_<slug>. Also absolutises the URL (get_absolute_url is
+    relative), which the post-template path previously shared un-absolutised.
+    """
+    from urllib.parse import urlencode
+
+    base = f"https://{Site.objects.get(pk=1).domain}{post.get_absolute_url()}"
+    query = urlencode(
+        {
+            "utm_source": getattr(account, "provider_key", "") or "social",
+            "utm_medium": "social",
+            "utm_campaign": f"blog_{post.slug}",
+        }
+    )
+    sep = "&" if "?" in base else "?"
+    return f"{base}{sep}{query}"
+
+
 def _build_share_content(post, account):
     """
     Build the share content for a social post.
@@ -660,7 +682,7 @@ def _build_share_content(post, account):
             excerpt=content["excerpt"][:200] + "..."
             if len(content["excerpt"]) > 200
             else content["excerpt"],
-            url=post.get_absolute_url(),
+            url=_social_share_url(post, account),
             hashtags=hashtags,
         )
 

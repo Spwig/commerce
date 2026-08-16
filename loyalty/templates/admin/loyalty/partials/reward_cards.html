@@ -5,6 +5,7 @@
 <div class="list-row-cards">
     {% for reward in rewards %}
     <div class="list-row-card reward-card {% if reward.featured %}featured{% endif %} {% if reward.quantity_total and reward.quantity_remaining == 0 %}out-of-stock{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=reward.pk %}
         <!-- Reward Type Icon -->
         <div class="list-row-card-icon {{ reward.reward_type }}">
             {% if reward.reward_type == 'discount' %}

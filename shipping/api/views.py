@@ -8,7 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from core.api.authentication import HeadlessAPIMixin
@@ -193,6 +194,26 @@ class ShipmentViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             return ShipmentCreateSerializer
         return ShipmentSerializer
 
+    def get_permissions(self):
+        """Restrict shipment mutations to staff; keep owner checks for reads/create."""
+        if self.action in ("update", "partial_update", "destroy"):
+            return [IsAdminUser()]
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        """Authorize the submitted order and provider account against the user."""
+        user = self.request.user
+        if not user.is_staff:
+            order = serializer.validated_data.get("order")
+            provider_account = serializer.validated_data.get("provider_account")
+            if order is not None and order.user_id != user.id:
+                raise PermissionDenied(_("You do not have permission to use this order."))
+            if provider_account is not None and provider_account.user_id != user.id:
+                raise PermissionDenied(
+                    _("You do not have permission to use this provider account.")
+                )
+        serializer.save()
+
     @action(detail=True, methods=["get"])
     def tracking(self, request, pk=None):
         """
@@ -314,18 +335,18 @@ class ShipmentViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
                 {"error": "form_type must be CN22 or CN23"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check if already generated
-        if not shipment.customs_form_url:
-            # Generate new customs form
-            try:
-                data_uri = DocumentService.generate_customs_form(shipment, form_type=form_type)
-                shipment.customs_form_url = data_uri
-                shipment.save(update_fields=["customs_form_url"])
-            except Exception as e:
-                return Response(
-                    {"error": f"Failed to generate customs form: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        # Always regenerate for the requested form_type. Only one customs_form_url
+        # field exists, so a cached URL cannot be trusted to match the requested
+        # type and reusing it would return a CN22 while claiming CN23 (or vice versa).
+        try:
+            data_uri = DocumentService.generate_customs_form(shipment, form_type=form_type)
+            shipment.customs_form_url = data_uri
+            shipment.save(update_fields=["customs_form_url"])
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to generate customs form: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         return Response(
             {
@@ -475,6 +496,16 @@ class ProviderAccountViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             return ProviderAccountListSerializer
         return ProviderAccountSerializer
 
+    def get_permissions(self):
+        """Restrict provider-account creation to staff only."""
+        if self.action == "create":
+            return [IsAdminUser()]
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        """Bind the new provider account to the requesting user server-side."""
+        serializer.save(user=self.request.user)
+
     @action(detail=True, methods=["post"])
     def test_connection(self, request, pk=None):
         """
@@ -494,8 +525,11 @@ class ProviderAccountViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
                     {"error": "Provider implementation not found"}, status=status.HTTP_404_NOT_FOUND
                 )
 
-            # Create provider instance and test
-            provider = provider_class(credentials=provider_account.credentials)
+            # Create provider instance and test using decrypted credentials
+            from shipping.utils.encryption import decrypt_credentials
+
+            credentials = decrypt_credentials(provider_account.credentials_encrypted)
+            provider = provider_class(credentials=credentials)
             result = provider.test_connection()
 
             # Update provider account status

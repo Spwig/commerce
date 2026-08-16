@@ -320,6 +320,33 @@ class TestSiteSettingsAdminViews:
         content = resp.content.decode()
         assert "data-field-tab-map" in content
 
+    def test_sitesettings_change_view_surfaces_inventory_and_document_fields(
+        self, staff_client, site_settings
+    ):
+        """All inventory-intelligence and document settings are surfaced and functional.
+
+        Every field here is read by real code: the reorder/velocity settings by
+        ``InventoryService``, the alert settings by the realtime signal + digest task,
+        ``allow_backorders_by_default`` by product creation, and the document fields by
+        the invoice/packing-slip PDF generator (logo included). Guards that the wired
+        settings stay editable (2026-08-15 audit + follow-up wiring).
+        """
+        resp = staff_client.get(f"/en/admin/core/sitesettings/{site_settings.pk}/change/")
+        assert resp.status_code == 200
+        content = resp.content.decode()
+        for field in [
+            "default_reorder_lead_days",
+            "safety_stock_multiplier",
+            "velocity_calculation_window_days",
+            "low_stock_alert_frequency",
+            "allow_backorders_by_default",
+            "tax_id",
+            "invoice_footer_text",
+            "packing_slip_footer_text",
+            "document_logo_width",
+        ]:
+            assert f'name="{field}"' in content, f"Field '{field}' not rendered on change form"
+
 
 @pytest.mark.django_db
 class TestAPITokenAdminViews:

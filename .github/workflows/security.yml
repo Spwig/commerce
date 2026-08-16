@@ -36,7 +36,18 @@ jobs:
             | tar -xz -C /usr/local/bin gitleaks
           gitleaks version
 
-      - name: gitleaks detect
+      # On a PR, scan ONLY the commits the PR adds (base..head), not the
+      # whole repo history: a secret-shaped test fixture already on the base
+      # branch must not fail every unrelated open PR. push/schedule below
+      # still scan full history, so nothing that lands on dev/main is missed.
+      - name: gitleaks detect (PR diff)
+        if: github.event_name == 'pull_request'
+        run: |
+          gitleaks detect --config .gitleaks.toml --verbose \
+            --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+
+      - name: gitleaks detect (full history)
+        if: github.event_name != 'pull_request'
         run: gitleaks detect --config .gitleaks.toml --verbose
 
   pip-audit:

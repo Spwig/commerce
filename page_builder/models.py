@@ -217,6 +217,45 @@ class Page(DesignMixin):
 
         return get_active_theme()
 
+    def has_temporal_visibility_rules(self):
+        """True if any element on this page has a temporal (time-based) visibility
+        rule (``date_range``, ``time_range``, ``day_of_week``, ``business_hours``).
+
+        Temporal rules are shell-rendered, so a cached response of the page must
+        not outlive the time window — the cache layer caps the timeout when this
+        is true. Cached briefly to keep it off the hot path.
+        """
+        from django.core.cache import cache
+
+        # Versioned key: any rule/group/membership change bumps the version (see
+        # page_builder.signals), so a stale "no temporal rules" can't persist and
+        # let a time-sensitive page be cached for its full timeout.
+        from visibility.models import visibility_config_version
+
+        cache_key = f"page_has_temporal_vis:{visibility_config_version()}:{self.pk}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        # Walk the WHOLE element tree — nested children have page=NULL and are
+        # reachable only via parent_element, so self.elements.all() (top-level
+        # only) would miss a temporal rule on a child inside a container — and
+        # each element's rule groups including nested child groups.
+        def _iter_tree():
+            stack = list(self.elements.all())
+            while stack:
+                el = stack.pop()
+                yield el
+                stack.extend(el.child_elements.all())
+
+        result = any(
+            group.contains_temporal_rule()
+            for element in _iter_tree()
+            for group in element.visibility_rules.filter(is_active=True)
+        )
+        cache.set(cache_key, result, 300)
+        return result
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -447,7 +486,7 @@ class Element(DesignMixin):
 
     # Advanced visibility rules
     visibility_rules = models.ManyToManyField(
-        "RuleGroup",
+        "visibility.RuleGroup",
         blank=True,
         related_name="elements",
         help_text=_("Advanced visibility rules for conditional display"),
@@ -589,7 +628,7 @@ class Element(DesignMixin):
         if self.visibility_rules.exists():
             # Build context if not provided
             if context is None and request:
-                from .visibility_evaluator import ContextCollector
+                from visibility.evaluator import ContextCollector
 
                 collector = ContextCollector()
                 context = collector.collect_context(request)
@@ -604,6 +643,90 @@ class Element(DesignMixin):
 
         # No rules defined, element is visible
         return True
+
+    def get_visibility_rule_groups(self):
+        """The RuleGroup M2M manager, for the shared ``visibility.service``.
+
+        Uniform accessor so page elements and nav items (which name their M2M
+        ``rule_groups``) resolve through the same show/hide/defer function.
+        """
+        return self.visibility_rules
+
+    @staticmethod
+    def _resolve_visibility_context(request, context):
+        """Collect (and memoize on the request) the rule-evaluation context.
+
+        Delegates to the shared service so page and nav share one memoized
+        context per request.
+        """
+        from visibility.service import collect_visibility_context
+
+        return collect_visibility_context(request, context)
+
+    def is_renderable(self, request=None, context=None):
+        """Full server-side visibility: ``is_active`` + advanced rules (all stages).
+
+        Does NOT apply the simple ``show_on_mobile/tablet/desktop`` toggles —
+        those stay CSS classes on the wrapper so one response serves every device.
+        Used off the cache path and by the personalization pass, which evaluates
+        deferred (per-visitor) rules with the real visitor context.
+        """
+        if not self.is_active:
+            return False
+        if not self.visibility_rules.exists():
+            return True
+
+        context = self._resolve_visibility_context(request, context)
+        active_groups = self.visibility_rules.filter(is_active=True)
+        # OR across rule groups: visible if any group matches.
+        return any(group.evaluate(context) for group in active_groups)
+
+    def shell_visibility(self, request=None, context=None):
+        """Decide how this element renders in the cacheable storefront shell.
+
+        Returns one of:
+          ``"show"``  render the element's content into the shell.
+          ``"hide"``  omit it entirely (a shell rule excluded it).
+          ``"defer"`` its visibility depends on a per-visitor (deferred) rule that
+                      must NOT be evaluated into the shared/cached shell — emit a
+                      content-less placeholder for the personalization pass to
+                      resolve, so per-visitor content is never exposed to (or
+                      cached for) the wrong visitor.
+
+        Delegates to the shared ``visibility.service`` so page elements and nav
+        items resolve show/hide/defer through one implementation.
+        """
+        from visibility.service import resolve_visibility
+
+        return resolve_visibility(self, request, context)
+
+    def requires_personalization(self):
+        """True if any visibility rule on this element is per-visitor (deferred).
+
+        Such elements can't be baked into the cacheable shell; the personalization
+        pass resolves them per request. Consumed by the cache layer and the
+        deferred renderer.
+        """
+        from visibility.service import requires_personalization
+
+        return requires_personalization(self)
+
+    def visibility_summary(self):
+        """De-duplicated, capped short labels of this element's active visibility
+        rules — for the builder canvas chip indicator, which shows what gates an
+        element without hiding it (the canvas never applies visibility).
+        """
+        labels = []
+        for group in self.visibility_rules.filter(is_active=True):
+            labels.extend(group.rule_labels())
+
+        seen, summary = set(), []
+        for label in labels:
+            key = str(label)
+            if key and key not in seen:
+                seen.add(key)
+                summary.append(label)
+        return summary[:5]
 
 
 class PageTemplate(models.Model):
@@ -914,196 +1037,6 @@ class PageVersion(models.Model):
 
         for element_data in snapshot.get("elements", []):
             create_element(element_data.copy())
-
-
-class VisibilityRule(models.Model):
-    """
-    Advanced visibility rules for page elements
-    Allows conditional display based on various criteria
-    """
-
-    # Rule Types
-    RULE_TYPES = [
-        # Geographic
-        ("geo_country", _("Country")),
-        ("geo_region", _("Region/State")),
-        ("geo_city", _("City")),
-        ("geo_timezone", _("Time Zone")),
-        # User & Authentication
-        ("user_logged_in", _("Logged In Status")),
-        ("user_group", _("User Group")),
-        ("user_segment", _("Customer Segment")),
-        ("user_lifetime_value", _("Customer Lifetime Value")),
-        ("user_order_count", _("Order Count")),
-        # Device & Technical
-        ("device_type", _("Device Type")),
-        ("browser", _("Browser")),
-        ("operating_system", _("Operating System")),
-        ("screen_size", _("Screen Size")),
-        ("connection_speed", _("Connection Speed")),
-        # Time-Based
-        ("date_range", _("Date Range")),
-        ("time_range", _("Time of Day")),
-        ("day_of_week", _("Day of Week")),
-        ("business_hours", _("Business Hours")),
-        # Behavioral
-        ("first_visit", _("First Time Visitor")),
-        ("visit_count", _("Visit Count")),
-        ("page_views", _("Page Views in Session")),
-        ("time_on_site", _("Time on Site")),
-        ("referrer", _("Referrer Source")),
-        ("utm_campaign", _("UTM Campaign")),
-        # E-commerce
-        ("cart_value", _("Cart Value")),
-        ("cart_items", _("Cart Item Count")),
-        ("has_purchased", _("Has Purchased Before")),
-        ("abandoned_cart", _("Has Abandoned Cart")),
-        ("wishlist_items", _("Has Wishlist Items")),
-        # Language & Localization
-        ("browser_language", _("Browser Language")),
-        ("selected_language", _("Selected Language")),
-        ("selected_currency", _("Selected Currency")),
-    ]
-
-    # Operators
-    OPERATORS = [
-        ("equals", _("Equals")),
-        ("not_equals", _("Not Equals")),
-        ("contains", _("Contains")),
-        ("not_contains", _("Does Not Contain")),
-        ("greater_than", _("Greater Than")),
-        ("less_than", _("Less Than")),
-        ("in_list", _("In List")),
-        ("not_in_list", _("Not In List")),
-        ("is_true", _("Is True")),
-        ("is_false", _("Is False")),
-        ("between", _("Between")),
-        ("regex", _("Matches Regex")),
-    ]
-
-    # Logic Operators for combining rules
-    LOGIC_OPERATORS = [
-        ("AND", _("All conditions must match")),
-        ("OR", _("Any condition matches")),
-    ]
-
-    name = models.CharField(max_length=200, help_text=_("Descriptive name for this rule"))
-
-    description = models.TextField(
-        blank=True, help_text=_("Optional description of what this rule does")
-    )
-
-    # Rule configuration
-    rule_type = models.CharField(
-        max_length=50, choices=RULE_TYPES, help_text=_("Type of condition to check")
-    )
-
-    operator = models.CharField(
-        max_length=20, choices=OPERATORS, default="equals", help_text=_("How to compare the value")
-    )
-
-    # Value to compare against (stored as JSON for flexibility)
-    value = models.JSONField(default=dict, help_text=_("Value or values to compare against"))
-
-    # Additional configuration
-    is_active = models.BooleanField(default=True)
-    priority = models.IntegerField(
-        default=0, help_text=_("Higher priority rules are evaluated first")
-    )
-
-    # Caching
-    cache_duration = models.IntegerField(
-        default=300, help_text=_("How long to cache rule evaluation results (seconds)")
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _("Visibility Rule")
-        verbose_name_plural = _("Visibility Rules")
-        ordering = ["-priority", "name"]
-        indexes = [
-            models.Index(fields=["rule_type", "is_active"]),
-            models.Index(fields=["priority", "is_active"]),
-        ]
-
-    def __str__(self):
-        return f"{self.name} ({self.get_rule_type_display()})"
-
-    def evaluate(self, context):
-        """
-        Evaluate this rule against the provided context
-        Returns True if the rule matches, False otherwise
-        """
-        from .visibility_evaluator import RuleEvaluator
-
-        evaluator = RuleEvaluator()
-        return evaluator.evaluate_single_rule(self, context)
-
-
-class RuleGroup(models.Model):
-    """
-    Groups multiple visibility rules with logic operators
-    """
-
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-
-    # How to combine rules in this group
-    logic_operator = models.CharField(
-        max_length=3,
-        choices=VisibilityRule.LOGIC_OPERATORS,
-        default="AND",
-        help_text=_("How to combine rules in this group"),
-    )
-
-    # Rules in this group
-    rules = models.ManyToManyField(VisibilityRule, related_name="groups", through="RuleGroupMember")
-
-    # Nested groups support
-    parent_group = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.CASCADE, related_name="child_groups"
-    )
-
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _("Rule Group")
-        verbose_name_plural = _("Rule Groups")
-        ordering = ["name"]
-
-    def __str__(self):
-        operator_display = "ALL" if self.logic_operator == "AND" else "ANY"
-        return f"{self.name} ({operator_display})"
-
-    def evaluate(self, context):
-        """
-        Evaluate all rules in this group against the context
-        """
-        from .visibility_evaluator import RuleEvaluator
-
-        evaluator = RuleEvaluator()
-        return evaluator.evaluate_rule_group(self, context)
-
-
-class RuleGroupMember(models.Model):
-    """
-    Through model for rule group membership with ordering
-    """
-
-    rule_group = models.ForeignKey(RuleGroup, on_delete=models.CASCADE)
-    rule = models.ForeignKey(VisibilityRule, on_delete=models.CASCADE)
-    order = models.IntegerField(default=0)
-
-    class Meta:
-        ordering = ["order"]
-        unique_together = ["rule_group", "rule"]
-
-    def __str__(self):
-        return f"{self.rule_group} → {self.rule} (order={self.order})"
 
 
 class PagePublishHistory(models.Model):

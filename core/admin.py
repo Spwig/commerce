@@ -1009,6 +1009,12 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
             "returns_page": "pages",
             "error_404_page": "pages",
             "error_500_page": "pages",
+            # Communications tab
+            "enable_double_opt_in": "communications",
+            "default_marketing_opt_in": "communications",
+            "preference_center_enabled": "communications",
+            "show_unsubscribe_reasons": "communications",
+            "require_sms_verification": "communications",
             # Cookies tab
             "cookie_consent_enabled": "cookies",
             "cookie_banner_position": "cookies",

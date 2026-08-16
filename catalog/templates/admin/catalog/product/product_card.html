@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static seo_tags %}
 
 <div class="product-card" data-product-id="{{ product.id }}">
     <!-- Checkbox for bulk select -->
@@ -93,6 +93,9 @@
                 {% endif %}
                 {{ product.get_status_display }}
             </span>
+
+            <!-- SEO status (reusable system-wide badge) -->
+            {% seo_badge product %}
 
             <!-- Stock Badge (Multi-Location Inventory) -->
             {% if product.track_inventory %}

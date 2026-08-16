@@ -79,13 +79,14 @@ def is_domestic_shipment(origin_country: str, dest_country: str) -> bool:
     return origin_country.upper() == dest_country.upper()
 
 
-def get_shipping_zone(country_code: str, origin_country: str = "US") -> str:
+def get_shipping_zone(country_code: str, origin_country: str | None = None) -> str:
     """
     Get the shipping zone for a destination country.
 
     Args:
         country_code: Destination country code
-        origin_country: Origin country code (default: 'US')
+        origin_country: Origin country code. When omitted, the store's configured
+            shipping origin country is used.
 
     Returns:
         Shipping zone identifier ('domestic', 'international', or custom zone from CountryMapping)
@@ -100,6 +101,13 @@ def get_shipping_zone(country_code: str, origin_country: str = "US") -> str:
     """
     if not country_code:
         return "international"
+
+    # Fall back to the store's configured shipping origin rather than a hardcoded
+    # country so non-US installs classify domestic vs. international correctly.
+    if origin_country is None:
+        from core.utils import get_shipping_origin_country
+
+        origin_country = get_shipping_origin_country()
 
     # Check if domestic
     if is_domestic_shipment(origin_country, country_code):

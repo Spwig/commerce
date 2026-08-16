@@ -124,9 +124,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="preference-results">
         {% include "admin/accounts/communicationpreference/partials/preference_cards.html" with preferences=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <div id="list-filter-config"
          data-filter-url="{% url 'filter_communication_preferences' %}"

@@ -5,6 +5,7 @@
 
   let translations = {};
   let chartData = {};
+  const charts = {};
 
   function init() {
     const dataEl = document.getElementById('preference-analytics-data');
@@ -22,6 +23,11 @@
     }
 
     initCharts();
+
+    // Re-render charts when the admin theme is switched so their axis/grid/
+    // legend colours follow the light/dark tokens. We never track theme state
+    // client-side — we only react to the core's admin-theme-changed event.
+    document.addEventListener('admin-theme-changed', initCharts);
   }
 
   function toggleCustomDates() {
@@ -50,15 +56,41 @@
     }
   }
 
+  // Resolve the admin theme tokens to concrete colours for Chart.js, which
+  // cannot read CSS custom properties itself.
+  function themeColors() {
+    const styles = getComputedStyle(document.documentElement);
+    const read = function (name, fallback) {
+      const value = styles.getPropertyValue(name).trim();
+      return value || fallback;
+    };
+    return {
+      text: read('--body-fg', '#1a1a1a'),
+      muted: read('--body-quiet-color', '#5f6368'),
+      grid: read('--border-color', '#e0e0e0'),
+      accent: read('--link-color', '#1a73e8'),
+    };
+  }
+
   function initCharts() {
     if (typeof Chart === 'undefined') {
       return;
     }
 
+    const colors = themeColors();
+
+    // Rebuild from scratch so a theme switch fully re-colours the canvas.
+    Object.keys(charts).forEach(function (key) {
+      if (charts[key]) {
+        charts[key].destroy();
+        delete charts[key];
+      }
+    });
+
     const trendData = chartData.optInTrend || [];
     const trendCtx = document.getElementById('optInTrendChart');
     if (trendCtx && trendData.length > 0) {
-      new Chart(trendCtx, {
+      charts.trend = new Chart(trendCtx, {
         type: 'line',
         data: {
           labels: trendData.map(function (item) {
@@ -70,8 +102,8 @@
               data: trendData.map(function (item) {
                 return item.count;
               }),
-              borderColor: '#417690',
-              backgroundColor: 'rgba(65, 118, 144, 0.1)',
+              borderColor: colors.accent,
+              backgroundColor: 'rgba(26, 115, 232, 0.1)',
               tension: 0.4,
               fill: true,
             },
@@ -84,9 +116,14 @@
             legend: { display: false },
           },
           scales: {
+            x: {
+              ticks: { color: colors.muted },
+              grid: { color: colors.grid },
+            },
             y: {
               beginAtZero: true,
-              ticks: { precision: 0 },
+              ticks: { precision: 0, color: colors.muted },
+              grid: { color: colors.grid },
             },
           },
         },
@@ -96,7 +133,7 @@
     const appBreakdown = chartData.appBreakdown || {};
     const pieCtx = document.getElementById('appBreakdownChart');
     if (pieCtx) {
-      new Chart(pieCtx, {
+      charts.breakdown = new Chart(pieCtx, {
         type: 'doughnut',
         data: {
           labels: [
@@ -113,14 +150,17 @@
                 appBreakdown.referrals || 0,
                 appBreakdown.affiliate || 0,
               ],
-              backgroundColor: ['#417690', '#10b981', '#f59e0b', '#8b5cf6'],
+              backgroundColor: ['#1a73e8', '#10b981', '#f59e0b', '#8b5cf6'],
+              borderColor: colors.grid,
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom' } },
+          plugins: {
+            legend: { position: 'bottom', labels: { color: colors.text } },
+          },
         },
       });
     }

@@ -161,6 +161,23 @@ class CheckoutService:
             request.session.modified = True
 
     @staticmethod
+    def _advance_step(session: CheckoutSession, target: str) -> bool:
+        """Advance step_completed to `target` only if it is later than the
+        current step — never regress. step_completed is an informational
+        resume marker (nothing gates on it), so it must be monotonic: no-shipping
+        carts can reach `payment` before `billing` submits, and recording an
+        earlier step then would send a resuming customer backward. Returns True
+        if the step was changed (caller is responsible for saving)."""
+        order = [c[0] for c in CheckoutSession.CHECKOUT_STEPS]
+        try:
+            if order.index(target) > order.index(session.step_completed):
+                session.step_completed = target
+                return True
+        except ValueError:
+            pass
+        return False
+
+    @staticmethod
     @transaction.atomic
     def set_shipping_address(
         session: CheckoutSession,
@@ -240,8 +257,15 @@ class CheckoutService:
             session.shipping_cost = Decimal("0.00")
             session.estimated_delivery_date = None
             session.available_shipping_methods = []
+            # Destination changed → the shipping method (and thus a later
+            # payment/review) is now invalid, so rewind the resume marker to
+            # this step rather than leaving it stale at a later one.
+            session.step_completed = "shipping_address"
+        else:
+            # Same destination (e.g. re-submitting to add a phone number) —
+            # nothing downstream is invalidated, so keep the furthest step.
+            CheckoutService._advance_step(session, "shipping_address")
 
-        session.step_completed = "shipping_address"
         session.save()
 
         # Recalculate totals
@@ -311,6 +335,10 @@ class CheckoutService:
         else:
             return False, _("Billing address must be provided")
 
+        # Record the billing step (monotonic — never regress a session that
+        # already reached a later step, e.g. a no-shipping cart that selected
+        # payment first).
+        CheckoutService._advance_step(session, "billing")
         session.save()
         return True, _("Billing address set")
 
@@ -384,7 +412,7 @@ class CheckoutService:
         session.selected_shipping_method = shipping_method
         session.shipping_cost = shipping_cost
         session.estimated_delivery_date = shipping_method.get_estimated_delivery_date()
-        session.step_completed = "shipping_method"
+        CheckoutService._advance_step(session, "shipping_method")
         session.save()
 
         # Recalculate totals with new shipping cost
@@ -532,7 +560,7 @@ class CheckoutService:
                 return False, _("Payment provider is not available for your location or currency")
 
         session.payment_provider = payment_provider
-        session.step_completed = "payment"
+        CheckoutService._advance_step(session, "payment")
         session.save()
 
         return True, _("Payment method selected")
@@ -794,6 +822,19 @@ class CheckoutService:
         from catalog.services import InsufficientStockError, fulfillment_service
 
         logger = logging.getLogger(__name__)
+
+        # Serialize concurrent completions of the SAME checkout. Two racing
+        # /checkout/complete/ submissions would otherwise each create an order
+        # and allocate stock (duplicate order + oversell). Lock the SESSION row
+        # first — the same order PaymentOrchestrationService uses (session then
+        # cart), so lock acquisition is consistent everywhere and cannot deadlock.
+        # On the sync /complete/ path the winner deletes the session, so the
+        # loser's lock finds it gone and bails cleanly instead of creating a
+        # second order.
+        if session.pk is not None:
+            locked = CheckoutSession.objects.select_for_update().filter(pk=session.pk).first()
+            if locked is None:
+                return False, _("Checkout session is no longer active"), None
 
         # Validate checkout
         is_valid, errors = CheckoutService.validate_checkout(session)
@@ -1281,10 +1322,16 @@ class CheckoutService:
             return False
 
         currency = order.total_amount.currency
+        # Count only INTERNAL tenders (gift card / wallet) — those are exactly
+        # the holds the settlement receiver captures and credits onto
+        # amount_paid. Counting a hold the receiver won't capture (e.g. a future
+        # gateway auth) would mark the order paid while the money is never
+        # collected.
         held = PaymentTransaction.objects.filter(
             order=order,
             transaction_type="authorize",
             status="authorized",
+            tender_type__in=PaymentTransaction.INTERNAL_TENDERS,
         ).values_list("settlement_amount", "settlement_amount_currency")
 
         tendered = Money(Decimal("0"), currency)
@@ -1303,7 +1350,14 @@ class CheckoutService:
 
         order.payment_status = "paid"
         order.paid_at = timezone.now()
-        order.amount_paid = order.total_amount
+        # Seed amount_paid with the net still due — zero, since tenders cover it
+        # all. The settlement receiver (fired by the save below) captures the
+        # tender holds and credits their settled value onto amount_paid,
+        # producing the true figure. This mirrors the gateway path
+        # (amount_paid = amount_due); seeding the full total here would
+        # DOUBLE-count once the capture credit lands.
+        order.amount_paid = Money(Decimal("0"), currency)
+        order.amount_paid_base = Decimal("0")
         # Full save, not update_fields: the settlement receiver keys off
         # post_save, and this is the transition it exists to catch.
         order.save()

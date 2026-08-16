@@ -17,6 +17,10 @@ class ManualTerminalProvider(TerminalProviderBase):
     provider_name = "Manual Entry"
 
     @property
+    def integration_mode(self):
+        return "manual"
+
+    @property
     def credential_schema(self):
         return {"type": "object", "properties": {}}
 

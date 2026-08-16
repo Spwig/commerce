@@ -189,12 +189,23 @@ class TestMandateIssuance:
         assert mandate is not None
         assert mandate["format"] == "ap2-checkout-mandate+sd-jwt"
 
-        # Exactly one mandate stored, and it verifies against the published JWKS.
-        assert Mandate.objects.count() == 1
+        # Completion issues both AP2 mandates: the Checkout Mandate (surfaced as
+        # `mandate`) and the Payment Mandate (surfaced as `payment_mandate`).
+        assert Mandate.objects.filter(mandate_type=Mandate.TYPE_CHECKOUT).count() == 1
+        assert Mandate.objects.filter(mandate_type=Mandate.TYPE_PAYMENT).count() == 1
         jwk = next(k for k in get_jwks()["keys"] if k["kid"] == key.kid)
         payload, disclosed = sdjwt.verify_sd_jwt(mandate["value"], public_jwk=jwk)
         assert payload["order_ref"] == result["order"]["id"]
         assert disclosed["buyer_email"] == BUYER["email"]
+
+        # The payment mandate is present, verifies, and carries the agent-presence
+        # signal without leaking the operator's identity.
+        payment_mandate = result["payment_mandate"]
+        assert payment_mandate is not None
+        assert payment_mandate["format"] == "ap2-payment-mandate+sd-jwt"
+        ppayload, _ = sdjwt.verify_sd_jwt(payment_mandate["value"], public_jwk=jwk)
+        assert ppayload["mandate_type"] == "payment"
+        assert ppayload["human_present"] is False
 
     def test_mandate_endpoint_scopes_and_serves(
         self, client, enabled, agent_identity, digital_product, gateway, site_settings, warehouse

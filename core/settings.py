@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     # Local apps
     "core",
     # Platform apps
+    "visibility.apps.VisibilityConfig",  # Shared visibility-rule engine (page + nav)
     "design",
     "page_builder.apps.PageBuilderConfig",
     "component_updates.apps.ComponentUpdatesConfig",  # Component update & distribution system
@@ -115,6 +116,7 @@ INSTALLED_APPS = [
     "search",  # Site-wide search with autocomplete, analytics, and language support
     "wallet",  # Customer store credit wallet (ledger-based)
     "referrals",  # Customer referral program with rewards
+    "attribution",  # Store-wide multi-touch revenue attribution engine
     "migration.apps.MigrationConfig",  # Data migration from WooCommerce/other platforms
     "admin_api",  # Admin API for merchant mobile app
     "form_builder",  # Custom form builder for merchants
@@ -198,6 +200,7 @@ MIDDLEWARE = [
     ),  # Static files (production only)
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "catalog.middleware.MarketMiddleware",  # Strip /<market>/ prefix before locale (must precede LocaleMiddleware)
     "django.middleware.locale.LocaleMiddleware",  # For language detection
     "core.middleware.license_acceptance.LicenseAcceptanceMiddleware",  # License agreement acceptance gate (must run before ActivationMiddleware)
     "core.middleware.activation.ActivationMiddleware",  # Activation gate (redirects to /activate/ until activated)
@@ -224,6 +227,7 @@ MIDDLEWARE = [
     "setup_wizard.middleware.SetupWizardMiddleware",  # Setup wizard redirection
     "referrals.middleware.RequestContextMiddleware",  # Referral request context
     "referrals.middleware.ReferralTrackingMiddleware",  # Referral click tracking
+    "attribution.middleware.AttributionCaptureMiddleware",  # Store-wide touch capture (consent-gated)
     "core.middleware.maintenance.MaintenanceModeMiddleware",  # Maintenance mode handling
     "core.sandbox.middleware.SandboxBannerMiddleware",  # Sandbox mode visual indicator
     "core.middleware.error_reporting.ErrorReportingMiddleware",  # Error capture for Spwig diagnostics
@@ -477,6 +481,7 @@ def get_locale_paths():
     # Add locale directories from all local apps
     app_names = [
         "core",
+        "visibility",
         "design",
         "page_builder",
         "accounts",
@@ -493,6 +498,7 @@ def get_locale_paths():
         "address_autocomplete",
         "affiliate",
         "announcements",
+        "attribution",
         "blog",
         "component_updates",
         "configurator_3d",
@@ -1054,6 +1060,8 @@ _CSP_DIRECTIVES = {
         "https://cdnjs.cloudflare.com",  # Monaco Editor (admin email template editor)
         "https://cdn.jsdelivr.net",  # ReDoc (API developer docs)
         "https://static.cloudflareinsights.com",  # Cloudflare Web Analytics beacon
+        "https://www.google.com/recaptcha/",  # Google reCAPTCHA v3 (form spam protection)
+        "https://www.gstatic.com/recaptcha/",  # reCAPTCHA dynamically-loaded assets
     ],
     # Style — unsafe-inline required for dynamic theme CSS variables & inline styles
     "style-src": [
@@ -1076,6 +1084,7 @@ _CSP_DIRECTIVES = {
         "blob:",  # model-viewer (Three.js GLTFLoader) blob texture URLs
         "https://www.gstatic.com",  # Draco WASM decoder for compressed GLB/glTF models
         "https://cloudflareinsights.com",  # Cloudflare Web Analytics beacon reporting
+        "https://www.google.com",  # Google reCAPTCHA v3 token verification XHR
     ],
     "frame-src": [
         "'self'",
@@ -1348,6 +1357,22 @@ CELERY_BEAT_SCHEDULE = {
     "send-daily-telemetry": {
         "task": "core.telemetry.tasks.send_daily_telemetry",
         "schedule": crontab(hour=1, minute=0),  # once daily; task jitters up to 1h
+        "options": {"expires": 3600},
+    },
+    "low-stock-digest-daily": {
+        # Daily low-stock digest push. The task no-ops unless the store's
+        # low_stock_alert_frequency is set to 'daily' (and alerts are enabled).
+        "task": "admin_api.tasks.send_low_stock_digest",
+        "schedule": crontab(hour=8, minute=0),  # once daily at 08:00 UTC
+        "kwargs": {"cadence": "daily"},
+        "options": {"expires": 3600},
+    },
+    "low-stock-digest-weekly": {
+        # Weekly low-stock digest push. No-ops unless low_stock_alert_frequency
+        # is 'weekly'. Runs Monday mornings.
+        "task": "admin_api.tasks.send_low_stock_digest",
+        "schedule": crontab(hour=8, minute=0, day_of_week=1),  # Monday 08:00 UTC
+        "kwargs": {"cadence": "weekly"},
         "options": {"expires": 3600},
     },
     "refresh-hosted-service-usage": {

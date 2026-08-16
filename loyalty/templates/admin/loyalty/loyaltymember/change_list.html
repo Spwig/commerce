@@ -102,9 +102,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="results-container">
         {% include "admin/loyalty/partials/member_cards.html" with members=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     {% block pagination %}{% pagination cl %}{% endblock %}
 </div>

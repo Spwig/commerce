@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -35,7 +37,7 @@ class POSCartSerializer(serializers.Serializer):
 class POSAddToCartSerializer(serializers.Serializer):
     """Add item to POS cart."""
 
-    product_id = serializers.IntegerField()
+    product_id = serializers.IntegerField(required=False, allow_null=True)
     variant_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(min_value=1, max_value=9999, default=1)
     barcode = serializers.CharField(required=False, allow_blank=True)
@@ -54,6 +56,14 @@ class POSAddToCartSerializer(serializers.Serializer):
         help_text=_("List of optional BundleItem IDs to exclude"),
     )
 
+    def validate(self, attrs):
+        """Require at least one nonblank product_id or barcode."""
+        product_id = attrs.get("product_id")
+        barcode = (attrs.get("barcode") or "").strip()
+        if product_id is None and not barcode:
+            raise serializers.ValidationError(_("Either product_id or barcode is required."))
+        return attrs
+
 
 class POSUpdateCartItemSerializer(serializers.Serializer):
     """Update cart item quantity."""
@@ -65,3 +75,20 @@ class POSApplyDiscountSerializer(serializers.Serializer):
     """Apply voucher/discount code."""
 
     code = serializers.CharField(max_length=50)
+
+
+class POSManualDiscountSerializer(serializers.Serializer):
+    """Validate a manual (staff/manager) discount payload.
+
+    Shared by the item-level, cart-level, and manager-approval discount
+    endpoints so malformed ``discount_value`` input (e.g. ``"abc"``) returns a
+    400 instead of raising ``decimal.InvalidOperation``.
+    """
+
+    discount_type = serializers.ChoiceField(choices=("percentage", "fixed"))
+    discount_value = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+    )
+    reason = serializers.CharField(required=False, allow_blank=True, default="")

@@ -5,11 +5,31 @@ AJAX endpoints for admin list filtering.
 """
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
-from .models import BlogCategory, BlogSubscriber, BlogTag
+from media_library.models import MediaThumbnail
+
+from .models import BlogCategory, BlogPost, BlogSubscriber, BlogTag
+
+
+def blog_post_list_queryset():
+    """Base queryset for the blog-post changelist and its AJAX filter endpoint.
+
+    Prefetches the "medium" featured-image thumbnail so the card thumbnails don't
+    fire a query each (MediaAsset.get_thumbnail reads the prefetch cache). Shared
+    so the initial page and AJAX-filtered results stay identical.
+    """
+    return BlogPost.objects.select_related(
+        "category", "featured_image", "created_by"
+    ).prefetch_related(
+        "tags",
+        Prefetch(
+            "featured_image__thumbnails",
+            queryset=MediaThumbnail.objects.filter(size_preset="medium"),
+        ),
+    )
 
 
 @staff_member_required
@@ -159,3 +179,69 @@ def filter_blog_subscribers(request):
     )
 
     return JsonResponse({"html": html, "count": subscribers.count()})
+
+
+@staff_member_required
+def filter_blog_posts(request):
+    """
+    AJAX endpoint for filtering blog posts in admin.
+
+    Query Parameters:
+    - search: Search by title, excerpt, or content
+    - status: Filter by status (published/draft/scheduled/archived)
+    - category: Filter by category id
+    - featured: '1' → featured posts only
+    - seo: 'complete' / 'incomplete' by meta_title + meta_description
+    """
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    # Mirror the changelist's view/change permission gate — staff_member_required
+    # alone would let any staff user enumerate posts (incl. drafts).
+    if not (
+        request.user.has_perm("blog.view_blogpost") or request.user.has_perm("blog.change_blogpost")
+    ):
+        return JsonResponse({"error": "Forbidden"}, status=403)
+
+    posts = blog_post_list_queryset()
+
+    search = request.GET.get("search", "").strip()
+    if search:
+        posts = posts.filter(
+            Q(title__icontains=search)
+            | Q(excerpt__icontains=search)
+            | Q(simple_content__icontains=search)
+        )
+
+    status_filter = request.GET.get("status", "")
+    if status_filter:
+        posts = posts.filter(status=status_filter)
+
+    category_filter = request.GET.get("category", "")
+    if category_filter:
+        try:
+            posts = posts.filter(category_id=int(category_filter))
+        except ValueError:
+            pass
+
+    if request.GET.get("featured", "") == "1":
+        posts = posts.filter(is_featured=True)
+
+    seo_filter = request.GET.get("seo", "")
+    seo_complete = (
+        Q(meta_title__isnull=False)
+        & ~Q(meta_title="")
+        & Q(meta_description__isnull=False)
+        & ~Q(meta_description="")
+    )
+    if seo_filter == "complete":
+        posts = posts.filter(seo_complete)
+    elif seo_filter == "incomplete":
+        posts = posts.exclude(seo_complete)
+
+    html = render_to_string(
+        "admin/blog/blogpost/partials/post_card.html",
+        {"posts": posts, "request": request},
+    )
+
+    return JsonResponse({"html": html, "count": posts.count()})

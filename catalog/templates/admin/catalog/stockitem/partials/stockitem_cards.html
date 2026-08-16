@@ -4,6 +4,9 @@
     {% for item in stock_items %}
     <div class="stock-item-card">
         <div class="card-header">
+            <label class="stock-item-card__select" title="{% trans 'Select for bulk action' %}">
+                <input type="checkbox" name="_selected_action" value="{{ item.pk }}" class="action-select">
+            </label>
             <div class="product-info">
                 <h3>
                     <a href="{% url 'admin:catalog_product_change' item.product.id %}">

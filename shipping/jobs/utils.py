@@ -7,7 +7,7 @@ validation, data formatting, and error handling.
 
 import hashlib
 import logging
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from django.utils import timezone
@@ -44,7 +44,7 @@ def validate_shipment_data(data: dict[str, Any]) -> tuple[bool, str | None]:
             weight = Decimal(str(data["weight"]))
             if weight <= 0:
                 return False, "weight must be positive"
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, InvalidOperation):
             return False, "Invalid weight format"
 
     return True, None

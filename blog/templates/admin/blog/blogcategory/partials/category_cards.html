@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static seo_tags %}
 <link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
 
 <div class="list-row-cards">
@@ -31,6 +31,7 @@
             </p>
 
             <div class="list-row-card-badges">
+                {% seo_badge category %}
                 {% if category.is_active %}
                     <span class="list-row-card-badge list-row-card-badge-success">
                         <i class="fas fa-check-circle"></i> {% trans "Active" %}

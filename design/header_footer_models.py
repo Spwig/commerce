@@ -772,6 +772,17 @@ class WidgetPlacement(models.Model):
         default=dict, blank=True, help_text=_("Override widget config for this placement")
     )
 
+    # Shared visibility engine (visibility.RuleGroup): gate this placement of the
+    # widget by the same rules that gate page elements and menu items. Attached
+    # per-placement (not on Widget) so the same widget can carry a different rule
+    # in different headers/footers. Evaluated during nav render in Phase 2.
+    rule_groups = models.ManyToManyField(
+        "visibility.RuleGroup",
+        blank=True,
+        related_name="widget_placements",
+        help_text=_("Advanced visibility rules for conditional display"),
+    )
+
     # Status
     is_active = models.BooleanField(default=True)
 
@@ -790,6 +801,11 @@ class WidgetPlacement(models.Model):
     def __str__(self):
         location = self.header or self.footer
         return f"{self.widget.name} in {location} - {self.zone}"
+
+    def get_visibility_rule_groups(self):
+        """The RuleGroup M2M manager, for the shared ``visibility.service`` (so a
+        placement resolves show/hide/defer the same way page elements do)."""
+        return self.rule_groups
 
 
 class Menu(models.Model):
@@ -1041,7 +1057,12 @@ class MenuItem(models.Model):
         default=dict, blank=True, help_text=_("Configuration for mega menu layout")
     )
 
-    # Visibility rules per item
+    # Visibility rules per item.
+    #
+    # Legacy shallow JSON (device / user_status / user_group). Still evaluated by
+    # design.templatetags.theme_tags._should_show_menu_item (user_status only) —
+    # kept live until the shared engine (rule_groups below) supersedes it in the
+    # region-aware-nav Phase 2 evaluation step.
     visibility_rules = models.JSONField(
         default=list,
         blank=True,
@@ -1051,6 +1072,17 @@ class MenuItem(models.Model):
         #   {"type": "user_status", "value": "logged_in"},
         #   {"type": "user_group", "value": ["wholesale", "vip"]}
         # ]
+    )
+
+    # Shared visibility engine (visibility.RuleGroup): full rule parity with page
+    # elements — geo/market, language, currency, time, and per-visitor auth/cart/
+    # device rules. Attached here in Phase 1; evaluated during nav render in
+    # Phase 2 (see get_visibility_rule_groups). Not yet evaluated on its own.
+    rule_groups = models.ManyToManyField(
+        "visibility.RuleGroup",
+        blank=True,
+        related_name="menu_items",
+        help_text=_("Advanced visibility rules for conditional display"),
     )
 
     # Translations for title
@@ -1180,12 +1212,35 @@ class MenuItem(models.Model):
             return "---"
         return self.title or ""
 
+    def get_visibility_rule_groups(self):
+        """The RuleGroup M2M manager, for the shared ``visibility.service`` (so a
+        menu item resolves show/hide/defer the same way page elements do)."""
+        return self.rule_groups
+
     def get_children(self):
-        """Get child menu items"""
+        """Get child menu items.
+
+        Honours a per-request ``_visible_children`` annotation when present (set by
+        ``design.templatetags.theme_tags._annotate_visible_children``): once the
+        nav renderer has filtered this item's children through the visibility
+        engine for the current market/visitor, the template's ``get_children``
+        transparently returns that filtered list, so nested per-visitor / per-market
+        items are gated the same way top-level ones are. Absent the annotation
+        (builder preview, management rendering) it falls back to the raw active
+        children.
+        """
+        cached = self.__dict__.get("_visible_children")
+        if cached is not None:
+            return cached
         return self.children.filter(is_active=True).order_by("order")
 
     def has_children(self):
-        """Check if this item has active children"""
+        """Check if this item has active children (visibility-filtered when the
+        per-request ``_visible_children`` annotation is present — see
+        ``get_children``)."""
+        cached = self.__dict__.get("_visible_children")
+        if cached is not None:
+            return bool(cached)
         return self.children.filter(is_active=True).exists()
 
     def should_show_for_device(self, device_type):

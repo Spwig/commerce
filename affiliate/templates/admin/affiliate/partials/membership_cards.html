@@ -4,6 +4,7 @@
 <div class="list-row-cards">
     {% for membership in memberships %}
     <div class="list-row-card membership-card {% if membership.status == 'rejected' %}inactive{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=membership.pk %}
         <!-- Membership Icon -->
         <div class="list-row-card-icon membership {{ membership.status }}">
             <i class="fas fa-user-plus"></i>

@@ -1,23 +1,27 @@
 import json
+import logging
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Avg, Count, Q
-from django.http import Http404
+from django.http import Http404, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
+from django_ratelimit.decorators import ratelimit
 
 from catalog.models import Category, Product
 from core.decorators import allow_iframe_sameorigin
 from core.translation_utils import translate_storefront_context
 
 from .models import Element, Page
+
+logger = logging.getLogger(__name__)
 
 
 class PageView(TemplateView):
@@ -235,14 +239,48 @@ class PageView(TemplateView):
             }
         return {}
 
+    # A page carrying temporal visibility rules must not be served stale past its
+    # time window; cap its cache so a boundary flip (e.g. business_hours) is at
+    # most this many seconds late.
+    TEMPORAL_CACHE_MAX_SECONDS = 60
+
+    @staticmethod
+    def _page_cache_key_prefix(request, page):
+        """Cache key prefix for a storefront page.
+
+        Market and language are already in the cached URL (they ride on
+        request.path — ``/nz/en/…``), but currency is cookie/GeoIP-driven and NOT
+        in the path, so it must be added explicitly or one visitor's currency
+        variant would be served to another. Market/language are included too for
+        an explicit, self-documenting key.
+        """
+        market = getattr(request, "market_slug", None) or "default"
+        lang = getattr(request, "LANGUAGE_CODE", "") or ""
+        currency = getattr(request, "currency", "") or ""
+        return f"page_{page.id}_{market}_{lang}_{currency}_{request.GET.urlencode()}"
+
     @method_decorator(vary_on_headers("User-Agent"))
     @method_decorator(allow_iframe_sameorigin)
     def dispatch(self, request, *args, **kwargs):
-        # Cache pages for performance
         page = self.get_page_object()
-        if page.cache_timeout > 0:
-            cache_key = f"page_{page.id}_{request.GET.urlencode()}"
+
+        # Auth-gated pages: send anonymous visitors to log in (with ?next), and
+        # never serve them from cache. The personalization endpoint enforces the
+        # same gate for deferred fragments.
+        if page.requires_auth and not request.user.is_authenticated:
+            from django.contrib.auth.views import redirect_to_login
+
+            return redirect_to_login(request.get_full_path())
+
+        # Cache pages for performance — but NEVER shared-cache an auth-gated page:
+        # its rendered HTML can carry user-specific chrome (e.g. the logged-in
+        # header) and the cache key isn't per-user, so it would leak between
+        # logged-in visitors.
+        if page.cache_timeout > 0 and not page.requires_auth:
+            cache_key = self._page_cache_key_prefix(request, page)
             timeout = page.cache_timeout
+            if page.has_temporal_visibility_rules():
+                timeout = min(timeout, self.TEMPORAL_CACHE_MAX_SECONDS)
             return cache_page(timeout, key_prefix=cache_key)(super().dispatch)(
                 request, *args, **kwargs
             )
@@ -1544,6 +1582,59 @@ def page_preview(request, slug):
         Page.objects.select_related("theme").prefetch_related("elements"), slug=slug
     )
 
+    # "Preview as market": override the resolved market so shell visibility rules
+    # (geo_region), currency and region-scoped content render as a visitor in the
+    # chosen market would see them. Staff-only view, so trusting the param is safe.
+    preview_market = request.GET.get("preview_market") or ""
+    if preview_market:
+        from catalog.middleware import get_region_for_market_slug
+
+        region = get_region_for_market_slug(preview_market)
+        if region:
+            request.market_slug = region.slug
+            request.sales_region = region
+            if region.default_currency:
+                request.currency = region.default_currency
+        else:
+            preview_market = ""
+
+    # "Preview as visitor state": render the COMPLETE result for a simulated
+    # visitor (auth / cart) by evaluating full visibility server-side rather than
+    # deferring per-visitor rules to the personalization pass. Staff-only and
+    # uncached, so this is safe. (device_type preview is a tracked follow-up — it
+    # would need the viewport buttons to reload the iframe.)
+    from visibility.evaluator import ContextCollector
+
+    preview_context = ContextCollector().collect_context(request)
+    preview_auth = request.GET.get("preview_auth")
+    if preview_auth == "guest":
+        # Reset to a full anonymous baseline — not just is_authenticated — so a
+        # staff user in a VIP/admin group doesn't still see group/segment-gated
+        # content while previewing as a logged-out visitor.
+        preview_context["user"] = {
+            "is_authenticated": False,
+            "is_staff": False,
+            "is_superuser": False,
+            "username": None,
+            "email": None,
+            "groups": [],
+            "segment": None,
+            "lifetime_value": 0,
+            "order_count": 0,
+        }
+    elif preview_auth == "member":
+        preview_context["user"]["is_authenticated"] = True
+    preview_cart = request.GET.get("preview_cart")
+    if preview_cart:
+        try:
+            cart_value = float(preview_cart)
+            preview_context["ecommerce"]["cart_value"] = cart_value
+            preview_context["ecommerce"]["cart_items"] = 1 if cart_value > 0 else 0
+        except (TypeError, ValueError):
+            pass
+    request._visibility_context = preview_context
+    request._pb_full_visibility = True
+
     elements = page.elements.filter(parent_element__isnull=True).order_by("order")
 
     # Get theme CSS URL for the page (use effective_theme like visual_builder)
@@ -1588,6 +1679,7 @@ def page_preview(request, slug):
         "elements": elements,
         "page_title": _(f"Preview: {page.title or page.slug}"),
         "is_preview": True,
+        "preview_market": preview_market,
         "capture_mode": request.GET.get("capture") == "1",
         "page_theme_css_url": page_theme_css_url,
         "brand_css_url": brand_css_url,
@@ -1643,6 +1735,21 @@ def builder_preview(request, slug):
     # Get active languages for the switcher
     languages = get_active_languages()
 
+    # Previewable markets: active regions that have their own storefront URL
+    # (a non-empty slug), excluding the default market (served unprefixed — it is
+    # the switcher's "Default" option).
+    from catalog.middleware import get_default_region
+    from catalog.models import SalesRegion
+
+    default_region = get_default_region()
+    markets = [
+        region
+        for region in SalesRegion.objects.filter(is_active=True)
+        .exclude(slug="")
+        .order_by("-priority", "name")
+        if not (default_region and region.pk == default_region.pk)
+    ]
+
     preview_url = reverse("page_builder_admin:page_preview", kwargs={"slug": slug})
 
     context = {
@@ -1650,6 +1757,7 @@ def builder_preview(request, slug):
         "preview_url": preview_url,
         "page_title": _(f"Preview: {page.title or page.slug}"),
         "languages": languages,
+        "markets": markets,
     }
 
     return render(request, "page_builder/builder_preview.html", context)
@@ -1689,3 +1797,74 @@ def render_element_ajax(request, element_id):
         template_path = f"page_builder/elements/{element.element_type}.html"
 
     return render(request, template_path, context)
+
+
+@csrf_exempt
+@ratelimit(key="ip", rate="60/m", block=False)
+def personalize_page(request):
+    """Resolve deferred (per-visitor) visibility placeholders for a page.
+
+    CSRF-exempt on purpose: this is a READ-ONLY endpoint (it renders and returns
+    the caller's own entitled content, changing no server state) served from
+    CACHED storefront pages, where a per-session CSRF token can't be embedded.
+    It only ever returns content the *requesting* visitor is entitled to (rules
+    evaluate against their real session), a cross-origin caller can't read the
+    JSON response (no CORS allowance), and the JSON body resists simple cross-site
+    form posts. Keep it read-only — do NOT add state changes here.
+
+    POST ``{page_id, element_ids:[...]}`` → ``{elements: {id: html|null}}``.
+
+    Runs FULL visibility evaluation with the real visitor context and returns
+    rendered HTML only for elements the visitor should actually see (``null`` →
+    remove the placeholder). This is where per-visitor rules (auth, cart, device,
+    precise geo) are evaluated — never in the cacheable shell. Never cached.
+    """
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    # Unauthenticated + moderately expensive (renders up to 200 elements, some
+    # provider-backed) → cap per-IP to blunt abuse.
+    if getattr(request, "limited", False):
+        return JsonResponse({"error": "rate limited"}, status=429)
+
+    try:
+        payload = json.loads(request.body or "{}")
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "invalid JSON"}, status=400)
+
+    page_id = payload.get("page_id")
+    element_ids = payload.get("element_ids")
+    if not page_id or not isinstance(element_ids, list):
+        return JsonResponse({"error": "page_id and element_ids required"}, status=400)
+
+    # Only integer ids, capped to bound the work a single request can trigger.
+    element_ids = [i for i in element_ids if isinstance(i, int)][:200]
+
+    # Published pages only, and only elements that belong to that page — never
+    # render an arbitrary element id supplied by the client.
+    try:
+        page = Page.objects.get(pk=page_id, status="published")
+    except (Page.DoesNotExist, ValueError, TypeError):
+        return JsonResponse({"error": "page not found"}, status=404)
+
+    # Auth-gated pages must not leak their elements to anonymous callers.
+    if page.requires_auth and not request.user.is_authenticated:
+        return JsonResponse({"error": "page not found"}, status=404)
+
+    from .services.visibility_service import resolve_personalized_elements
+
+    # Route slugs let the endpoint rebuild category/product page context for
+    # deferred elements that need it. Coerced to str; ignored if not a match.
+    category_slug = payload.get("category_slug")
+    product_slug = payload.get("product_slug")
+    result = resolve_personalized_elements(
+        page,
+        element_ids,
+        request,
+        category_slug=str(category_slug) if category_slug else None,
+        product_slug=str(product_slug) if product_slug else None,
+    )
+
+    response = JsonResponse({"elements": result})
+    response["Cache-Control"] = "private, no-store"
+    return response
