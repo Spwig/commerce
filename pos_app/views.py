@@ -47,7 +47,8 @@ class POSAssetView(View):
         file_path = os.path.normpath(os.path.join(POS_DIST_DIR, rel_path))
 
         # Prevent directory traversal
-        if not file_path.startswith(os.path.normpath(POS_DIST_DIR)):
+        dist_dir = os.path.normpath(POS_DIST_DIR)
+        if os.path.commonpath([file_path, dist_dir]) != dist_dir:
             raise Http404
 
         if not os.path.isfile(file_path):

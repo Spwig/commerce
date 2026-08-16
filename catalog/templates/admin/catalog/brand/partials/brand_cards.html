@@ -1,0 +1,59 @@
+{% load i18n static seo_tags %}
+{% for brand in brands %}
+<div class="list-row-card{% if not brand.is_active %} draft{% endif %}" data-brand-id="{{ brand.id }}">
+    {% include "admin/includes/action_checkbox.html" with pk=brand.pk %}
+
+    <div class="list-row-card-icon">
+        <a href="{% url 'admin:catalog_brand_change' brand.pk %}">
+            {% if brand.logo %}
+                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" loading="lazy">
+            {% else %}
+                <i class="fas fa-copyright"></i>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:catalog_brand_change' brand.pk %}">{{ brand.name }}</a>
+        </h3>
+
+        {% if brand.website %}
+        <p class="list-row-card-subtitle">
+            <i class="fas fa-globe"></i> {{ brand.website }}
+        </p>
+        {% elif brand.description %}
+        <p class="list-row-card-subtitle">{{ brand.description|striptags|truncatechars:120 }}</p>
+        {% endif %}
+
+        <div class="list-row-card-badges">
+            {% seo_badge brand %}
+            {% if brand.is_active %}
+                <span class="list-row-card-badge list-row-card-badge-success"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+            {% else %}
+                <span class="list-row-card-badge"><i class="fas fa-times-circle"></i> {% trans "Inactive" %}</span>
+            {% endif %}
+            {% if brand.is_featured %}
+                <span class="list-row-card-badge list-row-card-badge-primary"><i class="fas fa-star"></i> {% trans "Featured" %}</span>
+            {% endif %}
+            <span class="list-row-card-badge list-row-card-badge-info">
+                <i class="fas fa-box-open"></i> {{ brand.num_products }} {% trans "product" %}{{ brand.num_products|pluralize }}
+            </span>
+        </div>
+    </div>
+
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:catalog_brand_change' brand.pk %}" class="list-row-card-action" title="{% trans 'Edit brand' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <a href="{% url 'admin:catalog_brand_delete' brand.pk %}" class="list-row-card-action" title="{% trans 'Delete brand' %}">
+            <i class="fas fa-trash"></i>
+        </a>
+    </div>
+</div>
+{% empty %}
+<div class="list-row-card empty-state">
+    <div class="empty-icon"><i class="fas fa-copyright"></i></div>
+    <p>{% trans "No brands match your filters." %}</p>
+</div>
+{% endfor %}

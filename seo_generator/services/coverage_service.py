@@ -25,6 +25,7 @@ CONTENT_TYPE_META = {
     "product": {"label": "Products", "icon": "fas fa-box-open", "priority": 1},
     "category": {"label": "Categories", "icon": "fas fa-folder-tree", "priority": 1},
     "brand": {"label": "Brands", "icon": "fas fa-copyright", "priority": 2},
+    "collection": {"label": "Collections", "icon": "fas fa-layer-group", "priority": 2},
     "page": {"label": "Pages", "icon": "fas fa-file-alt", "priority": 2},
     "blogpost": {"label": "Blog Posts", "icon": "fas fa-newspaper", "priority": 3},
     "blogcategory": {"label": "Blog Categories", "icon": "fas fa-bookmark", "priority": 3},

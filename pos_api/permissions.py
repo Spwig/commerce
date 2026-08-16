@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from rest_framework import permissions
 from rest_framework import status as http_status
@@ -36,7 +37,7 @@ class IsPOSTerminalUser(permissions.BasePermission):
 
         try:
             terminal = POSTerminal.objects.get(uuid=terminal_uuid, is_active=True)
-        except POSTerminal.DoesNotExist:
+        except (POSTerminal.DoesNotExist, ValidationError, ValueError):
             return False
 
         # If terminal has assigned users, check membership

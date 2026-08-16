@@ -98,7 +98,10 @@ class ProductFilter(django_filters.FilterSet):
 
         if value.endswith("+"):
             # "200+" means 200 and above
-            min_price = float(value.rstrip("+"))
+            try:
+                min_price = float(value.rstrip("+"))
+            except (ValueError, TypeError):
+                return queryset
             return queryset.filter(price__gte=min_price)
 
         if "-" in value:

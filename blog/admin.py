@@ -437,17 +437,8 @@ class BlogPostAdmin(SEOGeneratorAdminMixin, TranslatableAdminMixin, admin.ModelA
     def changelist_view(self, request, extra_context=None):
         """Add extra context for the custom change list template."""
         extra_context = extra_context or {}
-
-        # Get counts for filter tabs
-        extra_context["all_count"] = BlogPost.objects.count()
-        extra_context["published_count"] = BlogPost.objects.filter(status="published").count()
-        extra_context["draft_count"] = BlogPost.objects.filter(status="draft").count()
-        extra_context["scheduled_count"] = BlogPost.objects.filter(status="scheduled").count()
-        extra_context["featured_count"] = BlogPost.objects.filter(is_featured=True).count()
-
-        # Get categories for filter dropdown
+        # Categories for the filter-panel dropdown.
         extra_context["categories"] = BlogCategory.objects.filter(is_active=True)
-
         return super().changelist_view(request, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
@@ -514,10 +505,18 @@ class BlogPostAdmin(SEOGeneratorAdminMixin, TranslatableAdminMixin, admin.ModelA
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_queryset(self, request):
-        """Optimize queryset with prefetch."""
+        """Optimize queryset with prefetch (incl. the card's medium thumbnail)."""
+        from django.db.models import Prefetch
+
+        from media_library.models import MediaThumbnail
+
         qs = super().get_queryset(request)
         return qs.select_related("category", "featured_image", "created_by").prefetch_related(
-            "tags"
+            "tags",
+            Prefetch(
+                "featured_image__thumbnails",
+                queryset=MediaThumbnail.objects.filter(size_preset="medium"),
+            ),
         )
 
     actions = ["make_published", "make_draft", "make_featured", "remove_featured"]

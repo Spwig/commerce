@@ -20,7 +20,7 @@ from providers_common.utils import load_manifest_translations, validate_credenti
 from shipping.models import ProviderAccount
 from shipping.providers.loader import load_provider_manifest
 from shipping.providers.registry import ProviderRegistry
-from shipping.utils.encryption import encrypt_credentials
+from shipping.utils.encryption import decrypt_credentials, encrypt_credentials
 
 
 class WizardSessionMixin:
@@ -47,6 +47,18 @@ class WizardSessionMixin:
         """Clear wizard data from session"""
         if self.SESSION_KEY in self.request.session:
             del self.request.session[self.SESSION_KEY]
+
+    def wizard_prerequisites_met(self):
+        """Return True only when a provider is chosen, credentials are stored,
+        and the connection test has passed for those credentials."""
+        data = self.get_wizard_data()
+        return all(
+            [
+                data.get("component_id"),
+                data.get("credentials"),
+                data.get("connection_test_passed"),
+            ]
+        )
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -302,8 +314,15 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
                 messages.error(request, error)
             return self.get(request)
 
-        # Store credentials in session (will be encrypted when saved)
-        self.update_wizard_data(credentials=credentials)
+        # Encrypt credentials before putting them in the (database-backed)
+        # session so submitted API keys and secrets are never serialized to
+        # django_session in plaintext. New credentials also invalidate any
+        # prior successful connection test so they must be tested again.
+        self.update_wizard_data(
+            credentials=encrypt_credentials(credentials),
+            connection_test_passed=False,
+            connection_test_message="",
+        )
 
         return redirect("shipping:wizard_step4")
 
@@ -346,13 +365,16 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
         """Perform connection test"""
         wizard_data = self.get_wizard_data()
         component_id = wizard_data.get("component_id")
-        credentials = wizard_data.get("credentials", {})
+        stored_credentials = wizard_data.get("credentials", {})
 
-        if not component_id or not credentials:
+        if not component_id or not stored_credentials:
             return JsonResponse({"success": False, "error": "Missing data"}, status=400)
 
         try:
             component = ComponentRegistry.objects.get(id=component_id)
+
+            # Decrypt credentials transiently, only for the connection test.
+            credentials = decrypt_credentials(stored_credentials)
 
             # Get provider class from registry
             provider_class = ProviderRegistry.get_provider(component.slug)
@@ -393,14 +415,9 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
         """Display configuration form"""
         wizard_data = self.get_wizard_data()
 
-        # Verify all required data is present
-        if not all(
-            [
-                wizard_data.get("component_id"),
-                wizard_data.get("credentials"),
-                wizard_data.get("connection_test_passed"),
-            ]
-        ):
+        # Verify a provider is chosen, credentials are stored, and the
+        # connection test passed for those credentials.
+        if not self.wizard_prerequisites_met():
             messages.warning(request, _("Please complete all previous steps."))
             return redirect("shipping:wizard_step1")
 
@@ -425,6 +442,13 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
         """Save provider account"""
         wizard_data = self.get_wizard_data()
 
+        # Never save an account unless a provider is chosen, credentials are
+        # stored, and the connection test passed for those credentials. This
+        # blocks POSTing straight to step 5 without a successful test.
+        if not self.wizard_prerequisites_met():
+            messages.warning(request, _("Please complete all previous steps."))
+            return redirect("shipping:wizard_step1")
+
         display_name = request.POST.get("display_name", "").strip()
         is_default = request.POST.get("is_default") == "on"
 
@@ -436,10 +460,10 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
             from django.utils import timezone
 
             component = ComponentRegistry.objects.get(id=wizard_data["component_id"])
-            credentials = wizard_data["credentials"]
 
-            # Encrypt credentials before storing
-            credentials_encrypted = encrypt_credentials(credentials)
+            # Credentials are already stored encrypted in the session, in the
+            # same format ProviderAccount.credentials_encrypted expects.
+            credentials_encrypted = wizard_data["credentials"]
 
             # Create provider account
             ProviderAccount.objects.create(

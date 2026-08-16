@@ -10,6 +10,7 @@ Provides customer-facing endpoints for:
 
 from datetime import UTC, date, datetime, time
 from decimal import Decimal
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -278,6 +279,12 @@ def booking_availability(request, product_slug):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    if not (1 <= month <= 12) or not (1 <= year <= 9999):
+        return Response(
+            {"error": "month must be 1-12 and year must be 1-9999"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     resource_id = request.GET.get("resource_id")
     if resource_id:
         try:
@@ -520,28 +527,43 @@ def booking_check(request, product_slug):
     time_end_str = data.get("time_end")
     end_date_str = data.get("end_date")
 
+    # Resolve the customer's timezone; local times are converted to UTC (the
+    # timezone the availability service works in) before any slot check.
+    tz_name = data.get("timezone")
+    booking_tz = UTC
+    if tz_name:
+        try:
+            booking_tz = ZoneInfo(tz_name)
+        except (ZoneInfoNotFoundError, ValueError, TypeError):
+            return Response(
+                {"error": "Invalid timezone. Use an IANA identifier (e.g. 'America/New_York')"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     try:
         if time_start_str and time_end_str:
             # Time-based booking (appointment, class, event, rental)
             start_time = time.fromisoformat(time_start_str)
             end_time = time.fromisoformat(time_end_str)
-            start_dt = datetime.combine(booking_date, start_time, tzinfo=UTC)
-            end_dt = datetime.combine(booking_date, end_time, tzinfo=UTC)
+            start_dt = datetime.combine(booking_date, start_time, tzinfo=booking_tz).astimezone(UTC)
+            end_dt = datetime.combine(booking_date, end_time, tzinfo=booking_tz).astimezone(UTC)
         elif end_date_str:
             # Date-range booking (accommodation)
             if isinstance(end_date_str, str):
                 end_date_obj = date.fromisoformat(end_date_str)
             else:
                 end_date_obj = end_date_str
-            start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=UTC)
-            end_dt = datetime.combine(end_date_obj, time(0, 0), tzinfo=UTC)
+            start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=booking_tz).astimezone(UTC)
+            end_dt = datetime.combine(end_date_obj, time(0, 0), tzinfo=booking_tz).astimezone(UTC)
         else:
             # Fallback: use product's default duration
             try:
                 config = product.booking_config
                 from datetime import timedelta
 
-                start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=UTC)
+                start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=booking_tz).astimezone(
+                    UTC
+                )
                 duration_minutes = config.duration
                 if config.duration_unit == "hour":
                     duration_minutes = config.duration * 60
@@ -562,8 +584,14 @@ def booking_check(request, product_slug):
     resource_id = data.get("resource_id")
     persons = data.get("persons", {})
 
+    if persons and not isinstance(persons, dict):
+        return Response(
+            {"error": 'persons must be an object of person-type counts, e.g. {"Adult": 2}'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     # Validate person counts — must be non-negative integers
-    if persons and isinstance(persons, dict):
+    if persons:
         for ptype, count in persons.items():
             try:
                 c = int(count)
@@ -893,7 +921,7 @@ def booking_waitlist(request, product_slug):
 
     try:
         desired_date = date.fromisoformat(data["desired_date"])
-    except (KeyError, ValueError):
+    except (KeyError, ValueError, TypeError):
         return Response(
             {"error": "desired_date is required (YYYY-MM-DD)"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -904,13 +932,19 @@ def booking_waitlist(request, product_slug):
     if data.get("desired_time_start"):
         try:
             desired_time_start = time.fromisoformat(data["desired_time_start"])
-        except ValueError:
-            pass
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Invalid desired_time_start. Use HH:MM"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     if data.get("desired_time_end"):
         try:
             desired_time_end = time.fromisoformat(data["desired_time_end"])
-        except ValueError:
-            pass
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Invalid desired_time_end. Use HH:MM"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     customer = None
     if request.user.is_authenticated:
@@ -1091,6 +1125,12 @@ def booking_cancel(request, booking_id):
     if error:
         return error
 
+    if not booking.is_cancellable:
+        return Response(
+            {"error": "This booking can no longer be cancelled"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
     reason = request.data.get("reason", "")
 
     ok, msg = BookingLifecycleService.cancel_booking(
@@ -1164,6 +1204,12 @@ def booking_reschedule_api(request, booking_id):
     except (ValueError, TypeError):
         return Response(
             {"error": "Invalid date or time format"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if new_end <= new_start:
+        return Response(
+            {"error": "time_end must be after time_start"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

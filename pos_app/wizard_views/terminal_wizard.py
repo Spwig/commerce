@@ -105,11 +105,11 @@ class TerminalWizardStep1View(WizardSessionMixin, View):
                             logo_file = logo_raw.get("file", "")
                         else:
                             logo_file = logo_raw if logo_raw else ""
-                            if logo_file:
-                                # Static path: terminal_providers/{slug}/current/{logo_file}
-                                logo_url = static(
-                                    f"terminal_providers/{component.slug}/current/{logo_file}"
-                                )
+                        if logo_file:
+                            # Static path: terminal_providers/{slug}/current/{logo_file}
+                            logo_url = static(
+                                f"terminal_providers/{component.slug}/current/{logo_file}"
+                            )
 
                         provider_data.append(
                             {

@@ -3,10 +3,14 @@ Shipping Promotion Configuration Wizard Views
 Multi-step wizard for creating and configuring shipping promotions
 """
 
+from datetime import datetime, time
+
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
+from django.utils import timezone
+from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
@@ -16,6 +20,22 @@ from cart.models import ShippingMethod
 from catalog.models import Category, Product
 from core.utils import get_default_currency
 from shipping.models import ShippingPromotion, ShippingZone
+
+
+def parse_wizard_datetime(value):
+    """Parse a wizard date/time string into a timezone-aware datetime.
+
+    Accepts full datetimes as well as date-only values (which
+    ``parse_datetime`` alone would drop by returning ``None``).
+    """
+    parsed = parse_datetime(value)
+    if parsed is None:
+        parsed_date = parse_date(value)
+        if parsed_date is not None:
+            parsed = datetime.combine(parsed_date, time.min)
+    if parsed is not None and timezone.is_naive(parsed):
+        parsed = timezone.make_aware(parsed)
+    return parsed
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -335,15 +355,11 @@ class RuleWizardStep5View(TemplateView):
             if wizard_data.get("max_item_count"):
                 rule.max_item_count = wizard_data.get("max_item_count")
 
-            # Set time restrictions
+            # Set time restrictions (tolerating date-only input)
             if start_date:
-                from django.utils.dateparse import parse_datetime
-
-                rule.start_date = parse_datetime(start_date)
+                rule.start_date = parse_wizard_datetime(start_date)
             if end_date:
-                from django.utils.dateparse import parse_datetime
-
-                rule.end_date = parse_datetime(end_date)
+                rule.end_date = parse_wizard_datetime(end_date)
 
             # Set customer restrictions
             rule.first_time_customers_only = wizard_data.get("first_time_customers_only", False)

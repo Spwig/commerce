@@ -1,4 +1,5 @@
 import base64
+import struct
 
 from django.core import signing
 from django.utils import timezone
@@ -46,13 +47,28 @@ def _b64decode(s):
     return base64.urlsafe_b64decode(s)
 
 
+def _attested_credential_data(credential_id, public_key):
+    """Reconstruct AttestedCredentialData from a stored credential, tolerating
+    both the current full-blob format and the legacy COSE-only format."""
+    # Current format: public_key holds the full serialized AttestedCredentialData.
+    try:
+        data = AttestedCredentialData(public_key)
+        if data.credential_id == credential_id:
+            return data
+    except Exception:
+        pass
+    # Legacy format: public_key holds only the CBOR COSE key. Wrap it back into
+    # attested credential data using the separately stored credential_id and a
+    # zero AAGUID (AAGUID is not consulted during assertion verification).
+    return AttestedCredentialData(
+        b"\x00" * 16 + struct.pack(">H", len(credential_id)) + credential_id + public_key
+    )
+
+
 def _build_credentials(queryset):
     """Build AttestedCredentialData list from WebAuthnCredential queryset."""
     return [
-        AttestedCredentialData.from_ctap1(
-            bytes(cred.credential_id),
-            bytes(cred.public_key),
-        )
+        _attested_credential_data(bytes(cred.credential_id), bytes(cred.public_key))
         for cred in queryset
     ]
 
@@ -96,6 +112,10 @@ def webauthn_register_begin(request):
         user_verification=UserVerificationRequirement.PREFERRED,
         resident_key_requirement=ResidentKeyRequirement.DISCOURAGED,
     )
+
+    # Bind the signed state to the initiating user so it cannot be completed
+    # by a different authenticated staff user.
+    state["register_user_id"] = user.pk
 
     # Sign the state for stateless round-trip
     signed_state = signing.dumps(state, salt="webauthn-register")
@@ -174,6 +194,17 @@ def webauthn_register_complete(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    # Reject completion by anyone other than the user who began registration.
+    register_user_id = state.pop("register_user_id", None)
+    if register_user_id != request.user.pk:
+        return Response(
+            {
+                "success": False,
+                "error": {"code": "INVALID_STATE", "message": "Challenge expired or invalid."},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     try:
         client_data_bytes = _b64decode(credential_data["response"]["clientDataJSON"])
         att_object_bytes = _b64decode(credential_data["response"]["attestationObject"])
@@ -205,7 +236,7 @@ def webauthn_register_complete(request):
     WebAuthnCredential.objects.create(
         user=request.user,
         credential_id=cred_data.credential_id,
-        public_key=bytes(cred_data.public_key),
+        public_key=bytes(cred_data),
         sign_count=auth_data.counter,
         device_name=device_name[:200] if device_name else "",
     )
@@ -248,7 +279,30 @@ def webauthn_authenticate_begin(request):
     from pos_app.models import POSStaffDiscount, WebAuthnCredential
 
     locked_by_user_id = request.data.get("locked_by_user_id")
-    failed_attempts = request.data.get("failed_attempts", 0)
+    try:
+        failed_attempts = int(request.data.get("failed_attempts", 0))
+    except (TypeError, ValueError):
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_REQUEST",
+                    "message": "failed_attempts must be a non-negative integer.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if failed_attempts < 0:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_REQUEST",
+                    "message": "failed_attempts must be a non-negative integer.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     require_manager = failed_attempts >= 3
 
     # Determine which user IDs have valid credentials
@@ -397,6 +451,7 @@ def webauthn_authenticate_complete(request):
     )
     credentials = _build_credentials(creds_qs)
 
+    authenticator_data = AuthenticatorData(authenticator_data_bytes)
     server = _get_server(request)
 
     try:
@@ -405,7 +460,7 @@ def webauthn_authenticate_complete(request):
             credentials,
             credential_id,
             CollectedClientData(client_data_bytes),
-            AuthenticatorData(authenticator_data_bytes),
+            authenticator_data,
             signature,
         )
     except Exception as e:
@@ -417,7 +472,24 @@ def webauthn_authenticate_complete(request):
     # Update sign count and last used
     try:
         stored_cred = WebAuthnCredential.objects.get(credential_id=credential_id)
-        stored_cred.sign_count += 1
+        new_sign_count = authenticator_data.counter
+        # Per WebAuthn: a non-increasing counter signals a possible cloned
+        # authenticator, unless the authenticator does not support counters
+        # (both values remain zero).
+        if (new_sign_count != 0 or stored_cred.sign_count != 0) and (
+            new_sign_count <= stored_cred.sign_count
+        ):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "COUNTER_ROLLBACK",
+                        "message": "Authenticator sign count did not increase.",
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        stored_cred.sign_count = new_sign_count
         stored_cred.last_used_at = timezone.now()
         stored_cred.save(update_fields=["sign_count", "last_used_at"])
         auth_user = stored_cred.user

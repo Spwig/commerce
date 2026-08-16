@@ -47,6 +47,17 @@ def _setup_site(site_settings):
     return site_settings
 
 
+@pytest.fixture(autouse=True)
+def _clear_throttle_cache():
+    """Reset the DRF throttle cache between tests so the form-submit rate limit
+    doesn't accumulate across the suite and 429."""
+    from django.core.cache import cache
+
+    cache.clear()
+    yield
+    cache.clear()
+
+
 @pytest.fixture
 def admin_user(db):
     from django.contrib.auth import get_user_model
@@ -1013,9 +1024,12 @@ class TestFormActionsExecution:
         assert result["status"] == "sent"
         assert result["recipients"] == ["admin@test.com"]
 
+    @patch("form_builder.actions.webhook.resolve_public_ip", return_value="93.184.216.34")
     @patch("form_builder.actions.webhook.requests")
-    def test_webhook_action(self, mock_requests, form_with_fields):
-        mock_response = mock_requests.request.return_value
+    def test_webhook_action(self, mock_requests, _mock_resolve, form_with_fields):
+        # The action now posts through a pinned-IP Session (SSRF hardening), so
+        # the mock lives on Session().request, and DNS resolution is stubbed.
+        mock_response = mock_requests.Session.return_value.request.return_value
         mock_response.status_code = 200
         mock_response.ok = True
         mock_response.text = "OK"
@@ -1042,7 +1056,7 @@ class TestFormActionsExecution:
         result = executor.execute()
         assert result["status"] == "sent"
         assert result["http_status"] == 200
-        mock_requests.request.assert_called_once()
+        mock_requests.Session.return_value.request.assert_called_once()
 
 
 # ============================================================

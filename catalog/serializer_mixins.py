@@ -3,6 +3,7 @@ Serializer mixins for handling translated fields in the catalog app
 """
 
 from django.utils import translation
+from django.utils.translation import get_supported_language_variant
 
 from core.translation_utils import get_primary_language
 
@@ -153,7 +154,9 @@ def _parse_accept_language(header):
     Parse an Accept-Language header and return the preferred language code.
 
     Respects quality weights: ``en;q=0.5,fr;q=0.9`` returns ``'fr'``.
-    Strips region subtags: ``en-GB`` becomes ``'en'``.
+    Normalizes the complete tag against supported languages, preserving script
+    subtags such as ``zh-Hans`` (``'zh-hans'``) and only falling back from a
+    regional variant (``en-GB`` becomes ``'en'``) when the full tag has no match.
     """
     best_lang = None
     best_q = -1
@@ -162,7 +165,7 @@ def _parse_accept_language(header):
         if not part:
             continue
         pieces = part.split(";")
-        lang = pieces[0].strip().split("-")[0]
+        lang = pieces[0].strip()
         q = 1.0
         for param in pieces[1:]:
             param = param.strip()
@@ -174,4 +177,9 @@ def _parse_accept_language(header):
         if q > best_q:
             best_q = q
             best_lang = lang
-    return best_lang or get_primary_language()
+    if best_lang:
+        try:
+            return get_supported_language_variant(best_lang)
+        except LookupError:
+            pass
+    return get_primary_language()

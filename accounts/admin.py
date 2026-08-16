@@ -4,8 +4,9 @@ Includes OAuth provider settings, social app management, and User admin customiz
 """
 
 from allauth.socialaccount.models import SocialAccount, SocialApp
+from django import forms
 from django.contrib import admin, messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.urls import path, reverse
 from django.utils import timezone
@@ -990,12 +991,65 @@ class MFAStatusFilter(admin.SimpleListFilter):
             return queryset
 
 
+class StaffMemberCreationForm(forms.ModelForm):
+    """Add-staff form: set an initial password and assign at least one role.
+
+    Under deny-by-default a staff user with no role can't reach the admin, so a
+    role is mandatory at creation — otherwise you'd create a locked-out account.
+    """
+
+    password1 = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+    )
+    password2 = forms.CharField(
+        label=_("Confirm password"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+    )
+    roles = forms.ModelMultipleChoiceField(
+        queryset=None,  # set in __init__ to avoid import-time app access
+        required=True,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Roles"),
+        help_text=_("Staff can't access the admin until they have a role. Assign at least one."),
+    )
+
+    class Meta:
+        model = StaffMember
+        fields = ("email", "first_name", "last_name", "username")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from staff_roles.models import StaffRole
+
+        self.fields["roles"].queryset = StaffRole.objects.order_by("sort_order", "display_name")
+
+    def clean_password2(self):
+        p1 = self.cleaned_data.get("password1")
+        p2 = self.cleaned_data.get("password2")
+        if p1 and p2 and p1 != p2:
+            raise forms.ValidationError(_("The two password fields didn't match."))
+        password_validation.validate_password(p2, self.instance)
+        return p2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
+
+
 @admin.register(StaffMember)
 class StaffMemberAdmin(admin.ModelAdmin):
     """Dedicated admin for managing staff members."""
 
     change_list_template = "admin/accounts/staffmember/change_list.html"
     change_form_template = "admin/accounts/staffmember/change_form.html"
+    add_form = StaffMemberCreationForm
 
     list_display = ["email", "first_name", "last_name", "is_active", "date_joined"]
     list_filter = [RoleFilter, AccessTypeFilter, "is_active", MFAStatusFilter]
@@ -1017,6 +1071,35 @@ class StaffMemberAdmin(admin.ModelAdmin):
         ),
     )
 
+    # Shown only on the add page (password + mandatory role assignment).
+    add_fieldsets = (
+        (
+            _("Account"),
+            {"fields": ("email", "first_name", "last_name", "username")},
+        ),
+        (
+            _("Password"),
+            {"fields": ("password1", "password2")},
+        ),
+        (
+            _("Roles"),
+            {
+                "fields": ("roles",),
+                "description": _("New staff need at least one role to access the admin."),
+            },
+        ),
+    )
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj is None:
+            kwargs["form"] = self.add_form
+        return super().get_form(request, obj, **kwargs)
+
+    def get_fieldsets(self, request, obj=None):
+        if obj is None:
+            return self.add_fieldsets
+        return super().get_fieldsets(request, obj)
+
     class Media:
         css = {"all": ("accounts/css/staff_management.css",)}
         js = ("accounts/js/staff_management.js",)
@@ -1027,6 +1110,16 @@ class StaffMemberAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.is_staff = True
         super().save_model(request, obj, form, change)
+        # On create, assign the roles chosen in the add form (add the user to
+        # each role's wrapped Group) so the new staff member isn't locked out.
+        if not change:
+            roles = form.cleaned_data.get("roles")
+            if roles:
+                from staff_roles.services import invalidate_user_cache
+
+                for role in roles:
+                    obj.groups.add(role.group)
+                invalidate_user_cache(obj)
 
     def get_urls(self):
         urls = super().get_urls()

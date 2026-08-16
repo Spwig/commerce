@@ -81,7 +81,10 @@ class CustomAPIAdapter(BaseLicenseProviderAdapter):
             "auth_token": {
                 "type": "string",
                 "title": "Authentication Token/Key",
-                "required": True,
+                # Conditionally required: needed for bearer, api_key, and basic
+                # auth, but not for custom-header authentication. Enforced in
+                # validate_credentials based on the selected auth_type.
+                "required": False,
                 "secret": True,
                 "help_text": "API token, key, or username (for Basic Auth)",
             },
@@ -119,7 +122,6 @@ class CustomAPIAdapter(BaseLicenseProviderAdapter):
                 "title": "Response Format",
                 "choices": [
                     ("json", "JSON"),
-                    ("xml", "XML"),
                 ],
                 "default": "json",
                 "help_text": "Expected response format from your API",
@@ -158,6 +160,42 @@ class CustomAPIAdapter(BaseLicenseProviderAdapter):
             headers.update(custom_headers)
 
         return headers
+
+    def validate_credentials(self) -> tuple[bool, str | None]:
+        """
+        Validate credentials with auth-type-aware requirements.
+
+        The authentication token is only needed for bearer, api_key, and basic
+        auth. Custom-header authentication requires custom_headers instead, so
+        auth_token is optional in that mode.
+        """
+        is_valid, error_msg = super().validate_credentials()
+        if not is_valid:
+            return is_valid, error_msg
+
+        schema = self.credential_schema
+        auth_type = self.config.get("auth_type", "bearer")
+
+        if auth_type == "custom":
+            if not self.config.get("custom_headers"):
+                return False, f"Missing required field: {schema['custom_headers']['title']}"
+        elif not self.config.get("auth_token", self.api_key):
+            return False, f"Missing required field: {schema['auth_token']['title']}"
+
+        # Only JSON responses are parsed (_make_request always calls
+        # response.json()). Reject any legacy/unsupported response_format
+        # (e.g. an "xml" value persisted before XML was removed as a choice)
+        # so it surfaces a clear error instead of a confusing JSON decode
+        # failure at request time.
+        response_format = self.config.get("response_format", "json")
+        supported_formats = {value for value, _ in schema["response_format"]["choices"]}
+        if response_format not in supported_formats:
+            return False, (
+                f"Unsupported {schema['response_format']['title']}: "
+                f"'{response_format}'. Only JSON is supported."
+            )
+
+        return True, None
 
     def _get_endpoint(self, operation: str, **kwargs) -> str:
         """
@@ -223,8 +261,18 @@ class CustomAPIAdapter(BaseLicenseProviderAdapter):
             "order": {
                 "id": str(order.id),
                 "number": order.order_number,
-                "customer_email": order.user.email,
-                "customer_name": f"{order.user.first_name} {order.user.last_name}".strip(),
+                # Order.user is nullable (guest checkout), while Order.email and
+                # the shipping snapshot are always present. Fall back to the
+                # linked user's name only when an account is attached.
+                "customer_email": order.email,
+                "customer_name": (
+                    order.shipping_name
+                    or (
+                        f"{order.user.first_name} {order.user.last_name}".strip()
+                        if order.user_id
+                        else ""
+                    )
+                ),
             },
             "metadata": {
                 "source": "spwig",

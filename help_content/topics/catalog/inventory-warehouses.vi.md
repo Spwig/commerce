@@ -1,128 +1,145 @@
 ---
-title: Kho hàng & Kho
+title: Kho hàng và Kho lưu trữ
 ---
 
-Hệ thống kho hàng cho phép bạn quản lý tồn kho tại nhiều vị trí, thiết lập ưu tiên xử lý đơn hàng và theo dõi mức tồn kho theo thời gian thực. Di chuyển đến **Settings > License Management** trong thanh bên, hoặc truy cập kho hàng từ tab tồn kho sản phẩm.
+Hệ thống kho cho phép bạn quản lý hàng tồn kho ở nhiều địa điểm khác nhau, thiết lập thứ tự thực hiện đơn hàng, và theo dõi mức hàng tồn kho theo thời gian thực. Truy cập **Sản phẩm > Kho** trong thanh điều hướng quản trị để quản lý các địa điểm kho của bạn.
 
-![Danh sách kho hàng](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
+![Danh sách kho](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
 
-## Kho hàng
+## Kho
 
-### Danh sách kho hàng
+### Danh sách kho
 
-Trang kho hàng hiển thị tất cả vị trí tồn kho của bạn dưới dạng các thẻ với:
+Trang kho hiển thị tất cả các địa điểm hàng hóa của bạn dưới dạng thẻ với:
 
-- **Tên và mã** — Mã nhận dạng kho hàng (ví dụ: "Main Warehouse", mã "MAIN-WH")
-- **Khu vực bán hàng** — Gán khu vực địa lý
-- **Biểu tượng trạng thái** — Hoạt động/đang tắt, vị trí bán lẻ
-- **Thống kê** — Số lượng sản phẩm tồn kho, ưu tiên xử lý, tỷ lệ đệm tồn kho
+- **Tên và mã** — Mã định danh kho (ví dụ: "Kho chính", mã "CHINH-WH")
+- **Vùng bán hàng** — Phân vùng địa lý
+- **Biểu tượng trạng thái** — Đang hoạt động/dừng hoạt động, cửa hàng bán lẻ
+- **Thống kê** — Số sản phẩm tồn kho, thứ tự thực hiện đơn hàng, tỷ lệ hàng tồn kho dự phòng
 - **Vị trí** — Thành phố và quốc gia
-- **Cập nhật lần cuối** — Khi mức tồn kho được sửa đổi lần cuối
+- **Cập nhật lần cuối** — Thời điểm mức hàng tồn kho cuối cùng được thay đổi
 
-### Tạo kho hàng
+### Tạo kho
 
-1. Nhấp **+ Thêm Kho**
-2. Điền thông tin kho hàng:
-   - **Tên** — Nhãn mô tả (ví dụ: "US East Warehouse")
-   - **Mã** — Mã duy nhất ngắn (ví dụ: "US-EAST")
-   - **Khu vực bán hàng** — Gán khu vực địa lý để định tuyến xử lý đơn hàng
-   - **Địa chỉ** — Địa chỉ kho hàng đầy đủ để tính toán vận chuyển
-3. Cấu hình cài đặt:
-   - **Hoạt động** — Bật để bao gồm trong xử lý đơn hàng
-   - **Vị trí bán lẻ** — Đánh dấu nếu kho này cũng phục vụ như một cửa hàng vật lý
-   - **Ưu tiên xử lý** — Số cao hơn = ưu tiên cao hơn cho xử lý đơn hàng
-   - **Đệm tồn kho** — Phần trăm tồn kho được dự trữ như đệm an toàn
-4. Nhấp **Lưu**
+1. Nhấn **+ Thêm Kho**
+2. Điền thông tin **Cơ bản**:
+   - **Tên** — Nhãn mô tả (ví dụ: "Kho Đông Hoa Kỳ")
+   - **Mã** — Mã định danh ngắn duy nhất (ví dụ: "ĐÔNG-HOA") — phải duy nhất trên toàn bộ các kho
+   - **Vùng bán hàng** — Gán cho một khu vực địa lý để định tuyến thực hiện đơn hàng
+   - **Đang hoạt động** — Kích hoạt để bao gồm trong quá trình thực hiện đơn hàng
+3. Điền phần **Địa chỉ** với địa chỉ đầy đủ của kho
+4. Cấu hình **Cài đặt Thực hiện đơn hàng**:
+   - **Thứ tự thực hiện** — Số lớn hơn = thứ tự cao hơn cho việc thực hiện đơn hàng
+   - **Tỷ lệ hàng tồn kho dự phòng** — Phần trăm hàng tồn kho được giữ lại làm hàng dự phòng (0–100)
+   - **Vị trí giao hàng** — Liên kết tùy chọn đến địa điểm lấy hàng nếu kho này hỗ trợ khách hàng lấy hàng
+5. Cấu hình **Hiển thị cho Người dùng** (tùy chọn):
+   - **Tên hiển thị** — Nhãn cho người dùng (ví dụ: "Giao hàng từ Úc"). Để trống để sử dụng tên kho.
+   - **Hiển thị trên Trang chủ** — Hiển thị nguồn hàng của kho này cho người dùng trên trang sản phẩm
+6. Cấu hình **Cửa hàng POS / Bán lẻ** (tùy chọn):
+   - **Cửa hàng bán lẻ** — Kiểm tra nếu kho này đồng thời là cửa hàng vật lý có máy POS
+   - **Tên hiển thị POS** — Tên ngắn được hiển thị trong giao diện POS
+   - **Nhóm Cửa hàng** — Gán vào nhóm cửa hàng POS để kế thừa cài đặt
+7. Thêm **Thông tin Liên hệ** nếu cần (tên, email, số điện thoại)
+8. Nhấn **Lưu**
 
-### Ưu tiên xử lý
+### Thứ tự Thực hiện
 
-Khi một đơn hàng đến, hệ thống chọn kho hàng tốt nhất dựa trên:
+Khi có đơn hàng đến, hệ thống chọn kho tốt nhất dựa trên:
 
-1. **Giá trị ưu tiên** — Kho hàng có ưu tiên cao hơn được ưa tiên
-2. **Sự có sẵn của tồn kho** — Phải có đủ tồn kho
-3. **Phù hợp khu vực** — Kho hàng trong khu vực của khách hàng được ưa tiên
+1. **Giá trị thứ tự** — Kho có thứ tự cao hơn được ưa tiên
+2. **Sự sẵn có của hàng tồn kho** — Phải có đủ hàng tồn kho
+3. **Phù hợp khu vực** — Kho ở khu vực khách hàng được ưa tiên
 
-Ví dụ, nếu bạn có kho hàng ở Mỹ (ưu tiên 100) và kho hàng ở EU (ưu tiên 60), đơn hàng Mỹ sẽ được xử lý từ kho hàng Mỹ trước.
+Ví dụ, nếu bạn có kho Hoa Kỳ (thứ tự 100) và kho châu Âu (thứ tự 60), đơn hàng Hoa Kỳ sẽ được thực hiện từ kho Hoa Kỳ trước.
 
-### Đệm tồn kho
+### Tỷ lệ Hàng tồn kho Dự phòng
 
-Đệm tồn kho dự trữ một phần trăm tồn kho sẽ không được bán trực tuyến. Điều này hữu ích cho:
-- Các cửa hàng bán lẻ vật lý cần tồn kho trên sàn
-- Tồn kho an toàn để tránh bán quá mức
-- Tồn kho được đặt hàng cho các đơn hàng sỉ
+Tỷ lệ hàng tồn kho dự phòng giữ lại một phần hàng tồn kho không được bán trực tuyến. Điều này hữu ích cho:
 
-Một đệm 10% trên 100 đơn vị có nghĩa là chỉ có 90 đơn vị có sẵn cho các đơn hàng trực tuyến.
+- Các cửa hàng bán lẻ vật lý cần hàng trưng bày
+- Hàng tồn kho an toàn để tránh bán quá mức
+- Hàng tồn kho được giữ riêng cho đơn hàng bán buôn
 
-## Các mục tồn kho
+Một tỷ lệ 10% trên 100 đơn vị có nghĩa là chỉ có 90 đơn vị có sẵn cho đơn hàng trực tuyến.
 
-Các mục tồn kho đại diện cho tồn kho thực tế của một sản phẩm cụ thể tại một kho hàng cụ thể.
+## Mặt hàng Hàng tồn kho
 
-### Xem mức tồn kho
+Các mặt hàng hàng tồn kho đại diện cho hàng tồn kho thực tế của một sản phẩm cụ thể tại một kho cụ thể.
 
-1. Nhấp vào **biểu tượng tồn kho** trên bất kỳ thẻ kho hàng nào để xem các mục tồn kho của nó
-2. Hoặc di chuyển đến tab **Tồn kho** của sản phẩm để xem tồn kho trên tất cả kho hàng
+### Xem Mức hàng tồn kho
 
-Mỗi mục tồn kho hiển thị:
+1. Nhấn vào **biểu tượng hàng tồn kho** trên thẻ kho để xem các mặt hàng hàng tồn kho của nó
+2. Hoặc truy cập tab **Hàng tồn kho** của sản phẩm để xem hàng tồn kho trên tất cả các kho
+
+Mỗi mặt hàng hàng tồn kho hiển thị:
+
 - **Tên sản phẩm** và biến thể (nếu có)
-- **Có sẵn** — Tổng tồn kho vật lý
-- **Đã phân bổ** — Số lượng được đặt giữ cho các đơn hàng đang chờ
-- **Sẵn sàng** — Có sẵn trừ đi đã phân bổ (điều có thể được bán)
+- **Số lượng hiện có** — Tổng hàng tồn kho vật lý
+- **Đã phân bổ** — Số lượng được giữ cho các đơn hàng đang chờ
+- **Còn lại** — Số lượng hiện có trừ đi đã phân bổ (điều mà có thể bán được)
 
-### Thêm tồn kho
+### Thêm hàng tồn kho
 
-1. Từ trang xem tồn kho kho hàng, nhấp **Thêm mục tồn kho**
-2. Chọn sản phẩm và biến thể
-3. Nhập số lượng **có sẵn**
-4. Lưu
+1. Truy cập **Sản phẩm > Mặt hàng Hàng tồn kho** và nhấn **+ Thêm Mặt hàng Hàng tồn kho**, hoặc
+2. Mở biểu mẫu chỉnh sửa sản phẩm và sử dụng phần **Mặt hàng Hàng tồn kho** ở cuối
+3. Chọn **sản phẩm** và **kho** (và tùy chọn **biến thể** cho sản phẩm có biến thể)
+4. Nhập **số lượng hiện có**
+5. Thiết lập **ngưỡng hàng tồn kho thấp** — ngưỡng này cho từng mặt hàng kích hoạt thông báo hàng tồn kho thấp
+6. Lưu
 
-### Các hoạt động tồn kho
+### Các chuyển động Hàng tồn kho
 
-Mọi thay đổi đối với tồn kho được theo dõi như một **hoạt động tồn kho**:
+Mọi thay đổi về hàng tồn kho đều được ghi nhận dưới dạng **chuyển động hàng tồn kho**:
 
-| Loại hoạt động | Mô tả |
+| Loại Di Chuyển | Mô Tả |
 |--------------|-------------|
-| **Nhận hàng** | Tồn kho mới nhận từ nhà cung cấp |
-| **Bán hàng** | Tồn kho bị trừ đi cho đơn hàng đã được xử lý |
-| **Trả hàng** | Tồn kho được trả lại từ khách hàng |
-| **Điều chỉnh** | Sửa đổi thủ công (sai số đếm) |
-| **Chuyển kho** | Chuyển giữa các kho hàng |
-| **Đặt giữ** | Được giữ tạm thời cho giỏ hàng đang hoạt động |
+| **Nhập Kho** | Hàng hóa mới được nhận từ nhà cung cấp |
+| **Bán Hàng** | Số lượng hàng hóa bị trừ cho đơn hàng đã hoàn tất |
+| **Trả Lại** | Hàng hóa được trả lại từ khách hàng |
+| **Điều Chỉnh** | Sửa đổi thủ công (sai lệch số lượng kiểm kê) |
+| **Chuyển Kho** | Được di chuyển giữa các kho hàng |
+| **Duy Trì** | Được giữ tạm thời cho giỏ hàng đang hoạt động |
+| **Hư Hại** | Được ghi nhận là hư hỏng hoặc mất mát |
+| **Đếm Lại** | Được điều chỉnh để khớp với số lượng kiểm kê thực tế |
 
-Các hoạt động tồn kho cung cấp một bản ghi kiểm toán đầy đủ về các thay đổi tồn kho.
+Các chuyển động hàng hóa cung cấp một bản ghi kiểm toán đầy đủ về các thay đổi trong hàng tồn kho. Ngoài hành động **Điều Chỉnh Mức Hàng Tồn Kho**, Spwig còn cung cấp các hành động khối trên danh sách Hàng Hóa để chuyển kho, ghi nhận hàng hóa hư hại và đếm lại số lượng hàng hóa trên nhiều mặt hàng cùng lúc — xem [Hành Động Kiểm Kê Đa Dạng](/help/stock-bulk-actions).
 
-## Theo dõi tồn kho trên sản phẩm
+## Theo Dõi Hàng Hóa Trên Sản Phẩm
 
-### Bật theo dõi tồn kho
+### Kích Hoạt Theo Dõi Hàng Hóa
 
-Trên tab **Tồn kho** của sản phẩm:
+Trên phần **Hàng Hóa** của sản phẩm:
 
-1. Chuyển đổi **Track Inventory** để bật quản lý tồn kho
-2. Thiết lập **Low Stock Threshold** — kích hoạt cảnh báo khi tồn kho giảm xuống dưới mức này
-3. Cấu hình **Allow Backorders** nếu bạn muốn chấp nhận đơn hàng khi hết hàng
+1. Chuyển đổi **Theo Dõi Hàng Hóa** để kích hoạt quản lý số lượng hàng hóa cho sản phẩm này
+2. Thiết lập **Ngưỡng Hàng Hóa Dưới Mức** — kích hoạt thông báo bảng điều khiển khi số lượng hàng hóa tại bất kỳ kho nào đều dưới mức này
+3. Cấu hình **Cho phép Đặt Hàng Khi Hết Hàng** nếu bạn muốn chấp nhận đơn hàng khi hết hàng
+4. Thiết lập tùy chọn **Hành Động Hết Hàng** để ghi đè hành vi chung của trang web hoặc danh mục cho sản phẩm cụ thể này
 
-### Tồn kho đa kho hàng
+Sau khi kích hoạt theo dõi, quản lý số lượng hàng hóa thực tế bằng phần **Hàng Hóa** ngay dưới dạng biểu mẫu sản phẩm, hoặc thông qua **Sản Phẩm > Hàng Hóa**.
 
-Khi theo dõi tồn kho được bật, tab Tồn kho hiển thị mức tồn kho trên tất cả kho hàng trong bảng tổng quan:
+### Hàng Hóa Nhiều Kho
 
-- Tổng số lượng có sẵn trên tất cả các vị trí
-- Phân tích theo từng kho hàng
-- Số lượng có sẵn sau khi trừ đi các đặt giữ và phân bổ
+Khi theo dõi hàng hóa được kích hoạt, tab Hàng Hóa hiển thị số lượng hàng hóa tại tất cả các kho trong bảng tổng quan:
 
-## Cảnh báo tồn kho thấp
+- Tổng số lượng hàng hóa có sẵn tại tất cả địa điểm
+- Phân bổ theo kho
+- Số lượng có sẵn sau khi giữ chỗ và phân bổ
 
-Hệ thống tự động theo dõi mức tồn kho và cảnh báo bạn khi:
-- Một sản phẩm giảm xuống dưới **ngưỡng tồn kho thấp** của nó
-- Một sản phẩm đạt **số lượng tồn kho sẵn sàng bằng 0**
+## Cảnh Báo Hàng Hóa Dưới Mức
 
-Cảnh báo tồn kho thấp xuất hiện tại:
-- **Bảng điều khiển Cửa hàng** trong phần **Hành động cần thực hiện**
-- Danh sách sản phẩm với chỉ báo trực quan
+Hệ thống tự động theo dõi mức hàng hóa và cảnh báo cho bạn khi:
+- Một sản phẩm giảm dưới **ngưỡng hàng hóa dưới mức**
+- Một sản phẩm đạt **mức hàng hóa bằng không**
 
-## Mẹo
+Cảnh báo hàng hóa dưới mức xuất hiện tại:
+- **Bảng Điều Khiển Cửa Hàng** trong phần Các Hành Động Cần Thiết
+- Danh sách sản phẩm với biểu tượng trực quan
 
-- Bắt đầu với một kho hàng và thêm nhiều hơn khi doanh nghiệp phát triển.
-- Thiết lập ưu tiên xử lý dựa trên tốc độ và chi phí vận chuyển đến từng khu vực.
-- Sử dụng đệm tồn kho cho các vị trí bán lẻ để đảm bảo sẵn sàng tồn kho trên sàn.
-- Kiểm tra thường xuyên các hoạt động tồn kho để phát hiện sự suy giảm hoặc sai lệch.
-- Thiết lập ngưỡng tồn kho thấp dựa trên thời gian đặt hàng lại của bạn — nếu mất 2 tuần để bổ sung hàng, hãy đặt ngưỡng để bao phủ 2 tuần doanh số.
-- Bật theo dõi tồn kho trước khi chính thức vận hành để tránh bán quá mức.
+## Lời Khuyên
+
+- Bắt đầu với một kho duy nhất và thêm nhiều kho hơn khi doanh nghiệp phát triển.
+- Thiết lập thứ tự thực hiện dựa trên tốc độ và chi phí giao hàng đến từng khu vực.
+- Sử dụng các biện pháp dự phòng hàng hóa cho các cửa hàng bán lẻ để đảm bảo có hàng tồn kho trên sàn.
+- Đánh giá các chuyển động hàng hóa định kỳ để phát hiện sự hao hụt hoặc sai lệch.
+- Thiết lập ngưỡng hàng hóa dưới mức dựa trên thời gian đặt hàng của bạn — nếu thời gian restock là 2 tuần, hãy thiết lập ngưỡng để bao gồm 2 tuần doanh số.
+- Kích hoạt theo dõi hàng hóa trước khi ra mắt để tránh bán quá số lượng.

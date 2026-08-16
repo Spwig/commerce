@@ -11,11 +11,14 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET
 
+from staff_roles.decorators import requires_permission
+
 from .models import PaymentTransaction, PaymentWebhook
 
 
 @staff_member_required
 @require_GET
+@requires_permission("payment_providers.view_paymenttransaction", ajax=True)
 def filter_transactions(request):
     """AJAX filter endpoint for PaymentTransaction entries."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
@@ -70,6 +73,7 @@ def filter_transactions(request):
 
 @staff_member_required
 @require_GET
+@requires_permission("payment_providers.view_paymentwebhook", ajax=True)
 def filter_webhooks(request):
     """AJAX filter endpoint for PaymentWebhook entries."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":

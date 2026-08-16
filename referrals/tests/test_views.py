@@ -28,7 +28,9 @@ class ReferralDashboardViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -126,7 +128,9 @@ class FilterAttributionsViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -195,7 +199,9 @@ class FilterRewardsViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -262,7 +268,9 @@ class ApproveAttributionViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -307,7 +315,9 @@ class RejectAttributionViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -357,7 +367,9 @@ class IssueRewardViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 
@@ -405,7 +417,9 @@ class RevokeRewardViewTest(TestCase):
 
     def setUp(self):
         self.program = create_referral_program()
-        self.admin = create_user(email="admin@example.com", is_staff=True)
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these view tests assume is a superuser (always exempt).
+        self.admin = create_user(email="admin@example.com", is_staff=True, is_superuser=True)
         self.client = Client()
         self.client.force_login(self.admin)
 

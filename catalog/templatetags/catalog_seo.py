@@ -34,9 +34,8 @@ def product_structured_data(context, product):
         "@context": "https://schema.org/",
         "@type": "Product",
         "name": product.name,
-        "description": product.short_description or product.description[:200]
-        if product.description
-        else "",
+        "description": product.short_description
+        or (product.full_description[:200] if product.full_description else ""),
         "sku": product.sku,
     }
 

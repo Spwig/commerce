@@ -1,0 +1,111 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Collections" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-list-header">
+        <div>
+            <h1><i class="fas fa-layer-group"></i> {% trans "Collections" %}</h1>
+            <p class="subtitle">{% trans "Group products into curated collections" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_collection_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Collection" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title"><i class="fas fa-filter"></i> {% trans "Filters" %}</h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search"><i class="fas fa-search"></i> {% trans "Search" %}</label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by name or description...' %}" value="">
+            </div>
+            <div class="filter-field">
+                <label for="filter-type"><i class="fas fa-sitemap"></i> {% trans "Type" %}</label>
+                <select id="filter-type">
+                    <option value="">{% trans "All types" %}</option>
+                    {% for value, label in collection_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-status"><i class="fas fa-toggle-on"></i> {% trans "Status" %}</label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-featured"><i class="fas fa-star"></i> {% trans "Featured" %}</label>
+                <select id="filter-featured">
+                    <option value="">{% trans "All collections" %}</option>
+                    <option value="1">{% trans "Featured only" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-seo"><i class="fas fa-magnifying-glass-chart"></i> {% trans "SEO" %}</label>
+                <select id="filter-seo">
+                    <option value="">{% trans "Any SEO state" %}</option>
+                    <option value="complete">{% trans "SEO complete" %}</option>
+                    <option value="incomplete">{% trans "SEO incomplete" %}</option>
+                </select>
+            </div>
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="results-info">
+        <h2>{% trans "Collections" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-layer-group"></i>
+            <span id="collection-count">{{ cl.result_count }}</span> {% trans "collection" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    {% include "admin/includes/bulk_actions_open.html" %}
+    <div id="collection-results" class="list-row-cards">
+        {% include "admin/catalog/collection/partials/collection_cards.html" with collections=cl.result_list %}
+    </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
+
+    {% pagination cl %}
+
+    <div id="list-filter-config"
+         hidden
+         data-filter-url="{% url 'catalog_admin:filter_collections' %}"
+         data-results-container="collection-results"
+         data-results-count="collection-count"></div>
+</div>
+{% endblock %}

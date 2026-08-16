@@ -55,6 +55,11 @@ class Command(BaseCommand):
                 "widget_type": "language",
                 "config": {"display": "dropdown", "show_flags": True},
             },
+            {
+                "name": "Ship-To Selector",
+                "widget_type": "ship_to",
+                "config": {"button_style": "outline", "show_label": True},
+            },
             # Content widgets
             {
                 "name": "About Us Text",

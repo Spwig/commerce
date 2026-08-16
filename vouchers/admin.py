@@ -1,9 +1,21 @@
+from datetime import timedelta
+
 from django.contrib import admin
-from django.db.models import Count, Q, Sum
+from django.db.models import (
+    Count,
+    DateTimeField,
+    DurationField,
+    ExpressionWrapper,
+    F,
+    Q,
+    Sum,
+)
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+
+from core.utils.currency_helpers import format_money
 
 from .models import AppliedVoucher, GiftCard, VoucherCode, VoucherRestriction, VoucherUsage
 from .services.voucher_importer import export_queryset
@@ -57,8 +69,20 @@ class VoucherCodeAdmin(admin.ModelAdmin):
     search_fields = ["code", "name", "description"]
     readonly_fields = ["current_uses", "created_at", "updated_at"]
 
+    autocomplete_fields = ["attribution_campaign"]
     fieldsets = (
         (_("Basic Information"), {"fields": ("code", "name", "description", "is_active")}),
+        (
+            _("Revenue Attribution"),
+            {
+                "fields": ("attribution_campaign",),
+                "classes": ("collapse",),
+                "description": _(
+                    "Link this code to a campaign so redeeming it credits that "
+                    "campaign in revenue attribution (e.g. an influencer code)."
+                ),
+            },
+        ),
         (
             _("Discount Configuration"),
             {
@@ -151,13 +175,19 @@ class VoucherCodeAdmin(admin.ModelAdmin):
         if obj.discount_type == "percentage":
             display = f"{obj.discount_value}%"
             if obj.max_discount_amount:
-                display += f" (max ${obj.max_discount_amount.amount})"
+                cap = format_money(
+                    obj.max_discount_amount.amount, str(obj.max_discount_amount.currency)
+                )
+                display += f" (max {cap})"
             css_class = "voucher-discount voucher-discount--percentage"
         elif obj.discount_type == "fixed":
-            display = f"${obj.discount_value}"
+            display = format_money(obj.discount_value, obj.currency)
             css_class = "voucher-discount voucher-discount--fixed"
         elif obj.discount_type == "gift_card":
-            display = f"Gift Card ${obj.original_gift_card_value.amount if obj.original_gift_card_value else 0}"
+            gift_value = obj.original_gift_card_value
+            amount = gift_value.amount if gift_value else 0
+            currency = str(gift_value.currency) if gift_value else obj.currency
+            display = f"Gift Card {format_money(amount, currency)}"
             css_class = "voucher-discount voucher-discount--gift-card"
         else:
             display = str(obj.discount_value)
@@ -222,26 +252,23 @@ class VoucherCodeAdmin(admin.ModelAdmin):
     def expiry_display(self, obj):
         if not obj.end_date and not obj.days_valid:
             return format_html('<span class="voucher-expiry--none">{}</span>', _("No expiry"))
-        elif obj.end_date:
-            now = timezone.now()
-            if obj.end_date < now:
-                return format_html('<span class="voucher-expiry--expired">{}</span>', _("Expired"))
-            else:
-                days_left = (obj.end_date - now).days
-                css_class = "voucher-expiry--warning" if days_left <= 7 else "voucher-expiry--ok"
-                return format_html(
-                    '<span class="{}"><i class="fas fa-calendar-alt"></i> {} {}</span>',
-                    css_class,
-                    days_left,
-                    _("days"),
-                )
-        elif obj.days_valid:
-            return format_html(
-                '<span class="voucher-expiry--none">{} {}</span>',
-                obj.days_valid,
-                _("days from first use"),
-            )
-        return "-"
+
+        # days_valid overrides end_date in VoucherCode.is_valid, so it takes
+        # precedence here: expiry is created_at + days_valid days.
+        now = timezone.now()
+        expiry = obj.created_at + timedelta(days=obj.days_valid) if obj.days_valid else obj.end_date
+
+        if expiry < now:
+            return format_html('<span class="voucher-expiry--expired">{}</span>', _("Expired"))
+
+        days_left = (expiry - now).days
+        css_class = "voucher-expiry--warning" if days_left <= 7 else "voucher-expiry--ok"
+        return format_html(
+            '<span class="{}"><i class="fas fa-calendar-alt"></i> {} {}</span>',
+            css_class,
+            days_left,
+            _("days"),
+        )
 
     expiry_display.short_description = _("Expiry")
 
@@ -328,16 +355,27 @@ class VoucherCodeAdmin(admin.ModelAdmin):
         """Add context for the custom change list template"""
         extra_context = extra_context or {}
 
-        # Count active vouchers (is_active=True and not expired)
         now = timezone.now()
-        active_qs = VoucherCode.objects.filter(is_active=True).filter(
-            Q(end_date__isnull=True) | Q(end_date__gt=now)
-        )
-        extra_context["active_count"] = active_qs.count()
 
-        # Count inactive vouchers (is_active=False or expired)
-        inactive_qs = VoucherCode.objects.filter(Q(is_active=False) | Q(end_date__lt=now))
-        extra_context["inactive_count"] = inactive_qs.count()
+        # Mirror VoucherCode.is_valid so these counts match the status column:
+        # active means is_active, started, before end_date, before
+        # created_at + days_valid, and not usage-exhausted. days_valid overrides
+        # end_date, so both expiry conditions must be checked.
+        days_valid_expiry = ExpressionWrapper(
+            F("created_at")
+            + ExpressionWrapper(F("days_valid") * timedelta(days=1), output_field=DurationField()),
+            output_field=DateTimeField(),
+        )
+        valid_filter = (
+            Q(is_active=True)
+            & Q(start_date__lte=now)
+            & (Q(end_date__isnull=True) | Q(end_date__gte=now))
+            & (Q(days_valid__isnull=True) | Q(_days_valid_expiry__gte=now))
+            & (Q(max_uses_total__isnull=True) | Q(current_uses__lt=F("max_uses_total")))
+        )
+        base_qs = VoucherCode.objects.annotate(_days_valid_expiry=days_valid_expiry)
+        extra_context["active_count"] = base_qs.filter(valid_filter).count()
+        extra_context["inactive_count"] = base_qs.exclude(valid_filter).count()
 
         # Total redemptions (sum of all voucher uses)
         extra_context["total_redemptions"] = (
@@ -355,10 +393,20 @@ class VoucherCodeAdmin(admin.ModelAdmin):
                 voucher = VoucherCode.objects.get(pk=object_id)
                 now = timezone.now()
 
-                # Determine status
-                if not voucher.is_active:
+                # Determine status, mirroring VoucherCode.is_valid: a future
+                # start_date or a passed created_at + days_valid must not read as
+                # active. days_valid overrides end_date for expiry.
+                if not voucher.is_active or voucher.start_date and now < voucher.start_date:
                     extra_context["voucher_status"] = "inactive"
-                elif voucher.end_date and voucher.end_date < now:
+                elif (
+                    (
+                        voucher.days_valid
+                        and voucher.created_at
+                        and now > voucher.created_at + timedelta(days=voucher.days_valid)
+                    )
+                    or voucher.end_date
+                    and now > voucher.end_date
+                ):
                     extra_context["voucher_status"] = "expired"
                 elif voucher.max_uses_total and voucher.current_uses >= voucher.max_uses_total:
                     extra_context["voucher_status"] = "exhausted"
@@ -394,6 +442,9 @@ class VoucherRestrictionAdmin(admin.ModelAdmin):
     list_display = ["voucher", "restriction_type", "restriction_value", "is_inclusive"]
     list_filter = ["restriction_type", "is_inclusive"]
     search_fields = ["voucher__code", "restriction_value"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("voucher")
 
 
 @admin.register(GiftCard)
@@ -431,23 +482,38 @@ class GiftCardAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ("vouchers/css/admin-voucher-badges.css",)}
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("voucher", "purchased_by", "purchase_order")
+        )
+
     def voucher_code(self, obj):
         return obj.voucher.code
 
     voucher_code.short_description = _("Code")
 
     def original_value(self, obj):
-        return f"${obj.original_value.amount}" if obj.original_value else "$0"
+        value = obj.original_value
+        if value:
+            return format_money(value.amount, str(value.currency))
+        return format_money(0, obj.voucher.currency)
 
     original_value.short_description = _("Original Value")
 
     def current_balance(self, obj):
-        if obj.balance:
+        balance = obj.balance
+        if balance:
             css_class = (
-                "giftcard-balance--positive" if obj.balance.amount > 0 else "giftcard-balance--zero"
+                "giftcard-balance--positive" if balance.amount > 0 else "giftcard-balance--zero"
             )
-            return format_html('<span class="{}">${}</span>', css_class, obj.balance.amount)
-        return "$0"
+            return format_html(
+                '<span class="{}">{}</span>',
+                css_class,
+                format_money(balance.amount, str(balance.currency)),
+            )
+        return format_money(0, obj.voucher.currency)
 
     current_balance.short_description = _("Balance")
 

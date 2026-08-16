@@ -61,7 +61,7 @@
             <div class="role-form-group">
                 <label for="id_display_name">{% trans "Display Name" %} *</label>
                 <input type="text" id="id_display_name" name="display_name"
-                       value="{{ adminform.form.initial.display_name|default:original.display_name|default:'' }}"
+                       value="{{ adminform.form.display_name.value|default:'' }}"
                        required maxlength="100"
                        placeholder="{% trans 'e.g. Store Manager' %}">
             </div>

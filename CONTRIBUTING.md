@@ -65,6 +65,13 @@ target (see [ARCHITECTURE.md → Distribution model](ARCHITECTURE.md#distributio
 
 You need Python 3.12+, Node 18+, PostgreSQL 15+, Redis 7+.
 
+The quickest DB + Redis is the `docker-compose.dev.yml` step below. If you'd
+rather run PostgreSQL, Redis, and the app **natively with no Docker at all**,
+follow [DEVELOPMENT.md](DEVELOPMENT.md) — a step-by-step native setup for
+Ubuntu/WSL2, macOS, and Windows (including the pgvector extension and licence
+path a bare-metal install needs). Everything else on this page applies either
+way.
+
 ```bash
 # 1. Fork + clone
 git clone git@github.com:YOUR_USER/commerce.git spwig-commerce
@@ -85,8 +92,9 @@ docker compose -f docker-compose.dev.yml up -d
 cp .env.example .env
 # edit .env — DB_*, REDIS_*, SECRET_KEY at minimum
 
-# 6. Migrate + create a superuser
+# 6. Migrate, seed baseline data, create a superuser
 ./manage.py migrate
+./manage.py seed            # REQUIRED — creates SiteSettings/Site/etc; skip it and every page 500s
 ./manage.py createsuperuser
 
 # 7. Run the shop

@@ -49,6 +49,7 @@ class Command(BaseCommand):
         )
 
         total_deleted = 0
+        would_delete = 0
 
         for dup in duplicates:
             product_id = dup["product_id"]
@@ -88,6 +89,9 @@ class Command(BaseCommand):
                         stock_item.delete()
                         total_deleted += 1
 
+            # Each group contributes (count - 1) deletions to the running total.
+            would_delete += count - 1
+
             self.stdout.write("")
 
         if fix_mode:
@@ -98,7 +102,7 @@ class Command(BaseCommand):
             self.stdout.write("")
             self.stdout.write(
                 self.style.WARNING(
-                    f"DRY RUN - Would delete {duplicates.count() * (count - 1)} records. "
+                    f"DRY RUN - Would delete {would_delete} records. "
                     "Run with --fix to actually delete them."
                 )
             )

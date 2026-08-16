@@ -60,6 +60,16 @@ SCOPE_REGISTRY = {
         "supports_write": False,
         "hq_only": False,
     },
+    "analytics.attribution": {
+        "label": _("Revenue Attribution"),
+        "group": "analytics",
+        "description": _(
+            "Read multi-touch revenue attribution: per-model channel breakdown, "
+            "time-series, journeys and campaign performance."
+        ),
+        "supports_write": False,
+        "hq_only": False,
+    },
     # --- Catalog ---
     "products": {
         "label": _("Products"),

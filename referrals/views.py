@@ -5,11 +5,12 @@ Admin views for dashboard, filtering, and managing referrals.
 """
 
 import json
-from datetime import timedelta
+from datetime import UTC, timedelta
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, DateTimeField, ExpressionWrapper, F, Q, Sum
+from django.db.models.functions import TruncDate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -85,15 +86,31 @@ def referral_dashboard(request):
     total_orders = ReferralEvent.objects.filter(event_type="order").count()
     conversion_rate = (total_orders / total_clicks * 100) if total_clicks > 0 else 0
 
-    # Referrals over time (last 30 days)
+    # Referrals over time (last 30 days). Group into the same rolling 24-hour
+    # windows the per-day loop used (anchored at start_date's time-of-day, not
+    # calendar midnight). Shifting created_at back by that offset and truncating
+    # in UTC makes each UTC day boundary land exactly on start_date + i*24h, so
+    # the buckets match the original date labels and counts one-for-one.
+    day_offset = start_date - start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    bucket_day = TruncDate(
+        ExpressionWrapper(F("created_at") - day_offset, output_field=DateTimeField()),
+        tzinfo=UTC,
+    )
+    daily_counts = {
+        row["day"]: row["count"]
+        for row in (
+            ReferralAttribution.objects.filter(created_at__gte=start_date)
+            .annotate(day=bucket_day)
+            .values("day")
+            .annotate(count=Count("id"))
+        )
+    }
     referrals_trend = []
     for i in range(30):
         date = start_date + timedelta(days=i)
-        next_date = date + timedelta(days=1)
-        count = ReferralAttribution.objects.filter(
-            created_at__gte=date, created_at__lt=next_date
-        ).count()
-        referrals_trend.append({"date": date.strftime("%Y-%m-%d"), "count": count})
+        referrals_trend.append(
+            {"date": date.strftime("%Y-%m-%d"), "count": daily_counts.get(date.date(), 0)}
+        )
 
     # Conversion funnel data
     funnel_data = {

@@ -358,15 +358,18 @@ class TestAdminAndPOSAccess:
         assert can_access_admin(test_user) is True
         assert can_access_pos(test_user) is True
 
-    def test_staff_with_no_roles_gets_admin_access(self, test_user):
+    def test_staff_with_no_roles_denied_admin_access(self, test_user):
         """
-        Verify staff users with no roles get admin access (backwards compatibility)
+        Verify staff users with no roles are denied admin access (deny-by-default).
+
+        A role-less staff member must be granted a role before they can reach the
+        admin. Single-owner stores are unaffected because the owner is a superuser.
         """
         test_user.is_staff = True
         test_user.save()
 
-        # No roles assigned, but is_staff=True
-        assert can_access_admin(test_user) is True
+        # No roles assigned: deny-by-default denies admin access
+        assert can_access_admin(test_user) is False
 
 
 class TestDefaultPermissions:

@@ -8,6 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
@@ -488,7 +489,9 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                     {
                         "success": True,
                         "message": _("Provider connected successfully!"),
-                        "redirect_url": f"/admin/catalog/licenseprovider/{provider.id}/change/",
+                        "redirect_url": reverse(
+                            "admin:catalog_licenseprovider_change", args=[provider.id]
+                        ),
                     }
                 )
 

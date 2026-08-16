@@ -48,6 +48,8 @@ class GiftCardService:
         """
         from django.db import IntegrityError
 
+        from catalog.models import GiftCard
+
         created = []
 
         gift_card_items = order.items.filter(
@@ -94,13 +96,20 @@ class GiftCardService:
                             order_item=order_item, order=order, issue_index=index
                         )
                 except IntegrityError:
-                    # Slot already claimed — this order line was minted before.
-                    # Expected on any retry; not an error.
-                    logger.info(
-                        f"Gift card slot {index} on order item {order_item.pk} already "
-                        f"issued; skipping"
-                    )
-                    continue
+                    # An IntegrityError only proves the slot is already claimed
+                    # if a card for this (order_item, issue_index) truly exists.
+                    # A generated-code collision or any other integrity failure
+                    # rolls back the new card too; treating that as "already
+                    # issued" would silently drop a paid card. Confirm the slot,
+                    # then skip; otherwise re-raise so the issuance task retries
+                    # or reports the failure.
+                    if GiftCard.objects.filter(order_item=order_item, issue_index=index).exists():
+                        logger.info(
+                            f"Gift card slot {index} on order item {order_item.pk} already "
+                            f"issued; skipping"
+                        )
+                        continue
+                    raise
                 except ValueError as exc:
                     # The line itself is unmintable — no recipient, for
                     # instance. Retrying will never fix it, so do not raise into
@@ -332,8 +341,16 @@ class GiftCardService:
             order=order, transaction_type="refund", gift_card__order_item__order=order
         ).values_list("gift_card_id", flat=True)
 
-        purchased_gift_cards = GiftCard.objects.filter(order_item__order=order).exclude(
-            id__in=already_deactivated_gc_ids
+        # Lock the purchased cards for the duration of this atomic block. Without
+        # the lock, a concurrent redemption of the same card commits between this
+        # SELECT and the zeroing below: the refund still sees balance ==
+        # initial_value, zeroes the card, and books a full -initial_value refund
+        # row while the redemption also lands — over-crediting and corrupting the
+        # ledger. deduct_balance() locks the same way for the same race.
+        purchased_gift_cards = (
+            GiftCard.objects.select_for_update()
+            .filter(order_item__order=order)
+            .exclude(id__in=already_deactivated_gc_ids)
         )
 
         for gift_card in purchased_gift_cards:

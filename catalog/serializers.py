@@ -664,11 +664,20 @@ class ProductListSerializer(serializers.ModelSerializer):
         """Whether this product is sold in the requesting shopper's region."""
         return _ships_to_region(obj, self.context.get("request"))
 
+    def _listing_images(self, obj) -> list:
+        """Prefetched listing images (position order), filtered in memory to avoid N+1."""
+        return [img for img in obj.images.all() if img.show_in_listing]
+
+    def _approved_reviews(self, obj) -> list:
+        """Prefetched approved reviews, filtered in memory to avoid N+1."""
+        return [review for review in obj.reviews.all() if review.is_approved]
+
     def get_primary_image(self, obj) -> dict | None:
         """Get primary image or first image"""
-        primary = obj.images.filter(is_primary=True, show_in_listing=True).first()
-        if not primary:
-            primary = obj.images.filter(show_in_listing=True).first()
+        listing_images = self._listing_images(obj)
+        primary = next((img for img in listing_images if img.is_primary), None)
+        if not primary and listing_images:
+            primary = listing_images[0]
 
         if primary:
             return {
@@ -682,7 +691,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj) -> list:
         """Get product images with thumbnails for cart/mini-cart"""
-        images = obj.images.filter(show_in_listing=True).order_by("-is_primary", "position")[:1]
+        images = sorted(self._listing_images(obj), key=lambda i: (not i.is_primary, i.position))[:1]
         result = []
         for img in images:
             if img.media_asset:
@@ -705,12 +714,14 @@ class ProductListSerializer(serializers.ModelSerializer):
 
     def get_average_rating(self, obj) -> float | None:
         """Calculate average rating from reviews"""
-        avg = obj.reviews.filter(is_approved=True).aggregate(Avg("rating"))["rating__avg"]
-        return round(avg, 1) if avg else None
+        ratings = [review.rating for review in self._approved_reviews(obj)]
+        if not ratings:
+            return None
+        return round(sum(ratings) / len(ratings), 1)
 
     def get_review_count(self, obj) -> int:
         """Count approved reviews"""
-        return obj.reviews.filter(is_approved=True).count()
+        return len(self._approved_reviews(obj))
 
 
 class ProductDetailSerializer(
@@ -1567,8 +1578,11 @@ class ConfigurationSlotOptionSerializer(TranslationAwareSerializer, serializers.
     @extend_schema_field(serializers.BooleanField())
     def get_in_stock(self, obj) -> bool:
         product = obj.option_product
-        if obj.option_variant:
-            stock = product.stock_items.filter(variant=obj.option_variant).first()
+        if obj.option_variant_id:
+            stock = next(
+                (s for s in product.stock_items.all() if s.variant_id == obj.option_variant_id),
+                None,
+            )
             if stock:
                 return stock.available > 0
         total = sum(s.available for s in product.stock_items.all())
@@ -1614,7 +1628,7 @@ class CompatibilityRuleSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(serializers.ListField(child=serializers.IntegerField()))
     def get_compatible_option_ids(self, obj) -> list:
-        return list(obj.compatible_options.values_list("id", flat=True))
+        return [option.id for option in obj.compatible_options.all()]
 
 
 class ConfigurationPresetSerializer(TranslationAwareSerializer, serializers.ModelSerializer):

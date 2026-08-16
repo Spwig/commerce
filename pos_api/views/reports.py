@@ -8,6 +8,7 @@ All endpoints require staff authentication and a valid POS license.
 from datetime import date
 from decimal import Decimal
 
+from django.db import transaction
 from django.db.models import Count, Sum
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
@@ -56,8 +57,8 @@ def _serialize_shift(shift):
         amount = pb["total"] or Decimal("0")
         if pb["method"] == "cash":
             cash_total = amount
-        elif pb["method"] == "card":
-            card_total = amount
+        elif pb["method"] in ("card", "terminal_card"):
+            card_total += amount
         elif pb["method"] == "gift_card":
             gift_card_total = amount
 
@@ -146,7 +147,7 @@ def current_shift_summary(request):
 @permission_classes([IsStaffUser])
 def open_shift(request):
     """Open a new shift on the terminal."""
-    from pos_app.models import POSShift
+    from pos_app.models import POSShift, POSTerminal
 
     terminal, err = get_terminal(request)
     if err:
@@ -156,32 +157,37 @@ def open_shift(request):
     serializer.is_valid(raise_exception=True)
     opening_cash = serializer.validated_data.get("opening_cash", Decimal("0"))
 
-    # Check for existing open shift on this terminal
-    existing = POSShift.objects.filter(
-        terminal=terminal,
-        ended_at__isnull=True,
-    ).first()
+    # Serialize the check-and-create by locking the terminal row so two
+    # concurrent requests cannot both open a shift on the same terminal.
+    with transaction.atomic():
+        POSTerminal.objects.select_for_update().get(pk=terminal.pk)
 
-    if existing:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "SHIFT_ALREADY_OPEN",
-                    "message": f"A shift is already open on this terminal (cashier: {existing.cashier.get_full_name()}).",
+        # Check for existing open shift on this terminal
+        existing = POSShift.objects.filter(
+            terminal=terminal,
+            ended_at__isnull=True,
+        ).first()
+
+        if existing:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "SHIFT_ALREADY_OPEN",
+                        "message": f"A shift is already open on this terminal (cashier: {existing.cashier.get_full_name()}).",
+                    },
                 },
-            },
-            status=status.HTTP_409_CONFLICT,
-        )
+                status=status.HTTP_409_CONFLICT,
+            )
 
-    shift = POSShift.objects.create(
-        terminal=terminal,
-        cashier=request.user,
-        opening_cash=opening_cash,
-        total_sales=Decimal("0"),
-        total_refunds=Decimal("0"),
-        total_transactions=0,
-    )
+        shift = POSShift.objects.create(
+            terminal=terminal,
+            cashier=request.user,
+            opening_cash=opening_cash,
+            total_sales=Decimal("0"),
+            total_refunds=Decimal("0"),
+            total_transactions=0,
+        )
 
     return Response(
         {"success": True, "message": "Shift opened.", "shift": _serialize_shift(shift)},
@@ -245,7 +251,17 @@ def close_shift(request):
             status=status.HTTP_409_CONFLICT,
         )
 
-    shift.close_shift(closing_cash_amount=closing_cash)
+    try:
+        shift.close_shift(closing_cash_amount=closing_cash)
+    except ValueError:
+        # A concurrent request already closed this shift.
+        return Response(
+            {
+                "success": False,
+                "error": {"code": "NO_OPEN_SHIFT", "message": "No open shift found."},
+            },
+            status=status.HTTP_409_CONFLICT,
+        )
     if notes:
         shift.notes = notes
         shift.save(update_fields=["notes"])
@@ -402,6 +418,7 @@ def daily_report(request):
             order__created_at__date=report_date,
             amount__gt=0,
         )
+        .exclude(order__status="cancelled")
         .values("method")
         .annotate(
             total=Sum("amount"),
@@ -489,7 +506,10 @@ def top_products(request):
     else:
         report_date = date.today()
 
-    limit = min(int(request.query_params.get("limit", 10)), 50)
+    try:
+        limit = min(int(request.query_params.get("limit", 10)), 50)
+    except ValueError:
+        limit = 10
 
     top_items = (
         OrderItem.objects.filter(

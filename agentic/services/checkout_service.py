@@ -32,6 +32,12 @@ from agentic.services.catalog_service import money_to_ucp
 
 SESSION_KEY_PREFIX = "agentic:"
 
+# Marks a session an agent has explicitly canceled. Cancellation is recorded on
+# the shared CheckoutSession's metadata (it has no status column of its own), so
+# a subsequent read reports `canceled` rather than silently reverting to
+# not-ready — and update/complete refuse to act on it.
+CANCELED_METADATA_KEY = "agentic_canceled_at"
+
 # UCP checkout session statuses (the subset the store can be in).
 STATUS_NOT_READY = "not_ready_for_payment"
 STATUS_READY = "ready_for_payment"
@@ -61,6 +67,20 @@ def _session_key(checkout_id: str) -> str:
 
 def _agent_id(agent) -> str | None:
     return str(agent.id) if agent is not None else None
+
+
+def _is_canceled(session) -> bool:
+    """Whether the agent has canceled this session (recorded in its metadata)."""
+    return bool((session.metadata or {}).get(CANCELED_METADATA_KEY))
+
+
+# Per-checkout mutex shared by completion and cancellation so the two can never
+# interleave (a cancel racing an in-flight charge, or two concurrent completes).
+COMPLETE_LOCK_TTL = 120  # seconds
+
+
+def _complete_lock_key(checkout_id: str) -> str:
+    return f"agentic:complete-lock:{checkout_id}"
 
 
 # --------------------------------------------------------------------------- #
@@ -251,6 +271,8 @@ def update_checkout_session(
     session = load_session(checkout_id, agent)
     if session is None:
         raise CheckoutError("not_found", "No such checkout session.", status=404)
+    if _is_canceled(session):
+        raise CheckoutError("checkout_canceled", "This checkout has been canceled.", status=409)
 
     if buyer is not None and not isinstance(buyer, dict):
         raise CheckoutError("invalid_buyer", "buyer must be an object.")
@@ -269,6 +291,103 @@ def update_checkout_session(
     session.refresh_from_db()
     _autoselect_provider(session)
     return session
+
+
+def cancel_checkout_session(checkout_id: str, agent) -> dict[str, Any]:
+    """
+    Cancel an agent's in-progress checkout session so it can no longer be paid.
+
+    Cancel acts only on a PRE-ORDER session — a session whose completion has not
+    yet produced an order — so it is a pure state transition with no stock to
+    release. It records the cancellation on the session and returns it in UCP
+    shape with a `canceled` status. Idempotent — canceling an already-canceled
+    session repeats the canceled view without error.
+
+    It refuses (409) rather than mislead in three cases: a completion is in flight
+    (`completion_in_progress` — it shares completion's lock); a payment could still
+    settle out-of-band (`payment_in_progress`); or a completion attempt already
+    produced an order — paid (`already_completed`) or unpaid/retryable
+    (`order_pending`, whose held stock allocation is the order lifecycle's to
+    release, not this path's). An unknown id is 404, kept distinct from a paid
+    order so an agent is never told its own order does not exist.
+    """
+    from django.core.cache import cache
+    from django.utils import timezone
+
+    lock_key = _complete_lock_key(checkout_id)
+    if not cache.add(lock_key, "1", COMPLETE_LOCK_TTL):
+        raise CheckoutError(
+            "completion_in_progress",
+            "This checkout is being completed and can't be canceled.",
+            status=409,
+        )
+    try:
+        session = load_session(checkout_id, agent)
+        if session is None:
+            order = find_completed_order(checkout_id, agent)
+            if order is not None:
+                raise CheckoutError(
+                    "already_completed",
+                    "This checkout is already completed and cannot be canceled.",
+                    status=409,
+                )
+            raise CheckoutError("not_found", "No such checkout session.", status=404)
+
+        if not _is_canceled(session):
+            # Cancel only ever acts on a PRE-ORDER session. Refuse if a payment
+            # attempt could still settle out-of-band — a 3DS redirect
+            # (`requires_action`) or async `processing` intent can be completed by
+            # the provider/webhook even after we mark the session canceled, which
+            # would pay an order we reported as canceled.
+            if _has_settleable_intent(session):
+                raise CheckoutError(
+                    "payment_in_progress",
+                    "A payment is in progress; wait for it to finish before canceling.",
+                    status=409,
+                )
+            # And refuse if a completion attempt has already produced an order:
+            # a paid one is `already_completed`; an unpaid one (a failed/retryable
+            # attempt) holds a stock allocation and belongs to the order lifecycle,
+            # not a checkout-session metadata stamp — stamping `canceled` here would
+            # both mislead and strand that allocation. The agent manages the order.
+            existing_order = find_completed_order(checkout_id, agent)
+            if existing_order is not None:
+                if getattr(existing_order, "payment_status", "") == "paid":
+                    raise CheckoutError(
+                        "already_completed",
+                        "This checkout is already completed and cannot be canceled.",
+                        status=409,
+                    )
+                raise CheckoutError(
+                    "order_pending",
+                    "This checkout has a pending order from a payment attempt; "
+                    "resolve that order rather than canceling the checkout.",
+                    status=409,
+                )
+            session.metadata = {
+                **(session.metadata or {}),
+                CANCELED_METADATA_KEY: timezone.now().isoformat(),
+            }
+            session.save(update_fields=["metadata"])
+
+        return build_ucp_checkout_session(session, checkout_id)
+    finally:
+        cache.delete(lock_key)
+
+
+# Payment-intent statuses that a provider/webhook can still turn into a paid
+# order after the fact — cancellation must not race these.
+_SETTLEABLE_INTENT_STATUSES = ("requires_action", "processing")
+
+
+def _has_settleable_intent(session) -> bool:
+    """Whether this session has a payment intent that could still settle."""
+    try:
+        return session.payment_intents.filter(status__in=_SETTLEABLE_INTENT_STATUSES).exists()
+    except Exception:
+        # No related manager / query error → be safe and treat as none in flight;
+        # the shared completion lock is the primary guard against a live charge.
+        return False
 
 
 # --------------------------------------------------------------------------- #
@@ -340,12 +459,22 @@ def build_ucp_checkout_session(
     session, checkout_id: str, *, order=None, continue_url: str | None = None
 ) -> dict[str, Any]:
     """Project a store CheckoutSession (+ optional Order) into UCP shape."""
-    status, messages = _derive_status(session, order)
+    if _is_canceled(session):
+        status, messages = STATUS_CANCELED, []
+    else:
+        status, messages = _derive_status(session, order)
+    if status == STATUS_CANCELED:
+        payment_status = "canceled"
+    elif status == STATUS_COMPLETED:
+        payment_status = "completed"
+    else:
+        payment_status = "requires_payment"
     payment = {
-        "status": "completed" if status == STATUS_COMPLETED else "requires_payment",
+        "status": payment_status,
         # Escalation: a human can finish this in the storefront if the agent
-        # cannot complete it headlessly. Best-effort; may be None.
-        "continue_url": continue_url,
+        # cannot complete it headlessly. Best-effort; may be None. A canceled
+        # session offers no continue_url — there is nothing left to finish.
+        "continue_url": None if status == STATUS_CANCELED else continue_url,
     }
     body: dict[str, Any] = {
         "id": checkout_id,
@@ -445,18 +574,53 @@ def _order_view(checkout_id: str, order) -> dict[str, Any]:
             "status": getattr(order, "payment_status", ""),
         },
         "mandate": _mandate_view(checkout_id),
+        "payment_mandate": _payment_mandate_view(checkout_id),
     }
+
+
+def _payment_method_label(session) -> str:
+    """
+    A non-identifying label for the paying gateway for the payment mandate.
+
+    Built from the provider's display name / component name only — deliberately
+    NOT ``str(provider)``, whose ``__str__`` appends the merchant's admin
+    username. The mandate's claims are cleartext-readable and handed to the
+    calling agent and the payment network, so the label must carry no operator
+    identity and no credential/PAN.
+    """
+    provider = getattr(session, "payment_provider", None)
+    if provider is None:
+        return ""
+    try:
+        return provider.display_name or provider.component.name
+    except Exception:
+        return ""
 
 
 def _mandate_view(checkout_id: str) -> dict | None:
     """The AP2 checkout mandate for this checkout, if one was issued."""
     from agentic.services import mandate_service
 
-    mandate = mandate_service.mandate_for_checkout(checkout_id)
+    mandate = mandate_service.checkout_mandate_for_checkout(checkout_id)
     if mandate is None:
         return None
     return {
         "format": "ap2-checkout-mandate+sd-jwt",
+        "alg": mandate.alg,
+        "kid": mandate.kid,
+        "value": mandate.sd_jwt,
+    }
+
+
+def _payment_mandate_view(checkout_id: str) -> dict | None:
+    """The AP2 payment mandate for this checkout, if one was issued."""
+    from agentic.services import mandate_service
+
+    mandate = mandate_service.payment_mandate_for_checkout(checkout_id)
+    if mandate is None:
+        return None
+    return {
+        "format": "ap2-payment-mandate+sd-jwt",
         "alg": mandate.alg,
         "kid": mandate.kid,
         "value": mandate.sd_jwt,
@@ -528,8 +692,8 @@ def complete_checkout_session(
     # gateway intent before the first deletes the session — a double charge. A
     # short cache lock lets only one completion run at a time; the loser is told
     # to retry (by which point the winner has finished and it replays the order).
-    lock_key = f"agentic:complete-lock:{checkout_id}"
-    if not cache.add(lock_key, "1", 120):
+    lock_key = _complete_lock_key(checkout_id)
+    if not cache.add(lock_key, "1", COMPLETE_LOCK_TTL):
         raise CheckoutError(
             "completion_in_progress", "This checkout is already being completed.", status=409
         )
@@ -541,6 +705,8 @@ def complete_checkout_session(
             if order is not None:
                 return _order_view(checkout_id, order)
             raise CheckoutError("not_found", "No such checkout session.", status=404)
+        if _is_canceled(session):
+            raise CheckoutError("checkout_canceled", "This checkout has been canceled.", status=409)
 
         session.recalculate_totals()
         session.refresh_from_db()
@@ -610,12 +776,21 @@ def complete_checkout_session(
         order.refresh_from_db()
 
     if order is not None and getattr(order, "payment_status", "") == "paid":
-        # Issue the AP2 checkout mandate (once) attesting what was charged. A
-        # no-op when the store has no AP2 key; never blocks the paid order.
+        # Issue the AP2 mandates (once each) attesting the paid order: the
+        # Checkout Mandate (what was authorised to buy) and the Payment Mandate
+        # (the payment leg, for the network/issuer). Both are no-ops when the
+        # store has no AP2 key, and neither ever blocks the paid order.
         from agentic.services import mandate_service
 
-        if mandate_service.mandate_for_checkout(checkout_id) is None:
+        if mandate_service.checkout_mandate_for_checkout(checkout_id) is None:
             mandate_service.issue_checkout_mandate(order, ucp_checkout_id=checkout_id, agent=agent)
+        if mandate_service.payment_mandate_for_checkout(checkout_id) is None:
+            mandate_service.issue_payment_mandate(
+                order,
+                ucp_checkout_id=checkout_id,
+                agent=agent,
+                payment_method_label=_payment_method_label(session),
+            )
         return _order_view(checkout_id, order)
 
     # Not paid yet. 3DS / redirect flows escalate to a human via continue_url.

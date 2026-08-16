@@ -1,0 +1,128 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Revenue Attribution" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'attribution/admin/css/attribution-dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{{ payload|json_script:"attr-payload" }}
+{% endblock %}
+
+{% block content %}
+<div class="attr-dash"
+     data-theme="{{ admin_theme|default:'light' }}"
+     data-url="{% url 'attribution:dashboard_data' %}"
+     data-active="{{ period }}">
+
+  <div class="attr-topbar">
+    <div class="attr-brand">
+      <span class="attr-eyebrow">{% trans "Insights" %}</span>
+      <h1>{% trans "Revenue Attribution" %}</h1>
+      <p class="attr-sub">{% trans "Every order, credited across the whole journey — and re-credited the instant you change how you count." %}</p>
+    </div>
+    <div class="attr-tools">
+      <label class="attr-range">
+        <span class="sr-only">{% trans "Date range" %}</span>
+        <select id="attr-range" aria-label="{% trans 'Date range' %}">
+          <option value="last_7_days" {% if period == 'last_7_days' %}selected{% endif %}>{% trans "Last 7 days" %}</option>
+          <option value="last_14_days" {% if period == 'last_14_days' %}selected{% endif %}>{% trans "Last 14 days" %}</option>
+          <option value="last_30_days" {% if period == 'last_30_days' %}selected{% endif %}>{% trans "Last 30 days" %}</option>
+          <option value="last_90_days" {% if period == 'last_90_days' %}selected{% endif %}>{% trans "Last 90 days" %}</option>
+          <option value="month_to_date" {% if period == 'month_to_date' %}selected{% endif %}>{% trans "Month to date" %}</option>
+        </select>
+      </label>
+      {% if has_data %}
+      <a id="attr-export" class="attr-export-btn" href="#" data-url="{% url 'attribution:dashboard_export' %}" role="button">
+        <i class="fas fa-download" aria-hidden="true"></i> {% trans "Export CSV" %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if has_data %}
+  <div class="attr-body">
+    <!-- HERO: model switcher -->
+    <section class="attr-hero" aria-labelledby="attr-hero-label">
+      <div class="attr-hero-head">
+        <span class="attr-hero-label" id="attr-hero-label">{% trans "Attribution model" %}</span>
+        <span class="attr-live"><span class="attr-pulse"></span>{% trans "Re-attributes live · no reprocessing" %}</span>
+      </div>
+      <div class="attr-models" id="attr-models" role="radiogroup" aria-label="{% trans 'Attribution model' %}"></div>
+    </section>
+
+    <!-- KPI strip -->
+    <section class="attr-kpis">
+      <div class="attr-kpi attr-reconcile">
+        <div class="k-label">{% trans "Attributed revenue" %}</div>
+        <div class="k-val" id="kpi-total">—</div>
+        <div class="recon-badge" id="kpi-recon"></div>
+      </div>
+      <div class="attr-kpi">
+        <div class="k-label">{% trans "Orders" %}</div>
+        <div class="k-val" id="kpi-orders">—</div>
+        <div class="k-sub">{% trans "across all channels" %}</div>
+      </div>
+      <div class="attr-kpi">
+        <div class="k-label">{% trans "Avg. touches / order" %}</div>
+        <div class="k-val" id="kpi-touches">—</div>
+        <div class="k-sub">{% trans "multi-touch journeys" %}</div>
+      </div>
+      <div class="attr-kpi">
+        <div class="k-label">{% trans "Leading channel" %}</div>
+        <div class="k-val k-val--sm" id="kpi-top-val">—</div>
+        <div class="k-top"><span class="sw" id="kpi-top-sw"></span><span id="kpi-top-name" class="k-sub">—</span></div>
+      </div>
+    </section>
+
+    <div class="attr-grid">
+      <section class="attr-card">
+        <div class="card-head"><h2>{% trans "Revenue by channel" %}</h2><span class="hint">{% trans "watch it re-weight" %}</span></div>
+        <div class="attr-bars" id="attr-bars"></div>
+      </section>
+      <section class="attr-card">
+        <div class="card-head"><h2>{% trans "Revenue over time" %}</h2><span class="hint">{% trans "stacked by channel" %}</span></div>
+        <div class="chart-wrap"><canvas id="attr-timeseries" height="200"></canvas></div>
+      </section>
+    </div>
+
+    <section class="attr-card">
+      <div class="card-head">
+        <h2>{% trans "How customers actually arrive" %}</h2>
+        <div class="attr-seg" role="group" aria-label="{% trans 'Revenue lens' %}">
+          <button type="button" data-lens="attributed" aria-pressed="true">{% trans "Attributed" %}</button>
+          <button type="button" data-lens="influenced" aria-pressed="false">{% trans "Influenced" %}</button>
+        </div>
+      </div>
+      <p class="hint" id="attr-lens-note">{% trans "First touch on the left, the order on the right." %}</p>
+      <div class="sankey-wrap"><svg class="attr-sankey" id="attr-sankey" viewBox="0 0 720 260" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{% trans 'Customer journey flows' %}"></svg></div>
+    </section>
+
+    <section class="attr-card" id="attr-campaigns-card">
+      <div class="card-head"><h2>{% trans "Campaigns" %}</h2><span class="hint">{% trans "tagged links & codes" %}</span></div>
+      <div class="attr-scroll-x">
+      <table class="attr-tbl">
+        <thead><tr><th>{% trans "Campaign" %}</th><th class="num">{% trans "Revenue" %}</th><th class="num">{% trans "Orders" %}</th><th class="num">{% trans "AOV" %}</th></tr></thead>
+        <tbody id="attr-campaigns"></tbody>
+      </table>
+      </div>
+    </section>
+
+    <p class="attr-foot" id="attr-foot"></p>
+  </div>
+  {% else %}
+  <div class="attr-empty">
+    <div class="attr-empty-icon"><i class="fas fa-diagram-project"></i></div>
+    <h2>{% trans "No attributed revenue yet" %}</h2>
+    <p>{% trans "As orders come in, you'll see exactly where they came from — across every touch in the customer's journey, not just the last click." %}</p>
+  </div>
+  {% endif %}
+</div>
+
+<script src="{% static 'attribution/admin/js/attribution-dashboard.js' %}" defer></script>
+{% endblock %}

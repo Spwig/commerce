@@ -121,13 +121,21 @@ def staff_list(request):
 
     total_count = queryset.count()
     start = (page - 1) * page_size
-    staff_members = queryset[start : start + page_size]
+    staff_members = list(queryset.prefetch_related("groups")[start : start + page_size])
+
+    # Bulk-resolve roles for the page so the serializer does not issue a
+    # per-user role query (N+1).
+    from staff_roles.services import get_roles_for_users
+
+    roles_by_user = get_roles_for_users(staff_members)
 
     return Response(
         {
             "success": True,
             "data": {
-                "staff": StaffMemberListSerializer(staff_members, many=True).data,
+                "staff": StaffMemberListSerializer(
+                    staff_members, many=True, context={"roles_by_user": roles_by_user}
+                ).data,
                 "pagination": {
                     "page": page,
                     "page_size": page_size,

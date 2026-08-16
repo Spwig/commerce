@@ -5,6 +5,7 @@
 <div class="list-row-cards">
     {% for segment in segments %}
     <div class="list-row-card segment-card {% if not segment.is_active %}card-inactive{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=segment.pk %}
         <!-- Segment Icon -->
         <div class="list-row-card-icon segment {{ segment.criteria_type|slugify }}">
             {% if segment.criteria_type == 'rule_based' %}

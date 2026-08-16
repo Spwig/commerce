@@ -159,6 +159,13 @@
       },
     })
       .then(response => {
+        if (response.status === 403) {
+          // Permission denial — distinct from a transient failure so the
+          // catch below can show a "you don't have access" message, not "retry".
+          const err = new Error('forbidden');
+          err.forbidden = true;
+          throw err;
+        }
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
@@ -184,8 +191,11 @@
         console.error('Filter error:', error);
         if (container) {
           container.classList.remove('loading');
-          container.innerHTML =
-            '<div class="error">Failed to load results. Please try again.</div>';
+          const msg =
+            error && error.forbidden
+              ? "You don't have permission to view these results."
+              : 'Failed to load results. Please try again.';
+          container.innerHTML = '<div class="error">' + msg + '</div>';
         }
       });
   }

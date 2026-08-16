@@ -558,8 +558,10 @@ class FulfillmentService:
         Returns value between 0 and 1. Gracefully degrades to 0.5 if geocoding
         is unavailable or warehouse has no coordinates.
         """
-        # Check if warehouse has coordinates
-        if not all([warehouse.latitude, warehouse.longitude]):
+        # Check if warehouse has coordinates. Use explicit None checks so a valid
+        # location on the equator (lat=0) or prime meridian (lon=0) is not treated
+        # as missing coordinates.
+        if warehouse.latitude is None or warehouse.longitude is None:
             return 0.5
 
         # Try to geocode the customer's shipping address
@@ -626,7 +628,9 @@ class FulfillmentService:
 
             if result.get("suggestions"):
                 centroid = result["suggestions"][0].get("centroid")
-                if centroid and centroid.get("lat") and centroid.get("lon"):
+                # Explicit None checks so a centroid on the equator (lat=0) or
+                # prime meridian (lon=0) is not treated as a geocode failure.
+                if centroid and centroid.get("lat") is not None and centroid.get("lon") is not None:
                     coords = (float(centroid["lat"]), float(centroid["lon"]))
                     cache.set(cache_key, coords, 86400)  # Cache 24 hours
                     return coords

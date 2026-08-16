@@ -2,7 +2,7 @@
 title: Inventario y Almacenes
 ---
 
-El sistema de almacenes le permite gestionar el inventario en múltiples ubicaciones, establecer prioridades de cumplimiento y realizar un seguimiento de los niveles de stock en tiempo real. Navegue a **Configuración > Gestión de Licencias** en la barra lateral, o acceda a los almacenes desde la pestaña de inventario del producto.
+El sistema de almacenes le permite gestionar el inventario en múltiples ubicaciones, establecer prioridades de cumplimiento y seguir los niveles de stock en tiempo real. Navegue hasta **Productos > Almacenes** en la barra lateral de administración para gestionar sus ubicaciones de almacén.
 
 ![Lista de almacenes](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
 
@@ -10,48 +10,57 @@ El sistema de almacenes le permite gestionar el inventario en múltiples ubicaci
 
 ### Lista de Almacenes
 
-La página de almacenes muestra todas sus ubicaciones de inventario como tarjetas con:
+La página de almacén muestra todas sus ubicaciones de inventario como tarjetas con:
 
-- **Nombre y código** — Identificador del almacén (ej., "Almacén Principal", código "MAIN-WH")
+- **Nombre y código** — Identificador del almacén (por ejemplo, "Almacén principal", código "MAIN-WH")
 - **Región de ventas** — Asignación de región geográfica
-- **Insignias de estado** — Activo/inactivo, ubicación de venta al público
+- **Estados** — Activo/inactivo, ubicación de venta al por menor
 - **Estadísticas** — Productos almacenados, prioridad de cumplimiento, porcentaje de reserva de stock
 - **Ubicación** — Ciudad y país
 - **Última actualización** — Cuándo se modificaron por última vez los niveles de stock
 
-### Crear un Almacén
+### Crear un almacén
 
 1. Haga clic en **+ Añadir Almacén**
-2. Complete los detalles del almacén:
-   - **Nombre** — Etiqueta descriptiva (ej., "Almacén Este de EE.UU.")
-   - **Código** — Identificador único corto (ej., "US-EAST")
-   - **Región de Ventas** — Asignar a una región geográfica para el enrutamiento de cumplimiento
-   - **Dirección** — Dirección completa del almacén para cálculos de envío
-3. Configure los ajustes:
-   - **Activo** — Habilitar para incluir en el cumplimiento
-   - **Ubicación de Venta al Público** — Marcar si este almacén también funciona como tienda física
-   - **Prioridad de Cumplimiento** — Los números más altos significan mayor prioridad para el cumplimiento de pedidos
-   - **Reserva de Stock** — Porcentaje de stock que se reserva como margen de seguridad
-4. Haga clic en **Guardar**
+2. Complete la **Información Básica**:
+   - **Nombre** — Etiqueta descriptiva (por ejemplo, "Almacén de EE.UU. Este")
+   - **Código** — Identificador único corto (por ejemplo, "US-EAST") — debe ser único en todos los almacenes
+   - **Región de ventas** — Asignar a una región geográfica para el enrutamiento de cumplimiento
+   - **Activo** — Habilitar para incluirlo en el cumplimiento
+3. Complete la sección **Dirección** con la dirección completa del almacén
+4. Configure **Configuración de Cumplimiento**:
+   - **Prioridad de Cumplimiento** — Números más altos = mayor prioridad para el cumplimiento de pedidos
+   - **Porcentaje de Reserva de Stock** — Porcentaje de stock que se reserva como reserva de seguridad (0–100)
+   - **Ubicación de Envío** — Opcionalmente, vincular a una ubicación de recogida si este almacén admite la recogida por parte del cliente
+5. Configure **Visualización para el Cliente** (opcional):
+   - **Nombre para Mostrar** — Etiqueta visible para el cliente (por ejemplo, "Envío desde Australia"). Deje en blanco para usar el nombre del almacén.
+   - **Mostrar en la Página Principal** — Mostrar el origen de este almacén a los clientes en las páginas de productos
+6. Configure **Punto de Venta / Tienda de Venta al por menor** (opcional):
+   - **Ubicación de Venta al por Menos** — Marcar si este almacén también sirve como tienda física con terminales de Punto de Venta
+   - **Nombre para Mostrar en Punto de Venta** — Nombre corto que se muestra en la interfaz de Punto de Venta
+   - **Grupo de Tiendas** — Asignar a un grupo de tiendas de Punto de Venta para heredar configuraciones
+7. Agregue **Información de Contacto** si es necesario (nombre, correo electrónico, teléfono)
+8. Haga clic en **Guardar"
 
 ### Prioridad de Cumplimiento
 
-Cuando llega un pedido, el sistema selecciona el mejor almacén basándose en:
+Cuando llega un pedido, el sistema selecciona el mejor almacén según:
 
-1. **Valor de prioridad** — Los almacenes con mayor prioridad son preferidos
-2. **Disponibilidad de stock** — Debe tener stock suficiente
-3. **Coincidencia de región** — Se prefieren los almacenes en la región del cliente
+1. **Valor de prioridad** — Almacenes con mayor prioridad son preferidos
+2. **Disponibilidad de stock** — Debe tener suficiente stock
+3. **Coincidencia de región** — Los almacenes en la región del cliente son preferidos
 
-Por ejemplo, si tiene un almacén en EE.UU. (prioridad 100) y un almacén en la UE (prioridad 60), los pedidos de EE.UU. se cumplirán primero desde el almacén de EE.UU.
+Por ejemplo, si tiene un almacén de EE.UU. (prioridad 100) y un almacén de la UE (prioridad 60), los pedidos de EE.UU. se cumplirán desde el almacén de EE.UU. primero.
 
-### Reserva de Stock
+### Porcentaje de Reserva de Stock
 
-La reserva de stock reserva un porcentaje del inventario que no se venderá en línea. Esto es útil para:
-- Tiendas físicas que necesitan stock de exposición
-- Stock de seguridad para prevenir la sobreventa
+El porcentaje de reserva de stock reserva un porcentaje de inventario que no se venderá en línea. Esto es útil para:
+
+- Tiendas físicas de venta al por menor que necesitan stock en el mostrador
+- Stock de seguridad para evitar la venta en exceso
 - Inventario reservado para pedidos mayoristas
 
-Una reserva del 10% sobre 100 unidades significa que solo 90 unidades están disponibles para pedidos en línea.
+Un 10% de reserva en 100 unidades significa que solo 90 unidades están disponibles para pedidos en línea.
 
 ## Artículos de Stock
 
@@ -60,69 +69,77 @@ Los artículos de stock representan el inventario real de un producto específic
 ### Ver Niveles de Stock
 
 1. Haga clic en el **icono de stock** en cualquier tarjeta de almacén para ver sus artículos de stock
-2. O navegue a la pestaña **Inventario** de un producto para ver el stock en todos los almacenes
+2. O navegue hasta la pestaña **Inventario** de un producto para ver el stock en todos los almacenes
 
 Cada artículo de stock muestra:
-- **Nombre del producto** y variante (si corresponde)
-- **Disponible** — Inventario físico total
+
+- **Nombre del producto** y variante (si aplica)
+- **En mano** — Inventario físico total
 - **Asignado** — Cantidad reservada para pedidos pendientes
-- **Disponible para venta** — Disponible menos asignado (lo que se puede vender)
+- **Disponible** — En mano menos asignado (lo que se puede vender)
 
-### Añadir Stock
+### Añadir stock
 
-1. Desde la vista de stock del almacén, haga clic en **Añadir Artículo de Stock**
-2. Seleccione el producto y la variante
-3. Introduzca la cantidad **disponible**
-4. Guarde
+1. Navegue hasta **Productos > Artículos de Stock** y haga clic en **+ Añadir Artículo de Stock**, o
+2. Abra el formulario de edición de un producto y use la sección **Artículos de Stock** en el fondo
+3. Seleccione el **producto** y el **almacén** (y opcionalmente una **variante** para productos variables)
+4. Ingrese la cantidad **en mano**
+5. Establezca el **umbral de bajo stock** — este umbral por artículo activa una alerta de bajo stock
+6. Guarde
 
 ### Movimientos de Stock
 
 Cada cambio en el inventario se registra como un **movimiento de stock**:
 
-| Tipo de Movimiento | Descripción |
-|--------------------|-------------|
-| **Recepción** | Nuevo stock recibido del proveedor |
-| **Venta** | Stock deducido para un pedido cumplido |
+| Tipo de movimiento | Descripción |
+|--------------|-------------|
+| **Entrada** | Nuevo stock recibido del proveedor |
+| **Venta** | Stock deducido por un pedido cumplido |
 | **Devolución** | Stock devuelto por un cliente |
-| **Ajuste** | Corrección manual (discrepancia en el conteo) |
-| **Transferencia** | Trasladado entre almacenes |
-| **Reserva** | Retenido temporalmente para un carrito activo |
+| **Ajuste** | Corrección manual (diferencia en el conteo) |
+| **Transferencia** | Movido entre almacenes |
+| **Reserva** | Mantenido temporalmente para un carrito activo |
+| **Daño** | Cancelado como dañado o perdido |
+| **Reconteo** | Corregido para coincidir con un conteo físico del inventario |
 
-Los movimientos de stock proporcionan un registro de auditoría completo de los cambios en el inventario.
+Los movimientos de inventario proporcionan un registro completo de los cambios en el inventario. Más allá de la acción **Ajustar los niveles de stock**, Spwig también ofrece acciones en masa en la lista de artículos de stock para transferir, escribir fuera y recount stock en muchos artículos a la vez — véase [Acciones de stock en masa](/help/stock-bulk-actions).
 
-## Seguimiento de Inventario en Productos
+## Seguimiento del inventario en productos
 
-### Habilitar el Seguimiento de Inventario
+### Habilitar el seguimiento del inventario
 
-En la pestaña **Inventario** de un producto:
+En la sección **Inventario** de un producto:
 
-1. Active **Seguimiento de Inventario** para habilitar la gestión de stock
-2. Establezca el **Umbral de Stock Bajo** — activa alertas cuando el stock cae por debajo de este nivel
-3. Configure **Permitir Pedidos Pendientes** si desea aceptar pedidos cuando no hay stock
+1. Active **Seguimiento del inventario** para habilitar la gestión de stock para este producto
+2. Establezca el **Umbral de bajo stock** — activa alertas en el tablero cuando el stock en cualquier almacén caiga por debajo de este nivel
+3. Configure **Permitir devoluciones** si quiere aceptar pedidos cuando esté agotado
+4. Opcionalmente, establezca una **Acción de agotado** para reemplazar el comportamiento del sitio o categoría para este producto específico
 
-### Stock en Múltiples Almacenes
+Después de habilitar el seguimiento, gestione las cantidades reales de stock usando la sección **Artículos de stock** integrada en la parte inferior del formulario del producto, o a través de **Productos > Artículos de stock**.
 
-Cuando el seguimiento de inventario está habilitado, la pestaña Inventario muestra los niveles de stock en todos los almacenes en una tabla resumen:
+### Stock en múltiples almacenes
 
-- Total disponible en todas las ubicaciones
+Cuando el seguimiento del inventario está habilitado, la pestaña de inventario muestra los niveles de stock en todos los almacenes en una tabla resumen:
+
+- Total en mano en todas las ubicaciones
 - Desglose por almacén
-- Cantidades disponibles después de reservas y asignaciones
+- Cantidad disponible después de reservas y asignaciones
 
-## Alertas de Stock Bajo
+## Alertas de bajo stock
 
-El sistema monitorea automáticamente los niveles de stock y le alerta cuando:
-- Un producto cae por debajo de su **umbral de stock bajo**
-- Un producto alcanza **stock disponible cero**
+El sistema monitorea automáticamente los niveles de stock y alerta cuando:
+- Un producto cae por debajo de su **límite de bajo stock**
+- Un producto alcanza **cero stock disponible**
 
-Las alertas de stock bajo aparecen en:
-- El **Panel de Control de la Tienda** en la sección de Acciones Requeridas
+Las alertas de bajo stock aparecen en:
+- El **Tablero de tienda** en la sección Acciones Pendientes
 - La lista de productos con un indicador visual
 
 ## Consejos
 
-- Comience con un solo almacén y añada más a medida que su negocio crezca.
-- Establezca las prioridades de cumplimiento basándose en la velocidad de envío y el coste a cada región.
-- Use reservas de stock para ubicaciones de venta al público para asegurar la disponibilidad de stock de exposición.
-- Revise los movimientos de stock regularmente para identificar pérdidas o discrepancias.
-- Establezca umbrales de stock bajo basándose en su tiempo de reabastecimiento — si tarda 2 semanas en reponer, establezca el umbral para cubrir 2 semanas de ventas.
-- Habilite el seguimiento de inventario antes de lanzar la tienda para evitar la sobreventa.
+- Comience con un solo almacén y agregue más a medida que crezca su negocio.
+- Establezca prioridades de cumplimiento según la velocidad y el costo del envío a cada región.
+- Use buffers de stock para ubicaciones de venta minorista para garantizar la disponibilidad de stock en el piso.
+- Revise regularmente los movimientos de stock para identificar pérdidas o discrepancias.
+- Establezca umbrales de bajo stock basados en su tiempo de reorden — si toma 2 semanas restablecer el stock, establezca el umbral para cubrir 2 semanas de ventas.
+- Habilite el seguimiento del inventario antes de lanzar para evitar ventas excesivas.

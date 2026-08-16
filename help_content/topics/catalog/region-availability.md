@@ -42,14 +42,7 @@ This builds on **Sales Regions**, which group countries into named markets (see 
 
 Every product has a **Region availability** setting on its edit page. Open **Products > All Products**, select a product, and find it in the **Status** section alongside **Status**, **Featured**, and **Hide from Storefront**.
 
-<!-- screenshots-needed:
-- url: /en/admin/catalog/product/1/change/
-  filename: product-region-availability-field.webp
-  description: Product edit page scrolled to the Status section, with the Region availability dropdown visible and set to "Only in selected regions"
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: Use a product with at least 2 regions already selected below, if possible, so the inline table has visible rows in the second screenshot.
--->
+![The product edit form's Status section, with the Region availability dropdown set to "Only in selected regions" alongside Featured and Hide from Storefront](/static/core/admin/img/help/region-availability/product-region-availability-field.webp)
 
 | Option | What it means |
 |--------|---------------|
@@ -66,13 +59,7 @@ Below the Status section, a table titled **Region availability (selected regions
 3. Repeat for each region you want to add.
 4. Click **Save**.
 
-<!-- screenshots-needed:
-- url: /en/admin/catalog/product/1/change/
-  filename: product-region-availability-inline.webp
-  description: The "Region availability (selected regions)" inline table with two or three region rows added
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
+![The "Region availability (selected regions)" inline table with North America and Europe rows added](/static/core/admin/img/help/region-availability/product-region-availability-inline.webp)
 
 If **Region availability** is set to **Available in all regions**, anything in this table is ignored — clear the mode dropdown first if you want to remove a restriction without deleting the rows.
 
@@ -82,27 +69,14 @@ For a catalog-wide view of every product's region rules in one list (handy when 
 
 When a shopper's region doesn't match a product's availability rules, you control what they see in **Stock Display Settings**, under the **Region Availability** section. This page doesn't have a sidebar shortcut yet — open it directly at `/admin/catalog/stockdisplaysettings/`.
 
-<!-- screenshots-needed:
-- url: /en/admin/catalog/stockdisplaysettings/1/change/
-  filename: stock-display-region-availability.webp
-  description: Stock Display Settings change form scrolled to the "Region Availability" fieldset, showing the Region-restricted display dropdown
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
+![Stock Display Settings, Region Availability section — the Region-restricted display dropdown, set to "Show, marked as unavailable"](/static/core/admin/img/help/region-availability/stock-display-region-availability.webp)
 
 | Option | What shoppers see |
 |--------|-------------------|
 | **Show, marked as unavailable** (default) | The product still appears in listings, with an "Unavailable" badge and a "Does not ship to [region]" notice in place of the Add to Cart button. A banner also appears at the top of listing pages ("Some products don't ship to [destination]") with a link to filter down to only the items that do ship there. |
 | **Hide from listings** | The product is removed from listing and search results entirely for shoppers in that region. |
 
-<!-- screenshots-needed:
-- url: /en/products/
-  filename: storefront-region-restricted-listing.webp
-  description: Storefront product listing with the region banner at the top and at least one product card showing the "Unavailable" badge and "Does not ship to [region]" notice
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: Requires a live ship-to selection (or GeoIP detection) that resolves to a region a demo product is restricted from.
--->
+![Storefront product listing shipping to Europe — the "Some products don't ship to Europe" banner above the grid, and a product card marked "Unavailable" with a "Does not ship to Europe" notice](/static/core/admin/img/help/region-availability/storefront-region-restricted-listing.webp)
 
 A restricted product's own page always shows a "This product doesn't ship to [region]" notice when a shopper reaches it directly (for example, from a shared link or search engine result) — this applies regardless of which listing option you choose above, since a direct link bypasses the listing entirely.
 
@@ -125,14 +99,7 @@ Spwig detects a shopper's region from their location and applies it automaticall
 > We picked this from your location so you see the right products and prices. Not right? Choose your country.
 > Ship to: [country picker]  **[Keep browsing]**
 
-<!-- screenshots-needed:
-- url: /en/
-  filename: region-confirmation-modal.webp
-  description: The "We've set your region to [Region]" confirmation modal on the storefront homepage, with the country picker and Keep browsing button
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
-  notes: Requires GeoIP resolving to a non-default region and at least 2 active Sales Regions to trigger. Locally, set a "geo_country" cookie to a non-default country to simulate it.
--->
+![The "We've set your region to North America" confirmation modal on the storefront, with a "Ship to" country picker and a Keep browsing button](/static/core/admin/img/help/region-availability/region-confirmation-modal.webp)
 
 Choosing a different country in the picker switches them immediately. Dismissing it or clicking **Keep browsing** keeps their current region, and they won't be asked again on that browser. Visitors who are already in your default region aren't shown the confirmation at all.
 
@@ -144,13 +111,7 @@ If you'd rather let shoppers change region themselves at any time (instead of re
 2. Drag the **Ship-To Selector** widget from the Widget Library into a row.
 3. Click **Save**.
 
-<!-- screenshots-needed:
-- url: /en/theme/header/builder/
-  filename: ship-to-selector-widget-library.webp
-  description: Header Builder with the Widget Library sidebar open and the Ship-To Selector widget visible/highlighted
-  save-to: core/static/core/admin/img/help/region-availability/
-  viewport: 1440x900
--->
+![The Header Builder widget library with the Shop group highlighted, showing the Ship-To Selector widget alongside Shopping Cart, Account Menu and Language Selector](/static/core/admin/img/help/region-availability/ship-to-selector-widget-library.webp)
 
 The widget needs no setup — it lists your active Shipping Countries automatically, and shows a shopper's current selection (or their GeoIP-detected country, if they haven't chosen one yet). Picking a different country updates their region immediately and reloads the page's product availability and pricing.
 

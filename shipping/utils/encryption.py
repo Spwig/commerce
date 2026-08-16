@@ -109,6 +109,7 @@ def _is_secret_field(field_name: str) -> bool:
         "access_token",
         "refresh_token",
         "private_key",
+        "account_number",
     ]
 
     field_lower = field_name.lower()

@@ -1,5 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+
+from accounts.models import CustomerProfile
+
+# Persisted-column limits: a walk-in customer's email is stored as User.username
+# and their phone as CustomerProfile.phone, so validation must match those columns.
+USERNAME_MAX_LENGTH = get_user_model()._meta.get_field("username").max_length
+PHONE_MAX_LENGTH = CustomerProfile._meta.get_field("phone").max_length
 
 
 class POSCustomerSerializer(serializers.Serializer):
@@ -25,7 +33,7 @@ class POSCustomerSearchSerializer(serializers.Serializer):
 class POSCustomerCreateSerializer(serializers.Serializer):
     """Create a walk-in customer."""
 
-    email = serializers.EmailField(required=False, allow_blank=True)
+    email = serializers.EmailField(max_length=USERNAME_MAX_LENGTH, required=False, allow_blank=True)
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
-    phone = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    phone = serializers.CharField(max_length=PHONE_MAX_LENGTH, required=False, allow_blank=True)

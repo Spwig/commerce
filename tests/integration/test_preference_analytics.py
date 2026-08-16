@@ -395,7 +395,7 @@ def test_preference_analytics_dashboard_requires_staff(client, db):
 def test_preference_analytics_dashboard_accessible_by_staff(client, db):
     """Test analytics dashboard accessible by staff users"""
     # Staff user
-    user = UserFactory(is_staff=True)
+    user = UserFactory(is_staff=True, is_superuser=True)
     client.force_login(user)
 
     url = reverse("preference_analytics_dashboard")
@@ -406,7 +406,7 @@ def test_preference_analytics_dashboard_accessible_by_staff(client, db):
 
 def test_preference_analytics_dashboard_context(client, db):
     """Test analytics dashboard includes all required context"""
-    user = UserFactory(is_staff=True)
+    user = UserFactory(is_staff=True, is_superuser=True)
     client.force_login(user)
 
     url = reverse("preference_analytics_dashboard")
@@ -421,7 +421,7 @@ def test_preference_analytics_dashboard_context(client, db):
 
 def test_preference_analytics_dashboard_period_filter(client, db):
     """Test analytics dashboard accepts period parameter"""
-    user = UserFactory(is_staff=True)
+    user = UserFactory(is_staff=True, is_superuser=True)
     client.force_login(user)
 
     url = reverse("preference_analytics_dashboard")
@@ -433,7 +433,7 @@ def test_preference_analytics_dashboard_period_filter(client, db):
 
 def test_preference_analytics_dashboard_compare_mode(client, db):
     """Test analytics dashboard accepts compare parameter"""
-    user = UserFactory(is_staff=True)
+    user = UserFactory(is_staff=True, is_superuser=True)
     client.force_login(user)
 
     url = reverse("preference_analytics_dashboard")

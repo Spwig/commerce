@@ -1,4 +1,9 @@
 <!-- Element Wrapper -->
+{% if deferred %}
+{% comment %}Per-visitor visibility: content-less placeholder resolved client-side by the
+   personalization pass. No element content is emitted into the cached shell.{% endcomment %}
+<div class="page-element pb-deferred" data-pb-defer="{{ element.id }}" data-element-type="{{ element.element_type }}"></div>
+{% elif not hidden %}
 <div class="page-element element-{{ element.element_type }}
            {% if element.template_variant %}variant-{{ element.template_variant }}{% endif %}
            {% if element.get_css_classes %}{{ element.get_css_classes }}{% endif %}
@@ -29,3 +34,4 @@
     </div>
     {% endif %}
 </div>
+{% endif %}

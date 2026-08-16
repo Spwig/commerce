@@ -6,3 +6,6 @@ class StaffRolesConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "staff_roles"
     verbose_name = _("Staff Roles")
+
+    def ready(self):
+        from staff_roles import signals  # noqa: F401

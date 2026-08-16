@@ -2,29 +2,29 @@
 title: AI购物
 ---
 
-AI购物允许AI购物助手找到您的产品，并在您允许的情况下，代表客户从您的商店购买商品。默认情况下，它是**关闭的**——开启它是有意为之的选择，直到您开启，您的商店不会向这些助手暴露任何内容。
+AI购物让AI购物助手找到你的产品，并在你允许的情况下，代表客户从你的商店购买。默认是关闭的——开启它是一个有意的选择，直到你开启之前，你的商店不会向这些助手暴露任何内容。
 
-## 启用功能
+## 如何开启
 
-打开**设置 → AI购物**，并将**启用代理式商业**切换为开启状态。从那时起，支持通用商业协议的助手可以发现您的商店并阅读您的商品目录。您的正常商店前端不会有任何变化。
+打开 **设置 → AI购物** 并开启 **代理购物功能**。从那时起，支持通用购物协议的助手可以发现你的商店并查看你的目录。你正常的商店界面不会发生任何变化。
 
-## 准备状态仪表板
+## 准备就绪仪表板
 
-AI购物页面顶部用一句话回答了一个问题：**目前AI助手是否真的可以从您的商店购买商品？**
+AI购物页面顶部用一句话回答一个问题：**AI助手现在真的能从你的商店购买吗？**
 
-- **"AI助手可以从您的商店购买"** — 所有购买所需的内容都已就绪。
-- **"AI助手可以浏览您的商店，但还不能购买"** — 您的商店可以被发现，但在完成购买之前还缺少某些内容（通常是连接的支付提供商）。
-- **"紧急停止已启用"** 或 **"代理式商业已关闭"** — 没有任何内容提供给助手。
+- **"AI助手可以从你的商店购买"** —— 购买所需的一切都已就绪。
+- **"AI助手可以浏览你的商店，但还不能购买"** —— 你的商店可以被发现，但在购买完成之前有些东西缺失（通常是连接的支付提供商）。
+- **"紧急停止已开启"** 或 **"代理购物功能已关闭"** —— 没有任何内容被提供给助手。
 
-在判断结果下方，您会看到一个简短的检查清单——已连接支付提供商、可以报价运输、产品对助手可见——任何仍需关注的项目旁边都有提示。计数器显示助手可以销售的产品数量、您隐藏的产品数量、已访问的助手数量以及您阻止的助手数量。
+在判断结果下方你会看到一个简短的检查清单——支付提供商已连接，可以提供运费报价，产品对助手可见——任何仍需关注的内容旁边都有提示。计数器显示助手可以销售多少产品，你隐藏了多少给他们，有多少助手访问过，以及你阻止了多少。
 
-检查清单反映的是您的**实时**配置：连接支付提供商或添加运输方式后，下次打开页面时判断结果会更新。
+检查清单反映你的 **实时** 设置：连接支付提供商或添加运输方式后，下次打开页面时判断结果会更新。
 
 ## 紧急停止
 
-**紧急停止**是与主开关分开的独立开关。使用它立即停止所有助手活动——例如，当您发现某些异常时——而无需更改您的配置。清除它以恢复。可以将主开关视为"此功能是否已配置"，而紧急停止则视为"立即停止所有操作"。
+**紧急停止** 是一个与主开关分开的开关。在出现问题时，可以立即停止所有助手活动——例如如果看起来有问题——而无需更改你的配置。清除它以恢复。将主开关视为“此功能是否已配置”，而紧急停止视为“立即停止一切”。
 
-## 助手可以执行的操作
+## 助手能做什么
 
 Two levels of access, controlled separately:
 
@@ -39,9 +39,40 @@ Every product has a **Visible to AI shopping agents** setting (on by default). S
 
 ## Managing individual assistants
 
-When an assistant first buys — or tries to — Spwig records it under **AI Shopping → Agent Identities**. Each entry shows the assistant's verified home (the directory it signs with) and how many requests it has made. The name and logo an assistant presents are shown only as *claimed* details — treat them as a label, not proof of identity; the verified home is the part that can be trusted.
+When an assistant first buys — or tries to — Spwig records it under **AI Shopping → Agent Identities**. Each entry shows the assistant's verified home (the directory it signs with), its trust level, and how many requests it has made. The name and logo an assistant presents are shown only as *claimed* details — treat them as a label, not proof of identity; the verified home is the part that can be trusted.
 
-New assistants start **capped**: they can transact, but within limits. To stop one, select it and choose **Block selected assistants** — open checkouts end and the assistant can no longer buy, while any payment already taken is left untouched. **Unblock selected assistants** returns it to the capped state (never straight to unlimited — lifting limits is always a separate, deliberate step).
+Every assistant sits in one of three trust levels:
+
+| Trust level | What it means |
+|---|---|
+| **Capped (verified, limited)** | The default for a new assistant. Spwig has recorded its identity, and it carries the order-value cap, spend cap, and tender restrictions set on its policy (see below). |
+| **Verified (limits removed)** | A deliberate decision by you to trust this assistant fully. Its order-value and daily spend caps are cleared. |
+| **Blocked** | The assistant can no longer buy from your store. Open checkouts end, though any payment already taken is left untouched. |
+
+To stop an assistant, select it in the list and choose **Block selected assistants**. **Unblock selected assistants** always returns it to **Capped** — never straight to Verified — because lifting limits is a separate, deliberate step.
+
+To lift an assistant's limits entirely, select it and choose **Promote to verified (remove limits)**.
+
+This clears its max order value and daily spend cap and moves the assistant to the Verified state.
+
+A blocked assistant is skipped — unblock it first, then promote it.
+
+Treat this as a real trust decision: only promote an assistant you're confident about, since verification removes the guardrails a new assistant starts with.
+
+## Setting an assistant's limits
+
+Open an assistant's detail page and use the **Policy (limits & allowed tenders)** section to set what it's allowed to do:
+
+| Field | What it controls |
+|---|---|
+| **Max order value** | The largest single order this assistant can place. Leave blank for no cap. |
+| **Daily spend cap** | The most this assistant can spend across all orders in a day. Leave blank for no cap. |
+| **Allow discount codes** | Whether the assistant can apply voucher codes at checkout. |
+| **Allow gift cards** | Whether the assistant can redeem gift cards. |
+| **Allow digital goods** | Whether the assistant can buy digital products. |
+| **Rate limit (per minute)** | How many requests the assistant can make to your store per minute. |
+
+A new assistant starts capped with concrete order-value and spend caps, and with discount codes, gift cards, and digital goods switched off — the deliberately conservative default. Change any of these fields and save; every change is written to **Agent Events** with the before and after values, so you always have a record of who changed what, and when. Promoting an assistant to Verified clears its Max order value and Daily spend cap for you — you don't need to blank them out by hand first.
 
 ## The activity record
 
@@ -49,8 +80,10 @@ New assistants start **capped**: they can transact, but within limits. To stop o
 
 ## A note on the assistant platforms
 
-The companies running these assistants (and the rules for appearing in them) are new and change often.
+Preserve all markdown formatting, image paths, code blocks, and technical terms.
 
-Some require you to apply or meet regional conditions before your products can be bought through them.
+这些助手的运营公司（以及在其中出现的规则）是新的，经常发生变化。
 
-Spwig 使您的商店做好准备；某个助手是否将您列入名单，取决于该助手。
+有些助手要求您在产品可通过它们购买之前先申请或满足地区条件。
+
+Spwig 会将您的店铺准备好；是否列出您取决于该助手。

@@ -1054,10 +1054,12 @@ class SiteSettings(models.Model):
     )
 
     require_sms_verification = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name=_("Require SMS Verification"),
         help_text=_(
-            "Send verification code before enabling SMS notifications (recommended for TCPA compliance)"
+            "Require customers to verify their phone with a one-time code before any "
+            "SMS is sent to them (recommended for TCPA compliance). When off, an SMS "
+            "opt-in alone is enough to start sending."
         ),
     )
 

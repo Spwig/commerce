@@ -71,7 +71,10 @@ def get_warehouse_id(request):
     """Extract warehouse ID from terminal UUID header or query param."""
     warehouse_id = request.query_params.get("warehouse_id")
     if warehouse_id:
-        return int(warehouse_id)
+        try:
+            return int(warehouse_id)
+        except ValueError:
+            return None
 
     terminal_uuid = request.headers.get("X-Terminal-UUID")
     if terminal_uuid:

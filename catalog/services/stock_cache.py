@@ -8,6 +8,7 @@ Uses Django's cache framework with automatic cache invalidation on stock changes
 import logging
 
 from django.core.cache import cache
+from django.db import transaction
 from django.db.models import Sum
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
@@ -106,14 +107,28 @@ class StockCache:
             total_on_hand=Sum("on_hand"), total_allocated=Sum("allocated")
         )
 
-        on_hand = aggregated["total_on_hand"] or 0
-        allocated = aggregated["total_allocated"] or 0
-        available = on_hand - allocated
-
-        return {"on_hand": on_hand, "allocated": allocated, "available": available}
+        return StockCache._build_stock_data(
+            aggregated["total_on_hand"], aggregated["total_allocated"]
+        )
 
     @staticmethod
-    def invalidate_product_cache(product_id):
+    def _build_stock_data(on_hand, allocated):
+        """
+        Build a stock-data dict, clamping available to zero.
+
+        Mirrors StockItem.available so cached values never go negative when
+        allocations exceed on-hand quantity.
+        """
+        on_hand = on_hand or 0
+        allocated = allocated or 0
+        return {
+            "on_hand": on_hand,
+            "allocated": allocated,
+            "available": max(0, on_hand - allocated),
+        }
+
+    @staticmethod
+    def invalidate_product_cache(product_id, extra_warehouse_ids=None, extra_region_ids=None):
         """
         Invalidate all cached stock data for a product.
 
@@ -121,6 +136,10 @@ class StockCache:
 
         Args:
             product_id: Product ID
+            extra_warehouse_ids: Warehouse IDs to invalidate even if no surviving
+                StockItem references them (e.g. the warehouse of a just-deleted item).
+            extra_region_ids: Region IDs to invalidate even if no surviving StockItem
+                references them.
         """
         from catalog.models import StockItem
 
@@ -129,32 +148,31 @@ class StockCache:
         # Invalidate total stock cache
         cache.delete(StockCache._get_cache_key(product_id))
 
-        # Invalidate regional caches
+        # Seed with explicitly forwarded IDs so keys for a deleted item's last
+        # warehouse/region are cleared even though they're no longer discoverable.
+        warehouses = set(extra_warehouse_ids or ())
+        regions = set(extra_region_ids or ())
+
+        # Discover warehouses/regions still referenced by surviving stock items
         try:
             stock_items = StockItem.objects.filter(product_id=product_id).select_related(
                 "warehouse"
             )
-
-            # Get unique regions
-            regions = set()
-            warehouses = set()
-
             for item in stock_items:
-                if item.warehouse:
-                    warehouses.add(item.warehouse.id)
-                    if item.warehouse.region:
-                        regions.add(item.warehouse.region.id)
-
-            # Invalidate each region cache
-            for region_id in regions:
-                cache.delete(StockCache._get_cache_key(product_id, region_id=region_id))
-
-            # Invalidate each warehouse cache
-            for warehouse_id in warehouses:
-                cache.delete(StockCache._get_cache_key(product_id, warehouse_id=warehouse_id))
-
+                if item.warehouse_id:
+                    warehouses.add(item.warehouse_id)
+                    if item.warehouse.region_id:
+                        regions.add(item.warehouse.region_id)
         except Exception as e:
             logger.error(f"Error invalidating product cache: {e}")
+
+        # Invalidate each region cache
+        for region_id in regions:
+            cache.delete(StockCache._get_cache_key(product_id, region_id=region_id))
+
+        # Invalidate each warehouse cache
+        for warehouse_id in warehouses:
+            cache.delete(StockCache._get_cache_key(product_id, warehouse_id=warehouse_id))
 
     @staticmethod
     def warm_cache_for_products(product_ids, region=None):
@@ -170,18 +188,37 @@ class StockCache:
         Returns:
             dict: Mapping of product_id -> stock_data
         """
-        from catalog.models import Product
+        from catalog.models import StockItem
 
         logger.info(f"Warming stock cache for {len(product_ids)} products")
 
+        region_id = region.id if region else None
+
+        # Aggregate stock for every product in a single grouped query
+        queryset = StockItem.objects.filter(product_id__in=product_ids)
+        if region:
+            queryset = queryset.filter(warehouse__region=region, warehouse__is_active=True)
+
+        stock_by_product = {
+            row["product_id"]: StockCache._build_stock_data(
+                row["total_on_hand"], row["total_allocated"]
+            )
+            for row in queryset.values("product_id").annotate(
+                total_on_hand=Sum("on_hand"), total_allocated=Sum("allocated")
+            )
+        }
+
+        # Populate every requested product, including those with zero stock
         result = {}
+        cache_data = {}
+        for product_id in product_ids:
+            stock_data = stock_by_product.get(
+                product_id, {"on_hand": 0, "allocated": 0, "available": 0}
+            )
+            result[product_id] = stock_data
+            cache_data[StockCache._get_cache_key(product_id, region_id=region_id)] = stock_data
 
-        # Fetch products in batch
-        products = Product.objects.filter(id__in=product_ids)
-
-        for product in products:
-            stock_data = StockCache.get_product_stock(product, region=region)
-            result[product.id] = stock_data
+        cache.set_many(cache_data, StockCache.CACHE_TTL)
 
         return result
 
@@ -192,17 +229,30 @@ class StockCache:
 @receiver(post_save, sender="catalog.StockItem")
 def invalidate_on_stock_change(sender, instance, **kwargs):
     """Invalidate cache when StockItem is created or updated"""
-    StockCache.invalidate_product_cache(instance.product_id)
+    product_id = instance.product_id
+    transaction.on_commit(lambda: StockCache.invalidate_product_cache(product_id))
 
 
 @receiver(post_delete, sender="catalog.StockItem")
 def invalidate_on_stock_delete(sender, instance, **kwargs):
     """Invalidate cache when StockItem is deleted"""
-    StockCache.invalidate_product_cache(instance.product_id)
+    product_id = instance.product_id
+    # Forward the deleted item's warehouse/region so their cache keys are cleared
+    # even when this was the product's last item there and is no longer queryable.
+    warehouse_id = instance.warehouse_id
+    region_id = instance.warehouse.region_id if warehouse_id else None
+    transaction.on_commit(
+        lambda: StockCache.invalidate_product_cache(
+            product_id,
+            extra_warehouse_ids=[warehouse_id] if warehouse_id else None,
+            extra_region_ids=[region_id] if region_id else None,
+        )
+    )
 
 
 @receiver(post_save, sender="catalog.StockMovement")
 def invalidate_on_stock_movement(sender, instance, **kwargs):
     """Invalidate cache when stock movement is recorded"""
     if instance.stock_item:
-        StockCache.invalidate_product_cache(instance.stock_item.product_id)
+        product_id = instance.stock_item.product_id
+        transaction.on_commit(lambda: StockCache.invalidate_product_cache(product_id))

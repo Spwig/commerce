@@ -50,6 +50,44 @@
   border-color: var(--primary, #417690) !important;
 }
 
+/* Shimmering placeholder tiles shown while an upload is in progress */
+.ml-modal .media-item--skeleton {
+  pointer-events: none !important;
+}
+
+.media-item--skeleton .image-container,
+.media-item--skeleton .skeleton-line {
+  background-image: linear-gradient(
+    100deg,
+    var(--darkened-bg, #f5f5f5) 30%,
+    var(--body-bg, #fff) 50%,
+    var(--darkened-bg, #f5f5f5) 70%
+  );
+  background-size: 200% 100%;
+  animation: media-upload-shimmer 1.4s ease-in-out infinite;
+}
+
+.media-item--skeleton .skeleton-line {
+  height: 12px;
+  border-radius: 4px;
+}
+
+@keyframes media-upload-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-item--skeleton .image-container,
+  .media-item--skeleton .skeleton-line {
+    animation: none !important;
+  }
+}
+
 .ml-modal .modal-content {
   background: var(--body-bg, #fff) !important;
   color: var(--body-fg, #333) !important;

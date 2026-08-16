@@ -328,4 +328,9 @@ class PermissionTests(ShippingAPITestCase):
             f"/api/shipping/shipments/{self.shipment1.id}/", data, format="json"
         )
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Shipment mutations are staff-only (IsAdminUser), enforced at the view
+        # level, so a non-staff user is denied at check_permissions with 403
+        # before the object is even looked up. The 403 is uniform for any
+        # shipment id, so existence is not leaked. See PR #425, which
+        # restricted update/partial_update/destroy to staff.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

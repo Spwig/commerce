@@ -5,6 +5,7 @@
 <div class="list-row-cards" id="results-container">
     {% for reader in readers %}
     <div class="list-row-card{% if reader.status == 'offline' %} disabled{% endif %}" data-reader-id="{{ reader.pk }}">
+        {% include "admin/includes/action_checkbox.html" with pk=reader.pk %}
         <div class="list-row-card-icon">
             {% if reader.reader_type == 'stripe_m2' %}
                 <i class="fas fa-mobile-alt text-primary icon-medium"></i>

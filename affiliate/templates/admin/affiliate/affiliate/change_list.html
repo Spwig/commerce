@@ -121,9 +121,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="results-container">
         {% include "admin/affiliate/partials/affiliate_cards.html" with affiliates=affiliates %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     {% block pagination %}{% pagination cl %}{% endblock %}
 

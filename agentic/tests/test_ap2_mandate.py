@@ -189,3 +189,60 @@ class TestMandateService:
         mandate = mandate_service.issue_checkout_mandate(self._order())
         with pytest.raises(ValueError, match="cannot be deleted"):
             mandate.delete()
+
+
+@pytest.mark.django_db
+class TestPaymentMandate:
+    """The AP2 Payment Mandate — the payment-leg attestation, distinct from the
+    Checkout Mandate — signed with the same merchant AP2 key."""
+
+    def _order(self):
+        from tests.factories import OrderFactory, OrderItemFactory
+
+        order = OrderFactory()
+        OrderItemFactory(order=order, quantity=1)
+        return order
+
+    def test_no_ap2_key_means_no_payment_mandate(self, site_settings):
+        from agentic.services import mandate_service
+
+        assert mandate_service.issue_payment_mandate(self._order()) is None
+
+    def test_issues_a_verifiable_payment_mandate(self, site_settings):
+        from agentic.identity.keys import generate_ap2_key, get_jwks
+        from agentic.models import Mandate
+        from agentic.services import mandate_service
+
+        key = generate_ap2_key()
+        order = self._order()
+        mandate = mandate_service.issue_payment_mandate(
+            order, ucp_checkout_id="chkP", payment_method_label="stripe"
+        )
+
+        assert mandate is not None
+        assert mandate.mandate_type == Mandate.TYPE_PAYMENT
+        assert mandate.attested_amount == order.total_amount
+
+        jwk = next(k for k in get_jwks()["keys"] if k["kid"] == key.kid)
+        payload, _ = sdjwt.verify_sd_jwt(mandate.sd_jwt, public_jwk=jwk)
+        assert payload["mandate_type"] == "payment"
+        assert payload["human_present"] is False  # agent-initiated presence signal
+        assert payload["payment_method"] == "stripe"
+        assert payload["vct"].endswith("payment-mandate/v1")
+
+    def test_checkout_and_payment_mandates_are_distinguished(self, site_settings):
+        from agentic.identity.keys import generate_ap2_key
+        from agentic.services import mandate_service
+
+        generate_ap2_key()
+        order = self._order()
+        mandate_service.issue_checkout_mandate(order, ucp_checkout_id="chkD")
+        mandate_service.issue_payment_mandate(order, ucp_checkout_id="chkD")
+
+        checkout = mandate_service.checkout_mandate_for_checkout("chkD")
+        payment = mandate_service.payment_mandate_for_checkout("chkD")
+        assert checkout.mandate_type == "checkout"
+        assert payment.mandate_type == "payment"
+        # The back-compat alias still resolves the checkout mandate, not the newer
+        # payment one (the /mandate/ endpoint must keep returning the checkout).
+        assert mandate_service.mandate_for_checkout("chkD").id == checkout.id

@@ -9,6 +9,7 @@ import base64
 import logging
 from decimal import Decimal
 from io import BytesIO
+from xml.sax.saxutils import escape
 
 from django.utils.translation import gettext as _
 from reportlab.lib import colors
@@ -771,7 +772,9 @@ class DocumentService:
         # Customer notes (if provided)
         if return_request.customer_notes:
             story.append(Paragraph(_("Customer Notes"), styles["SectionHeader"]))
-            notes_paragraph = Paragraph(return_request.customer_notes[:500], styles["Normal"])
+            notes_paragraph = Paragraph(
+                escape(return_request.customer_notes[:500]), styles["Normal"]
+            )
             story.append(notes_paragraph)
             story.append(Spacer(1, 0.2 * inch))
 

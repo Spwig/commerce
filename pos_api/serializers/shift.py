@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 
@@ -25,13 +27,15 @@ class POSShiftSerializer(serializers.Serializer):
 class POSShiftOpenSerializer(serializers.Serializer):
     """Open a new shift."""
 
-    opening_cash = serializers.DecimalField(max_digits=10, decimal_places=2, default=0)
+    opening_cash = serializers.DecimalField(
+        max_digits=10, decimal_places=2, default=0, min_value=Decimal("0")
+    )
 
 
 class POSShiftCloseSerializer(serializers.Serializer):
     """Close the current shift."""
 
-    closing_cash = serializers.DecimalField(max_digits=10, decimal_places=2)
+    closing_cash = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0"))
     notes = serializers.CharField(required=False, allow_blank=True)
 
 

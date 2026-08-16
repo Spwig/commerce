@@ -1,0 +1,36 @@
+{% load i18n static %}
+{% comment %}"Preview as market" switcher — reuses the .language-switcher styling. Only
+   shown when the store actually has additional markets configured.{% endcomment %}
+{% if markets %}
+<div class="language-switcher market-switcher" id="preview-market-switcher">
+    <button class="language-dropdown-toggle" type="button" id="marketDropdown"
+            data-action="toggle-market-dropdown" aria-expanded="false"
+            title="{% trans 'Preview as market' %}">
+        <i class="fas fa-globe" style="font-size: 16px;"></i>
+        <span class="current-market-code">{% trans "Default" %}</span>
+        <span class="dropdown-arrow">▼</span>
+    </button>
+
+    <div class="language-dropdown-menu" id="marketDropdownMenu">
+        <button class="language-option active" data-action="switch-preview-market" data-market="">
+            <span class="flag"><i class="fas fa-globe"></i></span>
+            <span class="lang-details">
+                <span class="lang-name">{% trans "Default market" %}</span>
+            </span>
+            <span class="checkmark">✓</span>
+        </button>
+        {% for market in markets %}
+        <button class="language-option" data-action="switch-preview-market"
+                data-market="{{ market.slug }}">
+            <span class="flag"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="lang-details">
+                <span class="lang-name">{{ market.name }}</span>
+                <span class="lang-code">{{ market.slug|upper }}</span>
+            </span>
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'page_builder/js/preview-market-switcher.js' %}" defer></script>
+{% endif %}

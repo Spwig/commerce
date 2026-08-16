@@ -90,7 +90,7 @@ class CampaignActionExecutor:
         Returns:
             dict: Result with transaction_id
         """
-        from loyalty.models import LoyaltyTransaction
+        from loyalty.models import LoyaltyBalance, LoyaltyTransaction
         from loyalty.services.tiering_service import TieringService
 
         points = action.get("points", 0)
@@ -116,11 +116,19 @@ class CampaignActionExecutor:
             related_object_id=str(context.get("campaign_id", "")),
         )
 
-        # Update balance
-        balance = member.balance
+        # Update balance. Lock the row for the read-modify-write so concurrent
+        # awards for the same member cannot both read the same values and lose an
+        # update (the points_engine locks its balance row the same way). Runs
+        # inside this method's atomic block.
+        balance = LoyaltyBalance.objects.select_for_update().get(member=member)
         balance.available_points += points
         balance.lifetime_earned += points
         balance.save(update_fields=["available_points", "lifetime_earned"])
+
+        # Refresh the reverse relation cache so tier evaluation (which reads
+        # member.balance.lifetime_earned) sees the updated, locked instance
+        # rather than a stale prefetched one.
+        member.balance = balance
 
         # Evaluate tier eligibility after points change
         tiering_service = TieringService()
@@ -141,7 +149,7 @@ class CampaignActionExecutor:
             "action": "award_points",
             "points": points,
             "transaction_id": txn.id,
-            "new_balance": member.balance.available_points,
+            "new_balance": balance.available_points,
         }
 
     def _send_email(self, action: dict, member: LoyaltyMember, context: dict) -> dict:

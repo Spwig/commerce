@@ -420,7 +420,9 @@ class ProductCreateSerializer(serializers.Serializer):
     # Inventory
     track_inventory = serializers.BooleanField(default=True)
     low_stock_threshold = serializers.IntegerField(default=5, min_value=0)
-    allow_backorders = serializers.BooleanField(default=False)
+    # No default: when omitted, the view seeds it from the store's
+    # ``allow_backorders_by_default`` SiteSetting (new products inherit it).
+    allow_backorders = serializers.BooleanField(required=False)
     initial_stock = serializers.IntegerField(default=0, min_value=0)
 
     # Physical

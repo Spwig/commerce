@@ -1,0 +1,27 @@
+{% comment %}
+Opens the Django admin actions form and renders the shared bulk-actions bar for
+card-based changelists. Pair with `admin/includes/bulk_actions_close.html`
+(closes the form after the results) and put an
+`admin/includes/action_checkbox.html` on each card.
+
+The guard mirrors Django's own change_list.html, so the bar only appears when
+actions exist, are permitted, and there are rows. Select-all + counter behaviour
+is provided by card-bulk-actions.js; the Go button submits through Django's
+action framework (CSRF + per-action permissions + confirmation pages).
+{% endcomment %}
+{% load i18n static %}
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+<form id="changelist-form" method="post">{% csrf_token %}
+    <div class="card-bulk-actions">
+        <label class="card-bulk-actions__selectall">
+            <input type="checkbox" data-select-all>
+            {% trans "Select all on this page" %}
+        </label>
+        <label class="card-bulk-actions__label" for="{{ action_form.action.id_for_label }}">{% trans "Bulk actions:" %}</label>
+        {{ action_form.action }}
+        <button type="submit" class="button card-bulk-actions__go" name="index" value="0"
+                title="{% trans 'Run the selected action on the checked items' %}">{% trans "Go" %}</button>
+        <span class="card-bulk-actions__counter" data-action-counter data-of-label="{% trans 'of' %}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+    </div>
+    <script src="{% static 'core/admin/js/card-bulk-actions.js' %}" defer></script>
+{% endif %}

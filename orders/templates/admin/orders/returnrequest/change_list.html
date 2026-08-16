@@ -137,9 +137,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="return-results">
         {% include "admin/orders/returnrequest/request_cards.html" with requests=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count %}

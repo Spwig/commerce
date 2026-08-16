@@ -89,6 +89,51 @@ def get_user_roles(user):
     return roles
 
 
+def get_roles_for_users(users):
+    """
+    Bulk-resolve StaffRole objects for many users in a fixed number of queries.
+
+    Maps each user's assigned groups to their StaffRoles so a paginated list can
+    be serialized without a per-user role query (avoids N+1). Callers should
+    prefetch ``groups`` on the user queryset so reading each user's groups does
+    not itself issue a query.
+
+    Args:
+        users: Iterable of Django User instances.
+
+    Returns:
+        Dict mapping user pk to a list of that user's StaffRole objects.
+    """
+    from staff_roles.models import StaffRole
+
+    users = list(users)
+    if not users:
+        return {}
+
+    user_group_ids = {}
+    all_group_ids = set()
+    for user in users:
+        gids = [group.id for group in user.groups.all()]
+        user_group_ids[user.pk] = gids
+        all_group_ids.update(gids)
+
+    roles_by_group = {}
+    if all_group_ids:
+        for role in StaffRole.objects.filter(group_id__in=all_group_ids).select_related("group"):
+            roles_by_group.setdefault(role.group_id, []).append(role)
+
+    # Preserve StaffRole.Meta.ordering ("sort_order", "display_name") so each
+    # user's role list matches the order the per-user get_user_roles() queryset
+    # would produce, rather than following the user's group order.
+    return {
+        pk: sorted(
+            (role for gid in gids for role in roles_by_group.get(gid, [])),
+            key=lambda role: (role.sort_order, role.display_name),
+        )
+        for pk, gids in user_group_ids.items()
+    }
+
+
 def invalidate_user_cache(user):
     """Clear cached permissions for a user."""
     cache.delete(f"user_roles_{user.pk}")
@@ -190,8 +235,10 @@ def can_access_admin(user):
     """
     Check if a user can access the admin panel.
 
-    Superusers always can. For other staff, checks if any of their
-    roles have can_access_admin=True.
+    Deny-by-default: superusers always can; every other staff user must have
+    at least one role that grants ``can_access_admin``. A staff user with no
+    role (or only roles without admin access) is denied — single-owner stores
+    are unaffected because the owner is a superuser.
     """
     if user.is_superuser:
         return True
@@ -204,11 +251,6 @@ def can_access_admin(user):
 
     roles = get_user_roles(user)
     result = any(role.can_access_admin for role in roles)
-
-    # If user has no roles at all and is_staff, allow access
-    # (backwards compatibility for users not yet assigned roles)
-    if not roles.exists() and user.is_staff:
-        result = True
 
     cache.set(cache_key, result, timeout=POS_PERM_CACHE_TIMEOUT)
     return result
@@ -232,12 +274,9 @@ def is_effectively_read_only(user):
     """
     Determine if a user is effectively read-only across the admin.
 
-    A user is read-only if they are not a superuser, have at least one
-    StaffRole assigned, and none of their roles grant 'full' access on
-    any permission category.
-
-    Users with no roles are NOT treated as read-only (backwards
-    compatibility for merchants who haven't set up roles yet).
+    Deny-by-default: a user is read-only unless they are a superuser or have a
+    role granting 'full' on some permission category. A staff user with no role
+    assigned is read-only (they have been granted no write access).
     """
     if user.is_superuser:
         return False
@@ -249,10 +288,10 @@ def is_effectively_read_only(user):
 
     roles = get_user_roles(user)
 
-    # No roles assigned = not read-only (backwards compat)
+    # No roles assigned = read-only (deny-by-default; no write access granted)
     if not roles.exists():
-        cache.set(cache_key, False, timeout=POS_PERM_CACHE_TIMEOUT)
-        return False
+        cache.set(cache_key, True, timeout=POS_PERM_CACHE_TIMEOUT)
+        return True
 
     # Check if ANY role grants "full" on ANY category
     for role in roles:

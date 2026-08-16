@@ -37,7 +37,7 @@ class POSLicenseMiddleware:
         response = self.get_response(request)
 
         # Inject sandbox header for POS API and POS frontend requests
-        if request.path.startswith(("/api/pos/", "/pos/")):
+        if request.path_info.startswith(("/api/pos/", "/pos/")):
             from core.license import is_sandbox_mode
 
             if is_sandbox_mode():

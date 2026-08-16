@@ -13,7 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 
-from .models import Element, Page, PageVersion, RuleGroup, RuleGroupMember, VisibilityRule
+from visibility.models import RuleGroup, RuleGroupMember, VisibilityRule
+
+from .models import Element, Page, PageVersion
 
 logger = logging.getLogger(__name__)
 
@@ -1498,7 +1500,9 @@ class RuleGroupAPIView(PageBuilderAPIView):
         if include_rules:
             # Get rules with order from through table
             members = (
-                RuleGroupMember.objects.filter(group=group).select_related("rule").order_by("order")
+                RuleGroupMember.objects.filter(rule_group=group)
+                .select_related("rule")
+                .order_by("order")
             )
 
             data["rules"] = [
@@ -1570,13 +1574,13 @@ def save_rule_group_structure(request, group_id):
 
                     # Update or create membership
                     member, created = RuleGroupMember.objects.update_or_create(
-                        group=group, rule_id=rule_id, defaults={"order": idx}
+                        rule_group=group, rule_id=rule_id, defaults={"order": idx}
                     )
 
             # Remove rules that are no longer in the group
             removed_ids = current_rule_ids - new_rule_ids
             if removed_ids:
-                RuleGroupMember.objects.filter(group=group, rule_id__in=removed_ids).delete()
+                RuleGroupMember.objects.filter(rule_group=group, rule_id__in=removed_ids).delete()
 
         # Handle nested groups
         if "child_groups" in data:
@@ -1650,12 +1654,12 @@ def _save_nested_groups(parent_group, child_groups_data):
 def _update_group_rules(group, rules_data):
     """Update rules membership for a group"""
     # Clear existing memberships
-    RuleGroupMember.objects.filter(group=group).delete()
+    RuleGroupMember.objects.filter(rule_group=group).delete()
 
     for idx, rule_data in enumerate(rules_data):
         rule_id = rule_data.get("id")
         if rule_id:
-            RuleGroupMember.objects.create(group=group, rule_id=rule_id, order=idx)
+            RuleGroupMember.objects.create(rule_group=group, rule_id=rule_id, order=idx)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -1760,14 +1764,14 @@ class VisibilityRuleAPIView(PageBuilderAPIView):
             if group_id:
                 try:
                     group = RuleGroup.objects.get(id=group_id)
-                    # Get max order
-                    max_order = (
-                        RuleGroupMember.objects.filter(group=group).aggregate(
-                            max_order=Max("order")
-                        )["max_order"]
-                        or -1
-                    )
-                    RuleGroupMember.objects.create(group=group, rule=rule, order=max_order + 1)
+                    # Append after the current highest order. Use an explicit
+                    # None check: an existing max order of 0 is falsy but valid,
+                    # so `or -1` would collide the new member back at order 0.
+                    max_order = RuleGroupMember.objects.filter(rule_group=group).aggregate(
+                        max_order=Max("order")
+                    )["max_order"]
+                    next_order = 0 if max_order is None else max_order + 1
+                    RuleGroupMember.objects.create(rule_group=group, rule=rule, order=next_order)
                 except RuleGroup.DoesNotExist:
                     pass
 

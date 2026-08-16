@@ -9,13 +9,51 @@ Uses the Stripe Python SDK to:
 """
 
 import logging
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 import stripe
+
+from core.utils.currency_helpers import get_currency_decimal_places
 
 from .base import TerminalProviderBase
 
 logger = logging.getLogger(__name__)
+
+
+# Stripe special-case currencies: ISO 4217 lists these as zero-decimal, but
+# Stripe requires amounts to be provided as if they had two decimal places
+# (multiplied by 100). Using the generic ISO helper here would undercharge or
+# under-refund these currencies by 100×.
+# See https://docs.stripe.com/currencies#special-cases
+_STRIPE_TWO_DECIMAL_OVERRIDES = frozenset({"HUF", "ISK", "TWD", "UGX"})
+
+# Stripe zero-decimal currencies that the ISO helper does not flag as such.
+# Stripe treats MGA as zero-decimal, but get_currency_decimal_places("MGA")
+# returns 2, which would submit MGA amounts at 100× the requested value.
+# See https://docs.stripe.com/currencies#zero-decimal
+_STRIPE_ZERO_DECIMAL_OVERRIDES = frozenset({"MGA"})
+
+
+def _stripe_decimal_places(currency):
+    """Decimal places Stripe expects for a currency's smallest unit."""
+    code = currency.upper()
+    if code in _STRIPE_ZERO_DECIMAL_OVERRIDES:
+        return 0
+    if code in _STRIPE_TWO_DECIMAL_OVERRIDES:
+        return 2
+    return get_currency_decimal_places(code)
+
+
+def _to_minor_units(amount, currency):
+    """Convert a major-unit amount to Stripe's smallest currency unit for the currency."""
+    scale = Decimal(10) ** _stripe_decimal_places(currency)
+    return int((Decimal(str(amount)) * scale).to_integral_value(rounding=ROUND_HALF_UP))
+
+
+def _from_minor_units(minor_amount, currency):
+    """Convert an amount in the smallest currency unit back to major units for the currency."""
+    scale = Decimal(10) ** _stripe_decimal_places(currency)
+    return Decimal(minor_amount) / scale
 
 
 class StripeTerminalProvider(TerminalProviderBase):
@@ -149,7 +187,7 @@ class StripeTerminalProvider(TerminalProviderBase):
         s = self._get_stripe()
         try:
             intent = s.PaymentIntent.create(
-                amount=int(amount * 100),  # Stripe uses smallest currency unit
+                amount=_to_minor_units(amount, currency),  # Stripe uses smallest currency unit
                 currency=currency.lower(),
                 payment_method_types=["card_present"],
                 capture_method="automatic",
@@ -174,7 +212,7 @@ class StripeTerminalProvider(TerminalProviderBase):
             amount = Decimal("0")
 
             if intent.status == "succeeded":
-                amount = Decimal(str(intent.amount_received)) / 100
+                amount = _from_minor_units(intent.amount_received, intent.currency)
                 # Extract card details from the charge
                 latest_charge_id = intent.get("latest_charge")
                 if latest_charge_id:
@@ -210,7 +248,8 @@ class StripeTerminalProvider(TerminalProviderBase):
         try:
             params = {"payment_intent": payment_intent_id}
             if amount is not None:
-                params["amount"] = int(amount * 100)
+                intent = s.PaymentIntent.retrieve(payment_intent_id)
+                params["amount"] = _to_minor_units(amount, intent.currency)
             refund = s.Refund.create(**params)
             return {
                 "success": True,
@@ -264,24 +303,29 @@ class StripeTerminalProvider(TerminalProviderBase):
             logger.error(f"Stripe Terminal upload splash screen error: {e}")
             raise
 
-    def create_splash_configuration(self, file_id: str, reader_type: str) -> str:
+    def create_splash_configuration(self, file_id_by_reader_type: dict) -> str:
         """
-        Create a Terminal Configuration with the splash screen.
+        Create a Terminal Configuration carrying a splash screen per reader type.
+
+        A single location-level configuration can hold a separate splash section
+        for each reader type, so a location with mixed hardware shows an
+        appropriately sized splash on every reader.
 
         Args:
-            file_id: Stripe File ID for the splash screen
-            reader_type: Reader type (e.g., 'bbpos_wisepos_e')
+            file_id_by_reader_type: Mapping of reader type (e.g.
+                'bbpos_wisepos_e') to the Stripe File ID of the splash image
+                sized for that reader type.
 
         Returns:
             configuration_id (e.g., 'cfg_xxx')
         """
         s = self._get_stripe()
         try:
-            config_key = self._get_reader_config_key(reader_type)
-
-            # Build the configuration parameters
-            # Each reader type has its own configuration section
-            config_params = {config_key: {"splashscreen": file_id}}
+            # Each reader type has its own configuration section.
+            config_params = {}
+            for reader_type, file_id in file_id_by_reader_type.items():
+                config_key = self._get_reader_config_key(reader_type)
+                config_params[config_key] = {"splashscreen": file_id}
 
             config = s.terminal.Configuration.create(**config_params)
             logger.info(f"Created Stripe Terminal configuration: {config.id}")

@@ -17,6 +17,23 @@ from core.utils import get_default_currency
 logger = logging.getLogger(__name__)
 
 
+def _unwrap_rule_value(value):
+    """Normalise a persisted rule value for comparison.
+
+    The rule builder saves scalars as ``{"value": n}`` and list inputs as
+    ``{"values": [...]}``; unwrap those so ``greater_than`` / ``in_list`` / etc.
+    compare against the real gate rather than the wrapper dict. Range shapes
+    (``{"min","max"}`` for between, ``{"start","end"}`` for date/time) have no
+    ``value``/``values`` key and pass through unchanged for their own handlers.
+    """
+    if isinstance(value, dict):
+        if "value" in value:
+            return value["value"]
+        if "values" in value:
+            return value["values"]
+    return value
+
+
 class ContextCollector:
     """
     Collects all relevant context data for rule evaluation
@@ -96,13 +113,14 @@ class ContextCollector:
 
         try:
             from geoip.models import GeoLocation
-            from geoip.utils import get_client_ip
+            from geoip.utils.ip_utils import get_client_ip
 
             ip = get_client_ip(request)
             if ip:
-                # Try to get cached location
-                geo = GeoLocation.objects.filter(ip_address=ip, is_expired=False).first()
-                if geo:
+                # is_expired is a model property, not a DB field, so filter by ip
+                # and check freshness in Python.
+                geo = GeoLocation.objects.filter(ip_address=ip).first()
+                if geo and not geo.is_expired:
                     context.update(
                         {
                             "country_code": geo.country_code,
@@ -116,6 +134,26 @@ class ContextCollector:
                     )
         except Exception as e:
             logger.debug(f"Could not load GeoIP data: {e}")
+
+        # geo_region is resolved from the URL-authoritative market, NOT the
+        # visitor's cookie/GeoIP region: the market URL prefix (/nz/…) sets it,
+        # and unprefixed URLs use the default market. This is what makes the shell
+        # deterministic per URL — so a default-URL response cached under
+        # market=default is identical for every visitor. (Cookie/GeoIP still
+        # drives currency and product availability; it just can't vary the
+        # cacheable shell.) Precise geo_country/geo_city stay GeoIP-derived
+        # (per-visitor, resolved in the deferred pass).
+        try:
+            from catalog.middleware import get_default_region, get_region_for_market_slug
+
+            market_slug = getattr(request, "market_slug", None)
+            region_obj = (
+                get_region_for_market_slug(market_slug) if market_slug else get_default_region()
+            )
+            if region_obj is not None and getattr(region_obj, "code", None):
+                context["region"] = region_obj.code
+        except Exception as e:
+            logger.debug(f"Could not resolve market region for visibility: {e}")
 
         # Get timezone from request or geo data
         context["timezone"] = request.session.get(
@@ -235,10 +273,26 @@ class ContextCollector:
         """Extract language and localization context"""
         from django.utils import translation
 
+        # The render hook runs this for every storefront element, so a missing or
+        # broken SiteSettings must never raise and blank the page — fall back to
+        # None if the default currency can't be resolved.
+        try:
+            # request.currency is set by CurrencyMiddleware (and by the preview
+            # market override), so it reflects the resolved/previewed currency;
+            # prefer it over the raw session value or the site default.
+            currency = (
+                getattr(request, "currency", None)
+                or request.session.get("currency")
+                or get_default_currency()
+            )
+        except Exception as e:
+            logger.debug(f"Could not resolve default currency for visibility: {e}")
+            currency = None
+
         context = {
             "browser_language": request.META.get("HTTP_ACCEPT_LANGUAGE", "").split(",")[0].strip(),
             "selected_language": translation.get_language(),
-            "selected_currency": request.session.get("currency", get_default_currency()),
+            "selected_currency": currency,
         }
 
         return context
@@ -329,11 +383,16 @@ class RuleEvaluator:
         if not rule.is_active:
             return False
 
-        # Get cache key for this rule and context
-        cache_key = self._get_cache_key(rule, context)
+        # Only shell-stage rules (geo_region / language / currency) are stable
+        # enough to cache. Deferred rules vary per individual visitor (cart, auth,
+        # behaviour) and temporal rules change over time (business_hours,
+        # time_range) — caching either would serve a stale or leaked decision
+        # (temporal results could outlive the page TTL; deferred results leak
+        # between visitors).
+        cacheable = rule.cache_duration > 0 and rule.render_stage == rule.RENDER_STAGE_SHELL
+        cache_key = self._get_cache_key(rule, context) if cacheable else None
 
-        # Check cache
-        if rule.cache_duration > 0:
+        if cacheable:
             cached_result = cache.get(cache_key)
             if cached_result is not None:
                 return cached_result
@@ -342,8 +401,7 @@ class RuleEvaluator:
         try:
             result = self._evaluate_rule_type(rule, context)
 
-            # Cache result
-            if rule.cache_duration > 0:
+            if cacheable:
                 cache.set(cache_key, result, rule.cache_duration)
 
             return result
@@ -386,7 +444,7 @@ class RuleEvaluator:
         """
         rule_type = rule.rule_type
         operator = rule.operator
-        rule_value = rule.value
+        rule_value = _unwrap_rule_value(rule.value)
 
         # Geographic rules
         if rule_type == "geo_country":
@@ -484,7 +542,13 @@ class RuleEvaluator:
         elif operator == "is_false":
             return not bool(actual_value)
         elif operator == "regex":
-            return bool(re.search(str(expected_value), str(actual_value), re.IGNORECASE))
+            # A merchant-defined pattern runs against visitor-controlled input
+            # (referrer / utm / browser_language) on storefront traffic. Bound the
+            # subject length so a crafted input can't amplify catastrophic
+            # backtracking into a request-hanging ReDoS. (A full fix would also cap
+            # match time; that needs a regex-timeout mechanism — tracked follow-up.)
+            subject = str(actual_value)[:512]
+            return bool(re.search(str(expected_value), subject, re.IGNORECASE))
         else:
             return False
 
@@ -565,16 +629,26 @@ class RuleEvaluator:
         return False
 
     def _get_cache_key(self, rule, context: dict[str, Any]) -> str:
-        """Generate cache key for rule evaluation"""
-        # Create a simplified context hash for caching
+        """Generate cache key for rule evaluation.
+
+        The key must include every context dimension a rule can depend on, or a
+        result cached for one visitor leaks to another. In particular it must
+        carry the sales region / market, language and currency — the shell
+        dimensions geo_region / selected_language / selected_currency vary on —
+        not just the geo country.
+        """
         context_parts = []
 
         if "user" in context:
             context_parts.append(f"user_{context['user'].get('username', 'anon')}")
         if "geo" in context:
-            context_parts.append(f"geo_{context['geo'].get('country_code', 'unknown')}")
+            context_parts.append(f"country_{context['geo'].get('country_code', 'unknown')}")
+            context_parts.append(f"region_{context['geo'].get('region', 'unknown')}")
         if "device" in context:
             context_parts.append(f"device_{context['device'].get('device_type', 'unknown')}")
+        if "language" in context:
+            context_parts.append(f"lang_{context['language'].get('selected_language', 'unknown')}")
+            context_parts.append(f"cur_{context['language'].get('selected_currency', 'unknown')}")
 
         context_hash = "_".join(context_parts)
         return f"visibility_rule_{rule.id}_{context_hash}"

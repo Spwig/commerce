@@ -1,9 +1,10 @@
 from datetime import timedelta
 
 from django.contrib import admin
-from django.db.models import BooleanField, Case, Count, Value, When
+from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
 
 from catalog.models import Warehouse
@@ -144,7 +145,7 @@ class POSTerminalAdmin(admin.ModelAdmin):
         delta = timezone.now() - obj.last_heartbeat
         if delta.total_seconds() < 300:  # 5 minutes
             return _("Online")
-        return _("Offline (%s ago)") % timezone.timesince(obj.last_heartbeat)
+        return _("Offline (%s ago)") % timesince(obj.last_heartbeat)
 
     last_heartbeat_display.short_description = _("Status")
 
@@ -225,8 +226,21 @@ class StoreGroupAdmin(admin.ModelAdmin):
         css = {"all": ("pos_app/admin/css/storegroup_form.css",)}
         js = ("pos_app/admin/js/storegroup_form.js",)
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                retail_store_count=Count(
+                    "warehouses",
+                    filter=Q(warehouses__is_retail_location=True),
+                    distinct=True,
+                )
+            )
+        )
+
     def store_count(self, obj):
-        return obj.store_count
+        return obj.retail_store_count
 
     store_count.short_description = _("Stores")
 
@@ -429,6 +443,9 @@ class POSTerminalReaderAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("provider", "terminal__warehouse")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -682,6 +699,9 @@ class ReceiptTemplateAdmin(admin.ModelAdmin):
         css = {"all": ("pos_app/admin/css/receipt_preview.css",)}
         js = ("pos_app/admin/js/receipt_preview.js",)
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("warehouse", "store_group")
+
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context["store_groups"] = StoreGroup.objects.filter(is_active=True).order_by(
@@ -751,6 +771,9 @@ class PromoSlideAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("warehouse", "store_group")
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
@@ -867,6 +890,16 @@ class POSStaffDiscountAdmin(admin.ModelAdmin):
                 )
         return form
 
+    def save_model(self, request, obj, form, change):
+        # A new plaintext PIN only gets hashed by the model when its hash is
+        # empty, so clear the stale hash whenever the PIN field changed. The
+        # model then re-hashes the replacement and blanks the plaintext field.
+        if "manager_pin" in form.changed_data:
+            obj.manager_pin_hash = ""
+        if "cashier_pin" in form.changed_data:
+            obj.cashier_pin_hash = ""
+        super().save_model(request, obj, form, change)
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "user":
             kwargs["queryset"] = db_field.related_model.objects.filter(is_staff=True)
@@ -937,6 +970,13 @@ class TerminalLockEventAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("terminal__warehouse", "performed_by", "locked_by")
+        )
 
     def has_add_permission(self, request):
         return False

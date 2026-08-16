@@ -966,6 +966,10 @@ class WidgetPropertyRenderer {
     // Add Device Visibility group
     html += this.renderDeviceVisibilityGroup(widgetData);
 
+    // Add Visibility Rule Groups (shared engine — market/geo, language, currency,
+    // time, per-visitor). Mounted by the builder after render.
+    html += this.renderVisibilityRuleGroupsGroup(widgetData);
+
     // Add Advanced JSON editor as collapsed section
     html += this.renderAdvancedSection(config);
 
@@ -1591,6 +1595,38 @@ class WidgetPropertyRenderer {
                                 <span>Mobile</span>
                             </label>
                         </div>
+                    </div>
+                </div>
+            </div>
+        `;
+  }
+
+  /**
+   * Render the Visibility Rule Groups group. The editor itself is mounted by the
+   * builder after the panel HTML is inserted (see mountVisibilityEditor); here we
+   * only provide the container + hidden input. Placements always have a database
+   * id (they are created server-side), so no "save first" guard is needed.
+   */
+  renderVisibilityRuleGroupsGroup(widgetData) {
+    const persisted = /^\d+$/.test(String(widgetData.id));
+    const body = persisted
+      ? '<input type="hidden" id="hf-visibility-rule-groups">'
+      : `<p style="font-size: 0.8rem; color: var(--admin-text-muted, #888); margin: 0;">
+             Save this widget to attach visibility rule groups.
+         </p>`;
+    return `
+            <div class="bb-property-group collapsed" id="group-visibility-rule-groups">
+                <div class="bb-property-group-header">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                    <h4 class="bb-property-group-title">Visibility Rule Groups</h4>
+                </div>
+                <div class="bb-property-group-content single-column">
+                    <div class="bb-property-field full-width">
+                        <p style="font-size: 0.8rem; color: var(--admin-text-muted, #888); margin: 0 0 0.75rem;">
+                            Show this widget by market/region, language, currency, time, or
+                            per-visitor conditions using reusable rule groups.
+                        </p>
+                        ${body}
                     </div>
                 </div>
             </div>
@@ -3484,7 +3520,7 @@ class HeaderFooterBuilder {
     // Group widgets by category
     const categories = {
       Navigation: ['logo', 'menu', 'search'],
-      Shop: ['cart', 'account', 'currency', 'language'],
+      Shop: ['cart', 'account', 'currency', 'language', 'ship_to'],
       Content: ['text', 'links', 'newsletter', 'contact', 'site_variable'],
       Social: ['social'],
       Other: ['payment', 'trust_badges', 'custom'],
@@ -4725,6 +4761,11 @@ class HeaderFooterBuilder {
     // Setup event listeners for all controls
     this.propertyRenderer.setupEventListeners();
 
+    // Mount the shared visibility-rule-group editor for this placement. It reads
+    // and writes the placement's rule_groups M2M directly via /api/visibility/,
+    // so it is independent of the widget-config save below.
+    this.mountVisibilityEditor(widgetData);
+
     // Setup save/cancel handlers
     document.getElementById('save-widget-config')?.addEventListener('click', () => {
       this.saveWidgetConfig(widgetData.id);
@@ -4733,6 +4774,26 @@ class HeaderFooterBuilder {
     document.getElementById('cancel-widget-config')?.addEventListener('click', () => {
       this.clearWidgetSelection();
     });
+  }
+
+  mountVisibilityEditor(widgetData) {
+    // Tear down any previous instance before mounting for the new placement.
+    if (this._hfVisEditor && typeof this._hfVisEditor.destroy === 'function') {
+      try {
+        this._hfVisEditor.destroy();
+      } catch (e) {
+        /* ignore */
+      }
+      this._hfVisEditor = null;
+    }
+    const input = document.getElementById('hf-visibility-rule-groups');
+    if (input && window.VisibilityRulesEditor && /^\d+$/.test(String(widgetData.id))) {
+      this._hfVisEditor = new window.VisibilityRulesEditor({
+        targetType: 'widgetplacement',
+        targetId: widgetData.id,
+      });
+      this._hfVisEditor.attach(input, '');
+    }
   }
 
   clearWidgetSelection() {

@@ -10,6 +10,7 @@ import secrets
 from decimal import Decimal
 from typing import Any
 
+from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 
@@ -30,6 +31,21 @@ class DigitalReceiptService:
         """Generate a unique, URL-safe token for receipt access."""
         return secrets.token_urlsafe(self.TOKEN_LENGTH)
 
+    def ensure_receipt_token(self, order: Order) -> str:
+        """Assign a receipt token to the order atomically, returning the persisted value.
+
+        Locks the order row so that concurrent receipt sends agree on a single
+        token, then reloads the stored value onto the in-memory instance so the
+        returned token always matches what is in the database.
+        """
+        with transaction.atomic():
+            locked = Order.objects.select_for_update().get(pk=order.pk)
+            if not locked.receipt_token:
+                locked.receipt_token = self.generate_receipt_token()
+                locked.save(update_fields=["receipt_token"])
+            order.receipt_token = locked.receipt_token
+        return order.receipt_token
+
     def get_receipt_url(self, order: Order, request=None) -> str:
         """
         Generate a public URL for viewing the receipt.
@@ -43,8 +59,7 @@ class DigitalReceiptService:
         """
         # Ensure order has a receipt token
         if not order.receipt_token:
-            order.receipt_token = self.generate_receipt_token()
-            order.save(update_fields=["receipt_token"])
+            self.ensure_receipt_token(order)
 
         # Build the URL path
         receipt_path = reverse("public_receipt", kwargs={"token": order.receipt_token})

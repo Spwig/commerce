@@ -614,9 +614,35 @@ def product_list(request):
         except Category.DoesNotExist:
             products = products.filter(category__id=category_id)
 
-    # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 50)), 200)
+    # Pagination. Validate page/page_size so malformed, zero, or negative
+    # values return a 400 instead of raising (ValueError) or dividing by zero
+    # when computing total_pages below.
+    try:
+        page = int(request.query_params.get("page", 1))
+        page_size = int(request.query_params.get("page_size", 50))
+    except (TypeError, ValueError):
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_PAGINATION",
+                    "message": "page and page_size must be integers.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if page < 1 or page_size < 1:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_PAGINATION",
+                    "message": "page and page_size must be positive integers.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    page_size = min(page_size, 200)
     start = (page - 1) * page_size
     end = start + page_size
 

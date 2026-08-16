@@ -53,6 +53,34 @@ from .serializers import (
 User = get_user_model()
 
 
+def preference_center_required(view_func):
+    """Return HTTP 403 when the merchant has disabled the self-service preference center.
+
+    Applied to the customer-facing preference read/write API so it stays in lockstep
+    with the ``communication_preferences`` page (both gated on
+    ``SiteSettings.preference_center_enabled``). Compliance escape hatches
+    (unsubscribe, SMS verification) are intentionally left ungated.
+    """
+    import functools
+
+    @functools.wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        from core.models import SiteSettings
+
+        try:
+            enabled = SiteSettings.get_settings().preference_center_enabled
+        except Exception:
+            enabled = True
+        if not enabled:
+            return Response(
+                {"success": False, "error": _("The preference center is currently unavailable.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
 @extend_schema(
     tags=["Accounts"],
     summary=_("Register new user account"),
@@ -395,6 +423,7 @@ def update_profile(request):
 @api_view(["PUT", "PATCH"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([IsAuthenticated])
+@preference_center_required
 def update_preferences(request):
     """
     Update dashboard preferences
@@ -776,6 +805,7 @@ def account_creation_context(request):
 @api_view(["GET"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([IsAuthenticated])
+@preference_center_required
 def get_communication_preferences(request):
     """
     Get customer's communication preferences.
@@ -823,6 +853,7 @@ def get_communication_preferences(request):
 @api_view(["POST"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([IsAuthenticated])
+@preference_center_required
 def update_communication_preference(request):
     """
     Update a single communication preference.
@@ -906,6 +937,7 @@ def update_communication_preference(request):
 @api_view(["POST"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([IsAuthenticated])
+@preference_center_required
 def bulk_update_communication_preferences(request):
     """
     Update multiple communication preferences at once.
@@ -1060,6 +1092,7 @@ def unsubscribe_all_communications(request):
 @api_view(["GET"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([IsAuthenticated])
+@preference_center_required
 def export_preferences(request):
     """Export user's complete preference data (GDPR Article 15)."""
     from accounts.services.preference_export_service import PreferenceExportService

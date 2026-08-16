@@ -199,9 +199,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="terminal-results">
         {% include "admin/pos_app/posterminal/partials/terminal_cards.html" with terminals=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count > 0 %}

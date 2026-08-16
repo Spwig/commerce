@@ -62,9 +62,9 @@ class TestCustomerSearch:
 
     def test_search_by_phone(self, pos_client, site_settings):
         """
-        Phone-based search does not match because the current search
-        filters on User fields (email, first_name, last_name) only.
-        Phone is stored on CustomerProfile, not queried by the search view.
+        Phone-based search matches because the search filters on the
+        CustomerProfile phone field in addition to the User fields
+        (email, first_name, last_name).
         """
         from accounts.models import CustomerProfile
 
@@ -76,11 +76,11 @@ class TestCustomerSearch:
         CustomerProfile.objects.update_or_create(
             user=customer, defaults={"phone": "+1-555-987-6543"}
         )
-        # Searching by the phone number alone should yield no results
+        # Searching by the phone number alone should return the customer
         response = pos_client.get(SEARCH_URL, {"q": "555-987"})
         data = assert_pos_success(response)
         ids = [r["id"] for r in data["results"]]
-        assert customer.id not in ids
+        assert customer.id in ids
 
     def test_min_query_length(self, pos_client, site_settings):
         """Query shorter than 2 characters returns QUERY_TOO_SHORT error."""

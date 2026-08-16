@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 
@@ -7,16 +9,22 @@ class POSOfflineTransactionItemSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     variant_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(min_value=1, max_value=9999)
-    unit_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    unit_price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("0.00")
+    )
 
 
 class POSOfflinePaymentSerializer(serializers.Serializer):
     """Payment in an offline transaction."""
 
     method = serializers.ChoiceField(choices=["cash", "card", "gift_card"])
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0.00"))
     amount_tendered = serializers.DecimalField(
-        max_digits=10, decimal_places=2, required=False, allow_null=True
+        max_digits=10,
+        decimal_places=2,
+        required=False,
+        allow_null=True,
+        min_value=Decimal("0.00"),
     )
     card_last_four = serializers.CharField(required=False, allow_blank=True)
     card_reference = serializers.CharField(required=False, allow_blank=True)
@@ -29,10 +37,33 @@ class POSOfflineTransactionSerializer(serializers.Serializer):
     local_id = serializers.CharField(max_length=100)
     terminal_uuid = serializers.UUIDField()
     cashier_id = serializers.IntegerField()
-    items = POSOfflineTransactionItemSerializer(many=True)
-    payments = POSOfflinePaymentSerializer(many=True)
+    items = POSOfflineTransactionItemSerializer(many=True, allow_empty=False)
+    payments = POSOfflinePaymentSerializer(many=True, allow_empty=False)
     customer_id = serializers.IntegerField(required=False, allow_null=True)
     created_at = serializers.DateTimeField()
+
+    def validate(self, attrs):
+        """Reject transactions whose payments do not settle the item total."""
+        item_total = sum(
+            (item["unit_price"] * item["quantity"] for item in attrs["items"]),
+            Decimal("0.00"),
+        )
+        paid_total = sum(
+            (payment["amount"] for payment in attrs["payments"]),
+            Decimal("0.00"),
+        )
+        if paid_total != item_total:
+            raise serializers.ValidationError(
+                "Payment amounts must equal the transaction item total."
+            )
+        for payment in attrs["payments"]:
+            if payment["method"] == "cash":
+                tendered = payment.get("amount_tendered")
+                if tendered is not None and tendered < payment["amount"]:
+                    raise serializers.ValidationError(
+                        "Cash tendered cannot be less than the cash payment amount."
+                    )
+        return attrs
 
 
 class POSOfflineUploadSerializer(serializers.Serializer):

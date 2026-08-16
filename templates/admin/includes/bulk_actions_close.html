@@ -1,0 +1,9 @@
+{% comment %}
+Closes the Django admin actions form opened by
+`admin/includes/bulk_actions_open.html`. Include it immediately after the
+results container so the form wraps the cards (and any AJAX-reloaded results).
+The guard must match bulk_actions_open.html exactly.
+{% endcomment %}
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+</form>
+{% endif %}

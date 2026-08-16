@@ -280,6 +280,11 @@ class PreferenceService:
                 f"Updated preference for user {user.id}: {channel}/{message_type} = {enabled}"
             )
 
+            # Kick off double opt-in confirmation when a user opts into marketing
+            # email and the store requires it (no-op otherwise).
+            if enabled and channel == "email" and category == "marketing":
+                cls.request_marketing_confirmation(user, prefs)
+
             return {"success": True}
 
         except Exception as e:
@@ -314,6 +319,28 @@ class PreferenceService:
                 cache.delete_many(keys)
 
     @classmethod
+    def request_marketing_confirmation(cls, user, prefs=None) -> bool:
+        """Send a double opt-in confirmation email when the store requires one.
+
+        Fires only when the store has double opt-in enabled, the user has opted
+        into marketing email, and the address is not yet confirmed. Safe to call
+        on every marketing opt-in — it is a no-op otherwise.
+
+        Returns True if a confirmation email was sent.
+        """
+        if prefs is None:
+            prefs, _ = cls.get_or_create_for_user(user)
+
+        if not prefs.email_marketing or prefs.email_verified:
+            return False
+
+        if not CommunicationPreference._double_opt_in_required():
+            return False
+
+        result = cls.send_verification_email(user)
+        return bool(result.get("success"))
+
+    @classmethod
     def send_verification_email(cls, user) -> dict:
         """
         Send double opt-in verification email for marketing communications.
@@ -344,11 +371,20 @@ class PreferenceService:
             )
 
             # Import email service
+            # Send verification email. Build the confirmation link with reverse()
+            # under the user's language so it carries the correct i18n prefix and
+            # the real mount point (/<lang>/account/verify-email/<token>/) — a
+            # hardcoded path silently 404s.
+            from django.urls import reverse
+            from django.utils.translation import override
+
             from email_system.services.email_sender import EmailSendingService
 
-            # Send verification email
             site = Site.objects.get_current()
-            verification_url = f"https://{site.domain}/accounts/verify-email/{token}/"
+            lang = prefs.language_code or "en"
+            with override(lang):
+                verify_path = reverse("accounts:verify_email", kwargs={"token": token})
+            verification_url = f"https://{site.domain}{verify_path}"
 
             EmailSendingService.send_template_email(
                 to_email=user.email,

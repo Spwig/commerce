@@ -9,4 +9,5 @@ class CatalogConfig(AppConfig):
 
     def ready(self):
         """Import signal handlers when app is ready"""
+        import catalog.services.stock_cache  # noqa: F401
         import catalog.signals  # noqa: F401

@@ -1,4 +1,7 @@
+import ipaddress
 import logging
+import socket
+from urllib.parse import urljoin, urlparse
 
 import requests
 from django.contrib.admin.views.decorators import staff_member_required
@@ -9,10 +12,89 @@ from mozilla_django_oidc.views import (
     OIDCAuthenticationRequestView,
     OIDCLogoutView,
 )
+from requests.adapters import HTTPAdapter
 
 from .backends import _get_db_setting
 
 logger = logging.getLogger(__name__)
+
+
+def _validate_discovery_url(url):
+    """Reject discovery URLs that could enable SSRF.
+
+    Requires HTTPS and rejects any host that resolves to a loopback,
+    private, link-local, or otherwise non-global address. Returns a
+    ``(error, pinned_ip)`` tuple: ``error`` is a message string if the URL
+    is disallowed (with ``pinned_ip`` ``None``), otherwise ``error`` is
+    ``None`` and ``pinned_ip`` is the validated address the connection must
+    be pinned to. Pinning the address closes the DNS-rebinding gap where the
+    hostname could resolve to a different (private) IP when Requests
+    reconnects.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        return "discovery_url must use HTTPS", None
+
+    hostname = parsed.hostname
+    if not hostname:
+        return "discovery_url must include a valid host", None
+
+    try:
+        addrinfo = socket.getaddrinfo(hostname, parsed.port or 443, proto=socket.IPPROTO_TCP)
+    except socket.gaierror:
+        return "Could not resolve discovery host", None
+
+    if not addrinfo:
+        return "Could not resolve discovery host", None
+
+    for info in addrinfo:
+        ip = ipaddress.ip_address(info[4][0])
+        if not ip.is_global or ip.is_reserved:
+            return "discovery_url resolves to a disallowed address", None
+
+    # Pin the first validated address for the actual connection so the
+    # hostname is not re-resolved (and possibly rebound to a private IP)
+    # when the request is sent.
+    return None, addrinfo[0][4][0]
+
+
+class _PinnedIPHTTPSAdapter(HTTPAdapter):
+    """Force HTTPS connections to a pre-validated IP address.
+
+    The connection is opened to ``pinned_ip`` (the address vetted by
+    ``_validate_discovery_url``) while SNI and certificate verification stay
+    bound to the original hostname, preventing a DNS-rebinding SSRF between
+    validation and connection.
+    """
+
+    def __init__(self, pinned_ip, *args, **kwargs):
+        self._pinned_ip = pinned_ip
+        super().__init__(*args, **kwargs)
+
+    def send(self, request, **kwargs):
+        parsed = urlparse(request.url)
+        hostname = parsed.hostname
+        port = parsed.port
+
+        # Keep TLS SNI + certificate hostname verification tied to the real
+        # hostname even though we connect to the pinned IP.
+        pool_kw = self.poolmanager.connection_pool_kw
+        pool_kw["server_hostname"] = hostname
+        pool_kw["assert_hostname"] = hostname
+
+        host_header = hostname
+        if port:
+            host_header = f"{hostname}:{port}"
+        request.headers["Host"] = host_header
+
+        # Rewrite the netloc to the validated IP so no second DNS lookup can
+        # redirect the connection to a private/loopback address.
+        ip_netloc = f"[{self._pinned_ip}]" if ":" in self._pinned_ip else self._pinned_ip
+        if port:
+            ip_netloc = f"{ip_netloc}:{port}"
+        request.url = parsed._replace(netloc=ip_netloc).geturl()
+
+        return super().send(request, **kwargs)
 
 
 class SpwigOIDCCallbackView(OIDCAuthenticationCallbackView):
@@ -83,7 +165,26 @@ def oidc_discover(request):
         discovery_url += ".well-known/openid-configuration"
 
     try:
-        response = requests.get(discovery_url, timeout=10)
+        # Follow redirects manually so every hop is re-validated against the
+        # SSRF checks below; a public URL must not be able to redirect the
+        # server to a loopback/private/link-local address.
+        current_url = discovery_url
+        for _ in range(5):
+            error, pinned_ip = _validate_discovery_url(current_url)
+            if error:
+                return JsonResponse({"error": error}, status=400)
+            # Connect to the exact IP that passed validation so the hostname
+            # cannot be re-resolved to a private address (DNS rebinding).
+            session = requests.Session()
+            session.mount("https://", _PinnedIPHTTPSAdapter(pinned_ip))
+            with session:
+                response = session.get(current_url, timeout=10, allow_redirects=False)
+            if response.is_redirect or response.is_permanent_redirect:
+                current_url = urljoin(current_url, response.headers.get("Location", ""))
+                continue
+            break
+        else:
+            return JsonResponse({"error": "Too many redirects"}, status=400)
         response.raise_for_status()
         config = response.json()
     except requests.RequestException as e:

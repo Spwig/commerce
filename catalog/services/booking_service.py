@@ -195,9 +195,13 @@ class BookingAvailabilityService:
         resource_id: int | None = None,
         persons: dict | None = None,
         exclude_reservation_id: int | None = None,
+        exclude_booking_id: int | None = None,
     ) -> tuple[bool, str, Decimal | None]:
         """
         Check if a specific time slot is available and calculate the price.
+
+        Pass ``exclude_booking_id`` to ignore an existing booking when counting
+        capacity (used when rescheduling that booking onto the same slot).
 
         Returns (is_available, message, total_price)
         """
@@ -275,6 +279,7 @@ class BookingAvailabilityService:
                     night_date,
                     resource_id,
                     exclude_reservation_id=exclude_reservation_id,
+                    exclude_booking_id=exclude_booking_id,
                 )
                 if capacity <= 0:
                     return (
@@ -308,6 +313,7 @@ class BookingAvailabilityService:
                 end_dt.time(),
                 resource_id,
                 exclude_reservation_id=exclude_reservation_id,
+                exclude_booking_id=exclude_booking_id,
             )
 
             # Check person count against capacity
@@ -1029,7 +1035,9 @@ class BookingAvailabilityService:
         resource_id: int | None = None,
     ) -> bool:
         """Check if a date is available based on availability rules."""
-        rules = product.booking_availability_rules.all().order_by("-priority")
+        # Ascending priority so the highest-priority matching rule is applied
+        # last and therefore wins the last-write.
+        rules = product.booking_availability_rules.all().order_by("priority")
         if resource_id:
             rules = rules.filter(Q(resource_id=resource_id) | Q(resource__isnull=True))
         else:
@@ -1142,11 +1150,14 @@ class BookingAvailabilityService:
         end_time: time,
         resource_id: int | None = None,
         exclude_reservation_id: int | None = None,
+        exclude_booking_id: int | None = None,
     ) -> int:
         """
         Check remaining capacity for a time slot.
 
         Counts existing bookings + active slot reservations against max_bookings_per_slot.
+        ``exclude_booking_id`` omits a booking from the count so it isn't treated
+        as competing with itself when being rescheduled.
         """
         max_capacity = config.max_bookings_per_slot
 
@@ -1162,6 +1173,8 @@ class BookingAvailabilityService:
         )
         if resource_id:
             overlapping_bookings = overlapping_bookings.filter(resource_id=resource_id)
+        if exclude_booking_id:
+            overlapping_bookings = overlapping_bookings.exclude(pk=exclude_booking_id)
 
         booking_count = overlapping_bookings.count()
 
@@ -1189,6 +1202,7 @@ class BookingAvailabilityService:
         booking_date: date,
         resource_id: int | None = None,
         exclude_reservation_id: int | None = None,
+        exclude_booking_id: int | None = None,
     ) -> int:
         """
         Check remaining accommodation capacity for a single night.
@@ -1214,6 +1228,7 @@ class BookingAvailabilityService:
                         time(23, 59),
                         res_pk,
                         exclude_reservation_id=exclude_reservation_id,
+                        exclude_booking_id=exclude_booking_id,
                     )
                     for res_pk in customer_resources.values_list("pk", flat=True)
                 )
@@ -1226,6 +1241,7 @@ class BookingAvailabilityService:
             time(23, 59),
             resource_id,
             exclude_reservation_id=exclude_reservation_id,
+            exclude_booking_id=exclude_booking_id,
         )
 
     @staticmethod
@@ -1542,6 +1558,7 @@ class BookingLifecycleService:
             new_end,
             resource_id=resource_id,
             persons=booking.persons,
+            exclude_booking_id=booking.pk,
         )
 
         if not is_available:
@@ -1640,12 +1657,19 @@ class BookingLifecycleService:
 
         Builds the standard booking context dict and delegates to
         EmailSendingService.send_template_email().
+
+        Returns:
+            bool: True if the email was queued/handled (including an intentional
+            preference skip), False if there was no recipient address or the send
+            raised. Callers that gate durable state on delivery (e.g. the reminder
+            task stamping reminder_sent_at) must only advance on True, so a
+            transient failure stays retryable instead of being silently dropped.
         """
         if not booking.customer_email:
             logger.warning(
                 f"Cannot send {template_type} for booking #{booking.pk}: no customer email"
             )
-            return
+            return False
 
         try:
             from core.models import SiteSettings
@@ -1687,11 +1711,14 @@ class BookingLifecycleService:
                 note_type="email",
             )
 
+            return True
+
         except Exception as e:
             logger.error(
                 f"Failed to send {template_type} email for booking #{booking.pk}: {e}",
                 exc_info=True,
             )
+            return False
 
     @classmethod
     def send_admin_email(

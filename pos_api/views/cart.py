@@ -28,6 +28,7 @@ from pos_api.serializers.cart import (
     POSAddToCartSerializer,
     POSApplyDiscountSerializer,
     POSCartSerializer,
+    POSManualDiscountSerializer,
     POSUpdateCartItemSerializer,
 )
 from pos_api.views.utils import get_terminal, get_terminal_currency, serialize_cart
@@ -559,8 +560,6 @@ def _validate_discount(user, discount_type, discount_value, cart_subtotal):
 @permission_classes([IsStaffUser])
 def apply_item_discount(request, item_id):
     """Apply a manual discount to a cart item."""
-    from decimal import Decimal
-
     from cart.models import CartItem
     from cart.services.cart_service import CartService
 
@@ -588,33 +587,11 @@ def apply_item_discount(request, item_id):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    discount_type = request.data.get("discount_type")
-    discount_value = Decimal(str(request.data.get("discount_value", 0)))
-    reason = request.data.get("reason", "")
-
-    if discount_type not in ("percentage", "fixed"):
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INVALID_TYPE",
-                    "message": 'Invalid discount type. Use "percentage" or "fixed".',
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if discount_value <= 0:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INVALID_VALUE",
-                    "message": "Discount value must be greater than 0.",
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    discount_serializer = POSManualDiscountSerializer(data=request.data)
+    discount_serializer.is_valid(raise_exception=True)
+    discount_type = discount_serializer.validated_data["discount_type"]
+    discount_value = discount_serializer.validated_data["discount_value"]
+    reason = discount_serializer.validated_data["reason"]
 
     # Check if reason is required
     if limits.requires_reason and not reason.strip():
@@ -788,33 +765,11 @@ def apply_cart_discount(request):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    discount_type = request.data.get("discount_type")
-    discount_value = Decimal(str(request.data.get("discount_value", 0)))
-    reason = request.data.get("reason", "")
-
-    if discount_type not in ("percentage", "fixed"):
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INVALID_TYPE",
-                    "message": 'Invalid discount type. Use "percentage" or "fixed".',
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if discount_value <= 0:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INVALID_VALUE",
-                    "message": "Discount value must be greater than 0.",
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    discount_serializer = POSManualDiscountSerializer(data=request.data)
+    discount_serializer.is_valid(raise_exception=True)
+    discount_type = discount_serializer.validated_data["discount_type"]
+    discount_value = discount_serializer.validated_data["discount_value"]
+    reason = discount_serializer.validated_data["reason"]
 
     # Check if reason is required
     if limits.requires_reason and not reason.strip():
@@ -969,8 +924,12 @@ def verify_manager_pin(request):
             }
         )
 
-    # Find a manager with this PIN (supports both hashed and legacy plaintext)
-    for manager_limit in POSStaffDiscount.objects.select_related("user").filter(is_manager=True):
+    # Find a manager with this PIN (supports both hashed and legacy plaintext).
+    # Only active accounts may authorize: a deactivated manager's PIN row
+    # survives, so without user__is_active it would remain a valid credential.
+    for manager_limit in POSStaffDiscount.objects.select_related("user").filter(
+        is_manager=True, user__is_active=True
+    ):
         if manager_limit.verify_pin(pin):
             manager_name = manager_limit.user.get_full_name() or manager_limit.user.username
             return Response(
@@ -1035,10 +994,13 @@ def approve_discount(request):
     cart = CartService.get_or_create_cart(user=request.user)
 
     manager_pin = str(request.data.get("manager_pin", "")).strip()
-    discount_type = request.data.get("discount_type")
-    discount_value = Decimal(str(request.data.get("discount_value", 0)))
-    reason = request.data.get("reason", "")
     item_id = request.data.get("item_id")  # None for cart-level discount
+
+    discount_serializer = POSManualDiscountSerializer(data=request.data)
+    discount_serializer.is_valid(raise_exception=True)
+    discount_type = discount_serializer.validated_data["discount_type"]
+    discount_value = discount_serializer.validated_data["discount_value"]
+    reason = discount_serializer.validated_data["reason"]
 
     # Validate PIN
     if not manager_pin or len(manager_pin) < 4 or len(manager_pin) > 6:
@@ -1050,9 +1012,13 @@ def approve_discount(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Find manager with this PIN (supports both hashed and legacy plaintext)
+    # Find manager with this PIN (supports both hashed and legacy plaintext).
+    # Only active accounts may authorize: a deactivated manager's PIN row
+    # survives, so without user__is_active it would remain a valid credential.
     manager_limit = None
-    for ml in POSStaffDiscount.objects.select_related("user").filter(is_manager=True):
+    for ml in POSStaffDiscount.objects.select_related("user").filter(
+        is_manager=True, user__is_active=True
+    ):
         if ml.verify_pin(manager_pin):
             manager_limit = ml
             break
@@ -1063,47 +1029,12 @@ def approve_discount(request):
         )
     manager = manager_limit.user
 
-    # Validate discount parameters
-    if discount_type not in ("percentage", "fixed"):
-        return Response(
-            {
-                "success": False,
-                "error": {"code": "INVALID_TYPE", "message": "Invalid discount type."},
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if discount_value <= 0:
-        return Response(
-            {
-                "success": False,
-                "error": {
-                    "code": "INVALID_VALUE",
-                    "message": "Discount value must be greater than 0.",
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
     manager_name = manager.get_full_name() or manager.username
 
-    # Calculate discount amount for shift tracking
-    if discount_type == "percentage":
-        if item_id:
-            cart_item = CartItem.objects.get(id=item_id, cart=cart)
-            discount_amount = (
-                (cart_item.unit_price.amount * cart_item.quantity) * discount_value / 100
-            )
-        else:
-            cart_subtotal = (
-                cart.total_amount.amount if hasattr(cart.total_amount, "amount") else Decimal("0")
-            )
-            discount_amount = cart_subtotal * discount_value / 100
-    else:
-        discount_amount = discount_value
-
+    # Resolve the target cart item once, guarded, before it is used to compute
+    # the discount amount — an unguarded lookup here 500'd on a stale item_id.
+    cart_item = None
     if item_id:
-        # Item-level discount
         try:
             cart_item = CartItem.objects.get(id=item_id, cart=cart)
         except CartItem.DoesNotExist:
@@ -1115,6 +1046,22 @@ def approve_discount(request):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+    # Calculate discount amount for shift tracking
+    if discount_type == "percentage":
+        if cart_item is not None:
+            discount_amount = (
+                (cart_item.unit_price.amount * cart_item.quantity) * discount_value / 100
+            )
+        else:
+            cart_subtotal = (
+                cart.total_amount.amount if hasattr(cart.total_amount, "amount") else Decimal("0")
+            )
+            discount_amount = cart_subtotal * discount_value / 100
+    else:
+        discount_amount = discount_value
+
+    if cart_item is not None:
+        # Item-level discount
         cart_item.manual_discount_type = discount_type
         cart_item.manual_discount_value = discount_value
         cart_item.manual_discount_applied_by = request.user
@@ -1178,6 +1125,35 @@ def approve_discount(request):
 # ============================================================================
 
 
+def _serialize_parked_items(cart):
+    """Build a lossless per-line snapshot of a cart for park/restore.
+
+    The display-oriented ``serialize_cart`` output drops everything add_item
+    needs to rebuild a line exactly — configurator/bundle selections,
+    customizations and item-level manual discounts. Capture the raw parent
+    ``CartItem`` fields here so restoration is a faithful round-trip.
+    """
+    items = []
+    for item in cart.items.filter(parent_bundle__isnull=True).order_by("id"):
+        items.append(
+            {
+                "product_id": item.product_id,
+                "variant_id": item.variant_id,
+                "quantity": item.quantity,
+                "notes": item.notes or "",
+                "customizations": item.customizations or {},
+                "manual_discount": {
+                    "type": item.manual_discount_type,
+                    "value": str(item.manual_discount_value),
+                    "reason": item.manual_discount_reason or "",
+                    "applied_by_id": item.manual_discount_applied_by_id,
+                    "approved_by_id": item.manual_discount_approved_by_id,
+                },
+            }
+        )
+    return items
+
+
 @extend_schema(
     summary=_("Park current cart"),
     description=_(
@@ -1234,6 +1210,9 @@ def park_cart(request):
     # Build cart snapshot
     currency = get_terminal_currency(request)
     cart_snapshot = serialize_cart(cart, currency=currency, request=request)
+    # Attach a lossless per-line snapshot so restore can rebuild configuration,
+    # customization and item-discount data that serialize_cart does not carry.
+    cart_snapshot["parked_items"] = _serialize_parked_items(cart)
 
     # Calculate totals
     item_count = sum(item["quantity"] for item in cart_snapshot.get("items", []))
@@ -1315,10 +1294,14 @@ def list_parked_carts(request):
             }
         )
 
-    parked_carts = ParkedCart.objects.filter(
-        terminal=terminal,
-        restored_at__isnull=True,
-    ).order_by("-parked_at")
+    parked_carts = (
+        ParkedCart.objects.filter(
+            terminal=terminal,
+            restored_at__isnull=True,
+        )
+        .select_related("created_by")
+        .order_by("-parked_at")
+    )
 
     result = []
     for parked in parked_carts:
@@ -1362,6 +1345,9 @@ def list_parked_carts(request):
 @permission_classes([IsStaffUser])
 def restore_parked_cart(request, parked_id):
     """Restore a parked cart."""
+    from decimal import Decimal
+
+    from django.db import transaction
     from django.utils import timezone
 
     from cart.services.cart_service import CartService
@@ -1382,77 +1368,151 @@ def restore_parked_cart(request, parked_id):
         )
 
     cart = CartService.get_or_create_cart(user=request.user)
-
-    # Clear current cart first
-    CartService.clear_cart(cart)
-    cart.pos_manual_discount_type = "none"
-    cart.pos_manual_discount_value = 0
-    cart.pos_manual_discount_applied_by = None
-    cart.pos_manual_discount_approved_by = None
-    cart.pos_manual_discount_reason = ""
-    cart.save(
-        update_fields=[
-            "pos_manual_discount_type",
-            "pos_manual_discount_value",
-            "pos_manual_discount_applied_by",
-            "pos_manual_discount_approved_by",
-            "pos_manual_discount_reason",
-        ]
-    )
-
-    # Restore items from parked cart
     cart_data = parked.cart_data
     pos_warehouse = terminal.warehouse if terminal else None
 
-    for item in cart_data.get("items", []):
-        product_id = item.get("product_id")
-        variant_id = item.get("variant_id")
-        quantity = item.get("quantity", 1)
+    # Prefer the lossless snapshot; fall back to the display items for carts
+    # parked before that snapshot existed.
+    parked_items = cart_data.get("parked_items")
+    if parked_items is None:
+        parked_items = cart_data.get("items", [])
 
-        if product_id:
-            CartService.add_item(
-                cart,
-                product_id,
-                quantity,
-                variant_id=variant_id,
-                channel="pos",
-                warehouse=pos_warehouse,
-                customer_currency=get_terminal_currency(request),
-            )
-
-    # Restore customer if present
-    customer_data = cart_data.get("customer")
-    if customer_data and customer_data.get("id"):
-        from customers.models import Customer
-
-        try:
-            customer = Customer.objects.get(id=customer_data["id"])
-            cart.customer = customer
-            cart.save(update_fields=["customer"])
-        except Customer.DoesNotExist:
-            pass
-
-    # Restore manual discount if present
-    manual_discount = cart_data.get("manual_discount")
-    if manual_discount and manual_discount.get("type") and manual_discount["type"] != "none":
-        from decimal import Decimal
-
-        cart.pos_manual_discount_type = manual_discount["type"]
-        cart.pos_manual_discount_value = Decimal(str(manual_discount.get("value", 0)))
-        cart.pos_manual_discount_reason = manual_discount.get("reason", "")
-        cart.pos_manual_discount_applied_by = request.user
+    # Restore the whole cart atomically: if any line can no longer be added
+    # (unpublished, unavailable, out of stock) or the parked voucher no longer
+    # applies, roll everything back and leave the parked snapshot intact rather
+    # than marking it restored and losing recoverable data.
+    restore_error = None
+    with transaction.atomic():
+        # Clear current cart first
+        CartService.clear_cart(cart)
+        cart.pos_manual_discount_type = "none"
+        cart.pos_manual_discount_value = 0
+        cart.pos_manual_discount_applied_by = None
+        cart.pos_manual_discount_approved_by = None
+        cart.pos_manual_discount_reason = ""
         cart.save(
             update_fields=[
                 "pos_manual_discount_type",
                 "pos_manual_discount_value",
-                "pos_manual_discount_reason",
                 "pos_manual_discount_applied_by",
+                "pos_manual_discount_approved_by",
+                "pos_manual_discount_reason",
             ]
         )
 
-    # Mark parked cart as restored
-    parked.restored_at = timezone.now()
-    parked.save(update_fields=["restored_at"])
+        for item in parked_items:
+            product_id = item.get("product_id")
+            if not product_id:
+                continue
+
+            # Split stored customizations back into the discrete add_item
+            # arguments: configurator/bundle metadata lives under
+            # underscore-prefixed keys, real customizations under the rest.
+            raw_customizations = item.get("customizations") or {}
+            configuration = raw_customizations.get("_configuration")
+            preset_id = raw_customizations.get("_preset_id")
+            variant_selections = raw_customizations.get("_bundle_variant_selections")
+            excluded_optional_items = raw_customizations.get("_bundle_excluded_items")
+            customizations = {k: v for k, v in raw_customizations.items() if not k.startswith("_")}
+
+            success, message, restored_item = CartService.add_item(
+                cart,
+                product_id,
+                item.get("quantity", 1),
+                variant_id=item.get("variant_id"),
+                channel="pos",
+                warehouse=pos_warehouse,
+                notes=item.get("notes", ""),
+                customizations=customizations or None,
+                configuration=configuration,
+                preset_id=preset_id,
+                variant_selections=variant_selections,
+                excluded_optional_items=excluded_optional_items,
+                customer_currency=get_terminal_currency(request),
+            )
+            if not success:
+                restore_error = str(message)
+                break
+
+            # Restore the item-level manual discount and its approval metadata.
+            item_discount = item.get("manual_discount")
+            if (
+                restored_item is not None
+                and item_discount
+                and item_discount.get("type")
+                and item_discount["type"] != "none"
+            ):
+                restored_item.manual_discount_type = item_discount["type"]
+                restored_item.manual_discount_value = Decimal(str(item_discount.get("value", 0)))
+                restored_item.manual_discount_reason = item_discount.get("reason", "")
+                restored_item.manual_discount_applied_by_id = item_discount.get("applied_by_id")
+                restored_item.manual_discount_approved_by_id = item_discount.get("approved_by_id")
+                restored_item.save(
+                    update_fields=[
+                        "manual_discount_type",
+                        "manual_discount_value",
+                        "manual_discount_reason",
+                        "manual_discount_applied_by",
+                        "manual_discount_approved_by",
+                    ]
+                )
+
+        if restore_error is None:
+            # Restore customer if present
+            customer_data = cart_data.get("customer")
+            if customer_data and customer_data.get("id"):
+                from customers.models import Customer
+
+                try:
+                    cart.customer = Customer.objects.get(id=customer_data["id"])
+                    cart.save(update_fields=["customer"])
+                except Customer.DoesNotExist:
+                    pass
+
+            # Restore cart-level manual discount if present
+            manual_discount = cart_data.get("manual_discount")
+            if (
+                manual_discount
+                and manual_discount.get("type")
+                and manual_discount["type"] != "none"
+            ):
+                cart.pos_manual_discount_type = manual_discount["type"]
+                cart.pos_manual_discount_value = Decimal(str(manual_discount.get("value", 0)))
+                cart.pos_manual_discount_reason = manual_discount.get("reason", "")
+                cart.pos_manual_discount_applied_by = request.user
+                cart.save(
+                    update_fields=[
+                        "pos_manual_discount_type",
+                        "pos_manual_discount_value",
+                        "pos_manual_discount_reason",
+                        "pos_manual_discount_applied_by",
+                    ]
+                )
+
+            # Reapply the parked voucher; parking cleared it from the cart.
+            voucher_code = cart_data.get("voucher_code")
+            if voucher_code:
+                ok, voucher_message, _discount = CartService.apply_voucher(
+                    cart, voucher_code, user=None
+                )
+                if not ok:
+                    restore_error = str(voucher_message)
+
+        if restore_error is not None:
+            transaction.set_rollback(True)
+        else:
+            # Mark parked cart as restored
+            parked.restored_at = timezone.now()
+            parked.save(update_fields=["restored_at"])
+
+    if restore_error is not None:
+        return Response(
+            {
+                "success": False,
+                "error": {"code": "RESTORE_FAILED", "message": restore_error},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     cart.refresh_from_db()
     return Response(

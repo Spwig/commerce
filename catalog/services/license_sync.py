@@ -7,6 +7,7 @@ This service handles syncing license operations to external license management s
 import logging
 from datetime import timedelta
 
+from django.db.models import Q
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -122,7 +123,7 @@ class LicenseProviderService:
 
         try:
             success, activation_id, response_data = self.adapter.activate_device(
-                activation.license_key, activation.device_fingerprint, activation.device_info
+                activation.license_key, activation.device_identifier, activation.device_info
             )
 
             if success:
@@ -154,7 +155,7 @@ class LicenseProviderService:
 
         try:
             success, response_data = self.adapter.deactivate_device(
-                activation.license_key, activation.device_fingerprint
+                activation.license_key, activation.device_identifier
             )
 
             if success:
@@ -190,6 +191,17 @@ class LicenseProviderService:
             logger.exception(f"Exception validating license: {e}")
             return False, {"error": str(e)}
 
+    def _schedule_next_retry(self, sync, now, error_message):
+        """Increment the retry counter and schedule the next attempt.
+
+        Uses exponential backoff (5min, 15min, 45min, ...) measured from the
+        incremented retry count so the first retry waits 5 minutes.
+        """
+        sync.retry_count += 1
+        sync.error_message = error_message
+        delay = 5 * (3 ** (sync.retry_count - 1))
+        sync.next_retry_at = now + timedelta(minutes=delay)
+
     def retry_failed_syncs(self, max_retries=3):
         """
         Retry failed synchronization operations.
@@ -202,13 +214,15 @@ class LicenseProviderService:
         """
         from catalog.models import ExternalLicenseSync
 
-        # Find failed syncs that are due for retry
+        # Find failed syncs that are due for retry. Newly failed records have a
+        # null next_retry_at and must also be picked up (NULL is excluded by a
+        # plain <= comparison).
         now = timezone.now()
         failed_syncs = ExternalLicenseSync.objects.filter(
+            Q(next_retry_at__isnull=True) | Q(next_retry_at__lte=now),
             provider=self.provider,
             sync_status="failed",
             retry_count__lt=max_retries,
-            next_retry_at__lte=now,
         )
 
         retried_count = 0
@@ -217,12 +231,18 @@ class LicenseProviderService:
             try:
                 # Attempt to recreate the license
                 if self.adapter:
-                    # Get required data from sync record
+                    # Get required data from sync record. A license may carry an
+                    # order_item without a digital_asset, so fall back to the
+                    # order item's product when the asset is absent.
                     license_key = sync.license_key
-                    product = (
-                        license_key.digital_asset.product if license_key.digital_asset else None
-                    )
-                    order = license_key.order_item.order if license_key.order_item else None
+                    order_item = license_key.order_item
+                    if license_key.digital_asset:
+                        product = license_key.digital_asset.product
+                    elif order_item:
+                        product = order_item.product
+                    else:
+                        product = None
+                    order = order_item.order if order_item else None
 
                     if product and order:
                         success, external_id, response_data = self.adapter.create_license(
@@ -236,20 +256,20 @@ class LicenseProviderService:
                             sync.next_retry_at = None
                             retried_count += 1
                         else:
-                            sync.retry_count += 1
-                            sync.error_message = response_data.get("error", "Unknown error")
-                            # Exponential backoff: 5min, 15min, 45min
-                            delay = 5 * (3**sync.retry_count)
-                            sync.next_retry_at = now + timedelta(minutes=delay)
+                            self._schedule_next_retry(
+                                sync, now, response_data.get("error", "Unknown error")
+                            )
 
                         sync.save()
+                    else:
+                        logger.warning(
+                            f"Cannot retry sync {sync.id}: license {license_key.key} is "
+                            "missing product or order data"
+                        )
 
             except Exception as e:
                 logger.exception(f"Exception retrying sync {sync.id}: {e}")
-                sync.retry_count += 1
-                sync.error_message = str(e)
-                delay = 5 * (3**sync.retry_count)
-                sync.next_retry_at = now + timedelta(minutes=delay)
+                self._schedule_next_retry(sync, now, str(e))
                 sync.save()
 
         return retried_count

@@ -38,6 +38,16 @@ regexes = [
   '''ABCD1234EFGH5678IJKL''',
   '''ABCDEFGH12345678WXYZ''',
   '''abc123def456''',
+  # Visitor-cookie fixture in tests/attribution/test_identity.py — a test
+  # assertion value (assigned to a variable named `key`, so the
+  # generic-api-key rule misfires). Never corresponded to a live secret.
+  '''existing-key-123''',
+
+  # Visitor-cookie fixture in tests/attribution/test_identity.py — the test
+  # seeds req.COOKIES with this literal and asserts it round-trips
+  # (ensure_visitor_key reuses an existing cookie). The generic-api-key rule
+  # matches the bare `key == "existing-key-123"` assertion. Never a live value.
+  '''existing-key-123''',
 
   # Dummy account passphrase in the checkout-contact test — the test
   # creates a user and asserts the password is hashed (check_password),

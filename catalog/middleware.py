@@ -6,11 +6,47 @@ Determines visitor's sales region based on GeoIP data
 import logging
 
 from django.core.cache import cache
+from django.urls import set_script_prefix
 from django.utils.functional import SimpleLazyObject
 
 from .models import SalesRegion
 
 logger = logging.getLogger(__name__)
+
+# Shared version stamp for every SalesRegion-derived cache entry
+# (``default_sales_region`` and all ``region_by_country:*`` mappings). Bumping
+# it strands the previously cached region IDs so that a priority change,
+# deactivation, or edit to a region's country list takes effect immediately
+# instead of persisting for up to the one-hour entry timeout.
+_REGION_CACHE_VERSION_KEY = "sales_region_cache_version"
+
+
+def _region_cache_version() -> int:
+    """Return the current version stamp for cached SalesRegion lookups.
+
+    Seeds the stamp on first use. It never expires so that long-lived region
+    entries can't be resurrected by the stamp resetting under them.
+    """
+    version = cache.get(_REGION_CACHE_VERSION_KEY)
+    if version is None:
+        version = 1
+        cache.add(_REGION_CACHE_VERSION_KEY, version, timeout=None)
+    return version
+
+
+def invalidate_region_cache() -> None:
+    """Invalidate every cached SalesRegion lookup by bumping the version stamp.
+
+    Call this whenever a SalesRegion is saved or deleted (including priority and
+    active-state changes) so the cached default region and country-to-region
+    mappings can never serve an obsolete match.
+    """
+    _region_cache_version()  # ensure the stamp exists so incr can't miss
+    try:
+        cache.incr(_REGION_CACHE_VERSION_KEY)
+    except ValueError:
+        # Expired between seed and incr; reseed ahead of any stale entries.
+        cache.set(_REGION_CACHE_VERSION_KEY, 2, timeout=None)
 
 
 class RegionDetectionMiddleware:
@@ -51,6 +87,16 @@ class RegionDetectionMiddleware:
         Returns:
             SalesRegion instance or None
         """
+        # URL-derived market is authoritative: when the visitor is on a market
+        # URL (/nz/en/…), the market — not a cookie or GeoIP — sets the region,
+        # so each market URL renders deterministically (SEO/cache safety).
+        market_slug = getattr(request, "market_slug", None)
+        if market_slug:
+            region = get_region_for_market_slug(market_slug)
+            if region:
+                logger.debug(f"Pinned region to URL market: {region.code}")
+                return region
+
         # Check for user preference override
         region = self._get_user_override(request)
         if region:
@@ -133,35 +179,8 @@ class RegionDetectionMiddleware:
         return get_region_for_country(country_code)
 
     def _get_default_region(self) -> SalesRegion | None:
-        """
-        Get the default sales region (highest priority active region).
-
-        Uses caching to avoid repeated database queries.
-
-        Returns:
-            SalesRegion instance or None
-        """
-        cache_key = "default_sales_region"
-        cached_region_id = cache.get(cache_key)
-
-        if cached_region_id:
-            try:
-                return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
-            except SalesRegion.DoesNotExist:
-                # Cached region no longer exists, invalidate cache
-                cache.delete(cache_key)
-
-        # Query database for highest priority region
-        try:
-            region = SalesRegion.objects.filter(is_active=True).order_by("-priority").first()
-            if region:
-                # Cache for 1 hour
-                cache.set(cache_key, region.id, timeout=3600)
-                return region
-        except Exception as e:
-            logger.error(f"Error getting default region: {e}")
-
-        return None
+        """Get the default sales region (delegates to the shared helper)."""
+        return get_default_region()
 
     def _add_content_language_header(self, request, response):
         """
@@ -247,26 +266,188 @@ def get_region_for_country(country_code: str) -> SalesRegion | None:
 
     country_code = country_code.upper()
     cache_key = f"region_by_country:{country_code}"
-    cached_region_id = cache.get(cache_key)
+    version = _region_cache_version()
+    cached_region_id = cache.get(cache_key, version=version)
 
     if cached_region_id:
         try:
             return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
         except SalesRegion.DoesNotExist:
             # Cached region no longer exists, invalidate cache
-            cache.delete(cache_key)
+            cache.delete(cache_key, version=version)
 
     # A region matches if the country_code is in its countries JSON array.
     try:
         regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
         for region in regions:
             if isinstance(region.countries, list) and country_code in region.countries:
-                cache.set(cache_key, region.id, timeout=3600)
+                cache.set(cache_key, region.id, timeout=3600, version=version)
                 return region
     except Exception as e:
         logger.error(f"Error querying regions for country {country_code}: {e}")
 
     return None
+
+
+def get_default_region() -> SalesRegion | None:
+    """Return the default market: the highest-priority active SalesRegion.
+
+    Cached for one hour under the shared region cache version, so a priority
+    change or deactivation (which bumps the version via ``invalidate_region_cache``)
+    takes effect immediately.
+    """
+    cache_key = "default_sales_region"
+    version = _region_cache_version()
+    cached_region_id = cache.get(cache_key, version=version)
+
+    if cached_region_id:
+        try:
+            return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
+        except SalesRegion.DoesNotExist:
+            cache.delete(cache_key, version=version)
+
+    try:
+        region = SalesRegion.objects.filter(is_active=True).order_by("-priority").first()
+        if region:
+            cache.set(cache_key, region.id, timeout=3600, version=version)
+            return region
+    except Exception as e:
+        logger.error(f"Error getting default region: {e}")
+
+    return None
+
+
+def get_market_slugs() -> set[str]:
+    """Return the set of active market slugs (lower-cased).
+
+    A "market" is an active SalesRegion with a non-empty ``slug`` — the segment
+    that gives it its own storefront URL (``/nz/en/…``). Cached for one hour
+    under the shared region cache version.
+    """
+    cache_key = "market_slugs"
+    version = _region_cache_version()
+    cached = cache.get(cache_key, version=version)
+    if cached is not None:
+        return cached
+
+    try:
+        slugs = {
+            slug.lower()
+            for slug in SalesRegion.objects.filter(is_active=True)
+            .exclude(slug="")
+            .values_list("slug", flat=True)
+        }
+        # The default market (highest-priority region) is always served WITHOUT a
+        # prefix. Drop its slug so it can't also be reached at /<slug>/… — that
+        # would serve the default market at two URLs (duplicate content).
+        default = get_default_region()
+        if default and default.slug:
+            slugs.discard(default.slug.lower())
+    except Exception as e:
+        logger.error(f"Error loading market slugs: {e}")
+        slugs = set()
+
+    cache.set(cache_key, slugs, timeout=3600, version=version)
+    return slugs
+
+
+def get_region_for_market_slug(slug: str) -> SalesRegion | None:
+    """Resolve a market slug to its SalesRegion (active only), cached one hour."""
+    if not slug:
+        return None
+
+    slug = slug.lower()
+    cache_key = f"region_by_market_slug:{slug}"
+    version = _region_cache_version()
+    cached_region_id = cache.get(cache_key, version=version)
+
+    if cached_region_id:
+        try:
+            return SalesRegion.objects.get(pk=cached_region_id, is_active=True)
+        except SalesRegion.DoesNotExist:
+            cache.delete(cache_key, version=version)
+
+    try:
+        region = SalesRegion.objects.filter(slug__iexact=slug, is_active=True).first()
+        if region:
+            cache.set(cache_key, region.id, timeout=3600, version=version)
+            return region
+    except Exception as e:
+        logger.error(f"Error resolving market slug {slug}: {e}")
+
+    return None
+
+
+class MarketMiddleware:
+    """Resolve the storefront *market* from a leading URL segment and strip it.
+
+    A market URL looks like ``/nz/en/products/…``: the first segment (``nz``) is
+    an active :class:`SalesRegion` slug. This middleware strips that segment from
+    ``path_info`` so the rest of the stack — ``LocaleMiddleware``,
+    ``i18n_patterns``, URL resolution — sees the ordinary ``/en/products/…`` path
+    unchanged, and folds the segment into the script prefix so that a plain
+    ``{% url %}`` / ``reverse()`` keeps the visitor inside their market.
+
+    Sets on the request:
+        ``market_slug``   — the matched slug, or ``None`` for the default
+                            (unprefixed) market.
+        ``market_prefix`` — ``"/nz"`` for URL building, or ``""`` for the default.
+        ``market``        — lazy resolved SalesRegion (matched slug, else default).
+
+    When a market slug is present it is authoritative:
+    ``RegionDetectionMiddleware`` pins ``request.sales_region`` to it (see
+    ``_detect_region``), so the URL — not a cookie or GeoIP — determines the
+    market, keeping each market URL's rendered content deterministic.
+
+    MUST be ordered before ``LocaleMiddleware``. Only ever strips a segment that
+    is a known active market slug, so page/product slugs can never be mistaken
+    for a market.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        request.market_slug = None
+        request.market_prefix = ""
+
+        path_info = request.path_info or "/"
+        first = path_info.lstrip("/").split("/", 1)[0].lower()
+
+        if first and first in get_market_slugs():
+            prefix_seg = "/" + first
+            remainder = path_info[len(prefix_seg) :] or "/"
+            if not remainder.startswith("/"):
+                remainder = "/" + remainder
+
+            # Strip the market segment from the path used for resolution + i18n.
+            request.path_info = remainder
+            request.META["PATH_INFO"] = remainder
+
+            # Fold the market into the script prefix so reverse()/{% url %} keep
+            # it, while request.path (script_name + path_info) stays the full
+            # /nz/en/… for correct absolute URIs / canonical links. Derive the
+            # base from SCRIPT_NAME (set by SubpathMiddleware for /shop subpath
+            # deployments) so a subpath composes correctly as /shop/nz.
+            new_script = request.META.get("SCRIPT_NAME", "") + prefix_seg
+            request.META["SCRIPT_NAME"] = new_script
+            set_script_prefix(new_script + "/")
+
+            request.market_slug = first
+            request.market_prefix = prefix_seg
+
+        request.market = SimpleLazyObject(lambda: self._resolve_market(request))
+
+        return self.get_response(request)
+
+    @staticmethod
+    def _resolve_market(request) -> SalesRegion | None:
+        slug = getattr(request, "market_slug", None)
+        if slug:
+            region = get_region_for_market_slug(slug)
+            if region:
+                return region
+        return get_default_region()
 
 
 def get_ship_to_options(request):

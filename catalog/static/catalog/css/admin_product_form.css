@@ -161,56 +161,12 @@ body,
   gap: 8px;
 }
 
-/* Tabbed Navigation */
-.admin-tabs {
-  display: flex;
-  gap: 5px;
-  background: var(--selected-bg);
-  padding: 12px 12px 0 12px;
-  border-radius: 8px 8px 0 0;
-  overflow-x: auto;
-  margin-bottom: 0;
-  border-bottom: 2px solid var(--hairline-color);
-}
-
-.admin-tab-btn {
-  background: none;
-  border: none;
-  padding: 12px 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--body-quiet-color);
-  border-radius: 6px 6px 0 0;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  border-bottom: 3px solid transparent;
-}
-
-.admin-tab-btn i {
-  font-size: 16px;
-}
-
-.admin-tab-btn:hover {
-  background: var(--darkened-bg);
-  color: var(--body-fg);
-}
-
-.admin-tab-btn.active {
-  background: var(--darkened-bg);
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-  font-weight: 600;
-}
-
-.admin-tab-btn .label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+/* Tabbed Navigation — the .admin-tabs / .admin-tab-btn component is owned by
+   admin-base.css (declared with !important), which is the platform-wide shared
+   tab component. The local redefinitions that used to live here only lost the
+   cascade (or conflicted, e.g. .active { color: var(--primary) } vs the shared
+   selected-fg/selected-bg pairing), so they've been removed. Product-form-only
+   tab states (.hidden, .conditional-tab) are additive and kept further below. */
 
 /* Tab Content, Tab Panel, Form Card, Two Column Layout, Checkbox Row */
 /* Note: These base classes are now defined in admin-base.css */
@@ -511,77 +467,9 @@ body,
   min-height: 200px;
 }
 
-.images-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.image-item {
-  position: relative;
-  aspect-ratio: 1;
-  border: 2px solid var(--border-color);
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--body-bg);
-  cursor: move;
-  transition: border-color 0.2s;
-}
-
-.image-item:hover {
-  border-color: var(--primary);
-}
-
-.image-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-item .image-actions {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: flex;
-  gap: 4px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.image-item:hover .image-actions {
-  opacity: 1;
-}
-
-.image-item .image-actions button {
-  background: var(--close-button-bg);
-  color: var(--button-fg);
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.image-item .image-actions button:hover {
-  background: var(--close-button-hover-bg);
-}
-
-.image-item .primary-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: var(--primary);
-  color: var(--primary-fg);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-}
+/* The legacy .images-grid / .image-item image manager was removed. The live
+   image manager (media_manager.js) renders .product-image-card / .image-card-*
+   into #product-images-grid; those styles live further down in this file. */
 
 /* Translation Fields */
 .translation-language-selector {
@@ -637,210 +525,12 @@ body,
   min-height: 300px;
 }
 
-/* CKEditor 5 Theme Customization */
-/* Main editor container */
-.ck.ck-editor {
-  border-color: var(--border-color) !important;
-}
-
-/* Toolbar */
-.ck.ck-toolbar {
-  background-color: var(--darkened-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-toolbar .ck-toolbar__separator {
-  background-color: var(--border-color) !important;
-}
-
-/* Toolbar buttons */
-.ck.ck-button,
-.ck.ck-button.ck-off {
-  background-color: transparent !important;
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-button:not(.ck-disabled):hover,
-.ck.ck-button.ck-on {
-  background-color: var(--selected-bg) !important;
-  color: var(--body-loud-color) !important;
-}
-
-.ck.ck-button.ck-on {
-  background-color: var(--selected-bg) !important;
-  border-color: var(--primary) !important;
-}
-
-.ck.ck-button:not(.ck-disabled):active {
-  background-color: var(--selected-bg) !important;
-  box-shadow: none !important;
-}
-
-/* Dropdown buttons */
-.ck.ck-dropdown .ck-button.ck-dropdown__button {
-  background-color: transparent !important;
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-dropdown .ck-button.ck-dropdown__button:not(.ck-disabled):hover {
-  background-color: var(--selected-bg) !important;
-}
-
-/* Editor content area */
-.ck.ck-editor__main > .ck-editor__editable {
-  background-color: var(--body-bg) !important;
-  color: var(--body-fg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
-  border-color: var(--border-color) !important;
-}
-
-.ck.ck-editor__main > .ck-editor__editable.ck-focused {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 2px var(--blue-subtle) !important;
-}
-
-/* Content inside editor */
-.ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
-  background-color: var(--body-bg) !important;
-}
-
-.ck-content h2,
-.ck-content h3,
-.ck-content h4 {
-  color: var(--body-loud-color) !important;
-}
-
-.ck-content p,
-.ck-content li,
-.ck-content td {
-  color: var(--body-fg) !important;
-}
-
-.ck-content a {
-  color: var(--link-fg) !important;
-}
-
-.ck-content blockquote {
-  border-left-color: var(--border-color) !important;
-  color: var(--body-quiet-color) !important;
-}
-
-/* Dropdown panels */
-.ck.ck-list {
-  background-color: var(--secondary-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.ck.ck-list__item {
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-list__item:hover:not(.ck-disabled) {
-  background-color: var(--selected-bg) !important;
-}
-
-.ck.ck-list__item.ck-on {
-  background-color: var(--selected-bg) !important;
-  color: var(--body-loud-color) !important;
-}
-
-/* Balloon toolbar (appears on text selection) */
-.ck.ck-balloon-panel {
-  background-color: var(--secondary-bg) !important;
-  border-color: var(--border-color) !important;
-}
-
-.ck.ck-balloon-panel .ck-toolbar {
-  background-color: var(--secondary-bg) !important;
-  border: none !important;
-}
-
-/* Input fields inside editor (link, table properties, etc.) */
-.ck.ck-input,
-.ck.ck-input-text {
-  background-color: var(--body-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-input:focus,
-.ck.ck-input-text:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 2px var(--blue-subtle) !important;
-}
-
-/* Labels */
-.ck.ck-label {
-  color: var(--body-fg) !important;
-}
-
-/* Icons - ensure they're visible in both themes */
-.ck.ck-button .ck-icon {
-  color: var(--body-fg) !important;
-}
-
-.ck.ck-button:hover .ck-icon,
-.ck.ck-button.ck-on .ck-icon {
-  color: var(--body-loud-color) !important;
-}
-
-/* Table editing */
-.ck.ck-table-form {
-  background-color: var(--secondary-bg) !important;
-}
-
-/* Color picker */
-.ck.ck-color-grid {
-  background-color: var(--secondary-bg) !important;
-}
-
-.ck.ck-color-grid__tile {
-  border-color: var(--border-color) !important;
-}
-
-/* Placeholder text */
-.ck.ck-placeholder::before {
-  color: var(--body-quiet-color) !important;
-}
-
-/* Special content (code blocks) */
-.ck-content pre {
-  background-color: var(--darkened-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--body-fg) !important;
-}
-
-.ck-content code {
-  background-color: var(--darkened-bg) !important;
-  color: var(--primary) !important;
-}
-
-/* Selection color */
-.ck-content ::selection {
-  background-color: var(--selected-bg) !important;
-}
-
-/* Scrollbar styling for dark theme */
-html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar {
-  width: 12px;
-}
-
-html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-track {
-  background: var(--darkened-bg);
-}
-
-html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 6px;
-}
-
-html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb:hover {
-  background: var(--selected-bg);
-}
+/* CKEditor 5 theme customisation was removed. Dark mode is fully themed by
+   core/admin/css/themes/dark.css ([data-theme='dark'] .ck…, higher
+   specificity than these rules were, so it already won here); toolbar
+   responsiveness lives in core/admin/css/ckeditor_media_library.css. Light
+   mode now uses CKEditor defaults, matching every other admin editor. The
+   local .ckeditor-field min-height above is product-form-specific and kept. */
 
 /* SEO Preview */
 .seo-preview {
@@ -882,76 +572,14 @@ html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb:hover {
   line-height: 1.4;
 }
 
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background: var(--body-bg);
-  border-radius: 8px;
-  width: 90%;
-  max-width: 1200px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color);
-}
-
-.modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--body-fg);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: var(--body-quiet-color);
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.modal-close:hover {
-  background: var(--darkened-bg);
-}
-
-.modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-}
+/* Generic .modal / .modal-content / .modal-header / .modal-close / .modal-body
+   styles were removed. Nothing on the product form uses these bare classes: the
+   in-page modals use prefixed families defined in their own card stylesheets
+   (.attr-modal-*, .variant-modal-*, .config-*-modal-*, .booking-modal-*), the
+   unsaved-changes modal uses the shared .admin-modal-* system (admin-base.css),
+   and the media-library picker is owned by media_library/css/media-library.css
+   (scoped under .ml-modal). The bare rules were dead weight and a latent
+   cross-file conflict, so they're gone. */
 
 /* Buttons — colour/box styling is inherited from the canonical admin-base
    .button (which sets background/color/border/padding/etc. with !important, so
@@ -1074,18 +702,56 @@ html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb:hover {
 }
 
 .image-card-preview {
+  position: relative;
   width: 100%;
   height: 200px;
   background: var(--darkened-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .image-card-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+/* Shimmering placeholder shown while a newly added thumbnail loads */
+.image-card-preview.is-loading img {
+  opacity: 0;
+}
+
+.image-card-preview.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--darkened-bg) 30%,
+    var(--body-bg) 50%,
+    var(--darkened-bg) 70%
+  );
+  background-size: 200% 100%;
+  animation: image-card-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes image-card-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-card-preview.is-loading::after {
+    animation: none;
+  }
 }
 
 .image-card-details {
@@ -1166,203 +832,12 @@ html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb:hover {
   color: var(--body-quiet-color);
 }
 
-/* ========================================
-   Media Library Modal
-   ======================================== */
-
-.media-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.media-modal-content {
-  background: var(--body-bg);
-  width: 90%;
-  max-width: 1200px;
-  height: 85vh;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 20px 60px var(--shadow-dark);
-}
-
-.media-modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--darkened-bg);
-}
-
-.media-modal-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--body-fg);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.media-modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: var(--body-quiet-color);
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.media-modal-close:hover {
-  background: var(--close-button-bg);
-  color: var(--close-button-fg);
-}
-
-.media-modal-body {
-  flex: 1;
-  padding: 24px;
-  overflow-y: auto;
-}
-
-.media-upload-zone {
-  border: 2px dashed var(--border-color);
-  padding: 40px;
-  text-align: center;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  background: var(--darkened-bg);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.media-upload-zone:hover {
-  border-color: var(--primary);
-  background: var(--primary-bg);
-}
-
-.media-upload-zone i {
-  font-size: 48px;
-  color: var(--body-quiet-color);
-  margin-bottom: 12px;
-  display: block;
-}
-
-.media-upload-zone p {
-  color: var(--body-fg);
-  margin: 0;
-  font-size: 14px;
-}
-
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.media-loading {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--body-quiet-color);
-}
-
-.media-loading i {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.media-item {
-  position: relative;
-  border: 3px solid transparent;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--darkened-bg);
-}
-
-.media-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--shadow-dark);
-}
-
-.media-item.selected {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary-bg);
-}
-
-.media-item img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  display: block;
-}
-
-.media-item-title {
-  padding: 8px;
-  background: var(--darkened-bg);
-  font-size: 12px;
-  text-align: center;
-  color: var(--body-fg);
-  border-top: 1px solid var(--border-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.media-item .selected-check {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  background: var(--primary);
-  color: var(--primary-fg);
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.media-item.selected .selected-check {
-  display: flex;
-}
-
-.media-modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--darkened-bg);
-}
-
-.selected-info {
-  font-size: 14px;
-  color: var(--body-quiet-color);
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-}
+/* The legacy media-library picker styles (.media-modal*, .media-upload-zone,
+   .media-grid, .media-item*, .media-modal-footer, .selected-info,
+   .modal-actions) were removed. The live picker is owned by
+   media_library/css/media-library.css (scoped under .ml-modal, and loaded
+   on this page), so these unscoped copies were dead and risked conflicting
+   with it. */
 
 /* ========================================
    Inline Formsets Within Tabs
@@ -1390,56 +865,16 @@ html[data-theme='dark'] .ck.ck-editor__editable::-webkit-scrollbar-thumb:hover {
   overflow: hidden;
 }
 
-.form-card .inline-group table {
-  width: 100%;
-  background: var(--body-bg);
-}
+/* Tabular inline table styling (thead/tbody/tr/td colours, padding, borders,
+   hover) is owned by admin-base.css (.inline-related.tabular fieldset.module
+   table …, declared with !important). The local copies only duplicated it and
+   lost the cascade, so they've been removed. */
 
-.form-card .inline-group table thead th {
-  background: var(--darkened-bg);
-  color: var(--body-fg);
-  font-weight: 600;
-  padding: 12px;
-  text-align: left;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.form-card .inline-group table tbody td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--body-bg);
-}
-
-.form-card .inline-group table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.form-card .inline-group table tbody tr:hover td {
-  background: var(--darkened-bg);
-}
-
-/* Add row button styling */
-.form-card .add-row {
-  margin-top: 12px;
-}
-
-.form-card .add-row a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--primary);
-  color: var(--body-fg);
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  transition: opacity 0.2s;
-}
-
-.form-card .add-row a:hover {
-  opacity: 0.9;
-}
+/* Add-row link is styled by the canonical admin-base rule
+   (.inline-related.tabular .add-row a), which sets color:var(--primary)
+   with !important. The old local override set background:var(--primary)
+   too, so the link text and its background both resolved to --primary
+   (invisible label). Deferring to admin-base fixes that. */
 
 /* Stacked inline styling */
 .form-card .inline-group .stacked {

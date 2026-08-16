@@ -368,6 +368,26 @@ class TestRefundToWallet:
         wallet.refresh_from_db()
         assert wallet.available_balance.amount == Decimal("75.00")  # 100 - 40 + 15
 
+    def test_refund_writes_a_refund_typed_ledger_row(self):
+        # A refund to the wallet must be a TYPE_REFUND row, not a plain credit —
+        # so refunds are distinguishable in history and reporting.
+        wallet, capture = self._captured("40.00")
+
+        WalletTenderService.refund_to_wallet(
+            capture, amount=Money(Decimal("15.00"), "USD"), refund_ref="r1"
+        )
+
+        row = WalletTransaction.objects.get(
+            wallet=wallet, transaction_type=WalletTransaction.TYPE_REFUND
+        )
+        assert row.amount == Money(Decimal("15.00"), "USD")
+        assert row.source == WalletTransaction.SOURCE_REFUND
+        assert not WalletTransaction.objects.filter(
+            wallet=wallet,
+            transaction_type=WalletTransaction.TYPE_CREDIT,
+            source=WalletTransaction.SOURCE_REFUND,
+        ).exists(), "The refund must not also be recorded as a plain credit."
+
     def test_refund_is_idempotent_before_money_moves(self):
         """The pre-lookup, not an IntegrityError afterwards, is the guard."""
         wallet, capture = self._captured("40.00")
@@ -408,3 +428,130 @@ class TestRefundToWallet:
             WalletTenderService.refund_to_wallet(
                 capture, amount=Money(Decimal("15.00"), "USD"), refund_ref="r1"
             )
+
+
+class TestSpendableBalance:
+    """compute_spendable_balance: stored balance minus every live hold, floored
+    at zero, never touching the ledger."""
+
+    def test_with_no_holds_it_equals_the_stored_balance(self):
+        wallet, _user = _funded_wallet("60.00")
+        assert WalletTenderService.spendable_balance(wallet) == Money(Decimal("60.00"), "USD")
+
+    def test_live_holds_are_subtracted(self):
+        wallet, user = _funded_wallet("100.00")
+        WalletTenderService.authorize_for_session(_session(user, total="30.00"), user)
+        assert WalletTenderService.spendable_balance(wallet) == Money(Decimal("70.00"), "USD")
+
+    def test_voided_holds_do_not_count(self):
+        wallet, user = _funded_wallet("100.00")
+        session = _session(user, total="30.00")
+        WalletTenderService.authorize_for_session(session, user)
+        WalletTenderService.void_holds(session)
+        assert WalletTenderService.spendable_balance(wallet) == Money(Decimal("100.00"), "USD")
+
+    def test_it_floors_at_zero_never_negative(self):
+        # Two holds across sessions could in theory exceed the balance if the
+        # guard were absent; spendable must never go negative.
+        wallet, user = _funded_wallet("50.00")
+        s1 = _session(user, total="50.00")
+        WalletTenderService.authorize_for_session(s1, user)
+        # Force a second, overlapping hold directly (bypassing the authorize cap)
+        # to prove the floor, not the cap.
+        PaymentTransaction.objects.create(
+            transaction_id="wt-auth:manual-extra",
+            tender_type=PaymentTransaction.TENDER_WALLET,
+            transaction_type="authorize",
+            status="authorized",
+            wallet=wallet,
+            checkout_session=_session(user, total="50.00"),
+            amount=Money(Decimal("50.00"), "USD"),
+            settlement_amount=Money(Decimal("50.00"), "USD"),
+            exchange_rate=Decimal("1.00000000"),
+            provider_account=None,
+        )
+        spendable = WalletTenderService.spendable_balance(wallet)
+        assert spendable == Money(Decimal("0.00"), "USD")
+        assert spendable.amount >= Decimal("0")
+
+    def test_it_never_writes_to_the_ledger(self):
+        wallet, user = _funded_wallet("100.00")
+        before = WalletTransaction.objects.filter(wallet=wallet).count()
+        WalletTenderService.authorize_for_session(_session(user, total="30.00"), user)
+        WalletTenderService.spendable_balance(wallet)
+        assert WalletTransaction.objects.filter(wallet=wallet).count() == before
+
+
+class TestExpireStaleHolds:
+    def test_only_holds_older_than_the_window_are_voided(self):
+        wallet, user = _funded_wallet("100.00")
+        fresh = WalletTenderService.authorize_for_session(_session(user, total="20.00"), user)
+        stale = WalletTenderService.authorize_for_session(_session(user, total="20.00"), user)
+        # Age the second hold past the window.
+        old = timezone.now() - timedelta(minutes=WalletTenderService.HOLD_MINUTES + 1)
+        PaymentTransaction.objects.filter(pk=stale.pk).update(created_at=old)
+
+        voided = WalletTenderService.expire_stale_holds()
+
+        assert voided == 1
+        fresh.refresh_from_db()
+        stale.refresh_from_db()
+        assert fresh.status == "authorized"
+        assert stale.status == "voided"
+
+    def test_it_is_a_noop_when_nothing_is_stale(self):
+        _wallet, user = _funded_wallet("100.00")
+        WalletTenderService.authorize_for_session(_session(user, total="20.00"), user)
+        assert WalletTenderService.expire_stale_holds() == 0
+
+    def test_expiry_moves_no_money(self):
+        wallet, user = _funded_wallet("100.00")
+        stale = WalletTenderService.authorize_for_session(_session(user, total="20.00"), user)
+        PaymentTransaction.objects.filter(pk=stale.pk).update(
+            created_at=timezone.now() - timedelta(minutes=WalletTenderService.HOLD_MINUTES + 1)
+        )
+        ledger_before = WalletTransaction.objects.filter(wallet=wallet).count()
+
+        WalletTenderService.expire_stale_holds()
+
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("100.00")
+        assert WalletTransaction.objects.filter(wallet=wallet).count() == ledger_before
+
+
+class TestVoidCheckoutHolds:
+    def test_it_voids_only_the_given_sessions_holds(self):
+        wallet, user = _funded_wallet("100.00")
+        keep_session = _session(user, total="20.00")
+        drop_session = _session(user, total="20.00")
+        keep = WalletTenderService.authorize_for_session(keep_session, user)
+        drop = WalletTenderService.authorize_for_session(drop_session, user)
+
+        count = WalletTenderService.void_holds(drop_session)
+
+        assert count == 1
+        keep.refresh_from_db()
+        drop.refresh_from_db()
+        assert keep.status == "authorized"
+        assert drop.status == "voided"
+
+    def test_it_moves_no_money(self):
+        wallet, user = _funded_wallet("100.00")
+        session = _session(user, total="20.00")
+        WalletTenderService.authorize_for_session(session, user)
+        WalletTenderService.void_holds(session)
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("100.00")
+
+
+@pytest.mark.skip(
+    reason="hold_pending_balance is planned-not-built: pending_balance / "
+    "STATUS_PENDING are reserved (see wallet/models.py). No pending-refund-window "
+    "driver exists yet. This test names the intended contract for when it is built."
+)
+def test_hold_pending_balance_not_yet_implemented():
+    # Intended contract: a service places a pending credit (STATUS_PENDING) that
+    # raises pending_balance without touching available_balance, and a later
+    # release transitions it to completed, moving pending_balance -> available.
+    # Not built — no product trigger for a pending hold exists yet.
+    raise AssertionError("hold_pending_balance is not implemented")

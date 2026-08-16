@@ -54,24 +54,25 @@ class ProviderService:
                 component_type="shipping_provider"
             )
 
+            # Fetch all installed provider slugs once to avoid an N+1 query pattern
+            installed_slugs = set(
+                ComponentRegistry.objects.filter(component_type="shipping_provider").values_list(
+                    "slug", flat=True
+                )
+            )
+
             # Enhance with local installation status
             providers = []
             for component_data in available:
                 slug = component_data.get("slug")
-
-                # Check if already installed locally
-                is_installed = ComponentRegistry.objects.filter(
-                    slug=slug, component_type="shipping_provider"
-                ).exists()
-
-                component_data["is_installed"] = is_installed
+                component_data["is_installed"] = slug in installed_slugs
                 providers.append(component_data)
 
             return providers
 
-        except Exception as e:
-            logger.error(f"Error fetching providers from update server: {e}")
-            return []
+        except Exception:
+            logger.exception("Error fetching providers from update server")
+            raise
 
     def get_installed_providers(self) -> list[dict]:
         """

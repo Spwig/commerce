@@ -1,0 +1,35 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans 'Access Denied' %} - {% trans 'Shop' %}</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'core/css/error-403.css' %}">
+</head>
+<body>
+    <div class="error-page">
+        <div class="error-page__icon">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h1 class="error-page__code">403</h1>
+        <h2 class="error-page__title">{% trans "Access Denied" %}</h2>
+        <p class="error-page__text">
+            {% trans "You don't have permission to view this page." %}
+        </p>
+        <p class="error-page__hint">
+            {% trans "If you're a staff member and think this is a mistake, ask a store administrator to update your role." %}
+        </p>
+        <div class="error-page__actions">
+            <a href="/" class="btn btn--primary">
+                <i class="fas fa-home"></i>
+                {% trans 'Go to Homepage' %}
+            </a>
+        </div>
+    </div>
+</body>
+</html>

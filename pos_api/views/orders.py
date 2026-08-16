@@ -266,9 +266,36 @@ def order_list(request):
         if order_status:
             orders = orders.filter(status=order_status)
 
-    # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 20)), 100)
+    # Pagination — validate strictly so bad params return a controlled 400
+    # instead of raising ValueError / ZeroDivisionError / negative-slice errors.
+    try:
+        page = int(request.query_params.get("page", 1))
+        page_size = int(request.query_params.get("page_size", 20))
+    except (TypeError, ValueError):
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_PAGINATION",
+                    "message": "page and page_size must be integers.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if page < 1 or page_size < 1:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "INVALID_PAGINATION",
+                    "message": "page and page_size must be positive integers.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    # Cap oversized page sizes rather than rejecting them, preserving the
+    # previous min(page_size, 100) behaviour for existing clients.
+    page_size = min(page_size, 100)
     start = (page - 1) * page_size
     end = start + page_size
 

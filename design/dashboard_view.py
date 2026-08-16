@@ -436,14 +436,14 @@ class DesignDashboardView(View):
                     {
                         "title": "Visibility Rules",
                         "description": "Create individual visibility conditions",
-                        "url": reverse("admin:page_builder_visibilityrule_changelist"),
+                        "url": reverse("admin:visibility_visibilityrule_changelist"),
                         "icon": "fa-filter",
                         "badge": self.get_visibility_rule_count(),
                     },
                     {
                         "title": "Rule Groups",
                         "description": "Combine rules with AND/OR logic",
-                        "url": reverse("admin:page_builder_rulegroup_changelist"),
+                        "url": reverse("admin:visibility_rulegroup_changelist"),
                         "icon": "fa-layer-group",
                         "badge": self.get_rule_group_count(),
                     },
@@ -510,7 +510,7 @@ class DesignDashboardView(View):
     def get_visibility_rule_count(self):
         """Get visibility rule count"""
         try:
-            from page_builder.models import VisibilityRule
+            from visibility.models import VisibilityRule
 
             return VisibilityRule.objects.filter(is_active=True).count()
         except Exception:
@@ -519,7 +519,7 @@ class DesignDashboardView(View):
     def get_rule_group_count(self):
         """Get rule group count"""
         try:
-            from page_builder.models import RuleGroup
+            from visibility.models import RuleGroup
 
             return RuleGroup.objects.filter(is_active=True).count()
         except Exception:

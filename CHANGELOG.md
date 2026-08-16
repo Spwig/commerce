@@ -5,6 +5,260 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2026-08-16
+
+An inventory and agentic-commerce release. Spwig gains first-class **warehouse
+stock operations** — transfers, write-offs and physical recounts — and
+**back-in-stock notifications** become more reliable so waiting customers are
+told the moment an item returns. Merchants also gain **trust and spending
+controls for AI assistants**, agent checkouts gain signed payment attestations,
+a cancel path, and rotatable signing keys, **store-credit wallets** gain
+audited manual adjustments and clearer refund history, and **subscription
+renewals** now bill discounts and add-ons automatically. **Custom forms** are
+hardened end-to-end — full server-side validation and enforced spam protection,
+including invisible **reCAPTCHA v3**. And a new **Revenue Attribution**
+dashboard shows merchants where their sales really come from — crediting every
+order across the whole customer journey, with a live model switch that
+re-attributes revenue instantly. The **admin gets a broad refresh** too —
+card-based lists with quick bulk actions across orders, blog, brands and
+collections, "SEO complete" badges, and a **more complete product editor** that
+surfaces settings which previously existed but weren't shown. Upgrading is
+drop-in: no manual migration steps are required.
+
+### Added
+
+- **Warehouse stock transfers, write-offs and recounts.** From
+  **Stock Items**, merchants can now move stock between warehouses, record
+  damaged or lost units, and reconcile on-hand quantities to a physical count —
+  all as bulk actions on the selected items. Every operation is written to the
+  stock movement audit trail, applies atomically, and will not move or remove
+  units that are already reserved for open orders.
+
+**Multi-market storefronts (region-aware content & navigation)**
+
+- **Show different content and navigation by market.** A single Spwig store can
+  now present different storefront content and menus depending on where a visitor
+  is — served under clean market URLs (for example `/nz/`) — while keeping one
+  catalogue, one theme and one login. This is a presentation layer, not a
+  separate store: there is still one merchant and one admin.
+- **Visibility Rules — one system to show or hide anything.** A shared rule engine
+  lets you gate **page elements, menu items, and header/footer widgets** on the
+  same conditions: market/region, language, currency, time and schedule, and
+  per-visitor state (signed in, cart contents, device). Rules are grouped with
+  AND/OR logic and reused across the store.
+- **Author rules right where you design.** Attach and quick-create rules from the
+  visibility control in the **Page Builder**, the **Menu Builder**, and the
+  **Header & Footer Builder** — including on nested/dropdown menu items — with
+  on-canvas chips showing what's gated.
+- **Fast and SEO-safe.** Region and language decisions are baked into the cached,
+  per-market page so search engines see stable content; rules that depend on the
+  individual visitor (signed in, cart, device) are resolved per shopper without
+  slowing the store or leaking one visitor's navigation into another's cache.
+- **Preview as a market or visitor.** Preview the storefront as a chosen market,
+  and as a signed-in or guest visitor with a cart, so you can see exactly what
+  each audience will get before publishing.
+
+**Agentic commerce (AI Shopping)**
+
+- **Trust and spending limits for AI assistants.** Each assistant that contacts
+  your store can now be promoted to *Verified* (removing its starter caps) or
+  held at *Capped* with per-assistant limits — maximum order value, daily spend,
+  which tenders it may use (discount codes, gift cards, digital goods) and a
+  request rate limit — all editable from the assistant's page under **AI
+  Shopping → Agent Identities**. Every change is written to the assistant's audit
+  trail.
+- **Signed payment attestations for agent orders.** When an AI assistant
+  completes a purchase, Spwig now issues a merchant-signed AP2 *Payment Mandate*
+  alongside the existing Checkout Mandate — durable, verifiable evidence of the
+  payment for dispute protection, carrying no card details.
+- **AI assistants can cancel a checkout.** An assistant can now cancel a checkout
+  it started, before it becomes an order, so abandoned agent carts resolve
+  cleanly instead of lingering.
+- **Rotatable agent signing keys.** Store operators can now rotate and retire the
+  store's agentic signing keys with a publication overlap window, so keys can be
+  rolled on a schedule (or in response to a concern) without interrupting agent
+  traffic.
+
+**Store credit (wallet)**
+
+- **Manual store-credit adjustments.** Staff can now apply a signed correction —
+  raising or lowering a customer's wallet balance — as a distinct, audited
+  adjustment, separate from organic credits and spends. A decrease can never take
+  a balance below zero, and every adjustment records who made it.
+- **Refunds to store credit are itemised.** Money refunded to a customer's wallet
+  is now recorded as a *refund* in their history rather than a generic credit, so
+  refunds are easy to tell apart from rewards and promotions in statements and
+  reporting.
+
+**Subscriptions**
+
+- **Discounts and add-ons are billed automatically on renewals.** Discounts
+  attached to a subscription (percentage, fixed-amount or fixed-price, applied
+  once, for a set number of cycles, or forever) and per-cycle add-ons are now
+  applied on every renewal charge — folded into the amount billed, itemised on
+  the billing record, and, for limited-duration discounts, counted down as they
+  are used. Stacked discounts are summed and can never take a cycle below zero.
+
+**Forms**
+
+- **Invisible reCAPTCHA v3 on storefront forms.** Forms configured for reCAPTCHA
+  now show Google's invisible v3 widget on the storefront and attach a verified
+  token to each submission — bot protection with no extra click for customers.
+  Only the public site key is sent to the browser; the secret is encrypted at
+  rest and never leaves the server.
+
+**Revenue attribution (Insights)**
+
+- **See where your revenue really comes from.** A new **Insights → Revenue
+  Attribution** dashboard credits every order across the *whole* customer
+  journey — not just the last link they clicked. Revenue is broken down by
+  channel (Email, Organic/Paid Search, Organic/Paid Social, Affiliate, Refer a
+  Friend, Campaign, Direct), over time, and by campaign, with a customer-journey
+  flow showing how buyers actually arrive.
+- **Choose how credit is shared — and change your mind instantly.** Switch
+  between Last touch, First touch, Linear, Time decay and Position (40/20/40)
+  and watch revenue re-attribute across channels in place, with no reprocessing
+  or waiting. Because every touch is kept, you can re-credit your entire history
+  under a different model at any time. A headline figure confirms the total
+  always reconciles to your net revenue.
+- **Attributed vs. influenced.** An *Influenced* view credits every channel that
+  played any part in a sale — surfacing the early-funnel channels (content,
+  social, search) that last-click attribution hides.
+- **Channels tag themselves.** Marketing emails, auto-shared blog posts,
+  affiliate and refer-a-friend links, and campaign-tagged discount codes are
+  attributed automatically; you can also tag your own links with standard UTM
+  parameters. Attribution respects the storefront cookie banner — touches are
+  only recorded with a visitor's analytics consent.
+- **In the mobile app and as CSV.** The same attribution data is available over
+  the admin API for the Spwig Merchant app, and the dashboard exports the
+  current view to CSV.
+
+**Staff roles & permissions**
+
+- **Set a password and assign a role when you add a staff member.** The
+  create-staff screen now takes an initial password and requires at least one
+  role, so a new staff member can sign in and has exactly the access you chose —
+  instead of being created with no password and no permissions.
+- **Delegate far more of the admin to staff roles.** Areas that were previously
+  owner-only can now be granted through a role — including bookings and the
+  product configurator, product tags and pricing rules, themes and menus,
+  loyalty, referrals and affiliates, vouchers, store-credit wallets,
+  subscriptions, POS hardware, and staff and role management itself — so each
+  person gets exactly the access their job needs.
+
+**A refreshed admin experience**
+
+- **Card-based lists with quick bulk actions.** The Orders, Blog posts, Brands
+  and Collections lists have been rebuilt as scannable cards sharing a consistent
+  toolbar — select several rows and apply an action to all of them at once. The
+  Orders list also loads noticeably faster (a query that grew with the number of
+  orders has been removed).
+- **"SEO complete" at a glance.** Product, brand, collection and blog lists now
+  show a badge indicating whether each item's search-engine details (title,
+  description, image) are filled in, so gaps are easy to spot and fix.
+- **Bulk customs preparation on the product list.** Flag which products are ready
+  for international shipping and export their customs data as CSV, in bulk,
+  directly from the product list.
+- **Preference change-log at a glance.** The customer communication-preference
+  change log is now compact and supports bulk actions.
+
+**A more complete product editor**
+
+- **Settings that existed but weren't shown are now on the product page.** Region
+  availability, pre-order/backorder, shipping requirements, tags, page template,
+  ship-to, and an out-of-stock override are all now editable directly on the
+  product editor — no workarounds needed. (This also means saving a product no
+  longer fails because one of these controls was missing from the form.)
+- **Upload progress when adding images.** Adding product images now shows a
+  progress indicator so you can watch large uploads complete instead of
+  wondering whether they worked.
+
+**Store settings, surfaced**
+
+- **Communication & privacy preferences.** Marketing and transactional
+  communication-preference settings (consent/GDPR, newsletter opt-in) are now
+  editable from Site Settings and honoured across the storefront and account
+  area.
+- **Inventory & document settings that were dormant now take effect.** Low-stock
+  alert thresholds and their real-time/digest gating, the stock-velocity window,
+  the backorder seed quantity, and the PDF document logo are all wired up and
+  applied.
+
+### Fixed
+
+**Admin**
+
+- **Repaired admin pages that could error.** Opening a shipping method or a
+  receipt template, reaching the add-staff-role screen, and viewing referral
+  attribution cards where a referred customer had been removed no longer produce
+  an error page.
+
+**Inventory**
+
+- **Back-in-stock notifications are now dependable.** Customers who asked to be
+  notified when an out-of-stock product returns are emailed whenever the item
+  becomes available again — including when stock frees up because a reservation
+  is released or an order is cancelled, not only when new stock is received.
+  Notifications are sent in the background so restocking stays fast, and each
+  customer is notified exactly once.
+
+**Subscriptions**
+
+- **Recovered subscription payments are recorded reliably.** A renewal charge
+  that failed and then succeeded on a later automatic retry is now correctly
+  marked paid and recorded, and any limited-duration discount it used is counted
+  down exactly once — previously a recovered payment could be silently lost,
+  leaving a paid-up subscription stuck as past-due.
+
+**Checkout**
+
+- **Gift-card / store-credit-paid orders record the correct amount.** An order
+  paid entirely with gift cards or store credit (no card charge) recorded twice
+  its value as paid, which overstated revenue reporting and could leave such an
+  order stuck as *partially refunded* after a full refund. The paid amount is
+  now recorded exactly once. (No customer was ever over-refunded.)
+- **Double-submitting checkout no longer creates a duplicate order.** If the
+  "Place Order" request was submitted twice in quick succession (double-click,
+  retry), the two requests could each create an order and reserve stock. Order
+  placement is now serialised per checkout, so only one order is created and
+  stock is reserved once.
+
+### Security
+
+**Forms**
+
+- **Hardened form submissions end-to-end.** Custom forms now validate every
+  submission on the server — required fields (including conditionally-required
+  ones), field types, length, patterns and allowed choices are all enforced
+  regardless of the browser, and only your form's declared fields are stored.
+  Spam protection is now applied server-side (honeypot submissions are dropped;
+  reCAPTCHA is verified when present — see *Added* for the storefront widget),
+  and the public submission endpoint is rate-limited.
+- **Safer file uploads.** Uploaded form files are checked by content, not just
+  extension, with a strict block-list of executable/active types — closing a
+  path that could host malicious files on your store's domain.
+- **Webhook and export hardening.** Form webhooks can no longer be pointed at
+  internal/private network addresses (SSRF), spreadsheet-formula injection in
+  CSV exports of responses is neutralised, saved drafts can only be resumed by
+  their owner, and the reCAPTCHA secret is no longer shown in page source and is
+  now encrypted at rest.
+
+**Staff roles & permissions**
+
+- **Staff access is now deny-by-default.** A staff member with no role assigned
+  no longer has the run of the admin — they have no admin access until you give
+  them a role, and can only ever see and do what their role permits (store
+  owners are unaffected). *After upgrading, assign a role to any staff member
+  who should keep admin access.*
+- **Sensitive data and actions require the matching permission.** Admin screens
+  listing licence keys, gift-card codes, payment transactions, customer contact
+  and marketing details, and affiliate earnings — and actions such as issuing
+  refunds, adjusting stock, and creating or changing products and categories —
+  are now gated to the appropriate role permission instead of being reachable by
+  any staff account, both in the admin and over the Spwig Merchant app API. A
+  staff member who lacks access to a screen is shown a clear message rather than
+  a raw error.
+
 ## [1.7.2] - 2026-08-08
 
 A payments and hardening release. Spwig adds **Razorpay** as a new payment

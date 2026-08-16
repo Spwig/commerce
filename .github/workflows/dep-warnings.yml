@@ -124,7 +124,7 @@ jobs:
         #                      DeprecationWarning also covers RemovedInDjangoXX
         #                      (subclass); Pending + Future need their own lines.
         #   --create-db        build a fresh DB (no reuse of a stale one).
-        #   -n auto            xdist workers -> per-worker warns_<worker>.jsonl.
+        #   -n 6            xdist workers -> per-worker warns_<worker>.jsonl.
         # Same audited path list as test.yml's run_full. Never fails the build.
         env:
           PYTHONPATH: ${{ github.workspace }}/tests/plugins
@@ -135,7 +135,7 @@ jobs:
             -W default::DeprecationWarning \
             -W default::PendingDeprecationWarning \
             -W default::FutureWarning \
-            --create-db -n auto -q \
+            --create-db -n 6 -q \
             tests/unit/ tests/integration/ tests/contract/ tests/catalog/ \
             tests/rbac/ tests/integrity/ accounts/tests/ admin_api/tests/ \
             catalog/tests/ design/tests/ email_system/tests/ loyalty/tests/ \

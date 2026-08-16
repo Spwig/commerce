@@ -5,6 +5,7 @@
 <div class="list-row-cards">
     {% for campaign in campaigns %}
     <div class="list-row-card campaign-card {% if not campaign.is_active %}card-inactive{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=campaign.pk %}
         <!-- Campaign Type Icon -->
         <div class="list-row-card-icon campaign {{ campaign.campaign_type|slugify }}">
             {% if campaign.campaign_type == 'trigger_based' %}

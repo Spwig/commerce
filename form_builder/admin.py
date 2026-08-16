@@ -24,6 +24,20 @@ from .models import Form, FormField, FormResponse, FormStep
 class FormAdminForm(forms.ModelForm):
     """Form with translatable field widgets for the Form model."""
 
+    # Masked so the secret is never echoed into page source; blank on submit
+    # keeps the stored value (leave-blank-to-keep).
+    recaptcha_secret_key = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(render_value=False, attrs={"autocomplete": "new-password"}),
+        help_text=_("Leave blank to keep the current key."),
+    )
+
+    def clean_recaptcha_secret_key(self):
+        value = self.cleaned_data.get("recaptcha_secret_key")
+        if not value and self.instance and self.instance.pk:
+            return self.instance.recaptcha_secret_key  # keep existing on blank
+        return value
+
     class Meta:
         model = Form
         fields = "__all__"

@@ -525,61 +525,152 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
 
     customs_form_preview.short_description = _("Customs Form")
 
-    # Bulk actions
+    # Bulk actions — every state-changing one goes through a confirmation page.
+    def _confirm_bulk(self, request, queryset, *, action_name, title, danger, apply):
+        """Show a confirmation page before running a state-changing bulk action.
+
+        On the first POST we render an intermediate page listing the selected
+        orders; only once the merchant confirms (`_confirmed`) do we run
+        ``apply(queryset)`` and fall through to the usual changelist redirect.
+        """
+        if request.POST.get("_confirmed"):
+            apply(queryset)
+            return None
+
+        from django.contrib.admin import helpers
+        from django.shortcuts import render
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": title,
+            "action_name": action_name,
+            "danger": danger,
+            "orders": queryset,
+            "order_count": queryset.count(),
+            "opts": self.model._meta,
+            "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+        }
+        return render(request, "admin/orders/order/confirm_bulk_action.html", context)
+
     @admin.action(description=_("Mark selected orders as Processing"))
     def mark_as_processing(self, request, queryset):
-        updated = queryset.update(status="processing")
-        self.message_user(request, _(f"{updated} orders marked as processing"))
+        def apply(qs):
+            n = qs.update(status="processing")
+            self.message_user(request, _("%(n)d orders marked as processing") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_processing",
+            title=_("Mark orders as Processing"),
+            danger=False,
+            apply=apply,
+        )
 
     @admin.action(description=_("Mark selected orders as Shipped"))
     def mark_as_shipped(self, request, queryset):
-        updated = queryset.update(status="shipped")
-        self.message_user(request, _(f"{updated} orders marked as shipped"))
+        def apply(qs):
+            n = qs.update(status="shipped")
+            self.message_user(request, _("%(n)d orders marked as shipped") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_shipped",
+            title=_("Mark orders as Shipped"),
+            danger=False,
+            apply=apply,
+        )
 
     @admin.action(description=_("Mark selected orders as Delivered"))
     def mark_as_delivered(self, request, queryset):
-        updated = queryset.update(status="delivered")
-        self.message_user(request, _(f"{updated} orders marked as delivered"))
+        def apply(qs):
+            n = qs.update(status="delivered")
+            self.message_user(request, _("%(n)d orders marked as delivered") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_delivered",
+            title=_("Mark orders as Delivered"),
+            danger=False,
+            apply=apply,
+        )
 
     @admin.action(description=_("Mark selected orders as Cancelled"))
     def mark_as_cancelled(self, request, queryset):
-        updated = queryset.update(status="cancelled")
-        self.message_user(request, _(f"{updated} orders marked as cancelled"))
+        def apply(qs):
+            n = qs.update(status="cancelled")
+            self.message_user(request, _("%(n)d orders cancelled") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_cancelled",
+            title=_("Cancel orders"),
+            danger=True,
+            apply=apply,
+        )
 
     # Payment Status Actions
     @admin.action(description=_("Mark selected orders as Paid"))
     def mark_as_paid(self, request, queryset):
         from django.utils import timezone
 
-        # Saved one at a time, NOT via queryset.update().
-        #
-        # `update()` writes straight to SQL and fires no post_save signals, so
-        # everything that keys off "payment is confirmed" was skipped: digital
-        # product licences, and now gift card tender settlement. Worse, the old
-        # code then called order.save() only for orders whose amount_paid
-        # differed — so signals fired for *some* of the selected orders and not
-        # others, which is harder to notice than never firing at all.
-        now = timezone.now()
-        updated = 0
-        for order in queryset:
-            order.payment_status = "paid"
-            order.paid_at = now
-            if order.amount_paid != order.total_amount:
-                order.amount_paid = order.total_amount
-            order.save()
-            updated += 1
+        def apply(qs):
+            # Saved one at a time, NOT via queryset.update(): update() writes
+            # straight to SQL and fires no post_save signals, so everything that
+            # keys off "payment is confirmed" (digital licences, gift-card
+            # settlement) would be skipped.
+            now = timezone.now()
+            n = 0
+            for order in qs:
+                order.payment_status = "paid"
+                order.paid_at = now
+                if order.amount_paid != order.total_amount:
+                    order.amount_paid = order.total_amount
+                order.save()
+                n += 1
+            self.message_user(request, _("%(n)d orders marked as paid") % {"n": n})
 
-        self.message_user(request, _(f"{updated} orders marked as paid"))
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_paid",
+            title=_("Mark orders as Paid"),
+            danger=True,
+            apply=apply,
+        )
 
     @admin.action(description=_("Mark selected orders as Unpaid"))
     def mark_as_unpaid(self, request, queryset):
-        updated = queryset.update(payment_status="unpaid", paid_at=None)
-        self.message_user(request, _(f"{updated} orders marked as unpaid"))
+        def apply(qs):
+            n = qs.update(payment_status="unpaid", paid_at=None)
+            self.message_user(request, _("%(n)d orders marked as unpaid") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_as_unpaid",
+            title=_("Mark orders as Unpaid"),
+            danger=True,
+            apply=apply,
+        )
 
     @admin.action(description=_("Mark selected orders as Payment Pending"))
     def mark_payment_pending(self, request, queryset):
-        updated = queryset.update(payment_status="pending")
-        self.message_user(request, _(f"{updated} orders marked as payment pending"))
+        def apply(qs):
+            n = qs.update(payment_status="pending")
+            self.message_user(request, _("%(n)d orders marked as payment pending") % {"n": n})
+
+        return self._confirm_bulk(
+            request,
+            queryset,
+            action_name="mark_payment_pending",
+            title=_("Mark orders as Payment Pending"),
+            danger=False,
+            apply=apply,
+        )
 
     @admin.action(description=_("Generate licenses now (manual trigger)"))
     def generate_licenses_now(self, request, queryset):
@@ -1192,11 +1283,21 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         # Redirect to the change view which uses the modern interface
         return redirect("admin:orders_order_change", order.pk)
 
-    def changelist_view(self, request, extra_context=None):
-        """Add order statistics and filtered orders to context"""
-        extra_context = extra_context or {}
+    # Triage groupings shared by the stat tiles and their "queue" filters.
+    UNFULFILLED_STATUSES = ["pending", "processing"]
+    AWAITING_PAYMENT_STATUSES = ["unpaid", "pending", "failed"]
+    REFUND_PAYMENT_STATUSES = ["refunded", "partially_refunded"]
 
-        # Get overall statistics (unfiltered)
+    def changelist_view(self, request, extra_context=None):
+        """Order list: triage stat tiles, filters, and the paginated queryset."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        extra_context = extra_context or {}
+        today = timezone.localdate()
+
+        # Triage stat tiles (unfiltered) + legacy per-status counts.
         stats = Order.objects.aggregate(
             total_count=Count("id"),
             pending_count=Count("id", filter=Q(status="pending")),
@@ -1205,11 +1306,19 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
             delivered_count=Count("id", filter=Q(status="delivered")),
             cancelled_count=Count("id", filter=Q(status="cancelled")),
             refunded_count=Count("id", filter=Q(status="refunded")),
+            unfulfilled_paid=Count(
+                "id", filter=Q(status__in=self.UNFULFILLED_STATUSES, payment_status="paid")
+            ),
+            awaiting_payment=Count(
+                "id", filter=Q(payment_status__in=self.AWAITING_PAYMENT_STATUSES)
+            ),
+            refunds_count=Count("id", filter=Q(payment_status__in=self.REFUND_PAYMENT_STATUSES)),
+            today_count=Count("id", filter=Q(created_at__date=today)),
+            today_revenue=Sum("total_amount", filter=Q(created_at__date=today)),
             total_revenue=Sum(
                 "total_amount", filter=Q(status__in=["processing", "shipped", "delivered"])
             ),
         )
-
         extra_context.update(
             {
                 "total_orders": stats["total_count"] or 0,
@@ -1220,26 +1329,84 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
                 "cancelled_count": stats["cancelled_count"] or 0,
                 "refunded_count": stats["refunded_count"] or 0,
                 "total_revenue": stats["total_revenue"] or 0,
+                "tile_unfulfilled": stats["unfulfilled_paid"] or 0,
+                "tile_awaiting": stats["awaiting_payment"] or 0,
+                "tile_refunds": stats["refunds_count"] or 0,
+                "tile_today_count": stats["today_count"] or 0,
+                "tile_today_revenue": stats["today_revenue"] or 0,
             }
         )
 
-        # Get URL parameters for filtering
+        # Filter params
         status_filter = request.GET.get("status", "")
+        payment_filter = request.GET.get("payment", "")
+        queue = request.GET.get("queue", "")
+        date_range = request.GET.get("date", "")
         search_query = request.GET.get("q", "")
         page = int(request.GET.get("page", 1))
-        per_page = 100
+        per_page = 25
 
-        # Start with base queryset
-        orders_qs = Order.objects.select_related("user").prefetch_related(
-            "items__product__images",
-            "items__component_items__product__images",
+        # Row rendering needs: total top-level quantity + the first few
+        # top-level items' product thumbnails. The old `total_item_quantity` /
+        # `top_level_items` properties each ran a fresh `.filter()` query PER
+        # order (bypassing any prefetch) — an N+1 that loaded ~400 queries for a
+        # single page. Annotate the quantity, and prefetch just the top-level
+        # items (+ their product image) into `top_items`.
+        from django.db.models import Prefetch
+
+        from catalog.models import ProductImage
+        from media_library.models import MediaThumbnail
+        from orders.models import OrderItem
+
+        # Prefetch the "small" thumbnail rows so MediaAsset.get_thumbnail("small")
+        # reads them from the prefetch cache instead of issuing a `.get()` per
+        # image (an N+1 that added ~one query per rendered thumbnail).
+        images_qs = ProductImage.objects.select_related("media_asset").prefetch_related(
+            Prefetch(
+                "media_asset__thumbnails",
+                queryset=MediaThumbnail.objects.filter(size_preset="small"),
+            )
+        )
+        top_items_qs = (
+            OrderItem.objects.filter(parent_bundle__isnull=True)
+            .select_related("product")
+            .prefetch_related(Prefetch("product__images", queryset=images_qs))
+        )
+        orders_qs = (
+            Order.objects.select_related("user")
+            .annotate(
+                top_qty=Sum(
+                    "items__quantity",
+                    filter=Q(items__parent_bundle__isnull=True),
+                )
+            )
+            .prefetch_related(Prefetch("items", queryset=top_items_qs, to_attr="top_items"))
         )
 
-        # Apply status filter
+        # Stat-tile "queue" shortcuts
+        if queue == "unfulfilled":
+            orders_qs = orders_qs.filter(
+                status__in=self.UNFULFILLED_STATUSES, payment_status="paid"
+            )
+        elif queue == "awaiting":
+            orders_qs = orders_qs.filter(payment_status__in=self.AWAITING_PAYMENT_STATUSES)
+        elif queue == "refund":
+            orders_qs = orders_qs.filter(payment_status__in=self.REFUND_PAYMENT_STATUSES)
+        elif queue == "today":
+            orders_qs = orders_qs.filter(created_at__date=today)
+
         if status_filter and status_filter != "all":
             orders_qs = orders_qs.filter(status=status_filter)
+        if payment_filter:
+            orders_qs = orders_qs.filter(payment_status=payment_filter)
+        if date_range == "today":
+            orders_qs = orders_qs.filter(created_at__date=today)
+        elif date_range == "month":
+            orders_qs = orders_qs.filter(created_at__year=today.year, created_at__month=today.month)
+        elif date_range in ("7d", "30d"):
+            days = 7 if date_range == "7d" else 30
+            orders_qs = orders_qs.filter(created_at__date__gte=today - timedelta(days=days))
 
-        # Apply search filter
         if search_query:
             orders_qs = orders_qs.filter(
                 Q(order_number__icontains=search_query)
@@ -1248,31 +1415,38 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
                 | Q(user__username__icontains=search_query)
                 | Q(email__icontains=search_query)
                 | Q(phone__icontains=search_query)
+                | Q(shipping_name__icontains=search_query)
                 | Q(items__product__name__icontains=search_query)
             ).distinct()
 
-        # Order by most recent
         orders_qs = orders_qs.order_by("-created_at")
-
-        # Get total count of filtered results
         total = orders_qs.count()
-
-        # Paginate
         start = (page - 1) * per_page
         end = start + per_page
 
-        # Pass filtered orders and context to template
         extra_context.update(
             {
                 "recent_orders": orders_qs[start:end],
                 "has_more_orders": total > end,
                 "current_page": page,
                 "total_order_count": total,
-                "current_status": status_filter if status_filter else "all",
+                "current_status": status_filter or "all",
+                "current_payment": payment_filter,
+                "current_queue": queue,
+                "current_date": date_range,
                 "current_search": search_query,
-                "filtered_count": total,  # Count of results after filters
+                "filtered_count": total,
             }
         )
+
+        # These are our own filter params (already applied to recent_orders
+        # above). Strip them so Django's ChangeList doesn't reject them as
+        # unknown lookups and redirect (?e=1).
+        if any(p in request.GET for p in ("queue", "payment", "date")):
+            mutable = request.GET.copy()
+            for p in ("queue", "payment", "date"):
+                mutable.pop(p, None)
+            request.GET = mutable
 
         return super().changelist_view(request, extra_context=extra_context)
 

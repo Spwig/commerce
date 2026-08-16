@@ -10,22 +10,48 @@ import hashlib
 import logging
 from typing import Any
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
-def _get_fernet_key() -> bytes:
+def _derive_fernet_key(secret_key: str) -> bytes:
     """
-    Derive a Fernet key from Django's SECRET_KEY.
+    Derive a Fernet key from a Django secret key.
 
     Returns:
         32-byte Fernet key
     """
-    # Use SHA256 to derive a consistent 32-byte key from SECRET_KEY
-    key = hashlib.sha256(settings.SECRET_KEY.encode()).digest()
+    # Use SHA256 to derive a consistent 32-byte key from the secret key
+    key = hashlib.sha256(secret_key.encode()).digest()
     return base64.urlsafe_b64encode(key)
+
+
+def _get_fernet_key() -> bytes:
+    """
+    Derive a Fernet key from Django's current SECRET_KEY.
+
+    Returns:
+        32-byte Fernet key
+    """
+    return _derive_fernet_key(settings.SECRET_KEY)
+
+
+def _get_multi_fernet() -> MultiFernet:
+    """
+    Build a MultiFernet from the current SECRET_KEY and every
+    SECRET_KEY_FALLBACKS entry.
+
+    Encryption always uses the current key (first in the list) while
+    decryption transparently tries fallback keys, so credentials encrypted
+    with a previous SECRET_KEY stay readable after key rotation.
+
+    Returns:
+        MultiFernet spanning the current and fallback keys
+    """
+    keys = [settings.SECRET_KEY, *getattr(settings, "SECRET_KEY_FALLBACKS", [])]
+    return MultiFernet([Fernet(_derive_fernet_key(key)) for key in keys])
 
 
 def encrypt_credentials(credentials: dict[str, Any]) -> dict[str, Any]:
@@ -68,7 +94,7 @@ def decrypt_credentials(encrypted_credentials: dict[str, Any]) -> dict[str, Any]
     Returns:
         Plain credential dictionary with decrypted values
     """
-    fernet = Fernet(_get_fernet_key())
+    fernet = _get_multi_fernet()
     decrypted = {}
 
     for key, value in encrypted_credentials.items():

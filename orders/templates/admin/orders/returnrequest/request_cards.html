@@ -3,6 +3,7 @@
 <div class="list-row-cards">
     {% for request in requests %}
     <div class="list-row-card return-request-card {% if request.status == 'rejected' or request.status == 'cancelled' %}disabled{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=request.pk %}
         <div class="list-row-card-icon">
             <div class="return-status-icon {{ request.status }}">
                 {% if request.status == 'pending' %}

@@ -23,6 +23,7 @@ from wallet.api.serializers import (
     AdminTransactionSerializer,
     CustomerWalletListSerializer,
     CustomerWalletSerializer,
+    WalletAdjustSerializer,
     WalletBalanceSerializer,
     WalletCreditSerializer,
     WalletDebitSerializer,
@@ -245,6 +246,24 @@ class WalletTransactionViewSet(HeadlessAPIMixin, viewsets.ViewSet):
             ),
         },
     ),
+    adjust=extend_schema(
+        tags=["Wallet"],
+        summary=_("Adjust a wallet balance"),
+        description=_(
+            "Apply a manual staff correction to a customer's wallet. `direction` "
+            "(increase/decrease) sets the sign of the positive `amount`. Recorded "
+            "as a distinct adjustment ledger entry. Fails if a decrease would take "
+            "the balance below zero, the currency does not match, or the wallet is "
+            "frozen."
+        ),
+        request=WalletAdjustSerializer,
+        responses={
+            200: WalletTransactionSerializer,
+            400: OpenApiResponse(
+                description=_("Insufficient balance, invalid input, or wallet frozen")
+            ),
+        },
+    ),
     freeze=extend_schema(
         tags=["Wallet"],
         summary=_("Toggle wallet freeze"),
@@ -385,6 +404,57 @@ class AdminWalletViewSet(viewsets.ReadOnlyModelViewSet):
             {
                 "success": True,
                 "message": _("Wallet debited successfully"),
+                "data": WalletTransactionSerializer(txn).data,
+            }
+        )
+
+    @action(detail=True, methods=["post"], url_path="adjust")
+    def adjust(self, request, pk=None):
+        """Apply a manual staff balance correction (signed adjustment)."""
+        wallet = self.get_object()
+
+        serializer = WalletAdjustSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        try:
+            txn = WalletService.adjust_balance(
+                user=wallet.customer,
+                amount=data["amount"],
+                direction=data["direction"],
+                currency=data["currency"],
+                description=data["description"],
+                created_by=request.user,
+                reference_id=data.get("reference_id", ""),
+            )
+        except WalletCurrencyMismatch:
+            return Response(
+                {
+                    "success": False,
+                    "error": _("Adjustment currency does not match the wallet currency"),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except InsufficientBalance:
+            return Response(
+                {"success": False, "error": _("Adjustment would take the balance below zero")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except WalletFrozen:
+            return Response(
+                {"success": False, "error": _("Wallet is frozen")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except ValueError as exc:
+            return Response(
+                {"success": False, "error": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {
+                "success": True,
+                "message": _("Wallet adjusted successfully"),
                 "data": WalletTransactionSerializer(txn).data,
             }
         )

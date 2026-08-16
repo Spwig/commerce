@@ -306,15 +306,19 @@ class ShippingMethodAdmin(admin.ModelAdmin):
                 # Promotions explicitly targeting this method
                 targeting_this = ShippingPromotion.objects.filter(
                     is_active=True, shipping_methods=obj
-                )
-                # Promotions with no method restrictions (apply to all)
+                ).values_list("id", flat=True)
+                # Promotions with no method restrictions (apply to all methods)
                 targeting_all = (
                     ShippingPromotion.objects.filter(is_active=True)
                     .annotate(method_count=Count("shipping_methods"))
                     .filter(method_count=0)
+                    .values_list("id", flat=True)
                 )
-
-                extra_context["active_promotions"] = (targeting_this | targeting_all).distinct()
+                # Resolve to IDs first: OR-combining a plain queryset with an
+                # aggregated one and calling .distinct() produces invalid
+                # "SELECT DISTINCT ... GROUP BY" SQL on Postgres.
+                ids = set(targeting_this) | set(targeting_all)
+                extra_context["active_promotions"] = ShippingPromotion.objects.filter(id__in=ids)
         return super().change_view(request, object_id, form_url, extra_context)
 
     def get_urls(self):

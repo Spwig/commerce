@@ -9,7 +9,11 @@ and more informative error messages throughout the provider implementation.
 class FedExError(Exception):
     """Base exception for all FedEx-related errors."""
 
-    pass
+    def __init__(self, message, error_code=None, error_details=None):
+        super().__init__(message)
+        self.message = message
+        self.error_code = error_code
+        self.error_details = error_details or {}
 
 
 class FedExAuthenticationError(FedExError):

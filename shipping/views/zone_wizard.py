@@ -3,6 +3,7 @@ Zone Configuration Wizard Views
 Multi-step wizard for creating and configuring shipping zones
 """
 
+from django import forms
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
@@ -13,6 +14,25 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
 
 from shipping.models import ShippingZone
+
+
+class ZoneWizardBasicForm(forms.Form):
+    """Validate the Step 1 basic-information payload for the zone wizard.
+
+    Shared by Step 1 (raw POST) and Step 3 (accumulated session data) so an
+    empty/non-numeric priority or a missing zone name is surfaced as a
+    validation error instead of a 500 or an invalid blank-named zone.
+    """
+
+    name = forms.CharField(max_length=200)
+    description = forms.CharField(required=False)
+    priority = forms.IntegerField(min_value=0, required=False)
+    is_active = forms.BooleanField(required=False)
+
+    def clean_priority(self):
+        # An absent or empty priority defaults to 0 (highest); a non-numeric
+        # value is already rejected by IntegerField before reaching here.
+        return self.cleaned_data.get("priority") or 0
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -31,14 +51,21 @@ class ZoneWizardStep1View(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # Store step 1 data in session
+        # Validate step 1 input before storing it in the session
+        form = ZoneWizardBasicForm(request.POST)
+        if not form.is_valid():
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            context["zone_data"] = request.POST
+            return self.render_to_response(context)
+
         wizard_data = request.session.get("zone_wizard_data", {})
         wizard_data.update(
             {
-                "name": request.POST.get("name", ""),
-                "description": request.POST.get("description", ""),
-                "priority": int(request.POST.get("priority", 0)),
-                "is_active": request.POST.get("is_active") == "on",
+                "name": form.cleaned_data["name"],
+                "description": form.cleaned_data["description"],
+                "priority": form.cleaned_data["priority"],
+                "is_active": form.cleaned_data["is_active"],
             }
         )
         request.session["zone_wizard_data"] = wizard_data
@@ -212,13 +239,21 @@ class ZoneWizardStep3View(TemplateView):
     def post(self, request, *args, **kwargs):
         wizard_data = request.session.get("zone_wizard_data", {})
 
+        # Ensure the required wizard state exists and is valid before creating;
+        # create() skips model validation, so an empty name would otherwise
+        # persist a blank-named zone.
+        form = ZoneWizardBasicForm(wizard_data)
+        if not form.is_valid():
+            messages.warning(request, _("Please complete the wizard steps"))
+            return redirect("shipping:zone_wizard_step1")
+
         try:
             # Create the zone
             zone = ShippingZone.objects.create(
-                name=wizard_data.get("name", ""),
-                description=wizard_data.get("description", ""),
-                priority=wizard_data.get("priority", 0),
-                is_active=wizard_data.get("is_active", True),
+                name=form.cleaned_data["name"],
+                description=form.cleaned_data["description"],
+                priority=form.cleaned_data["priority"],
+                is_active=form.cleaned_data["is_active"],
                 countries=wizard_data.get("countries", []),
                 states=wizard_data.get("states", {}),
                 postal_code_patterns=wizard_data.get("postal_code_patterns", []),

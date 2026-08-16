@@ -5,6 +5,7 @@
 <div class="list-row-cards" id="results-container">
     {% for terminal in terminals %}
     <div class="list-row-card{% if not terminal.is_active %} disabled{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=terminal.pk %}
         <div class="list-row-card-icon">
             <i class="fas fa-cash-register text-primary icon-medium"></i>
         </div>

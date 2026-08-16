@@ -171,3 +171,29 @@
 .stock-item-card .card-actions a:hover {
   text-decoration: underline;
 }
+
+/* Bulk-action selection UI (Django admin action framework) */
+.stock-item-card .card-header {
+  gap: 12px;
+}
+
+.stock-item-card__select {
+  display: flex;
+  align-items: center;
+  padding-top: 2px;
+  flex: 0 0 auto;
+}
+
+.stock-item-card__select input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.stock-item-card .product-info {
+  flex: 1 1 auto;
+}
+
+/* The bulk-actions bar itself is now the shared .card-bulk-actions component
+   (core/admin/css/admin-base.css) rendered via admin/includes/bulk_actions_open.html. */

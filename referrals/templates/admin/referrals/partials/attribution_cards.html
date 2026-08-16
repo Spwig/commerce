@@ -21,12 +21,18 @@
         <div class="list-row-card-content">
             <h3 class="list-row-card-title">
                 <a href="{% url 'admin:referrals_referralattribution_change' attribution.pk %}">
-                    {{ attribution.referee_customer.get_full_name|default:attribution.referee_customer.username }}
+                    {% if attribution.referee_customer %}
+                        {{ attribution.referee_customer.get_full_name|default:attribution.referee_customer.username }}
+                    {% else %}
+                        {% trans "Unknown customer" %}
+                    {% endif %}
                 </a>
             </h3>
+            {% if attribution.referee_customer.email %}
             <p class="list-row-card-subtitle">
                 <i class="fas fa-envelope"></i> {{ attribution.referee_customer.email }}
             </p>
+            {% endif %}
 
             <div class="list-row-card-badges">
                 {% if attribution.status == 'pending' %}

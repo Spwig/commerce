@@ -7,7 +7,7 @@ import json
 from django import template
 from django.utils.safestring import mark_safe
 
-from ..visibility_evaluator import ContextCollector
+from visibility.evaluator import ContextCollector
 
 register = template.Library()
 

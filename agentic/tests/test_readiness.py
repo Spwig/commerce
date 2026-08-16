@@ -92,3 +92,36 @@ class TestAgentRegistryActions:
         assert agent.trust_state == AgentIdentity.TRUST_CAPPED
         assert agent.blocked_at is None
         assert AgentEvent.objects.filter(event_type=AgentEvent.EVENT_AGENT_UNBLOCKED).exists()
+
+    def test_unblock_clears_reason_and_keeps_chain_intact(self, site_settings):
+        agent = _agent(trust_state=AgentIdentity.TRUST_BLOCKED, blocked_reason="spam")
+        self._admin_call("unblock_agents", AgentIdentity.objects.filter(pk=agent.pk))
+        agent.refresh_from_db()
+        assert agent.blocked_reason == ""
+        assert AgentEvent.verify_chain() is True
+
+    def test_unblock_is_noop_on_a_non_blocked_agent(self, site_settings):
+        # The action filters to blocked agents, so a capped one is untouched and
+        # gets no spurious unblock event polluting the audit chain.
+        agent = _agent(trust_state=AgentIdentity.TRUST_CAPPED)
+        self._admin_call("unblock_agents", AgentIdentity.objects.filter(pk=agent.pk))
+        agent.refresh_from_db()
+        assert agent.trust_state == AgentIdentity.TRUST_CAPPED
+        assert not AgentEvent.objects.filter(event_type=AgentEvent.EVENT_AGENT_UNBLOCKED).exists()
+
+    def test_unblock_leaves_a_verified_agent_untouched(self, site_settings):
+        agent = _agent(trust_state=AgentIdentity.TRUST_VERIFIED)
+        self._admin_call("unblock_agents", AgentIdentity.objects.filter(pk=agent.pk))
+        agent.refresh_from_db()
+        assert agent.trust_state == AgentIdentity.TRUST_VERIFIED
+
+    def test_block_then_unblock_round_trip_events(self, site_settings):
+        agent = _agent()
+        qs = AgentIdentity.objects.filter(pk=agent.pk)
+        self._admin_call("block_agents", qs)
+        self._admin_call("unblock_agents", qs)
+        agent.refresh_from_db()
+        assert agent.trust_state == AgentIdentity.TRUST_CAPPED
+        assert AgentEvent.objects.filter(event_type=AgentEvent.EVENT_AGENT_BLOCKED).count() == 1
+        assert AgentEvent.objects.filter(event_type=AgentEvent.EVENT_AGENT_UNBLOCKED).count() == 1
+        assert AgentEvent.verify_chain() is True

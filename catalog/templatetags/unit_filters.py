@@ -36,6 +36,7 @@ def convert_weight(value, customer_country=None):
     if not value:
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_weight_unit
@@ -90,6 +91,7 @@ def convert_dimension(value, customer_country=None):
     if not value:
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_length_unit
@@ -141,6 +143,7 @@ def format_dimensions(length, width, height, customer_country=None):
     if not (length and width and height):
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_length_unit
@@ -218,6 +221,7 @@ def convert_volume(value, customer_country=None):
     if not value:
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_volume_unit
@@ -272,6 +276,7 @@ def convert_area(value, customer_country=None):
     if not value:
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_area_unit
@@ -326,6 +331,7 @@ def convert_temperature(value, customer_country=None):
     if value is None:
         return ""
 
+    settings = None
     try:
         settings = SiteSettings.get_settings()
         admin_unit = settings.default_temperature_unit

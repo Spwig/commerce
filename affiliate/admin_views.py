@@ -4,7 +4,7 @@ Handles list filtering for admin change_list templates.
 """
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
+from django.db.models import Count, F, Q, Sum
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
@@ -38,8 +38,8 @@ PROGRAM_ORDER_FIELDS = {
     "-status",
 }
 MEMBERSHIP_ORDER_FIELDS = {
-    "joined_at",
-    "-joined_at",
+    "applied_at",
+    "-applied_at",
     "status",
     "-status",
 }
@@ -53,6 +53,9 @@ PAYOUT_ORDER_FIELDS = {
 }
 
 
+from staff_roles.decorators import requires_permission
+
+
 def _safe_int(value):
     """Return integer or None for ID filter parameters."""
     try:
@@ -62,6 +65,7 @@ def _safe_int(value):
 
 
 @staff_member_required
+@requires_permission("affiliate.view_commission", ajax=True)
 def filter_commissions(request):
     """
     AJAX endpoint for filtering commissions in admin.
@@ -117,6 +121,7 @@ def filter_commissions(request):
 
 
 @staff_member_required
+@requires_permission("affiliate.view_affiliate", ajax=True)
 def filter_affiliates(request):
     """AJAX endpoint for filtering affiliates."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
@@ -128,8 +133,26 @@ def filter_affiliates(request):
     payment_method = request.GET.get("payment-method", "").strip()
     order = request.GET.get("order", "-created_at").strip()
 
-    # Build queryset
-    queryset = Affiliate.objects.select_related("user").all()
+    # Build queryset with the same annotations AffiliateAdmin uses for card display.
+    # total_earned/outstanding_balance/total_paid are getter-only model properties,
+    # so the earnings totals are annotated under sort_-prefixed names to avoid a
+    # name clash (matching AffiliateAdmin.changelist_view).
+    queryset = (
+        Affiliate.objects.select_related("user")
+        .annotate(
+            programs_count=Count(
+                "programs", filter=Q(affiliateprogrammembership__status="approved")
+            ),
+            links_count=Count("links"),
+            sort_total_earned=Sum(
+                "commissions__amount", filter=Q(commissions__status__in=["approved", "paid"])
+            ),
+            sort_outstanding_balance=Sum(
+                "commissions__amount", filter=Q(commissions__status="approved")
+            ),
+        )
+        .all()
+    )
 
     # Apply filters
     if search:
@@ -171,15 +194,23 @@ def filter_programs(request):
     commission_type = request.GET.get("commission-type", "").strip()
     order = request.GET.get("order", "-created_at").strip()
 
-    # Build queryset
-    queryset = Program.objects.all()
+    # Build queryset with the same annotations/eager loading the program changelist uses.
+    queryset = Program.objects.select_related("merchant").annotate(
+        affiliates_count=Count(
+            "affiliates", filter=Q(affiliateprogrammembership__status="approved")
+        ),
+        active_affiliates=Count(
+            "affiliates", filter=Q(affiliateprogrammembership__status="approved")
+        ),
+        total_earned=Sum("commissions__amount"),
+    )
 
     # Apply filters
     if search:
         queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
 
     if status:
-        queryset = queryset.filter(is_active=(status == "active"))
+        queryset = queryset.filter(status=status)
 
     if commission_type:
         queryset = queryset.filter(commission_type=commission_type)
@@ -204,12 +235,25 @@ def filter_memberships(request):
     search = request.GET.get("search", "").strip()
     status = request.GET.get("status", "").strip()
     program_id = request.GET.get("program", "").strip()
-    order = request.GET.get("order", "-joined_at").strip()
+    order = request.GET.get("order", "-applied_at").strip()
 
-    # Build queryset
+    # Build queryset with the per-membership annotations the card template expects,
+    # scoped to each membership's own program (matching filter_memberships in views.py).
     queryset = AffiliateProgramMembership.objects.select_related(
         "affiliate", "affiliate__user", "program"
-    ).all()
+    ).annotate(
+        commissions_count=Count(
+            "affiliate__commissions", filter=Q(affiliate__commissions__program=F("program"))
+        ),
+        total_earned=Sum(
+            "affiliate__commissions__amount",
+            filter=Q(
+                affiliate__commissions__program=F("program"),
+                affiliate__commissions__status__in=["approved", "paid"],
+            ),
+        ),
+        links_count=Count("affiliate__links", filter=Q(affiliate__links__program=F("program"))),
+    )
 
     # Apply filters
     if search:
@@ -240,6 +284,7 @@ def filter_memberships(request):
 
 
 @staff_member_required
+@requires_permission("affiliate.view_payout", ajax=True)
 def filter_payouts(request):
     """AJAX endpoint for filtering affiliate payouts."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
@@ -259,20 +304,22 @@ def filter_payouts(request):
         queryset = queryset.filter(
             Q(affiliate__user__email__icontains=search)
             | Q(affiliate__affiliate_code__icontains=search)
-            | Q(reference_number__icontains=search)
+            | Q(reference__icontains=search)
         )
 
     if status:
         queryset = queryset.filter(status=status)
 
     if payment_method:
-        queryset = queryset.filter(payment_method=payment_method)
+        queryset = queryset.filter(method=payment_method)
 
     # Apply sorting (whitelist only)
     if order and order in PAYOUT_ORDER_FIELDS:
         queryset = queryset.order_by(order)
 
     # Render results
-    html = render_to_string("admin/affiliate/partials/payout_cards.html", {"payouts": queryset})
+    html = render_to_string(
+        "admin/affiliate/payout/partials/payout_cards.html", {"payouts": queryset}
+    )
 
     return JsonResponse({"html": html, "count": queryset.count()})

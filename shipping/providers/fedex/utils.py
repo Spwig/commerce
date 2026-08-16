@@ -5,7 +5,7 @@ Unit conversions, service code mappings, and helper functions.
 """
 
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from django.utils import timezone
@@ -177,12 +177,17 @@ def parse_fedex_date(date_str: str | None) -> datetime | None:
         return None
 
 
-def calculate_delivery_days(commit_data: dict[str, Any] | None) -> int | None:
+def calculate_delivery_days(
+    commit_data: dict[str, Any] | None,
+    ship_date: datetime | None = None,
+) -> int | None:
     """
     Calculate delivery days from FedEx commit data.
 
     Args:
         commit_data: FedEx commit data from rate response
+        ship_date: Requested shipment date; transit days are measured from
+            this date, defaulting to today when not supplied
 
     Returns:
         Number of delivery days or None
@@ -202,12 +207,13 @@ def calculate_delivery_days(commit_data: dict[str, Any] | None) -> int | None:
         except (ValueError, TypeError):
             pass
 
-    # Fallback: Calculate from dates
-    delivery_date_str = commit_data.get("dateDetail", {}).get("dayFormat")
+    # Fallback: Calculate transit days from the requested ship date
+    delivery_date_str = (commit_data.get("dateDetail") or {}).get("dayFormat")
     if delivery_date_str:
         delivery_date = parse_fedex_date(delivery_date_str)
         if delivery_date:
-            days = (delivery_date.date() - timezone.now().date()).days
+            base_date = ship_date.date() if ship_date else timezone.now().date()
+            days = (delivery_date.date() - base_date).days
             return max(0, days)
 
     return None
@@ -240,7 +246,7 @@ def parse_money(money_obj: Any | None) -> Decimal | None:
     if isinstance(money_obj, (int, float)):
         try:
             return Decimal(str(money_obj))
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, InvalidOperation):
             return None
 
     # Handle object format with 'amount' key
@@ -249,7 +255,7 @@ def parse_money(money_obj: Any | None) -> Decimal | None:
         if amount is not None:
             try:
                 return Decimal(str(amount))
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, InvalidOperation):
                 return None
 
     return None

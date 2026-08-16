@@ -1,8 +1,18 @@
 {# Visual Builder Element Partial - Renders element with proper wrapper #}
 {# This template recursively renders elements with their children for the visual builder #}
-{% load element_tags %}
+{% load element_tags i18n %}
 
 <div class="element-wrapper" data-element-id="{{ element.id }}" data-element-type="{{ element.element_type }}">
+    {% comment %}Non-destructive visibility indicator: the canvas never hides elements, so
+       chips show at a glance what market/audience gates this block.{% endcomment %}
+    {% with vis_chips=element.visibility_summary %}
+    {% if vis_chips %}
+    <div class="element-visibility-chips" title="{% trans 'Visibility rules apply to this element' %}">
+        <i class="fas fa-eye vis-icon"></i>
+        {% for chip in vis_chips %}<span class="visibility-chip">{{ chip }}</span>{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <div class="element-controls">
         <button class="control-btn edit-btn" data-action="edit-element" data-element-id="{{ element.id }}">
             <i class="fas fa-edit"></i>

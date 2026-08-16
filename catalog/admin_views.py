@@ -5,12 +5,13 @@ Handles variation builder and other admin-specific functionality
 
 import json
 from datetime import UTC
+from decimal import Decimal, InvalidOperation
 from itertools import product as itertools_product
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction
-from django.db.models import Max
+from django.db.models import Exists, Max, OuterRef
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.text import slugify
@@ -19,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from core.utils import get_default_currency
+from staff_roles.decorators import requires_permission
 
 from .models import (
     AttributeValue,
@@ -102,9 +104,9 @@ def generate_variations(request, product_id):
 
         # Validate price amount if needed
         try:
-            price_adjustment = float(price_amount) if price_amount else 0
-        except ValueError:
-            price_adjustment = 0
+            price_adjustment = Decimal(price_amount) if price_amount else Decimal("0")
+        except (InvalidOperation, ValueError):
+            price_adjustment = Decimal("0")
 
         # Get attribute value objects
         attr_values_map = {}
@@ -156,10 +158,14 @@ def generate_variations(request, product_id):
                     variant_price = product_obj.price.amount + price_adjustment
                     pricing_strategy = "custom"
                 elif price_strategy == "fixed_subtract":
-                    variant_price = max(0.01, product_obj.price.amount - price_adjustment)
+                    variant_price = max(
+                        Decimal("0.01"), product_obj.price.amount - price_adjustment
+                    )
                     pricing_strategy = "custom"
                 elif price_strategy == "percentage_add":
-                    variant_price = product_obj.price.amount * (1 + price_adjustment / 100)
+                    variant_price = product_obj.price.amount * (
+                        Decimal("1") + price_adjustment / Decimal("100")
+                    )
                     pricing_strategy = "custom"
 
                 # Create variant
@@ -197,7 +203,7 @@ def generate_variations(request, product_id):
         return redirect("catalog_admin:variation_builder", product_id=product_id)
 
     # Redirect back to product change page
-    return redirect(f"/en/admin/catalog/product/{product_id}/change/")
+    return redirect("admin:catalog_product_change", product_id)
 
 
 def _generate_sku_from_pattern(pattern, combination, product):
@@ -478,8 +484,10 @@ def quick_add_attribute(request):
         errors = []
         if not attribute_name:
             errors.append(gettext("Attribute name is required"))
-        if not values_list or len(values_list) == 0:
+        if not isinstance(values_list, list) or not values_list:
             errors.append(gettext("At least one value is required"))
+        elif not all(isinstance(v, str) for v in values_list):
+            errors.append(gettext("Values must be a list of strings"))
 
         if errors:
             return JsonResponse({"success": False, "errors": errors}, status=400)
@@ -974,15 +982,18 @@ def delete_product_variant(request, variant_id):
     AJAX endpoint to delete a product variant.
     Returns JSON response with success status.
     """
+    if not request.user.has_perm("catalog.delete_productvariant"):
+        return JsonResponse(
+            {"success": False, "error": gettext("You do not have permission to delete variants.")},
+            status=403,
+        )
+
     try:
         variant = get_object_or_404(ProductVariant, pk=variant_id)
 
         # Store info for response before deletion
         variant_name = variant.name
         product_id = variant.product_id
-
-        # Check if user has permission to delete (they should be staff at minimum)
-        # Additional permission checks could be added here
 
         # Delete the variant (this will cascade delete related stock items)
         variant.delete()
@@ -1012,11 +1023,17 @@ def _build_variant_card_data(variant, product=None):
     if product is None:
         product = variant.product
 
+    # Work from the prefetched relations (see list_variants) to avoid an N+1:
+    # do not re-query images/selected_attributes/stock_items per variant.
+    variant_images = list(variant.images.all())
+    selected_attributes = list(variant.selected_attributes.all())
+    stock_items = list(variant.stock_items.all())
+
     # Get primary image thumbnail
     thumbnail_url = None
-    primary_image = variant.images.filter(is_primary=True).select_related("media_asset").first()
-    if not primary_image:
-        primary_image = variant.images.select_related("media_asset").first()
+    primary_image = next((img for img in variant_images if img.is_primary), None)
+    if not primary_image and variant_images:
+        primary_image = variant_images[0]
     if primary_image and primary_image.media_asset:
         thumbnail_url = primary_image.thumbnail_small
 
@@ -1024,28 +1041,31 @@ def _build_variant_card_data(variant, product=None):
     price = variant.get_effective_price()
     price_display = str(price) if price else None
 
-    # Get stock totals
-    total_stock = variant.total_stock
-    available_stock = variant.available_stock
-    stock_status = variant.stock_status
+    # Get stock totals from the prefetched stock items
+    total_stock = sum(si.on_hand for si in stock_items)
+    available_stock = sum(si.on_hand - si.allocated for si in stock_items)
+    if available_stock <= 0:
+        stock_status = "out_of_stock"
+    elif available_stock <= product.low_stock_threshold:
+        stock_status = "low_stock"
+    else:
+        stock_status = "in_stock"
 
     # Get color hex from color-type attribute
     color_hex = None
-    color_attrs = variant.selected_attributes.filter(attribute__type="color").first()
+    color_attrs = next((av for av in selected_attributes if av.attribute.type == "color"), None)
     if color_attrs and color_attrs.color_hex:
         color_hex = color_attrs.color_hex
 
     # Build attributes display
-    attr_dict = variant.get_attribute_dict()
+    attr_dict = {av.attribute.name: av.value for av in selected_attributes}
     attributes_display = (
         " \u2022 ".join(f"{k}: {v}" for k, v in attr_dict.items()) if attr_dict else ""
     )
 
-    # Build attribute pills data
+    # Build attribute pills data (sorted in Python to keep using the prefetch cache)
     attribute_pills = []
-    for attr_val in variant.selected_attributes.select_related("attribute").order_by(
-        "attribute__sort_order"
-    ):
+    for attr_val in sorted(selected_attributes, key=lambda av: av.attribute.sort_order):
         attribute_pills.append(
             {
                 "attribute_name": attr_val.attribute.name,
@@ -1479,7 +1499,9 @@ def update_variant_stock(request, variant_id):
                     continue
 
                 try:
-                    stock_item = StockItem.objects.get(pk=stock_item_id, variant=variant)
+                    stock_item = StockItem.objects.select_for_update().get(
+                        pk=stock_item_id, variant=variant
+                    )
                 except StockItem.DoesNotExist:
                     continue
 
@@ -1654,6 +1676,7 @@ def update_attribute_color(request, value_id):
 
 
 @staff_member_required
+@requires_permission("catalog.view_giftcard", ajax=True)
 def filter_gift_cards(request):
     """
     AJAX endpoint for filtering gift cards in the admin change list.
@@ -1695,17 +1718,17 @@ def filter_gift_cards(request):
     elif status == "expired":
         queryset = queryset.filter(expires_at__lt=now, is_active=True)
     elif status == "fully_redeemed":
-        queryset = queryset.filter(current_balance__amount=0, is_active=True)
+        queryset = queryset.filter(current_balance=0, is_active=True)
     elif status == "partially_used":
         queryset = queryset.filter(
-            first_used_at__isnull=False, current_balance__amount__gt=0, is_active=True
+            first_used_at__isnull=False, current_balance__gt=0, is_active=True
         )
 
     # Balance filter
     if balance == "has_balance":
-        queryset = queryset.filter(current_balance__amount__gt=0)
+        queryset = queryset.filter(current_balance__gt=0)
     elif balance == "zero_balance":
-        queryset = queryset.filter(current_balance__amount=0)
+        queryset = queryset.filter(current_balance=0)
 
     # Date filter
     if date_filter == "today":
@@ -1732,6 +1755,7 @@ def filter_gift_cards(request):
 
 
 @staff_member_required
+@requires_permission("catalog.view_giftcardtransaction", ajax=True)
 def filter_gift_card_transactions(request):
     """
     AJAX endpoint for filtering gift card transactions in the admin change list.
@@ -2784,18 +2808,16 @@ def product_recycle_bin(request):
                     f"{len(errors)} products with orders were skipped: {', '.join(errors[:5])}",
                 )
 
-    # Get deleted products with related data
+    # Get deleted products with related data.
+    # Annotate order existence in a single query (PROTECT constraint) to avoid an N+1.
+    from orders.models import OrderItem
+
     deleted_products = (
         Product.all_objects.filter(is_deleted=True)
         .select_related("category", "brand", "deleted_by")
+        .annotate(has_orders=Exists(OrderItem.objects.filter(product_id=OuterRef("pk"))))
         .order_by("-deleted_at")
     )
-
-    # Check if products have orders (PROTECT constraint)
-    from orders.models import OrderItem
-
-    for product in deleted_products:
-        product.has_orders = OrderItem.objects.filter(product=product).exists()
 
     context = {
         "deleted_products": deleted_products,
@@ -2821,8 +2843,10 @@ def booking_calendar_api(request):
 
     from django.utils import timezone as tz
 
-    year = int(request.GET.get("year", tz.now().year))
-    month = int(request.GET.get("month", tz.now().month))
+    year = _safe_int(request.GET.get("year", tz.now().year))
+    month = _safe_int(request.GET.get("month", tz.now().month))
+    if year is None or month is None or not (1 <= month <= 12):
+        return JsonResponse({"error": "Invalid year/month"}, status=400)
 
     first_day = tz.datetime(year, month, 1, tzinfo=tz.utc)
     _, last_day_num = cal_module.monthrange(year, month)
@@ -2979,7 +3003,7 @@ def _serialize_booking_config(config):
 def _serialize_resource(r):
     """Serialize BookingResource to dict."""
     images = []
-    for img in r.images.select_related("media_asset").all():
+    for img in r.images.all():
         images.append(
             {
                 "id": img.pk,
@@ -3254,7 +3278,11 @@ def list_booking_resources(request, product_id):
     product_obj, err = _check_booking_ajax(request, product_id)
     if err:
         return err
-    resources = BookingResource.objects.filter(product=product_obj).order_by("sort_order", "name")
+    resources = (
+        BookingResource.objects.filter(product=product_obj)
+        .prefetch_related("images__media_asset")
+        .order_by("sort_order", "name")
+    )
     return JsonResponse(
         {
             "success": True,
@@ -3308,7 +3336,9 @@ def booking_resource_detail(request, resource_id):
     _, err = _check_booking_ajax(request)
     if err:
         return err
-    resource = get_object_or_404(BookingResource, pk=resource_id)
+    resource = get_object_or_404(
+        BookingResource.objects.prefetch_related("images__media_asset"), pk=resource_id
+    )
     return JsonResponse({"success": True, "resource": _serialize_resource(resource)})
 
 
@@ -3838,9 +3868,9 @@ def filter_reviews(request):
             | Q(title__icontains=search)
         )
 
-    rating = request.GET.get("rating", "").strip()
-    if rating:
-        queryset = queryset.filter(rating=int(rating))
+    rating = _safe_int(request.GET.get("rating", "").strip())
+    if rating is not None:
+        queryset = queryset.filter(rating=rating)
 
     approved = request.GET.get("approved", "").strip()
     if approved == "true":

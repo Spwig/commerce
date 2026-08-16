@@ -91,6 +91,10 @@
             <i class="fas fa-cookie-bite"></i>
             <span class="label">{% trans "Cookies" %}</span>
         </button>
+        <button type="button" class="admin-tab-btn" data-tab="communications">
+            <i class="fas fa-comment-dots"></i>
+            <span class="label">{% trans "Communications" %}</span>
+        </button>
         <button type="button" class="admin-tab-btn" data-tab="domain-ssl">
             <i class="fas fa-lock"></i>
             <span class="label">{% trans "Domain & SSL" %}</span>
@@ -1076,6 +1080,122 @@
         </div>
 
         <div class="form-card">
+            <h2><i class="fas fa-chart-line"></i> {% trans "Inventory Intelligence" %}</h2>
+            <p class="help-text">
+                {% trans "Tune the automatic reorder, safety-stock and sales-velocity calculations, and how out-of-stock and low-stock situations are handled." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-default_reorder_lead_days">
+                        {{ adminform.form.default_reorder_lead_days.errors }}
+                        <div>
+                            {{ adminform.form.default_reorder_lead_days.label_tag }}
+                            {{ adminform.form.default_reorder_lead_days }}
+                            {% if adminform.form.default_reorder_lead_days.help_text %}
+                                <div class="help">{{ adminform.form.default_reorder_lead_days.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-velocity_calculation_window_days">
+                        {{ adminform.form.velocity_calculation_window_days.errors }}
+                        <div>
+                            {{ adminform.form.velocity_calculation_window_days.label_tag }}
+                            {{ adminform.form.velocity_calculation_window_days }}
+                            {% if adminform.form.velocity_calculation_window_days.help_text %}
+                                <div class="help">{{ adminform.form.velocity_calculation_window_days.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-allow_backorders_by_default">
+                        {{ adminform.form.allow_backorders_by_default.errors }}
+                        <div>
+                            {{ adminform.form.allow_backorders_by_default.label_tag }}
+                            {{ adminform.form.allow_backorders_by_default }}
+                            {% if adminform.form.allow_backorders_by_default.help_text %}
+                                <div class="help">{{ adminform.form.allow_backorders_by_default.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-safety_stock_multiplier">
+                        {{ adminform.form.safety_stock_multiplier.errors }}
+                        <div>
+                            {{ adminform.form.safety_stock_multiplier.label_tag }}
+                            {{ adminform.form.safety_stock_multiplier }}
+                            {% if adminform.form.safety_stock_multiplier.help_text %}
+                                <div class="help">{{ adminform.form.safety_stock_multiplier.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-low_stock_alert_frequency">
+                        {{ adminform.form.low_stock_alert_frequency.errors }}
+                        <div>
+                            {{ adminform.form.low_stock_alert_frequency.label_tag }}
+                            {{ adminform.form.low_stock_alert_frequency }}
+                            {% if adminform.form.low_stock_alert_frequency.help_text %}
+                                <div class="help">{{ adminform.form.low_stock_alert_frequency.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-file-invoice"></i> {% trans "Documents &amp; Invoicing" %}</h2>
+            <p class="help-text">
+                {% trans "Details shown on generated invoices and packing slips." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-tax_id">
+                        {{ adminform.form.tax_id.errors }}
+                        <div>
+                            {{ adminform.form.tax_id.label_tag }}
+                            {{ adminform.form.tax_id }}
+                            {% if adminform.form.tax_id.help_text %}
+                                <div class="help">{{ adminform.form.tax_id.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-invoice_footer_text">
+                        {{ adminform.form.invoice_footer_text.errors }}
+                        <div>
+                            {{ adminform.form.invoice_footer_text.label_tag }}
+                            {{ adminform.form.invoice_footer_text }}
+                            {% if adminform.form.invoice_footer_text.help_text %}
+                                <div class="help">{{ adminform.form.invoice_footer_text.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-packing_slip_footer_text">
+                        {{ adminform.form.packing_slip_footer_text.errors }}
+                        <div>
+                            {{ adminform.form.packing_slip_footer_text.label_tag }}
+                            {{ adminform.form.packing_slip_footer_text }}
+                            {% if adminform.form.packing_slip_footer_text.help_text %}
+                                <div class="help">{{ adminform.form.packing_slip_footer_text.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-document_logo_width">
+                        {{ adminform.form.document_logo_width.errors }}
+                        <div>
+                            {{ adminform.form.document_logo_width.label_tag }}
+                            {{ adminform.form.document_logo_width }}
+                            {% if adminform.form.document_logo_width.help_text %}
+                                <div class="help">{{ adminform.form.document_logo_width.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
             <h2><i class="fas fa-credit-card"></i> {% trans "Payment Providers" %}</h2>
             <div class="form-row">
                 {{ payment_methods_html|safe }}
@@ -1772,6 +1892,99 @@
                     {% trans "No Cookie Policy page assigned. Go to the Pages tab to assign one." %}
                 </p>
             {% endif %}
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# COMMUNICATIONS TAB                                          #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="communications">
+        <div class="form-card">
+            <h2><i class="fas fa-envelope-open-text"></i> {% trans "Email Marketing Consent" %}</h2>
+            <p class="help-text">
+                {% trans "Controls how customers opt into marketing email and how that consent is confirmed (GDPR)." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-enable_double_opt_in">
+                        {{ adminform.form.enable_double_opt_in.errors }}
+                        <div>
+                            {{ adminform.form.enable_double_opt_in.label_tag }}
+                            {{ adminform.form.enable_double_opt_in }}
+                            {% if adminform.form.enable_double_opt_in.help_text %}
+                                <div class="help">{{ adminform.form.enable_double_opt_in.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-default_marketing_opt_in">
+                        {{ adminform.form.default_marketing_opt_in.errors }}
+                        <div>
+                            {{ adminform.form.default_marketing_opt_in.label_tag }}
+                            {{ adminform.form.default_marketing_opt_in }}
+                            {% if adminform.form.default_marketing_opt_in.help_text %}
+                                <div class="help">{{ adminform.form.default_marketing_opt_in.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-sliders-h"></i> {% trans "Preferences &amp; Unsubscribe" %}</h2>
+            <p class="help-text">
+                {% trans "Self-service controls customers see for managing and leaving your communications." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-preference_center_enabled">
+                        {{ adminform.form.preference_center_enabled.errors }}
+                        <div>
+                            {{ adminform.form.preference_center_enabled.label_tag }}
+                            {{ adminform.form.preference_center_enabled }}
+                            {% if adminform.form.preference_center_enabled.help_text %}
+                                <div class="help">{{ adminform.form.preference_center_enabled.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-show_unsubscribe_reasons">
+                        {{ adminform.form.show_unsubscribe_reasons.errors }}
+                        <div>
+                            {{ adminform.form.show_unsubscribe_reasons.label_tag }}
+                            {{ adminform.form.show_unsubscribe_reasons }}
+                            {% if adminform.form.show_unsubscribe_reasons.help_text %}
+                                <div class="help">{{ adminform.form.show_unsubscribe_reasons.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-sms"></i> {% trans "SMS Consent" %}</h2>
+            <p class="help-text">
+                {% trans "Text-message (TCPA) consent rules." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-require_sms_verification">
+                        {{ adminform.form.require_sms_verification.errors }}
+                        <div>
+                            {{ adminform.form.require_sms_verification.label_tag }}
+                            {{ adminform.form.require_sms_verification }}
+                            {% if adminform.form.require_sms_verification.help_text %}
+                                <div class="help">{{ adminform.form.require_sms_verification.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
         </div>
     </div>
 

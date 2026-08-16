@@ -214,11 +214,11 @@ def test_gateway_on_disk() -> "object":
     # freshly-provisioned provider (plus the test's ComponentRegistry row) is
     # picked up on the next get_provider(). The registry caches discovery at
     # class scope for the worker's lifetime; without this, a prior test that
-    # discovered providers before this fixture provisioned test_gateway leaves
+    # discovered providers *before* this fixture provisioned test_gateway leaves
     # a stale cache, and get_provider("test_gateway") returns None ("Payment
-    # provider not found"). That is order-dependent, so it can pass under one
-    # test distribution and fail under another. Reset on teardown too so the
-    # test provider doesn't leak into later tests.
+    # provider not found"). That is order-dependent, so it stays green under one
+    # xdist distribution (self-hosted) and goes red under another (GitHub-hosted).
+    # Reset on teardown too so the test provider doesn't leak into later tests.
     from payment_providers.providers.registry import ProviderRegistry
 
     ProviderRegistry._providers.clear()

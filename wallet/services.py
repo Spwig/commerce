@@ -105,22 +105,18 @@ class WalletService:
             )
 
     @staticmethod
-    @transaction.atomic
-    def credit(user, amount, currency, source, description, reference_id="", created_by=None):
+    def _apply_credit(
+        user, amount, currency, transaction_type, source, description, reference_id, created_by
+    ):
         """
-        Add credit to a customer's wallet.
+        Shared implementation for every credit-direction ledger write (a plain
+        credit and a refund are the same money movement — value INTO the wallet —
+        differing only in ``transaction_type``). Keeping one writer means the two
+        can never drift apart (the divergence-is-where-bugs-hide rule the tender
+        services follow). Caller is responsible for ``@transaction.atomic``.
 
-        Args:
-            user: Customer user instance
-            amount: Decimal or numeric amount (must be positive)
-            currency: Currency code string (e.g. 'USD')
-            source: Source choice (e.g. 'referral', 'refund')
-            description: Human-readable description
-            reference_id: External reference for linking
-            created_by: Staff user for manual adjustments
-
-        Returns:
-            WalletTransaction
+        Both types are POSITIVE in the reconciler (I5), so both add to
+        ``available_balance`` and bump ``lifetime_credited``.
         """
         amount = Decimal(str(amount))
         if amount <= 0:
@@ -143,7 +139,7 @@ class WalletService:
 
         txn = WalletTransaction.objects.create(
             wallet=wallet,
-            transaction_type=WalletTransaction.TYPE_CREDIT,
+            transaction_type=transaction_type,
             amount=Money(amount, currency),
             balance_after=Money(new_balance, currency),
             status=WalletTransaction.STATUS_COMPLETED,
@@ -168,10 +164,66 @@ class WalletService:
         )
 
         logger.info(
-            f"Credited {amount} {currency} to wallet for {user.email} "
+            f"{transaction_type.capitalize()} {amount} {currency} to wallet for {user.email} "
             f"(txn={txn.id}, source={source})"
         )
         return txn
+
+    @staticmethod
+    @transaction.atomic
+    def credit(user, amount, currency, source, description, reference_id="", created_by=None):
+        """
+        Add credit to a customer's wallet.
+
+        Args:
+            user: Customer user instance
+            amount: Decimal or numeric amount (must be positive)
+            currency: Currency code string (e.g. 'USD')
+            source: Source choice (e.g. 'referral', 'refund')
+            description: Human-readable description
+            reference_id: External reference for linking
+            created_by: Staff user for manual adjustments
+
+        Returns:
+            WalletTransaction
+        """
+        return WalletService._apply_credit(
+            user,
+            amount,
+            currency,
+            WalletTransaction.TYPE_CREDIT,
+            source,
+            description,
+            reference_id,
+            created_by,
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def record_refund_transaction(
+        user, amount, currency, description, reference_id="", created_by=None
+    ):
+        """
+        Credit a refunded amount back to a customer's wallet as a refund entry.
+
+        A refund is money returned for an order — value into the wallet, like a
+        credit, but recorded as its own ``TYPE_REFUND`` ledger row (and always
+        ``source='refund'``) so refunds are distinguishable from promotional or
+        referral credits in history, reporting, and the reconciler. The
+        reconciler already counts refunds as positive, so invariant I5 holds.
+
+        Returns the created WalletTransaction.
+        """
+        return WalletService._apply_credit(
+            user,
+            amount,
+            currency,
+            WalletTransaction.TYPE_REFUND,
+            WalletTransaction.SOURCE_REFUND,
+            description,
+            reference_id,
+            created_by,
+        )
 
     @staticmethod
     @transaction.atomic
@@ -273,8 +325,13 @@ class WalletService:
         if original_txn.transaction_type not in (
             WalletTransaction.TYPE_CREDIT,
             WalletTransaction.TYPE_REFUND,
-            WalletTransaction.TYPE_ADJUSTMENT,
         ):
+            # An ADJUSTMENT is a signed correction whose direction is not stored
+            # on the row, so reverse_transaction (which only ever subtracts) would
+            # move a decrease-adjustment the WRONG way and quietly destroy funds —
+            # and the reconciler, reading the sign from balance_after, would not
+            # catch it. Undo an adjustment with an OPPOSITE adjustment instead
+            # (WalletService.adjust_balance), which stays honest on the ledger.
             raise ValueError(f"Cannot reverse a {original_txn.transaction_type} transaction")
 
         # Lock the wallet row to prevent concurrent balance corruption
@@ -338,6 +395,111 @@ class WalletService:
             f"(reversal txn={reversal.id})"
         )
         return reversal
+
+    ADJUST_INCREASE = "increase"
+    ADJUST_DECREASE = "decrease"
+
+    @staticmethod
+    @transaction.atomic
+    def adjust_balance(
+        user,
+        amount,
+        direction,
+        currency,
+        description,
+        created_by,
+        reference_id="",
+    ):
+        """
+        Apply a manual staff correction to a wallet balance.
+
+        A first-class, signed ledger correction — the writer the `adjustment`
+        transaction type was declared for. Distinct from a credit/debit: it does
+        not represent organic value earned or spent, so it is recorded as
+        ``TYPE_ADJUSTMENT`` and leaves ``lifetime_credited`` / ``lifetime_used``
+        untouched, while still moving ``available_balance`` under the wallet lock
+        so invariant I5 holds.
+
+        The sign convention the reconciler could not previously assume is now
+        DEFINED here: ``amount`` is always positive and ``direction`` says whether
+        it raises or lowers the balance; the row's ``balance_after`` records the
+        signed result, and the reconciler reconstructs the effect from it (and
+        verifies it against ``amount``). A staff ``created_by`` is required —
+        an adjustment with no author is a programming error.
+
+        Raises ValueError (bad direction / missing author / non-positive amount),
+        WalletFrozen, WalletCurrencyMismatch, or InsufficientBalance (a decrease
+        that would take the wallet below zero).
+        """
+        if created_by is None:
+            raise ValueError("adjust_balance requires created_by (the staff author)")
+        if direction not in (WalletService.ADJUST_INCREASE, WalletService.ADJUST_DECREASE):
+            raise ValueError(f"direction must be 'increase' or 'decrease', got {direction!r}")
+
+        amount = Decimal(str(amount))
+        if amount <= 0:
+            raise ValueError("Adjustment amount must be positive; direction sets the sign")
+
+        wallet = WalletService.get_or_create_wallet(user)
+        wallet = CustomerWallet.objects.select_for_update().get(pk=wallet.pk)
+
+        if not wallet.is_active:
+            raise WalletFrozen(f"Wallet for {user.email} is frozen")
+
+        WalletService._assert_currency(wallet, currency)
+        currency = str(wallet.available_balance.currency)
+
+        if direction == WalletService.ADJUST_INCREASE:
+            new_balance = wallet.available_balance.amount + amount
+        else:
+            new_balance = wallet.available_balance.amount - amount
+            if new_balance < 0:
+                raise InsufficientBalance(
+                    f"Decreasing by {amount} {currency} would take the wallet "
+                    f"below zero (balance {wallet.available_balance})."
+                )
+
+        txn = WalletTransaction.objects.create(
+            wallet=wallet,
+            transaction_type=WalletTransaction.TYPE_ADJUSTMENT,
+            amount=Money(amount, currency),
+            balance_after=Money(new_balance, currency),
+            status=WalletTransaction.STATUS_COMPLETED,
+            source=WalletTransaction.SOURCE_MANUAL,
+            description=description,
+            reference_id=reference_id,
+            created_by=created_by,
+        )
+
+        wallet.available_balance = Money(new_balance, currency)
+        # A correction is neither organic credit nor spend, so lifetime_* are
+        # intentionally left as-is; only the activity timestamp moves.
+        if direction == WalletService.ADJUST_INCREASE:
+            wallet.last_credited_at = timezone.now()
+            wallet.save(
+                update_fields=[
+                    "available_balance",
+                    "available_balance_currency",
+                    "last_credited_at",
+                    "updated_at",
+                ]
+            )
+        else:
+            wallet.last_used_at = timezone.now()
+            wallet.save(
+                update_fields=[
+                    "available_balance",
+                    "available_balance_currency",
+                    "last_used_at",
+                    "updated_at",
+                ]
+            )
+
+        logger.info(
+            f"Adjusted wallet for {user.email} by {direction} {amount} {currency} "
+            f"(txn={txn.id}, by={getattr(created_by, 'email', created_by)})"
+        )
+        return txn
 
     @staticmethod
     def get_balance(user):

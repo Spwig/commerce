@@ -34,10 +34,12 @@ def on_reader_saved(sender, instance, created, **kwargs):
         if not splash_fields.intersection(set(update_fields)):
             return
 
-    # For new readers or explicit saves, queue splash screen generation
+    # For new readers or override changes, queue splash screen generation
     if created:
         logger.info(f"New Stripe reader created: {instance.pk}, queuing splash screen generation")
-        _queue_splash_update(instance.pk)
+    else:
+        logger.info(f"Stripe reader {instance.pk} updated, queuing splash screen generation")
+    _queue_splash_update(instance.pk)
 
 
 @receiver(post_save, sender="core.SiteSettings")

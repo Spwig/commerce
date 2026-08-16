@@ -8,7 +8,11 @@
   right: 20px;
   width: 400px;
   max-height: 500px;
-  /* z-index inherited from .utility-popup (10000) */
+  /* .utility-popup sets z-index: 10000, but the media-library picker modal
+     (.media-modal) sits at 10010. When an upload is started from inside that
+     modal — the product-page flow — the popup must sit above it, or the
+     progress indicator is invisible behind the modal. */
+  z-index: 10020;
 }
 
 .upload-queue-container.hidden {

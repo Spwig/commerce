@@ -468,7 +468,8 @@ def test_site_settings_default_values(site_settings_row):
     assert site_settings_row.enable_double_opt_in is True
     assert site_settings_row.default_marketing_opt_in is False
     assert site_settings_row.preference_center_enabled is True
-    assert site_settings_row.require_sms_verification is False
+    # TCPA-safe default: verification required unless the merchant opts out.
+    assert site_settings_row.require_sms_verification is True
     assert site_settings_row.show_unsubscribe_reasons is True
 
 

@@ -1,6 +1,7 @@
 {% load i18n static humanize %}
 
 <div class="list-row-card{% if account.status != 'connected' and account.status != 'active' %} warning{% endif %}" data-account-id="{{ account.id }}">
+    {% include "admin/includes/action_checkbox.html" with pk=account.pk %}
     <!-- Platform Icon -->
     <div class="list-row-card-icon social-platform-icon {{ account.provider_key }}">
         {% if account.provider_key == 'facebook' or account.provider_key == 'facebook_page' %}

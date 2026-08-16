@@ -4,6 +4,7 @@ POS Loyalty API views.
 Thin wrapper around existing loyalty services for POS frontend integration.
 """
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
@@ -72,16 +73,15 @@ def loyalty_member(request, customer_id):
             }
         )
 
-    # Get balance
+    # Get balance. A missing balance row is a normal "no points yet" state
+    # (``.first()`` returns None); any other failure querying LoyaltyBalance is
+    # a real error and must surface as a 5xx rather than a false zero balance.
     available_points = 0
-    try:
-        from loyalty.models import LoyaltyBalance
+    from loyalty.models import LoyaltyBalance
 
-        balance = LoyaltyBalance.objects.filter(member=member).first()
-        if balance:
-            available_points = balance.available_points
-    except Exception:
-        pass
+    balance = LoyaltyBalance.objects.filter(member=member).first()
+    if balance:
+        available_points = balance.available_points
 
     # Get tier info
     tier_name = None
@@ -139,7 +139,11 @@ def loyalty_preview(request, customer_id):
     try:
         user = User.objects.get(pk=customer_id)
         member = user.loyalty_member
-    except Exception:
+    except ObjectDoesNotExist:
+        # No such user, or the user has no loyalty membership (reverse
+        # one-to-one RelatedObjectDoesNotExist). Previewing points is
+        # meaningless in either case, so report zero. Any other failure (e.g. a
+        # database OperationalError) is not swallowed and surfaces as a 5xx.
         return Response(
             {
                 "success": True,
@@ -155,33 +159,53 @@ def loyalty_preview(request, customer_id):
             }
         )
 
-    cart_total = request.query_params.get("cart_total", "0")
+    from decimal import Decimal, InvalidOperation
 
+    raw_cart_total = request.query_params.get("cart_total", "0")
     try:
-        from decimal import Decimal
+        cart_total = Decimal(str(raw_cart_total))
+    except InvalidOperation:
+        cart_total = None
 
-        from loyalty.services.points_engine import PointsEngine
-
-        # Build a minimal mock order-like object for calculation
-        class MockOrder:
-            def __init__(self, total):
-                self.total_amount = total
-                self.subtotal = total
-                self.id = 0
-
-        mock = MockOrder(Decimal(str(cart_total)))
-        engine = PointsEngine()
-        result = engine.calculate_order_points(mock, member)
+    if cart_total is None or not cart_total.is_finite() or cart_total < 0:
         return Response(
             {
-                "success": True,
-                "points_preview": result.get("total_points", 0),
-            }
+                "success": False,
+                "error": {"code": "INVALID_CART_TOTAL"},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
-    except Exception:
-        return Response(
-            {
-                "success": True,
-                "points_preview": 0,
-            }
-        )
+
+    from djmoney.money import Money
+
+    from core.utils import get_default_currency
+    from loyalty.services.points_engine import PointsEngine
+
+    # Order-like stand-in for the points calculation. PointsEngine reads a Money
+    # ``subtotal`` and iterates ``items`` (a related manager), so both must be
+    # present and shaped like the real Order. A preview carries no cart lines,
+    # so item-based rules contribute nothing while spend-based rules earn on the
+    # supplied total. Unexpected failures below propagate as a logged 5xx.
+    class _PreviewItems:
+        def select_related(self, *args, **kwargs):
+            return self
+
+        def all(self):
+            return []
+
+    class MockOrder:
+        def __init__(self, subtotal):
+            self.subtotal = subtotal
+            self.total_amount = subtotal
+            self.items = _PreviewItems()
+            self.id = 0
+
+    mock = MockOrder(Money(cart_total, get_default_currency()))
+    engine = PointsEngine()
+    result = engine.calculate_order_points(mock, member)
+    return Response(
+        {
+            "success": True,
+            "points_preview": result.get("total_points", 0),
+        }
+    )

@@ -120,3 +120,97 @@ class TestHumanTerritoryIsNeverAutoFixed:
         # Stored balance reflects only completed movement; pending must not
         # count, or the reconciler reports phantom drift.
         assert _run() is True
+
+
+class TestWellFormedAdjustmentsReconcile:
+    """Adjustments written by the service carry their sign in balance_after and
+    now reconcile — only rows that fail that consistency check need a human."""
+
+    def _staff(self):
+        return UserFactory(staff=True)
+
+    def test_an_increase_adjustment_reconciles_clean(self):
+        wallet = _wallet()
+        WalletService.credit(wallet.customer, Decimal("50.00"), "USD", "manual", "t")
+        WalletService.adjust_balance(
+            wallet.customer,
+            Decimal("5.00"),
+            "increase",
+            "USD",
+            "correction",
+            created_by=self._staff(),
+        )
+        assert _run() is True
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("55.00")
+
+    def test_a_decrease_adjustment_reconciles_clean(self):
+        wallet = _wallet()
+        WalletService.credit(wallet.customer, Decimal("50.00"), "USD", "manual", "t")
+        WalletService.adjust_balance(
+            wallet.customer,
+            Decimal("12.00"),
+            "decrease",
+            "USD",
+            "clawback",
+            created_by=self._staff(),
+        )
+        assert _run() is True
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("38.00")
+
+    def test_adjustments_interleaved_with_credits_debits_reconcile(self):
+        wallet = _wallet()
+        WalletService.credit(wallet.customer, Decimal("100.00"), "USD", "manual", "t")
+        WalletService.adjust_balance(
+            wallet.customer, Decimal("10.00"), "decrease", "USD", "a", created_by=self._staff()
+        )
+        WalletService.debit(wallet.customer, Decimal("20.00"), "USD", "order", "t")
+        WalletService.adjust_balance(
+            wallet.customer, Decimal("5.00"), "increase", "USD", "a", created_by=self._staff()
+        )
+        # 100 - 10 - 20 + 5
+        assert _run() is True
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("75.00")
+
+    def test_refund_typed_rows_count_as_positive(self):
+        wallet = _wallet()
+        WalletService.record_refund_transaction(wallet.customer, Decimal("30.00"), "USD", "refund")
+        assert _run() is True
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("30.00")
+
+    def test_drift_on_a_wallet_with_an_adjustment_is_now_fixable(self):
+        wallet = _wallet()
+        WalletService.credit(wallet.customer, Decimal("50.00"), "USD", "manual", "t")
+        WalletService.adjust_balance(
+            wallet.customer, Decimal("5.00"), "increase", "USD", "c", created_by=self._staff()
+        )
+        # Corrupt the stored balance behind the ledger's back.
+        CustomerWallet.objects.filter(pk=wallet.pk).update(available_balance=Decimal("999.00"))
+
+        assert _run("--fix") is True
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == Decimal("55.00")
+
+    def test_a_malformed_adjustment_is_still_reported_and_not_fixed(self):
+        # balance_after that contradicts the amount was not written by the
+        # service — the reconciler must not guess its sign.
+        wallet = _wallet()
+        WalletService.credit(wallet.customer, Decimal("50.00"), "USD", "manual", "t")
+        WalletTransaction.objects.create(
+            wallet=wallet,
+            transaction_type=WalletTransaction.TYPE_ADJUSTMENT,
+            amount=Money(Decimal("5.00"), "USD"),
+            balance_after=Money(Decimal("50.00"), "USD"),  # delta 0 ≠ amount 5
+            status=WalletTransaction.STATUS_COMPLETED,
+            source="manual",
+            description="hand-made, inconsistent",
+        )
+        assert _run() is False
+        wallet.refresh_from_db()
+        before = wallet.available_balance.amount
+        _run("--fix")
+        wallet.refresh_from_db()
+        assert wallet.available_balance.amount == before

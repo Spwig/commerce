@@ -3,7 +3,7 @@ Management command to calculate customer metrics for all users
 """
 
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 
 from customers.models import CustomerMetrics, CustomerSegment
@@ -88,7 +88,7 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.SUCCESS(
                             f"[{index}/{total_users}] ✓ {user.username} - "
-                            f"${metrics.total_spent.amount:.2f} spent, "
+                            f"{metrics.total_spent} spent, "
                             f"{metrics.completed_orders} orders - "
                             f"Segment: {segment_name}"
                         )
@@ -134,3 +134,11 @@ class Command(BaseCommand):
                 f"\n{active_segments} active customer segments available in the system.\n"
             )
         )
+
+        # Fail loudly so cron/deployment automation does not treat a run with
+        # per-user calculation failures as a success (exit status 0).
+        if error_count > 0:
+            raise CommandError(
+                f"Customer metric calculation completed with {error_count} error(s); "
+                "see the log above for the affected users."
+            )

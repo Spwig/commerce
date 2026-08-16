@@ -1,0 +1,50 @@
+{% load i18n %}
+<div class="orders-rows">
+    {% for order in orders %}
+    <div class="orders-row">
+        {% include "admin/includes/action_checkbox.html" with pk=order.pk %}
+        <a class="orders-row__link" href="{% url 'admin:orders_order_change' order.pk %}">
+            <span class="orders-row__id">
+                #{{ order.order_number }}
+                <small>{{ order.created_at|timesince }} {% trans "ago" %}</small>
+            </span>
+
+            <span class="orders-row__cust">
+                <b>{{ order.shipping_name|default:order.email }}</b>
+                <small>
+                    {{ order.email }}{% if order.shipping_city or order.shipping_country %}
+                    &middot; {% if order.shipping_city %}{{ order.shipping_city }}{% endif %}{% if order.shipping_city and order.shipping_country %}, {% endif %}{% if order.shipping_country %}{{ order.shipping_country }}{% endif %}{% endif %}
+                </small>
+            </span>
+
+            <span class="orders-row__thumbs">
+                {% for item in order.top_items|slice:":3" %}
+                <span class="orders-row__thumb">
+                    {% if item.product.images.all %}
+                    <img src="{{ item.product.images.all.0.thumbnail_small }}" alt="">
+                    {% else %}
+                    <i class="fas fa-box"></i>
+                    {% endif %}
+                </span>
+                {% endfor %}
+                <span class="orders-row__count">{{ order.top_qty|default:0 }}</span>
+            </span>
+
+            <span class="orders-row__total">{{ order.total_amount }}</span>
+
+            <span class="opill opill--pay-{{ order.payment_status }}">
+                <span class="opill__dot"></span>{{ order.get_payment_status_display }}
+            </span>
+            <span class="opill opill--ful-{{ order.status }}">
+                <span class="opill__dot"></span>{{ order.get_status_display }}
+            </span>
+        </a>
+    </div>
+    {% empty %}
+    <div class="orders-empty">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>{% trans "No orders match" %}</h3>
+        <p>{% trans "Try clearing the filters or search." %}</p>
+    </div>
+    {% endfor %}
+</div>

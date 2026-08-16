@@ -4,7 +4,7 @@ Provides AJAX filter endpoints for admin change list pages.
 """
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
+from django.db.models import F, Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_GET
@@ -38,7 +38,9 @@ def filter_shipping_packages(request):
     if sort == "name":
         queryset = queryset.order_by("name")
     elif sort == "volume":
-        queryset = queryset.order_by("length")
+        queryset = queryset.annotate(volume=F("length") * F("width") * F("height")).order_by(
+            "volume"
+        )
     elif sort == "max_weight":
         queryset = queryset.order_by("max_weight")
     else:

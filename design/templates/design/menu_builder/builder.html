@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% trans "Menu Builder" %} - {{ menu.name }}</title>
     {% favicon_meta %}
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Visibility Rules Editor utility (shared visibility engine) -->
+    <link rel="stylesheet" href="{% static 'utilities/visibility_rules_editor/current/visibility_rules_editor.css' %}">
 
     <!-- Core Admin Theme Styles -->
     <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
@@ -627,6 +631,9 @@
 
     <!-- ColorPicker Utility -->
     <script src="{% static 'utilities/color_picker/current/color_picker.js' %}"></script>
+
+    <!-- Visibility Rules Editor utility (attaches rule groups to menu items) -->
+    <script src="{% static 'utilities/visibility_rules_editor/current/visibility_rules_editor.js' %}"></script>
 
     <!-- Menu Builder JavaScript -->
     <script src="{% static 'design/js/menu-builder.js' %}"></script>

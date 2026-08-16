@@ -15,6 +15,135 @@ register = template.Library()
 from ..theme_utils import get_active_theme_cached
 
 
+def _nav_object_state(obj, request):
+    """Shell-stage visibility state for a nav object (WidgetPlacement / MenuItem):
+    ``"show"`` / ``"hide"`` / ``"defer"``.
+
+    Shell rules (geo_region / market, language, currency) and temporal rules are
+    evaluated server-side — deterministic per market URL. Per-visitor (deferred)
+    rules resolve to ``"defer"`` so the object can be resolved after the shell,
+    never leaking into the shared cache. Fail-closed (``"hide"``) on any evaluation
+    error — a broken rule must never expose gated nav.
+    """
+    if request is None:
+        # No request context (e.g. management rendering) — can't evaluate rules;
+        # show ungated objects, hide anything carrying a rule group.
+        try:
+            return "show" if not obj.get_visibility_rule_groups().exists() else "hide"
+        except Exception:
+            return "show"
+    try:
+        from visibility.service import resolve_visibility
+
+        return resolve_visibility(obj, request)
+    except Exception:
+        return "hide"
+
+
+def _menu_widget_defers(placement, request):
+    """True if a menu/account widget placement — visible on its own — contains a
+    per-visitor (deferred) menu item, so the whole widget must defer and be
+    resolved per visitor (its entitled items rendered by the personalization
+    pass). Keeps per-visitor items out of the shared cached shell."""
+    widget = getattr(placement, "widget", None)
+    if not widget or widget.widget_type not in ("menu", "account"):
+        return False
+    try:
+        from visibility.service import requires_personalization
+
+        from ..header_footer_models import Menu
+
+        config = {**(widget.config or {}), **(placement.override_config or {})}
+        menu_id = config.get("menu_id")
+        menu = None
+        if menu_id:
+            menu = Menu.objects.filter(pk=menu_id).first()
+        elif widget.widget_type == "account":
+            menu = Menu.objects.filter(slug="account-menu", is_active=True).first()
+        if not menu:
+            return False
+        items = menu.items.filter(is_active=True).prefetch_related("rule_groups")
+        return any(requires_personalization(item) for item in items)
+    except Exception:
+        return False
+
+
+def _placement_nav_state(placement, request):
+    """Nav state for a widget placement: ``"hide"`` / ``"defer"`` / ``"show"``.
+
+    The placement's own rule groups decide first; a placement that shows but is a
+    menu widget carrying a per-visitor item defers as a whole (see
+    ``_menu_widget_defers``)."""
+    state = _nav_object_state(placement, request)
+    if state != "show":
+        return state
+    if _menu_widget_defers(placement, request):
+        return "defer"
+    return "show"
+
+
+def _nav_shell_visible(obj, request):
+    """True if the object renders directly in the shell (state == show). Used by
+    the widget-zone tags to drop hidden/deferred placements."""
+    return _placement_nav_state(obj, request) == "show"
+
+
+def _filter_visible_menu_items(items, request, full=False):
+    """Keep the menu items this visitor should see, preserving order. In the shell
+    (``full=False``) only ``show`` items are kept (deferred items are resolved when
+    the whole menu widget is personalized). In the personalization pass
+    (``full=True``) items are evaluated with the real visitor context."""
+    if full:
+        from visibility.service import is_fully_visible
+
+        return [item for item in items if is_fully_visible(item, request)]
+    return [item for item in items if _nav_object_state(item, request) == "show"]
+
+
+# Depth cap for nested-menu filtering. The menu templates render at most 3 levels
+# (mega mode: item -> child -> subchild); this bounds the walk well past any real
+# menu so a merchant-authored parent cycle (the builder does not reject
+# ``parent == self`` or a longer loop) can never recurse without limit.
+_MAX_MENU_DEPTH = 6
+
+
+def _annotate_visible_children(items, request, full=False, _depth=0, _seen=None):
+    """Recursively annotate each menu item with ``_visible_children`` — the child
+    items this market/visitor should see, order-preserving and filtered by the same
+    visibility engine as the top level.
+
+    The menu templates iterate ``item.get_children`` / ``item.has_children`` at
+    every depth; those methods honour this annotation (see
+    ``design.header_footer_models.MenuItem.get_children``), so a per-visitor or
+    per-market rule on a NESTED item gates it exactly like a top-level one — closing
+    both the shell market-on-child leak and the personalization-pass gap. In the
+    shell (``full=False``) a per-visitor child resolves to ``defer`` and is dropped
+    here (kept out of the cached shell); the whole menu widget then defers and is
+    re-annotated with ``full=True`` in the personalization pass, where the child is
+    evaluated against the real visitor.
+
+    Bounded against merchant-authored parent cycles: a per-branch ``_seen`` set of
+    item ids breaks any loop, and ``_MAX_MENU_DEPTH`` caps the walk. On the cap a
+    node is annotated with no visible children (fail-closed — never render an
+    unfiltered subtree).
+    """
+    if _depth >= _MAX_MENU_DEPTH:
+        for item in items:
+            item._visible_children = []
+        return items
+    for item in items:
+        seen = set(_seen or ())
+        if item.pk in seen:
+            item._visible_children = []  # cycle — stop descending
+            continue
+        seen.add(item.pk)
+        children = list(item.get_children().prefetch_related("rule_groups"))
+        visible = _filter_visible_menu_items(children, request, full=full)
+        item._visible_children = visible
+        _annotate_visible_children(visible, request, full=full, _depth=_depth + 1, _seen=seen)
+    return items
+
+
 @register.simple_tag
 def theme_css():
     """
@@ -468,8 +597,8 @@ def get_default_footer():
     return footer
 
 
-@register.simple_tag
-def get_header_widgets_by_zone(header, zone_name):
+@register.simple_tag(takes_context=True)
+def get_header_widgets_by_zone(context, header, zone_name):
     """
     Get widgets for a specific zone in a header.
     Zone name should be in format 'primary-zone_sub-zone' e.g., 'main-header_left'.
@@ -478,6 +607,10 @@ def get_header_widgets_by_zone(header, zone_name):
     if not header:
         return []
 
+    # The cached candidate list is region-blind on purpose — it holds every
+    # active placement in the zone. Shell visibility (market/geo, language,
+    # currency, time) is applied per request AFTER the cache read, so one
+    # market's decisions never bake into another's cache.
     cache_key = f"header_{header.pk}_widgets_{zone_name}"
     widgets = cache.get(cache_key)
 
@@ -487,6 +620,7 @@ def get_header_widgets_by_zone(header, zone_name):
                 header.widget_placements.filter(
                     zone=zone_name, is_active=True, widget__is_active=True
                 )
+                .prefetch_related("rule_groups")
                 .select_related("widget")
                 .order_by("order")
             )
@@ -496,11 +630,12 @@ def get_header_widgets_by_zone(header, zone_name):
         except Exception:
             widgets = []
 
-    return widgets
+    request = context.get("request")
+    return [p for p in widgets if _nav_shell_visible(p, request)]
 
 
-@register.simple_tag
-def get_footer_widgets_by_zone(footer, zone_name):
+@register.simple_tag(takes_context=True)
+def get_footer_widgets_by_zone(context, footer, zone_name):
     """
     Get widgets for a specific zone in a footer.
     Usage: {% get_footer_widgets_by_zone footer 'column_1' as widgets %}
@@ -508,6 +643,8 @@ def get_footer_widgets_by_zone(footer, zone_name):
     if not footer:
         return []
 
+    # Region-blind candidate cache + per-request shell filter (see
+    # get_header_widgets_by_zone).
     cache_key = f"footer_{footer.pk}_widgets_{zone_name}"
     widgets = cache.get(cache_key)
 
@@ -517,6 +654,7 @@ def get_footer_widgets_by_zone(footer, zone_name):
                 footer.widget_placements.filter(
                     zone=zone_name, is_active=True, widget__is_active=True
                 )
+                .prefetch_related("rule_groups")
                 .select_related("widget")
                 .order_by("order")
             )
@@ -526,7 +664,8 @@ def get_footer_widgets_by_zone(footer, zone_name):
         except Exception:
             widgets = []
 
-    return widgets
+    request = context.get("request")
+    return [p for p in widgets if _nav_shell_visible(p, request)]
 
 
 @register.simple_tag(takes_context=True)
@@ -538,6 +677,34 @@ def render_widget(context, placement):
     if not placement or not placement.widget:
         return ""
 
+    request = context.get("request")
+
+    # Personalization pass (full=True): the widget was deferred in the shell and
+    # is being resolved with the real visitor context. Render it only if this
+    # visitor is entitled; menu items inside are filtered with full visibility.
+    full_visibility = bool(request and getattr(request, "_nav_full_visibility", False))
+    if full_visibility:
+        from visibility.service import is_fully_visible
+
+        if not is_fully_visible(placement, request):
+            return ""
+    else:
+        # Shell pass: hide → omit; defer → emit a content-less placeholder the
+        # personalization endpoint resolves per visitor (never the widget itself,
+        # so per-visitor content is never baked into the cached shell).
+        state = getattr(placement, "_nav_state", None) or _placement_nav_state(placement, request)
+        if state == "hide":
+            return ""
+        if state == "defer":
+            # Carry the URL-authoritative market into the placeholder so the
+            # personalization request (which has no /nz/ prefix) evaluates shell
+            # geo_region / language rules against the SAME market, not the default.
+            market = getattr(request, "market_slug", "") or ""
+            return mark_safe(
+                f'<div class="pb-nav-defer" data-pb-defer-nav-widget="{placement.id}"'
+                f' data-pb-market="{market}"></div>'
+            )
+
     widget = placement.widget
 
     # Merge widget config with placement overrides
@@ -546,7 +713,6 @@ def render_widget(context, placement):
         config.update(placement.override_config)
 
     # Apply widget translations for non-primary languages (config + content)
-    request = context.get("request")
     content = widget.content
     if request and hasattr(request, "LANGUAGE_CODE") and widget.translations:
         from core.translation_utils import get_primary_language
@@ -589,9 +755,21 @@ def render_widget(context, placement):
         try:
             menu = Menu.objects.get(pk=config["menu_id"])
             widget_context["menu"] = menu
-            menu_items = menu.get_items()
+            # Apply visibility rules per request, omitting top-level items this
+            # market/visitor shouldn't see. In the personalization pass (full
+            # mode) items are evaluated against the real visitor context; in the
+            # shell only market/geo/language/currency/time items are decided.
+            # Nested items are filtered recursively just below.
+            menu_items = _filter_visible_menu_items(
+                list(menu.get_items().prefetch_related("rule_groups")),
+                request,
+                full=full_visibility,
+            )
+            # Recursively filter nested items so a per-visitor / per-market rule on
+            # a child gates it the same way it does a top-level item (the template
+            # renders children via item.get_children, which honours the annotation).
+            _annotate_visible_children(menu_items, request, full=full_visibility)
             # Apply translations for non-primary languages
-            request = context.get("request")
             if request and hasattr(request, "LANGUAGE_CODE"):
                 from core.translation_utils import get_primary_language, translate_menu_items
 
@@ -661,7 +839,11 @@ def _get_account_menu_items(context, config):
     is_staff = getattr(user, "is_staff", False) if user else False
 
     # Get all active menu items
-    items = list(menu.items.filter(is_active=True, parent__isnull=True).order_by("order"))
+    items = list(
+        menu.items.filter(is_active=True, parent__isnull=True)
+        .prefetch_related("rule_groups")
+        .order_by("order")
+    )
 
     # Apply translations for non-primary languages
     if request and hasattr(request, "LANGUAGE_CODE"):
@@ -673,10 +855,24 @@ def _get_account_menu_items(context, config):
             for item in items:
                 translate_instance(item, lang, menu_field_map)
 
-    # Filter by visibility rules
+    # Filter by visibility rules: the legacy shallow user_status JSON AND the
+    # shared engine. In the personalization pass (full mode) items are evaluated
+    # against the real visitor context; in the shell only market/geo/language/
+    # currency/time items are decided (deferred items resolve when the whole
+    # account widget is personalized). Legacy stays live until the engine fully
+    # supersedes it.
+    full_visibility = bool(request and getattr(request, "_nav_full_visibility", False))
+
+    def _engine_ok(item):
+        if full_visibility:
+            from visibility.service import is_fully_visible
+
+            return is_fully_visible(item, request)
+        return _nav_object_state(item, request) == "show"
+
     filtered_items = []
     for item in items:
-        if _should_show_menu_item(item, is_authenticated):
+        if _should_show_menu_item(item, is_authenticated) and _engine_ok(item):
             filtered_items.append(
                 {
                     "title": item.title,
@@ -778,12 +974,22 @@ def render_header(context, page=None):
             )
 
         if header:
-            # Group widget placements by zone
+            request = context.get("request")
+            # Group widget placements by zone, applying shell visibility rules
+            # (market/geo, language, currency, time) per request — omitting a
+            # placement the current market/visitor shouldn't see.
             for placement in (
                 header.widget_placements.filter(is_active=True, widget__is_active=True)
+                .prefetch_related("rule_groups")
                 .select_related("widget")
                 .order_by("order")
             ):
+                state = _placement_nav_state(placement, request)
+                if state == "hide":
+                    continue
+                # Keep deferred placements in the zone — render_widget emits a
+                # per-visitor placeholder for them; the annotation avoids re-eval.
+                placement._nav_state = state
                 zone = placement.zone.replace("-", "_")
                 if zone not in zones:
                     zones[zone] = []
@@ -858,12 +1064,21 @@ def render_footer(context, page=None):
             )
 
         if footer:
-            # Group widget placements by zone
+            request = context.get("request")
+            # Group widget placements by zone, applying shell visibility rules per
+            # request (see render_header).
             for placement in (
                 footer.widget_placements.filter(is_active=True, widget__is_active=True)
+                .prefetch_related("rule_groups")
                 .select_related("widget")
                 .order_by("order")
             ):
+                state = _placement_nav_state(placement, request)
+                if state == "hide":
+                    continue
+                # Keep deferred placements in the zone — render_widget emits a
+                # per-visitor placeholder for them; the annotation avoids re-eval.
+                placement._nav_state = state
                 zone = placement.zone.replace("-", "_")
                 if zone not in zones:
                     zones[zone] = []

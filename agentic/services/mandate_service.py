@@ -29,8 +29,12 @@ from agentic.identity import sdjwt
 
 logger = logging.getLogger(__name__)
 
-# SD-JWT verifiable-credential type for a Spwig checkout mandate.
+# SD-JWT verifiable-credential types for the two AP2 mandate kinds Spwig issues.
+# The Checkout (Cart) Mandate attests WHAT was authorised to be bought; the
+# Payment Mandate attests the payment leg (amount, method, agent presence) for
+# the payment network / issuer. Both are signed with the merchant's AP2 key.
 VCT_CHECKOUT = "https://spwig.com/ap2/checkout-mandate/v1"
+VCT_PAYMENT = "https://spwig.com/ap2/payment-mandate/v1"
 
 
 def _active_ap2_key():
@@ -98,14 +102,13 @@ def build_checkout_mandate_payload(order, *, ucp_checkout_id: str = "") -> dict:
     return {"always": always, "sd": sd}
 
 
-def issue_checkout_mandate(order, *, ucp_checkout_id: str = "", agent=None):
+def _issue_mandate(order, *, mandate_type, vct, always_claims, sd_claims, ucp_checkout_id, agent):
     """
-    Issue, sign, and persist a Checkout Mandate for ``order``.
+    Sign one AP2 mandate for ``order`` and persist it. Shared by both kinds.
 
     Returns the created ``Mandate``, or None when the store has no active AP2
-    key (in which case it doesn't advertise ap2_mandate either). Never raises
-    into the checkout path — a mandate is additional attestation, not a gate on
-    the order that already placed and paid.
+    key. Never raises into the checkout path — a mandate is additional
+    attestation, not a gate on the order that already placed and paid.
     """
     from agentic.identity.keys import load_private_key
     from agentic.models import Mandate
@@ -115,7 +118,6 @@ def issue_checkout_mandate(order, *, ucp_checkout_id: str = "", agent=None):
         return None
 
     try:
-        claims = build_checkout_mandate_payload(order, ucp_checkout_id=ucp_checkout_id)
         private_key = load_private_key(key)
 
         now = timezone.now()
@@ -123,19 +125,19 @@ def issue_checkout_mandate(order, *, ucp_checkout_id: str = "", agent=None):
         iat = int(now.timestamp())
 
         sd_jwt = sdjwt.issue_sd_jwt(
-            always_claims=claims["always"],
-            sd_claims=claims["sd"],
+            always_claims=always_claims,
+            sd_claims=sd_claims,
             private_key=private_key,
             kid=key.kid,
             iss=_merchant_iss(),
             iat=iat,
             exp=int(exp.timestamp()),
-            vct=VCT_CHECKOUT,
+            vct=vct,
         )
-        payload_sha = hashlib.sha256(jcs.canonicalize(claims["always"])).hexdigest()
+        payload_sha = hashlib.sha256(jcs.canonicalize(always_claims)).hexdigest()
 
         return Mandate.objects.create(
-            mandate_type=Mandate.TYPE_CHECKOUT,
+            mandate_type=mandate_type,
             order=order,
             agent=agent,
             ucp_checkout_id=ucp_checkout_id,
@@ -148,12 +150,116 @@ def issue_checkout_mandate(order, *, ucp_checkout_id: str = "", agent=None):
             expires_at=exp,
         )
     except Exception:
-        logger.exception("mandate: failed to issue checkout mandate for order %s", order.pk)
+        logger.exception("mandate: failed to issue %s mandate for order %s", mandate_type, order.pk)
         return None
 
 
-def mandate_for_checkout(ucp_checkout_id: str):
-    """The most recent mandate issued for a UCP checkout id, or None."""
+def issue_checkout_mandate(order, *, ucp_checkout_id: str = "", agent=None):
+    """
+    Issue, sign, and persist a Checkout Mandate for ``order``.
+
+    The merchant's signed attestation of what the order was authorised to buy and
+    be charged (the AP2 ``merchant_authorization``). Returns the created
+    ``Mandate``, or None when the store has no active AP2 key.
+    """
     from agentic.models import Mandate
 
-    return Mandate.objects.filter(ucp_checkout_id=ucp_checkout_id).order_by("-issued_at").first()
+    claims = build_checkout_mandate_payload(order, ucp_checkout_id=ucp_checkout_id)
+    return _issue_mandate(
+        order,
+        mandate_type=Mandate.TYPE_CHECKOUT,
+        vct=VCT_CHECKOUT,
+        always_claims=claims["always"],
+        sd_claims=claims["sd"],
+        ucp_checkout_id=ucp_checkout_id,
+        agent=agent,
+    )
+
+
+def build_payment_mandate_payload(
+    order, *, ucp_checkout_id: str = "", payment_method_label: str = ""
+) -> dict:
+    """
+    The claim set an AP2 Payment Mandate attests for a paid order.
+
+    Distinct from the checkout mandate: this attests the payment leg the payment
+    network / issuer cares about — the amount actually charged, the (non-secret)
+    payment-method label, and the presence signal (agent-initiated, no human at
+    checkout). It carries no selectively-disclosed claims and never any card data.
+    """
+    amount = _money_claim(order.total_amount)
+    always = {
+        "mandate_type": "payment",
+        "order_ref": str(order.id),
+        "order_number": getattr(order, "order_number", "") or str(order.id),
+        "ucp_checkout_id": ucp_checkout_id,
+        "amount": amount,
+        "currency": amount["currency"],
+        # Agent orders are placed headlessly: the human is not present at the
+        # moment of payment. This presence signal is exactly what an issuer's
+        # risk engine reads off an AP2 payment mandate.
+        "presence": "agent",
+        "human_present": False,
+        "payment_method": payment_method_label or "",
+    }
+    return {"always": always, "sd": {}}
+
+
+def issue_payment_mandate(
+    order, *, ucp_checkout_id: str = "", agent=None, payment_method_label: str = ""
+):
+    """
+    Issue, sign, and persist an AP2 Payment Mandate for a paid ``order``.
+
+    The merchant's signed attestation of the payment leg (amount charged, method
+    label, agent-presence) for the payment network / issuer. Returns the created
+    ``Mandate``, or None when the store has no active AP2 key. Never raises into
+    the checkout path.
+    """
+    from agentic.models import Mandate
+
+    claims = build_payment_mandate_payload(
+        order, ucp_checkout_id=ucp_checkout_id, payment_method_label=payment_method_label
+    )
+    return _issue_mandate(
+        order,
+        mandate_type=Mandate.TYPE_PAYMENT,
+        vct=VCT_PAYMENT,
+        always_claims=claims["always"],
+        sd_claims=claims["sd"],
+        ucp_checkout_id=ucp_checkout_id,
+        agent=agent,
+    )
+
+
+def checkout_mandate_for_checkout(ucp_checkout_id: str):
+    """The most recent Checkout Mandate issued for a UCP checkout id, or None."""
+    from agentic.models import Mandate
+
+    return (
+        Mandate.objects.filter(ucp_checkout_id=ucp_checkout_id, mandate_type=Mandate.TYPE_CHECKOUT)
+        .order_by("-issued_at")
+        .first()
+    )
+
+
+def payment_mandate_for_checkout(ucp_checkout_id: str):
+    """The most recent Payment Mandate issued for a UCP checkout id, or None."""
+    from agentic.models import Mandate
+
+    return (
+        Mandate.objects.filter(ucp_checkout_id=ucp_checkout_id, mandate_type=Mandate.TYPE_PAYMENT)
+        .order_by("-issued_at")
+        .first()
+    )
+
+
+def mandate_for_checkout(ucp_checkout_id: str):
+    """
+    The Checkout Mandate for a UCP checkout id, or None.
+
+    Back-compat alias for `checkout_mandate_for_checkout`: the `/mandate/`
+    endpoint has always returned the checkout mandate, and adding payment
+    mandates must not change what it resolves.
+    """
+    return checkout_mandate_for_checkout(ucp_checkout_id)

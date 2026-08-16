@@ -126,8 +126,8 @@ jobs:
         # (Phases 1 + 4 + 5) for the audited scope in run_full below.
         run: |
           run_full() {
-            pytest -n auto tests/community_edition/ tests/integration/test_sandbox.py -v
-            pytest -n auto --create-db -v \
+            pytest -n 6 tests/community_edition/ tests/integration/test_sandbox.py -v
+            pytest -n 6 --create-db -v \
               tests/unit/ tests/integration/ tests/contract/ tests/catalog/ \
               tests/invariants/ tests/tier2/ \
               tests/rbac/ tests/integrity/ accounts/tests/ admin_api/tests/ \
@@ -148,7 +148,7 @@ jobs:
             run_full
           else
             echo "Scoped PR test targets: $TARGETS"
-            pytest -n auto --create-db -v $TARGETS
+            pytest -n 6 --create-db -v $TARGETS
           fi
 
   # Oracle-parity (Tier-3, NO browser): proves the ORM and HTTP footprint

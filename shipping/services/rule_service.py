@@ -299,7 +299,7 @@ class ShippingPromotionService:
                 rate_table=table, value=value, address=address
             )
 
-            if rate:
+            if rate is not None:
                 return rate
 
         logger.info(

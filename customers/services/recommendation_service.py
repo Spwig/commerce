@@ -6,7 +6,7 @@ from datetime import timedelta
 from decimal import Decimal
 from typing import Any
 
-from django.db.models import Count, F, Q, Sum
+from django.db.models import Count, F, Max, Q, Sum
 from django.utils import timezone
 
 from cart.models import Wishlist
@@ -299,7 +299,7 @@ class RecommendationService:
             .annotate(
                 times_purchased=Count("id"),
                 total_spent=Sum("total_price"),
-                last_purchased=F("order__created_at"),
+                last_purchased=Max("order__created_at"),
             )
             .order_by("-times_purchased")[:limit]
         )

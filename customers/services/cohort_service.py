@@ -6,6 +6,7 @@ Builds customer cohorts and calculates retention-based lifetime value
 from datetime import timedelta
 from decimal import Decimal
 
+from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from django.utils import timezone
 from djmoney.money import Money
@@ -70,13 +71,42 @@ class CohortService:
         }
 
     @classmethod
+    def _cohort_member_user_ids(cls, cohort):
+        """Return the user IDs that actually belong to this specific cohort.
+
+        Membership is keyed by acquisition month *plus* the channel and first
+        product category derived from each customer's first delivered order, so
+        that channel/category cohorts sharing a month don't all claim every
+        customer acquired that month.
+        """
+        member_ids = []
+        candidates = CustomerMetrics.objects.filter(
+            cohort_month=cohort.cohort_date, first_purchase_date__isnull=False
+        ).select_related("user")
+
+        for metrics in candidates:
+            first_order = (
+                metrics.user.orders.filter(status="delivered").order_by("created_at").first()
+            )
+            if not first_order:
+                continue
+
+            channel = first_order.source or "unknown"
+            category = ""
+            first_item = first_order.items.select_related("product__category").first()
+            if first_item and first_item.product and first_item.product.category:
+                category = first_item.product.category.name
+
+            if channel == cohort.acquisition_channel and category == cohort.first_product_category:
+                member_ids.append(metrics.user_id)
+
+        return member_ids
+
+    @classmethod
     def _update_cohort_counts(cls):
         """Update customer_count for all cohorts"""
         for cohort in CustomerCohort.objects.all():
-            count = CustomerMetrics.objects.filter(
-                cohort_month=cohort.cohort_date, first_purchase_date__isnull=False
-            ).count()
-            cohort.customer_count = count
+            cohort.customer_count = len(cls._cohort_member_user_ids(cohort))
             cohort.save(update_fields=["customer_count", "updated_at"])
 
     @classmethod
@@ -119,21 +149,21 @@ class CohortService:
         """
         Calculate metrics for a specific cohort at a specific time offset
         """
-        # Define the time window for this cohort month
+        # Define the time window for this cohort month. Use calendar-aware month
+        # arithmetic so the boundary is the first day of the calendar month after
+        # the requested offset (exclusive), rather than a fixed 30-day interval.
         cohort_date = cohort.cohort_date
-        cutoff_date = cohort_date + timedelta(days=30 * (months_since_acquisition + 1))
+        period_end = cohort_date + relativedelta(months=months_since_acquisition + 1)
 
-        # Get customers in this cohort
-        cohort_customers = CustomerMetrics.objects.filter(
-            cohort_month=cohort_date, first_purchase_date__isnull=False
-        ).values_list("user_id", flat=True)
+        # Get customers in this specific cohort (matched by channel/category)
+        cohort_customers = cls._cohort_member_user_ids(cohort)
 
         if not cohort_customers:
             return None
 
-        # Get all orders from cohort customers up to the cutoff date
+        # Get all orders from cohort customers up to the period boundary
         orders_in_period = Order.objects.filter(
-            user_id__in=cohort_customers, status="delivered", created_at__lte=cutoff_date
+            user_id__in=cohort_customers, status="delivered", created_at__lt=period_end
         )
 
         # Calculate cumulative revenue
@@ -146,13 +176,13 @@ class CohortService:
         total_orders = orders_in_period.count()
 
         # Calculate active customers (made purchase in last 6 months from cutoff)
-        activity_start = cutoff_date - timedelta(days=180)
+        activity_start = period_end - timedelta(days=180)
         active_customers = (
             Order.objects.filter(
                 user_id__in=cohort_customers,
                 status="delivered",
                 created_at__gte=activity_start,
-                created_at__lte=cutoff_date,
+                created_at__lt=period_end,
             )
             .values("user_id")
             .distinct()
@@ -184,49 +214,82 @@ class CohortService:
         return "created" if created else "updated"
 
     @classmethod
-    def update_customer_cohort_ltv(cls):
+    def _find_customer_cohort(cls, metrics):
+        """Return the CustomerCohort a customer belongs to, or None.
+
+        Matches on acquisition month plus the channel and first product
+        category derived from the customer's first delivered order, falling
+        back to a channel-only (empty category) cohort.
         """
-        Update LTV for all customers using cohort-based calculation
-        Only updates customers with completed orders
+        first_order = metrics.user.orders.filter(status="delivered").order_by("created_at").first()
+
+        if not first_order:
+            return None
+
+        acquisition_channel = first_order.source or "unknown"
+        first_category = ""
+        first_item = first_order.items.select_related("product__category").first()
+        if first_item and first_item.product and first_item.product.category:
+            first_category = first_item.product.category.name
+
+        # Try to find exact cohort match
+        try:
+            return CustomerCohort.objects.get(
+                cohort_date=metrics.cohort_month,
+                acquisition_channel=acquisition_channel,
+                first_product_category=first_category,
+            )
+        except CustomerCohort.DoesNotExist:
+            # Try without category
+            try:
+                return CustomerCohort.objects.get(
+                    cohort_date=metrics.cohort_month,
+                    acquisition_channel=acquisition_channel,
+                    first_product_category="",
+                )
+            except CustomerCohort.DoesNotExist:
+                return None
+
+    @classmethod
+    def refresh_customer_cohort_ltv(cls, user):
+        """Refresh a single customer's cohort-based LTV without side effects.
+
+        Recalculates the metrics for only that customer's cohort and then
+        updates only that customer's CustomerMetrics, so a task queued for
+        one user never mutates other customers.
+        """
+        metrics = CustomerMetrics.objects.filter(
+            user=user, cohort_month__isnull=False, completed_orders__gte=1
+        ).first()
+
+        if metrics:
+            cohort = cls._find_customer_cohort(metrics)
+            if cohort:
+                cls.calculate_cohort_metrics(cohort_id=cohort.id)
+
+        return cls.update_customer_cohort_ltv(user=user)
+
+    @classmethod
+    def update_customer_cohort_ltv(cls, user=None):
+        """
+        Update LTV for customers using cohort-based calculation
+        Only updates customers with completed orders. When ``user`` is
+        supplied, only that customer's metrics are updated; otherwise every
+        eligible customer is processed.
         Returns: dict with update statistics
         """
         customers_updated = 0
         customers_with_cohort = CustomerMetrics.objects.filter(
             cohort_month__isnull=False, completed_orders__gte=1
         )
+        if user is not None:
+            customers_with_cohort = customers_with_cohort.filter(user=user)
 
         for metrics in customers_with_cohort:
             # Find the customer's cohort
-            first_order = (
-                metrics.user.orders.filter(status="delivered").order_by("created_at").first()
-            )
-
-            if not first_order:
+            cohort = cls._find_customer_cohort(metrics)
+            if not cohort:
                 continue
-
-            acquisition_channel = first_order.source or "unknown"
-            first_category = ""
-            first_item = first_order.items.select_related("product__category").first()
-            if first_item and first_item.product and first_item.product.category:
-                first_category = first_item.product.category.name
-
-            # Try to find exact cohort match
-            try:
-                cohort = CustomerCohort.objects.get(
-                    cohort_date=metrics.cohort_month,
-                    acquisition_channel=acquisition_channel,
-                    first_product_category=first_category,
-                )
-            except CustomerCohort.DoesNotExist:
-                # Try without category
-                try:
-                    cohort = CustomerCohort.objects.get(
-                        cohort_date=metrics.cohort_month,
-                        acquisition_channel=acquisition_channel,
-                        first_product_category="",
-                    )
-                except CustomerCohort.DoesNotExist:
-                    continue
 
             # Get the latest cohort metric
             latest_metric = cohort.metrics.order_by("-months_since_acquisition").first()
@@ -310,21 +373,22 @@ class CohortService:
                 cohort_month=cohort_date, first_purchase_date__isnull=False
             ).count()
 
-            # Calculate weighted average LTV and retention
+            # Calculate customer-weighted average LTV and retention so that a
+            # large cohort influences the month average more than a tiny one.
             total_ltv = Decimal("0")
             total_retention = 0.0
-            cohorts_with_metrics = 0
+            weighted_customer_count = 0
 
             for cohort in month_cohorts:
                 latest_metric = cohort.metrics.order_by("-months_since_acquisition").first()
                 if latest_metric:
-                    total_ltv += latest_metric.average_ltv.amount
-                    total_retention += latest_metric.retention_rate
-                    cohorts_with_metrics += 1
+                    total_ltv += latest_metric.average_ltv.amount * cohort.customer_count
+                    total_retention += latest_metric.retention_rate * cohort.customer_count
+                    weighted_customer_count += cohort.customer_count
 
-            if cohorts_with_metrics > 0:
-                avg_ltv = float(total_ltv / cohorts_with_metrics)
-                avg_retention = round((total_retention / cohorts_with_metrics) * 100, 2)
+            if weighted_customer_count > 0:
+                avg_ltv = float(total_ltv / weighted_customer_count)
+                avg_retention = round((total_retention / weighted_customer_count) * 100, 2)
             else:
                 avg_ltv = 0.0
                 avg_retention = 0.0

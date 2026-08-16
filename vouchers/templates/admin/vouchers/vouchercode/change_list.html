@@ -149,9 +149,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="voucher-results">
         {% include "admin/vouchers/vouchercode/voucher_cards.html" with vouchers=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count %}

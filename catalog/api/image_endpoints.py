@@ -5,6 +5,7 @@ Product Image API endpoints
 import json
 
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
@@ -173,7 +174,20 @@ def delete_product_image(request, product_id, image_id):
         product = Product.objects.get(pk=product_id)
         image = ProductImage.objects.get(id=image_id, product=product)
 
-        image.delete()
+        was_primary = image.is_primary
+
+        with transaction.atomic():
+            image.delete()
+
+            # If the primary image was removed, promote the first remaining
+            # image (by position) so the product still has a primary.
+            if was_primary:
+                next_image = (
+                    ProductImage.objects.filter(product=product).order_by("position", "id").first()
+                )
+                if next_image:
+                    next_image.is_primary = True
+                    next_image.save(update_fields=["is_primary"])
 
         return JsonResponse({"success": True, "message": "Image deleted"})
 

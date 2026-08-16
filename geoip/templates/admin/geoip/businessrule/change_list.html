@@ -47,9 +47,11 @@
 
     <!-- Rules Cards -->
     {% if rules %}
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div class="list-row-cards">
         {% for rule in rules %}
         <div class="list-row-card">
+            {% include "admin/includes/action_checkbox.html" with pk=rule.pk %}
             <div class="list-row-card-icon">
                 <i class="fas fa-gavel"></i>
             </div>
@@ -107,6 +109,7 @@
         </div>
         {% endfor %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
     {% else %}
     <div class="list-row-cards">
         <div class="list-row-card geoip-empty-state">

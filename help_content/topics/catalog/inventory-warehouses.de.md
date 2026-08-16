@@ -1,8 +1,8 @@
 ---
-title: Bestandsverwaltung und Lager
+title: Lagerbestand & Lager
 ---
 
-Das Lagersystem ermoeglicht es Ihnen, den Bestand ueber mehrere Standorte hinweg zu verwalten, Erfuellungsprioritaeten festzulegen und Lagerbestaende in Echtzeit zu verfolgen. Navigieren Sie zu **Einstellungen > Lizenzverwaltung** in der Seitenleiste, oder greifen Sie ueber den Inventar-Tab des Produkts auf die Lager zu.
+Das Lager-System ermöglicht die Verwaltung des Lagerbestands über mehrere Standorte, die Festlegung von Erfüllungs-Prioritäten und die Echtzeit-Überwachung des Lagerbestands. Navigieren Sie zu **Produkte > Lager** im Admin-Seitenleistenmenü, um Ihre Lagerstandorte zu verwalten.
 
 ![Lagerliste](/static/core/admin/img/help/inventory-warehouses/warehouse-list.webp)
 
@@ -10,119 +10,136 @@ Das Lagersystem ermoeglicht es Ihnen, den Bestand ueber mehrere Standorte hinweg
 
 ### Lagerliste
 
-Die Lagerseite zeigt alle Ihre Inventarstandorte als Karten mit:
+Die Lagerseite zeigt alle Ihre Lagerstandorte als Karten mit:
 
-- **Name und Code** — Lagerkennung (z. B. "Hauptlager", Code "MAIN-WH")
+- **Name und Code** — Lager-Identifikator (z. B. "Hauptlager", Code "Haupt-LS")
 - **Verkaufsregion** — Zuordnung der geografischen Region
 - **Status-Badges** — Aktiv/inaktiv, Einzelhandelsstandort
-- **Statistiken** — Gelagerte Produkte, Erfuellungsprioritaet, Prozentsatz der Bestandsreserve
-- **Standort** — Stadt und Land
-- **Letzte Aktualisierung** — Wann die Lagerbestaende zuletzt geaendert wurden
+- **Statistiken** — Gelagerte Produkte, Erfüllungspriorität, Lagerpuffer-Prozentsatz
+- **Lage** — Stadt und Land
+- **Zuletzt aktualisiert** — Zeitpunkt der letzten Änderung des Lagerbestands
 
 ### Ein Lager erstellen
 
-1. Klicken Sie auf **+ Lager hinzufuegen**
-2. Fuellen Sie die Lagerdetails aus:
-   - **Name** — Beschreibende Bezeichnung (z. B. "US-Ostlager")
-   - **Code** — Kurzer eindeutiger Identifikator (z. B. "US-EAST")
-   - **Verkaufsregion** — Einer geografischen Region fuer die Auftragsweiterleitung zuordnen
-   - **Adresse** — Vollstaendige Lageradresse fuer Versandberechnungen
-3. Konfigurieren Sie die Einstellungen:
-   - **Aktiv** — Aktivieren, um in die Auftragsabwicklung einzubeziehen
-   - **Einzelhandelsstandort** — Markieren, wenn dieses Lager auch als physisches Geschaeft dient
-   - **Erfuellungsprioritaet** — Hoehere Zahlen bedeuten hoehere Prioritaet fuer die Auftragsabwicklung
-   - **Bestandsreserve** — Prozentsatz des Bestands, der als Sicherheitspuffer reserviert wird
-4. Klicken Sie auf **Speichern**
+1. Klicken Sie auf **+ Lager hinzufügen**
+2. Füllen Sie die **Grundinformationen** aus:
+   - **Name** — Beschreibender Bezeichner (z. B. "US-East-Lager")
+   - **Code** — Kurze eindeutige Kennung (z. B. "US-EAST") — muss eindeutig in allen Lagern sein
+   - **Verkaufsregion** — Zuordnung einer geografischen Region für die Erfüllungsrouting
+   - **Aktiv** — Aktivieren, um es in die Erfüllung einzubeziehen
+3. Füllen Sie den **Adressbereich** mit der vollständigen Lageradresse aus
+4. Konfigurieren Sie **Erfüllungseinstellungen**:
+   - **Erfüllungspriorität** — Höhere Zahlen = höhere Priorität für die Bestellabwicklung
+   - **Lagerpuffer-Prozentsatz** — Prozentsatz des Lagerbestands, der als Sicherheitspuffer reserviert wird (0–100)
+   - **Versandort** — Optionalen Link zu einem Abholort hinzufügen, falls dieses Lager Kundenabholung unterstützt
+5. Konfigurieren Sie **Kundenansicht** (optional):
+   - **Anzeigename** — Kundenansichts-Bezeichnung (z. B. "Versendet aus Australien"). Leer lassen, um den Lagernamen zu verwenden.
+   - **Im Frontend anzeigen** — Diesen Lagerstandort auf Produktseiten Kunden anzeigen
+6. Konfigurieren Sie **POS / Einzelhandelsspeicher** (optional):
+   - **Einzelhandelsspeicher** — Prüfen, ob dieses Lager auch als physischer Laden mit POS-Terminals dient
+   - **POS-Anzeigename** — Kurzer Name, der im POS-Interface angezeigt wird
+   - **Lagengruppe** — einer POS-Lagengruppe zuordnen für Einstellungen Erbschaft
+7. Fügen Sie **Kontaktdaten** hinzu, falls erforderlich (Name, E-Mail, Telefon)
+8. Auf **Speichern** klicken
 
-### Erfuellungsprioritaet
+### Erfüllungspriorität
 
-Wenn eine Bestellung eingeht, waehlt das System das beste Lager basierend auf:
+Wenn eine Bestellung eingeht, wählt das System das beste Lager basierend auf:
 
-1. **Prioritaetswert** — Lager mit hoeherer Prioritaet werden bevorzugt
-2. **Bestandsverfuegbarkeit** — Es muss ausreichend Bestand vorhanden sein
-3. **Regionsabgleich** — Lager in der Region des Kunden werden bevorzugt
+1. **Prioritätswert** — Höhere Prioritätslager werden bevorzugt
+2. **Lagerbestand** — Muss ausreichend vorhanden sein
+3. **Regionenübereinstimmung** — Lager in der Region des Kunden werden bevorzugt
 
-Wenn Sie beispielsweise ein US-Lager (Prioritaet 100) und ein EU-Lager (Prioritaet 60) haben, werden US-Bestellungen zuerst aus dem US-Lager erfuellt.
+Zum Beispiel: Wenn Sie ein US-Lager (Priorität 100) und ein EU-Lager (Priorität 60) haben, werden US-Bestellungen zuerst aus dem US-Lager abgewickelt.
 
-### Bestandsreserve
+### Lagerpuffer
 
-Die Bestandsreserve haelt einen Prozentsatz des Inventars zurueck, der nicht online verkauft wird. Dies ist nuetzlich fuer:
-- Physische Einzelhandelsgeschaefte, die Ausstellungsbestand benoetigen
-- Sicherheitsbestand zur Vermeidung von Ueberverkauf
-- Reserviertes Inventar fuer Grosshandelsbestellungen
+Der Lagerpuffer reserviert einen Prozentsatz des Lagerbestands, der nicht online verkauft wird. Dies ist nützlich für:
 
-Eine Reserva von 10 % bei 100 Einheiten bedeutet, dass nur 90 Einheiten fuer Online-Bestellungen verfuegbar sind.
+- Physische Einzelhandelsgeschäfte, die Bodenbestand benötigen
+- Sicherheitsbestand, um Überverkäufe zu vermeiden
+- Reservierter Bestand für Großhandelsbestellungen
 
-## Bestandsartikel
+Ein 10 %iger Puffer auf 100 Einheiten bedeutet, dass nur 90 Einheiten für Online-Bestellungen verfügbar sind.
 
-Bestandsartikel repraesentieren den tatsaechlichen Bestand eines bestimmten Produkts in einem bestimmten Lager.
+## Lagerartikel
 
-### Lagerbestaende einsehen
+Lagerartikel repräsentieren den tatsächlichen Lagerbestand eines bestimmten Produkts an einem bestimmten Lager.
 
-1. Klicken Sie auf das **Bestandssymbol** auf einer beliebigen Lagerkarte, um die Bestandsartikel zu sehen
-2. Oder navigieren Sie zum **Inventar**-Tab eines Produkts, um den Bestand ueber alle Lager zu sehen
+### Anzeige des Lagerbestands
 
-Jeder Bestandsartikel zeigt:
+1. Klicken Sie auf das **Lager-Symbol** auf jedem Lagerkarten, um seine Lagerartikel anzuzeigen
+2. Oder navigieren Sie zu dem **Lager**-Tab eines Produkts, um den Bestand in allen Lagern anzuzeigen
+
+Jeder Lagerartikel zeigt an:
+
 - **Produktname** und Variante (falls zutreffend)
-- **Vorraaetig** — Gesamter physischer Bestand
-- **Zugewiesen** — Fuer ausstehende Bestellungen reservierte Menge
-- **Verfuegbar** — Vorraetig abzueglich zugewiesen (was verkauft werden kann)
+- **Vorrat** — Gesamtbestand physisch
+- **Zugewiesen** — Menge, die für ausstehende Bestellungen reserviert ist
+- **Verfügbar** — Vorrat minus zugewiesen (was verkauft werden kann)
 
-### Bestand hinzufuegen
+### Lagerbestand hinzufügen
 
-1. Klicken Sie in der Lagerbestandsansicht auf **Bestandsartikel hinzufuegen**
-2. Waehlen Sie das Produkt und die Variante
-3. Geben Sie die **vorraaetige** Menge ein
-4. Speichern
+1. Navigieren Sie zu **Produkte > Lagerartikel** und klicken Sie auf **+ Lagerartikel hinzufügen**, oder
+2. Öffnen Sie das Bearbeitungsformular eines Produkts und verwenden Sie den **Lagerartikel**-Inline-Bereich unten
+3. Wählen Sie das **Produkt** und das **Lager** (und optional eine **Variante** für variable Produkte)
+4. Geben Sie die **Vorratsmenge** ein
+5. Legen Sie den **Niedrigbestands-Schwellenwert** fest — dieser pro-Artikel-Schwellenwert löst eine Warnung bei niedrigem Bestand aus
+6. Speichern
 
-### Bestandsbewegungen
+### Lagerbewegungen
 
-Jede Aenderung am Inventar wird als **Bestandsbewegung** erfasst:
+Jede Änderung des Lagerbestands wird als **Lagerbewegung** protokolliert:
 
 | Bewegungstyp | Beschreibung |
-|-------------|-------------|
-| **Wareneingang** | Neuer Bestand vom Lieferanten erhalten |
-| **Verkauf** | Bestand fuer eine erfuellte Bestellung abgezogen |
-| **Retoure** | Bestand von einem Kunden zurueckgegeben |
-| **Anpassung** | Manuelle Korrektur (Zaehlabweichung) |
-| **Transfer** | Zwischen Lagern verschoben |
-| **Reservierung** | Voruebergehend fuer einen aktiven Warenkorb gehalten |
+|--------------|-------------|
+| **Eingang** | Neues Lagergut vom Lieferanten erhalten |
+| **Verkauf** | Lagergut für einen abgeschlossenen Auftrag abgezogen |
+| **Rückgabe** | Lagergut von einem Kunden zurückgegeben |
+| **Anpassung** | Manuelle Korrektur (Zählungsdifferenz) |
+| **Transfer** | Zwischen Lagerhäusern verschoben |
+| **Reservierung** | Temporär für einen aktiven Warenkorb gesperrt |
+| **Beschädigung** | Als beschädigt oder verloren angesehen |
+| **Neuzählung** | Korrigiert, um einer physischen Lagerzählung zu entsprechen |
 
-Bestandsbewegungen bieten eine vollstaendige Pruefungshistorie der Inventaraenderungen.
+Lagerbewegungen bieten einen vollständigen Audit-Trail für Lagerveränderungen. Neben der Aktion **Lagerbestände anpassen** bietet Spwig auch Massenaktionen auf der Liste der Lagerartikel, um Lagerbestände in vielen Artikeln gleichzeitig zu transferieren, abzuschreiben und neu zu zählen — siehe [Massenlageraktionen](/help/stock-bulk-actions).
 
-## Bestandsverfolgung bei Produkten
+## Lagerbestandsverfolgung bei Produkten
 
-### Bestandsverfolgung aktivieren
+### Lagerbestandsverfolgung aktivieren
 
-Im **Inventar**-Tab eines Produkts:
+Im **Lager**-Abschnitt eines Produkts:
 
-1. Aktivieren Sie **Bestand verfolgen**, um die Lagerverwaltung zu aktivieren
-2. Legen Sie den **Schwellenwert fuer niedrigen Bestand** fest — loest Benachrichtigungen aus, wenn der Bestand unter diesen Wert faellt
-3. Konfigurieren Sie **Nachbestellungen zulassen**, wenn Sie Bestellungen bei ausverkauften Produkten annehmen moechten
+1. Schalten Sie **Lagerbestand verfolgen** ein, um die Lagerverwaltung für dieses Produkt zu aktivieren
+2. Legen Sie den **Niedrigbestands-Schwellenwert** fest — löst Warnungen im Dashboard aus, wenn der Lagerbestand in einem Lager unter diesen Wert fällt
+3. Konfigurieren Sie **Zurückhaltungen zulassen**, falls Sie Bestellungen akzeptieren möchten, wenn der Artikel nicht auf Lager ist
+4. Legen Sie optional eine **Nicht-lagernd-Aktion** fest, um das Verhalten der Website oder Kategorie für dieses spezifische Produkt zu überschreiben
 
-### Multi-Lager-Bestand
+Nach Aktivierung der Verfolgung können Sie die tatsächlichen Lagerbestände über die **Lagerartikel**-Inline-Sektion am Ende des Produktformulars verwalten oder über **Produkte > Lagerartikel**.
 
-Wenn die Bestandsverfolgung aktiviert ist, zeigt der Inventar-Tab die Lagerbestaende aller Lager in einer Zusammenfassungstabelle:
+### Lagerbestand über mehrere Lagerhäuser
 
-- Gesamtbestand ueber alle Standorte
-- Aufschluesselung nach Lager
-- Verfuegbare Mengen nach Reservierungen und Zuweisungen
+Wenn die Lagerverfolgung aktiviert ist, zeigt der Lager-Tab die Lagerbestände über alle Lagerhäuser in einer Zusammenfassungstabelle an:
 
-## Benachrichtigungen bei niedrigem Bestand
+- Gesamtbestand an allen Standorten
+- Aufschlüsselung pro Lagerhaus
+- Verfügbare Mengen nach Reservierungen und Zuordnungen
 
-Das System ueberwacht automatisch die Lagerbestaende und benachrichtigt Sie, wenn:
-- Ein Produkt unter seinen **Schwellenwert fuer niedrigen Bestand** faellt
-- Ein Produkt **keinen verfuegbaren Bestand** mehr hat
+## Niedrigbestands-Warnungen
 
-Benachrichtigungen bei niedrigem Bestand erscheinen:
-- Im **Shop-Dashboard** im Bereich Erforderliche Aktionen
-- In der Produktliste mit einem visuellen Indikator
+Das System überwacht automatisch die Lagerbestände und warnt Sie, wenn:
+- Ein Produkt unter seinen **Niedrigbestands-Schwellenwert** fällt
+- Ein Produkt **keine verfügbaren Lagerbestände** mehr hat
+
+Niedrigbestands-Warnungen erscheinen auf:
+- Der **Shop-Dashboard**-Seite im Abschnitt "Aktionen erforderlich"
+- Der Produktliste mit einer visuellen Kennzeichnung
 
 ## Tipps
 
-- Beginnen Sie mit einem einzelnen Lager und fuegen Sie weitere hinzu, wenn Ihr Geschaeft waechst.
-- Legen Sie die Erfuellungsprioritaeten basierend auf Versandgeschwindigkeit und -kosten fuer jede Region fest.
-- Verwenden Sie Bestandsreserven fuer Einzelhandelsstandorte, um die Verfuegbarkeit von Ausstellungsbestand sicherzustellen.
-- Ueberpruefen Sie Bestandsbewegungen regelmaessig, um Schwund oder Abweichungen zu erkennen.
-- Legen Sie die Schwellenwerte fuer niedrigen Bestand basierend auf Ihrer Nachbestellzeit fest — wenn die Nachlieferung 2 Wochen dauert, setzen Sie den Schwellenwert so, dass er 2 Wochen Verkaeufe abdeckt.
-- Aktivieren Sie die Bestandsverfolgung vor dem Start, um Ueberverkaeufe zu vermeiden.
+- Beginnen Sie mit einem Lagerhaus und fügen Sie weitere hinzu, wenn sich Ihr Geschäft weiterentwickelt.
+- Legen Sie Fulfillment-Prioritäten basierend auf der Versandgeschwindigkeit und -kosten für jedes Gebiet fest.
+- Verwenden Sie Lagerpuffer für Einzelhandelsstandorte, um die Lagerverfügbarkeit am Regal sicherzustellen.
+- Prüfen Sie regelmäßig Lagerbewegungen, um Beschädigungen oder Diskrepanzen zu identifizieren.
+- Legen Sie Niedrigbestands-Schwellenwerte basierend auf Ihrem Nachschub-Zeithorizont fest – wenn es 2 Wochen dauert, um nachzubestellen, setzen Sie den Schwellenwert auf 2 Wochen Verkauf.
+- Aktivieren Sie die Lagerverfolgung, bevor Sie live gehen, um Überverkäufe zu vermeiden.

@@ -545,7 +545,11 @@ def import_batch(
         )
 
     if to_create:
-        VoucherCode.objects.bulk_create(to_create, batch_size=500)
+        # Save one at a time (not bulk_create) so VoucherCode.save() runs its
+        # currency derivation and gift-card balance/discount_value init on every
+        # imported row. The whole import is already wrapped in a transaction.
+        for obj in to_create:
+            obj.save()
         result.imported = len(to_create)
 
     if codes_to_update:
@@ -562,6 +566,10 @@ def import_batch(
                 if opt in mapped_row and mapped_row[opt]:
                     payload[opt] = mapped_row[opt]
             payload["migration_job_id"] = job.id
+            # Use update() (not load-mutate-save) for existing rows: calling
+            # VoucherCode.save() here would treat a zero gift_card_balance as
+            # unset and replenish a fully spent gift card back to its original
+            # value. Overwrites must never resurrect spent balances.
             VoucherCode.objects.filter(code=code).update(**payload)
         result.updated = len(codes_to_update)
 

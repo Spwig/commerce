@@ -5,6 +5,7 @@
 <div class="list-row-cards">
     {% for redemption in redemptions %}
     <div class="list-row-card redemption-card {{ redemption.status }}">
+        {% include "admin/includes/action_checkbox.html" with pk=redemption.pk %}
         <!-- Status Icon -->
         <div class="list-row-card-icon {{ redemption.status }}">
             {% if redemption.status == 'pending' %}

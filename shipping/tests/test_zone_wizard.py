@@ -18,11 +18,14 @@ class ZoneWizardStep1Test(TestCase):
 
     def setUp(self):
         self.client = Client()
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these wizard tests assume is a superuser (always exempt).
         self.user = User.objects.create_user(
             username="admin",
             email="admin@example.com",
             password="testpass123",
             is_staff=True,
+            is_superuser=True,
         )
         self.client.login(username="admin", password="testpass123")
         self.url = reverse("shipping:zone_wizard_step1")
@@ -102,11 +105,14 @@ class ZoneWizardStep2Test(TestCase):
 
     def setUp(self):
         self.client = Client()
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these wizard tests assume is a superuser (always exempt).
         self.user = User.objects.create_user(
             username="admin",
             email="admin@example.com",
             password="testpass123",
             is_staff=True,
+            is_superuser=True,
         )
         self.client.login(username="admin", password="testpass123")
         self.url = reverse("shipping:zone_wizard_step2")
@@ -274,11 +280,14 @@ class ZoneWizardStep3Test(TestCase):
 
     def setUp(self):
         self.client = Client()
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these wizard tests assume is a superuser (always exempt).
         self.user = User.objects.create_user(
             username="admin",
             email="admin@example.com",
             password="testpass123",
             is_staff=True,
+            is_superuser=True,
         )
         self.client.login(username="admin", password="testpass123")
         self.url = reverse("shipping:zone_wizard_step3")
@@ -385,11 +394,14 @@ class ZoneWizardAjaxValidationTest(TestCase):
 
     def setUp(self):
         self.client = Client()
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these wizard tests assume is a superuser (always exempt).
         self.user = User.objects.create_user(
             username="admin",
             email="admin@example.com",
             password="testpass123",
             is_staff=True,
+            is_superuser=True,
         )
         self.client.login(username="admin", password="testpass123")
 
@@ -481,11 +493,14 @@ class ZoneWizardNavigationTest(TestCase):
 
     def setUp(self):
         self.client = Client()
+        # Deny-by-default gates the admin behind a StaffRole; the store-owner
+        # persona these wizard tests assume is a superuser (always exempt).
         self.user = User.objects.create_user(
             username="admin",
             email="admin@example.com",
             password="testpass123",
             is_staff=True,
+            is_superuser=True,
         )
         self.client.login(username="admin", password="testpass123")
 

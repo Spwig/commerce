@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -23,7 +25,7 @@ class ConnectionTokenResponseSerializer(serializers.Serializer):
 class CreatePaymentIntentSerializer(serializers.Serializer):
     """Request to create a PaymentIntent for terminal collection."""
 
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0.01"))
     currency = serializers.CharField(max_length=3, required=False, allow_blank=True)
 
 
@@ -50,7 +52,7 @@ class CancelPaymentSerializer(serializers.Serializer):
 class InitiateCloudPaymentSerializer(serializers.Serializer):
     """Request to initiate a cloud-based payment on a terminal reader."""
 
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0.01"))
     currency = serializers.CharField(max_length=3, required=False, allow_blank=True)
     reader_id = serializers.CharField(
         max_length=255,

@@ -32,11 +32,12 @@
 </div>
 
 <!-- Provider Cards -->
+{% include "admin/includes/bulk_actions_open.html" %}
 <div class="list-row-cards" id="results-container">
     {% for provider in providers %}
     <div class="list-row-card{% if not provider.is_active %} disabled{% endif %}">
         <div class="list-row-card-checkbox">
-            <input type="checkbox" name="_selected_action" value="{{ provider.pk }}">
+            <input type="checkbox" name="_selected_action" value="{{ provider.pk }}" class="action-select">
         </div>
         <div class="list-row-card-icon">
             {% if provider.provider_type == 'spwig' %}
@@ -152,6 +153,7 @@
     </div>
     {% endfor %}
 </div>
+{% include "admin/includes/bulk_actions_close.html" %}
 
 
     <script id="geoip-provider-config" type="application/json">{"testUrl": "{% url 'geoip_admin:test_provider' 'PLACEHOLDER' %}", "updateUrl": "{% url 'geoip_admin:update_database' 0 %}"}</script>

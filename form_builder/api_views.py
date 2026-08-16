@@ -13,6 +13,7 @@ from rest_framework import status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from core.api.api_descriptions import (
@@ -248,6 +249,8 @@ class FormSubmitView(HeadlessAPIMixin, APIView):
 
     permission_classes = [AllowAny]
     parser_classes = [JSONParser, FormParser, MultiPartParser]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "public_write"
 
     @extend_schema(
         tags=["Form Builder"],
@@ -288,28 +291,38 @@ class FormSubmitView(HeadlessAPIMixin, APIView):
                 {"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        # Validate required fields
-        errors = {}
-        data = request.data.copy()
+        from .validation import check_spam, validate_submission
 
-        for field in form.fields.filter(is_required=True):
-            value = data.get(field.field_name)
-            if not value:
-                errors[field.field_name] = f"{field.translated_label} is required"
+        # Spam protection (honeypot / reCAPTCHA), enforced server-side. A tripped
+        # honeypot returns a benign success without storing so bots can't tune,
+        # while a failed reCAPTCHA is an explicit error.
+        spam = check_spam(form, request)
+        if spam == "spam_detected":
+            return Response({"success": True, "message": form.translated_success_message})
+        if spam == "recaptcha_failed":
+            return Response(
+                {"errors": {"__all__": _("Spam verification failed. Please try again.")}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        if errors:
-            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Normalize data: QueryDict (from FormData) stores values as lists,
-        # but we want single strings for single-value fields.
-        # Also exclude internal fields (CSRF token, honeypot).
+        # Normalize QueryDict (FormData) to a plain dict of single values, then
+        # validate against the form definition: type/length/regex/choice checks,
+        # conditional required/hidden/set-value rules, and whitelist to declared
+        # fields only (never store arbitrary posted keys).
         from django.http import QueryDict
 
-        exclude_fields = {"csrfmiddlewaretoken", "website"}
-        if isinstance(data, QueryDict):
-            clean_data = {k: v for k, v in data.dict().items() if k not in exclude_fields}
+        raw = request.data
+        if isinstance(raw, QueryDict):
+            submitted = {}
+            for key in raw:
+                vals = raw.getlist(key)
+                submitted[key] = vals if len(vals) > 1 else raw.get(key)
         else:
-            clean_data = {k: v for k, v in data.items() if k not in exclude_fields}
+            submitted = dict(raw)
+
+        clean_data, errors = validate_submission(form, submitted)
+        if errors:
+            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create response
         response = FormResponse.objects.create(
@@ -341,12 +354,11 @@ class FormSubmitView(HeadlessAPIMixin, APIView):
 
     def get_client_ip(self, request):
         """Get client IP address from request"""
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(",")[0].strip()
-        else:
-            ip = request.META.get("REMOTE_ADDR")
-        return ip
+        # Use the proxy-aware helper so a spoofed X-Forwarded-For can't poison
+        # the stored IP (it skips private/invalid hops).
+        from geoip.utils.ip_utils import get_client_ip as _trusted_client_ip
+
+        return _trusted_client_ip(request)
 
 
 class SavePartialView(HeadlessAPIMixin, APIView):
@@ -404,22 +416,41 @@ class SavePartialView(HeadlessAPIMixin, APIView):
         response_id = request.data.get("response_id")
         current_step = request.data.get("current_step", 1)
         data = request.data.get("data", {})
+        if not isinstance(data, dict):
+            return Response(
+                {"errors": {"data": "Invalid data payload"}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Keep drafts to declared field names only — never store arbitrary keys.
+        known = set(form.fields.values_list("field_name", flat=True))
+        data = {k: v for k, v in data.items() if k in known}
+
+        # Ensure a session exists so anonymous drafts can be scoped to their owner.
+        if not request.session.session_key:
+            request.session.save()
+        session_key = request.session.session_key or ""
 
         if response_id:
-            # Update existing response
+            # Scope the draft to its owner (authenticated user, else session) so a
+            # sequential id can't be used to overwrite another user's draft (IDOR).
+            lookup = {"pk": response_id, "form": form, "status": "draft"}
+            if request.user.is_authenticated:
+                lookup["user"] = request.user
+            else:
+                lookup["session_key"] = session_key
             try:
-                response = FormResponse.objects.get(pk=response_id, form=form, status="draft")
-                response.data.update(data)
-                response.current_step = current_step
-                response.save()
+                response = FormResponse.objects.get(**lookup)
             except FormResponse.DoesNotExist:
                 return Response({"error": "Response not found"}, status=status.HTTP_404_NOT_FOUND)
+            response.data.update(data)
+            response.current_step = current_step
+            response.save(update_fields=["data", "current_step"])
         else:
             # Create new draft response
             response = FormResponse.objects.create(
                 form=form,
                 user=request.user if request.user.is_authenticated else None,
-                session_key=request.session.session_key or "",
+                session_key=session_key,
                 data=data,
                 ip_address=self.get_client_ip(request),
                 current_step=current_step,
@@ -435,12 +466,11 @@ class SavePartialView(HeadlessAPIMixin, APIView):
         )
 
     def get_client_ip(self, request):
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(",")[0].strip()
-        else:
-            ip = request.META.get("REMOTE_ADDR")
-        return ip
+        # Use the proxy-aware helper so a spoofed X-Forwarded-For can't poison
+        # the stored IP (it skips private/invalid hops).
+        from geoip.utils.ip_utils import get_client_ip as _trusted_client_ip
+
+        return _trusted_client_ip(request)
 
 
 class FileUploadView(HeadlessAPIMixin, APIView):
@@ -519,21 +549,18 @@ class FileUploadView(HeadlessAPIMixin, APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check file type
-        if allowed_types:
-            ext = file.name.split(".")[-1].lower()
-            if ext not in allowed_types:
-                return Response(
-                    {"error": f"File type .{ext} not allowed"}, status=status.HTTP_400_BAD_REQUEST
-                )
+        # Deny-by-default type check + magic-byte content sniff + safe filename.
+        from .upload_security import UploadRejected, safe_stored_name, validate_upload
 
-        # Save file
-        import uuid
+        try:
+            ext = validate_upload(file, allowed_types)
+        except UploadRejected as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Save file under a sanitised, non-traversable path.
         from django.core.files.storage import default_storage
-        from django.utils.text import slugify
 
-        filename = f"{slugify(form.slug)}/{uuid.uuid4().hex[:8]}_{file.name}"
+        filename = safe_stored_name(form.slug, file.name, ext)
         path = default_storage.save(f"form_uploads/{filename}", file)
 
         return Response(

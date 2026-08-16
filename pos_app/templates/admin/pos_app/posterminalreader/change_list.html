@@ -147,9 +147,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="reader-results">
         {% include "admin/pos_app/posterminalreader/partials/reader_cards.html" with readers=cl.result_list terminals=terminals %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count > 0 %}

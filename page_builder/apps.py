@@ -6,3 +6,6 @@ class PageBuilderConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "page_builder"
     verbose_name = _("Page Builder")
+
+    def ready(self):
+        from . import signals  # noqa: F401  (register visibility-config signals)

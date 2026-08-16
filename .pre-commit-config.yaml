@@ -45,3 +45,26 @@ repos:
         language: system
         pass_filenames: false
         files: ^CLAUDE\.md$
+
+      # New staff-facing admin views must gate on a capability, not just
+      # @staff_member_required. Baseline-ratcheted: only NEW gaps fail.
+      - id: permission-coverage
+        name: permission-coverage (staff views must gate on a capability)
+        entry: python3 scripts/permission_coverage.py
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      # Django {# #} comments are single-line only; a multi-line one renders
+      # literally on the page. Catch it before it reaches a merchant.
+      - id: check-template-comments
+        name: check-template-comments (no multi-line {# #})
+        entry: python3 scripts/check_template_comments.py
+        language: system
+        files: \.html$
+        exclude: |
+          (?x)^(
+            node_modules/|
+            staticfiles/|
+            components_data/
+          )

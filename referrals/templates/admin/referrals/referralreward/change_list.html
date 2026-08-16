@@ -127,9 +127,11 @@
     </div>
 
     <!-- Results Container -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="results-container">
         {% include "admin/referrals/partials/reward_cards.html" with rewards=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     {% block pagination %}{% pagination cl %}{% endblock %}
 

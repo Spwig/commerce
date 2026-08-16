@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from catalog.models import ProductDependency
 
 
@@ -18,12 +20,11 @@ def check_hard_dependencies(product, user, cart=None):
     if not hard_deps:
         return True, []
 
-    if not user or not user.is_authenticated:
-        return False, hard_deps
+    authenticated = bool(user and user.is_authenticated)
 
     blocking = []
     for dep in hard_deps:
-        owned = _user_owns_product(user, dep.required_product_id)
+        owned = _user_owns_product(user, dep.required_product_id) if authenticated else False
         in_cart = _product_in_cart(cart, dep.required_product_id) if cart else False
         if not owned and not in_cart:
             blocking.append(dep)
@@ -51,31 +52,53 @@ def _user_owns_product(user, product_id):
     1. A paid (non-refunded) order containing the product.
     2. An active LicenseKey for the product.
     """
+    from django.utils import timezone
+
     from catalog.models import LicenseKey
     from orders.models import OrderItem
 
-    # Check order history
-    has_order = (
-        OrderItem.objects.filter(
-            order__user=user,
-            product_id=product_id,
-            order__payment_status__in=["paid", "partially_refunded"],
+    # Check order history. A fully paid order always proves ownership, but a
+    # partially refunded order only does so for items with purchased quantity
+    # not yet covered by completed item-level refunds.
+    order_items = OrderItem.objects.filter(
+        order__user=user,
+        product_id=product_id,
+        order__payment_status__in=["paid", "partially_refunded"],
+    ).select_related("order")
+    for item in order_items:
+        if item.order.payment_status == "paid":
+            return True
+        if _unrefunded_quantity(item) > 0:
+            return True
+
+    # Check active, non-expired license keys (linked through order_item → product).
+    now = timezone.now()
+    has_license = (
+        LicenseKey.objects.filter(
+            user=user,
+            status="active",
+            order_item__product_id=product_id,
         )
-        .exclude(
-            order__payment_status="refunded",
-        )
+        .filter(Q(is_lifetime=True) | Q(expires_at__isnull=True) | Q(expires_at__gt=now))
         .exists()
     )
-    if has_order:
-        return True
-
-    # Check active license keys (linked through order_item → product)
-    has_license = LicenseKey.objects.filter(
-        user=user,
-        status="active",
-        order_item__product_id=product_id,
-    ).exists()
     return has_license
+
+
+def _unrefunded_quantity(order_item):
+    """Return the purchased quantity of an order item not covered by completed refunds."""
+    from orders.models import Refund
+
+    refunded = 0
+    items_jsons = Refund.objects.filter(
+        order_id=order_item.order_id,
+        status="completed",
+    ).values_list("items_json", flat=True)
+    for items_json in items_jsons:
+        for entry in items_json or []:
+            if entry.get("order_item_id") == order_item.id:
+                refunded += entry.get("quantity", 0)
+    return order_item.quantity - refunded
 
 
 def _product_in_cart(cart, product_id):

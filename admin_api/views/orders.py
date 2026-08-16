@@ -18,7 +18,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.orders import (
     AdminOrderDetailSerializer,
@@ -386,7 +386,7 @@ def order_notes(request, order_number):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("orders", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def add_order_note(request, order_number):
     """
@@ -511,7 +511,7 @@ def add_order_note(request, order_number):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("orders", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_order_status(request, order_number):
     """
@@ -604,7 +604,7 @@ def update_order_status(request, order_number):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("orders", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_tracking(request, order_number):
     """
@@ -688,7 +688,7 @@ def update_tracking(request, order_number):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("orders", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def cancel_order(request, order_number):
     """
@@ -814,7 +814,7 @@ def cancel_order(request, order_number):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("orders", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def initiate_refund(request, order_number):
     """

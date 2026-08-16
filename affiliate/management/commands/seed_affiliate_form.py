@@ -83,7 +83,10 @@ class Command(SeedCommand):
     def seed(self) -> int:
         from form_builder.models import Form, FormField
 
-        form, created = Form.objects.get_or_create(
+        # Look up through all_objects so a soft-deleted row (still holding the
+        # database-level unique slug) is found instead of colliding on insert.
+        # get_or_create keeps this atomic under concurrent seed runs.
+        form, created = Form.all_objects.get_or_create(
             slug="affiliate-registration",
             defaults={
                 "name": "Affiliate Registration",
@@ -100,6 +103,8 @@ class Command(SeedCommand):
         )
 
         if not created:
+            if form.is_deleted:
+                form.restore()
             return 0
 
         for field_data in self.FIELDS:

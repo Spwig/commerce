@@ -75,10 +75,11 @@ class FedExOAuthClientTestCase(TestCase):
         mock_post.return_value = mock_response
 
         # Acquire token
-        token = self.client._acquire_token()
+        token, expires_in = self.client._acquire_token()
 
         # Verify token
         self.assertEqual(token, "test_access_token_xyz")
+        self.assertEqual(expires_in, 3600)
 
         # Verify request was made correctly
         mock_post.assert_called_once()

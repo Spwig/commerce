@@ -140,10 +140,15 @@
         </span>
     </div>
 
+    <!-- Bulk actions (shared card-changelist bulk-actions bar) -->
+    {% include "admin/includes/bulk_actions_open.html" %}
+
     <!-- Results Container (will be loaded via AJAX) -->
     <div id="stockitem-results">
         {% include "admin/catalog/stockitem/partials/stockitem_cards.html" with stock_items=cl.result_list %}
     </div>
+
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <!-- Pagination -->
     {% if cl.result_count %}

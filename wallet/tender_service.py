@@ -421,11 +421,10 @@ class WalletTenderService:
                 f"confirming it should be released"
             )
 
-        WalletService.credit(
+        WalletService.record_refund_transaction(
             wallet.customer,
             amount.amount,
             str(amount.currency),
-            "refund",
             reason or f"Refund of {capture.transaction_id}",
             reference_id=refund_id,
         )

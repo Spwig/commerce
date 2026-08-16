@@ -149,29 +149,38 @@ class LicenseKeyGenerator:
         if len(key) < template.min_length or len(key) > template.max_length:
             return False
 
-        # Check prefix/suffix
-        if template.prefix and not key.startswith(template.prefix):
+        # Match the key against the fully expanded template pattern. This places
+        # the configured prefix/suffix where their placeholders actually occur
+        # (rather than an unconditional startswith/endswith) and captures every
+        # embedded checksum for verification.
+        regex_pattern, checksum_info = self._build_validation_regex(template)
+        match = re.fullmatch(regex_pattern, key)
+        if not match:
             return False
-        if template.suffix and not key.endswith(template.suffix):
-            return False
 
-        # Checksum verification
-        return not ("{CHECKSUM:" in template.pattern and not self._verify_checksum(key, template))
+        # Verify embedded checksums, if any.
+        return self._verify_checksums(key, match, checksum_info)
 
-    def _verify_checksum(self, key: str, template) -> bool:
-        """Verify embedded Luhn checksum in a license key.
+    def _build_validation_regex(self, template) -> tuple[str, list]:
+        """Build a regex that matches keys produced by the template pattern.
 
-        During generation, _process_checksum_placeholders computes Luhn on
-        the pattern string that still contains the {CHECKSUM:N} placeholder.
-        To verify, we reconstruct that same string by replacing the checksum
-        digits back with the original placeholder, then recompute Luhn.
+        Static prefix/suffix values are substituted at their placeholder
+        positions before escaping, so validation mirrors generation instead of
+        assuming the prefix/suffix sits at the start/end of the key. Each
+        {CHECKSUM:N} becomes a capture group; its length and original
+        placeholder text are returned so checksums can be verified.
         """
         pattern = template.pattern
 
-        # Build a regex from the pattern to locate the checksum position
+        # Substitute static placeholders exactly as generation does.
+        if template.prefix:
+            pattern = pattern.replace("{PREFIX}", template.prefix)
+        if template.suffix:
+            pattern = pattern.replace("{SUFFIX}", template.suffix)
+
         regex_pattern = re.escape(pattern)
 
-        # Track each {CHECKSUM:N} — its digit length and original placeholder text
+        # Track each {CHECKSUM:N} — its digit length and original placeholder text.
         checksum_info = []  # list of (length, original_placeholder)
 
         def checksum_replacer(match):
@@ -183,7 +192,7 @@ class LicenseKeyGenerator:
         regex_pattern = re.sub(r"\\{CHECKSUM:(\d+)\\}", checksum_replacer, regex_pattern)
 
         # Replace other placeholders with bounded character-class quantifiers
-        # to avoid ReDoS from ambiguous adjacent .+? groups
+        # to avoid ReDoS from ambiguous adjacent .+? groups.
         charset_escaped = re.escape(template.character_set)
 
         def random_replacer(match):
@@ -193,17 +202,33 @@ class LicenseKeyGenerator:
         regex_pattern = re.sub(r"\\{RANDOM:(\d+)\\}", random_replacer, regex_pattern)
         regex_pattern = re.sub(r"\\{[A-Z_]+(?::[^\\}]+)?\\}", ".+?", regex_pattern)
 
-        match = re.fullmatch(regex_pattern, key)
-        if not match:
-            return False
+        return regex_pattern, checksum_info
 
-        # Extract and verify each embedded checksum
-        for i, (length, placeholder) in enumerate(checksum_info):
+    def _verify_checksums(self, key: str, match: re.Match, checksum_info: list) -> bool:
+        """Verify every embedded Luhn checksum in a license key.
+
+        During generation, _process_checksum_placeholders computes Luhn on the
+        pattern string while all {CHECKSUM:N} placeholders are still present. To
+        verify, we reconstruct that same string by restoring every checksum
+        capture to its original placeholder, then recompute Luhn once and
+        compare each embedded checksum against it.
+        """
+        # Reconstruct the generation-time input: replace all checksum captures
+        # with their original placeholders in a single pass.
+        segments = []
+        last = 0
+        for i, (_length, placeholder) in enumerate(checksum_info):
+            start, end = match.span(i + 1)
+            segments.append(key[last:start])
+            segments.append(placeholder)
+            last = end
+        segments.append(key[last:])
+        reconstructed = "".join(segments)
+
+        base = self._calculate_luhn_checksum(reconstructed)
+        for i, (length, _placeholder) in enumerate(checksum_info):
             embedded = match.group(i + 1)
-            # Reconstruct the string as it was when Luhn was computed:
-            # replace checksum digits with the original {CHECKSUM:N} placeholder
-            reconstructed = key[: match.start(i + 1)] + placeholder + key[match.end(i + 1) :]
-            expected = str(self._calculate_luhn_checksum(reconstructed)).zfill(length)[-length:]
+            expected = str(base).zfill(length)[-length:]
             if embedded != expected:
                 return False
 

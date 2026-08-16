@@ -104,9 +104,10 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         """
         Get License Spring product code for a Spwig product.
 
-        Merchants can map products in provider_config.
+        Merchants map products through the provider mapping UI, which stores the
+        mapping on ``LicenseProvider.product_mapping``.
         """
-        product_mapping = self.config.get("product_mapping", {})
+        product_mapping = (self.provider.product_mapping if self.provider else None) or {}
         product_code = product_mapping.get(str(product.id))
 
         if not product_code:

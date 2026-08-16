@@ -48,8 +48,21 @@ class IsStaffOrReadOnly(permissions.BasePermission):
 class IsProviderOwner(permissions.BasePermission):
     """
     Permission to only allow owners of a provider account to access it.
-    Staff can access all provider accounts.
+    Staff can access all provider accounts. Creating an account is staff-only.
     """
+
+    def has_permission(self, request, view):
+        """
+        Authorise at the view level.
+
+        DRF never runs ``has_object_permission`` for the ``create`` action, so
+        without a view-level gate any authenticated user could create a
+        provider account. Account creation is staff-only; all other actions
+        defer to ``has_object_permission`` (and the viewset's queryset scoping).
+        """
+        if getattr(view, "action", None) == "create":
+            return bool(request.user and request.user.is_staff)
+        return True
 
     def has_object_permission(self, request, view, obj):
         """Check if user owns the provider account"""

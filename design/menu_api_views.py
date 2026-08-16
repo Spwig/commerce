@@ -320,14 +320,45 @@ class MenuItemsReorderAPIView(APIView):
             item_id = item_data["id"]
             try:
                 item = MenuItem.objects.get(pk=item_id)
-                item.order = item_data["order"]
-                item.parent_id = item_data.get("parent_id")
-                item.save(update_fields=["order", "parent_id"])
-                updated_count += 1
             except MenuItem.DoesNotExist:
                 continue
 
+            parent_id = item_data.get("parent_id")
+            if parent_id is not None and not self._parent_is_valid(item, parent_id):
+                # Reject a self/foreign-menu/cycle-forming parent — keep this item at
+                # the root rather than persist a malformed hierarchy. The nav renderer
+                # is already hardened against pathological trees; this stops the bad
+                # data reaching the DB in the first place (defense in depth).
+                parent_id = None
+
+            item.order = item_data["order"]
+            item.parent_id = parent_id
+            item.save(update_fields=["order", "parent_id"])
+            updated_count += 1
+
         return Response({"success": True, "updated_count": updated_count})
+
+    @staticmethod
+    def _parent_is_valid(item, parent_id):
+        """True if ``parent_id`` may parent ``item``: it exists, is in the same menu,
+        is not the item itself, and does not already descend from the item (which
+        would form a cycle). Walks ancestors against the in-transaction DB state with
+        a hard iteration cap so a pre-existing bad chain can't loop here."""
+        if parent_id == item.pk:
+            return False
+        parent = MenuItem.objects.filter(pk=parent_id).only("id", "menu_id", "parent_id").first()
+        if parent is None or parent.menu_id != item.menu_id:
+            return False
+        # Walk up from the prospective parent; reaching `item` means a cycle.
+        node, guard = parent, 0
+        while node is not None and guard < 100:
+            if node.pk == item.pk:
+                return False
+            if node.parent_id is None:
+                return True
+            node = MenuItem.objects.filter(pk=node.parent_id).only("id", "parent_id").first()
+            guard += 1
+        return guard < 100  # ran out of guard -> treat as unsafe
 
 
 @extend_schema(

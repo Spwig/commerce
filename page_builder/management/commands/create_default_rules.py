@@ -8,7 +8,7 @@ announcements, page elements, and other visibility-controlled content.
 
 from django.core.management.base import BaseCommand
 
-from page_builder.models import RuleGroup, RuleGroupMember, VisibilityRule
+from visibility.models import RuleGroup, RuleGroupMember, VisibilityRule
 
 # Default rules: (name, description, rule_type, operator, value)
 DEFAULT_RULES = [

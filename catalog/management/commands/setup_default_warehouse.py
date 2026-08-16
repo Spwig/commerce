@@ -132,8 +132,9 @@ class Command(BaseCommand):
         if not skip_migration:
             self.stdout.write("\nStep 3: Migrating product inventory to multi-location system...")
 
-            # Get all products that track inventory
-            products = Product.objects.all()
+            # Only products that track inventory get stock records; gift cards,
+            # bundles, and other non-inventory products must not be tracked.
+            products = Product.objects.filter(track_inventory=True)
             total_products = products.count()
 
             if total_products == 0:

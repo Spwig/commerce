@@ -5,7 +5,7 @@ Unified API for subscription operations that works with both native and fallback
 
 import logging
 from datetime import datetime, timedelta
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 from django.db import transaction
@@ -942,6 +942,156 @@ class SubscriptionManager:
     # Fallback Billing Engine
     # ===========================
 
+    def charge_subscription_addon(self, subscription, currency):
+        """
+        Sum the per-cycle add-ons active on a subscription for one billing cycle.
+
+        Returns the total (Money, in the cycle ``currency``) to fold into the
+        cycle charge and record on ``BillingCycleLog.addons_amount``. Only
+        ``per_cycle`` add-ons recur here; ``one_time`` add-ons are a
+        subscription-start charge, not a recurring one. An add-on priced in a
+        different currency than the cycle is skipped and logged rather than
+        silently mixed (a wallet holds one currency; a cycle charges one too).
+        """
+        from djmoney.money import Money
+
+        total = Decimal("0.00")
+        addons = subscription.active_addons.filter(is_active=True).select_related("addon")
+        for active in addons:
+            # A merchant deactivating the PlanAddon stops billing it for existing
+            # subscribers too — deactivation should not silently keep charging.
+            if not active.addon.is_active:
+                continue
+            if active.addon.billing_frequency != "per_cycle":
+                continue
+            if str(active.addon.price.currency) != str(currency):
+                logger.warning(
+                    "Add-on %s is priced in %s but subscription %s bills in %s; "
+                    "skipping it this cycle rather than mixing currencies.",
+                    active.addon_id,
+                    active.addon.price.currency,
+                    subscription.subscription_id,
+                    currency,
+                )
+                continue
+            total += active.calculate_cost()
+        return Money(total, currency)
+
+    def apply_subscription_discount(self, subscription, base_amount):
+        """
+        Compute the discount to apply to a cycle's base amount.
+
+        Sums every active discount on the subscription against ``base_amount``,
+        capping the running total so a cycle can never discount below zero, and
+        returns ``(discount_amount: Money, applied_discounts: list)``. This is the
+        pure calculation used to price the cycle and populate
+        ``BillingCycleLog.discount_amount``; the returned discounts are *consumed*
+        (remaining-cycle decrement / deactivation) only after the charge actually
+        succeeds — see ``_consume_applied_discounts`` — so a skipped or failed
+        cycle never burns a customer's remaining discount cycles.
+
+        Currency note: ``SubscriptionDiscount.value`` has no currency (a bare
+        Decimal). ``percentage`` is currency-neutral; ``fixed_amount`` /
+        ``fixed_price_override`` are read in the cycle currency, so "$10 off"
+        authored on a USD plan reads as "10 off" on a EUR cycle. It is capped at
+        the base (never negative), so it can mis-price but not corrupt. TODO: add a
+        currency to SubscriptionDiscount (or pin fixed-value discounts to the plan
+        currency, skip-with-log like add-ons) to close this model gap.
+        """
+        from djmoney.money import Money
+
+        now = timezone.now()
+        base = base_amount.amount
+        total = Decimal("0.00")
+        applied = []
+        for discount in subscription.discounts.filter(is_active=True).order_by("applied_at"):
+            if discount.expires_at and discount.expires_at <= now:
+                continue  # expired; priced as inactive (left for a cleanup pass)
+            # Each discount is computed against the ORIGINAL base and the results
+            # are summed (then capped below) — NOT compounded on the remaining
+            # balance, which would silently under-apply stacked discounts (two 10%
+            # would give 19 off a 100 cycle instead of 20).
+            amount = Decimal(str(discount.calculate_discount_amount(base)))
+            # Quantize to the minor unit BEFORE it can reach the gateway: a
+            # percentage discount (e.g. 10% of 9.99) is otherwise sub-cent, and
+            # the charged amount would not match the 2dp value the log stores.
+            amount = amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            if amount <= 0:
+                # A discount that reduces the charge by nothing this cycle (a 0%
+                # coupon, or a tiny percentage that rounds to zero on a low-priced
+                # plan) is NOT recorded as applied — so a limited once/repeating
+                # discount is never burned for a cycle it gave no benefit on.
+                continue
+            total += amount
+            applied.append(discount)
+        # The summed discount can never take a cycle below zero.
+        total = min(total, base)
+        return Money(total, base_amount.currency), applied
+
+    def consume_cycle_discounts(self, subscription, billing_log):
+        """
+        Burn one cycle of each discount that priced THIS cycle.
+
+        Consumes exactly the discounts recorded on the log at pricing time
+        (``billing_breakdown["applied_discount_ids"]``) — NOT the subscription's
+        current active discounts. Tying it to the log's own record means a discount
+        added or removed between a failed attempt and its recovery is never
+        mis-consumed: the recovery charges the amount the log stored, and burns only
+        the discounts that produced it. Call on whichever path first marks the cycle
+        successfully charged (initial engine run, ``retry_billing_cycle``, or
+        dunning); a cycle only becomes successful once, so each is burned exactly
+        one cycle.
+        """
+        from .models import BillingCycleLog, SubscriptionDiscount
+
+        if billing_log is None:
+            return
+        # Lock the log row and gate on a one-shot marker so two workers recovering
+        # the SAME cycle (a scheduled retry racing the dunning sweep, or a
+        # duplicated task) can never burn a repeating discount twice for one billed
+        # cycle. The loser blocks on the lock, then sees the marker and skips.
+        with transaction.atomic():
+            log = BillingCycleLog.objects.select_for_update().get(pk=billing_log.pk)
+            breakdown = log.billing_breakdown or {}
+            if breakdown.get("discounts_consumed"):
+                return
+            ids = breakdown.get("applied_discount_ids") or []
+            if ids:
+                # Lock the discount rows too, so a different cycle's concurrent
+                # recovery can't lost-update the same remaining_cycles counter.
+                discounts = list(
+                    SubscriptionDiscount.objects.select_for_update().filter(
+                        id__in=ids, is_active=True
+                    )
+                )
+                self._consume_applied_discounts(discounts)
+            breakdown["discounts_consumed"] = True
+            log.billing_breakdown = breakdown
+            log.save(update_fields=["billing_breakdown"])
+            billing_log.billing_breakdown = breakdown
+
+    def _consume_applied_discounts(self, applied_discounts):
+        """
+        Burn one cycle of each applied discount — call ONLY after a cycle's charge
+        succeeds. ``forever`` discounts are untouched; ``once``/``repeating`` ones
+        decrement their remaining cycles (seeding a ``repeating`` counter from
+        ``duration_months`` on first use) and deactivate when exhausted.
+        """
+        for discount in applied_discounts:
+            if discount.duration_type == "forever":
+                continue
+            if discount.remaining_cycles is None:
+                if discount.duration_type == "repeating" and discount.duration_months:
+                    discount.remaining_cycles = max(0, discount.duration_months - 1)
+                    discount.is_active = discount.remaining_cycles > 0
+                else:  # "once", or a repeating discount with no configured length
+                    discount.is_active = False
+                discount.save(update_fields=["remaining_cycles", "is_active"])
+            else:
+                discount.remaining_cycles = max(0, discount.remaining_cycles - 1)
+                discount.is_active = discount.remaining_cycles > 0
+                discount.save(update_fields=["remaining_cycles", "is_active"])
+
     def process_billing_cycle(self, subscription: CustomerSubscription) -> BillingCycleLog:
         """
         Process a billing cycle for fallback subscriptions.
@@ -1023,22 +1173,42 @@ class SubscriptionManager:
         )
         base_amount = Money(unit_price.amount * quantity, unit_price.currency)
 
+        # Recurring add-ons and active discounts fold into the cycle price before
+        # any downgrade proration credit. Discount computation is pure here — the
+        # discounts are only *consumed* (remaining-cycle decrement) after the
+        # charge succeeds, so a skipped/failed cycle never burns them.
+        addons_amount = self.charge_subscription_addon(subscription, base_amount.currency)
+        discount_amount, applied_discounts = self.apply_subscription_discount(
+            subscription, base_amount
+        )
+        pre_proration_amount = Money(
+            max(
+                Decimal("0.00"),
+                base_amount.amount + addons_amount.amount - discount_amount.amount,
+            ),
+            base_amount.currency,
+        )
+
         # Apply proration credit from downgrade if available
         proration_adjustment = Money(Decimal("0.00"), base_amount.currency)
-        charge_amount = base_amount
+        charge_amount = pre_proration_amount
         remaining_credit = None
 
         if subscription.proration_credit and subscription.proration_credit.amount > 0:
             credit = subscription.proration_credit
-            if credit.amount >= base_amount.amount:
+            if credit.amount >= pre_proration_amount.amount:
                 # Credit covers entire bill
-                proration_adjustment = Money(-base_amount.amount, base_amount.currency)
-                remaining_credit = Money(credit.amount - base_amount.amount, credit.currency)
+                proration_adjustment = Money(-pre_proration_amount.amount, base_amount.currency)
+                remaining_credit = Money(
+                    credit.amount - pre_proration_amount.amount, credit.currency
+                )
                 charge_amount = Money(Decimal("0.00"), base_amount.currency)
             else:
                 # Partial credit
                 proration_adjustment = Money(-credit.amount, credit.currency)
-                charge_amount = Money(base_amount.amount - credit.amount, base_amount.currency)
+                charge_amount = Money(
+                    pre_proration_amount.amount - credit.amount, base_amount.currency
+                )
                 remaining_credit = Money(Decimal("0.00"), credit.currency)
 
         # Create billing log. The (subscription, cycle_number) unique constraint
@@ -1054,9 +1224,17 @@ class SubscriptionManager:
                     cycle_number=cycle_number,
                     billing_date=timezone.now(),
                     base_amount=base_amount,
+                    addons_amount=addons_amount,
+                    discount_amount=discount_amount,
                     proration_amount=proration_adjustment,
                     total_amount=charge_amount,
                     status="processing",
+                    # Record WHICH discounts priced this cycle, so a later retry /
+                    # dunning recovery burns exactly those — never a discount added
+                    # to the subscription after this attempt failed.
+                    billing_breakdown={
+                        "applied_discount_ids": [str(d.id) for d in applied_discounts]
+                    },
                 )
         except IntegrityError:
             logger.info(
@@ -1069,7 +1247,10 @@ class SubscriptionManager:
             if charge_amount.amount <= 0:
                 # Credit covers full bill — no charge needed
                 billing_log.status = "successful"
+                # Merge, don't overwrite — the applied_discount_ids recorded at
+                # creation must survive for consume_cycle_discounts.
                 billing_log.billing_breakdown = {
+                    **(billing_log.billing_breakdown or {}),
                     "proration_credit_applied": str(abs(proration_adjustment.amount)),
                     "charge_waived": True,
                 }
@@ -1111,6 +1292,12 @@ class SubscriptionManager:
                 # Clear proration credit after successful application
                 if remaining_credit is not None:
                     subscription.proration_credit = remaining_credit
+
+                # Burn one cycle of each discount that priced this charge — only
+                # now that the charge has actually succeeded. Uses the same
+                # log-recorded path as retry/dunning recovery so consumption is
+                # identical however the cycle is settled.
+                self.consume_cycle_discounts(subscription, billing_log)
 
                 # Update subscription
                 subscription.billing_cycle_count = cycle_number
@@ -1212,14 +1399,25 @@ class SubscriptionManager:
 
         origin = subscription.originating_order
         quantity = subscription.quantity or 1
-        # Per-unit price × quantity is the nominal line value; `charged` is what
-        # the engine actually took (line value minus any proration credit). We
-        # represent that credit as an order discount so the order is internally
-        # consistent: subtotal - discount == total_amount == amount_paid.
+        # `gross` is the cycle's line value BEFORE reductions: the product line
+        # (unit × quantity) plus any recurring add-ons folded onto it — add-ons
+        # have no product of their own and OrderItem requires a product, so they
+        # ride on the fulfilment line rather than a separate row. `charged` is what
+        # the engine actually took (gross minus discounts and any proration
+        # credit). Representing the reductions as an order discount keeps the order
+        # internally consistent AND matched to the charge:
+        # subtotal(gross) - discount == total_amount == amount_paid == charged.
         unit_price = subscription.pricing_tier.calculate_price(product, subscription.variant)
         line_total = Money(unit_price.amount * quantity, unit_price.currency)
-        charged = billing_log.total_amount or line_total
-        discount_amt = line_total - charged
+        addons_amount = billing_log.addons_amount or Money(Decimal("0.00"), line_total.currency)
+        if str(addons_amount.currency) != str(line_total.currency):
+            addons_amount = Money(Decimal("0.00"), line_total.currency)
+        gross = Money(line_total.amount + addons_amount.amount, line_total.currency)
+        # Explicit None check, NOT `or`: a fully-discounted / credit-covered cycle
+        # has total_amount == Money(0), which is falsy — `or gross` would record a
+        # nonzero renewal-order total for a charge that was actually waived.
+        charged = billing_log.total_amount if billing_log.total_amount is not None else gross
+        discount_amt = gross - charged
         if discount_amt.amount < 0:
             discount_amt = Money(Decimal("0.00"), line_total.currency)
 
@@ -1249,7 +1447,7 @@ class SubscriptionManager:
             billing_state=_copy("billing_state"),
             billing_postal_code=_copy("billing_postal_code"),
             billing_country=_copy("billing_country"),
-            subtotal=line_total,
+            subtotal=gross,
             discount_amount=discount_amt,
             total_amount=charged,
             channel=channel,
@@ -1257,6 +1455,7 @@ class SubscriptionManager:
                 "is_subscription_renewal": True,
                 "subscription_id": str(subscription.subscription_id),
                 "subscription_cycle": billing_log.cycle_number,
+                "addons_amount": str(addons_amount.amount),
             },
         )
 
@@ -1275,7 +1474,9 @@ class SubscriptionManager:
             sku=subscription.variant.sku if subscription.variant else product.sku,
             quantity=quantity,
             unit_price=unit_price,
-            total_price=line_total,
+            # Fulfilment line carries the cycle's add-ons (they have no product of
+            # their own), so the item total matches the order subtotal (gross).
+            total_price=gross,
         )
 
         # Link the cycle to the order for the audit trail.
@@ -1297,7 +1498,7 @@ class SubscriptionManager:
         # Order-item base amounts (single-currency default: base == amount).
         if order.base_currency == order.customer_currency:
             item.unit_price_base = unit_price.amount
-            item.total_price_base = line_total.amount
+            item.total_price_base = gross.amount
             item.save(update_fields=["unit_price_base", "total_price_base"])
 
         # Full save LAST so the paid-order fulfilment receivers fire with the

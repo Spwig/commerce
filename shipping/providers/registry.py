@@ -39,6 +39,10 @@ class ProviderRegistry:
 
     # Class-level cache of loaded providers
     _providers: dict[str, type[ProviderBase]] = {}
+    # Maps a component slug to the provider_key it was registered under, so
+    # lookups by component slug resolve even when the manifest provider_key
+    # differs from ComponentRegistry.slug.
+    _slug_to_key: dict[str, str] = {}
     _discovered: bool = False
     _last_loaded_at: float = 0
 
@@ -129,9 +133,11 @@ class ProviderRegistry:
             if not issubclass(provider_class, ProviderBase):
                 raise ValueError("Provider class must inherit from ProviderBase")
 
-            # Register provider
+            # Register provider under its manifest key, and record the
+            # component slug so slug-based lookups resolve to the same class.
             provider_key = manifest.get("provider_key", component.slug)
             cls._providers[provider_key] = provider_class
+            cls._slug_to_key[component.slug] = provider_key
 
             logger.info(
                 f"Loaded provider: {provider_key} ({provider_class_name}) from {component_dir}"
@@ -202,7 +208,14 @@ class ProviderRegistry:
             logger.info("Cache marker detected — reloading shipping providers from disk")
             cls.reload_providers()
 
-        return cls._providers.get(provider_key)
+        provider_class = cls._providers.get(provider_key)
+        if provider_class is None:
+            # Fall back to a component-slug lookup for callers that pass
+            # component.slug rather than the manifest provider_key.
+            mapped_key = cls._slug_to_key.get(provider_key)
+            if mapped_key is not None:
+                provider_class = cls._providers.get(mapped_key)
+        return provider_class
 
     @classmethod
     def list_providers(cls) -> dict[str, type[ProviderBase]]:
@@ -280,6 +293,7 @@ class ProviderRegistry:
         Useful during development or after installing new provider components.
         """
         cls._providers.clear()
+        cls._slug_to_key.clear()
         cls._discovered = False
         cls.discover_providers()
 

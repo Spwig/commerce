@@ -314,11 +314,14 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(response => {
         const contentType = response.headers.get('Content-Type') || '';
         if (contentType.includes('text/csv')) {
+          const disposition = response.headers.get('Content-Disposition') || '';
+          const match = disposition.match(/filename="?([^"]+)"?/);
+          const filename = match ? match[1] : 'products_export.csv';
           return response.blob().then(blob => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'products_export.csv';
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             a.remove();

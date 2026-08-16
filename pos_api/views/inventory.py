@@ -8,7 +8,7 @@ a valid POS license.
 
 import math
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
@@ -25,6 +25,7 @@ from core.api.api_descriptions import (
 )
 from pos_api.permissions import IsStaffUser, check_pos_permission
 from pos_api.serializers.inventory import (
+    _INT_FIELD_MAX,
     POSCrossLocationStockSerializer,
     POSStockAdjustmentSerializer,
     POSStockItemSerializer,
@@ -36,21 +37,65 @@ from pos_api.views.utils import get_warehouse_id
 _INVENTORY_TYPES = ("simple", "variable", "customizable")
 
 
+class _QueryParamError(Exception):
+    """Raised when a request query parameter fails validation."""
+
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+
+def _error_response(code, message, http_status=status.HTTP_400_BAD_REQUEST):
+    """Build the standard POS error envelope response."""
+    return Response(
+        {"success": False, "error": {"code": code, "message": message}},
+        status=http_status,
+    )
+
+
+def _parse_int_param(request, name, *, default=None, minimum=None, maximum=None):
+    """Parse an integer query parameter, enforcing optional inclusive bounds.
+
+    Raises ``_QueryParamError`` for malformed or out-of-range values so the
+    caller can return HTTP 400 instead of crashing.
+    """
+    raw = request.query_params.get(name)
+    if raw is None or raw == "":
+        return default
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        raise _QueryParamError(f"'{name}' must be an integer.") from None
+    if minimum is not None and value < minimum:
+        raise _QueryParamError(f"'{name}' must be >= {minimum}.")
+    if maximum is not None and value > maximum:
+        raise _QueryParamError(f"'{name}' must be <= {maximum}.")
+    return value
+
+
+def _parse_pagination(request, *, default_page_size, max_page_size):
+    """Validate and return ``(page, page_size)`` for a paginated listing view.
+
+    Malformed or non-positive values are rejected, while an over-large
+    ``page_size`` is capped at ``max_page_size`` (preserving prior behaviour)
+    rather than being rejected.
+    """
+    page = _parse_int_param(request, "page", default=1, minimum=1)
+    page_size = _parse_int_param(request, "page_size", default=default_page_size, minimum=1)
+    return page, min(page_size, max_page_size)
+
+
 def _get_product_image(product):
-    """Get the primary image thumbnail URL for a product."""
-    primary_images = getattr(product, "_primary_images", None)
-    if primary_images:
-        img = primary_images[0]
+    """Get the primary image thumbnail URL for a product.
+
+    Relies on the caller prefetching images (primary first) into
+    ``_primary_images``; issues no per-product query here to avoid N+1 loads.
+    """
+    images = getattr(product, "_primary_images", None)
+    if images:
+        img = images[0]
         if img.media_asset:
             return img.media_asset.get_thumbnail("medium")
-    try:
-        img = product.images.select_related("media_asset").filter(is_primary=True).first()
-        if not img:
-            img = product.images.select_related("media_asset").first()
-        if img and img.media_asset:
-            return img.media_asset.get_thumbnail("medium")
-    except Exception:
-        pass
     return None
 
 
@@ -129,10 +174,12 @@ def stock_levels(request):
     low_stock_only = request.query_params.get("low_stock_only", "").lower() in ("true", "1")
     no_stock_only = request.query_params.get("no_stock_only", "").lower() in ("true", "1")
 
-    # --- Image prefetch for products ---
+    # --- Image prefetch for products (primary first, no per-product fallback) ---
     image_prefetch = Prefetch(
         "images",
-        queryset=ProductImage.objects.select_related("media_asset").filter(is_primary=True)[:1],
+        queryset=ProductImage.objects.select_related("media_asset").order_by(
+            "-is_primary", "position", "id"
+        ),
         to_attr="_primary_images",
     )
 
@@ -158,9 +205,9 @@ def stock_levels(request):
         .prefetch_related(
             Prefetch(
                 "product__images",
-                queryset=ProductImage.objects.select_related("media_asset").filter(is_primary=True)[
-                    :1
-                ],
+                queryset=ProductImage.objects.select_related("media_asset").order_by(
+                    "-is_primary", "position", "id"
+                ),
                 to_attr="_primary_images",
             ),
         )
@@ -256,8 +303,10 @@ def stock_levels(request):
     )
 
     # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 50)), 200)
+    try:
+        page, page_size = _parse_pagination(request, default_page_size=50, max_page_size=200)
+    except _QueryParamError as exc:
+        return _error_response("VALIDATION_ERROR", exc.message)
     total = len(results)
     start = (page - 1) * page_size
     end = start + page_size
@@ -325,7 +374,7 @@ def stock_detail(request, product_id):
     stock_items = StockItem.objects.filter(
         product=product,
         warehouse_id=warehouse_id,
-    ).select_related("variant")
+    ).select_related("variant", "product")
 
     results = []
     for si in stock_items:
@@ -339,7 +388,7 @@ def stock_detail(request, product_id):
                 "on_hand": si.on_hand,
                 "allocated": si.allocated,
                 "available": si.available,
-                "low_stock_threshold": si.low_stock_threshold,
+                "low_stock_threshold": si.effective_low_stock_threshold,
                 "is_low_stock": si.is_low_stock,
             }
         )
@@ -433,10 +482,10 @@ def cross_location_stock(request, product_id):
         distance_km = None
         if (
             current_wh
-            and current_wh.latitude
-            and current_wh.longitude
-            and wh.latitude
-            and wh.longitude
+            and current_wh.latitude is not None
+            and current_wh.longitude is not None
+            and wh.latitude is not None
+            and wh.longitude is not None
         ):
             distance_km = round(
                 _haversine_km(
@@ -525,7 +574,7 @@ _ADJUSTMENT_TYPE_MAP = {
 @permission_classes([IsStaffUser])
 def adjust_stock(request):
     """Adjust stock for a product in the terminal's warehouse."""
-    from catalog.models import Product, StockItem, StockMovement
+    from catalog.models import Product, ProductVariant, StockItem, StockMovement
 
     err = check_pos_permission(request, "pos_stock_adjustment")
     if err:
@@ -565,47 +614,53 @@ def adjust_stock(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Idempotency check
-    if idempotency_key and StockMovement.objects.filter(reference_key=idempotency_key).exists():
-        return Response(
-            {
-                "success": True,
-                "message": "Adjustment already processed (duplicate idempotency key).",
-                "duplicate": True,
-            }
-        )
-
-    # Validate product exists
+    # Validate the product carries inventory, and that variant usage matches
+    # the product type (a variant must belong to this product; variable
+    # products require one, non-variable products reject one).
     try:
-        Product.objects.get(id=product_id)
+        product = Product.objects.get(id=product_id, product_type__in=_INVENTORY_TYPES)
     except Product.DoesNotExist:
-        return Response(
-            {"success": False, "error": {"code": "NOT_FOUND", "message": "Product not found."}},
-            status=status.HTTP_404_NOT_FOUND,
-        )
+        return _error_response("NOT_FOUND", "Product not found.", status.HTTP_404_NOT_FOUND)
 
-    # Build stock item lookup
-    stock_filter = {"product_id": product_id, "warehouse_id": warehouse_id}
-    if variant_id:
-        stock_filter["variant_id"] = variant_id
-    else:
-        stock_filter["variant__isnull"] = True
+    if product.product_type == "variable":
+        if not variant_id:
+            return _error_response("VALIDATION_ERROR", "This product requires a variant_id.")
+        if not ProductVariant.objects.filter(id=variant_id, product_id=product_id).exists():
+            return _error_response(
+                "NOT_FOUND", "Variant not found for this product.", status.HTTP_404_NOT_FOUND
+            )
+    elif variant_id:
+        return _error_response("VALIDATION_ERROR", "This product does not support variants.")
 
     with transaction.atomic():
-        stock_item = StockItem.objects.select_for_update().filter(**stock_filter).first()
-
-        # Auto-create StockItem if none exists (products without stock
-        # records now appear in the inventory grid)
-        if not stock_item:
-            stock_item = StockItem.objects.create(
-                product_id=product_id,
-                warehouse_id=warehouse_id,
-                variant_id=variant_id,
-                on_hand=0,
-                allocated=0,
+        # Concurrency-safe get-or-create of the stock row. The
+        # (product, warehouse, variant) unique constraint lets a racing create
+        # surface as an IntegrityError, which we treat as "already exists" and
+        # re-fetch. We then lock the row with select_for_update so concurrent
+        # adjustments — and idempotent retries — are serialized on it.
+        lookup = {
+            "product_id": product_id,
+            "warehouse_id": warehouse_id,
+            "variant_id": variant_id,
+        }
+        try:
+            stock_item, _ = StockItem.objects.get_or_create(
+                defaults={"on_hand": 0, "allocated": 0}, **lookup
             )
-            # Re-lock
-            stock_item = StockItem.objects.select_for_update().get(pk=stock_item.pk)
+        except IntegrityError:
+            stock_item = StockItem.objects.get(**lookup)
+        stock_item = StockItem.objects.select_for_update().get(pk=stock_item.pk)
+
+        # Idempotency check, re-evaluated under the row lock so a duplicate
+        # retry cannot apply the adjustment twice.
+        if idempotency_key and StockMovement.objects.filter(reference_key=idempotency_key).exists():
+            return Response(
+                {
+                    "success": True,
+                    "message": "Adjustment already processed (duplicate idempotency key).",
+                    "duplicate": True,
+                }
+            )
 
         old_on_hand = stock_item.on_hand
 
@@ -633,6 +688,24 @@ def adjust_stock(request):
             delta = 0
 
         new_on_hand = old_on_hand + delta
+
+        # Bounding quantity alone is not enough: receive/return add to an
+        # existing positive on_hand, so the resulting total can still exceed the
+        # 32-bit IntegerField range and overflow on write. Reject that here.
+        if new_on_hand > _INT_FIELD_MAX:
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "QUANTITY_OUT_OF_RANGE",
+                        "message": (
+                            f"Resulting stock ({new_on_hand}) exceeds the maximum "
+                            f"of {_INT_FIELD_MAX}."
+                        ),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Use .filter().update() to bypass StockItem post_save signal
         StockItem.objects.filter(pk=stock_item.pk).update(on_hand=new_on_hand)
@@ -734,9 +807,12 @@ def stock_movements(request):
     )
 
     # Filter by product
-    product_id = request.query_params.get("product_id")
-    if product_id:
-        movements = movements.filter(stock_item__product_id=int(product_id))
+    try:
+        product_id = _parse_int_param(request, "product_id")
+    except _QueryParamError as exc:
+        return _error_response("VALIDATION_ERROR", exc.message)
+    if product_id is not None:
+        movements = movements.filter(stock_item__product_id=product_id)
 
     # Filter by movement type
     type_filter = request.query_params.get("type", "").strip()
@@ -746,8 +822,10 @@ def stock_movements(request):
             movements = movements.filter(movement_type__in=types)
 
     # Pagination
-    page = int(request.query_params.get("page", 1))
-    page_size = min(int(request.query_params.get("page_size", 20)), 100)
+    try:
+        page, page_size = _parse_pagination(request, default_page_size=20, max_page_size=100)
+    except _QueryParamError as exc:
+        return _error_response("VALIDATION_ERROR", exc.message)
     start = (page - 1) * page_size
     end = start + page_size
 

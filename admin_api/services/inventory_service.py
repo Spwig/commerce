@@ -752,12 +752,17 @@ class InventoryService:
 
         now = timezone.now()
         today = now.date()
-        thirty_days_ago = now - timedelta(days=30)
 
         # Get inventory settings from SiteSettings
         site_settings = cls._get_site_settings()
         lead_days = getattr(site_settings, "default_reorder_lead_days", 14)
         safety_multiplier = getattr(site_settings, "safety_stock_multiplier", 1.5)
+        # Sales-velocity look-back window (merchant-configurable). Guard against a
+        # zero window so the daily-velocity divisor below can't divide by zero.
+        velocity_window = max(
+            1, getattr(site_settings, "velocity_calculation_window_days", 30) or 30
+        )
+        velocity_window_start = now - timedelta(days=velocity_window)
 
         # All tracked, published products with their available stock
         products_qs = (
@@ -776,11 +781,11 @@ class InventoryService:
             )
         )
 
-        # Get 30-day velocity for all tracked products
+        # Get sales velocity over the configured window for all tracked products
         velocity_data = dict(
             StockMovement.objects.filter(
                 movement_type="fulfillment",
-                created_at__gte=thirty_days_ago,
+                created_at__gte=velocity_window_start,
                 stock_item__product__status="published",
                 stock_item__product__track_inventory=True,
             )
@@ -795,9 +800,9 @@ class InventoryService:
         suggestions = []
         for product in products_qs:
             available = product._available_stock
-            sold_30d = velocity_data.get(product.id, 0) or 0
+            sold_in_window = velocity_data.get(product.id, 0) or 0
 
-            if sold_30d == 0:
+            if sold_in_window == 0:
                 # No sales velocity - skip unless already out of stock
                 if available > 0:
                     continue
@@ -805,7 +810,8 @@ class InventoryService:
                 vel_daily = Decimal("0")
                 days_remaining = Decimal("0")
             else:
-                vel_daily = Decimal(str(sold_30d)) / Decimal("30")
+                # Daily velocity divisor must match the look-back window above.
+                vel_daily = Decimal(str(sold_in_window)) / Decimal(str(velocity_window))
                 if available > 0:
                     days_remaining = Decimal(str(available)) / vel_daily
                 else:

@@ -14,6 +14,10 @@ from .push_client import PushAuthError, PushClient, PushClientError, PushRateLim
 
 logger = logging.getLogger(__name__)
 
+# The push service accepts at most 100 tokens per request and silently
+# truncates anything beyond that, so batches must be split into chunks.
+MAX_TOKENS_PER_REQUEST = 100
+
 
 class PushNotificationService:
     """
@@ -80,29 +84,44 @@ class PushNotificationService:
 
         try:
             client = cls._get_client()
-            result = client.send_notification(
-                tokens=tokens,
-                title=title,
-                body=body,
-                data=data,
-                sound=sound,
-                badge=badge,
-                sandbox=cls.USE_SANDBOX,
-            )
+
+            # The client truncates each request to MAX_TOKENS_PER_REQUEST, so
+            # send the tokens in chunks and aggregate the results; otherwise
+            # every token beyond the first chunk is silently dropped.
+            sent = 0
+            failed = 0
+            results: list[dict[str, Any]] = []
+            error: str | None = None
+
+            for start in range(0, len(tokens), MAX_TOKENS_PER_REQUEST):
+                chunk = tokens[start : start + MAX_TOKENS_PER_REQUEST]
+                result = client.send_notification(
+                    tokens=chunk,
+                    title=title,
+                    body=body,
+                    data=data,
+                    sound=sound,
+                    badge=badge,
+                    sandbox=cls.USE_SANDBOX,
+                )
+                sent += result.sent
+                failed += result.failed
+                results.extend(result.results)
+                # Surface the first transport-level failure (timeout, network
+                # error) that the client returns as a PushResult rather than
+                # raising, so send_notification can flag the batch for retry.
+                if error is None:
+                    error = result.error
 
             # Collect invalid tokens that should be removed
-            invalid_tokens = [
-                r["token"] for r in result.results if r.get("should_remove_token", False)
-            ]
+            invalid_tokens = [r["token"] for r in results if r.get("should_remove_token", False)]
 
             return {
-                "sent": result.sent,
-                "failed": result.failed,
-                "results": result.results,
+                "sent": sent,
+                "failed": failed,
+                "results": results,
                 "invalid_tokens": invalid_tokens,
-                # Surface transport-level failures (timeouts, network errors)
-                # that the client returns as a PushResult rather than raising.
-                "error": result.error,
+                "error": error,
             }
 
         except PushAuthError as e:
@@ -298,6 +317,43 @@ class PushNotificationService:
             "product_name": product.name,
             "sku": product.sku,
             "current_stock": current_stock,
+        }
+
+        return cls.send_notification(
+            notification_type="low_stock",
+            title=title,
+            body=body,
+            data=data,
+        )
+
+    @classmethod
+    def send_low_stock_digest_notification(cls, products: list, cadence: str = "daily") -> int:
+        """
+        Send a single digest notification summarising products low on stock.
+
+        Args:
+            products: List of product dicts (from InventoryService.get_low_stock_products)
+            cadence: 'daily' or 'weekly' — used for the message wording
+
+        Returns:
+            Number of notifications sent
+        """
+        count = len(products)
+        if count == 0:
+            return 0
+
+        period = "today" if cadence == "daily" else "this week"
+        title = "Low Stock Digest"
+        if count == 1:
+            body = f"1 product is low on stock {period}."
+        else:
+            body = f"{count} products are low on stock {period}."
+
+        data = {
+            "type": "low_stock_digest",
+            "cadence": cadence,
+            "count": count,
+            "product_ids": [p.get("product_id") for p in products if p.get("product_id")][:50],
         }
 
         return cls.send_notification(

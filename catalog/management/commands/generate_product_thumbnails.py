@@ -3,6 +3,7 @@ Management command to generate thumbnails and WebP versions for product images
 """
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from tqdm import tqdm
 
 from catalog.models import ProductImage
@@ -75,10 +76,6 @@ class Command(BaseCommand):
                     if existing and not regenerate:
                         continue
 
-                    # Delete existing if regenerating
-                    if existing and regenerate:
-                        existing.delete()
-
                     # Generate thumbnail
                     try:
                         original_content, webp_content = processor.generate_thumbnail(
@@ -86,23 +83,41 @@ class Command(BaseCommand):
                             preset.width,
                             preset.height,
                             crop_mode=preset.crop_mode,
+                            padding_color=preset.padding_color,
                         )
 
                         if original_content:
-                            thumbnail = MediaThumbnail.objects.create(
+                            # A pad preset with transparent padding yields PNG bytes;
+                            # match the stored extension so Content-Type stays correct.
+                            is_transparent_pad = (
+                                preset.crop_mode == "pad" and preset.padding_color == "transparent"
+                            )
+                            extension = "png" if is_transparent_pad else "jpg"
+
+                            # Build the replacement and persist its files before touching
+                            # the database, then atomically swap it in. A corrupt original
+                            # or a storage/DB failure leaves the existing thumbnail intact
+                            # instead of deleting it up front.
+                            thumbnail = MediaThumbnail(
                                 media_asset=asset,
                                 size_preset=preset.slug,
                                 width=preset.width,
                                 height=preset.height,
                             )
                             thumbnail.file.save(
-                                f"{asset.id}_{preset.slug}.jpg", original_content, save=False
+                                f"{asset.id}_{preset.slug}.{extension}",
+                                original_content,
+                                save=False,
                             )
                             if webp_content:
                                 thumbnail.webp_file.save(
                                     f"{asset.id}_{preset.slug}.webp", webp_content, save=False
                                 )
-                            thumbnail.save()
+
+                            with transaction.atomic():
+                                if existing:
+                                    existing.delete()
+                                thumbnail.save()
 
                     except Exception as e:
                         self.stdout.write(

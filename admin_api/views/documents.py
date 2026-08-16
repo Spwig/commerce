@@ -18,7 +18,8 @@ from reportlab.lib.enums import TA_RIGHT
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
@@ -128,9 +129,75 @@ def _create_pdf_buffer(title, pagesize=letter):
     return buffer, doc
 
 
+def _build_logo_flowable(site_settings):
+    """Return a reportlab Image flowable for the store logo, or None.
+
+    Draws the store logo (SiteSettings.site_logo) at the merchant-configured
+    ``document_logo_width`` with the aspect ratio preserved. Returns None (a
+    text-only header) when there is no logo, the logo is an SVG (reportlab can't
+    embed SVG), or anything goes wrong — logo rendering must never break document
+    generation.
+    """
+    logo = getattr(site_settings, "site_logo", None) if site_settings else None
+    if not logo:
+        return None
+
+    # reportlab cannot embed SVG without svglib; skip rather than crash.
+    if getattr(logo, "mime_type", "") == "image/svg+xml":
+        return None
+
+    try:
+        image_field = logo.webp_file or logo.original_file
+        if not image_field:
+            return None
+
+        # Read bytes through the storage API so this works for local and remote
+        # (e.g. S3) backends alike.
+        image_field.open("rb")
+        try:
+            data = image_field.read()
+        finally:
+            image_field.close()
+
+        buffer = BytesIO(data)
+        native_w, native_h = ImageReader(buffer).getSize()
+        if not native_w or not native_h:
+            return None
+
+        # Reject absurdly large images (decompression-bomb guard) so document
+        # generation degrades to a text-only header rather than failing later at
+        # doc.build() outside this guard.
+        if native_w * native_h > 40_000_000:  # ~40 megapixels
+            return None
+
+        # The setting is in CSS pixels; convert to PDF points (72pt = 96px).
+        width_px = getattr(site_settings, "document_logo_width", 200) or 200
+        width_pt = min(float(width_px) * 72.0 / 96.0, 5.0 * inch)  # cap to page width
+        height_pt = width_pt * (native_h / native_w)
+
+        # Bound the height too (extreme aspect ratios), rescaling to preserve
+        # the aspect ratio so a tall logo can't overflow the page.
+        max_height_pt = 2.5 * inch
+        if height_pt > max_height_pt:
+            scale = max_height_pt / height_pt
+            width_pt *= scale
+            height_pt = max_height_pt
+
+        buffer.seek(0)
+        return Image(buffer, width=width_pt, height=height_pt)
+    except Exception:
+        logger.warning("Could not render store logo on document", exc_info=True)
+        return None
+
+
 def _build_store_header(styles, site_settings):
     """Build store branding header elements."""
     elements = []
+
+    logo = _build_logo_flowable(site_settings)
+    if logo is not None:
+        elements.append(logo)
+        elements.append(Spacer(1, 0.1 * inch))
 
     store_name = "Store"
     if site_settings:

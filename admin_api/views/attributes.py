@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.attributes import (
     AdminAttributeListSerializer,
     AttributeCreateSerializer,
@@ -98,7 +98,7 @@ def attribute_list(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_attribute(request):
     """Create a new product attribute with optional values."""
@@ -201,7 +201,7 @@ def create_attribute(request):
     responses={200: None, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def assign_product_attributes(request, product_id):
     """Assign attributes and allowed values to a product."""

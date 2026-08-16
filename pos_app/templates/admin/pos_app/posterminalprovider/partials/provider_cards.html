@@ -5,6 +5,7 @@
 <div class="list-row-cards" id="results-container">
     {% for provider in providers %}
     <div class="list-row-card{% if not provider.is_active %} disabled{% endif %}">
+        {% include "admin/includes/action_checkbox.html" with pk=provider.pk %}
         <div class="list-row-card-icon">
             {% if provider.provider_key == 'stripe_terminal' %}
                 <i class="fab fa-stripe text-primary icon-size-28"></i>

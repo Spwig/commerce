@@ -1,30 +1,30 @@
 ---
-title: Configurando Configurações da Loja
+title: Configurando as Configurações da Loja
 ---
 
-Configurações da Loja é o local central para configurar a identidade, localização, branding e preferências operacionais da sua loja. Navegue até **Configurações > Configurações da Loja** para começar.
+As Configurações da Loja é o local central para configurar a identidade, localização, marca e preferências operacionais da sua loja. Navegue até **Configurações > Configurações da Loja** para começar.
 
-![Guia geral de configurações da loja](/static/core/admin/img/help/store-settings/store-settings-general.webp)
+![aba geral das configurações da loja](/static/core/admin/img/help/store-settings/store-settings-general.webp)
 
-## Guia Geral
+## aba geral
 
-O guia **Geral** contém as configurações de identidade central da sua loja.
+A **aba Geral** contém as configurações principais da identidade da sua loja.
 
 ### Identidade da Loja
 
-- **Nome da Loja** — O nome exibido em títulos de página, e-mails e cabeçalho do painel administrativo.
+- **Nome da Loja** — O nome exibido nos títulos das páginas, e-mails e cabeçalho do painel de administração.
 - **Slogan** — Uma breve descrição da sua loja, usada em SEO e compartilhamento em redes sociais.
-- **URL do Site** — O endereço web público da sua loja. É usado em e-mails, geração de mapa do site e construção de links.
+- **URL do Site** — O endereço web público da sua loja. É usado em e-mails, geração de sitemap e construção de links.
 
 ### Informações de Contato
 
-- **E-mail de Contato** — Recebe notificações de pedidos e é exibido em comunicações com clientes.
-- **Número de Telefone** — Número de telefone opcional de suporte exibido no rodapé e e-mails.
+- **E-mail de Contato** — Recebe notificações de pedidos e é exibido nas comunicações com os clientes.
+- **Número de Telefone** — Número de telefone opcional exibido no rodapé e e-mails.
 
-### Endereço Comercial
+### Endereço da Empresa
 
-Insira seu endereço completo (rua, cidade, estado, código postal, país). É usado para:
-- Cálculos de origem de envio
+Digite seu endereço completo (rua, cidade, estado, CEP, país). Isso é usado para:
+- Cálculos da origem do envio
 - Cálculos de impostos
 - Requisitos legais e notas fiscais
 
@@ -32,17 +32,17 @@ Insira seu endereço completo (rua, cidade, estado, código postal, país). É u
 
 ### Logotipo
 
-Carregue o logotipo da sua loja (recomendado PNG ou SVG, ~200x50px com fundo transparente). O logotipo aparece em:
-- Cabeçalho do site
+Faça o upload do logotipo da sua loja (PNG ou SVG recomendado, ~200x50px com fundo transparente). O logotipo aparece em:
+- Cabeçalho da loja
 - Modelos de e-mail
-- Painel administrativo
+- Painel de administração
 
-### Favicon
+### Ícone de Favorito (Favicon)
 
-Carregue um favicon quadrado (ICO ou PNG, 32x32px). Ele aparece como:
-- Ícone da guia do navegador
+Faça o upload de um ícone quadrado (ICO ou PNG, 32x32px). Ele aparece como:
+- Ícone da aba do navegador
 - Ícone de favorito
-- Ícone da tela inicial do mobile
+- Ícone da tela inicial do celular
 
 ## Localização
 
@@ -58,103 +58,221 @@ Escolha o idioma principal da sua loja entre 10 opções suportadas:
 | Alemão | de |
 | Português | pt |
 | Japonês | ja |
-| Chinês Simplificado | zh-hans |
-| Chinês Tradicional | zh-hant |
+| Chines Simplificado | zh-hans |
+| Chines Tradicional | zh-hant |
 | Russo | ru |
 | Árabe | ar |
 
-O idioma padrão controla o idioma da interface administrativa e o fallback para conteúdo do site.
+O idioma padrão controla o idioma da interface do administrador e o fallback para o conteúdo da loja.
 
 ### Fuso Horário
 
-Selecione o fuso horário da sua loja para timestamps precisos de pedidos, promoções agendadas e relatórios.
+Selecione o fuso horário da sua loja para obter datas e horários de pedidos precisos, promoções agendadas e relatórios.
 
 ### Moeda
 
 - **Moeda Padrão** — A moeda principal para preços e contabilidade.
-- **Multi-Moeda** — Ative para permitir que os clientes vejam os preços em sua moeda preferida com conversão automática usando taxas de câmbio em tempo real.
+- **Múltiplas Moedas** — Ative para permitir que os clientes vejam preços na moeda de preferência com conversão automática usando taxas de câmbio em tempo real.
 
 Configure moedas adicionais em **Configurações > Configurações da Loja > Moeda**.
 
-## Configurações de E-Commerce
+## Configurações de Comércio Eletrônico
 
-### Checkout para Visitantes
+### Checkout como Visitante
 
 Permita compras sem criar uma conta:
 - Fluxo de checkout mais rápido
-- Menos atrito para compradores novos
-- Captura menos dados do cliente
+- Menos fricção para compradores pela primeira vez
+- Captura menos dados dos clientes
 
-### Formato do Número do Pedido
+### Tempo para Criação de Conta
 
-Personalize como os números dos pedidos aparecem:
-- **Prefixo** — por exemplo, "ORD-"
-- **Número Inicial** — O primeiro número do pedido
-- **Preenchimento** — por exemplo, 00001
+Controle quando os clientes são convidados a criar uma conta:
 
-### Configurações Padrão de Estoque
+| Opção | Descrição |
+|--------|-------------|
+| **Após a Compra (Recomendado)** | Peça para criar uma conta após um pedido bem-sucedido — aproveita a boa vontade pós-compra para melhorar a conversão |
+| **Durante o Checkout** | Crie uma conta antes do processamento do pagamento |
+| **Antes do Checkout** | Exija uma conta antes de fazer compras (não recomendado - reduz a conversão) |
 
-- **Rastrear Estoque** — Ative o rastreamento de estoque globalmente
-- **Limite de Estoque Baixo** — Nível de alerta (padrão: 5 unidades)
-- **Permitir Pedidos com Estoque Baixo** — Aceite pedidos quando estiver fora de estoque
+Você também pode definir uma **Mensagem de Criação de Conta** personalizada para explicar os benefícios do cadastro.
+
+### Padrões de Estoque
+
+- **Rastrear Estoque** — Ative o controle de estoque globalmente
+- **Limite de Estoque Baixo** — Nível de estoque em que alertas de estoque baixo são enviados para o e-mail do administrador (padrão: 10 unidades)
+
+## Inteligência de Estoque
+
+![cartão de inteligência de estoque mostrando os campos Prazo Padrão de Reabastecimento e Multiplicador de Estoque de Segurança](/static/core/admin/img/help/store-settings/ecommerce-inventory-intelligence.webp)
+
+Essas configurações ajustam os cálculos automáticos de reposição, estoque de segurança e velocidade de vendas, e controlam como situações de falta de estoque e estoque baixo são tratadas.
+
+- **Prazo Padrão de Reabastecimento (dias)** — Quantos dias normalmente levam para receber o reabastecimento do seu fornecedor uma vez que você coloca o pedido (padrão: 14).
+
+A previsão usa isso para sinalizar produtos que precisam ser reabastecidos *agora* para evitar falta de estoque antes que o novo estoque chegue.
+- **Multiplicador de Estoque de Segurança** — Um buffer aplicado sobre a demanda esperada para absorver picos de vendas ou atrasos no fornecedor.
+
+Por exemplo, um multiplicador de `1,5` inclui um buffer de 50% acima do estoque de segurança calculado; `2,0` o duplica.
+
+Aumente esse valor para produtos em que faltar estoque é caro (vendas populares, itens sazonais); reduza-o para estoque de baixa rotação que você não deseja encomendar em excesso.
+- **Período de Cálculo de Velocidade (dias)** — O período de consulta que o Spwig usa para calcular a velocidade de vendas de cada produto, o que por sua vez influencia as sugestões de reposição e os valores de dias de estoque (padrão: 30 dias).
+
+Um período mais curto reage mais rapidamente às mudanças recentes na demanda; um período mais longo suaviza os picos sazonais, de modo que uma única semana movimentada não distorça a previsão.
+- **Permitir Pedidos de Devolução por Padrão** — A configuração inicial de pedidos de devolução aplicada a novos produtos (desativado por padrão).
+
+Cada produto ainda pode substituí-lo individualmente na própria página do produto, e os produtos existentes mantêm qualquer configuração que já tenham — alterar isso só muda o que os novos produtos começam com, não atualiza retroativamente seu catálogo.
+- **Frequência do Alerta de Estoque Baixo** — Com que frequência o aplicativo móvel Spwig é notificado sobre estoque baixo: **Em tempo real** envia uma notificação por push no momento em que um produto ultrapassa seu limite de estoque baixo; **Resumo Diário** e **Resumo Semanal** enviam, em vez disso, uma única notificação por push resumindo todos os produtos com estoque baixo naquela programação.
+
+Este ajuste entra em vigor somente enquanto **Alertas de Estoque Baixo** (Configurações de E-mail, abaixo) estiver ativado — com os alertas desativados, nenhuma notificação é enviada em qualquer frequência.
+
+### Documentos e Notas Fiscais
+
+![Cartão de Documentos e Notas Fiscais mostrando os campos Tax ID / Número de IVA, Texto do Rodapé da Nota Fiscal e Texto do Rodapé da Nota de Embalagem preenchidos com valores de exemplo](/static/core/admin/img/help/store-settings/ecommerce-documents-invoicing.webp)
+
+Esses campos preenchem as notas fiscais e os recibos de embalagem gerados pelo Spwig para pedidos — por exemplo, quando um comerciante baixa ou envia por e-mail uma nota fiscal em PDF, ou imprime um recibo de embalagem para um envio.
+
+- **Tax ID / Número de IVA** — Seu número de identificação fiscal da empresa. Impresso nas notas fiscais geradas para que atendam aos requisitos locais de documentação fiscal.
+- **Texto do Rodapé da Nota Fiscal** — Texto livre exibido no final de cada nota fiscal gerada. Usos comuns: termos de pagamento ("Pagamento devido dentro de 30 dias"), uma mensagem de agradecimento ou detalhes de transferência bancária.
+- **Texto do Rodapé da Nota de Embalagem** — Texto livre exibido no final de cada recibo de embalagem gerado. Usos comuns: instruções de devolução ou uma nota para a equipe de armazém/fulfillment.
+- **Largura do Logotipo do Documento (px)** — A largura do logotipo da loja conforme aparece nas notas fiscais e recibos de embalagem em PDF (padrão: 200px). A altura escala automaticamente para combinar, preservando as proporções do logotipo. A imagem do logotipo vem de seu **Logotipo** (Marca, acima) — logotipos SVG não são desenhados em documentos PDF, então faça o upload de uma versão PNG ou JPG do seu logotipo se você usar arte vetorial na loja.
 
 ## Configurações de E-mail
 
-### Informações do Remetente
+Configure as configurações de envio de e-mail em **Configurações > Contas de E-mail** e **Configurações > Modelos de E-mail**. Veja [Configuração de E-mail](/help/email-configuration) para detalhes completos.
 
-- **Nome do Remetente** — Aparece como o remetente do e-mail (normalmente o nome da sua loja)
-- **E-mail do Remetente** — Deve ser de um domínio verificado
-- **E-mail de Resposta** — Onde as respostas dos clientes são direcionadas
+Configurações-chave de e-mail disponíveis nas Configurações da Loja:
 
-### Provedor de E-mail
+- **E-mails de Confirmação de Pedido** — Ative ou desative e-mails automáticos de confirmação
+- **E-mails de Notificação de Envio** — Ative ou desative notificações de atualizações de envio
+- **Alertas de Estoque Baixo** — Envie alertas para o e-mail do administrador quando o estoque cair abaixo do limite
+- **Modo de Entrega de E-mail** — Live (entrega normal), Pausado (manter todos os e-mails) ou Apenas Registro (registrar, mas nunca enviar)
+- **E-mail de Redirecionamento de Teste** — Redirecione todos os e-mails de saída para um endereço único para testes
 
-Configure seu serviço de entrega de e-mail em **Configurações > Configuração de E-mail**. Provedores suportados incluem SMTP, SendGrid, Mailgun e Amazon SES.
+## Configurações de Segurança
 
-## Legal & Conformidade
+### Autenticação de Dois Fatores (2FA)
 
-Adicione as políticas da sua loja para atender aos requisitos legais:
+Controle se os funcionários são obrigados a usar autenticação de dois fatores:
 
-- **Termos e Condições** — Necessário para checkout; os clientes devem aceitar antes de comprar
-- **Política de Privacidade** — Conformidade com GDPR/CCPA; vinculado no rodapé
-- **Política de Devolução** — Defina seu período de devolução, condições e processo de reembolso
+| Configuração | Descrição |
+|---------|-------------|
+| **Opcional** | Os funcionários podem escolher ativar a 2FA, mas não é obrigatório |
+| **Recomendado** | Os funcionários veem um aviso incentivando-os a configurar a 2FA |
+| **Obrigatório** | Os funcionários não podem acessar o painel de administração até que a 2FA esteja ativada |
+
+Preserve todos os formatos de markdown, caminhos de imagens, blocos de código e termos técnicos.
+
+- **Período de Carência (Dias)** — Quantos dias os funcionários têm para configurar 2FA após a ativação
+- **Permitir Dispositivos Confiáveis** — Permita que os funcionários pulam a verificação de 2FA em dispositivos reconhecidos por um número definido de dias
+
+## Consentimento de Cookies
+
+Configure o banner de consentimento de cookies exibido aos visitantes da loja:
+
+- **Consentimento de Cookies Habilitado** — Exibir ou ocultar o banner de cookies
+- **Posição do Banner** — Onde o banner aparece na tela (barra inferior, pop-up de canto, etc.)
+- **Modo de Consentimento** — Notícia simples, opt-in ou opt-out
+- **Título e Texto do Banner** — Título e descrição personalizáveis exibidos aos visitantes
+- **Descrições de Categoria** — Descrições separadas para cookies de análise, marketing e funcionais
+
+Todos os campos de texto do banner suportam traduções para lojas multilíngues.
+
+## Comunicações
+
+A aba **Comunicações** controla como sua loja obtém, confirma e permite que os clientes gerenciem o consentimento para e-mails e SMS de marketing. Essas configurações moldam sua postura de conformidade legal (GDPR para e-mails, TCPA para SMS), então revise-as com seu próprio aconselhador jurídico antes do lançamento — Spwig fornece os controles, não o aconselhamento.
+
+![A aba Comunicações mostra os cartões de Consentimento de Marketing por E-mail, Preferências & Cancelamento e Consentimento de SMS](/static/core/admin/img/help/store-settings/communications-tab.webp)
+
+### Consentimento de Marketing por E-mail
+
+- **Ativar Otimização Dupla para E-mails de Marketing** — Quando ativado, um cliente que opta por e-mails de marketing recebe um e-mail de confirmação e deve clicar no link dele antes de Spwig enviá-lo qualquer mensagem de marketing. Quando desativado, marcar a caixa de opção de opt-in de marketing é suficiente. Ativado por padrão, de acordo com as melhores práticas do GDPR.
+- **Estado Padrão de Opt-In de Marketing** — O estado inicial de opt-in de marketing aplicado a novas contas de clientes. Desativado por padrão (opt-out do GDPR), então novos clientes começam sem inscrição em e-mails de marketing até que ativamente optem por isso.
+
+Quando a otimização dupla estiver ativada, optar por inscrever-se aciona um e-mail de confirmação com um link de verificação. Até que o cliente clique nele, ele é registrado como optado, mas não confirmado, e os envios de marketing pulam-no — e-mails transacionais (confirmações de pedido, atualizações de envio, redefinições de senha) nunca são afetados por esta configuração.
+
+### Preferências & Cancelamento
+
+- **Ativar Centro de Preferências do Cliente** — Quando ativado, os clientes podem gerenciar seus e-mails e SMS de preferências em uma página de autosserviço vinculada ao seu painel de controle. Quando desativado, essa página e sua API de suporte retornam indisponíveis e o link do painel de controle é ocultado. Links de cancelamento de um clique em seus e-mails continuam funcionando da mesma forma — esse escape é necessário para conformidade e não é afetado por este interruptor.
+- **Coletar Motivos de Cancelamento** — Quando ativado, a página de cancelamento de um clique pergunta ao cliente um breve motivo antes da confirmação: *Recebo muitos e-mails*, *O conteúdo não é relevante para mim*, *Nunca me inscrevi nisso*, *Já não estou mais interessado*, ou *Outro*. A razão pela qual o cliente seleciona é registrada no histórico de auditoria de consentimento para que você possa revisar os padrões de cancelamento ao longo do tempo.
+
+### Consentimento de SMS
+
+- **Exigir Verificação de SMS** — Quando ativado (padrão), um cliente deve verificar seu número de telefone com um código de uma vez antes de Spwig enviá-lo qualquer SMS, incluindo mensagens de marketing. Quando desativado, marcar a caixa de opção de opt-in de SMS é suficiente para iniciar o envio. Este padrão foi alterado para **ativado** para segurança TCPA — desative-o somente se tiver outro passo de verificação em seu fluxo de inscrição.
 
 ## Modo de Manutenção
 
-Ative o modo de manutenção para desligar temporariamente sua loja:
-- Exibe uma mensagem personalizada de manutenção para os visitantes
-- Restringe o acesso apenas aos usuários do painel administrativo
-- Útil durante atualizações importantes ou migrações
+Ative o modo de manutenção para manter sua loja offline temporariamente:
+- Exibe uma mensagem de manutenção personalizada aos visitantes
+- Você pode vincular uma **Página de Manutenção** construída no Page Builder para uma experiência de marca completa de manutenção
+- Restringe o acesso somente aos usuários do admin
+- Útil durante atualizações ou migrações importantes
 
-## Configurações de Imposto
+## Mídia Social
 
-Configure a coleta de impostos em **Configurações > Configurações de Imposto**:
+Link seu perfis de mídia social da loja. Eles aparecem no rodapé e nos modelos de e-mail:
 
-1. **Método de Cálculo** — Por endereço de envio, endereço de cobrança ou localização da loja
-2. **Taxas de Imposto** — Defina taxas por região e classe de imposto do produto
-3. **Exibição de Imposto** — Mostre preços com imposto, sem imposto ou ambos
+- **URL do Facebook**
+- **URL do Twitter**
+- **URL do Instagram**
+- **URL do LinkedIn**
+
+## Padrões de SEO
+
+Preserve todos os formatações de markdown, caminhos de imagem, blocos de código e termos técnicos.
+
+Defina tags meta padrão usados quando as páginas não tiverem configurações de SEO próprias:
+
+- **Título Meta** — Título padrão da página (máx. 60 caracteres)
+- **Descrição Meta** — Descrição padrão exibida nos resultados de busca (máx. 160 caracteres)
+- **Palavras-Chave Meta** — Palavras-chave separadas por vírgula padrão
+
+## Configurações de Impostos
+
+Configure a cobrança de impostos em **Configurações > Configurações de Impostos**:
+
+1. **Método de Cálculo** — Pelo endereço de envio, endereço de cobrança ou localização da loja
+2. **Alíquotas de Impostos** — Defina as alíquotas por região e classe de produto
+3. **Exibição de Preços** — Exibir preços com impostos, sem impostos ou ambos
 
 ## Dicas
 
-- Defina seu fuso horário corretamente antes de processar qualquer pedido — afeta todos os timestamps e relatórios.
-- Ative o checkout para visitantes para melhorar as taxas de conversão.
-- Preencha seu endereço comercial para cálculos precisos de envio e impostos.
-- Carregue tanto um logotipo quanto um favicon para uma experiência profissional e com branding.
-- Revise suas páginas legais regularmente para manter a conformidade com as regulamentações locais.
+- Defina o fuso horário corretamente antes de processar quaisquer pedidos — ele afeta todos os registros de data/hora e relatórios.
+- Ative o checkout como convidado para melhorar as taxas de conversão.
+- Preencha o endereço da sua empresa para cálculos precisos de frete e impostos.
+- Faça o upload de um logotipo e favicon para uma experiência profissional e com marca registrada.
+- Use o timing de criação de conta **Após a Compra** para obter melhores taxas de registro.
+- Ative a execução da autenticação de dois fatores para o pessoal para proteger o administrador da loja.
+- Teste os fluxos de e-mail usando a configuração **Redirecionamento de E-mail de Teste** antes de ir para a produção.
+- Defina o **Tempo Padrão para Reordenação** para corresponder ao fornecedor mais lento — a previsão de reordenação aplica esse único valor em toda a sua catalogação, então fique do lado do produto com o tempo de entrega mais longo.
+- Preencha seu **ID de Imposto / Número de CPF** e texto do rodapé antes da primeira fatura real enviada ao cliente — ambos os campos estão em branco por padrão.
+- Deixe **Ativar Confirmação Dupla para E-mails de Marketing** ligado, a menos que você tenha um motivo específico para desativá-lo — é o padrão mais seguro para o GDPR e protege sua reputação de remetente mantendo endereços não verificados fora de seus envios de marketing.
+- Deixe **Estado Padrão de Consentimento para Marketing** desligado. Marcar como selecionado o consentimento de marketing para novas contas prejudica o requisito de opt-in do GDPR, mesmo que um cliente possa tecnicamente desmarcar.
+- Não desative **Ativar o Centro de Preferências do Cliente** apenas para simplificar seu painel de controle — sem ele, os clientes ainda podem se descadastrar de um tipo de mensagem, mas perdem a capacidade de ajustar preferências (ex.: manter atualizações de envio, mas descartar o boletim informativo).
+- Mantenha **Exigir Verificação por SMS** ligado, a menos que seu fluxo de inscrição já confirme os números de telefone de outra forma (ex.: login baseado em SMS) — o recurso existe especificamente para mantê-lo dentro das regras TCPA.
 
 ## Solução de Problemas
 
-**Alterações não aparecendo no site:**
-- Limpe o cache do seu navegador
-- Execute uma limpeza de cache do painel administrativo
-- Verifique se o modo de manutenção foi acidentalmente ativado
+**Mudanças não aparecem na loja virtual:**
+- Limpe o cache do navegador
+- Execute uma limpeza de cache pelo painel de administração
+- Verifique se o modo de manutenção está ativado acidentalmente
 
-**E-mails não enviando:**
-- Verifique as configurações do provedor de e-mail em Configuração de E-mail
-- Confira se o domínio do e-mail do remetente está verificado
-- Teste a conexão a partir da página de configuração do provedor
+**E-mails não estão sendo enviados:**
+- Verifique as configurações do provedor de e-mail na Configuração de E-mail
+- Verifique se o **Modo de Entrega de E-mail** está definido para **Live**
+- Certifique-se de que o **E-mail de Redirecionamento de Teste** esteja em branco, se quiser que os e-mails sejam enviados para destinatários reais
 
-**Conversão de moeda não funcionando:**
+**Conversão de moeda não está funcionando:**
 - Verifique se seu provedor de taxa de câmbio está conectado
-- Confira as credenciais da API nas configurações de taxa de câmbio
+- Verifique as credenciais da API nas configurações da taxa de câmbio
 - Tente atualizar as taxas manualmente
 
+**E-mails de marketing não estão chegando aos clientes que optaram por recebê-los:**
+- Verifique se **Ativar Confirmação Dupla para E-mails de Marketing** está ligado — se sim, o cliente deve clicar no link de confirmação no e-mail de verificação antes que os envios de marketing voltem a funcionar
+- Peça ao cliente para verificar o spam/junk por causa do e-mail de confirmação
+- Confirme se o opt-in de marketing do cliente ainda está ativo em suas preferências — um clique de cancelamento desativa-o
+
+**Clientes dizem que não conseguem encontrar o centro de preferências:**
+- Verifique se **Ativar o Centro de Preferências do Cliente** está ligado — quando desativado, o link do painel de controle é ocultado e a página fica indisponível por design
+- O link de cancelamento em qualquer e-mail de marketing sempre funciona, independentemente desse recurso, então aponte os clientes para ele como alternativa

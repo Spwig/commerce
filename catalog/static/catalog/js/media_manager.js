@@ -97,6 +97,9 @@ class MediaManager {
       });
 
       this.imagesGrid.insertAdjacentHTML('beforeend', cardHTML);
+
+      // Wire the shimmer placeholder for the card we just inserted
+      this.wireImageLoad(this.imagesGrid.lastElementChild);
     });
 
     // Re-setup delete buttons and toggles
@@ -105,6 +108,29 @@ class MediaManager {
 
     // Update positions
     this.updateImagePositions();
+  }
+
+  /**
+   * Reveal a freshly-added card's thumbnail once it has painted, clearing the
+   * shimmering placeholder. Handles cached images (already complete) and load
+   * failures so a card never stays stuck shimmering.
+   */
+  wireImageLoad(card) {
+    if (!card) return;
+    const preview = card.querySelector('.image-card-preview');
+    const img = preview && preview.querySelector('img');
+    if (!preview || !img) return;
+
+    const reveal = () => preview.classList.remove('is-loading');
+
+    // Cached images may already be decoded before the listener attaches
+    if (img.complete && img.naturalWidth > 0) {
+      reveal();
+      return;
+    }
+
+    img.addEventListener('load', reveal, { once: true });
+    img.addEventListener('error', reveal, { once: true });
   }
 
   createImageCard(image) {
@@ -117,7 +143,7 @@ class MediaManager {
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <div class="image-card-preview">
+                <div class="image-card-preview is-loading">
                     <img src="${image.thumbnail}" alt="${image.alt_text}">
                 </div>
                 <div class="image-card-details">

@@ -612,6 +612,16 @@ class CommunicationPreference(models.Model):
         """
         from django.utils.translation import get_language
 
+        # Apply the merchant's default marketing opt-in state to brand-new
+        # preference records. Fails safe to opt-out (False) if the setting can't
+        # be read, per GDPR best practice.
+        try:
+            from core.models import SiteSettings
+
+            default_marketing = bool(SiteSettings.get_settings().default_marketing_opt_in)
+        except Exception:
+            default_marketing = False
+
         prefs, created = cls.objects.get_or_create(
             user=user,
             defaults={
@@ -619,6 +629,7 @@ class CommunicationPreference(models.Model):
                 "consent_source": "registration",
                 "consent_timestamp": timezone.now(),
                 "language_code": get_language() or "en",
+                "email_marketing": default_marketing,
             },
         )
 
@@ -628,6 +639,29 @@ class CommunicationPreference(models.Model):
             prefs.save(update_fields=["app_preferences"])
 
         return prefs, created
+
+    @staticmethod
+    def _double_opt_in_required():
+        """Whether marketing email requires a confirmed (double opt-in) address.
+
+        Reads the merchant's ``enable_double_opt_in`` SiteSetting. Fails safe to
+        True (require confirmation) if the setting can't be read.
+        """
+        try:
+            from core.models import SiteSettings
+
+            return SiteSettings.get_settings().enable_double_opt_in
+        except Exception:
+            return True
+
+    def _marketing_email_allowed(self):
+        """Marketing email consent, honouring the double opt-in setting.
+
+        Opted in AND (address confirmed OR the store doesn't require double opt-in).
+        """
+        if not self.email_marketing:
+            return False
+        return self.email_verified or not self._double_opt_in_required()
 
     def should_send_email(self, message_type):
         """
@@ -652,14 +686,14 @@ class CommunicationPreference(models.Model):
         # Get message category
         category, app = get_message_type_category(message_type)
 
-        # Marketing emails require verification
+        # Marketing emails require opt-in (and confirmation when double opt-in is on)
         if category == "marketing":
-            return self.email_marketing and self.email_verified
+            return self._marketing_email_allowed()
 
         # App-specific emails
         if category == "app_specific" and app:
             # Requires marketing consent + app enabled
-            if not (self.email_marketing and self.email_verified):
+            if not self._marketing_email_allowed():
                 return False
 
             app_prefs = self.app_preferences.get(app, {})
@@ -672,7 +706,21 @@ class CommunicationPreference(models.Model):
             return app_prefs.get(pref_key, True)  # Default to True if not specified
 
         # Unknown category - default to requiring marketing consent
-        return self.email_marketing and self.email_verified
+        return self._marketing_email_allowed()
+
+    @staticmethod
+    def _sms_verification_required():
+        """Whether enabling SMS requires a verified phone number (TCPA).
+
+        Reads the merchant's ``require_sms_verification`` SiteSetting. Fails safe
+        to True (require verification) if the setting can't be read.
+        """
+        try:
+            from core.models import SiteSettings
+
+            return SiteSettings.get_settings().require_sms_verification
+        except Exception:
+            return True
 
     def should_send_sms(self, message_type):
         """
@@ -692,8 +740,10 @@ class CommunicationPreference(models.Model):
         if not self.sms_enabled:
             return False
 
-        # SMS requires verification for ALL types (TCPA compliance)
-        if not self.sms_verified:
+        # SMS requires a verified phone when the store enforces it (TCPA).
+        # `require_sms_verification` defaults to True; fails safe to True if the
+        # setting can't be read.
+        if not self.sms_verified and self._sms_verification_required():
             return False
 
         # Get message category

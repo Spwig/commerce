@@ -10,6 +10,7 @@ Creates sample packages and items, then demonstrates the packing algorithm.
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
+from djmoney.money import Money
 
 from shipping.models import ShippingPackage
 from shipping.utils.packing import PackableItem, PackingAlgorithm
@@ -99,7 +100,7 @@ class Command(BaseCommand):
         self.stdout.write(f"  Packages Required: {len(results)}")
         self.stdout.write("")
 
-        total_cost = Decimal("0")
+        total_costs: dict = {}
         total_weight_shipped = Decimal("0")
 
         for i, result in enumerate(results, 1):
@@ -131,8 +132,11 @@ class Command(BaseCommand):
             self.stdout.write(f"    Volume Utilization: {result.volume_utilization:.1f}%")
 
             if result.package.cost:
-                self.stdout.write(f"    Package Cost: {result.package.cost}")
-                total_cost += result.package.cost.amount
+                cost = result.package.cost
+                self.stdout.write(f"    Package Cost: {cost}")
+                total_costs[cost.currency] = (
+                    total_costs.get(cost.currency, Money(0, cost.currency)) + cost
+                )
 
             total_weight_shipped += result.total_weight
 
@@ -142,8 +146,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("=" * 80))
         self.stdout.write(f"  Total Packages: {len(results)}")
         self.stdout.write(f"  Total Weight (with packaging): {total_weight_shipped:.3f}kg")
-        if total_cost > 0:
-            self.stdout.write(f"  Total Package Cost: ${total_cost:.2f}")
+        for total in total_costs.values():
+            if total.amount > 0:
+                self.stdout.write(f"  Total Package Cost: {total}")
 
         # Efficiency metrics
         items_packed = sum(len(r.items) for r in results)

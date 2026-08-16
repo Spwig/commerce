@@ -52,88 +52,116 @@ def process_payout(self, payout_id: int, provider_account_id: int = None):
     logger.info(f"Processing payout {payout_id}")
 
     try:
-        payout = Payout.objects.select_related("affiliate").get(id=payout_id)
+        with transaction.atomic():
+            payout = (
+                Payout.objects.select_for_update().select_related("affiliate").get(id=payout_id)
+            )
+
+            # Check if already processed. Holding the row lock while we re-check
+            # and claim the payout means a concurrent duplicate delivery or a
+            # retry racing the original cannot both pass this guard and call
+            # create_payout, which would double-pay the affiliate.
+            if payout.status in ("completed", "processing"):
+                logger.warning(f"Payout {payout_id} already {payout.status}, skipping")
+                return {
+                    "success": False,
+                    "error": f"Payout already {payout.status}",
+                    "payout_id": payout_id,
+                }
+
+            # Claim the payout before the lock is released so no other worker can
+            # pass the guard above for the same payout.
+            payout.mark_as_processing()
     except Payout.DoesNotExist:
         logger.error(f"Payout {payout_id} not found")
         return {"success": False, "error": "Payout not found", "payout_id": payout_id}
 
-    # Check if already processed
-    if payout.status in ("completed", "processing"):
-        logger.warning(f"Payout {payout_id} already {payout.status}, skipping")
-        return {
-            "success": False,
-            "error": f"Payout already {payout.status}",
-            "payout_id": payout_id,
-        }
-
     affiliate = payout.affiliate
 
-    # Determine provider account
-    if provider_account_id:
-        try:
-            provider_account = PayoutProviderAccount.objects.get(
-                id=provider_account_id, is_active=True
-            )
-        except PayoutProviderAccount.DoesNotExist:
-            logger.error(f"Provider account {provider_account_id} not found or inactive")
-            return {"success": False, "error": "Provider account not found", "payout_id": payout_id}
-    else:
-        # Auto-select based on affiliate's payment method
-        provider_account = _get_provider_for_affiliate(affiliate)
-
-    if not provider_account:
-        error_msg = f"No active provider found for payment method: {affiliate.payment_method}"
-        logger.error(error_msg)
-        payout.mark_as_failed(notes=error_msg)
-        return {"success": False, "error": error_msg, "payout_id": payout_id}
-
-    # Get provider class and instantiate
-    provider_class = get_provider_class(provider_account.provider_type, provider_account.component)
-
-    if not provider_class:
-        error_msg = f"Provider class not found for type: {provider_account.provider_type}"
-        logger.error(error_msg)
-        payout.mark_as_failed(notes=error_msg)
-        return {"success": False, "error": error_msg, "payout_id": payout_id}
-
-    # Instantiate provider with credentials
-    config = provider_account.credentials
-    config.update(provider_account.settings)
-    provider = provider_class(config)
-
-    # Build recipient info
-    recipient = PayoutRecipient(
-        affiliate_id=affiliate.id,
-        email=affiliate.paypal_email or affiliate.user.email,
-        bank_account_holder=affiliate.bank_account_holder,
-        bank_account_number=affiliate.bank_account_number,
-        bank_routing_code=affiliate.bank_routing_code,
-        bank_swift_code=affiliate.bank_swift_code,
-        bank_country=affiliate.bank_country or affiliate.country,
-    )
-
-    # Determine payout method
-    if affiliate.payment_method == "paypal":
-        payout_method = PayoutMethod.PAYPAL
-    else:
-        payout_method = PayoutMethod.BANK_TRANSFER
-
-    # Create payout request
-    payout_request = PayoutRequest(
-        payout_id=payout.id,
-        recipient=recipient,
-        amount=payout.amount,
-        currency=payout.currency or get_default_currency(),
-        reference=f"SPWIG-PAYOUT-{payout.id}",
-        method=payout_method,
-        note=f"Commission payout for {affiliate.company_name or affiliate.user.email}",
-        metadata={
-            "affiliate_id": affiliate.id,
-            "payout_id": payout.id,
-        },
-    )
-
+    # Everything below runs after the payout has already been claimed as
+    # 'processing'. It must all sit inside this try: an exception during provider
+    # lookup, instantiation, or request construction would otherwise escape, and
+    # because the task autoretries on any Exception the retry would hit the
+    # 'already processing, skipping' guard above and abandon the payout forever
+    # (the sync fallback only rescues rows that have a provider_reference, which
+    # such a payout never gets). Catching here marks it failed first, so the
+    # retry re-enters past the guard and reprocesses.
     try:
+        # Determine provider account
+        if provider_account_id:
+            try:
+                provider_account = PayoutProviderAccount.objects.get(
+                    id=provider_account_id, is_active=True
+                )
+            except PayoutProviderAccount.DoesNotExist:
+                error_msg = f"Provider account {provider_account_id} not found or inactive"
+                logger.error(error_msg)
+                # The payout was already claimed as 'processing' above; without
+                # this it would be stuck there forever.
+                payout.mark_as_failed(notes=error_msg)
+                return {
+                    "success": False,
+                    "error": "Provider account not found",
+                    "payout_id": payout_id,
+                }
+        else:
+            # Auto-select based on affiliate's payment method
+            provider_account = _get_provider_for_affiliate(affiliate)
+
+        if not provider_account:
+            error_msg = f"No active provider found for payment method: {affiliate.payment_method}"
+            logger.error(error_msg)
+            payout.mark_as_failed(notes=error_msg)
+            return {"success": False, "error": error_msg, "payout_id": payout_id}
+
+        # Get provider class and instantiate
+        provider_class = get_provider_class(
+            provider_account.provider_type, provider_account.component
+        )
+
+        if not provider_class:
+            error_msg = f"Provider class not found for type: {provider_account.provider_type}"
+            logger.error(error_msg)
+            payout.mark_as_failed(notes=error_msg)
+            return {"success": False, "error": error_msg, "payout_id": payout_id}
+
+        # Instantiate provider with credentials
+        config = provider_account.credentials
+        config.update(provider_account.settings)
+        provider = provider_class(config)
+
+        # Build recipient info
+        recipient = PayoutRecipient(
+            affiliate_id=affiliate.id,
+            email=affiliate.paypal_email or affiliate.user.email,
+            bank_account_holder=affiliate.bank_account_holder,
+            bank_account_number=affiliate.bank_account_number,
+            bank_routing_code=affiliate.bank_routing_code,
+            bank_swift_code=affiliate.bank_swift_code,
+            bank_country=affiliate.bank_country or affiliate.country,
+        )
+
+        # Determine payout method
+        if affiliate.payment_method == "paypal":
+            payout_method = PayoutMethod.PAYPAL
+        else:
+            payout_method = PayoutMethod.BANK_TRANSFER
+
+        # Create payout request
+        payout_request = PayoutRequest(
+            payout_id=payout.id,
+            recipient=recipient,
+            amount=payout.amount,
+            currency=payout.currency or get_default_currency(),
+            reference=f"SPWIG-PAYOUT-{payout.id}",
+            method=payout_method,
+            note=f"Commission payout for {affiliate.company_name or affiliate.user.email}",
+            metadata={
+                "affiliate_id": affiliate.id,
+                "payout_id": payout.id,
+            },
+        )
+
         # Mark as processing before API call
         payout.mark_as_processing(provider_account=provider_account)
 
@@ -259,15 +287,23 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
             results.append({"payout_id": payout_id, "task_id": str(result.id)})
         return {"success": True, "message": "Queued for individual processing", "tasks": results}
 
-    # Load payouts
-    payouts = Payout.objects.filter(id__in=payout_ids, status="pending").select_related("affiliate")
+    # Load payouts. Only 'pending' rows are eligible. pending_ids is the
+    # candidate set; the actual set this worker claims (claimed_ids, computed
+    # under a row lock below) is what every later status update targets, never
+    # the raw payout_ids, so we never force-process an id that was already
+    # completed/failed and never built into a request.
+    payouts = list(
+        Payout.objects.filter(id__in=payout_ids, status="pending").select_related("affiliate")
+    )
 
-    if not payouts.exists():
+    if not payouts:
         return {"success": False, "error": "No pending payouts found"}
+
+    pending_ids = [payout.id for payout in payouts]
 
     # Build payout requests
     payout_requests = []
-    payout_map = {}  # Map reference to payout for later update
+    payout_map = {}  # Map payout id to payout for later update
 
     for payout in payouts:
         affiliate = payout.affiliate
@@ -298,14 +334,43 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
         )
 
         payout_requests.append(payout_request)
-        payout_map[reference] = payout
+        payout_map[payout.id] = payout
+
+    # The exact set of ids this worker wins the claim for. Only these are ever
+    # submitted to the provider or touched by any later status update.
+    claimed_ids = []
 
     try:
-        # Mark all as processing
+        # Claim only the rows we actually win. select_for_update locks the
+        # still-pending rows so a concurrent batch sharing an id cannot also
+        # claim it; claimed_ids is the precise rowset this worker owns. A
+        # conditional UPDATE ... WHERE status='pending' alone cannot tell us
+        # which rows it changed, so a losing concurrent batch would still submit
+        # its prebuilt request for that id = double payment. Locking and reading
+        # the pending rows first gives us that set. The lock is released when the
+        # atomic block commits status='processing'; that claim is durable, so we
+        # deliberately do NOT hold the lock across the provider network call.
         with transaction.atomic():
-            Payout.objects.filter(id__in=payout_ids).update(
-                status="processing", processed_at=timezone.now(), provider_account=provider_account
+            locked = list(
+                Payout.objects.select_for_update().filter(id__in=pending_ids, status="pending")
             )
+            claimed_ids = [payout.id for payout in locked]
+            if claimed_ids:
+                Payout.objects.filter(id__in=claimed_ids).update(
+                    status="processing",
+                    processed_at=timezone.now(),
+                    provider_account=provider_account,
+                )
+
+        if not claimed_ids:
+            # Every candidate row was won by a concurrent batch; submit nothing.
+            return {"success": False, "error": "No pending payouts found"}
+
+        # Restrict the submission set to the rows we actually claimed. Rows won
+        # by another worker were left untouched and must never be sent to the
+        # provider.
+        claimed_set = set(claimed_ids)
+        payout_requests = [req for req in payout_requests if req.payout_id in claimed_set]
 
         # Call batch payout
         batch_result = provider.create_batch_payout(payout_requests)
@@ -324,12 +389,23 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
                     else:
                         failed_items.append((req.payout_id, item_result.message))
             else:
-                submitted_ids = list(payout_ids)
+                submitted_ids = list(claimed_ids)
 
             if submitted_ids:
-                Payout.objects.filter(id__in=submitted_ids).update(
-                    provider_reference=batch_result.batch_reference or "",
-                    provider_response=batch_result.raw_response or {},
+                # Every payout in the batch shares the one batch_reference, so it
+                # cannot uniquely identify a payout for item-level webhooks.
+                # Persist the unique per-item reference (echoed by the provider as
+                # sender_item_id) on each payout so item events resolve to exactly
+                # one record, while the batch reference drives batch-level events.
+                submitted_payouts = []
+                for payout_id in submitted_ids:
+                    payout = payout_map[payout_id]
+                    payout.reference = f"SPWIG-PAYOUT-{payout.id}"
+                    payout.provider_reference = batch_result.batch_reference or ""
+                    payout.provider_response = batch_result.raw_response or {}
+                    submitted_payouts.append(payout)
+                Payout.objects.bulk_update(
+                    submitted_payouts, ["reference", "provider_reference", "provider_response"]
                 )
 
             for failed_id, message in failed_items:
@@ -352,8 +428,9 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
                 "failed_count": len(failed_items),
             }
         else:
-            # Batch failed - mark all as failed
-            Payout.objects.filter(id__in=payout_ids).update(
+            # Batch was rejected outright by the provider - mark the claimed
+            # set failed (never the raw payout_ids or rows won by another worker).
+            Payout.objects.filter(id__in=claimed_ids).update(
                 status="failed",
                 notes=batch_result.message or "Batch submission failed",
                 provider_response=batch_result.raw_response or {},
@@ -361,16 +438,22 @@ def process_batch_payouts(self, payout_ids: list, provider_account_id: int):
 
             logger.error(f"Batch payout failed: {batch_result.message}")
 
-            return {"success": False, "error": batch_result.message, "count": len(payout_ids)}
+            return {"success": False, "error": batch_result.message, "count": len(claimed_ids)}
 
     except Exception as e:
         logger.error(f"Error processing batch payout: {e}", exc_info=True)
 
-        # Mark all as failed
-        Payout.objects.filter(id__in=payout_ids).update(status="failed", notes=str(e))
-
         if self.request.retries < self.max_retries:
+            # Restore the claimed payouts to 'pending' so the retried invocation
+            # can resubmit them. Marking them 'failed' here would make the retry
+            # filter (status="pending") find nothing and submit nothing. Only the
+            # rows this worker claimed are restored; rows won by another worker
+            # stay untouched.
+            Payout.objects.filter(id__in=claimed_ids, status="processing").update(status="pending")
             raise self.retry(exc=e)
+
+        # Retries exhausted - now it is safe to record the failure.
+        Payout.objects.filter(id__in=claimed_ids).update(status="failed", notes=str(e))
 
         return {"success": False, "error": str(e)}
 
@@ -429,36 +512,13 @@ def sync_payout_status(self, payout_id: int):
             old_status = payout.status
             new_status = _map_provider_status(result.status)
 
-            # Update payout status
-            if new_status == "completed" and payout.status != "completed":
-                payout.mark_as_completed(
-                    provider_reference=payout.provider_reference,
-                    provider_response=result.raw_response,
-                )
-                logger.info(f"Payout {payout_id} marked as completed")
-
-            elif new_status == "failed" and payout.status not in ("completed", "failed"):
-                payout.mark_as_failed(
-                    notes=result.message or "Provider reported failure",
-                    provider_response=result.raw_response,
-                )
-                logger.warning(f"Payout {payout_id} marked as failed: {result.message}")
-
-            elif new_status in ("returned", "cancelled") and payout.status not in (
-                "completed",
-                "failed",
-                "cancelled",
-            ):
-                payout.status = "cancelled"
-                payout.notes = result.message or f"Provider status: {result.status.value}"
-                payout.provider_response = result.raw_response or {}
-                payout.save()
-                logger.warning(f"Payout {payout_id} marked as cancelled")
-
-            else:
-                # Just update the response data
-                payout.provider_response = result.raw_response or {}
-                payout.save()
+            _apply_provider_status(
+                payout,
+                new_status,
+                message=result.message or "",
+                raw_response=result.raw_response,
+            )
+            logger.info(f"Payout {payout_id} synced: {old_status} -> {payout.status}")
 
             return {
                 "success": True,
@@ -587,10 +647,18 @@ def handle_webhook_event(webhook_log_id: int):
             webhook_log.save()
             return {"success": True, "message": "No payout reference in event"}
 
-        # Find matching payout
-        payout = Payout.objects.filter(provider_reference=payout_reference).first()
+        # Resolve the affected payouts. A batch shares one batch reference across
+        # every payout, so batch-level events must update all records in the
+        # batch; item-level events carry a unique per-item reference and must
+        # resolve to exactly one payout (never an arbitrary .first()).
+        event_type = event_data.get("event_type", "") or ""
+        if "ITEM" in event_type.upper():
+            payouts = list(Payout.objects.filter(reference=payout_reference))
+        else:
+            payouts = list(Payout.objects.filter(provider_reference=payout_reference))
 
-        if not payout:
+        if not payouts:
+            webhook_log.payout_reference = payout_reference
             webhook_log.processed = True
             webhook_log.processed_at = timezone.now()
             webhook_log.save()
@@ -600,29 +668,19 @@ def handle_webhook_event(webhook_log_id: int):
                 "message": f"No payout found for reference: {payout_reference}",
             }
 
-        # Update payout status
+        # Apply the provider status with the same terminal-state guards used by
+        # sync_payout_status, so a late/duplicate cancellation cannot regress an
+        # already completed payout. Cancellations route through Payout.cancel(),
+        # which reverts the related commissions.
         new_status = _map_provider_status(provider_status)
+        message = event_data.get("message", "")
+        raw_data = event_data.get("raw_data", {})
 
-        if new_status == "completed" and payout.status != "completed":
-            payout.mark_as_completed(
-                provider_reference=payout_reference,
-                provider_response=event_data.get("raw_data", {}),
-            )
-            logger.info(f"Payout {payout.id} marked completed via webhook")
-
-        elif new_status == "failed" and payout.status not in ("completed", "failed"):
-            payout.mark_as_failed(
-                notes=event_data.get("message", "Failed via webhook"),
-                provider_response=event_data.get("raw_data", {}),
-            )
-            logger.warning(f"Payout {payout.id} marked failed via webhook")
-
-        elif new_status in ("returned", "cancelled"):
-            payout.status = "cancelled"
-            payout.notes = event_data.get("message", f"Status: {provider_status}")
-            payout.provider_response = event_data.get("raw_data", {})
-            payout.save()
-            logger.warning(f"Payout {payout.id} marked cancelled via webhook")
+        updated_ids = []
+        for payout in payouts:
+            if _apply_provider_status(payout, new_status, message=message, raw_response=raw_data):
+                updated_ids.append(payout.id)
+            logger.info(f"Payout {payout.id} webhook processed; status={payout.status}")
 
         # Mark webhook as processed
         webhook_log.payout_reference = payout_reference
@@ -632,8 +690,8 @@ def handle_webhook_event(webhook_log_id: int):
 
         return {
             "success": True,
-            "payout_id": payout.id,
-            "new_status": payout.status,
+            "payout_ids": [payout.id for payout in payouts],
+            "updated_ids": updated_ids,
             "event_type": event_data.get("event_type"),
         }
 
@@ -683,6 +741,49 @@ def _get_provider_for_affiliate(affiliate):
         ).first()
 
     return None
+
+
+def _apply_provider_status(payout, new_status, message="", raw_response=None):
+    """Apply a provider-reported status to a payout, guarding terminal states.
+
+    Shared by webhook processing and the status-sync fallback so both apply the
+    same guards: a payout already in a terminal state (completed/failed/
+    cancelled) is never regressed by a late or duplicate event, and
+    cancellations route through ``Payout.cancel`` so the related commissions are
+    reverted consistently.
+
+    Returns True if the payout status changed.
+    """
+    raw_response = raw_response or {}
+
+    if new_status == "completed" and payout.status != "completed":
+        payout.mark_as_completed(
+            provider_reference=payout.provider_reference,
+            provider_response=raw_response,
+        )
+        return True
+
+    if new_status == "failed" and payout.status not in ("completed", "failed"):
+        payout.mark_as_failed(
+            notes=message or "Provider reported failure",
+            provider_response=raw_response,
+        )
+        return True
+
+    if new_status in ("returned", "cancelled") and payout.status not in (
+        "completed",
+        "failed",
+        "cancelled",
+    ):
+        payout.cancel(notes=message or f"Provider status: {new_status}")
+        payout.provider_response = raw_response
+        payout.save(update_fields=["provider_response"])
+        return True
+
+    # No status transition; persist the latest response for the audit trail.
+    payout.provider_response = raw_response
+    payout.save(update_fields=["provider_response"])
+    return False
 
 
 def _map_provider_status(provider_status):

@@ -19,7 +19,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 
-from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.permissions import IsStaffWithWritePermission, category_permission
 from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.products import (
     AdminProductDetailSerializer,
@@ -420,7 +420,7 @@ def product_by_sku(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def adjust_stock(request, product_id):
     """
@@ -545,7 +545,7 @@ def adjust_stock(request, product_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product_status(request, product_id):
     """
@@ -822,7 +822,7 @@ def product_counts(request):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def upload_product_image(request, product_id):
     """
@@ -1031,7 +1031,7 @@ def upload_product_image(request, product_id):
     },
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def delete_product_image(request, product_id, image_id):
     """
@@ -1123,7 +1123,7 @@ def delete_product_image(request, product_id, image_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def set_primary_image(request, product_id, image_id):
     """
@@ -1207,7 +1207,7 @@ def set_primary_image(request, product_id, image_id):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminAPIThrottle])
 def reorder_product_images(request, product_id):
     """
@@ -1312,7 +1312,7 @@ def reorder_product_images(request, product_id):
     },
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product_image(request, product_id, image_id):
     """
@@ -1424,6 +1424,8 @@ def _create_single_product(data, user=None):
     Create a single product from validated data dict. Returns the Product instance.
     Used by both single create and bulk create to avoid duplication.
     """
+    from core.models import SiteSettings
+
     currency = data.get("currency") or get_default_currency()
     slug = _generate_unique_product_slug(data["name"])
 
@@ -1439,7 +1441,12 @@ def _create_single_product(data, user=None):
         full_description=data.get("full_description", ""),
         track_inventory=data.get("track_inventory", True),
         low_stock_threshold=data.get("low_stock_threshold", 5),
-        allow_backorders=data.get("allow_backorders", False),
+        # New products inherit the store's backorder default unless the caller
+        # explicitly sets it.
+        allow_backorders=data.get(
+            "allow_backorders",
+            SiteSettings.get_settings().allow_backorders_by_default,
+        ),
         weight=data.get("weight"),
         length=data.get("length"),
         width=data.get("width"),
@@ -1495,7 +1502,7 @@ def _create_single_product(data, user=None):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_product(request):
     """Create a new product."""
@@ -1573,7 +1580,7 @@ def create_product(request):
     },
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product(request, product_id):
     """Partially update a product."""
@@ -1736,7 +1743,7 @@ def update_product(request, product_id):
     responses={200: None, 404: ErrorResponseSerializer},
 )
 @api_view(["DELETE"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def delete_product(request, product_id):
     """Soft-delete a product."""
@@ -1781,7 +1788,7 @@ def delete_product(request, product_id):
     responses={201: None, 400: ErrorResponseSerializer},
 )
 @api_view(["POST"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_create_products(request):
     """Bulk create products."""
@@ -1854,7 +1861,7 @@ def bulk_create_products(request):
     responses={200: None, 400: ErrorResponseSerializer},
 )
 @api_view(["PATCH"])
-@permission_classes([IsStaffWithWritePermission])
+@permission_classes([category_permission("catalog", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_update_products(request):
     """Bulk update products."""

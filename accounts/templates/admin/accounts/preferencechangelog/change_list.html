@@ -101,15 +101,18 @@
         </span>
     </div>
 
-    <!-- Results Container -->
+    <!-- Bulk actions bar + results (form wraps the container so it survives
+         AJAX filter reloads that replace #changelog-results) -->
+    {% include "admin/includes/bulk_actions_open.html" %}
     <div id="changelog-results">
         {% include "admin/accounts/preferencechangelog/partials/changelog_cards.html" with logs=cl.result_list %}
     </div>
+    {% include "admin/includes/bulk_actions_close.html" %}
 
     <div id="list-filter-config"
          data-filter-url="{% url 'filter_preference_changelogs' %}"
          data-results-container="changelog-results"
          data-results-count="changelog-count"
-         style="display:none;"></div>
+         hidden></div>
 </div>
 {% endblock %}

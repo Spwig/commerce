@@ -31,25 +31,6 @@ published: true
 
 Any Simple, Variable, or Digital product can now be sold on a recurring basis, right alongside — or instead of — a one-time purchase. This guide covers turning subscriptions on for a product, choosing which plans customers can pick from, and what your customers actually see when they buy.
 
-<!-- screenshots-needed:
-- url: /admin/catalog/product/{id}/change/
-  filename: subscriptions-tab.webp
-  description: The product edit form with the Subscriptions tab active, showing
-    Enable Subscription checked, one or more plans selected in the Subscription
-    Plans field, and the Allow One-Time Purchase / Default to Subscription
-    checkboxes visible.
-  save-to: core/static/core/admin/img/help/selling-products-as-subscriptions/
-  viewport: 1440x900
-- url: (storefront) product detail page for a subscription-enabled product
-  filename: subscribe-and-save-selector.webp
-  description: The storefront "One-time purchase" vs "Subscribe & Save" selector
-    expanded, showing a delivery-frequency tier list with a Save X% badge on the
-    discounted tiers.
-  save-to: core/static/core/admin/img/help/selling-products-as-subscriptions/
-  viewport: 1440x900
-  notes: Requires a real subscription-enabled product with at least one active
-    public plan and pricing tiers, viewed from the storefront (not admin).
--->
 
 ## Which product types can be sold as subscriptions
 
@@ -77,6 +58,8 @@ The **Enable Subscription** checkbox itself isn't hidden or greyed out for ineli
 6. Configure the two purchase-mode checkboxes (below).
 7. Click **Save**.
 
+![The Subscriptions tab of the product edit form: Enable Subscription checked, a plan selected in the Subscription Plans list, and the Allow One-Time Purchase and Default to Subscription checkboxes](/static/core/admin/img/help/selling-products-as-subscriptions/subscriptions-tab.webp)
+
 ## Attaching subscription plans
 
 A **Subscription Plan** is a reusable template — billing cadence options, trial, setup fee, cancellation rules — that you build once and can attach to any number of eligible products. The **Subscription Plans** field on the product's Subscriptions tab is where you connect a product to the plan(s) it should be sold under.
@@ -97,6 +80,8 @@ Use **Default to Subscription** for products where recurring delivery is the nat
 ### On the product page
 
 When a product has subscriptions enabled and at least one active, public plan attached, a purchase-mode selector appears on the product page:
+
+![The storefront purchase selector with "Subscribe & Save" chosen: a One-time purchase vs Subscribe & Save toggle above a delivery-frequency list showing Annual (Save 20%), Monthly and Quarterly (Save 10%) tiers with prices, plus trial, cancellation and payment notes](/static/core/admin/img/help/selling-products-as-subscriptions/subscribe-and-save-selector.webp)
 
 - If one-time purchase is allowed, customers see a **"One-time purchase"** vs **"Subscribe & Save"** choice, defaulting to whichever mode you configured.
 - If the product has more than one plan attached, a plan chooser appears once "Subscribe & Save" is selected.

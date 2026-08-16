@@ -1087,6 +1087,32 @@ class MediaLibrary {
     }
   }
 
+  /**
+   * Insert shimmering skeleton tiles at the front of the media grid, one per
+   * file being uploaded. Removed automatically when the grid is re-rendered
+   * (renderMediaGrid clears innerHTML), so no explicit teardown is needed.
+   */
+  showUploadSkeletons(count) {
+    const grid =
+      document.querySelector('.ml-modal .media-grid') ||
+      document.querySelector('.media-gallery .media-grid');
+    if (!grid) return;
+
+    // Drop any empty-state message so skeletons aren't sitting beside it
+    const emptyState = grid.querySelector('.no-results');
+    if (emptyState) emptyState.remove();
+
+    for (let i = 0; i < count; i++) {
+      const skeleton = document.createElement('div');
+      skeleton.className = 'media-item media-item--skeleton';
+      skeleton.setAttribute('aria-hidden', 'true');
+      skeleton.innerHTML =
+        '<div class="image-container"></div>' +
+        '<div class="info"><div class="skeleton-line"></div></div>';
+      grid.insertAdjacentElement('afterbegin', skeleton);
+    }
+  }
+
   async handleFileUpload(files) {
     const validFiles = files.filter(file => {
       const mimeType = this.inferMimeType(file);
@@ -1109,6 +1135,10 @@ class MediaLibrary {
 
     // Use upload queue if available
     if (this.uploadQueue) {
+      // Show shimmering placeholder tiles in the grid for the duration of the
+      // upload. They are cleared when onComplete() → loadMedia() rebuilds the
+      // grid with the real items.
+      this.showUploadSkeletons(validFiles.length);
       this.uploadQueue.addToQueue(validFiles);
       // Auto-refresh is handled by the onComplete callback
     } else {

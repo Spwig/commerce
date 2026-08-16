@@ -94,8 +94,10 @@ class TerminalProviderRegistry:
             logger.info(f"Discovered {len(cls._providers)} terminal providers")
 
         except Exception as e:
+            # Leave _discovered false so a transient failure (e.g. the
+            # database being temporarily unavailable) is retried on the next
+            # access instead of permanently caching an incomplete provider set.
             logger.error(f"Error discovering terminal providers: {e}", exc_info=True)
-            cls._discovered = True  # Mark as discovered to prevent retry loops
 
     @classmethod
     def _load_provider_from_component(cls, component) -> None:

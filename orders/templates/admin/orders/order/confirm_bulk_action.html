@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block content %}
+<div class="confirm-bulk-action{% if danger %} confirm-bulk-action--danger{% endif %}">
+    <h1>
+        {% if danger %}<i class="fas fa-triangle-exclamation"></i>{% else %}<i class="fas fa-circle-question"></i>{% endif %}
+        {{ title }}
+    </h1>
+
+    <p class="confirm-bulk-lede">
+        {% blocktranslate count counter=order_count trimmed %}
+            This will run on {{ counter }} selected order.
+        {% plural %}
+            This will run on {{ counter }} selected orders.
+        {% endblocktranslate %}
+        {% if danger %}<strong>{% trans "This can’t be undone." %}</strong>{% endif %}
+    </p>
+
+    <div class="confirm-bulk-list">
+        {% for order in orders %}
+        <div class="confirm-bulk-item">
+            <span class="confirm-bulk-order">#{{ order.order_number }}</span>
+            <span class="confirm-bulk-cust">{{ order.shipping_name|default:order.email }}</span>
+            <span class="confirm-bulk-meta">{{ order.get_status_display }} · {{ order.get_payment_status_display }} · {{ order.total_amount }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{{ action_name }}">
+        <input type="hidden" name="_confirmed" value="1">
+        {% for order in orders %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ order.pk }}">
+        {% endfor %}
+        <div class="confirm-bulk-actions">
+            <button type="submit" class="button{% if danger %} confirm-bulk-danger{% endif %}">
+                <i class="fas fa-check"></i> {% trans "Yes, proceed" %}
+            </button>
+            <a href="../" class="button confirm-bulk-cancel">
+                <i class="fas fa-times"></i> {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

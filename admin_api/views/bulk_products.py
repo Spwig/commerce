@@ -9,7 +9,7 @@ import logging
 import secrets
 from decimal import ROUND_HALF_UP, Decimal
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -139,13 +139,33 @@ def bulk_stock_adjust(request):
                         failed += 1
                         continue
 
-                # Get or create stock item
-                stock_item, created = StockItem.objects.get_or_create(
-                    product=product,
-                    warehouse=warehouse,
-                    variant_id=variant_id,
-                    defaults={"on_hand": 0, "allocated": 0},
-                )
+                # Lock the existing stock row so concurrent 'set'/'adjust'
+                # operations serialize instead of computing deltas from a stale
+                # on_hand (which would otherwise cause lost updates). Creation is
+                # handled separately for the first-ever adjustment.
+                try:
+                    stock_item = StockItem.objects.select_for_update().get(
+                        product=product, warehouse=warehouse, variant_id=variant_id
+                    )
+                except StockItem.DoesNotExist:
+                    # No row to lock on the first-ever adjustment, so two
+                    # concurrent requests can both reach here. Create in a
+                    # savepoint; if another request won the (product, warehouse,
+                    # variant) unique_together race, re-fetch its row under lock
+                    # instead of failing.
+                    try:
+                        with transaction.atomic():
+                            stock_item = StockItem.objects.create(
+                                product=product,
+                                warehouse=warehouse,
+                                variant_id=variant_id,
+                                on_hand=0,
+                                allocated=0,
+                            )
+                    except IntegrityError:
+                        stock_item = StockItem.objects.select_for_update().get(
+                            product=product, warehouse=warehouse, variant_id=variant_id
+                        )
 
                 old_quantity = stock_item.on_hand
 

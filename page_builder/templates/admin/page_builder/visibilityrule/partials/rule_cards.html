@@ -32,7 +32,7 @@
 
         <div class="list-row-card-content">
             <h3 class="list-row-card-title">
-                <a href="{% url 'admin:page_builder_visibilityrule_change' rule.pk %}">
+                <a href="{% url 'admin:visibility_visibilityrule_change' rule.pk %}">
                     {{ rule.name }}
                 </a>
             </h3>
@@ -143,7 +143,7 @@
         </div>
 
         <div class="list-row-card-actions">
-            <a href="{% url 'admin:page_builder_visibilityrule_change' rule.pk %}"
+            <a href="{% url 'admin:visibility_visibilityrule_change' rule.pk %}"
                class="list-row-card-action"
                title="{% trans 'Edit rule' %}">
                 <i class="fas fa-edit"></i>
@@ -167,7 +167,7 @@
                 <i class="fas fa-toggle-off"></i>
             </button>
             {% endif %}
-            <a href="{% url 'admin:page_builder_visibilityrule_delete' rule.pk %}"
+            <a href="{% url 'admin:visibility_visibilityrule_delete' rule.pk %}"
                class="list-row-card-action"
                title="{% trans 'Delete rule' %}">
                 <i class="fas fa-trash"></i>
@@ -183,7 +183,7 @@
         <p class="card-empty-state-subtitle">
             {% trans "Try adjusting your filters or create a new rule." %}
         </p>
-        <a href="{% url 'admin:page_builder_visibilityrule_add' %}" class="button mt-16">
+        <a href="{% url 'admin:visibility_visibilityrule_add' %}" class="button mt-16">
             <i class="fas fa-plus"></i> {% trans "Create Rule" %}
         </a>
     </div>

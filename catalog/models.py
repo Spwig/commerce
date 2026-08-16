@@ -3748,6 +3748,18 @@ class SalesRegion(models.Model):
         db_index=True,
         help_text=_('Unique code (e.g., "APAC", "NZ", "SG")'),
     )
+    slug = models.SlugField(
+        _("market URL slug"),
+        max_length=20,
+        blank=True,
+        db_index=True,
+        help_text=_(
+            "Optional URL segment that gives this region its own storefront "
+            'address — e.g. "nz" serves it at /nz/en/… . Leave blank if the '
+            "region is not a separate storefront. The highest-priority region "
+            "is the default market and is always served without a prefix."
+        ),
+    )
     countries = models.JSONField(
         _("countries"),
         default=list,
@@ -3767,13 +3779,85 @@ class SalesRegion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Slugs that would collide with a top-level route and so can never be a
+    # market prefix. Language codes are reserved dynamically in ``clean()``
+    # because the market segment sits in front of the /<lang>/ prefix.
+    # Real top-level route prefixes (from core.urls) plus common storefront
+    # paths. A market slug that matched any of these would make MarketMiddleware
+    # strip it and break that route. Keep in sync if new top-level routes are
+    # added. (Django language codes are reserved dynamically in clean().)
+    RESERVED_MARKET_SLUGS = {
+        "account",
+        "accounts",
+        "activate",
+        "admin",
+        "affiliate",
+        "api",
+        "blog",
+        "brand",
+        "cart",
+        "category",
+        "checkout",
+        "ckeditor5",
+        "developers",
+        "download",
+        "email",
+        "health",
+        "i18n",
+        "license",
+        "maintenance",
+        "media",
+        "media-library",
+        "oidc",
+        "pos",
+        "product",
+        "products",
+        "receipt",
+        "search",
+        "static",
+        "theme",
+        "webhooks",
+    }
+
     class Meta:
         verbose_name = _("Sales Region")
         verbose_name_plural = _("Sales Regions")
         ordering = ["-priority", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug"],
+                condition=~models.Q(slug=""),
+                name="unique_market_slug",
+            )
+        ]
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_market(self) -> bool:
+        """True when this region is exposed as its own storefront URL (/slug/…)."""
+        return bool(self.slug) and self.is_active
+
+    def clean(self):
+        """Normalise the slug and reject values that would break routing."""
+        super().clean()
+        if self.slug:
+            from django.conf import settings as dj_settings
+            from django.core.exceptions import ValidationError
+
+            self.slug = self.slug.lower()
+            language_codes = {code.lower() for code, _name in dj_settings.LANGUAGES}
+            if self.slug in self.RESERVED_MARKET_SLUGS or self.slug in language_codes:
+                raise ValidationError(
+                    {
+                        "slug": _(
+                            "This slug is reserved — it clashes with a language "
+                            "code or a system route — and cannot be used as a "
+                            "market URL."
+                        )
+                    }
+                )
 
 
 class Warehouse(models.Model):
@@ -6926,7 +7010,7 @@ class StockDisplaySettings(models.Model):
         verbose_name_plural = _("Stock Display Settings")
 
     def __str__(self):
-        return _("Stock Display Settings")
+        return str(_("Stock Display Settings"))
 
     @classmethod
     def get_settings(cls):

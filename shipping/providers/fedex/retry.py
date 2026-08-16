@@ -65,7 +65,8 @@ class RetryConfig:
             import random
 
             jitter_amount = delay * random.uniform(0, 0.5)
-            delay += jitter_amount
+            # Re-apply the cap after jitter so the delay never exceeds max_delay.
+            delay = min(delay + jitter_amount, self.max_delay)
 
         return delay
 
@@ -162,6 +163,7 @@ def retry_with_backoff(
     Returns:
         Decorated function
     """
+    custom_config = config is not None
     if config is None:
         config = DEFAULT_RETRY_CONFIG
 
@@ -185,8 +187,9 @@ def retry_with_backoff(
                         logger.error(f"{func.__name__} failed after {attempt + 1} attempts")
                         raise
 
-                    # Get retry configuration for this exception type
-                    retry_config = get_retry_config(e)
+                    # Honour a caller-supplied config; otherwise pick one based
+                    # on the exception type.
+                    retry_config = config if custom_config else get_retry_config(e)
 
                     # Calculate delay
                     delay = retry_config.get_delay(attempt)

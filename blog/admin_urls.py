@@ -13,6 +13,7 @@ app_name = "blog_admin"
 
 urlpatterns = [
     # Admin List Filtering Endpoints
+    path("blogpost/filter/", admin_views.filter_blog_posts, name="filter_blog_posts"),
     path("blogcategory/filter/", admin_views.filter_blog_categories, name="filter_blog_categories"),
     path("blogtag/filter/", admin_views.filter_blog_tags, name="filter_blog_tags"),
     path(

@@ -44,6 +44,7 @@ def get_origin_address(destination_country_code: str) -> dict[str, str]:
                 country_code=destination_country_code.upper(),
                 is_active=True,
                 source_warehouse__isnull=False,
+                source_warehouse__is_active=True,
             )
             .first()
         )
@@ -71,6 +72,7 @@ def get_origin_address(destination_country_code: str) -> dict[str, str]:
                 CountryWarehouseFallback.objects.select_related("warehouse")
                 .filter(
                     country=shipping_country,
+                    warehouse__is_active=True,
                 )
                 .order_by("priority")
                 .first()
@@ -210,7 +212,7 @@ class RateService:
         # Call provider API
         logger.info(
             f"Fetching rates from {provider.provider_name} for "
-            f"{origin['country']} -> {destination['country']}"
+            f"{origin.get('country', '')} -> {destination.get('country', '')}"
         )
 
         try:
@@ -243,14 +245,14 @@ class RateService:
         Returns:
             List of rate dictionaries (same as get_rates())
         """
-        # Build destination from order shipping address
+        # Build destination from order shipping address fields
         destination = {
-            "country": order.shipping_address.get("country", ""),
-            "postal_code": order.shipping_address.get("postal_code", ""),
-            "state": order.shipping_address.get("state", ""),
-            "city": order.shipping_address.get("city", ""),
-            "address1": order.shipping_address.get("address1", ""),
-            "address2": order.shipping_address.get("address2", ""),
+            "country": order.shipping_country or "",
+            "postal_code": order.shipping_postal_code or "",
+            "state": order.shipping_state or "",
+            "city": order.shipping_city or "",
+            "address1": order.shipping_address1 or "",
+            "address2": order.shipping_address2 or "",
         }
 
         # Resolve origin address from warehouse → fallback warehouse → SiteSettings
