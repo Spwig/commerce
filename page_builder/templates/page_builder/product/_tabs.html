@@ -182,7 +182,7 @@
                                 {% if review.title %}
                                 <h4 class="review-card__title">{{ review.title }}</h4>
                                 {% endif %}
-                                <div class="review-card__content">{{ review.comment|safe }}</div>
+                                <div class="review-card__content">{{ review.comment|striptags|linebreaks }}</div>
                                 <div class="review-card__footer">
                                     <time class="review-card__date" datetime="{{ review.created_at|date:'c' }}">
                                         {{ review.created_at|date:"M d, Y" }}

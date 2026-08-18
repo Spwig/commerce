@@ -37795,6 +37795,80 @@
                 }
             }
         },
+        "/api/visibility/attach/": {
+            "get": {
+                "operationId": "api_visibility_attach_retrieve",
+                "description": "Read or set the RuleGroups attached to a target object.\n\nGET  ?target_type=&target_id=            -> {rule_group_ids: [...]}\nPOST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "api_visibility_attach_create",
+                "description": "Read or set the RuleGroups attached to a target object.\n\nGET  ?target_type=&target_id=            -> {rule_group_ids: [...]}\nPOST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/visibility/quick-rule/": {
+            "post": {
+                "operationId": "api_visibility_quick_rule_create",
+                "description": "POST: create a single-rule RuleGroup in one call, for the editor's\n'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup so the\nengine evaluates it like any admin-authored group (never a throwaway JSON).",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/visibility/rule-groups/": {
+            "get": {
+                "operationId": "api_visibility_rule_groups_retrieve",
+                "description": "GET: list active, top-level RuleGroups for the editor's picker.",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/api/vouchers/applied/": {
             "get": {
                 "operationId": "api_vouchers_applied_list",
@@ -58466,6 +58540,7 @@
                     },
                     "quantity": {
                         "type": "integer",
+                        "maximum": 2147483647,
                         "minimum": 0,
                         "description": "For receive/return: units to add. For damage: units to remove. For recount: new absolute on_hand count."
                     },
@@ -63182,7 +63257,7 @@
             },
             "PictureSources": {
                 "type": "object",
-                "description": "Responsive image source set for a storefront <picture> element.\n\nMirrors ``MediaAsset.get_picture_sources()``: ``avif``/``webp`` are the\nnext-gen candidates (null when not generated yet — the client omits that\n<source>), ``fallback`` is always a usable original-format URL for the\n<img>. Emitted alongside — never instead of — the existing single image\nURL field, so deployed clients keep working.",
+                "description": "Responsive image source set for a storefront <picture> element.\n\nMirrors ``MediaAsset.get_picture_sources()``: ``avif``/``webp`` are the\nnext-gen candidates (null when not generated yet — the client omits that\n<source>), ``fallback`` is always a usable original-format URL for the\n<img>. Emitted alongside — never instead of — the existing single image\nURL field, so deployed clients keep working.\n\n``avif_srcset``/``webp_srcset``/``fallback_srcset`` are additive\n``\"url Nw, url Nw\"`` responsive width ladders (one per format), null when\nfewer than two sizes exist. A headless client pairs them with a ``sizes``\nhint so the browser fetches the right width instead of the largest file;\nolder clients ignore the extra keys.",
                 "properties": {
                     "avif": {
                         "type": "string",
@@ -63202,6 +63277,18 @@
                     },
                     "height": {
                         "type": "integer",
+                        "nullable": true
+                    },
+                    "avif_srcset": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "webp_srcset": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fallback_srcset": {
+                        "type": "string",
                         "nullable": true
                     }
                 },
@@ -63538,8 +63625,7 @@
                         "default": 5
                     },
                     "allow_backorders": {
-                        "type": "boolean",
-                        "default": false
+                        "type": "boolean"
                     },
                     "initial_stock": {
                         "type": "integer",

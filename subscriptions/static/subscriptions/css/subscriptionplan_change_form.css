@@ -1,0 +1,135 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ============================================
+   SubscriptionPlan Change Form
+   Scoped under .subscriptionplan-change-form
+   Structural components (tabs, cards, dashboard header,
+   stat cards, util buttons) come from admin-base.css.
+   This file only adds the per-field glue + status badges.
+   ============================================ */
+
+/* --- Status Badges --- */
+.subscriptionplan-change-form .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.subscriptionplan-change-form .status-badge.active {
+  background: rgba(39, 174, 96, 0.12);
+  color: var(--admin-success, #27ae60);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.subscriptionplan-change-form .status-badge.inactive {
+  background: rgba(127, 140, 141, 0.12);
+  color: var(--admin-text-muted, #7f8c8d);
+  border: 1px solid rgba(127, 140, 141, 0.3);
+}
+
+.subscriptionplan-change-form .status-badge.public {
+  background: rgba(52, 152, 219, 0.12);
+  color: var(--admin-info, #3498db);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.subscriptionplan-change-form .status-badge.private {
+  background: rgba(243, 156, 18, 0.12);
+  color: var(--admin-warning, #f39c12);
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+/* --- Dashboard Stats --- */
+.subscriptionplan-change-form .dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* --- Form Cards — base .form-card styles provided by admin-base.css --- */
+.subscriptionplan-change-form .form-card-description {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--admin-text-muted, #718096);
+}
+
+/* --- Form Rows --- */
+.subscriptionplan-change-form .form-row {
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.subscriptionplan-change-form .form-row:last-child {
+  margin-bottom: 0;
+}
+
+.subscriptionplan-change-form .form-row label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-text, #2d3748);
+}
+
+.subscriptionplan-change-form .form-row .readonly {
+  padding: 8px 12px;
+  background: var(--admin-card-bg, #f7fafc);
+  border: 1px solid var(--admin-border, #e2e8f0);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--admin-text-muted, #718096);
+}
+
+.subscriptionplan-change-form .form-row .help {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--admin-text-muted, #718096);
+}
+
+/* --- Editable inlines (pricing tiers / add-ons) --- */
+.subscriptionplan-change-form .inline-group {
+  margin: 0;
+}
+
+.subscriptionplan-change-form .inline-group h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-text, #2d3748);
+  background: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+.subscriptionplan-change-form .tabular td,
+.subscriptionplan-change-form .tabular th {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.subscriptionplan-change-form .tabular table {
+  width: 100%;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .subscriptionplan-change-form .dashboard-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .subscriptionplan-change-form .form-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .subscriptionplan-change-form .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

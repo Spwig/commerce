@@ -2935,6 +2935,7 @@ class ProductAdmin(
 @admin.register(ProductReview)
 class ProductReviewAdmin(admin.ModelAdmin):
     change_list_template = "admin/catalog/productreview/change_list.html"
+    change_form_template = "admin/catalog/productreview/change_form.html"
     list_display = [
         "product",
         "user",
@@ -2946,11 +2947,167 @@ class ProductReviewAdmin(admin.ModelAdmin):
     list_filter = ["rating", "is_approved", "is_verified_purchase"]
     search_fields = ["product__name", "user__username", "title"]
     actions = ["approve_reviews", "reject_reviews"]
+    autocomplete_fields = ["product", "user"]
+    readonly_fields = [
+        "helpful_count",
+        "external_id",
+        "migration_job",
+        "created_at",
+        "updated_at",
+    ]
+
+    fieldsets = (
+        (
+            _("Review"),
+            {
+                "fields": (
+                    "product",
+                    "user",
+                    "rating",
+                    "title",
+                    "comment",
+                    "is_approved",
+                    "is_verified_purchase",
+                ),
+                "classes": ("tab-review",),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "fields": (
+                    "helpful_count",
+                    "external_id",
+                    "migration_job",
+                    "created_at",
+                    "updated_at",
+                ),
+                "classes": ("tab-advanced",),
+            },
+        ),
+    )
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context["rating_choices"] = range(1, 6)
         return super().changelist_view(request, extra_context=extra_context)
+
+    def get_readonly_fields(self, request, obj=None):
+        """A review's product and user must not be reassignable once it exists —
+        that would silently retarget the review. They stay editable on add."""
+        ro = list(super().get_readonly_fields(request, obj))
+        if obj is not None:
+            ro += ["product", "user"]
+        return ro
+
+    def save_model(self, request, obj, form, change):
+        """Apply image deletions/additions from the visual gallery. The `images`
+        JSONField is not a form field — it's managed here so merchants never edit
+        raw JSON."""
+        images = list(obj.images or [])
+        deleted = set(request.POST.getlist("delete_image"))
+        if deleted:
+            images = [img for i, img in enumerate(images) if str(i) not in deleted]
+        add = (request.POST.get("add_image_url") or "").strip()
+        if add and add.startswith(("http://", "https://", "/")):
+            images.append(add)
+        obj.images = images
+        super().save_model(request, obj, form, change)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        """Inject customer, purchase and attribution-journey context for the
+        tabbed change form."""
+        extra_context = extra_context or {}
+        obj = self.get_object(request, object_id)
+        if obj:
+            extra_context.update(self._review_context(obj))
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
+    def _review_context(self, review):
+        """Assemble read-only context: rendered images, customer stats, the
+        order(s) behind the reviewed product, and the customer's traffic-source
+        journey (reused from the attribution engine).
+
+        NOTE: attribution is customer/order-scoped. This shows how the customer
+        reached the store and the channel behind their purchase of this product
+        — NOT the source of the review-writing visit, which is not tracked.
+        """
+        from decimal import Decimal
+
+        from django.db.models import Avg
+
+        ctx = {}
+
+        # Normalise review images (list of URL strings and/or {"url": ...} dicts).
+        # Images are customer-submitted, so only surface safe http(s)/relative
+        # URLs — this blocks javascript:/data: schemes that would otherwise be a
+        # stored-XSS vector when an admin clicks a rendered thumbnail.
+        images = []
+        for idx, item in enumerate(review.images or []):
+            url = item.get("url") or item.get("src") if isinstance(item, dict) else item
+            if isinstance(url, str) and url.startswith(("http://", "https://", "/")):
+                images.append({"i": idx, "url": url})
+        ctx["review_images"] = images
+
+        user = review.user
+        ctx["customer_since"] = getattr(user, "date_joined", None)
+        ctx["customer_total_reviews"] = user.product_reviews.count()
+        ctx["customer_avg_rating"] = user.product_reviews.aggregate(a=Avg("rating"))["a"]
+
+        # Customer order history + the order(s) for the reviewed product.
+        try:
+            from orders.models import Order
+
+            user_orders = Order.objects.filter(user=user)
+            ctx["customer_total_orders"] = user_orders.count()
+            # Sum in Python to avoid mixed-currency aggregate surprises; a single
+            # customer's order set is small.
+            ctx["customer_total_spent"] = sum(
+                (o.total_amount.amount for o in user_orders), Decimal("0.00")
+            )
+
+            product_orders = (
+                user_orders.filter(items__product=review.product).distinct().order_by("-created_at")
+            )
+            rows = []
+            verified = False
+            for order in product_orders[:10]:
+                fulfilled = order.status in ("shipped", "delivered")
+                verified = verified or fulfilled
+                rows.append(
+                    {
+                        "order": order,
+                        "number": order.order_number,
+                        "status": order.get_status_display(),
+                        "status_code": order.status,
+                        "created_at": order.created_at,
+                        "total": order.total_amount,
+                        "source": order.get_source_display() if order.source else None,
+                        "source_code": order.source,
+                        "fulfilled": fulfilled,
+                    }
+                )
+            ctx["product_orders"] = rows
+            ctx["computed_verified_purchase"] = verified
+        except Exception:  # orders app unavailable or schema mismatch — degrade gracefully
+            ctx["customer_total_orders"] = 0
+            ctx["customer_total_spent"] = None
+            ctx["product_orders"] = []
+            ctx["computed_verified_purchase"] = False
+
+        # Customer traffic-source journey (attribution TouchPoint stream).
+        try:
+            from attribution.models import TouchPoint
+
+            ctx["attribution_touches"] = list(
+                TouchPoint.objects.filter(customer_id=user.id, is_bot=False).order_by(
+                    "-occurred_at"
+                )[:15]
+            )
+        except Exception:
+            ctx["attribution_touches"] = []
+
+        return ctx
 
     def approve_reviews(self, request, queryset):
         count = queryset.update(is_approved=True)

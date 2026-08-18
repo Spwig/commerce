@@ -18,6 +18,12 @@ class PictureSourcesSerializer(serializers.Serializer):
     <source>), ``fallback`` is always a usable original-format URL for the
     <img>. Emitted alongside — never instead of — the existing single image
     URL field, so deployed clients keep working.
+
+    ``avif_srcset``/``webp_srcset``/``fallback_srcset`` are additive
+    ``"url Nw, url Nw"`` responsive width ladders (one per format), null when
+    fewer than two sizes exist. A headless client pairs them with a ``sizes``
+    hint so the browser fetches the right width instead of the largest file;
+    older clients ignore the extra keys.
     """
 
     avif = serializers.CharField(allow_null=True)
@@ -25,6 +31,9 @@ class PictureSourcesSerializer(serializers.Serializer):
     fallback = serializers.CharField(allow_null=True)
     width = serializers.IntegerField(allow_null=True)
     height = serializers.IntegerField(allow_null=True)
+    avif_srcset = serializers.CharField(allow_null=True, required=False)
+    webp_srcset = serializers.CharField(allow_null=True, required=False)
+    fallback_srcset = serializers.CharField(allow_null=True, required=False)
 
 
 class MediaFolderSerializer(serializers.ModelSerializer):

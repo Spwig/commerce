@@ -134,6 +134,7 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
     translatable_fields = ["name", "description"]
     inlines = [PlanPricingTierInline, PlanAddonInline]
     change_list_template = "admin/subscriptions/subscriptionplan/change_list.html"
+    change_form_template = "admin/subscriptions/subscriptionplan/change_form.html"
 
     class Media:
         css = {
@@ -184,7 +185,8 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "name",
                     "slug",
                     "description",
-                )
+                ),
+                "classes": ("tab-general",),
             },
         ),
         (
@@ -195,7 +197,8 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "allow_quantity",
                     "minimum_quantity",
                     "maximum_quantity",
-                )
+                ),
+                "classes": ("tab-pricing",),
             },
         ),
         (
@@ -205,7 +208,7 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "trial_period_days",
                     "trial_price",
                 ),
-                "classes": ("collapse",),
+                "classes": ("tab-pricing",),
             },
         ),
         (
@@ -217,7 +220,7 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "grace_period_days",
                     "reactivation_period_days",
                 ),
-                "classes": ("collapse",),
+                "classes": ("tab-lifecycle",),
             },
         ),
         (
@@ -227,14 +230,14 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "upgrade_behavior",
                     "downgrade_behavior",
                 ),
-                "classes": ("collapse",),
+                "classes": ("tab-lifecycle",),
             },
         ),
         (
             _("Limits & Restrictions"),
             {
                 "fields": ("max_billing_cycles",),
-                "classes": ("collapse",),
+                "classes": ("tab-pricing",),
             },
         ),
         (
@@ -243,14 +246,15 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 "fields": (
                     "is_active",
                     "is_public",
-                )
+                ),
+                "classes": ("tab-general",),
             },
         ),
         (
             _("Provider Integration"),
             {
                 "fields": ("provider_plan_mappings",),
-                "classes": ("collapse",),
+                "classes": ("tab-advanced",),
                 "description": _(
                     'Map this plan to provider-specific plan IDs (e.g., {"stripe": "price_xxx", "paypal": "P-xxx"})'
                 ),
@@ -265,7 +269,7 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                     "created_at",
                     "updated_at",
                 ),
-                "classes": ("collapse",),
+                "classes": ("tab-advanced",),
             },
         ),
     )
@@ -384,6 +388,17 @@ class SubscriptionPlanAdmin(TranslatableAdminMixin, admin.ModelAdmin):
 
         # GET request - show wizard
         return render(request, "admin/subscriptions/subscriptionplan/wizard.html")
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        """Pass dashboard stats to the custom tabbed change form."""
+        extra_context = extra_context or {}
+        obj = self.get_object(request, object_id)
+        if obj:
+            extra_context["active_subscriptions"] = obj.get_active_subscriptions_count()
+            extra_context["pricing_tiers_count"] = obj.pricing_tiers.count()
+            extra_context["addons_count"] = obj.addons.count()
+            extra_context["total_revenue"] = self.total_revenue_display(obj)
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None):
         """Override to handle AJAX filtering requests"""

@@ -108,10 +108,31 @@ class BuiltinSMTPProvider(EmailProviderBase):
         Returns:
             MIMEMultipart message
         """
-        # Create message container
-        msg = MIMEMultipart("alternative")
+        # Build the body as a multipart/alternative container so that the
+        # plain-text and HTML parts are treated as alternative renderings of
+        # the same message.
+        body = MIMEMultipart("alternative")
 
-        # Set headers
+        # Add plain text body
+        if message.get("text"):
+            body.attach(MIMEText(message["text"], "plain", "utf-8"))
+
+        # Add HTML body
+        if message.get("html"):
+            body.attach(MIMEText(message["html"], "html", "utf-8"))
+
+        # When attachments are present, wrap the body in a multipart/mixed
+        # container so the attachments are real siblings of the body rather
+        # than alternative renderings of it (which mail clients hide/drop).
+        if message.get("attachments"):
+            msg = MIMEMultipart("mixed")
+            msg.attach(body)
+            for attachment in message["attachments"]:
+                self._add_attachment(msg, attachment)
+        else:
+            msg = body
+
+        # Set headers on the outer container
         msg["Subject"] = message["subject"]
         msg["From"] = message["from_email"]
         msg["To"] = ", ".join(message["to"])
@@ -126,21 +147,6 @@ class BuiltinSMTPProvider(EmailProviderBase):
             for key, value in message["headers"].items():
                 msg[key] = value
 
-        # Add plain text body
-        if message.get("text_body"):
-            text_part = MIMEText(message["text_body"], "plain", "utf-8")
-            msg.attach(text_part)
-
-        # Add HTML body
-        if message.get("html_body"):
-            html_part = MIMEText(message["html_body"], "html", "utf-8")
-            msg.attach(html_part)
-
-        # Add attachments
-        if message.get("attachments"):
-            for attachment in message["attachments"]:
-                self._add_attachment(msg, attachment)
-
         return msg
 
     def _add_attachment(self, msg: MIMEMultipart, attachment: dict[str, Any]):
@@ -149,11 +155,11 @@ class BuiltinSMTPProvider(EmailProviderBase):
 
         Args:
             msg: MIME message to add attachment to
-            attachment: Attachment dict with 'filename', 'content', 'mimetype'
+            attachment: Attachment dict with 'filename', 'content', 'content_type'
         """
         filename = attachment.get("filename", "attachment")
         content = attachment.get("content", b"")
-        mimetype = attachment.get("mimetype", "application/octet-stream")
+        mimetype = attachment.get("content_type", "application/octet-stream")
 
         # Parse mimetype
         maintype, subtype = (

@@ -96,6 +96,11 @@ def invalidate_theme_cache_on_change(sender, instance, created, **kwargs):
         # Clear specific cache keys (must match keys used in theme_utils.py)
         cache.delete("active_theme_instance")
         cache.delete("active_theme_css_url")
+        # template_loader.py caches the resolved theme + context under these keys
+        # (300s TTL); without clearing them a switch left the storefront structure
+        # / theme context stale until the TTL expired.
+        cache.delete("active_theme")
+        cache.delete("active_theme_context")
 
         # Invalidate template tag caches
         invalidate_token_cache()

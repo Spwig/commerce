@@ -7,6 +7,7 @@ automatically triggering webhooks when relevant events occur.
 
 import logging
 
+from django.apps import apps
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -41,11 +42,27 @@ def _has_field_changed(instance, field, previous_state):
 
 
 # =============================================================================
+# Model classes (senders)
+# =============================================================================
+# Django's signal dispatcher matches senders by object identity, not by label:
+# a string like "orders.Order" is never resolved, so a receiver connected with
+# one silently never fires. Resolve the real model classes here (the module is
+# imported from WebhooksConfig.ready(), so the app registry is populated) and
+# connect every receiver below against the class.
+Order = apps.get_model("orders", "Order")
+Product = apps.get_model("catalog", "Product")
+StockItem = apps.get_model("catalog", "StockItem")
+CustomerProfile = apps.get_model("accounts", "CustomerProfile")
+Shipment = apps.get_model("shipping", "Shipment")
+CustomerSubscription = apps.get_model("subscriptions", "CustomerSubscription")
+
+
+# =============================================================================
 # Order Signals
 # =============================================================================
 
 
-@receiver(pre_save, sender="orders.Order")
+@receiver(pre_save, sender=Order)
 def order_pre_save(sender, instance, **kwargs):
     """Store order state before save for change detection."""
     if instance.pk:
@@ -56,7 +73,7 @@ def order_pre_save(sender, instance, **kwargs):
             pass
 
 
-@receiver(post_save, sender="orders.Order")
+@receiver(post_save, sender=Order)
 def order_post_save(sender, instance, created, **kwargs):
     """Trigger webhooks for order events."""
     from .services import trigger_webhook
@@ -95,18 +112,18 @@ def order_post_save(sender, instance, created, **kwargs):
 # =============================================================================
 
 
-@receiver(pre_save, sender="catalog.Product")
+@receiver(pre_save, sender=Product)
 def product_pre_save(sender, instance, **kwargs):
     """Store product state before save for change detection."""
     if instance.pk:
         try:
             old_instance = sender.objects.get(pk=instance.pk)
-            _store_previous_state(old_instance, ["status", "is_active", "stock_quantity"])
+            _store_previous_state(old_instance, ["status"])
         except sender.DoesNotExist:
             pass
 
 
-@receiver(post_save, sender="catalog.Product")
+@receiver(post_save, sender=Product)
 def product_post_save(sender, instance, created, **kwargs):
     """Trigger webhooks for product events."""
     from .services import trigger_webhook
@@ -117,48 +134,23 @@ def product_post_save(sender, instance, created, **kwargs):
     else:
         previous_state = _get_previous_state(instance)
 
-        # Check for publish/unpublish
+        # Publication is driven by the stored `status` field (draft/published/
+        # discontinued), not by `is_active` (a read-only property) or a
+        # nonexistent stock field. Stock transitions live on StockItem below.
         if previous_state:
-            was_active = previous_state.get("is_active", False)
-            is_active = getattr(instance, "is_active", False)
+            old_status = previous_state.get("status")
+            new_status = getattr(instance, "status", None)
 
-            if not was_active and is_active:
+            if old_status != "published" and new_status == "published":
                 trigger_webhook("product.published", instance=instance)
-            elif was_active and not is_active:
+            elif old_status == "published" and new_status != "published":
                 trigger_webhook("product.unpublished", instance=instance)
-
-            # Check for stock changes
-            old_stock = previous_state.get("stock_quantity", 0) or 0
-            new_stock = getattr(instance, "stock_quantity", 0) or 0
-
-            if old_stock > 0 and new_stock == 0:
-                trigger_webhook(
-                    "inventory.out_of_stock",
-                    data={
-                        "product_id": instance.pk,
-                        "product_sku": getattr(instance, "sku", ""),
-                        "product_name": str(instance),
-                        "previous_stock": old_stock,
-                        "current_stock": new_stock,
-                    },
-                )
-            elif old_stock == 0 and new_stock > 0:
-                trigger_webhook(
-                    "inventory.restocked",
-                    data={
-                        "product_id": instance.pk,
-                        "product_sku": getattr(instance, "sku", ""),
-                        "product_name": str(instance),
-                        "previous_stock": old_stock,
-                        "current_stock": new_stock,
-                    },
-                )
 
         # Always trigger product.updated for non-created saves
         trigger_webhook("product.updated", instance=instance)
 
 
-@receiver(post_delete, sender="catalog.Product")
+@receiver(post_delete, sender=Product)
 def product_post_delete(sender, instance, **kwargs):
     """Trigger webhook when a product is deleted."""
     from .services import trigger_webhook
@@ -175,11 +167,57 @@ def product_post_delete(sender, instance, **kwargs):
 
 
 # =============================================================================
+# Inventory Signals
+# =============================================================================
+# Stock is owned by StockItem, not Product (Product has no stock field — its
+# `total_stock` property aggregates on_hand across warehouses). Out-of-stock and
+# restock transitions must therefore be detected on StockItem saves.
+
+
+@receiver(pre_save, sender=StockItem)
+def stock_item_pre_save(sender, instance, **kwargs):
+    """Store a product's total stock before a stock change for transition detection."""
+    product = instance.product
+    if product is not None:
+        _previous_states[f"stock:{product.pk}"] = {"total_stock": product.total_stock}
+
+
+@receiver(post_save, sender=StockItem)
+def stock_item_post_save(sender, instance, created, **kwargs):
+    """Trigger inventory webhooks when a product's total stock crosses zero."""
+    from .services import trigger_webhook
+
+    product = instance.product
+    if product is None:
+        return
+
+    previous_state = _previous_states.pop(f"stock:{product.pk}", None)
+    old_stock = (previous_state or {}).get("total_stock", 0) or 0
+    new_stock = product.total_stock or 0
+
+    if old_stock == new_stock:
+        return
+
+    payload = {
+        "product_id": product.pk,
+        "product_sku": getattr(product, "sku", ""),
+        "product_name": str(product),
+        "previous_stock": old_stock,
+        "current_stock": new_stock,
+    }
+
+    if old_stock > 0 and new_stock == 0:
+        trigger_webhook("inventory.out_of_stock", data=payload)
+    elif old_stock == 0 and new_stock > 0:
+        trigger_webhook("inventory.restocked", data=payload)
+
+
+# =============================================================================
 # Customer Signals
 # =============================================================================
 
 
-@receiver(post_save, sender="accounts.CustomerProfile")
+@receiver(post_save, sender=CustomerProfile)
 def customer_profile_post_save(sender, instance, created, **kwargs):
     """Trigger webhooks for customer profile events."""
     from .services import trigger_webhook
@@ -201,7 +239,7 @@ def customer_profile_post_save(sender, instance, created, **kwargs):
 # =============================================================================
 
 
-@receiver(pre_save, sender="shipping.Shipment")
+@receiver(pre_save, sender=Shipment)
 def shipment_pre_save(sender, instance, **kwargs):
     """Store shipment state before save for change detection."""
     if instance.pk:
@@ -212,7 +250,7 @@ def shipment_pre_save(sender, instance, **kwargs):
             pass
 
 
-@receiver(post_save, sender="shipping.Shipment")
+@receiver(post_save, sender=Shipment)
 def shipment_post_save(sender, instance, created, **kwargs):
     """Trigger webhooks for shipment events."""
     from .services import trigger_webhook
@@ -225,14 +263,17 @@ def shipment_post_save(sender, instance, created, **kwargs):
         if _has_field_changed(instance, "status", previous_state):
             old_status = previous_state.get("status") if previous_state else None
 
-            # Map shipment status to webhook events
+            # Map shipment status to webhook events. Keys must match
+            # Shipment.STATUS_CHOICES: "labeled" is the point a package is
+            # dispatched, and "exception" is the delivery-failure status
+            # (there is no "shipped"/"failed" status on the model).
             status = getattr(instance, "status", "")
             status_event_map = {
-                "shipped": "shipment.shipped",
+                "labeled": "shipment.shipped",
                 "in_transit": "shipment.in_transit",
                 "out_for_delivery": "shipment.out_for_delivery",
                 "delivered": "shipment.delivered",
-                "failed": "shipment.failed",
+                "exception": "shipment.failed",
                 "returned": "shipment.returned",
             }
 
@@ -258,7 +299,7 @@ def shipment_post_save(sender, instance, created, **kwargs):
 # =============================================================================
 
 
-@receiver(pre_save, sender="subscriptions.CustomerSubscription")
+@receiver(pre_save, sender=CustomerSubscription)
 def subscription_pre_save(sender, instance, **kwargs):
     """Store subscription state before save for change detection."""
     if instance.pk:
@@ -269,7 +310,7 @@ def subscription_pre_save(sender, instance, **kwargs):
             pass
 
 
-@receiver(post_save, sender="subscriptions.CustomerSubscription")
+@receiver(post_save, sender=CustomerSubscription)
 def subscription_post_save(sender, instance, created, **kwargs):
     """Trigger webhooks for subscription events."""
     from .services import trigger_webhook
@@ -283,10 +324,11 @@ def subscription_post_save(sender, instance, created, **kwargs):
             old_status = previous_state.get("status") if previous_state else None
             status = getattr(instance, "status", "")
 
-            # Map subscription status to webhook events
+            # Map subscription status to webhook events. CustomerSubscription
+            # stores the cancellation status as "canceled" (single "l").
             status_event_map = {
                 "active": "subscription.activated",
-                "cancelled": "subscription.cancelled",
+                "canceled": "subscription.cancelled",
                 "expired": "subscription.expired",
                 "paused": "subscription.paused",
             }
@@ -305,21 +347,44 @@ def subscription_post_save(sender, instance, created, **kwargs):
 # =============================================================================
 
 try:
+    PaymentTransaction = apps.get_model("payment_providers", "PaymentTransaction")
 
-    @receiver(post_save, sender="payment_providers.PaymentTransaction")
+    PAYMENT_STATUS_EVENT_MAP = {
+        "completed": "payment.received",
+        "failed": "payment.failed",
+        "pending": "payment.pending",
+    }
+
+    @receiver(pre_save, sender=PaymentTransaction)
+    def payment_pre_save(sender, instance, **kwargs):
+        """Store payment status before save for change detection."""
+        if instance.pk:
+            try:
+                old_instance = sender.objects.get(pk=instance.pk)
+                _store_previous_state(old_instance, ["status"])
+            except sender.DoesNotExist:
+                pass
+
+    @receiver(post_save, sender=PaymentTransaction)
     def payment_post_save(sender, instance, created, **kwargs):
-        """Trigger webhooks for payment events."""
+        """Trigger webhooks for payment events on creation and status changes."""
         from .services import trigger_webhook
 
+        # A transaction is often created as "pending" and later settled or
+        # failed, so react on the initial save and on any later status change.
         if created:
-            status = getattr(instance, "status", "")
-            if status == "completed" or status == "success":
-                trigger_webhook("payment.received", instance=instance)
-            elif status == "failed":
-                trigger_webhook("payment.failed", instance=instance)
-            elif status == "pending":
-                trigger_webhook("payment.pending", instance=instance)
-except Exception:
+            changed = True
+        else:
+            previous_state = _get_previous_state(instance)
+            changed = _has_field_changed(instance, "status", previous_state)
+
+        if not changed:
+            return
+
+        event = PAYMENT_STATUS_EVENT_MAP.get(getattr(instance, "status", ""))
+        if event:
+            trigger_webhook(event, instance=instance)
+except LookupError:
     # PaymentTransaction model may not exist
     pass
 

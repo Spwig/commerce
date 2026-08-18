@@ -1,0 +1,381 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Review" %}: {{ original.product.name }}{% else %}{% trans "Add Review" %}{% endif %} | {{ site_settings.site_name|default:site_title }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'catalog/admin/js/productreview_change_form.js' %}" defer></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/productreview_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="productreview-change-form">
+
+{% if original %}
+    {# === EDIT MODE: Dashboard + Tabs === #}
+
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-star-half-alt"></i>
+                    {% trans "Review" %}: {{ original.product.name }}
+                </h1>
+                <div class="header-meta">
+                    <span class="review-stars" aria-label="{% blocktrans with n=original.rating %}{{ n }} out of 5{% endblocktrans %}">
+                        {% for i in "12345" %}<i class="fa{% if forloop.counter <= original.rating %}s{% else %}r{% endif %} fa-star"></i>{% endfor %}
+                    </span>
+                    <span class="status-badge {% if original.is_approved %}approved{% else %}pending{% endif %}">
+                        {% if original.is_approved %}<i class="fas fa-check-circle"></i> {% trans "Approved" %}{% else %}<i class="fas fa-clock"></i> {% trans "Pending" %}{% endif %}
+                    </span>
+                    {% if original.is_verified_purchase or computed_verified_purchase %}
+                    <span class="status-badge verified"><i class="fas fa-shield-alt"></i> {% trans "Verified purchase" %}</span>
+                    {% endif %}
+                    <span class="meta-item"><i class="fas fa-user"></i> {{ original.user.get_full_name|default:original.user.username }}</span>
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {{ original.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="pr-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="pr-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- STATS GRID --- #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-star"></i></div>
+            <div class="value">{{ original.rating }}/5</div>
+            <div class="label">{% trans "Rating" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="value">{{ original.helpful_count }}</div>
+            <div class="label">{% trans "Helpful Votes" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shopping-bag"></i></div>
+            <div class="value">{{ customer_total_orders|default:0 }}</div>
+            <div class="label">{% trans "Customer Orders" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-coins"></i></div>
+            <div class="value">{% if customer_total_spent is not None %}{{ customer_total_spent|floatformat:2 }}{% else %}—{% endif %}</div>
+            <div class="label">{% trans "Lifetime Spend" %}{% if site_settings.default_currency %} ({{ site_settings.default_currency }}){% endif %}</div>
+        </div>
+    </div>
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="productreview_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="review" role="tab" aria-selected="true">
+                <i class="fas fa-comment-dots"></i>
+                <span class="label">{% trans "Review" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="customer" role="tab" aria-selected="false">
+                <i class="fas fa-user"></i>
+                <span class="label">{% trans "Customer & Journey" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="purchase" role="tab" aria-selected="false">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="label">{% trans "Purchase" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="advanced" role="tab" aria-selected="false">
+                <i class="fas fa-cogs"></i>
+                <span class="label">{% trans "Advanced" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {# === TAB: REVIEW === #}
+        <div class="admin-tab-content active" id="tab-review" role="tabpanel">
+            <div class="form-card">
+                <h2><i class="fas fa-images"></i> {% trans "Review Images" %}</h2>
+                {% if review_images %}
+                <div class="review-image-grid">
+                    {% for img in review_images %}
+                    <div class="review-image-thumb" data-index="{{ img.i }}">
+                        <a href="{{ img.url }}" target="_blank" rel="noopener" class="review-image-view">
+                            <img src="{{ img.url }}" alt="{% trans 'Review image' %}" loading="lazy">
+                        </a>
+                        <button type="button" class="review-image-delete" data-index="{{ img.i }}" title="{% trans 'Remove image' %}"><i class="fas fa-times"></i></button>
+                        <input type="checkbox" name="delete_image" value="{{ img.i }}" class="review-image-delete-input d-none">
+                    </div>
+                    {% endfor %}
+                </div>
+                <p class="review-image-hint">{% trans "Click × to mark an image for removal — it's deleted when you save." %}</p>
+                {% else %}
+                <p class="empty-message">{% trans "No images attached to this review." %}</p>
+                {% endif %}
+                <div class="add-image-row">
+                    <label for="pr-add-image">{% trans "Add image URL" %}</label>
+                    <input type="url" name="add_image_url" id="pr-add-image" class="add-image-input" placeholder="https://…">
+                </div>
+            </div>
+
+            {% for fieldset in adminform %}
+                {% if 'tab-review' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-comment-dots"></i> {% trans "Review Content" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CUSTOMER & JOURNEY === #}
+        <div class="admin-tab-content" id="tab-customer" role="tabpanel">
+            <div class="form-card">
+                <h2><i class="fas fa-id-card"></i> {% trans "Customer" %}</h2>
+                <div class="dashboard-stats-grid">
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-shopping-bag"></i></div>
+                        <div class="value">{{ customer_total_orders|default:0 }}</div>
+                        <div class="label">{% trans "Total Orders" %}</div>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-star-half-alt"></i></div>
+                        <div class="value">{{ customer_total_reviews|default:0 }}</div>
+                        <div class="label">{% trans "Reviews Written" %}</div>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-star"></i></div>
+                        <div class="value">{% if customer_avg_rating %}{{ customer_avg_rating|floatformat:1 }}{% else %}—{% endif %}</div>
+                        <div class="label">{% trans "Avg Rating Given" %}</div>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-calendar-check"></i></div>
+                        <div class="value value-small">{% if customer_since %}{{ customer_since|date:"M Y" }}{% else %}—{% endif %}</div>
+                        <div class="label">{% trans "Customer Since" %}</div>
+                    </div>
+                </div>
+                <div class="customer-contact">
+                    <span class="meta-item"><i class="fas fa-user"></i> {{ original.user.get_full_name|default:original.user.username }}</span>
+                    {% if original.user.email %}<span class="meta-item"><i class="fas fa-envelope"></i> {{ original.user.email }}</span>{% endif %}
+                    <a href="{% url 'admin:auth_user_change' original.user.id %}" class="util-btn util-btn-inline"><i class="fas fa-external-link-alt"></i> {% trans "Open customer" %}</a>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2><i class="fas fa-route"></i> {% trans "Traffic-source journey" %}</h2>
+                <p class="form-card-description">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "How this customer reached the store (from the attribution engine). This is the customer's arrival/purchase journey — not the source of the review-writing visit, which is not tracked." %}
+                </p>
+                {% if attribution_touches %}
+                <ul class="journey-timeline">
+                    {% for t in attribution_touches %}
+                    <li class="journey-item">
+                        <span class="journey-channel channel-{{ t.channel }}">{{ t.get_channel_display }}</span>
+                        <span class="journey-detail">
+                            {% if t.campaign %}{{ t.campaign }}{% elif t.source %}{{ t.source }}{% elif t.referrer_host %}{{ t.referrer_host }}{% else %}{% trans "direct" %}{% endif %}
+                        </span>
+                        <span class="journey-date">{{ t.occurred_at|date:"M d, Y H:i" }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="empty-message">{% trans "No attribution touchpoints recorded for this customer." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# === TAB: PURCHASE === #}
+        <div class="admin-tab-content" id="tab-purchase" role="tabpanel">
+            <div class="form-card">
+                <h2><i class="fas fa-shopping-bag"></i> {% trans "Purchase of this product" %}</h2>
+                <p class="form-card-description">{% trans "Orders in which this customer bought the reviewed product, and the channel that drove each purchase." %}</p>
+                {% if product_orders %}
+                <div class="list-row-cards">
+                    {% for row in product_orders %}
+                    <div class="list-row-card">
+                        <div class="list-row-card-icon"><i class="fas fa-receipt"></i></div>
+                        <div class="list-row-card-content">
+                            <div class="list-row-card-title">
+                                <a href="{% url 'admin:orders_order_change' row.order.id %}">{{ row.number }}</a>
+                            </div>
+                            <div class="list-row-card-subtitle">{{ row.created_at|date:"M d, Y" }} · {{ row.total }}</div>
+                            <div class="list-row-card-badges">
+                                <span class="list-row-card-badge {% if row.fulfilled %}list-row-card-badge-success{% else %}list-row-card-badge-warning{% endif %}">{{ row.status }}</span>
+                                {% if row.source %}<span class="list-row-card-badge list-row-card-badge-info"><i class="fas fa-route"></i> {{ row.source }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if computed_verified_purchase %}
+                <p class="verified-note"><i class="fas fa-shield-alt"></i> {% trans "This customer has a fulfilled order for the reviewed product — this is a verified purchase." %}</p>
+                {% endif %}
+                {% else %}
+                <p class="empty-message">{% trans "No orders found where this customer bought the reviewed product." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# === TAB: ADVANCED === #}
+        <div class="admin-tab-content" id="tab-advanced" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-advanced' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cogs"></i> {{ fieldset.name }}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN: any fieldset not mapped to a tab (keeps the form submittable) --- #}
+        <div class="d-none">
+            {% for fieldset in adminform %}
+                {% if 'tab-review' not in fieldset.classes and 'tab-advanced' not in fieldset.classes %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly %}<div class="form-row">{{ field.field }}</div>{% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {# === ADD MODE: clean sequential layout === #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1><i class="fas fa-plus-circle"></i> {% trans "Add Review" %}</h1>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="pr-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="pr-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="productreview_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% for fieldset in adminform %}
+        <div class="form-card">
+            {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if not field.is_readonly %}
+                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field.field }}
+                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% endif %}
+
+</div>
+{% endblock %}

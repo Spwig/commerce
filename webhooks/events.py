@@ -30,6 +30,7 @@ WEBHOOK_EVENTS = {
     "order.created": (_("Fired when a new order is placed"), WebhookEventCategory.ORDER),
     "order.paid": (_("Fired when payment for an order is confirmed"), WebhookEventCategory.ORDER),
     "order.cancelled": (_("Fired when an order is cancelled"), WebhookEventCategory.ORDER),
+    "order.refunded": (_("Fired when an order is refunded"), WebhookEventCategory.ORDER),
     "order.fulfilled": (
         _("Fired when all items in an order are shipped"),
         WebhookEventCategory.ORDER,

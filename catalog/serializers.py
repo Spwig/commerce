@@ -1152,6 +1152,23 @@ class ProductReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Rating must be between 1 and 5")
         return value
 
+    def validate_comment(self, value):
+        """Strip HTML from customer-submitted comments.
+
+        Reviews are untrusted user content and are rendered as plain text; this
+        prevents stored HTML/script from ever being persisted via the API. Does
+        not affect platform migration importers, which create reviews directly.
+        """
+        from django.utils.html import strip_tags
+
+        return strip_tags(value or "").strip()
+
+    def validate_title(self, value):
+        """Strip HTML from customer-submitted review titles (see validate_comment)."""
+        from django.utils.html import strip_tags
+
+        return strip_tags(value or "").strip()
+
     def validate(self, data):
         """Validate that user hasn't already reviewed this product"""
         request = self.context.get("request")

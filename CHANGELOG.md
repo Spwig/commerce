@@ -5,6 +5,62 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.4] - 2026-08-18
+
+A fast follow-up to 1.7.3 — a small, focused release of admin refinements and
+reliability fixes, most of them surfaced by our daily code reviews. Product
+**reviews** and **subscription plans** get cleaner, tabbed admin editors;
+storefront **page content** renders more reliably; the merchant's chosen
+**theme** always loads even while it is being switched; and a round of
+hardening lands across **email** and **webhooks**. Storefronts built on the
+headless API can now serve **responsive images** that download at the size the
+device actually needs. Upgrading is drop-in: changes to the public API are
+additive and backward-compatible, and no manual migration steps are required.
+
+### Added
+
+- **Responsive image sources for headless storefronts.** The catalog API's
+  image data now includes optional responsive *srcset* ladders (one per
+  format — AVIF, WebP and the original), assembled from the sizes Spwig already
+  generates. A storefront can pair them with a layout hint so the browser
+  downloads an appropriately sized image instead of always fetching the largest
+  file — so a small thumbnail no longer pulls a full-resolution photo. Existing
+  API clients are unaffected: the new fields sit alongside the current image
+  URLs and are simply ignored by older integrations.
+- **Tabbed editor for product reviews.** The review admin is reorganised into
+  tabs with an at-a-glance dashboard, making it quicker to moderate, respond to
+  and publish customer reviews.
+- **Tabbed editor for subscription plans.** Subscription plan settings are
+  grouped into tabs on the change form, so pricing, billing and product options
+  are easier to find and edit.
+
+### Fixed
+
+- **Storefront elements now load their styles reliably.** Carousels,
+  testimonials and call-to-action blocks placed with the Page Builder now always
+  pull in their stylesheet on the live storefront, so they render as designed.
+- **Adding a page no longer errors.** Creating a page with a not-yet-set title
+  no longer triggers a server error; partially-created pages are rolled back
+  cleanly.
+- **Page elements refresh correctly after an update.** The element registry's
+  cache is now keyed per release, so newly shipped or updated storefront
+  elements appear immediately instead of serving a stale definition.
+- **The selected theme always loads.** A store's chosen theme CSS is now served
+  even while the theme is inactive or mid-switch, preventing an unstyled page
+  during a theme change.
+
+### Security
+
+- **Comment hardening on product reviews.** Customer review comments are
+  escaped end-to-end, closing a cross-site-scripting vector on the review
+  surface.
+- **Email and webhook hardening.** A broad review pass fixed correctness and
+  robustness issues across the email system (newsletters, OAuth, template
+  rendering and management, sample data, provider handling — including a crash
+  when a provider returned a non-JSON response) and the webhooks subsystem
+  (delivery tasks, admin, the OpenAPI catalogue, and a missing `order.refunded`
+  event in the published event list).
+
 ## [1.7.3] - 2026-08-16
 
 An inventory and agentic-commerce release. Spwig gains first-class **warehouse

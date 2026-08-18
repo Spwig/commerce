@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Spwig eCommerce API Documentation
-  version: 1.7.3
+  version: 1.7.4
   description: |-
     ## Spwig API Documentation
 
@@ -44096,6 +44096,12 @@ components:
         <source>), ``fallback`` is always a usable original-format URL for the
         <img>. Emitted alongside — never instead of — the existing single image
         URL field, so deployed clients keep working.
+
+        ``avif_srcset``/``webp_srcset``/``fallback_srcset`` are additive
+        ``"url Nw, url Nw"`` responsive width ladders (one per format), null when
+        fewer than two sizes exist. A headless client pairs them with a ``sizes``
+        hint so the browser fetches the right width instead of the largest file;
+        older clients ignore the extra keys.
       properties:
         avif:
           type: string
@@ -44111,6 +44117,15 @@ components:
           nullable: true
         height:
           type: integer
+          nullable: true
+        avif_srcset:
+          type: string
+          nullable: true
+        webp_srcset:
+          type: string
+          nullable: true
+        fallback_srcset:
+          type: string
           nullable: true
       required:
       - avif

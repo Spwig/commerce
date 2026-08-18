@@ -252,6 +252,7 @@ class PageAdmin(TranslatableAdminMixin, SEOGeneratorAdminMixin, admin.ModelAdmin
     def add_view(self, request, form_url="", extra_context=None):
         """Auto-create a draft page and redirect to the visual builder."""
         from django.core.exceptions import PermissionDenied
+        from django.db import transaction
 
         if not self.has_add_permission(request):
             raise PermissionDenied
@@ -264,13 +265,22 @@ class PageAdmin(TranslatableAdminMixin, SEOGeneratorAdminMixin, admin.ModelAdmin
             slug = f"{base_slug}-{counter}"
             counter += 1
 
-        page = Page.objects.create(
-            title=_("Untitled Page"),
-            slug=slug,
-            page_type="custom",
-            status="draft",
-            created_by=request.user,
-        )
+        # Create the page and its initial draft version atomically. Page.save()
+        # cascades into create_draft_version()/create_snapshot(); if that step
+        # fails the page row must not be left behind as an orphaned draft.
+        with transaction.atomic():
+            page = Page.objects.create(
+                # Resolve the lazy translation to a concrete string. The title
+                # is persisted verbatim into PageVersion.content_snapshot (a
+                # JSONField) by create_snapshot(); a gettext_lazy __proxy__ isn't
+                # JSON serializable and 500s the insert. str() renders it in the
+                # active admin language, which the merchant renames immediately.
+                title=str(_("Untitled Page")),
+                slug=slug,
+                page_type="custom",
+                status="draft",
+                created_by=request.user,
+            )
 
         builder_url = reverse("page_builder_admin:visual_builder", kwargs={"page_id": page.pk})
         return redirect(builder_url)

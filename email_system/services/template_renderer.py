@@ -54,11 +54,38 @@ class TemplateRenderer:
         # Load template (with translation fallback)
         template = self._load_template(template_type, language)
 
+        return self.render_template(
+            template,
+            context,
+            language=language,
+            email_outbox_id=email_outbox_id,
+            enable_tracking=enable_tracking,
+        )
+
+    def render_template(
+        self,
+        template,
+        context: dict,
+        language: str | None = None,
+        email_outbox_id: str | None = None,
+        enable_tracking: bool = True,
+    ) -> tuple[str, str, str]:
+        """
+        Render a specific EmailTemplate instance to HTML and plain text.
+
+        Use this when the caller already holds the exact template to render
+        (e.g. one particular newsletter) rather than resolving the active
+        template by type. Compiles the stored MJML and applies the template
+        variables in ``context``.
+
+        Returns:
+            Tuple of (subject, html_body, plain_text_body)
+        """
+        if not language:
+            language = get_language() or "en"
+
         # Validate required variables
         self._validate_context(template, context)
-
-        # Render subject
-        subject = self._render_subject(template, context)
 
         # Get theme CSS variables (for CSS injection - legacy approach)
         theme_css = self.theme_service.generate_theme_css()
@@ -95,6 +122,10 @@ class TemplateRenderer:
             if key not in context or not context[key]:
                 context[key] = value
 
+        # Render subject (after site-settings/logo/theme enrichment so subject
+        # templates referencing shop_name, current_year, theme_* resolve correctly)
+        subject = self._render_subject(template, context)
+
         # Apply Django template variables to MJML
         mjml_rendered = self._apply_variables(mjml_with_theme, context)
 
@@ -115,7 +146,7 @@ class TemplateRenderer:
         plain_text_body = self._render_plain_text(template, context)
 
         logger.info(
-            f"Rendered template '{template_type}' in language '{language}' "
+            f"Rendered template '{template.template_type}' in language '{language}' "
             f"with tracking={'enabled' if enable_tracking else 'disabled'}"
         )
 

@@ -15,7 +15,20 @@ from django.core.cache import cache
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 
+from core.version import __version__ as _PLATFORM_VERSION
+
 logger = logging.getLogger(__name__)
+
+# Cache key for the discovered element registry. It is *versioned by the
+# platform release* on purpose: the cache stores pickled ElementConfig
+# instances, and a new release can add fields to ElementConfig (e.g.
+# conditional_css_files in 1.7.3). A cached object pickled under an older
+# release rehydrates without re-running __init__, so its new attributes are
+# simply absent — reading one raised AttributeError and 500'd the storefront
+# home page after upgrade. Pinning the release into the key means a new build
+# can never read a prior release's differently-shaped objects; the stale key
+# just expires on its 1-hour TTL.
+REGISTRY_CACHE_KEY = f"page_builder_elements_registry:v{_PLATFORM_VERSION}"
 
 # Category display order for the visual builder sidebar
 CATEGORY_DISPLAY_ORDER = [
@@ -334,7 +347,7 @@ class ElementRegistry:
 
     def discover_elements(self, force_reload: bool = False) -> None:
         """Discover all available elements from the filesystem."""
-        cache_key = "page_builder_elements_registry"
+        cache_key = REGISTRY_CACHE_KEY
 
         # Skip caching in DEBUG mode for immediate config updates during development
         use_cache = not settings.DEBUG
@@ -631,7 +644,9 @@ class ElementRegistry:
     def reload(self) -> None:
         """Force reload all elements from filesystem."""
         logger.info("Reloading element registry...")
-        cache.delete("page_builder_elements_registry")
+        # Delete the current versioned key and the legacy unversioned key, so
+        # a reload on an upgraded install also evicts any pre-fix poisoned cache.
+        cache.delete_many([REGISTRY_CACHE_KEY, "page_builder_elements_registry"])
         self._loaded = False
         self._base_properties = None  # Clear cached base properties
         self.discover_elements(force_reload=True)

@@ -2,76 +2,87 @@
 title: Recensioni dei prodotti
 ---
 
-Le recensioni dei prodotti permettono ai clienti di valutare e scrivere sulla loro esperienza con un prodotto. Le recensioni approvate da te vengono visualizzate sulla pagina del prodotto nel tuo negozio online, dove aiutano gli altri clienti a prendere decisioni di acquisto. Spwig ti dà il pieno controllo su quali recensioni sono visibili — niente viene pubblicato finché non lo approvi.
+Le recensioni dei prodotti consentono ai clienti di valutare e scrivere del loro esperienza con un prodotto. Le recensioni che approvi appariranno sulla pagina del prodotto nel tuo negozio, dove aiutano altri acquirenti a decidere cosa acquistare. Spwig ti dà pieno controllo su quali recensioni vengano pubblicate: nulla viene pubblicato fino a quando non le approvi.
 
-Naviga verso **Catalogo > Recensioni dei prodotti** per gestire tutte le recensioni.
+Le recensioni si trovano sotto **Prodotti > Recensioni** nella barra laterale, che si apre come un gruppo: il collegamento in alto ti porta alla **Dashboard delle recensioni**, e **Moderare le recensioni** ti porta direttamente all'elenco delle recensioni.
 
-## Elenco delle recensioni
+## La dashboard delle recensioni
 
-L'elenco delle recensioni ti dà un'anteprima di tutte le recensioni inviate nel tuo negozio:
+Vai a **Prodotti > Recensioni** per aprire la dashboard - un'anteprima su uno schermo di come le recensioni si stanno comportando in tutto il tuo negozio.
 
-| Colonna | Descrizione |
+![Dashboard delle recensioni](/static/core/admin/img/help/product-reviews/reviews-dashboard.webp)
+
+In cima, sei schede KPI riassumono le tue attività di recensione:
+
+| Scheda | Cosa mostra |
 |---|---|
-| **Prodotto** | Il prodotto che viene recensito |
-| **Utente** | Il cliente che ha inviato la recensione |
-| **Valutazione** | Valutazione a stelle da 1 a 5 |
-| **Approvata** | Se la recensione è attualmente visibile nel negozio online |
-| **Acquisto Verificato** | Se il recensore ha effettivamente acquistato il prodotto |
-| **Creato il** | Quando la recensione è stata inviata |
+| **Totale recensioni** | Tutte le recensioni mai inviate, approvate o meno |
+| **Voto medio** | La media dei punteggi delle recensioni |
+| **In attesa di moderazione** | Recensioni in attesa del tuo approvazione o rifiuto |
+| **Tasso di approvazione** | La percentuale di tutte le recensioni che hai approvato |
+| **Acquisti verificati** | La percentuale di recensioni lasciate da clienti con un ordine confermato per quel prodotto |
+| **Nuove (30 giorni)** | Recensioni inviate negli ultimi 30 giorni |
 
-### Filtrare le recensioni
+Sotto i KPI, tre grafici forniscono dettagli in più:
 
-Utilizza i filtri a destra per concentrarti su stati specifici delle recensioni:
+- **Distribuzione dei voti** - un grafico a barre di quante recensioni cadono in ciascun voto (1-5). Un gruppo di recensioni a 1 stella qui va indagato immediatamente.
+- **Volume delle recensioni (12 settimane)** - un grafico a linee dei conteggi delle recensioni settimanali, in modo da poter individuare picchi dopo una promozione o un calo che necessita di attenzione.
+- **Canale di acquisto dei recensori** - un grafico a ciambella del canale di marketing (diretto, email, ricerca pagata, social organico, e così via) che ha portato all'**acquisto** dietro ogni recensione. Questo riascolta i tuoi dati di attribuzione e è veramente utile per vedere quali canali portano clienti che poi lasciano recensioni - ma non è un registro di come il cliente abbia trovato la forma delle recensioni stessa. Spwig non ne tiene traccia separatamente; consulta 
 
-- **Valutazione** — mostra solo le recensioni con una valutazione a stelle specifica (utile per investigare le lamentele a 1 stella)
-- **Approvata** — separa rapidamente le recensioni approvate da quelle in attesa
-- **Acquisto Verificato** — filtra per visualizzare solo le recensioni da acquirenti confermati
+Nella scheda **Recensione**, seleziona o deseleziona **Approvato**
+3.
 
-Utilizza il campo di ricerca per trovare recensioni per nome del prodotto, nome utente del cliente o titolo della recensione.
+Fai clic sul pulsante con il segno di spunta nell'intestazione per salvare
 
-## Approvare e rifiutare le recensioni
+## Pagina modifica recensione
 
-Le recensioni non sono visibili nel tuo negozio online finché non vengono approvate. Puoi approvare o rifiutare le recensioni singolarmente o in blocco.
+Aprire una recensione ti dà una visualizzazione a dashboard incentrata su quella recensione: un'intestazione con il nome del prodotto, la valutazione a stelle, un badge **Approvato**/**In attesa di approvazione**, un badge **Acquisto verificato** quando è applicabile, chi ha scritto la recensione e quando, e una riga di statistiche (**Valutazione**, **Voti utili**, **Ordini clienti**, **Spesa complessiva**). Qui sotto, i dettagli sono organizzati in quattro schede.
 
-### Azioni in blocco
+![Pagina modifica recensione - Scheda Recensione con galleria immagini](/static/core/admin/img/help/product-reviews/review-edit-review-tab.webp)
 
-1. Nell'elenco delle recensioni, seleziona le caselle di controllo accanto alle recensioni su cui desideri agire
-2. Seleziona **Approva le recensioni selezionate** o **Rifiuta le recensioni selezionate** dal menu a discesa **Azione**
-3. Clicca su **Vai**
+### Scheda Recensione
 
-Questo è il modo più efficiente per elaborare un gruppo di nuove recensioni.
+Ecco dove moderi la recensione stessa:
 
-### Recensione singola
+- **Immagine della recensione** - se il cliente ha allegato foto, vengono visualizzate qui come galleria di anteprime; fai clic su qualsiasi anteprima per aprire l'immagine a dimensione intera in un'altra scheda. Le recensioni con foto sono un segnale di fiducia forte per gli acquirenti, quindi è bene dare un'occhiata prima di approvare.
+- **Valutazione**, **Titolo**, **Commento** - il contenuto inviato dal cliente
+- **Approvato** - controlla se la recensione è visibile sul tuo negozio
+- **Acquisto verificato** - segnala la recensione come proveniente da un acquirente confermato; Spwig lo imposta automaticamente quando esiste un ordine completato per il prodotto (vedi la **Scheda Acquisto**), ma puoi sovrascriverlo qui se necessario
+- **Immagine** - l'elenco sottostante delle URL delle immagini dietro la galleria sopra; di solito non hai bisogno di modificarlo, ma rimane modificabile per casi eccezionali (ad esempio, rimozione di una foto da una recensione con più immagini)
 
-1. Clicca su una riga di recensione per aprire la vista dettagliata
-2. Seleziona o de-seleziona il campo **Approvata**
-3. Clicca su **Salva**
+Non puoi modificare la parola della recensione - approvare o rifiutare, e gestire le immagini, è l'estensione di ciò che controlli qui.
 
-## Cosa contiene una recensione
+### Scheda Cliente e Percorso
 
-Quando apri una recensione singola puoi vedere tutti i dettagli che un cliente ha inviato:
+![Pagina modifica recensione - Scheda Cliente e Percorso](/static/core/admin/img/help/product-reviews/review-edit-customer-tab.webp)
 
-- **Titolo** — il titolo che il cliente ha dato alla sua recensione
-- **Commento** — il testo completo della recensione scritto
-- **Valutazione** — la valutazione a stelle (1–5)
-- **Acquisto Verificato** — impostato automaticamente quando il cliente che recensisce ha un ordine completato per quel prodotto
-- **Conteggio Utile** — quante volte altri clienti hanno segnalato questa recensione come utile
-- **Immagini** — qualsiasi foto che il cliente ha allegato alla sua recensione
+Questa scheda ti dà contesto su chi ha lasciato la recensione: ordini totali, quanti recensioni ha scritto, la sua valutazione media data, quanto tempo è stato cliente, e i suoi dati di contatto, con un collegamento per aprire il record completo del cliente.
 
-Non puoi modificare il contenuto di una recensione — puoi approvarla o rifiutarla solo.
+Sotto vi è il **percorso del traffico** - i canali, le campagne e i riferimenti che hanno portato questo cliente nel tuo negozio, estratti dai dati di attribuzione e visualizzati come un arco temporale.
 
-## Rivedere le valutazioni in un'occhiata
+#### Cosa fa e non fa la "traccia"
 
-L'elenco delle recensioni è ordinato con le recensioni più recenti in primo piano, rendendo facile rimanere aggiornato sulle nuove recensioni ricevute. Se desideri individuare rapidamente dei pattern:
+Leggi questo arco temporale come il **percorso di arrivo e acquisto** del cliente - come ha trovato inizialmente il tuo negozio e ha proseguito con l'acquisto. Non è un elenco del momento in cui il cliente ha effettuato l'accesso, o quale dispositivo o sessione abbia utilizzato, al momento in cui ha inviato la recensione. Se l'arco temporale mostra "Email > skincare estiva" tre settimane prima della data della recensione, ciò indica che la campagna email ha probabilmente guidato l'acquisto - non dice nulla su se il cliente è tornato da un risultato di ricerca, da un segnalibro o da una email di follow-up per lasciare effettivamente la recensione. Tratta questa scheda come contesto di marketing utile, non come traccia letterale del momento di invio della recensione.
 
-- **Filtra per Valutazione = 1** per visualizzare tutte le recensioni critiche in un unico elenco — spesso rivelano problemi con il prodotto o con la consegna che meritano di essere affrontati
-- **Filtra per Approvata = No** per visualizzare la tua coda di moderazione — pulisci regolarmente per evitare che i clienti aspettino troppo a lungo per la pubblicazione delle loro recensioni
-- **Filtra per Acquisto Verificato = Sì** per visualizzare solo le recensioni da acquirenti veri, che tendono ad essere le più credibili per gli altri clienti
+### Scheda Acquisto
 
-## Consigli
+![Pagina modifica recensione - Scheda Acquisto](/static/core/admin/img/help/product-reviews/review-edit-purchase-tab.webp)
 
-- Imposta un orario regolare per controllare la coda di approvazione — i clienti notano quando la loro recensione impiega settimane per essere pubblicata e questo può scoraggiare i feedback futuri
-- Approvare le recensioni in modo tempestivo, incluso quelle critiche, costruisce fiducia con i tuoi clienti; le recensioni negative visibili senza risposta possono sembrare peggiori di una lamentela gestita
-- Utilizza il filtro **Acquisto Verificato** quando decidi come gestire le recensioni borderline — i feedback da acquirenti confermati hanno più peso in qualsiasi disputa
-- Un prodotto con molte recensioni a 1 stella che menzionano tutti lo stesso problema è un segnale chiaro per investigare imballaggio, qualità del prodotto o la descrizione del prodotto
-- Le recensioni non possono essere modificate, quindi se una recensione contiene contenuti inappropriati l'unica opzione disponibile è rifiutarla — applica in modo coerente i tuoi standard di moderazione
+Questa scheda elenca ogni ordine in cui il cliente ha acquistato il prodotto recensito - numero d'ordine, data, totale, stato e canale d'acquisto per quell'ordine. Se uno di questi ordini ha raggiunto uno stato completato (spedito o consegnato), vedrai un notifica di conferma che si tratta di un acquisto verificato - lo stesso segnale che imposta automaticamente **Acquisto verificato** nella scheda Recensione.
+
+Se non appare alcun ordine corrispondente qui, il revisore ha acquistato il prodotto prima che il tuo negozio tracciasse gli ordini in Spwig, oppure non ha mai effettivamente acquistato il prodotto - da sapere prima di decidere quanto peso dare alla recensione.
+
+### Scheda Avanzata
+
+Metadati che raramente hai bisogno di modificare: **Conteggio utile** (quanti clienti hanno segnalato la recensione come utile), origine di importazione se la recensione è stata migrata da un altro sito, e le date di creazione/aggiornamento.
+
+## Suggerimenti
+
+Mantieni tutti i formati markdown, i percorsi immagini, i blocchi di codice e i termini tecnici.
+
+- Controlla per primo l'elenco **In attesa di moderazione** sulla dashboard — è il modo più veloce per vedere cosa richiede una decisione senza aprire l'elenco completo delle recensioni
+- Un insieme di recensioni a 1 punto sullo stesso prodotto nel grafico **Distribuzione dei voti** è un segnale chiaro per indagare sulle confezioni, la qualità del prodotto o la descrizione del listino
+- Usa il filtro **Verificato** quando decidi come gestire le recensioni borderline — i feedback dei clienti con un ordine confermato hanno più peso in qualsiasi controversia
+- Approva le recensioni tempestivamente, comprese quelle critiche — una recensione negativa visibile senza risposta può sembrare peggiore di un reclamo gestito, e le recensioni che compaiono con ritardo scoraggiano i clienti dal lasciare feedback futuro
+- Non leggere troppo il percorso **Fonte del traffico** o il grafico **Canale di acquisto dei recensori** della dashboard — entrambi descrivono come il cliente è arrivato e ha acquistato, non come è arrivato per scrivere la recensione
+- Le recensioni con foto meritano un'attenzione maggiore prima dell'approvazione; le foto del prodotto da parte dei clienti veri sono alcuni dei contenuti più persuasivi sul tuo negozio

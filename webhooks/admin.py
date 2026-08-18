@@ -289,6 +289,7 @@ class WebhookDeliveryAdmin(admin.ModelAdmin):
         "attempt_count",
         "created_at",
     ]
+    list_select_related = ["endpoint"]
     list_filter = ["status", "event_type", "endpoint", "created_at"]
     search_fields = ["id", "event_type", "endpoint__name", "payload"]
     readonly_fields = [

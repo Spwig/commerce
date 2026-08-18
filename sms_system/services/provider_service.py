@@ -205,7 +205,7 @@ class SMSProviderService:
         slug = provider_path.parent.name
 
         # Build static URL
-        return static(f"sms/{slug}/current/{logo_filename}")
+        return static(f"sms_provider/{slug}/current/{logo_filename}")
 
     @classmethod
     def _get_provider_slug(cls, provider_key: str) -> str | None:
