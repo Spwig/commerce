@@ -1,0 +1,158 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Reviews Dashboard" %} | {{ site_settings.site_name|default:site_title }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/productreview_dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<script src="{% static 'catalog/admin/js/productreview_dashboard.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="reviews-dashboard">
+
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1><i class="fas fa-star-half-alt"></i> {% trans "Reviews Dashboard" %}</h1>
+                <p class="subtitle">{% trans "Overview of customer reviews, ratings and what drives your reviewers." %}</p>
+            </div>
+            <div class="dashboard-header-actions">
+                <a href="{% url 'admin:catalog_productreview_changelist' %}" class="util-btn util-btn-inline">
+                    <i class="fas fa-list"></i> {% trans "Moderate Reviews" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# --- KPI CARDS --- #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-comments"></i></div>
+            <div class="value">{{ total_reviews }}</div>
+            <div class="label">{% trans "Total Reviews" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-star"></i></div>
+            <div class="value">{{ avg_rating|floatformat:2 }}</div>
+            <div class="label">{% trans "Average Rating" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_reviews }}</div>
+            <div class="label">{% trans "Pending Moderation" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-double"></i></div>
+            <div class="value">{{ approval_rate|floatformat:0 }}%</div>
+            <div class="label">{% trans "Approval Rate" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="value">{{ verified_pct|floatformat:0 }}%</div>
+            <div class="label">{% trans "Verified Purchases" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-calendar-week"></i></div>
+            <div class="value">{{ reviews_30d }}</div>
+            <div class="label">{% trans "New (30 days)" %}</div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+
+        {# --- CHARTS --- #}
+        <div class="reviews-charts-grid">
+            <div class="form-card">
+                <h2><i class="fas fa-chart-bar"></i> {% trans "Rating Distribution" %}</h2>
+                <div class="chart-wrap"><canvas id="ratingDistChart"></canvas></div>
+            </div>
+            <div class="form-card">
+                <h2><i class="fas fa-chart-line"></i> {% trans "Review Volume (12 weeks)" %}</h2>
+                <div class="chart-wrap"><canvas id="reviewsSeriesChart"></canvas></div>
+            </div>
+            <div class="form-card">
+                <h2><i class="fas fa-route"></i> {% trans "Reviewers' Purchase Channel" %}</h2>
+                <p class="form-card-description">{% trans "How the customers who left reviews reached their purchase (attribution). Not the source of the review visit itself." %}</p>
+                <div class="chart-wrap">
+                    {% if channel_rows %}<canvas id="channelChart"></canvas>{% else %}<p class="empty-message">{% trans "No attribution data yet." %}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# --- TABLES --- #}
+        <div class="reviews-tables-grid">
+            <div class="form-card">
+                <h2 class="dashboard-section-title"><i class="fas fa-trophy"></i> {% trans "Top Reviewed Products" %}</h2>
+                {% if top_products %}
+                <div class="list-row-cards">
+                    {% for p in top_products %}
+                    <div class="list-row-card">
+                        <div class="list-row-card-icon review-product-icon">
+                            {% with img=p.primary_image %}
+                            {% if img %}<img src="{{ img.thumbnail_small }}" alt="{{ p.name }}" class="review-product-thumb" loading="lazy">{% else %}<i class="fas fa-box"></i>{% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="list-row-card-content">
+                            <div class="list-row-card-title">
+                                <a href="{% url 'admin:catalog_product_change' p.id %}">{{ p.name }}</a>
+                            </div>
+                            <div class="list-row-card-badges">
+                                <span class="list-row-card-badge list-row-card-badge-primary">{{ p.review_count }} {% trans "reviews" %}</span>
+                                <span class="list-row-card-badge list-row-card-badge-info"><i class="fas fa-star"></i> {{ p.avg_rating|floatformat:1 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-message">{% trans "No reviewed products yet." %}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-card">
+                <h2 class="dashboard-section-title"><i class="fas fa-clock"></i> {% trans "Awaiting Moderation" %}</h2>
+                {% if recent_pending %}
+                <div class="list-row-cards">
+                    {% for r in recent_pending %}
+                    <div class="list-row-card">
+                        <div class="list-row-card-icon"><i class="fas fa-star-half-alt"></i></div>
+                        <div class="list-row-card-content">
+                            <div class="list-row-card-title">
+                                <a href="{% url 'admin:catalog_productreview_change' r.id %}">{{ r.title|default:r.product.name }}</a>
+                            </div>
+                            <div class="list-row-card-subtitle">{{ r.product.name }} · {{ r.user.get_full_name|default:r.user.username }} · {{ r.created_at|date:"M d, Y" }}</div>
+                            <div class="list-row-card-badges">
+                                <span class="list-row-card-badge list-row-card-badge-warning">{{ r.rating }}★</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-message">{% trans "Nothing awaiting moderation. " %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="application/json" id="reviews-dashboard-data">
+{
+    "ratingDistribution": {{ rating_distribution_json|safe }},
+    "reviewsSeries": {{ reviews_series_json|safe }},
+    "channelBreakdown": {{ channel_breakdown_json|safe }},
+    "translations": {
+        "reviews": "{% trans 'Reviews' %}",
+        "count": "{% trans 'Count' %}"
+    }
+}
+</script>
+{% endblock %}

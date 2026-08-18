@@ -10,22 +10,36 @@ selection and sending logic.
 import csv
 import io
 import logging
+from collections import Counter
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from customers.models import CustomerMetrics, CustomerSegment
+from customers.models import CustomerSegment
 from email_system.models import EmailOutbox, EmailTemplate
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+NEWSLETTER_TAG_PREFIX = "newsletter:"
+
+
+def _newsletter_tag(newsletter_id):
+    """Stable EmailOutbox tag identifying the newsletter template of a send.
+
+    Aggregating sent statistics by this tag (instead of by subject) keeps each
+    template's counts correct even when two newsletters share a subject or a
+    subject is edited after sends have already gone out.
+    """
+    return f"{NEWSLETTER_TAG_PREFIX}{newsletter_id}"
 
 
 @staff_member_required
@@ -51,19 +65,44 @@ def newsletter_list(request):
     if search_query:
         newsletters = newsletters.filter(Q(subject__icontains=search_query))
 
-    # Get send statistics for each newsletter
-    newsletter_stats = []
-    for newsletter in newsletters:
-        sent_count = EmailOutbox.objects.filter(
-            template_type="newsletter", subject=newsletter.subject, status="sent"
-        ).count()
+    newsletters = list(newsletters)
 
-        newsletter_stats.append(
-            {
-                "template": newsletter,
-                "sent_count": sent_count,
-            }
-        )
+    # Aggregate send statistics in a single query. New sends carry a stable
+    # per-template ``newsletter:<id>`` tag, which is preferred over subject
+    # matching: two newsletters can share a subject, and editing a subject would
+    # otherwise reassign or hide earlier sends. Sends queued before tagging was
+    # introduced have no such tag, so those legacy rows fall back to the original
+    # subject-based match (keyed to the current newsletter subject) to avoid
+    # regressing historical counts to zero.
+    newsletter_ids = {str(newsletter.id) for newsletter in newsletters}
+    subject_to_ids = {}
+    for newsletter in newsletters:
+        subject_to_ids.setdefault(newsletter.subject, []).append(str(newsletter.id))
+
+    sent_counts = Counter()
+    for tags, subject in EmailOutbox.objects.filter(
+        template_type="newsletter", status="sent"
+    ).values_list("tags", "subject"):
+        tagged = False
+        for tag in tags or []:
+            if tag.startswith(NEWSLETTER_TAG_PREFIX):
+                tagged = True
+                nid = tag[len(NEWSLETTER_TAG_PREFIX) :]
+                if nid in newsletter_ids:
+                    sent_counts[nid] += 1
+        if not tagged:
+            # Legacy row (no newsletter tag): attribute by subject, mirroring the
+            # previous per-newsletter subject count.
+            for nid in subject_to_ids.get(subject, ()):
+                sent_counts[nid] += 1
+
+    newsletter_stats = [
+        {
+            "template": newsletter,
+            "sent_count": sent_counts.get(str(newsletter.id), 0),
+        }
+        for newsletter in newsletters
+    ]
 
     context = {
         "title": _("Newsletters"),
@@ -169,8 +208,10 @@ def newsletter_send(request, newsletter_id):
         action = request.POST.get("action", "")
 
         if action == "preview_recipients":
-            # Calculate recipient count based on filters
-            recipient_count = _calculate_recipient_count(request.POST)
+            # Preview must count exactly what a send would queue, so route through
+            # the same recipient selection (including any uploaded CSV) rather than
+            # a separate DB-only count that ignores request.FILES.
+            recipient_count = len(_get_recipients(request.POST, request.FILES))
             return JsonResponse({"success": True, "recipient_count": recipient_count})
 
         elif action == "send":
@@ -199,23 +240,49 @@ def newsletter_send(request, newsletter_id):
                     )
                     return redirect("email_system:newsletter_send", newsletter.id)
 
-                queued_count = 0
-                for recipient_email, _recipient_name in recipients:
-                    # Create outbox entry
-                    EmailOutbox.objects.create(
-                        site=site,
-                        account=email_account,
-                        to_email=recipient_email,
-                        from_email=email_account.from_email,
-                        from_name=email_account.from_name,
-                        subject=newsletter.subject,
-                        html_body=newsletter.html_content,
-                        text_body=newsletter.text_content or "",
-                        template_type="newsletter",
-                        status="queued",
-                        queued_at=timezone.now(),
+                from email_system.services.template_renderer import TemplateRenderer
+
+                renderer = TemplateRenderer()
+                newsletter_tag = _newsletter_tag(newsletter.id)
+
+                # Build the whole batch first (rendering the stored MJML into the
+                # final HTML/subject/text per recipient) so nothing is written
+                # until every recipient is prepared.
+                outbox_entries = []
+                for recipient_email, recipient_name in recipients:
+                    render_context = {
+                        "customer_name": recipient_name or recipient_email,
+                        "recipient_email": recipient_email,
+                    }
+                    subject, html_body, text_body = renderer.render_template(
+                        newsletter,
+                        render_context,
+                        language=newsletter.language_code,
+                        enable_tracking=False,
                     )
-                    queued_count += 1
+                    outbox_entries.append(
+                        EmailOutbox(
+                            site=site,
+                            account=email_account,
+                            to_email=recipient_email,
+                            from_email=email_account.from_email,
+                            from_name=email_account.from_name,
+                            subject=subject,
+                            html_body=html_body,
+                            text_body=text_body,
+                            template_type="newsletter",
+                            tags=[newsletter_tag],
+                            status="queued",
+                            queued_at=timezone.now(),
+                        )
+                    )
+
+                # Create the batch atomically: if any row fails (e.g. an
+                # over-length address), the whole batch rolls back instead of
+                # leaving a partial, re-sendable set queued.
+                with transaction.atomic():
+                    EmailOutbox.objects.bulk_create(outbox_entries)
+                queued_count = len(outbox_entries)
 
                 messages.success(
                     request,
@@ -236,7 +303,7 @@ def newsletter_send(request, newsletter_id):
 
     # Total marketing-opted-in subscribers (what a store-wide blast can reach),
     # not every active account — keeps the figure honest post consent-gating.
-    total_subscribers = _calculate_recipient_count(post_data=QueryDict())
+    total_subscribers = len(_get_recipients(QueryDict(), {}))
 
     context = {
         "title": _("Send Newsletter"),
@@ -255,14 +322,23 @@ def newsletter_duplicate(request, newsletter_id):
     """
     newsletter = get_object_or_404(EmailTemplate, id=newsletter_id, template_type="newsletter")
 
-    # Clone the newsletter
-    new_newsletter = newsletter.clone(user=request.user, set_active=True)
-    new_newsletter.subject = f"{newsletter.subject} (Copy)"
-    new_newsletter.save()
+    if request.method == "POST":
+        # Only mutate on POST so the clone can't be triggered by a CSRF-exempt GET
+        # (e.g. an attacker-planted <img src>), matching newsletter_delete.
+        new_newsletter = newsletter.clone(user=request.user, set_active=True)
+        new_newsletter.subject = f"{newsletter.subject} (Copy)"
+        new_newsletter.save()
 
-    messages.success(request, _("Newsletter duplicated successfully!"))
+        messages.success(request, _("Newsletter duplicated successfully!"))
 
-    return redirect("email_system:newsletter_edit", new_newsletter.id)
+        return redirect("email_system:newsletter_edit", new_newsletter.id)
+
+    context = {
+        "title": _("Duplicate Newsletter"),
+        "newsletter": newsletter,
+    }
+
+    return render(request, "admin/email_system/newsletter_duplicate_confirm.html", context)
 
 
 @staff_member_required
@@ -285,45 +361,6 @@ def newsletter_delete(request, newsletter_id):
     }
 
     return render(request, "admin/email_system/newsletter_delete_confirm.html", context)
-
-
-def _calculate_recipient_count(post_data):
-    """
-    Calculate number of recipients based on filters
-
-    Args:
-        post_data: POST data with filter parameters
-
-    Returns:
-        int: Number of recipients
-    """
-    recipients = User.objects.filter(is_active=True, email__isnull=False).exclude(email="")
-
-    # Filter by segment
-    segment_ids = post_data.getlist("segments[]")
-    if segment_ids:
-        # Get users in selected segments
-        segment_user_ids = CustomerMetrics.objects.filter(segment_id__in=segment_ids).values_list(
-            "user_id", flat=True
-        )
-        recipients = recipients.filter(id__in=segment_user_ids)
-
-    # Filter by customer status
-    customer_status = post_data.get("customer_status", "")
-    if customer_status == "has_orders":
-        recipients = recipients.filter(orders__isnull=False).distinct()
-    elif customer_status == "no_orders":
-        recipients = recipients.filter(orders__isnull=True)
-
-    # Only count customers who have opted into marketing (and confirmed, when the
-    # store requires double opt-in) so the preview matches what actually sends.
-    from accounts.models import CommunicationPreference
-
-    consenting = 0
-    for prefs in CommunicationPreference.objects.filter(user__in=recipients).select_related("user"):
-        if prefs.should_send_email("newsletter"):
-            consenting += 1
-    return consenting
 
 
 def _newsletter_consent_by_email(emails):
@@ -372,11 +409,19 @@ def _get_recipients(post_data, files):
             decoded_file = csv_file.read().decode("utf-8")
             csv_reader = csv.DictReader(io.StringIO(decoded_file))
 
+            seen = set()
             for row in csv_reader:
                 email = row.get("email", "").strip()
                 name = row.get("name", "").strip()
-                if email:
-                    candidates.append((email, name))
+                if not email:
+                    continue
+                # Deduplicate case-insensitively so a repeated address is not
+                # queued (and delivered) more than once. Keep the first row.
+                key = email.lower()
+                if key in seen:
+                    continue
+                seen.add(key)
+                candidates.append((email, name))
         except Exception as e:
             logger.error(f"Error parsing CSV: {e}", exc_info=True)
             raise Exception(_("Error parsing CSV file: %(error)s") % {"error": str(e)})
@@ -391,13 +436,19 @@ def _get_recipients(post_data, files):
         # Get recipients from database based on filters
         users = User.objects.filter(is_active=True, email__isnull=False).exclude(email="")
 
-        # Filter by segment
+        # Filter by segment. Segment membership is computed dynamically via
+        # CustomerSegment.determine_segment_for_user (there is no persisted
+        # segment_id on CustomerMetrics to filter against).
         segment_ids = post_data.getlist("segments[]")
         if segment_ids:
-            segment_user_ids = CustomerMetrics.objects.filter(
-                segment_id__in=segment_ids
-            ).values_list("user_id", flat=True)
-            users = users.filter(id__in=segment_user_ids)
+            wanted_segments = {str(sid) for sid in segment_ids}
+            matched_user_ids = [
+                user.id
+                for user in users
+                if (segment := CustomerSegment.determine_segment_for_user(user))
+                and str(segment.id) in wanted_segments
+            ]
+            users = users.filter(id__in=matched_user_ids)
 
         # Filter by customer status
         customer_status = post_data.get("customer_status", "")

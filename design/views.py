@@ -91,7 +91,13 @@ class ThemeCSSView(View):
         """Serve theme CSS for the given theme slug."""
         from django.core.cache import cache
 
-        theme = get_object_or_404(Theme, slug=slug, is_active=True)
+        # Serve by slug only. The storefront links this URL for whichever theme
+        # GlobalDesignSettings.active_theme points at; gating on is_active=True
+        # made a *selected* theme 404 (blank storefront) whenever its Theme row
+        # had is_active=False — e.g. after a legacy "deactivate other themes on
+        # activate" pass left installed themes inactive. Availability is governed
+        # by the active-theme selection, not by this flag.
+        theme = get_object_or_404(Theme, slug=slug)
 
         # If compiled_css is empty, try to extract and populate
         if not theme.compiled_css:

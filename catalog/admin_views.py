@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from core.utils import get_default_currency
-from staff_roles.decorators import requires_permission
+from staff_roles.decorators import requires_category, requires_permission
 
 from .models import (
     AttributeValue,
@@ -3941,3 +3941,105 @@ def booking_check_reschedule(request, booking_id):
             "price": str(price) if price is not None else None,
         }
     )
+
+
+@staff_member_required
+@requires_category("catalog", "view")
+def review_dashboard(request):
+    """Reviews overview dashboard: volume/rating KPIs, rating distribution,
+    review volume over time, top-reviewed products, and the purchase channel
+    behind reviewers' orders (reused from the attribution engine).
+
+    The channel breakdown is the *purchase* channel of customers who left
+    reviews — not the source of the review-writing visit, which is not tracked.
+    """
+    import json
+    from datetime import timedelta
+
+    from django.contrib import admin as django_admin
+    from django.db.models import Avg, Count
+    from django.utils import timezone
+
+    from catalog.models import Product, ProductReview
+
+    reviews = ProductReview.objects.all()
+    total = reviews.count()
+    approved = reviews.filter(is_approved=True).count()
+    pending = total - approved
+    verified = reviews.filter(is_verified_purchase=True).count()
+    avg_rating = reviews.aggregate(a=Avg("rating"))["a"] or 0
+    now = timezone.now()
+    reviews_30d = reviews.filter(created_at__gte=now - timedelta(days=30)).count()
+
+    # Rating distribution (1..5).
+    dist = dict.fromkeys(range(1, 6), 0)
+    for row in reviews.values("rating").annotate(c=Count("id")):
+        if row["rating"] in dist:
+            dist[row["rating"]] = row["c"]
+    rating_distribution = [{"rating": r, "count": dist[r]} for r in range(1, 6)]
+
+    # Review volume over the last 12 weeks.
+    series = []
+    for i in range(11, -1, -1):
+        start = now - timedelta(weeks=i + 1)
+        end = now - timedelta(weeks=i)
+        series.append(
+            {
+                "date": end.date().isoformat(),
+                "count": reviews.filter(created_at__gte=start, created_at__lt=end).count(),
+            }
+        )
+
+    # Top reviewed products.
+    top_products = list(
+        Product.objects.annotate(review_count=Count("reviews"), avg_rating=Avg("reviews__rating"))
+        .filter(review_count__gt=0)
+        .order_by("-review_count")[:10]
+    )
+
+    # Purchase channel of reviewers (honest substitute for review-visit source).
+    channel_rows = []
+    try:
+        from orders.models import Order
+
+        reviewer_ids = reviews.values_list("user_id", flat=True).distinct()
+        label_map = dict(Order._meta.get_field("source").choices or [])
+        rows = (
+            Order.objects.filter(user_id__in=reviewer_ids)
+            .exclude(source="")
+            .values("source")
+            .annotate(c=Count("id"))
+            .order_by("-c")
+        )
+        for r in rows:
+            code = r["source"]
+            channel_rows.append(
+                {"channel": code, "label": str(label_map.get(code, code)), "count": r["c"]}
+            )
+    except Exception:
+        channel_rows = []
+
+    recent_pending = list(
+        reviews.filter(is_approved=False)
+        .select_related("product", "user")
+        .order_by("-created_at")[:8]
+    )
+
+    context = {
+        **django_admin.site.each_context(request),
+        "title": gettext("Reviews Dashboard"),
+        "total_reviews": total,
+        "approved_reviews": approved,
+        "pending_reviews": pending,
+        "avg_rating": round(float(avg_rating), 2),
+        "approval_rate": round((approved / total * 100) if total else 0, 1),
+        "verified_pct": round((verified / total * 100) if total else 0, 1),
+        "reviews_30d": reviews_30d,
+        "top_products": top_products,
+        "recent_pending": recent_pending,
+        "channel_rows": channel_rows,
+        "rating_distribution_json": json.dumps(rating_distribution),
+        "reviews_series_json": json.dumps(series),
+        "channel_breakdown_json": json.dumps(channel_rows),
+    }
+    return render(request, "admin/catalog/productreview/dashboard.html", context)

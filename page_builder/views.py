@@ -174,9 +174,16 @@ class PageView(TemplateView):
                 # instance actually renders (e.g. a product_grid's chosen
                 # layout), keyed on an element.content property. Falls back to
                 # the declared default when the instance hasn't set the value.
-                if element_config and element_config.conditional_css_files:
+                #
+                # getattr default guards against a stale, cross-version cached
+                # ElementConfig that predates this field: a pickled object
+                # rehydrates without re-running __init__, so the attribute can
+                # be absent. Degrade to "no variant CSS" rather than 500 the
+                # storefront home page (see REGISTRY_CACHE_KEY versioning).
+                conditional_css_files = getattr(element_config, "conditional_css_files", None)
+                if element_config and conditional_css_files:
                     content = element.content or {}
-                    for rule in element_config.conditional_css_files:
+                    for rule in conditional_css_files:
                         prop = rule.get("property")
                         variant_map = rule.get("map", {})
                         value = content.get(prop) or rule.get("default")

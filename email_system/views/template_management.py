@@ -649,13 +649,21 @@ def translation_manager(request):
             for lang in target_langs:
                 job_status_map[template_id][lang] = status
 
+    # Fetch every relevant translation once, keyed by (template_id, language),
+    # to avoid an N+1 query per template/language cell in the matrix.
+    supported_language_codes = [code for code, _name in supported_languages]
+    translations_by_key = {
+        (t.template_id, t.language_code): t
+        for t in EmailTemplateTranslation.objects.filter(
+            template__in=templates, language_code__in=supported_language_codes
+        )
+    }
+
     for template in templates:
         row = {"template": template, "languages": {}, "has_translations": False}
 
         for lang_code, _lang_name in supported_languages:
-            translation = EmailTemplateTranslation.objects.filter(
-                template=template, language_code=lang_code
-            ).first()
+            translation = translations_by_key.get((template.id, lang_code))
 
             # Check if there's a pending/processing job for this template+language
             job_status = None

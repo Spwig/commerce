@@ -3,11 +3,14 @@ Sample Data Provider for Email Template Preview
 Provides realistic sample data for testing and previewing email templates
 """
 
+import logging
 from datetime import timedelta
 from decimal import Decimal
 
 from django.utils import timezone
 from djmoney.money import Money
+
+logger = logging.getLogger(__name__)
 
 
 class SampleDataProvider:
@@ -28,11 +31,17 @@ class SampleDataProvider:
         Returns:
             Dict with template variables and sample values
         """
-        # Build shop URL from request or use default
+        # Build shop URL from request, configured site settings, or demo default.
+        # Resolving from SiteSettings.site_url here keeps template-specific links
+        # (order_url, product_url, activation_url, ...) consistent with the common
+        # shop_url when no request is available (e.g. the staff preview view).
         if request:
             shop_url = request.build_absolute_uri("/").rstrip("/")
         else:
-            shop_url = "https://demo.example.com"
+            settings = SampleDataProvider._get_site_settings()
+            shop_url = (
+                (settings.site_url if settings else "") or "https://demo.example.com"
+            ).rstrip("/")
 
         # Common variables across all templates - use actual SiteSettings when available
         common_data = {
@@ -963,6 +972,27 @@ class SampleDataProvider:
         return names.get(language, "John Smith")
 
     @staticmethod
+    def _get_site_settings():
+        """
+        Load the store's SiteSettings singleton for previews, or None if it
+        cannot be loaded.
+
+        Any failure is tolerated and treated as "no settings" so a preview
+        never breaks — the caller falls back to demo values. This mirrors the
+        defensive error handling used elsewhere in this preview-only provider.
+        """
+        try:
+            from core.models import SiteSettings
+
+            return SiteSettings.get_settings()
+        except Exception:
+            logger.warning(
+                "SiteSettings unavailable for email preview; using demo data",
+                exc_info=True,
+            )
+            return None
+
+    @staticmethod
     def _get_site_settings_sample_data(shop_url: str, request=None) -> dict[str, str]:
         """
         Get site settings for sample data.
@@ -977,8 +1007,6 @@ class SampleDataProvider:
         Returns:
             Dict with shop_name, shop_url, support_email, support_phone, current_year
         """
-        from django.utils import timezone
-
         try:
             from core.models import SiteSettings
 
@@ -1001,8 +1029,6 @@ class SampleDataProvider:
             pass
 
         # Fallback to demo values
-        from django.utils import timezone
-
         return {
             "shop_name": "Demo Store",
             "shop_url": shop_url,

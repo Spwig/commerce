@@ -1,21 +1,376 @@
 {% extends "admin/change_form.html" %}
 {% load i18n static %}
 
-{% block title %}{% if original %}{% trans "Edit Subscription Plan" %}: {{ original.name }}{% else %}{% trans "Add Subscription Plan" %}{% endif %} | {{ site_title }}{% endblock %}
+{% block title %}{% if original %}{% trans "Edit Subscription Plan" %}: {{ original.name }}{% else %}{% trans "Add Subscription Plan" %}{% endif %} | {{ site_settings.site_name|default:site_title }} | Spwig{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
 <link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+<script src="{% static 'subscriptions/js/subscriptionplan_change_form.js' %}" defer></script>
 {% endblock %}
 
 {% block extrastyle %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'subscriptions/css/subscriptionplan_change_form.css' %}">
 {% endblock %}
 
 {% block content %}
-{{ block.super }}
+<div id="content-main" class="subscriptionplan-change-form">
 
-{# Translation Editor Initialization #}
+{% if original %}
+    {# === EDIT MODE: Dashboard + Tabs === #}
+
+    {# --- BANNER HEADER --- #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-cubes"></i>
+                    {% trans "Edit Subscription Plan" %}: {{ original.name }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-layer-group"></i> {{ original.get_pricing_model_display }}
+                    </span>
+                    <span class="status-badge {% if original.is_active %}active{% else %}inactive{% endif %}">
+                        {% if original.is_active %}<i class="fas fa-check-circle"></i> {% trans "Active" %}{% else %}<i class="fas fa-times-circle"></i> {% trans "Inactive" %}{% endif %}
+                    </span>
+                    <span class="status-badge {% if original.is_public %}public{% else %}private{% endif %}">
+                        {% if original.is_public %}<i class="fas fa-eye"></i> {% trans "Public" %}{% else %}<i class="fas fa-eye-slash"></i> {% trans "Private" %}{% endif %}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="sp-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="sp-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- STATS GRID --- #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ active_subscriptions|default:0 }}</div>
+            <div class="label">{% trans "Active Subscriptions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-list-ol"></i></div>
+            <div class="value">{{ pricing_tiers_count|default:0 }}</div>
+            <div class="label">{% trans "Pricing Tiers" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-puzzle-piece"></i></div>
+            <div class="value">{{ addons_count|default:0 }}</div>
+            <div class="label">{% trans "Add-ons" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">{{ total_revenue|default:"$0.00" }}</div>
+            <div class="label">{% trans "Total Revenue" %}</div>
+        </div>
+    </div>
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- FORM --- #}
+    <form method="post" id="subscriptionplan_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {# --- TAB NAVIGATION --- #}
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="general" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "General" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="pricing" role="tab" aria-selected="false">
+                <i class="fas fa-tags"></i>
+                <span class="label">{% trans "Pricing" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="tiers" role="tab" aria-selected="false">
+                <i class="fas fa-layer-group"></i>
+                <span class="label">{% trans "Tiers & Add-ons" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="lifecycle" role="tab" aria-selected="false">
+                <i class="fas fa-heartbeat"></i>
+                <span class="label">{% trans "Lifecycle" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="advanced" role="tab" aria-selected="false">
+                <i class="fas fa-cogs"></i>
+                <span class="label">{% trans "Advanced" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {# === TAB: GENERAL === #}
+        <div class="admin-tab-content active" id="tab-general" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-general' in fieldset.classes %}
+                <div class="form-card">
+                    {% if fieldset.name %}<h2><i class="fas fa-info-circle"></i> {{ fieldset.name }}</h2>{% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: PRICING === #}
+        <div class="admin-tab-content" id="tab-pricing" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-pricing' in fieldset.classes %}
+                <div class="form-card">
+                    {% if fieldset.name %}<h2><i class="fas fa-tags"></i> {{ fieldset.name }}</h2>{% endif %}
+                    {% if fieldset.description %}<p class="form-card-description">{{ fieldset.description|safe }}</p>{% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: TIERS & ADD-ONS (inlines, matched by formset prefix) === #}
+        <div class="admin-tab-content" id="tab-tiers" role="tabpanel">
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.formset.prefix == 'pricing_tiers' %}
+                <div class="form-card">
+                    <h2><i class="fas fa-list-ol"></i> {% trans "Pricing Tiers" %}</h2>
+                    <p class="form-card-description">{% trans "Billing cycles and discounts customers can choose from when subscribing to this plan." %}</p>
+                    {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.formset.prefix == 'addons' %}
+                <div class="form-card">
+                    <h2><i class="fas fa-puzzle-piece"></i> {% trans "Add-ons" %}</h2>
+                    <p class="form-card-description">{% trans "Optional extras customers can add to their subscription." %}</p>
+                    {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: LIFECYCLE === #}
+        <div class="admin-tab-content" id="tab-lifecycle" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-lifecycle' in fieldset.classes %}
+                <div class="form-card">
+                    {% if fieldset.name %}<h2><i class="fas fa-heartbeat"></i> {{ fieldset.name }}</h2>{% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: ADVANCED === #}
+        <div class="admin-tab-content" id="tab-advanced" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-advanced' in fieldset.classes %}
+                <div class="form-card">
+                    {% if fieldset.name %}<h2><i class="fas fa-cogs"></i> {{ fieldset.name }}</h2>{% endif %}
+                    {% if fieldset.description %}<p class="form-card-description">{{ fieldset.description|safe }}</p>{% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN: any fieldset not mapped to a tab (keeps the form submittable) --- #}
+        <div class="d-none">
+            {% for fieldset in adminform %}
+                {% if 'tab-general' not in fieldset.classes and 'tab-pricing' not in fieldset.classes and 'tab-lifecycle' not in fieldset.classes and 'tab-advanced' not in fieldset.classes %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly %}<div class="form-row">{{ field.field }}</div>{% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            {# any inline not rendered above still needs its management form submitted #}
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.formset.prefix != 'pricing_tiers' and inline_admin_formset.formset.prefix != 'addons' %}
+                    {{ inline_admin_formset.formset.management_form }}
+                    {% for form in inline_admin_formset.formset.forms %}
+                        {% for fieldset in form %}
+                            {% for line in fieldset %}
+                                {% for field in line %}{{ field.field }}{% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN SUBMIT ROW (buttons in the header trigger these) --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {# === ADD MODE: Clean sequential layout (primary create path is the wizard) === #}
+
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1><i class="fas fa-plus-circle"></i> {% trans "Add Subscription Plan" %}</h1>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="sp-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="sp-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="subscriptionplan_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% for fieldset in adminform %}
+        <div class="form-card">
+            {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+            {% if fieldset.description %}<p class="form-card-description">{{ fieldset.description|safe }}</p>{% endif %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if not field.is_readonly %}
+                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field.field }}
+                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% endif %}
+
+{# --- Translation Editor (🌐 buttons for translatable name/description) --- #}
 {% include "admin/includes/translation_editor_init.html" %}
+
+</div>
 {% endblock %}

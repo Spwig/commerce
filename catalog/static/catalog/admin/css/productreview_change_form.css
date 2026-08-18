@@ -1,0 +1,281 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ============================================
+   ProductReview Change Form
+   Scoped under .productreview-change-form
+   Structural components (tabs, cards, dashboard header/stats,
+   list-row-cards, util buttons) come from admin-base.css.
+   Uses the standard theme-aware admin variables (--body-fg,
+   --body-quiet-color, --border-color, --darkened-bg) so it reads
+   correctly in both light and dark mode.
+   ============================================ */
+
+/* --- Star rating (header) --- */
+.productreview-change-form .review-stars {
+  color: #f5a623;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+/* --- Status badges --- */
+.productreview-change-form .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.productreview-change-form .status-badge.approved {
+  background: rgba(39, 174, 96, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(39, 174, 96, 0.4);
+}
+
+.productreview-change-form .status-badge.pending {
+  background: rgba(243, 156, 18, 0.15);
+  color: #f39c12;
+  border: 1px solid rgba(243, 156, 18, 0.4);
+}
+
+.productreview-change-form .status-badge.verified {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.4);
+}
+
+/* --- Dashboard stats grid --- */
+.productreview-change-form .dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.productreview-change-form .dashboard-stat-card .value-small {
+  font-size: 15px;
+}
+
+/* --- Form rows --- */
+.productreview-change-form .form-card-description {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--body-quiet-color);
+}
+
+.productreview-change-form .form-row {
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.productreview-change-form .form-row:last-child {
+  margin-bottom: 0;
+}
+
+.productreview-change-form .form-row label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--body-fg);
+}
+
+.productreview-change-form .form-row .readonly {
+  padding: 8px 12px;
+  background: var(--darkened-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--body-fg);
+}
+
+.productreview-change-form .form-row .help {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--body-quiet-color);
+}
+
+/* --- Review image gallery + delete --- */
+.productreview-change-form .review-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.productreview-change-form .review-image-thumb {
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+}
+
+.productreview-change-form .review-image-view,
+.productreview-change-form .review-image-view img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.productreview-change-form .review-image-view img {
+  object-fit: cover;
+}
+
+.productreview-change-form .review-image-delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.productreview-change-form .review-image-delete:hover {
+  background: #dc3545;
+}
+
+/* Marked-for-deletion state */
+.productreview-change-form .review-image-thumb.marked img {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.productreview-change-form .review-image-thumb.marked {
+  border-color: #dc3545;
+}
+
+.productreview-change-form .review-image-thumb.marked .review-image-delete {
+  background: #dc3545;
+}
+
+.productreview-change-form .review-image-hint {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--body-quiet-color);
+}
+
+.productreview-change-form .add-image-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.productreview-change-form .add-image-row label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--body-fg);
+}
+
+.productreview-change-form .add-image-input {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* --- Customer contact row --- */
+.productreview-change-form .customer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.productreview-change-form .util-btn-inline {
+  width: auto;
+  padding: 6px 12px;
+  gap: 6px;
+  font-size: 13px;
+}
+
+/* --- Attribution journey timeline --- */
+.productreview-change-form .journey-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.productreview-change-form .journey-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.productreview-change-form .journey-item:last-child {
+  border-bottom: none;
+}
+
+.productreview-change-form .journey-channel {
+  flex: 0 0 auto;
+  min-width: 110px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: capitalize;
+  color: #3498db;
+}
+
+.productreview-change-form .journey-detail {
+  flex: 1 1 auto;
+  color: var(--body-fg);
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.productreview-change-form .journey-date {
+  flex: 0 0 auto;
+  color: var(--body-quiet-color);
+  font-size: 12px;
+}
+
+/* --- Notes / empty states --- */
+.productreview-change-form .verified-note {
+  margin-top: 16px;
+  color: #2ecc71;
+  font-size: 13px;
+}
+
+.productreview-change-form .empty-message {
+  padding: 24px;
+  text-align: center;
+  color: var(--body-quiet-color);
+  font-size: 14px;
+  margin: 0;
+  background: var(--darkened-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .productreview-change-form .dashboard-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .productreview-change-form .journey-item {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .productreview-change-form .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

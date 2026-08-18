@@ -142,7 +142,24 @@ class SpwigHostedMailProvider(EmailProviderBase):
 
     def _create_mime_message(self, message: EmailMessage) -> MIMEMultipart:
         """Create a MIME message from EmailMessage dict."""
-        msg = MIMEMultipart("alternative")
+        # The text/html bodies are alternative renderings of each other, so they
+        # belong in a multipart/alternative container. When attachments are
+        # present, that container becomes an inner part of a multipart/mixed
+        # root and the files are attached as siblings of it — otherwise mail
+        # clients treat the files as alternative bodies and hide them.
+        body = MIMEMultipart("alternative")
+        if message.get("text"):
+            body.attach(MIMEText(message["text"], "plain", "utf-8"))
+        if message.get("html"):
+            body.attach(MIMEText(message["html"], "html", "utf-8"))
+
+        if message.get("attachments"):
+            msg = MIMEMultipart("mixed")
+            msg.attach(body)
+            for attachment in message["attachments"]:
+                self._add_attachment(msg, attachment)
+        else:
+            msg = body
 
         # Set headers
         msg["Subject"] = message["subject"]
@@ -174,21 +191,6 @@ class SpwigHostedMailProvider(EmailProviderBase):
                 if "\r" in key or "\n" in key:
                     continue
                 msg[key] = value
-
-        # Add plain text body
-        if message.get("text"):
-            text_part = MIMEText(message["text"], "plain", "utf-8")
-            msg.attach(text_part)
-
-        # Add HTML body
-        if message.get("html"):
-            html_part = MIMEText(message["html"], "html", "utf-8")
-            msg.attach(html_part)
-
-        # Add attachments
-        if message.get("attachments"):
-            for attachment in message["attachments"]:
-                self._add_attachment(msg, attachment)
 
         return msg
 

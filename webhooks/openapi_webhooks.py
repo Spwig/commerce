@@ -111,6 +111,73 @@ class SubscriptionWebhookData(serializers.Serializer):
     created_at = serializers.DateTimeField()
 
 
+class PaymentWebhookData(serializers.Serializer):
+    """Schema for payment data in webhooks."""
+
+    id = serializers.IntegerField(help_text="Payment transaction ID")
+    order_id = serializers.IntegerField(help_text="Associated order ID", allow_null=True)
+    order_number = serializers.CharField(help_text="Order number", allow_null=True)
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Payment amount")
+    currency = serializers.CharField(help_text="3-letter currency code")
+    status = serializers.CharField(help_text="Payment status (completed, failed, pending)")
+    payment_method = serializers.CharField(help_text="Payment method used", allow_null=True)
+    gateway = serializers.CharField(help_text="Payment gateway/provider name", allow_null=True)
+    transaction_id = serializers.CharField(
+        help_text="Gateway transaction reference", allow_null=True
+    )
+    created_at = serializers.DateTimeField(help_text="Payment creation time")
+
+
+class CartWebhookData(serializers.Serializer):
+    """Schema for cart data in webhooks."""
+
+    id = serializers.IntegerField(help_text="Cart ID")
+    customer_id = serializers.IntegerField(help_text="Customer ID", allow_null=True)
+    customer_email = serializers.EmailField(help_text="Customer email address", allow_null=True)
+    items_count = serializers.IntegerField(help_text="Number of items in the cart")
+    total = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Cart total amount")
+    currency = serializers.CharField(help_text="3-letter currency code")
+    recovery_url = serializers.URLField(
+        help_text="URL customers can use to recover the cart", allow_null=True
+    )
+    created_at = serializers.DateTimeField(help_text="Cart creation time")
+    updated_at = serializers.DateTimeField(help_text="Last update time")
+
+
+class RefundWebhookData(serializers.Serializer):
+    """Schema for refund data in webhooks."""
+
+    id = serializers.IntegerField(help_text="Refund ID")
+    order_id = serializers.IntegerField(help_text="Associated order ID")
+    order_number = serializers.CharField(help_text="Order number")
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Refund amount")
+    currency = serializers.CharField(help_text="3-letter currency code")
+    reason = serializers.CharField(help_text="Refund reason", allow_blank=True)
+    status = serializers.CharField(help_text="Refund status (created, completed, failed)")
+    created_at = serializers.DateTimeField(help_text="Refund creation time")
+
+
+class TranslationWebhookData(serializers.Serializer):
+    """Schema for translation job data in webhooks."""
+
+    id = serializers.IntegerField(help_text="Translation job ID")
+    job_type = serializers.CharField(help_text="Type of translation job")
+    status = serializers.CharField(help_text="Job status (completed, failed)")
+    content_type = serializers.CharField(help_text="Translated content type", allow_null=True)
+    source_language = serializers.CharField(help_text="Source language code")
+    target_languages = serializers.ListField(
+        child=serializers.CharField(), help_text="Target language codes"
+    )
+    progress = serializers.IntegerField(help_text="Completion percentage")
+    total_characters = serializers.IntegerField(help_text="Total characters to translate")
+    translated_characters = serializers.IntegerField(help_text="Characters translated so far")
+    error_message = serializers.CharField(
+        help_text="Error detail when the job failed", allow_blank=True
+    )
+    created_at = serializers.DateTimeField(help_text="Job creation time")
+    completed_at = serializers.DateTimeField(help_text="Job completion time", allow_null=True)
+
+
 # =============================================================================
 # Webhook Documentation Strings
 # =============================================================================
@@ -128,7 +195,7 @@ All webhooks are signed using HMAC-SHA256. To verify a webhook:
 2. Compute the expected signature:
    ```
    signature_payload = f"{timestamp}.{raw_request_body}"
-   expected = hmac.sha256(your_secret, signature_payload).hexdigest()
+   expected = hmac.new(your_secret.encode(), signature_payload.encode(), hashlib.sha256).hexdigest()
    ```
 
 3. Compare signatures using constant-time comparison.
@@ -163,13 +230,19 @@ After 10 consecutive failures, the endpoint is auto-disabled.
 
 **Python:**
 ```python
-import hmac
 import hashlib
+import hmac
+import time
 
 def verify_webhook(payload, signature_header, secret):
     parts = dict(p.split('=', 1) for p in signature_header.split(','))
-    timestamp = parts['t']
+    timestamp = int(parts['t'])
     signature = parts['v1']
+
+    # Reject timestamps outside the allowed 5-minute window to
+    # prevent replay attacks.
+    if abs(time.time() - timestamp) > 300:
+        return False
 
     expected = hmac.new(
         secret.encode(),
@@ -273,6 +346,10 @@ def get_webhook_payload_schema(event_type: str):
         "shipment": ShipmentWebhookData,
         "inventory": InventoryWebhookData,
         "subscription": SubscriptionWebhookData,
+        "payment": PaymentWebhookData,
+        "cart": CartWebhookData,
+        "refund": RefundWebhookData,
+        "translation": TranslationWebhookData,
     }
 
     return schemas.get(prefix, serializers.DictField)

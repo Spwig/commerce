@@ -266,54 +266,159 @@ class MediaAsset(SoftDeleteModel):
             return self.get_display_url()
 
     def get_picture_sources(self, size_preset=None):
-        """Return ``{avif, webp, fallback, width, height}`` for a <picture>.
+        """Return a responsive source set for a <picture>.
 
-        ``avif``/``webp`` are None when that rendition isn't available yet, so
-        callers omit the matching <source>; ``fallback`` is always a usable URL
-        pointing at the original-format file. A <source> is only ever emitted
-        for a file known to exist — never guess a URL by swapping extensions,
-        because a 404 <source> renders a broken image with no fallback.
+        Shape: ``{avif, webp, fallback, width, height, avif_srcset,
+        webp_srcset, fallback_srcset}``.
+
+        ``avif``/``webp`` are the single-URL, next-gen candidates (None when
+        that rendition isn't generated yet — callers omit the matching
+        <source>); ``fallback`` is always a usable original-format URL for the
+        <img>. ``width``/``height`` are the intrinsic size of that base
+        rendition.
+
+        The ``*_srcset`` values are additive, backwards-compatible ``"url Nw,
+        url Nw"`` width-ladder strings — one per format — assembled from the
+        asset's already-generated preset thumbnails plus the full-size file, so
+        a headless client can pair them with a ``sizes`` hint and let the
+        browser fetch the right width instead of always downloading the largest
+        file. Each is None when fewer than two same-aspect widths exist for that
+        format (a single-entry srcset carries no benefit). Only renditions
+        sharing the base rendition's aspect ratio are laddered together, so the
+        ``w`` descriptors stay valid (a square-cropped thumbnail is never mixed
+        into a wide image's ladder).
+
+        A <source>/srcset entry is only ever emitted for a file known to
+        exist — never guess a URL by swapping extensions, because a 404
+        candidate renders a broken image with no fallback.
         """
         # Video / 3D: only a poster still image, no avif/webp candidates.
         if self.is_video() or self.is_3d_model():
             poster = self.poster_image.url if self.poster_image else None
-            return {
-                "avif": None,
-                "webp": None,
-                "fallback": poster,
-                "width": self.width,
-                "height": self.height,
-            }
+            return self._picture_dict(None, None, poster, self.width, self.height)
         # SVG is vector — serve as-is, no raster renditions.
         if self.mime_type == "image/svg+xml":
-            return {
-                "avif": None,
-                "webp": None,
+            fallback = self.original_file.url if self.original_file else None
+            return self._picture_dict(None, None, fallback, self.width, self.height)
+
+        thumbs = self._thumbnails_for_srcset()
+
+        base = None
+        if size_preset:
+            base = next((t for t in thumbs if t.size_preset == size_preset), None)
+
+        if base is not None:
+            sources = {
+                "avif": base.avif_file.url if base.avif_file else None,
+                "webp": base.webp_file.url if base.webp_file else None,
+                "fallback": (base.file.url if base.file else None) or self.get_display_url(),
+                "width": base.width,
+                "height": base.height,
+            }
+        else:
+            sources = {
+                "avif": self.avif_file.url if self.avif_file else None,
+                "webp": self.webp_file.url if self.webp_file else None,
                 "fallback": self.original_file.url if self.original_file else None,
                 "width": self.width,
                 "height": self.height,
             }
 
-        if size_preset:
-            try:
-                thumb = self.thumbnails.get(size_preset=size_preset)
-                return {
-                    "avif": thumb.avif_file.url if thumb.avif_file else None,
-                    "webp": thumb.webp_file.url if thumb.webp_file else None,
-                    "fallback": (thumb.file.url if thumb.file else None) or self.get_display_url(),
-                    "width": thumb.width,
-                    "height": thumb.height,
-                }
-            except MediaThumbnail.DoesNotExist:
-                pass  # fall through to full-size sources
+        sources.update(self._build_srcsets(sources["width"], sources["height"], thumbs))
+        return sources
+
+    @staticmethod
+    def _picture_dict(avif, webp, fallback, width, height):
+        """Assemble a source dict with the full (srcset-less) key shape."""
+        return {
+            "avif": avif,
+            "webp": webp,
+            "fallback": fallback,
+            "width": width,
+            "height": height,
+            "avif_srcset": None,
+            "webp_srcset": None,
+            "fallback_srcset": None,
+        }
+
+    def _thumbnails_for_srcset(self):
+        """All thumbnail rows for this asset, prefetch-aware and memoised.
+
+        Reads the ``thumbnails`` prefetch cache when present (list/detail views
+        that ``prefetch_related('...media_asset__thumbnails')`` pay zero extra
+        queries). Otherwise it issues a single ``.all()`` and caches it on the
+        instance, so repeated ``get_picture_sources`` calls for one asset in a
+        single request don't re-query.
+        """
+        cache = getattr(self, "_prefetched_objects_cache", None)
+        if cache is not None and "thumbnails" in cache:
+            return list(cache["thumbnails"])
+        if "_srcset_thumbs" not in self.__dict__:
+            self.__dict__["_srcset_thumbs"] = list(self.thumbnails.all())
+        return self.__dict__["_srcset_thumbs"]
+
+    def _build_srcsets(self, base_width, base_height, thumbs):
+        """Build the per-format ``*_srcset`` width ladders.
+
+        Candidates are the thumbnails plus the full-size file, restricted to
+        those sharing the base rendition's aspect ratio (within 2%) so the
+        emitted ``w`` descriptors describe the same image at different sizes.
+        """
+        empty = {"avif_srcset": None, "webp_srcset": None, "fallback_srcset": None}
+        if not base_width or not base_height:
+            return empty
+        ref_ar = base_width / base_height
+        tolerance = 0.02 * ref_ar
+
+        # (width, avif_url, webp_url, fallback_url) per same-aspect rendition.
+        candidates = []
+        for t in thumbs:
+            if not t.width or not t.height:
+                continue
+            if abs((t.width / t.height) - ref_ar) > tolerance:
+                continue
+            candidates.append(
+                (
+                    t.width,
+                    t.avif_file.url if t.avif_file else None,
+                    t.webp_file.url if t.webp_file else None,
+                    t.file.url if t.file else None,
+                )
+            )
+        # Full-size file caps the ladder when it shares the base aspect ratio.
+        if self.width and self.height and abs((self.width / self.height) - ref_ar) <= tolerance:
+            candidates.append(
+                (
+                    self.width,
+                    self.avif_file.url if self.avif_file else None,
+                    self.webp_file.url if self.webp_file else None,
+                    self.original_file.url if self.original_file else None,
+                )
+            )
 
         return {
-            "avif": self.avif_file.url if self.avif_file else None,
-            "webp": self.webp_file.url if self.webp_file else None,
-            "fallback": self.original_file.url if self.original_file else None,
-            "width": self.width,
-            "height": self.height,
+            "avif_srcset": self._srcset_string(candidates, 1),
+            "webp_srcset": self._srcset_string(candidates, 2),
+            "fallback_srcset": self._srcset_string(candidates, 3),
         }
+
+    @staticmethod
+    def _srcset_string(candidates, url_index):
+        """Join ``candidates`` into a ``"url Nw, ..."`` string for one format.
+
+        Dedupes by width (first candidate at a given width wins), sorts
+        ascending, and returns None when fewer than two widths carry that
+        format — a one-entry srcset gives the browser nothing to choose.
+        """
+        by_width = {}
+        for candidate in candidates:
+            width = candidate[0]
+            url = candidate[url_index]
+            if url and width and width not in by_width:
+                by_width[width] = url
+        if len(by_width) < 2:
+            return None
+        return ", ".join(f"{by_width[width]} {width}w" for width in sorted(by_width))
 
     @classmethod
     def resolve_from_url(cls, url):

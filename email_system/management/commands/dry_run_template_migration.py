@@ -323,11 +323,14 @@ class Command(BaseCommand):
         self.stdout.write(f"   • Missing translations:        {self.stats['missing_translations']}")
 
         expected_translations = self.stats["base_files_parsed"] * 16
+        coverage = (
+            (self.stats["translations_found"] / expected_translations * 100)
+            if expected_translations
+            else 0.0
+        )
         self.stdout.write(f"\n   Expected translations:         {expected_translations}")
         self.stdout.write(f"   Actual translations found:     {self.stats['translations_found']}")
-        self.stdout.write(
-            f"   Coverage:                      {(self.stats['translations_found'] / expected_translations * 100):.1f}%"
-        )
+        self.stdout.write(f"   Coverage:                      {coverage:.1f}%")
 
         # Total records that would be created
         total_records = self.stats["base_files_parsed"] + self.stats["translations_parsed"]

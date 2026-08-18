@@ -36,6 +36,7 @@ urlpatterns = [
     path("warehouse/filter/", admin_views.filter_warehouses, name="filter_warehouses"),
     path("salesregion/filter/", admin_views.filter_sales_regions, name="filter_sales_regions"),
     path("productreview/filter/", admin_views.filter_reviews, name="filter_reviews"),
+    path("productreview/dashboard/", admin_views.review_dashboard, name="review_dashboard"),
     path("booking/filter/", admin_views.filter_bookings, name="filter_bookings"),
     # Variation Builder
     path(

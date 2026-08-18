@@ -355,11 +355,12 @@ def test_connection(request: HttpRequest, account_id: str) -> JsonResponse:
         # Update connection status
         if result.get("success"):
             account.connection_status = "connected"
-            account.last_connection_check = timezone.now()
+            account.connection_error = ""
         else:
             account.connection_status = "error"
             account.connection_error = result.get("message", "Connection test failed")
 
+        account.last_tested_at = timezone.now()
         account.save()
 
         return JsonResponse(result)

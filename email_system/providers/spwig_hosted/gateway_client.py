@@ -294,4 +294,4 @@ class SpwigMailGatewayClient:
                 detail=detail,
             )
 
-        return resp.json()
+        return resp.json() if resp.content else {}

@@ -45,7 +45,23 @@ class DKIMHandler:
         """
         self.domain = domain.lower().strip()
         self.selector = selector or self.DEFAULT_SELECTOR
-        self.cache_key = f"dkim_keys_{self.domain}_{self.selector}"
+
+    def _cache_key(self, kind: str, account: EmailAccount | None = None) -> str:
+        """
+        Build an account-scoped cache key for a piece of DKIM key material.
+
+        Scoping by account.pk keeps two accounts that share a domain/selector
+        from reading each other's cached keys.
+
+        Args:
+            kind: Which key material the entry holds ("private" or "public").
+            account: EmailAccount the keys belong to.
+
+        Returns:
+            Cache key string unique to the domain, selector, account, and kind.
+        """
+        account_scope = account.pk if account is not None else "none"
+        return f"dkim_keys_{self.domain}_{self.selector}_{account_scope}_{kind}"
 
     def generate_key_pair(self) -> tuple[bytes, bytes]:
         """
@@ -110,8 +126,11 @@ class DKIMHandler:
                 "Storing DKIM keys without EmailAccount - consider using database storage"
             )
 
-        # Clear cache
-        cache.delete(self.cache_key)
+        # Invalidate the cached key material so rotations take effect. The
+        # entries live under the "private"/"public" suffixed cache keys, so
+        # both must be deleted (the bare cache key was never populated).
+        cache.delete(self._cache_key("private", account))
+        cache.delete(self._cache_key("public", account))
 
     def get_private_key(self, account: EmailAccount | None = None) -> bytes | None:
         """
@@ -124,7 +143,7 @@ class DKIMHandler:
             Private key PEM bytes or None if not found
         """
         # Check cache first
-        cached = cache.get(f"{self.cache_key}_private")
+        cached = cache.get(self._cache_key("private", account))
         if cached:
             return cached
 
@@ -139,7 +158,7 @@ class DKIMHandler:
                 if private_key_str:
                     private_key = private_key_str.encode("utf-8")
                     # Cache for performance
-                    cache.set(f"{self.cache_key}_private", private_key, self.CACHE_TTL)
+                    cache.set(self._cache_key("private", account), private_key, self.CACHE_TTL)
                     return private_key
             except Exception as e:
                 logger.error(f"Failed to retrieve DKIM private key: {e}")
@@ -158,7 +177,7 @@ class DKIMHandler:
             Public key PEM string or None if not found
         """
         # Check cache first
-        cached = cache.get(f"{self.cache_key}_public")
+        cached = cache.get(self._cache_key("public", account))
         if cached:
             return cached
 
@@ -172,7 +191,7 @@ class DKIMHandler:
 
                 if public_key:
                     # Cache for performance
-                    cache.set(f"{self.cache_key}_public", public_key, self.CACHE_TTL)
+                    cache.set(self._cache_key("public", account), public_key, self.CACHE_TTL)
                     return public_key
             except Exception as e:
                 logger.error(f"Failed to retrieve DKIM public key: {e}")

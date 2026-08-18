@@ -15,6 +15,7 @@ from catalog.serializers import (
     ProductImageSerializer,
     ProductListSerializer,
 )
+from media_library.models import MediaThumbnail
 from tests.factories import CategoryFactory, MediaAssetFactory, ProductFactory
 
 pytestmark = [pytest.mark.django_db, pytest.mark.unit]
@@ -33,7 +34,16 @@ def _product_with_image(admin_user):
     return product, asset
 
 
-SOURCE_KEYS = {"avif", "webp", "fallback", "width", "height"}
+SOURCE_KEYS = {
+    "avif",
+    "webp",
+    "fallback",
+    "width",
+    "height",
+    "avif_srcset",
+    "webp_srcset",
+    "fallback_srcset",
+}
 
 
 class TestProductImageSources:
@@ -82,3 +92,75 @@ class TestCategoryImageSources:
         category = CategoryFactory(image_asset=None)
         data = CategoryListSerializer(category).data
         assert data["image_sources"] is None
+
+
+def _thumb(asset, preset, width, height, *, avif=True, webp=True):
+    """Create a MediaThumbnail row with URL-resolvable file fields."""
+    return MediaThumbnail.objects.create(
+        media_asset=asset,
+        size_preset=preset,
+        width=width,
+        height=height,
+        file=f"thumb/{preset}.jpg",
+        webp_file=f"thumb/{preset}.webp" if webp else None,
+        avif_file=f"thumb/{preset}.avif" if avif else None,
+    )
+
+
+class TestSrcsetLadder:
+    """The additive ``*_srcset`` width ladders built by get_picture_sources()."""
+
+    def test_srcset_lists_same_aspect_widths_ascending(self, admin_user):
+        # Full-size asset is 16:9 (factory default 1920x1080).
+        asset = MediaAssetFactory(uploaded_by=admin_user, mime_type="image/jpeg")
+        _thumb(asset, "small", 640, 360)
+        _thumb(asset, "medium", 960, 540)
+        _thumb(asset, "large", 1280, 720)
+
+        sources = asset.get_picture_sources()
+
+        # Every generated width appears with a correct ``Nw`` descriptor, in
+        # ascending order, each pointing at that format's file.
+        avif = sources["avif_srcset"]
+        assert avif.count(",") == 2
+        assert "small.avif 640w" in avif
+        assert "medium.avif 960w" in avif
+        assert "large.avif 1280w" in avif
+        assert avif.index("640w") < avif.index("960w") < avif.index("1280w")
+
+        webp = sources["webp_srcset"]
+        assert "small.webp 640w" in webp and "large.webp 1280w" in webp
+
+        # The full-size original (1920w) caps the fallback ladder.
+        assert sources["fallback_srcset"].endswith("1920w")
+        assert "640w" in sources["fallback_srcset"]
+
+    def test_srcset_excludes_mismatched_aspect_renditions(self, admin_user):
+        asset = MediaAssetFactory(uploaded_by=admin_user, mime_type="image/jpeg")
+        _thumb(asset, "small", 640, 360)  # 16:9 — kept
+        _thumb(asset, "medium", 960, 540)  # 16:9 — kept
+        _thumb(asset, "avatar", 300, 300)  # 1:1 — square crop, must be excluded
+
+        avif_srcset = asset.get_picture_sources()["avif_srcset"]
+
+        assert "300w" not in avif_srcset
+        assert "640w" in avif_srcset and "960w" in avif_srcset
+
+    def test_srcset_null_when_single_width(self, admin_user):
+        # Original 1920x1080 has no avif/webp file; the one 16:9 thumbnail is the
+        # only avif width -> a one-entry ladder is suppressed.
+        asset = MediaAssetFactory(uploaded_by=admin_user, mime_type="image/jpeg")
+        _thumb(asset, "small", 640, 360)
+
+        sources = asset.get_picture_sources()
+
+        assert sources["avif_srcset"] is None
+        assert sources["webp_srcset"] is None
+
+    def test_srcset_null_when_no_thumbnails(self, admin_user):
+        asset = MediaAssetFactory(uploaded_by=admin_user, mime_type="image/jpeg")
+        sources = asset.get_picture_sources()
+        assert sources["avif_srcset"] is None
+        assert sources["fallback_srcset"] is None
+        # Legacy single-URL keys are unaffected.
+        assert sources["fallback"]

@@ -168,6 +168,12 @@ class CategoryViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         queryset = Category.objects.filter(Q(is_active=True) | Q(id__in=structural_parent_ids))
 
+        # Pull the card/banner media asset and its thumbnails so each category's
+        # image_sources srcset ladder serialises without a per-row query.
+        queryset = queryset.select_related("image_asset", "banner_asset").prefetch_related(
+            "image_asset__thumbnails", "banner_asset__thumbnails"
+        )
+
         # Prefetch children for tree structure
         queryset = queryset.prefetch_related(
             Prefetch("children", queryset=Category.objects.filter(is_active=True))
@@ -214,7 +220,7 @@ class CategoryViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                 is_deleted=False,
             )
             .select_related("category", "brand")
-            .prefetch_related("images", "reviews")
+            .prefetch_related("images__media_asset__thumbnails", "reviews")
         )
 
         # Apply region filtering
@@ -303,7 +309,7 @@ class BrandViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         products = (
             Product.objects.filter(brand=brand, status="published", is_deleted=False)
             .select_related("category", "brand")
-            .prefetch_related("images", "reviews")
+            .prefetch_related("images__media_asset__thumbnails", "reviews")
         )
 
         # Apply region filtering
@@ -448,7 +454,12 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         # Prefetch related for many-to-many and reverse foreign keys
         queryset = queryset.prefetch_related(
-            Prefetch("images", queryset=ProductImage.objects.filter(show_in_listing=True)),
+            Prefetch(
+                "images",
+                queryset=ProductImage.objects.filter(show_in_listing=True)
+                .select_related("media_asset")
+                .prefetch_related("media_asset__thumbnails"),
+            ),
             Prefetch("variants", queryset=ProductVariant.objects.filter(is_active=True)),
             "reviews",
             "stock_items",  # Prefetch stock items for availability checks
@@ -612,7 +623,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         products = (
             Product.objects.filter(id__in=recently_viewed_ids, status="published", is_deleted=False)
             .select_related("category", "brand")
-            .prefetch_related("images", "reviews")
+            .prefetch_related("images__media_asset__thumbnails", "reviews")
         )
 
         # Sort by recently_viewed order
@@ -1132,7 +1143,7 @@ class ProductViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
             products = (
                 Product.objects.filter(id__in=product_ids, status="published")
                 .select_related("category", "brand")
-                .prefetch_related("images", "reviews")
+                .prefetch_related("images__media_asset__thumbnails", "reviews")
             )
         else:
             # Fallback to related products if no purchase history
@@ -1724,7 +1735,7 @@ def product_recommendations(request):
         )
         .exclude(sales_channel="pos_only")
         .select_related("category")
-        .prefetch_related("images__media_asset")[:limit]
+        .prefetch_related("images__media_asset__thumbnails")[:limit]
     )
 
     if products.count() < limit:
@@ -1739,7 +1750,7 @@ def product_recommendations(request):
             .exclude(sales_channel="pos_only")
             .exclude(id__in=featured_ids)
             .select_related("category")
-            .prefetch_related("images__media_asset")
+            .prefetch_related("images__media_asset__thumbnails")
             .order_by("-created_at")[: limit - len(featured_ids)]
         )
         products = list(products) + list(additional)

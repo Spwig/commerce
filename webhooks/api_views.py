@@ -306,6 +306,15 @@ def reset_endpoint_failures(request, pk):
     )
 
 
+class WebhookDeliveryQuerySerializer(drf_serializers.Serializer):
+    """Validate query parameters for the delivery list endpoint."""
+
+    endpoint = drf_serializers.UUIDField(required=False)
+    event_type = drf_serializers.CharField(required=False)
+    status = drf_serializers.ChoiceField(choices=WebhookDelivery.Status.choices, required=False)
+    limit = drf_serializers.IntegerField(required=False, default=50, min_value=0, max_value=200)
+
+
 class WebhookDeliveryList(APIView):
     """
     List webhook deliveries.
@@ -342,24 +351,34 @@ class WebhookDeliveryList(APIView):
     )
     def get(self, request):
         """List webhook deliveries."""
+        query = WebhookDeliveryQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            return Response(
+                {
+                    "success": False,
+                    "errors": query.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        params = query.validated_data
+
         deliveries = WebhookDelivery.objects.select_related("endpoint").all()
 
         # Apply filters
-        endpoint = request.query_params.get("endpoint")
+        endpoint = params.get("endpoint")
         if endpoint:
             deliveries = deliveries.filter(endpoint_id=endpoint)
 
-        event_type = request.query_params.get("event_type")
+        event_type = params.get("event_type")
         if event_type:
             deliveries = deliveries.filter(event_type=event_type)
 
-        status_filter = request.query_params.get("status")
+        status_filter = params.get("status")
         if status_filter:
             deliveries = deliveries.filter(status=status_filter)
 
         # Limit results
-        limit = min(int(request.query_params.get("limit", 50)), 200)
-        deliveries = deliveries[:limit]
+        deliveries = deliveries[: params["limit"]]
 
         serializer = WebhookDeliveryListSerializer(deliveries, many=True)
         return Response(
@@ -424,11 +443,19 @@ def retry_webhook_delivery(request, pk):
     """Manually retry a webhook delivery."""
     delivery = get_object_or_404(WebhookDelivery, pk=pk)
 
-    if delivery.status == WebhookDelivery.Status.SUCCESS:
+    # Only genuinely failed deliveries may be retried. In particular,
+    # SANDBOX_BLOCKED deliveries must never be requeued: deliver_webhook does
+    # not repeat the sandbox destination check, so retrying would send the
+    # payload to the external endpoint that trigger_webhook deliberately blocked.
+    retryable_statuses = {
+        WebhookDelivery.Status.FAILED,
+        WebhookDelivery.Status.RETRYING,
+    }
+    if delivery.status not in retryable_statuses:
         return Response(
             {
                 "success": False,
-                "error": "Cannot retry a successful delivery",
+                "error": "Only failed or retrying deliveries can be retried.",
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
@@ -525,6 +552,7 @@ def get_webhook_documentation(request):
         ShipmentWebhookData,
         SubscriptionWebhookData,
     )
+    from .tasks import calculate_retry_delay
 
     # Build payload schema documentation
     payload_schemas = {
@@ -570,6 +598,17 @@ def get_webhook_documentation(request):
             ),
         }
         events_list.append(category_data)
+
+    # Retry and timeout behaviour is configured per endpoint; expose the model
+    # defaults (and a schedule derived from the real backoff function) rather
+    # than hardcoding a fixed count and a fixed-length schedule that drift from
+    # any endpoint whose max_retries/timeout_seconds differ from the defaults.
+    default_max_retries = WebhookEndpoint._meta.get_field("max_retries").default
+    default_timeout = WebhookEndpoint._meta.get_field("timeout_seconds").default
+    backoff_schedule = [
+        {"attempt": attempt, "delay_seconds": calculate_retry_delay(attempt)}
+        for attempt in range(1, default_max_retries + 1)
+    ]
 
     documentation = {
         "version": PLATFORM_VERSION,
@@ -617,16 +656,16 @@ This enables you to build integrations, sync data with external systems, and aut
             },
         },
         "retry_policy": {
-            "max_attempts": 5,
-            "backoff_schedule": [
-                {"attempt": 1, "delay": "immediate"},
-                {"attempt": 2, "delay": "1 minute"},
-                {"attempt": 3, "delay": "2 minutes"},
-                {"attempt": 4, "delay": "4 minutes"},
-                {"attempt": 5, "delay": "8 minutes"},
-            ],
+            "max_attempts": default_max_retries,
+            "max_attempts_note": "Default value; configurable per endpoint via max_retries.",
+            "backoff_schedule": backoff_schedule,
+            "backoff_note": (
+                "Exponential backoff derived from the default max_attempts; the "
+                "number of attempts follows each endpoint's max_retries setting."
+            ),
             "success_codes": "2xx",
-            "timeout_seconds": 30,
+            "timeout_seconds": default_timeout,
+            "timeout_seconds_note": "Default value; configurable per endpoint via timeout_seconds.",
             "auto_disable_after": "10 consecutive failures",
         },
         "events": events_list,

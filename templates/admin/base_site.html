@@ -107,11 +107,24 @@
                     <span class="menu-icon"><i class="fas fa-folder-tree"></i></span>
                     <span class="menu-text">{% trans "Categories" %}</span>
                 </a>
-                <a href="{% url 'admin:catalog_productreview_changelist' %}" class="menu-item" data-tooltip="{% trans 'Moderate customer reviews' %}" data-badge-key="reviews_pending">
-                    <span class="menu-icon"><i class="fas fa-star-half-alt"></i></span>
-                    <span class="menu-text">{% trans "Reviews" %}</span>
-                    {% if menu_badges.reviews_pending %}<span class="menu-badge menu-badge-warning">{{ menu_badges.reviews_pending }}</span>{% endif %}
-                </a>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'catalog_admin:review_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="reviews" data-tooltip="{% trans 'Reviews overview and analytics' %}" data-badge-key="reviews_pending">
+                            <span class="menu-icon"><i class="fas fa-star-half-alt"></i></span>
+                            <span class="menu-text">{% trans "Reviews" %}</span>
+                            {% if menu_badges.reviews_pending %}<span class="menu-badge menu-badge-warning">{{ menu_badges.reviews_pending }}</span>{% endif %}
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle reviews submenu" aria-expanded="false" aria-controls="submenu-reviews">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-reviews">
+                        <a href="{% url 'admin:catalog_productreview_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Moderate customer reviews' %}">
+                            <span class="menu-icon"><i class="fas fa-check-circle"></i></span>
+                            <span class="menu-text">{% trans "Moderate Reviews" %}</span>
+                        </a>
+                    </div>
+                </div>
                 <a href="{% url 'admin:subscriptions_subscriptionplan_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage subscription plans with recurring billing' %}" data-badge-key="subscriptions_past_due">
                     <span class="menu-icon"><i class="fas fa-tag"></i></span>
                     <span class="menu-text">{% trans "Subscription Plans" %}</span>

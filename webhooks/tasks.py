@@ -18,6 +18,10 @@ from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
+# HTTP response codes that warrant a retry (transient server / rate-limit errors).
+# All other non-2xx responses are permanent client errors and must not be retried.
+RETRYABLE_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+
 
 def generate_signature(secret: str, timestamp: int, payload: str) -> str:
     """
@@ -61,14 +65,13 @@ def calculate_retry_delay(attempt: int, base_delay: int = 60, max_delay: int = 3
 @shared_task(
     bind=True,
     name="webhooks.deliver_webhook",
-    max_retries=5,
-    default_retry_delay=60,
+    # Retries are owned explicitly by _handle_delivery_failure via self.retry(), which
+    # honours each endpoint's own max_retries. Celery's autoretry_for / retry_backoff are
+    # intentionally omitted so retries fire from a single path (no duplicate deliveries) and
+    # so the persisted next_retry_at schedule matches the actual retry countdown.
+    max_retries=None,
     acks_late=True,
     reject_on_worker_lost=True,
-    autoretry_for=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
-    retry_backoff=True,
-    retry_backoff_max=3600,
-    retry_jitter=True,
 )
 def deliver_webhook(self, delivery_id: str):
     """
@@ -196,8 +199,8 @@ def deliver_webhook(self, delivery_id: str):
             response_body,
             response_time_ms,
             response_headers,
+            retryable=True,
         )
-        raise  # Let Celery handle retry
 
     except requests.exceptions.ConnectionError as e:
         response_time_ms = int((time.time() - start_time) * 1000)
@@ -211,12 +214,13 @@ def deliver_webhook(self, delivery_id: str):
             response_body,
             response_time_ms,
             response_headers,
+            retryable=True,
         )
-        raise  # Let Celery handle retry
 
     except requests.exceptions.HTTPError as e:
         response_time_ms = int((time.time() - start_time) * 1000)
         error_msg = str(e)
+        # Only server errors / rate limits are retryable; other 4xx are permanent.
         _handle_delivery_failure(
             self,
             delivery,
@@ -225,16 +229,8 @@ def deliver_webhook(self, delivery_id: str):
             response_body,
             response_time_ms,
             response_headers,
+            retryable=response_code in RETRYABLE_STATUS_CODES,
         )
-
-        # Only retry for certain status codes (server errors, rate limits)
-        if response_code and response_code in (429, 500, 502, 503, 504):
-            raise requests.exceptions.ConnectionError(error_msg)  # Trigger retry
-        else:
-            # Client errors (4xx except 429) - don't retry
-            delivery.status = WebhookDelivery.Status.FAILED
-            delivery.save(update_fields=["status"])
-            return
 
     except requests.exceptions.RequestException as e:
         response_time_ms = int((time.time() - start_time) * 1000)
@@ -248,8 +244,8 @@ def deliver_webhook(self, delivery_id: str):
             response_body,
             response_time_ms,
             response_headers,
+            retryable=True,
         )
-        raise  # Let Celery handle retry
 
 
 def _handle_delivery_failure(
@@ -260,9 +256,17 @@ def _handle_delivery_failure(
     response_body=None,
     response_time_ms=None,
     response_headers=None,
+    *,
+    retryable,
 ):
     """
-    Handle a delivery failure by updating the delivery record.
+    Handle a delivery failure by updating the delivery record and scheduling any retry.
+
+    A retry is only scheduled when the error is retryable (transient) *and* the endpoint's
+    own max_retries has not been reached. When it is, the Celery retry is scheduled with the
+    exact same countdown that is persisted in next_retry_at, so the stored schedule describes
+    the real retry. Otherwise the delivery is marked FAILED, which records a failure against
+    the endpoint (driving consecutive_failures / auto-disable) and clears next_retry_at.
 
     Args:
         task: The Celery task instance
@@ -272,16 +276,18 @@ def _handle_delivery_failure(
         response_body: Response body if available
         response_time_ms: Response time in milliseconds
         response_headers: Response headers dict
+        retryable: Whether the underlying error is transient and eligible for retry
     """
     max_retries = delivery.endpoint.max_retries
     current_attempt = delivery.attempt_count
-    will_retry = current_attempt < max_retries
+    will_retry = retryable and current_attempt < max_retries
 
     if will_retry:
-        # Calculate next retry time
+        # Calculate next retry time from the same countdown used to schedule the Celery retry.
         retry_delay = calculate_retry_delay(current_attempt)
         next_retry_at = timezone.now() + timedelta(seconds=retry_delay)
     else:
+        retry_delay = None
         next_retry_at = None
 
     delivery.mark_failed(
@@ -298,10 +304,12 @@ def _handle_delivery_failure(
             f"Webhook delivery {delivery.id} will retry "
             f"(attempt {current_attempt}/{max_retries}, next retry at {next_retry_at})"
         )
-    else:
-        logger.warning(
-            f"Webhook delivery {delivery.id} failed permanently after {current_attempt} attempts"
-        )
+        # Own the retry explicitly so it fires exactly once, at next_retry_at.
+        raise task.retry(countdown=retry_delay)
+
+    logger.warning(
+        f"Webhook delivery {delivery.id} failed permanently after {current_attempt} attempts"
+    )
 
 
 @shared_task(name="webhooks.send_test_webhook")
@@ -315,12 +323,28 @@ def send_test_webhook(endpoint_id: str):
     Returns:
         dict with success status and details
     """
+    from core.license import is_sandbox_mode
+
     from .models import WebhookEndpoint
+    from .services import _is_localhost_url
 
     try:
         endpoint = WebhookEndpoint.objects.get(id=endpoint_id)
     except WebhookEndpoint.DoesNotExist:
         return {"success": False, "error": f"Endpoint {endpoint_id} not found"}
+
+    # In sandbox mode only localhost URLs may be contacted, using the same validated policy
+    # as the webhook delivery service. This closes the test path that would otherwise POST to
+    # an external URL that normal triggers block as sandbox_blocked.
+    if is_sandbox_mode() and not _is_localhost_url(endpoint.url):
+        logger.info(
+            f"[SANDBOX] Test webhook to {endpoint.url} blocked (external URL in sandbox mode)"
+        )
+        return {
+            "success": False,
+            "error": "Sandbox mode only allows test webhooks to localhost URLs",
+            "sandbox_blocked": True,
+        }
 
     # Create test payload
     test_payload = {
@@ -384,34 +408,6 @@ def send_test_webhook(endpoint_id: str):
             "success": False,
             "error": f"Request error: {str(e)}",
         }
-
-
-@shared_task(name="webhooks.retry_failed_deliveries")
-def retry_failed_deliveries():
-    """
-    Retry failed webhook deliveries that are due for retry.
-
-    This task should be run periodically (e.g., every minute) to
-    pick up deliveries that need to be retried.
-    """
-    from .models import WebhookDelivery
-
-    # Find deliveries that are due for retry
-    due_deliveries = WebhookDelivery.objects.filter(
-        status=WebhookDelivery.Status.RETRYING,
-        next_retry_at__lte=timezone.now(),
-    ).select_related("endpoint")
-
-    count = 0
-    for delivery in due_deliveries:
-        if delivery.endpoint.is_active and not delivery.endpoint.is_disabled_by_failures:
-            deliver_webhook.delay(str(delivery.id))
-            count += 1
-
-    if count > 0:
-        logger.info(f"Queued {count} webhook deliveries for retry")
-
-    return count
 
 
 @shared_task(name="webhooks.cleanup_old_deliveries")

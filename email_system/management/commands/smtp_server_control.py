@@ -35,13 +35,10 @@ class Command(BaseCommand):
             result = subprocess.run(["which", "supervisorctl"], capture_output=True, text=True)
 
             if result.returncode != 0:
-                self.stdout.write(
-                    self.style.WARNING(
-                        "Supervisor not detected. This command only works in Docker.\n"
-                        "To run SMTP server manually, use: ./manage.py start_smtp_server"
-                    )
+                raise CommandError(
+                    "Supervisor not detected. This command only works in Docker.\n"
+                    "To run SMTP server manually, use: ./manage.py start_smtp_server"
                 )
-                return
 
             # Execute supervisor command
             cmd = ["supervisorctl", action, "smtp-server"]
@@ -99,6 +96,17 @@ class Command(BaseCommand):
                     )
                 else:
                     self.stdout.write(self.style.WARNING(f"\n? Status: {result.stdout.strip()}"))
+
+            # Surface supervisorctl failures as a command failure so manage.py
+            # exits nonzero (unknown process, unreachable supervisor, failed op).
+            if result.returncode != 0:
+                error_output = result.stderr.strip() or result.stdout.strip()
+                raise CommandError(
+                    f"supervisorctl {action} failed (exit code {result.returncode}): {error_output}"
+                )
+
+        except CommandError:
+            raise
 
         except FileNotFoundError:
             raise CommandError(
