@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Spwig eCommerce API Documentation",
-        "version": "1.7.3",
+        "version": "1.7.4",
         "description": "## Spwig API Documentation\n\nWelcome to the Spwig eCommerce Platform API documentation. This API enables you to build custom headless storefronts, mobile apps, and integrations.\n\n### Authentication\n\nMost endpoints require authentication using one of these methods:\n\n- **Token Authentication**: Include `Authorization: Token <your-token>` header\n- **Session Authentication**: Use Spwig session cookies (for browser-based apps)\n\nPublic endpoints (like product catalog) allow anonymous access.\n\n### API Standards\n\n- **Pagination**: List endpoints return 20 items per page by default. Use `?page=N` to navigate.\n- **Filtering**: Most list endpoints support query parameter filtering\n- **Multi-language**: Set `Accept-Language` header for localized responses\n- **Multi-currency**: Currency information included in price responses\n\n### Response Format\n\nAll endpoints return JSON with a consistent format:\n```json\n{\n  \"success\": true,\n  \"data\": { ... },\n  \"message\": \"Optional status message\"\n}\n```\n\n### Rate Limiting\n\nPublic endpoints may be rate-limited. Authenticated requests have higher limits."
     },
     "paths": {
@@ -41630,6 +41630,14 @@
                     "is_featured": {
                         "type": "boolean"
                     },
+                    "logo_url": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "banner_url": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "meta_title": {
                         "type": "string",
                         "maxLength": 255
@@ -41648,7 +41656,9 @@
                     }
                 },
                 "required": [
+                    "banner_url",
                     "id",
+                    "logo_url",
                     "name",
                     "product_count",
                     "slug"
@@ -41682,6 +41692,10 @@
                         "format": "uri",
                         "maxLength": 200
                     },
+                    "logo_url": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "product_count": {
                         "type": "integer",
                         "readOnly": true
@@ -41693,6 +41707,7 @@
                 },
                 "required": [
                     "id",
+                    "logo_url",
                     "name",
                     "product_count",
                     "slug"
@@ -41771,6 +41786,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "banner_url": {
                         "type": "string",
                         "readOnly": true
@@ -41797,6 +41816,7 @@
                     "banner_url",
                     "children",
                     "id",
+                    "image_sources",
                     "image_url",
                     "name",
                     "parent_id",
@@ -41850,10 +41870,15 @@
                     "image_url": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
                     }
                 },
                 "required": [
                     "id",
+                    "image_sources",
                     "image_url",
                     "name",
                     "parent_id",
@@ -42419,11 +42444,16 @@
                     "image_url": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
                     }
                 },
                 "required": [
                     "currency",
                     "id",
+                    "image_sources",
                     "image_url",
                     "product_id",
                     "product_name",
@@ -42613,6 +42643,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "images": {
                         "type": "array",
                         "items": {
@@ -42641,6 +42675,7 @@
                     "currency",
                     "full_description",
                     "id",
+                    "image_sources",
                     "image_url",
                     "images",
                     "is_in_stock",
@@ -42672,6 +42707,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "alt_text": {
                         "type": "string",
                         "description": "Override media asset alt text if needed",
@@ -42689,6 +42728,7 @@
                 "required": [
                     "full_url",
                     "id",
+                    "image_sources",
                     "thumbnail_url"
                 ]
             },
@@ -42749,12 +42789,17 @@
                     "image_url": {
                         "type": "string",
                         "readOnly": true
+                    },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
                     }
                 },
                 "required": [
                     "available_stock",
                     "currency",
                     "id",
+                    "image_sources",
                     "image_url",
                     "is_low_stock",
                     "name",
@@ -42978,6 +43023,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "image_sources": {
+                        "type": "string",
+                        "readOnly": true
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -42990,6 +43039,7 @@
                     "created_at",
                     "currency",
                     "id",
+                    "image_sources",
                     "image_url",
                     "name",
                     "price_amount",

@@ -12,6 +12,7 @@ Usage:
 import json
 from pathlib import Path
 
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandError
 
@@ -109,6 +110,34 @@ class Command(BaseCommand):
 
                 template_type = data["template_type"]
                 language_code = data["language_code"]
+
+                # Reject unrecognized template types (Django does not enforce
+                # field choices during objects.create()).
+                valid_types = {
+                    choice[0] for choice in EmailTemplate._meta.get_field("template_type").choices
+                }
+                if template_type not in valid_types:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"  ✗ {json_file.name} - unknown template_type: {template_type}"
+                        )
+                    )
+                    error_count += 1
+                    continue
+
+                # Skip HQ-only templates on non-HQ installations, matching
+                # seed_email_templates.
+                if not getattr(settings, "SPWIG_IS_HQ", False) and EmailTemplate.is_hq_only_type(
+                    template_type
+                ):
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"  ⊘ {json_file.name} - skipping HQ-only template on "
+                            f"non-HQ installation"
+                        )
+                    )
+                    skipped_count += 1
+                    continue
 
                 # Check if English is being imported (shouldn't happen)
                 if language_code == "en":

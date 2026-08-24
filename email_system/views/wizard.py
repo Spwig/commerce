@@ -19,6 +19,7 @@ from django.db import transaction
 from django.shortcuts import redirect, render
 from django.templatetags.static import static
 from django.utils.decorators import method_decorator
+from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.views import View
 
@@ -715,11 +716,11 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
                     )
                     return redirect("email_system:wizard_step2")
 
-                # Store OAuth credentials in wizard session
-                self.update_wizard_data(
-                    oauth_client_id=client_id,
-                    oauth_client_secret=client_secret,
-                )
+                # Store OAuth credentials in the top-level session keys that
+                # the OAuth initiate/callback views read.
+                request.session["oauth_client_id"] = client_id
+                request.session["oauth_client_secret"] = client_secret
+                request.session.modified = True
 
                 logger.info(f"OAuth credentials stored for {component_slug}, initiating OAuth flow")
 
@@ -1436,7 +1437,7 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
 <html>
 <head>
     <meta charset="utf-8">
-    <title>{subject}</title>
+    <title>{escape(subject)}</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
@@ -1450,19 +1451,19 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
                 <td style="padding: 8px 0; color: #666; font-weight: bold;">Provider:</td>
-                <td style="padding: 8px 0;">{provider.provider_name}</td>
+                <td style="padding: 8px 0;">{escape(provider.provider_name)}</td>
             </tr>
             <tr>
                 <td style="padding: 8px 0; color: #666; font-weight: bold;">From Email:</td>
-                <td style="padding: 8px 0;">{wizard_data.get("from_email", "N/A")}</td>
+                <td style="padding: 8px 0;">{escape(wizard_data.get("from_email", "N/A"))}</td>
             </tr>
             <tr>
                 <td style="padding: 8px 0; color: #666; font-weight: bold;">From Name:</td>
-                <td style="padding: 8px 0;">{wizard_data.get("from_name", "N/A")}</td>
+                <td style="padding: 8px 0;">{escape(wizard_data.get("from_name", "N/A"))}</td>
             </tr>
             <tr>
                 <td style="padding: 8px 0; color: #666; font-weight: bold;">Reply-To:</td>
-                <td style="padding: 8px 0;">{wizard_data.get("reply_to", "N/A")}</td>
+                <td style="padding: 8px 0;">{escape(wizard_data.get("reply_to", "N/A"))}</td>
             </tr>
         </table>
     </div>
@@ -1714,7 +1715,7 @@ class ProviderWizardStep6View(WizardSessionMixin, View):
                     is_active=True,
                     connection_status="unknown",
                     credentials=encrypt_credentials(credentials),
-                    dns_domain=wizard_data.get("dkim_domain", ""),
+                    dns_domain=wizard_data.get("dns_domain") or wizard_data.get("dkim_domain", ""),
                     created_by=request.user,
                 )
 

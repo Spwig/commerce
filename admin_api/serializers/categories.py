@@ -9,6 +9,8 @@ from rest_framework import serializers
 
 from catalog.models import Category
 
+from .image_sources import build_image_sources
+
 
 class AdminCategoryListSerializer(serializers.ModelSerializer):
     """Compact serializer for category list view."""
@@ -16,6 +18,7 @@ class AdminCategoryListSerializer(serializers.ModelSerializer):
     parent_name = serializers.SerializerMethodField()
     product_count = serializers.IntegerField(read_only=True)
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
@@ -30,22 +33,22 @@ class AdminCategoryListSerializer(serializers.ModelSerializer):
             "sort_order",
             "product_count",
             "image_url",
+            "image_sources",
         ]
 
     def get_parent_name(self, obj):
         return obj.parent.name if obj.parent else None
 
     def get_image_url(self, obj):
-        asset = obj.image_asset
-        if not asset:
+        if not obj.image_asset:
             return None
-        # Read from the medium thumbnails prefetched by the list view to avoid an
-        # N+1 query per imaged category (get_thumbnail() would hit the DB per row).
-        thumbnails = getattr(asset, "medium_thumbnails", None)
-        if thumbnails:
-            thumbnail = thumbnails[0]
-            return thumbnail.webp_file.url if thumbnail.webp_file else thumbnail.file.url
-        return asset.get_display_url()
+        # get_thumbnail() reads the prefetched thumbnails cache (list view
+        # prefetches image_asset__thumbnails), so no N+1 per imaged category.
+        return obj.image_asset.get_thumbnail("medium") or obj.image_asset.get_display_url()
+
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail/small/medium) for the category thumbnail."""
+        return build_image_sources(obj.image_asset, detail=False)
 
 
 class AdminCategoryDetailSerializer(serializers.ModelSerializer):
@@ -55,6 +58,7 @@ class AdminCategoryDetailSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
     product_count = serializers.IntegerField(read_only=True)
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
     banner_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -75,6 +79,7 @@ class AdminCategoryDetailSerializer(serializers.ModelSerializer):
             "meta_title",
             "meta_description",
             "image_url",
+            "image_sources",
             "banner_url",
             "children",
             "product_count",
@@ -93,6 +98,10 @@ class AdminCategoryDetailSerializer(serializers.ModelSerializer):
         if obj.image_asset:
             return obj.image_asset.get_thumbnail("medium") or obj.image_asset.get_display_url()
         return None
+
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail..large + full) for the category image on detail."""
+        return build_image_sources(obj.image_asset, detail=True)
 
     def get_banner_url(self, obj):
         if obj.banner_asset:

@@ -39,14 +39,17 @@ def extract_domain(email: str) -> str | None:
 
         domain = parts[1].strip().lower()
 
+        # Remove any surrounding dots first, then validate. Validating before
+        # stripping would let a value like ".com" pass the "." check and then
+        # collapse to a bare TLD ("com") that gets used directly for DNS/DKIM
+        # configuration.
+        domain = domain.strip(".")
+
         # Basic validation
         if not domain or "." not in domain:
             return None
 
-        # Remove any trailing/leading dots
-        domain = domain.strip(".")
-
-        return domain if domain else None
+        return domain
 
     except Exception:
         return None

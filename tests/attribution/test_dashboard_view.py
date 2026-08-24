@@ -5,11 +5,14 @@ from decimal import Decimal
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 
 from attribution.models import TouchPoint
 from attribution.services.resolution import resolve_order
+from staff_roles.models import StaffRole
+from staff_roles.services import invalidate_user_cache
 from tests.factories import OrderFactory
 
 pytestmark = pytest.mark.django_db
@@ -22,6 +25,29 @@ def _staff():
     return User.objects.create_user(
         username="staff", email="staff@example.com", password="x", is_staff=True, is_superuser=True
     )
+
+
+def _staff_without_analytics(username):
+    """Staff who *can* reach the admin but lack the ``analytics`` category.
+
+    Deny-by-default admin access means a role-less staff user is redirected (302)
+    by the admin middleware before the view runs, so it never reaches the view's
+    own analytics gate. Give them a role that grants admin access (but not
+    analytics) so the 403 we assert is the view's gate, not the redirect.
+    """
+    user = User.objects.create_user(
+        username=username, email=f"{username}@example.com", password="x", is_staff=True
+    )
+    group = Group.objects.create(name=f"role-{username}")
+    StaffRole.objects.create(
+        group=group,
+        display_name=username.title(),
+        can_access_admin=True,
+        permission_categories={"orders": "full"},
+    )
+    user.groups.add(group)
+    invalidate_user_cache(user)
+    return user
 
 
 def _attributed_order():
@@ -41,10 +67,7 @@ def test_dashboard_requires_staff(client):
 
 def test_dashboard_forbidden_for_staff_without_analytics(client):
     # Staff without the analytics category (and not superuser) must be refused.
-    plain = User.objects.create_user(
-        username="plain", email="plain@example.com", password="x", is_staff=True
-    )
-    client.force_login(plain)
+    client.force_login(_staff_without_analytics("plain"))
     assert client.get(reverse("attribution:dashboard")).status_code == 403
 
 
@@ -111,8 +134,5 @@ def test_export_returns_csv(client):
 
 
 def test_export_forbidden_for_staff_without_analytics(client):
-    plain = User.objects.create_user(
-        username="plain2", email="plain2@example.com", password="x", is_staff=True
-    )
-    client.force_login(plain)
+    client.force_login(_staff_without_analytics("plain2"))
     assert client.get(reverse("attribution:dashboard_export")).status_code == 403

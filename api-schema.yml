@@ -26937,6 +26937,12 @@ components:
           type: boolean
         is_featured:
           type: boolean
+        logo_url:
+          type: string
+          readOnly: true
+        banner_url:
+          type: string
+          readOnly: true
         meta_title:
           type: string
           maxLength: 255
@@ -26950,7 +26956,9 @@ components:
           type: string
           format: date-time
       required:
+      - banner_url
       - id
+      - logo_url
       - name
       - product_count
       - slug
@@ -26976,6 +26984,9 @@ components:
           type: string
           format: uri
           maxLength: 200
+        logo_url:
+          type: string
+          readOnly: true
         product_count:
           type: integer
           readOnly: true
@@ -26984,6 +26995,7 @@ components:
           format: date-time
       required:
       - id
+      - logo_url
       - name
       - product_count
       - slug
@@ -27049,6 +27061,9 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
         banner_url:
           type: string
           readOnly: true
@@ -27069,6 +27084,7 @@ components:
       - banner_url
       - children
       - id
+      - image_sources
       - image_url
       - name
       - parent_id
@@ -27111,8 +27127,12 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
       required:
       - id
+      - image_sources
       - image_url
       - name
       - parent_id
@@ -27545,9 +27565,13 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
       required:
       - currency
       - id
+      - image_sources
       - image_url
       - product_id
       - product_name
@@ -27700,6 +27724,9 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
         images:
           type: array
           items:
@@ -27723,6 +27750,7 @@ components:
       - currency
       - full_description
       - id
+      - image_sources
       - image_url
       - images
       - is_in_stock
@@ -27750,6 +27778,9 @@ components:
         full_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
         alt_text:
           type: string
           description: Override media asset alt text if needed
@@ -27763,6 +27794,7 @@ components:
       required:
       - full_url
       - id
+      - image_sources
       - thumbnail_url
     AdminProductList:
       type: object
@@ -27809,10 +27841,14 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
       required:
       - available_stock
       - currency
       - id
+      - image_sources
       - image_url
       - is_low_stock
       - name
@@ -27982,6 +28018,9 @@ components:
         image_url:
           type: string
           readOnly: true
+        image_sources:
+          type: string
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -27992,6 +28031,7 @@ components:
       - created_at
       - currency
       - id
+      - image_sources
       - image_url
       - name
       - price_amount

@@ -14,6 +14,7 @@ class AdminBrandListSerializer(serializers.ModelSerializer):
     """Compact serializer for brand list view."""
 
     product_count = serializers.IntegerField(read_only=True)
+    logo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Brand
@@ -24,15 +25,22 @@ class AdminBrandListSerializer(serializers.ModelSerializer):
             "is_active",
             "is_featured",
             "website",
+            "logo_url",
             "product_count",
             "created_at",
         ]
+
+    def get_logo_url(self, obj):
+        """Brand logo URL, or null when unset."""
+        return obj.logo.url if obj.logo else None
 
 
 class AdminBrandDetailSerializer(serializers.ModelSerializer):
     """Full brand detail serializer."""
 
     product_count = serializers.IntegerField(read_only=True)
+    logo_url = serializers.SerializerMethodField()
+    banner_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Brand
@@ -46,11 +54,21 @@ class AdminBrandDetailSerializer(serializers.ModelSerializer):
             "brand_story",
             "is_active",
             "is_featured",
+            "logo_url",
+            "banner_url",
             "meta_title",
             "meta_description",
             "product_count",
             "created_at",
         ]
+
+    def get_logo_url(self, obj):
+        """Brand logo URL, or null when unset."""
+        return obj.logo.url if obj.logo else None
+
+    def get_banner_url(self, obj):
+        """Brand banner image URL, or null when unset."""
+        return obj.banner_image.url if obj.banner_image else None
 
 
 class BrandCreateSerializer(serializers.Serializer):

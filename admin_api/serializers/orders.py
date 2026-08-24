@@ -9,6 +9,8 @@ from rest_framework import serializers
 
 from orders.models import Order, OrderItem
 
+from .image_sources import build_image_sources
+
 
 class AdminOrderItemSerializer(serializers.ModelSerializer):
     """Order item serializer for order details (admin/mobile app)."""
@@ -21,6 +23,7 @@ class AdminOrderItemSerializer(serializers.ModelSerializer):
     )
     currency = serializers.CharField(source="unit_price.currency.code", read_only=True)
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderItem
@@ -35,31 +38,39 @@ class AdminOrderItemSerializer(serializers.ModelSerializer):
             "total_price",
             "currency",
             "image_url",
+            "image_sources",
         ]
 
     @staticmethod
-    def _select_image(manager):
-        """Pick the primary image (or the first) from the prefetched set.
+    def _select_image_obj(manager):
+        """The primary image (or the first) from the prefetched set, or None.
 
         Iterate the already-fetched ``images.all()`` collection so we reuse the
         detail view's prefetch cache instead of issuing a fresh query per item;
         calling ``filter(is_primary=True)`` would bypass that cache.
         """
         images = list(manager.all())
-        primary = next((image for image in images if image.is_primary), None)
-        chosen = primary or (images[0] if images else None)
-        return chosen.thumbnail_small if chosen else None
+        return next((image for image in images if image.is_primary), None) or (
+            images[0] if images else None
+        )
+
+    def _chosen_image(self, obj):
+        """Variant image when it has a usable thumbnail, else the product image."""
+        if obj.variant:
+            chosen = self._select_image_obj(obj.variant.images)
+            if chosen and chosen.thumbnail_small:
+                return chosen
+        return self._select_image_obj(obj.product.images)
 
     def get_image_url(self, obj):
-        """Get product/variant thumbnail image URL."""
-        # Try variant image first (if item has a variant)
-        if obj.variant:
-            variant_image_url = self._select_image(obj.variant.images)
-            if variant_image_url:
-                return variant_image_url
+        """Get product/variant small thumbnail URL."""
+        chosen = self._chosen_image(obj)
+        return chosen.thumbnail_small if chosen else None
 
-        # Fall back to product primary image
-        return self._select_image(obj.product.images)
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail/small/medium) for the line-item thumbnail."""
+        chosen = self._chosen_image(obj)
+        return build_image_sources(chosen.media_asset, detail=False) if chosen else None
 
 
 class AdminOrderListSerializer(serializers.ModelSerializer):

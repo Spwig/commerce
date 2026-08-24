@@ -14,6 +14,14 @@ from .events import WebhookEventCategory, get_events_by_category
 from .models import WebhookEndpoint
 
 
+def _parse_int(value, default):
+    """Return ``value`` as an int, falling back to ``default`` on blank/invalid input."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 @staff_member_required
 def endpoint_wizard(request):
     """
@@ -24,8 +32,10 @@ def endpoint_wizard(request):
         name = request.POST.get("name", "").strip()
         url = request.POST.get("url", "").strip()
         description = request.POST.get("description", "").strip()
-        max_retries = int(request.POST.get("max_retries", 5))
-        timeout_seconds = int(request.POST.get("timeout_seconds", 30))
+        # Blank or non-numeric inputs fall back to the defaults instead of
+        # raising on int("") for a crafted or empty POST.
+        max_retries = _parse_int(request.POST.get("max_retries"), 5)
+        timeout_seconds = _parse_int(request.POST.get("timeout_seconds"), 30)
         is_active = request.POST.get("is_active") == "on"
 
         # Handle events selection

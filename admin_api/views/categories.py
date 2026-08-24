@@ -10,7 +10,7 @@ import secrets
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Q
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -113,13 +113,9 @@ def category_list(request):
     filters = filter_serializer.validated_data
     queryset = (
         Category.objects.select_related("parent", "image_asset")
-        .prefetch_related(
-            Prefetch(
-                "image_asset__thumbnails",
-                queryset=MediaThumbnail.objects.filter(size_preset="medium"),
-                to_attr="medium_thumbnails",
-            )
-        )
+        # Prefetch all thumbnails (not just medium) so both get_image_url and
+        # image_sources read the cache instead of querying per row (N+1).
+        .prefetch_related("image_asset__thumbnails")
         .annotate(product_count=Count("products", filter=Q(products__is_deleted=False)))
     )
 
@@ -608,7 +604,6 @@ def _upload_category_asset(request, category_id, field_name):
 
     field_name: 'image_asset' or 'banner_asset'
     """
-    from media_library.models import MediaThumbnail
 
     try:
         category = Category.objects.get(id=category_id)

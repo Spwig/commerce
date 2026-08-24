@@ -86,7 +86,9 @@ def variant_list(request, product_id):
             Prefetch(
                 "selected_attributes",
                 queryset=AttributeValue.objects.select_related("attribute"),
-            )
+            ),
+            # image_sources reads image_asset.thumbnails per variant.
+            "image_asset__thumbnails",
         )
         .order_by("created_at")
     )

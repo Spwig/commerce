@@ -578,3 +578,70 @@ def queue_avif_generation(asset):
         generate_avif_for_asset.delay(str(asset.id))
     except Exception as e:
         logger.warning(f"Could not queue AVIF generation for {getattr(asset, 'id', '?')}: {e}")
+
+
+def generate_thumbnails_for_asset(asset, *, processor=None, force=False):
+    """Generate thumbnails for every active ImageSizePreset on an asset.
+
+    Single source of truth for rendition sizes — driven by the ImageSizePreset
+    table (system presets: thumbnail 150, small 300, medium 600, large 1200, …)
+    — so every upload path produces the same, consistently-named renditions.
+    Without this, callers that hardcode their own size map drift out of sync with
+    the storefront and each other.
+
+    Existing presets are skipped unless ``force`` (then all are regenerated).
+    Returns the number of thumbnails written.
+    """
+    from media_library.models import ImageSizePreset, MediaThumbnail
+
+    if not asset.original_file:
+        return 0
+
+    processor = processor or ImageProcessor()
+
+    if force:
+        asset.thumbnails.all().delete()
+
+    written = 0
+    for preset in ImageSizePreset.objects.filter(is_active=True):
+        if not force and asset.thumbnails.filter(size_preset=preset.slug).exists():
+            continue
+        try:
+            asset.original_file.seek(0)
+            original_content, webp_content = processor.generate_thumbnail(
+                asset.original_file,
+                preset.width,
+                preset.height,
+                crop_mode=preset.crop_mode,
+                padding_color=getattr(preset, "padding_color", None),
+            )
+            if not original_content:
+                continue
+
+            # Replace any stale rendition for this preset.
+            MediaThumbnail.objects.filter(media_asset=asset, size_preset=preset.slug).delete()
+
+            ext = (
+                "png"
+                if preset.crop_mode == "pad"
+                and getattr(preset, "padding_color", "transparent") == "transparent"
+                else "jpg"
+            )
+            thumbnail = MediaThumbnail.objects.create(
+                media_asset=asset,
+                size_preset=preset.slug,
+                width=preset.width,
+                height=preset.height,
+            )
+            thumbnail.file.save(f"{asset.id}_{preset.slug}.{ext}", original_content, save=False)
+            if webp_content:
+                thumbnail.webp_file.save(f"{asset.id}_{preset.slug}.webp", webp_content, save=False)
+            thumbnail.save()
+            written += 1
+        except Exception as e:
+            # Resilient: one failed preset shouldn't cost the others or the
+            # upload. Callers needing strictness can compare `written` to the
+            # active-preset count.
+            logger.error(f"Error generating {preset.slug} thumbnail for asset {asset.id}: {e}")
+            continue
+    return written

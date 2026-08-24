@@ -17,7 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # Partial clone: DCO only reads commit messages in base..head,
+          # never file blobs. Full history stays reachable, but the 2.2 GB
+          # of historical blobs — which intermittently fail checkout with
+          # 'fatal: protocol error: bad pack header' — is never fetched.
           fetch-depth: 0
+          filter: blob:none
 
       - name: Verify Signed-off-by on every commit in the PR
         run: |

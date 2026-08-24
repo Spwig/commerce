@@ -7,6 +7,8 @@ Abstract interface for SMS/WhatsApp providers.
 from abc import ABC, abstractmethod
 from typing import Any
 
+import phonenumbers
+
 
 class SMSProviderBase(ABC):
     """Base class for SMS/WhatsApp providers."""
@@ -98,23 +100,35 @@ class SMSProviderBase(ABC):
         """
         Normalize phone number to E.164 format.
 
+        Numbers without an international prefix are interpreted using the
+        installation's configured default country.
+
         Args:
             phone: Phone number in various formats
 
         Returns:
             Phone number in E.164 format (e.g., +1234567890)
+
+        Raises:
+            ValueError: If the input cannot be parsed as a valid phone number
         """
-        # Remove common formatting characters
-        cleaned = "".join(c for c in phone if c.isdigit() or c == "+")
+        from core.utils import get_default_country
 
-        # Ensure it starts with +
-        if not cleaned.startswith("+"):
-            # Assume it's a US number if no country code
-            if len(cleaned) == 10:
-                cleaned = "+1" + cleaned
-            elif len(cleaned) == 11 and cleaned.startswith("1"):
-                cleaned = "+" + cleaned
-            else:
-                cleaned = "+" + cleaned
+        # phonenumbers.parse() is lenient: it treats a leading "+" as the
+        # international prefix and silently strips any other "+" while
+        # normalizing digits, so misplaced/duplicated plus signs would be
+        # accepted instead of rejected. Require "+" to appear at most once,
+        # and only as the very first character.
+        candidate = phone.strip()
+        if "+" in candidate[1:]:
+            raise ValueError(f"Invalid phone number: {phone!r}")
 
-        return cleaned
+        try:
+            parsed = phonenumbers.parse(phone, get_default_country())
+        except phonenumbers.NumberParseException as exc:
+            raise ValueError(f"Invalid phone number: {phone!r}") from exc
+
+        if not phonenumbers.is_valid_number(parsed):
+            raise ValueError(f"Invalid phone number: {phone!r}")
+
+        return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)

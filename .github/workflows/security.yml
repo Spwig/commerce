@@ -21,7 +21,17 @@ jobs:
     name: gitleaks secret scan
     runs-on: ubuntu-latest
     steps:
+      # PR: partial clone — the base..head diff scan needs only the range's
+      # blobs (fetched lazily), not 2.2 GB of history that intermittently
+      # fails checkout with 'bad pack header'.
       - uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      # push / schedule: full clone for the whole-history scan.
+      - uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
         with:
           fetch-depth: 0
 

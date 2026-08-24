@@ -9,12 +9,15 @@ from rest_framework import serializers
 
 from catalog.models import Brand, Category, Product, ProductImage, StockItem, Warehouse
 
+from .image_sources import build_image_sources
+
 
 class AdminProductImageSerializer(serializers.ModelSerializer):
     """Serializer for product images with thumbnail and full URLs (admin/mobile app)."""
 
     thumbnail_url = serializers.SerializerMethodField()
     full_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductImage
@@ -22,6 +25,7 @@ class AdminProductImageSerializer(serializers.ModelSerializer):
             "id",
             "thumbnail_url",
             "full_url",
+            "image_sources",
             "alt_text",
             "is_primary",
             "position",
@@ -38,6 +42,10 @@ class AdminProductImageSerializer(serializers.ModelSerializer):
         if obj.media_asset:
             return obj.media_asset.get_display_url()
         return None
+
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail/small/medium/large/full) for responsive display."""
+        return build_image_sources(obj.media_asset, detail=True)
 
 
 class AdminStockItemSerializer(serializers.ModelSerializer):
@@ -65,6 +73,7 @@ class AdminProductListSerializer(serializers.ModelSerializer):
     available_stock = serializers.IntegerField(read_only=True)
     is_low_stock = serializers.BooleanField(read_only=True)
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -83,6 +92,7 @@ class AdminProductListSerializer(serializers.ModelSerializer):
             "is_low_stock",
             "allow_backorders",
             "image_url",
+            "image_sources",
         ]
 
     def get_image_url(self, obj):
@@ -106,6 +116,14 @@ class AdminProductListSerializer(serializers.ModelSerializer):
             )
         return None
 
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail/small/medium) for the primary image in list cells."""
+        images = list(obj.images.all())
+        chosen = next((image for image in images if image.is_primary), None) or (
+            images[0] if images else None
+        )
+        return build_image_sources(chosen.media_asset, detail=False) if chosen else None
+
 
 class AdminProductDetailSerializer(serializers.ModelSerializer):
     """Full serializer for product detail view (admin/mobile app)."""
@@ -122,6 +140,7 @@ class AdminProductDetailSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     brand_name = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
     images = AdminProductImageSerializer(many=True, read_only=True)
     short_description = serializers.SerializerMethodField()
     full_description = serializers.SerializerMethodField()
@@ -158,6 +177,7 @@ class AdminProductDetailSerializer(serializers.ModelSerializer):
             "stock_items",
             # Images
             "image_url",  # Primary image (full size) for backwards compatibility
+            "image_sources",  # Primary image sized WebP URLs (thumbnail..large + full)
             "images",  # All images with thumbnail_url and full_url
             # Timestamps
             "created_at",
@@ -186,6 +206,11 @@ class AdminProductDetailSerializer(serializers.ModelSerializer):
                 or first_image.media_asset.get_display_url()
             )
         return None
+
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail..large + full) for the primary image on detail."""
+        primary = obj.images.filter(is_primary=True).first() or obj.images.first()
+        return build_image_sources(primary.media_asset, detail=True) if primary else None
 
     def get_short_description(self, obj):
         """Get short description as plain text."""
