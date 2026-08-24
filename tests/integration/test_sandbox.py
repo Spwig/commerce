@@ -1673,7 +1673,7 @@ class TestWebhookSandboxBlocking:
             events=["order.created"],
         )
 
-    def test_sandbox_blocks_external_endpoint(self):
+    def test_sandbox_blocks_external_endpoint(self, django_capture_on_commit_callbacks):
         """External endpoints get sandbox_blocked status in sandbox mode."""
         from webhooks.models import WebhookDelivery
         from webhooks.services import trigger_webhook
@@ -1682,10 +1682,13 @@ class TestWebhookSandboxBlocking:
             patch("core.license.is_sandbox_mode", return_value=True),
             patch("webhooks.tasks.deliver_webhook") as mock_deliver,
         ):
-            count = trigger_webhook(
-                "order.created",
-                data={"order_id": 123},
-            )
+            # Dispatch is deferred to transaction.on_commit, so run the
+            # callbacks to observe what actually gets queued.
+            with django_capture_on_commit_callbacks(execute=True):
+                count = trigger_webhook(
+                    "order.created",
+                    data={"order_id": 123},
+                )
 
             # Both endpoints should have deliveries
             assert count == 2
@@ -1724,7 +1727,7 @@ class TestWebhookSandboxBlocking:
             assert delivery is not None
             assert delivery.payload.get("sandbox") is True
 
-    def test_production_mode_delivers_to_all_endpoints(self):
+    def test_production_mode_delivers_to_all_endpoints(self, django_capture_on_commit_callbacks):
         """In production mode, all endpoints get normal delivery."""
         from webhooks.models import WebhookDelivery
         from webhooks.services import trigger_webhook
@@ -1733,10 +1736,13 @@ class TestWebhookSandboxBlocking:
             patch("core.license.is_sandbox_mode", return_value=False),
             patch("webhooks.tasks.deliver_webhook") as mock_deliver,
         ):
-            count = trigger_webhook(
-                "order.created",
-                data={"order_id": 123},
-            )
+            # Dispatch is deferred to transaction.on_commit, so run the
+            # callbacks to observe what actually gets queued.
+            with django_capture_on_commit_callbacks(execute=True):
+                count = trigger_webhook(
+                    "order.created",
+                    data={"order_id": 123},
+                )
 
             assert count == 2
 

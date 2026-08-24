@@ -5,6 +5,48 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5] - 2026-08-24
+
+A maintenance release that smooths a few customer- and merchant-facing rough
+edges and continues the reliability hardening of the messaging systems. Order
+emails now link customers straight to their order, webhook subscribers only ever
+receive events for changes that were actually saved, and a broad pass lands
+across the email and SMS subsystems. Dependencies are refreshed to their latest
+patched releases. Upgrading is drop-in — no manual migration steps and no
+breaking API changes.
+
+### Fixed
+
+- **Order emails now link to the order.** The "view your order" link in the
+  order confirmation, shipping, delivery and refund emails now points to the
+  customer's real order-confirmation page (in their own language) instead of a
+  dead address, so customers can open their order straight from the email.
+- **Webhooks fire only after a change is saved.** Webhook deliveries are now
+  dispatched after the triggering database change commits, so an integration
+  never receives an event referencing an order (or other record) that has not
+  been persisted yet — closing a rare race under load.
+- **Email system hardening.** A round of fixes across the email subsystem
+  (provider handling, DKIM signing, SMTP server control, theme integration,
+  domain handling, translated-template import and the setup wizard) makes
+  template management and sending more resilient — and per-template failures
+  are now reported accurately instead of masking an overall error.
+- **SMS sending hardening.** Correctness fixes in the SMS provider layer make
+  recipient handling and provider selection more robust.
+- **Translation webhook metadata.** The webhook category metadata no longer
+  omits the existing translation webhook, so it is configurable as expected.
+
+### Security
+
+- Dependency refresh, each bump validated by the full test suite: Stripe 11.6.0
+  and Django REST Framework 3.18.0, plus google-api-python-client 2.199.0 and
+  patch updates to boto3, google-auth, google-auth-httplib2 and phonenumbers.
+
+### Changed
+
+- **Installer 1.4.1 — no more scheduler OOM on small hosts.** The background
+  scheduler no longer OOM-loops on 4–6 GB hosts, and a leaner 4 GB tier is
+  available for modest self-hosted installs.
+
 ## [1.7.4] - 2026-08-18
 
 A fast follow-up to 1.7.3 — a small, focused release of admin refinements and

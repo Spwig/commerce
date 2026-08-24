@@ -8,6 +8,7 @@ from anywhere in the application.
 import logging
 from urllib.parse import urlparse
 
+from django.db import transaction
 from django.db.models import Model
 from django.utils import timezone
 
@@ -137,7 +138,8 @@ def trigger_webhook(
             event_type=event_type,
             payload=payload,
         )
-        deliver_webhook.delay(str(delivery.id))
+        delivery_id = str(delivery.id)
+        transaction.on_commit(lambda delivery_id=delivery_id: deliver_webhook.delay(delivery_id))
         count += 1
         logger.debug(f"Queued webhook delivery {delivery.id} for {event_type} to {endpoint.name}")
 

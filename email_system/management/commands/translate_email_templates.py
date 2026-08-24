@@ -3,7 +3,7 @@ Management command to translate email templates
 Usage: ./shop_venv/bin/python manage.py translate_email_templates --languages es fr de
 """
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from email_system.models import EmailTemplate
 from email_system.services.translation_service import EmailTemplateTranslationService
@@ -69,6 +69,7 @@ class Command(BaseCommand):
             return
 
         total_jobs = 0
+        failed = []
         for template in templates:
             self.stdout.write(f"Translating {template.template_type}...")
             result = service.translate_template(template=template, target_languages=languages)
@@ -81,8 +82,15 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f"  {result['message']}")
             else:
+                failed.append(template.template_type)
                 self.stdout.write(
                     self.style.WARNING(f"  Error: {result.get('message', 'Unknown error')}")
                 )
+
+        if failed:
+            raise CommandError(
+                f"Failed to translate {len(failed)} template(s): {', '.join(failed)} "
+                f"(created {total_jobs} translation jobs)"
+            )
 
         self.stdout.write(self.style.SUCCESS(f"Successfully created {total_jobs} translation jobs"))

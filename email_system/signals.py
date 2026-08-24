@@ -10,6 +10,8 @@ from django.contrib.sites.models import Site
 from django.db import transaction
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
+from django.utils import translation
 
 from email_system.utils.language import get_order_email_language
 
@@ -38,6 +40,16 @@ def _get_payment_method_display(order):
     if order.payment_method_last4:
         display += f" ending in {order.payment_method_last4}"
     return display
+
+
+def _build_order_url(order, site_url, language):
+    """Build the absolute storefront order-confirmation URL for the order's language."""
+    with translation.override(language):
+        path = reverse(
+            "page_builder:order_confirmation",
+            kwargs={"order_number": order.order_number},
+        )
+    return f"{site_url}{path}"
 
 
 # ============================================================================
@@ -81,6 +93,9 @@ def send_order_confirmation_email(sender, instance, created, **kwargs):
             except Exception:
                 site_url = getattr(settings, "SITE_URL", "http://localhost:8000")
 
+            # Get order language (captured at checkout, with user/site fallback)
+            language = get_order_email_language(instance)
+
             # Prepare context
             context = {
                 "customer_name": instance.shipping_name,
@@ -88,7 +103,7 @@ def send_order_confirmation_email(sender, instance, created, **kwargs):
                 "order_number": instance.order_number,
                 "order_date": instance.created_at.strftime("%B %d, %Y"),
                 "order_total": f"{instance.total_amount.currency} {instance.total_amount.amount}",
-                "order_url": f"{site_url}/orders/{instance.order_number}/",
+                "order_url": _build_order_url(instance, site_url, language),
                 "subtotal": f"{instance.subtotal.currency} {instance.subtotal.amount}",
                 "shipping": f"{instance.shipping_cost.currency} {instance.shipping_cost.amount}",
                 "tax": f"{instance.tax_amount.currency} {instance.tax_amount.amount}",
@@ -101,9 +116,6 @@ def send_order_confirmation_email(sender, instance, created, **kwargs):
                 ),
                 "payment_method": _get_payment_method_display(instance),
             }
-
-            # Get order language (captured at checkout, with user/site fallback)
-            language = get_order_email_language(instance)
 
             # Add activation link for guest orders
             if (
@@ -235,12 +247,17 @@ def _send_shipping_confirmation(order):
     except Exception:
         site_url = getattr(settings, "SITE_URL", "http://localhost:8000")
 
+    # Get order language (captured at checkout, with user/site fallback)
+    language = get_order_email_language(order)
+    order_url = _build_order_url(order, site_url, language)
+
     context = {
         "customer_name": order.shipping_name,
         "order_number": order.order_number,
-        "order_url": f"{site_url}/orders/{order.order_number}/",
+        "order_url": order_url,
         "tracking_number": order.tracking_number or "Not available",
-        "tracking_url": f"{site_url}/orders/{order.order_number}/tracking/",
+        # The order confirmation page also displays tracking information.
+        "tracking_url": order_url,
         "carrier": order.carrier.name if order.carrier_id else "Carrier",
         "estimated_delivery": order.estimated_delivery_date.strftime("%B %d, %Y")
         if order.estimated_delivery_date
@@ -253,9 +270,6 @@ def _send_shipping_confirmation(order):
             f"{order.shipping_postal_code}"
         ),
     }
-
-    # Get order language (captured at checkout, with user/site fallback)
-    language = get_order_email_language(order)
 
     EmailSendingService.send_template_email(
         to_email=order.email,
@@ -279,10 +293,13 @@ def _send_delivery_confirmation(order):
     except Exception:
         site_url = getattr(settings, "SITE_URL", "http://localhost:8000")
 
+    # Get order language (captured at checkout, with user/site fallback)
+    language = get_order_email_language(order)
+
     context = {
         "customer_name": order.shipping_name,
         "order_number": order.order_number,
-        "order_url": f"{site_url}/orders/{order.order_number}/",
+        "order_url": _build_order_url(order, site_url, language),
         "delivery_date": order.updated_at.strftime("%B %d, %Y"),
         "delivered_to": (
             f"{order.shipping_address1}, "
@@ -291,9 +308,6 @@ def _send_delivery_confirmation(order):
         ),
         "signature_required": False,
     }
-
-    # Get order language (captured at checkout, with user/site fallback)
-    language = get_order_email_language(order)
 
     EmailSendingService.send_template_email(
         to_email=order.email,
@@ -330,19 +344,19 @@ def _send_refund_notification(order):
         refund_method = _get_payment_method_display(order)
         refund_reason = "Refund requested"
 
+    # Get order language (captured at checkout, with user/site fallback)
+    language = get_order_email_language(order)
+
     context = {
         "customer_name": order.shipping_name,
         "order_number": order.order_number,
-        "order_url": f"{site_url}/orders/{order.order_number}/",
+        "order_url": _build_order_url(order, site_url, language),
         "refund_amount": refund_amount,
         "refund_method": refund_method,
         "refund_date": order.updated_at.strftime("%B %d, %Y"),
         "refund_reason": refund_reason,
         "processing_days": "5-7 business days",
     }
-
-    # Get order language (captured at checkout, with user/site fallback)
-    language = get_order_email_language(order)
 
     EmailSendingService.send_template_email(
         to_email=order.email,

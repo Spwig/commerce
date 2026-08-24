@@ -50,20 +50,25 @@ def order_detail_queryset():
     ``AdminOrderDetailSerializer`` renders each item's image, so the order
     must arrive with items and their product/variant image relations
     prefetched; otherwise ``_select_image`` issues a query per item. The
-    image's ``thumbnail_small`` dereferences ``media_asset``, so the
-    prefetch selects it too — otherwise serialization still adds a
-    media-asset query per chosen image. Reuse this for every response that
-    serializes a full order — including mutation responses that would
-    otherwise fetch the order bare.
+    image's ``thumbnail_small`` and ``image_sources`` dereference
+    ``media_asset`` and its ``thumbnails``, so the prefetch pulls both —
+    otherwise serialization still adds a media-asset/thumbnail query per
+    chosen image. Reuse this for every response that serializes a full
+    order — including mutation responses that would otherwise fetch the
+    order bare.
     """
     return Order.objects.select_related("user", "carrier").prefetch_related(
         Prefetch(
             "items__product__images",
-            queryset=ProductImage.objects.select_related("media_asset"),
+            queryset=ProductImage.objects.select_related("media_asset").prefetch_related(
+                "media_asset__thumbnails"
+            ),
         ),
         Prefetch(
             "items__variant__images",
-            queryset=ProductVariantImage.objects.select_related("media_asset"),
+            queryset=ProductVariantImage.objects.select_related("media_asset").prefetch_related(
+                "media_asset__thumbnails"
+            ),
         ),
     )
 

@@ -52,6 +52,21 @@ def generate_error_reference():
     return f"ERR-{secrets.token_hex(3).upper()}"
 
 
+def _images_with_thumbnails_prefetch():
+    """Prefetch product images with their media_asset + thumbnails.
+
+    Required wherever a serializer builds ``image_sources`` from an image's
+    thumbnails, so list/detail rendering reads the prefetch cache instead of
+    issuing a query per image (N+1).
+    """
+    return Prefetch(
+        "images",
+        queryset=ProductImage.objects.select_related("media_asset").prefetch_related(
+            "media_asset__thumbnails"
+        ),
+    )
+
+
 @extend_schema(
     tags=["Admin"],
     summary=_("List products"),
@@ -185,7 +200,7 @@ def product_list(request):
     queryset = (
         Product.objects.select_related("category", "brand")
         .prefetch_related(
-            Prefetch("images", queryset=ProductImage.objects.select_related("media_asset")),
+            _images_with_thumbnails_prefetch(),
             "stock_items",
         )
         .annotate(
@@ -310,7 +325,7 @@ def product_detail(request, product_id):
     try:
         product = (
             Product.objects.select_related("category", "brand")
-            .prefetch_related("images", "stock_items__warehouse")
+            .prefetch_related(_images_with_thumbnails_prefetch(), "stock_items__warehouse")
             .get(id=product_id)
         )
     except Product.DoesNotExist:
@@ -380,7 +395,7 @@ def product_by_sku(request):
     try:
         product = (
             Product.objects.select_related("category", "brand")
-            .prefetch_related("images", "stock_items__warehouse")
+            .prefetch_related(_images_with_thumbnails_prefetch(), "stock_items__warehouse")
             .get(sku=sku)
         )
     except Product.DoesNotExist:
@@ -664,7 +679,7 @@ def low_stock_products(request):
     queryset = (
         Product.objects.filter(track_inventory=True, status="published")
         .select_related("category", "brand")
-        .prefetch_related("images")
+        .prefetch_related(_images_with_thumbnails_prefetch())
         .annotate(
             _available_stock=Coalesce(
                 Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
@@ -830,10 +845,7 @@ def upload_product_image(request, product_id):
     """
     import mimetypes
 
-    from django.conf import settings
     from PIL import Image
-
-    from media_library.models import MediaThumbnail
 
     try:
         product = Product.objects.get(id=product_id)
@@ -909,43 +921,12 @@ def upload_product_image(request, product_id):
             if webp_content:
                 media_asset.webp_file.save(f"{media_asset.id}.webp", webp_content, save=True)
 
-        # Generate thumbnails
-        thumbnail_sizes = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
-            "THUMBNAIL_SIZES",
-            {
-                "small": (150, 150),
-                "medium": (300, 300),
-                "large": (600, 600),
-            },
-        )
+        # Generate thumbnails for the system size presets (single source of
+        # truth in ImageSizePreset), so images uploaded from the mobile app get
+        # the same, consistently-named renditions as storefront uploads.
+        from media_library.services import generate_thumbnails_for_asset
 
-        for size_name, (thumb_width, thumb_height) in thumbnail_sizes.items():
-            try:
-                image_file.seek(0)
-                original_content, webp_content = processor.generate_thumbnail(
-                    image_file, thumb_width, thumb_height
-                )
-
-                if original_content:
-                    thumbnail = MediaThumbnail.objects.create(
-                        media_asset=media_asset,
-                        size_preset=size_name,
-                        width=thumb_width,
-                        height=thumb_height,
-                    )
-                    thumbnail.file.save(
-                        f"{media_asset.id}_{size_name}.jpg", original_content, save=False
-                    )
-                    if webp_content:
-                        thumbnail.webp_file.save(
-                            f"{media_asset.id}_{size_name}.webp", webp_content, save=False
-                        )
-                    thumbnail.save()
-            except Exception as e:
-                import logging
-
-                logging.getLogger(__name__).error(f"Error generating thumbnail {size_name}: {e}")
-                continue
+        generate_thumbnails_for_asset(media_asset, processor=processor)
 
         # Queue AVIF generation off the request path (WebP was done inline)
         from media_library.services import queue_avif_generation
@@ -1542,7 +1523,9 @@ def create_product(request):
     # Re-fetch with annotations for response
     product = (
         Product.objects.select_related("category", "brand")
-        .prefetch_related("images", "stock_items", "stock_items__warehouse")
+        .prefetch_related(
+            _images_with_thumbnails_prefetch(), "stock_items", "stock_items__warehouse"
+        )
         .annotate(
             _available_stock=Coalesce(
                 Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
@@ -1711,7 +1694,9 @@ def update_product(request, product_id):
     # Re-fetch with annotations
     product = (
         Product.objects.select_related("category", "brand")
-        .prefetch_related("images", "stock_items", "stock_items__warehouse")
+        .prefetch_related(
+            _images_with_thumbnails_prefetch(), "stock_items", "stock_items__warehouse"
+        )
         .annotate(
             _available_stock=Coalesce(
                 Sum("stock_items__on_hand") - Sum("stock_items__allocated"),

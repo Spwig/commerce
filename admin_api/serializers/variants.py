@@ -9,6 +9,8 @@ from rest_framework import serializers
 
 from catalog.models import AttributeValue, ProductVariant
 
+from .image_sources import build_image_sources
+
 
 class AdminVariantListSerializer(serializers.ModelSerializer):
     """Serializer for variant list view."""
@@ -18,6 +20,7 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
     available_stock = serializers.IntegerField(source="_available_stock", read_only=True)
     attributes = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
+    image_sources = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductVariant
@@ -33,6 +36,7 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
             "attributes",
             "barcode",
             "image_url",
+            "image_sources",
             "created_at",
         ]
 
@@ -66,6 +70,10 @@ class AdminVariantListSerializer(serializers.ModelSerializer):
         if obj.image_asset:
             return obj.image_asset.get_thumbnail("medium") or obj.image_asset.get_display_url()
         return None
+
+    def get_image_sources(self, obj):
+        """Sized WebP URLs (thumbnail/small/medium) for the variant thumbnail."""
+        return build_image_sources(obj.image_asset, detail=False)
 
 
 class VariantCreateSerializer(serializers.Serializer):

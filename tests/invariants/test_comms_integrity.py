@@ -83,7 +83,8 @@ def test_confirmation_email_is_accurate_and_sent_once(
         contains=[order.order_number, "USD 99.99"],  # total renders as "CUR amount"
         once=True,
     )
-    assert f"/orders/{order.order_number}/" in row.html_body  # the order link renders
+    # the order link renders (points at the localised order-confirmation page)
+    assert f"/checkout/confirmation/{order.order_number}/" in row.html_body
     # #11 no-leak: the confirmation must not carry payment secrets / intent ids.
     haystack = f"{row.subject}\n{row.html_body}\n{row.text_body}".lower()
     assert "client_secret" not in haystack

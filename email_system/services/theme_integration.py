@@ -119,26 +119,30 @@ class ThemeIntegrationService:
 
         return css_vars
 
+    @staticmethod
+    def _get_active_theme():
+        """Resolve the active theme via the design app's single source of truth."""
+        from design.theme_utils import get_active_theme
+
+        return get_active_theme()
+
     def _load_branding(self) -> dict | None:
         """
-        Load active theme branding configuration
+        Load merchant brand customizations layered over the active theme
         """
         try:
-            from design.models import ThemeInstallation
+            from design.theme_models import ThemeBranding
 
-            # Get active theme installation
-            installation = (
-                ThemeInstallation.objects.filter(is_active=True).select_related("branding").first()
-            )
+            theme = self._get_active_theme()
+            if not theme:
+                return None
 
-            if installation and installation.branding:
-                branding = installation.branding
+            branding = ThemeBranding.objects.filter(theme=theme).first()
+            if branding:
                 return {
-                    "colors": branding.colors_config or {},
-                    "typography": branding.typography_config or {},
-                    "spacing": branding.spacing_config or {},
-                    "borders": branding.borders_config or {},
-                    "logo_url": branding.logo.url if branding.logo else None,
+                    "colors": branding.color_tokens or {},
+                    "typography": branding.typography_tokens or {},
+                    "spacing": branding.spacing_tokens or {},
                 }
 
         except Exception as e:
@@ -148,21 +152,16 @@ class ThemeIntegrationService:
 
     def _load_theme(self) -> dict | None:
         """
-        Load active theme configuration
+        Load active theme design tokens from its manifest
         """
         try:
-            from design.models import ThemeInstallation
-
-            installation = (
-                ThemeInstallation.objects.filter(is_active=True).select_related("theme").first()
-            )
-
-            if installation and installation.theme:
-                theme = installation.theme
+            theme = self._get_active_theme()
+            if theme:
+                tokens = theme.get_tokens()
                 return {
-                    "colors": theme.colors or {},
-                    "typography": theme.typography or {},
-                    "spacing": theme.spacing or {},
+                    "colors": tokens.get("colors", {}),
+                    "typography": tokens.get("typography", {}),
+                    "spacing": tokens.get("spacing", {}),
                 }
 
         except Exception as e:
@@ -215,14 +214,19 @@ class ThemeIntegrationService:
 
             if theme.get("typography"):
                 defaults["font_family"] = theme["typography"].get(
-                    "body_font", defaults["font_family"]
+                    "font-family-body", defaults["font_family"]
                 )
                 defaults["heading_font"] = theme["typography"].get(
-                    "heading_font", defaults["heading_font"]
+                    "font-family-heading", defaults["heading_font"]
                 )
                 defaults["font_size_base"] = theme["typography"].get(
-                    "base_size", defaults["font_size_base"]
+                    "font-size-base", defaults["font_size_base"]
                 )
+
+            if theme.get("spacing"):
+                defaults["spacing_small"] = theme["spacing"].get("2", defaults["spacing_small"])
+                defaults["spacing_medium"] = theme["spacing"].get("4", defaults["spacing_medium"])
+                defaults["spacing_large"] = theme["spacing"].get("6", defaults["spacing_large"])
 
         # Override with branding (highest priority)
         if branding:
@@ -239,22 +243,21 @@ class ThemeIntegrationService:
 
             if branding.get("typography"):
                 defaults["font_family"] = branding["typography"].get(
-                    "body_font", defaults["font_family"]
+                    "font-family-body", defaults["font_family"]
                 )
                 defaults["heading_font"] = branding["typography"].get(
-                    "heading_font", defaults["heading_font"]
+                    "font-family-heading", defaults["heading_font"]
+                )
+                defaults["font_size_base"] = branding["typography"].get(
+                    "font-size-base", defaults["font_size_base"]
                 )
 
             if branding.get("spacing"):
-                defaults["spacing_small"] = branding["spacing"].get(
-                    "small", defaults["spacing_small"]
-                )
+                defaults["spacing_small"] = branding["spacing"].get("2", defaults["spacing_small"])
                 defaults["spacing_medium"] = branding["spacing"].get(
-                    "medium", defaults["spacing_medium"]
+                    "4", defaults["spacing_medium"]
                 )
-                defaults["spacing_large"] = branding["spacing"].get(
-                    "large", defaults["spacing_large"]
-                )
+                defaults["spacing_large"] = branding["spacing"].get("6", defaults["spacing_large"])
 
         # Generate CSS string
         css_lines = []

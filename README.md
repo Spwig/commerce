@@ -63,21 +63,13 @@ fork it and go your own way, the licence explicitly permits that.
 ## Editions
 
 Same binary. A signed licence file toggles feature flags at runtime.
-Community is what you get by default when you `docker compose up`;
-upgrading is a key you paste into the admin.
-
-| | Community | Pro | Enterprise |
-|---|:---:|:---:|:---:|
-| Full e-commerce platform (storefront, admin, checkout, orders) | ✓ | ✓ | ✓ |
-| Point-of-sale terminal, page builder, themes | ✓ | ✓ | ✓ |
-| Bring-your-own payment + shipping providers | ✓ | ✓ | ✓ |
-| Marketplace access (premium themes + integrations) | ✓ | ✓ | ✓ |
-| Spwig-hosted address autocomplete | Free · rate-limited | Higher limit | Highest limit |
-| Spwig-hosted GeoIP (visitor location) | Free · rate-limited | Higher limit | Highest limit |
-| Push notifications (iOS admin app) | Free · rate-limited | Higher limit | Highest limit |
-| Hosted email gateway with warm IPs + DKIM | – | ✓ | ✓ |
-| Priority support | – | ✓ | ✓ |
-| Enterprise SSO (Azure AD, Okta) | – | – | ✓ |
+Community is what you get by default when you `docker compose up` — the
+full e-commerce platform: storefront, admin, checkout, orders,
+point-of-sale, page builder, themes, and bring-your-own payment and
+shipping providers. Paid tiers add higher limits on Spwig-hosted
+services (address autocomplete, GeoIP, push, email gateway) plus
+priority support and enterprise SSO. Upgrading is a key you paste into
+the admin.
 
 <br />
 
@@ -135,7 +127,9 @@ for Ubuntu/WSL2, macOS, and Windows.
       screens). Optional headless mode via the
       <a href="https://github.com/Spwig/headless-sdk">Spwig headless
       SDK</a> and <a href="https://github.com/Spwig/react">React
-      components</a>.</p>
+      components</a> — see
+      <a href="https://github.com/Spwig/starting-points">starting-points</a>
+      for ready-to-fork headless storefront demos.</p>
     </td>
     <td width="50%" valign="top">
       <img src="https://spwig.com/images/screenshots/storefront-product.webp" alt="Storefront product page">

@@ -86,6 +86,11 @@ class Command(BaseCommand):
                 "icon": "fa-undo",
                 "description": "Events related to refunds and returns",
             },
+            WebhookEventCategory.TRANSLATION: {
+                "name": "Translation",
+                "icon": "fa-language",
+                "description": "Events related to content translation",
+            },
         }
 
         # Build export data
