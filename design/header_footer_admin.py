@@ -4,6 +4,7 @@ Admin interfaces for header, footer, and menu management
 
 from django import forms
 from django.contrib import admin
+from django.db.models import Count
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -239,9 +240,12 @@ class WidgetAdmin(admin.ModelAdmin):
 
     visibility_summary.short_description = _("Devices")
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_usage_count=Count("placements"))
+
     def usage_count(self, obj):
         """Count how many times this widget is used"""
-        count = obj.placements.count()
+        count = obj._usage_count
         if count > 0:
             return format_html("<strong>{}</strong>", count)
         return format_html('<span style="color: var(--body-quiet-color);">{}</span>', count)

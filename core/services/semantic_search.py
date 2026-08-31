@@ -68,9 +68,12 @@ class TextChunker:
         chunks = []
         keywords_lower = [str(k).lower() for k in (keywords or []) if k is not None]
 
-        # First chunk: title + beginning of content
+        # First chunk: title + beginning of content. A very long title (titles
+        # come from an unrestricted translations JSONField) must not push the
+        # available content length negative, which would corrupt the slicing and
+        # subsequent chunk offsets. Clamp to at least zero.
         title_text = f"{title}\n\n"
-        first_chunk_content_length = TextChunker.CHUNK_SIZE - len(title_text)
+        first_chunk_content_length = max(0, TextChunker.CHUNK_SIZE - len(title_text))
         first_chunk_text = title_text + content[:first_chunk_content_length]
 
         chunks.append(
@@ -172,13 +175,16 @@ class IndexingService:
         return topic.title_i18n_key
 
     @staticmethod
-    def index_topic(topic_id: int, languages: list[str] | None = None) -> dict[str, int]:
+    def index_topic(
+        topic_id: int, languages: list[str] | None = None, force: bool = False
+    ) -> dict[str, int]:
         """
         Index a single topic in specified languages.
 
         Args:
             topic_id: ID of the HelpTopic to index
             languages: List of language codes to index (None = all languages)
+            force: Re-index a language even if it is already indexed
 
         Returns:
             Dictionary with indexing statistics
@@ -203,8 +209,14 @@ class IndexingService:
 
             title = IndexingService.get_topic_title(topic, language)
 
+            # Skip already-indexed languages unless a re-index is forced
+            existing_chunks = HelpSearchIndex.objects.filter(topic=topic, language=language)
+            if existing_chunks.exists() and not force:
+                logger.debug(f"Topic {topic.slug} [{language}] already indexed, skipping")
+                continue
+
             # Delete existing chunks for this topic+language
-            HelpSearchIndex.objects.filter(topic=topic, language=language).delete()
+            existing_chunks.delete()
 
             # Generate chunks
             chunks = TextChunker.chunk_content(

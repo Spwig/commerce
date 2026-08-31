@@ -292,18 +292,21 @@ class ThemePresetInstaller:
                 logger.warning("Skipping placement with no widget_type: %s", placement_data)
                 continue
 
-            # Get or create the shared widget for this type
+            # Reuse a deterministic shared widget for this type, creating one only
+            # when none exists. widget_type has no uniqueness constraint and the
+            # platform permits multiple widgets of a type, so get_or_create would
+            # raise MultipleObjectsReturned whenever two matching rows are present.
             display_name = str(
                 widget_type_names.get(widget_type, widget_type.replace("_", " ").title())
             )
-            widget, _ = Widget.objects.get_or_create(
-                widget_type=widget_type,
-                defaults={
-                    "name": display_name,
-                    "config": {},
-                    "is_active": True,
-                },
-            )
+            widget = Widget.objects.filter(widget_type=widget_type).order_by("pk").first()
+            if widget is None:
+                widget = Widget.objects.create(
+                    widget_type=widget_type,
+                    name=display_name,
+                    config={},
+                    is_active=True,
+                )
 
             placement = WidgetPlacement.objects.create(
                 widget=widget,

@@ -135,6 +135,45 @@ class AnalyticsService:
     # ------------------------------------------------------------------ #
     #  Existing: get_top_products
     # ------------------------------------------------------------------ #
+    @staticmethod
+    def _product_image_map(product_ids: list) -> dict:
+        """Map ``product_id -> {image_url, image_sources}`` for analytics lists.
+
+        Serves right-sized product thumbnails (medium) plus the responsive
+        ``image_sources`` set to analytics surfaces (top products, product
+        performance), matching the products endpoint. Reads a thumbnails
+        prefetch so building ``image_sources`` issues no per-image query.
+        """
+        ids = [pid for pid in product_ids if pid]
+        if not ids:
+            return {}
+
+        from django.db.models import Prefetch
+
+        from admin_api.serializers.image_sources import build_image_sources
+        from catalog.models import Product, ProductImage
+
+        qs = Product.objects.filter(id__in=ids).prefetch_related(
+            Prefetch(
+                "images",
+                queryset=ProductImage.objects.select_related("media_asset").prefetch_related(
+                    "media_asset__thumbnails"
+                ),
+            )
+        )
+        result = {}
+        for p in qs:
+            imgs = list(p.images.all())
+            chosen = next((i for i in imgs if i.is_primary), None) or (imgs[0] if imgs else None)
+            asset = chosen.media_asset if chosen else None
+            result[p.id] = {
+                "image_url": (
+                    (asset.get_thumbnail("medium") or asset.get_display_url()) if asset else None
+                ),
+                "image_sources": (build_image_sources(asset, detail=False) if asset else None),
+            }
+        return result
+
     @classmethod
     def get_top_products(cls, period: str = "today", limit: int = 5) -> list:
         """
@@ -176,6 +215,9 @@ class AnalyticsService:
             .order_by("-units_sold")[:limit]
         )
 
+        top_products = list(top_products)
+        image_map = cls._product_image_map([i["product_id"] for i in top_products])
+
         return [
             {
                 "product_id": item["product_id"],
@@ -184,6 +226,8 @@ class AnalyticsService:
                 "units_sold": item["units_sold"],
                 "revenue": item["revenue"] or Decimal("0.00"),
                 "currency": currency,
+                "image_url": image_map.get(item["product_id"], {}).get("image_url"),
+                "image_sources": image_map.get(item["product_id"], {}).get("image_sources"),
             }
             for item in top_products
         ]
@@ -554,8 +598,16 @@ class AnalyticsService:
                 .annotate(order_date=TruncDate("created_at"))
                 .values("order_date")
                 .annotate(
+                    # Fall back to total_amount when total_amount_base is NULL,
+                    # matching get_sales_kpi and get_sales_comparison. Without
+                    # this the per-day chart revenue coalesces to 0 for every
+                    # order whose base amount is NULL (cross-currency orders
+                    # without a stored rate), so the "Sales" chart reads 0 while
+                    # the headline KPI — which already has the fallback — shows
+                    # the real total.
                     revenue=Coalesce(
                         Sum("total_amount_base", output_field=DecimalField()),
+                        Sum("total_amount", output_field=DecimalField()),
                         Value(Decimal("0.00"), output_field=DecimalField()),
                     ),
                     order_count=Count("id"),
@@ -697,17 +749,40 @@ class AnalyticsService:
         product_ids = [p["product_id"] for p in page_data]
         products_map = {}
         if product_ids:
+            from django.db.models import Prefetch
+
+            from admin_api.serializers.image_sources import build_image_sources
+            from catalog.models import ProductImage
+
             products_qs = (
                 Product.objects.filter(id__in=product_ids)
                 .select_related("category", "brand")
-                .prefetch_related("images")
+                .prefetch_related(
+                    Prefetch(
+                        "images",
+                        queryset=ProductImage.objects.select_related(
+                            "media_asset"
+                        ).prefetch_related("media_asset__thumbnails"),
+                    )
+                )
             )
             for p in products_qs:
-                primary_img = p.images.filter(is_primary=True).first()
+                imgs = list(p.images.all())
+                chosen = next((i for i in imgs if i.is_primary), None) or (
+                    imgs[0] if imgs else None
+                )
+                asset = chosen.media_asset if chosen else None
                 products_map[p.id] = {
                     "category_name": p.category.name if p.category else "",
                     "brand_name": p.brand.name if p.brand else "",
-                    "image_url": primary_img.image_url if primary_img else None,
+                    # Serve the medium thumbnail (not the full-size original)
+                    # plus responsive image_sources, matching the products list.
+                    "image_url": (
+                        (asset.get_thumbnail("medium") or asset.get_display_url())
+                        if asset
+                        else None
+                    ),
+                    "image_sources": (build_image_sources(asset, detail=False) if asset else None),
                 }
 
         products = []
@@ -728,6 +803,7 @@ class AnalyticsService:
                     "product_name": item["product_name"],
                     "sku": item["sku"],
                     "image_url": extra.get("image_url"),
+                    "image_sources": extra.get("image_sources"),
                     "category_name": extra.get("category_name", ""),
                     "brand_name": extra.get("brand_name", ""),
                     "units_sold": units,

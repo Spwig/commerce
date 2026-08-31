@@ -158,12 +158,11 @@ class FeedService:
             .select_related(
                 "category",
                 "brand",
-                "primary_image",
             )
             .prefetch_related(
                 Prefetch(
                     "images",
-                    queryset=ProductImage.objects.filter(is_active=True).order_by("sort_order"),
+                    queryset=ProductImage.objects.filter(show_in_listing=True).order_by("position"),
                 ),
             )
         )
@@ -217,7 +216,10 @@ class FeedService:
         except Exception:
             base_url = getattr(settings, "SITE_URL", "https://example.com")
 
-        for product in products.iterator():
+        # chunk_size is required by Django to combine .iterator() with the
+        # prefetched images queryset. A single malformed product is logged and
+        # skipped so one bad row can't abort the entire feed.
+        for product in products.iterator(chunk_size=1000):
             try:
                 yield self._product_to_feed_item(product, base_url)
             except Exception as e:
@@ -248,22 +250,16 @@ class FeedService:
         # Build product URL
         link = f"{base_url}/product/{product.slug}/"
 
-        # Get primary image
+        # Get primary image (product.primary_image resolves to a MediaAsset)
         image_link = ""
-        if hasattr(product, "primary_image") and product.primary_image:
-            if hasattr(product.primary_image, "image") and product.primary_image.image:
-                image_link = f"{base_url}{product.primary_image.image.url}"
-            elif hasattr(product.primary_image, "asset") and product.primary_image.asset:
-                image_link = f"{base_url}{product.primary_image.asset.file.url}"
+        if product.primary_image:
+            image_link = f"{base_url}{product.primary_image.get_display_url()}"
 
         # Get additional images
         additional_images = []
-        if hasattr(product, "images"):
-            for img in list(product.images.all())[:10]:
-                if hasattr(img, "image") and img.image:
-                    additional_images.append(f"{base_url}{img.image.url}")
-                elif hasattr(img, "asset") and img.asset:
-                    additional_images.append(f"{base_url}{img.asset.file.url}")
+        for img in list(product.images.all())[:10]:
+            if img.media_asset:
+                additional_images.append(f"{base_url}{img.media_asset.get_display_url()}")
 
         # Build price string
         price = self._format_price(product)

@@ -2,90 +2,88 @@
 title: Stok Bildirimleri
 ---
 
-Stok bildirimleri, stokta olmayan bir ürün tekrar mevcut olduğunda e-posta ile bildirim almak için müşterilerin kaydolmasına olanak tanır. Stok görüntüleme ayarları, ürün sayfalarında müşterilerin ne gördüğünü kontrol eder - örneğin stok durumu etiketleri, düşük stok uyarısı ve bir ürün stokta kalmadığında ne olduğuna dair bilgiler.
+Stok bildirimleri, tüketicilerin stokta olmayan bir ürün tekrar stoklandığında e-posta ile bilgilendirilmek için kayıt olmalarına olanak tanır. Stok görüntüleme ayarları, tüketicilerin ürün sayfalarında ne gördüğünü kontrol eder — örneğin stok durumu etiketleri, düşük stok uyarıları ve bir ürün tükendiğinde ne olacağı.
 
 ## Stok görüntüleme ayarları
 
-Stok görüntüleme ayarları, kategori veya ürün seviyesinde geçersiz kılınmadıkça tüm ürünleri etkileyen genel ayarlardır.
+Stok görüntüleme ayarları, kategori veya ürün düzeyinde geçersiz kılınmadıkça tüm ürünlere uygulanan mağaza genelinde varsayılan ayarlardır.
 
-Bu seçenekleri yapılandırmak için **Katalog > Stok Görüntüleme Ayarları**'na gidin. Mağazanızan bir ayar kaydı vardır - düzenlemek için tıklayın.
+Bu seçenekleri yapılandırmak için **Katalog > Stok Görüntüleme Ayarları** bölümüne gidin. Mağazanız için bir ayar kaydı vardır — düzenlemek için üzerine tıklayın.
 
-### Stok durumu görüntüsü
+### Stok durumu görüntüleme
 
 | Ayar | Açıklama |
 |---------|-------------|
-| **Stok Durumunu Göster** | Ürün sayfalarında "Stokta Var" veya "Stokta Yok" etiketlerini göster |
-| **Düşük Stok Uyarısını Göster** | Stok azaldığında "Sadece X tane kaldı" mesajını göster |
-| **Düşük Stok Eşiği** | Düşük stok uyarısının görüldüğü miktar (varsayılan: 5) |
-| **Mevcut Miktarı Göster** | Kalan tam sayıyı göster (örneğin, "Sadece 3 tane kaldı!") genel bir uyarı yerine |
+| **Stok Durumunu Göster** | Ürün sayfalarında "Stokta" veya "Stokta Yok" etiketlerini görüntüler |
+| **Düşük Stok Uyarısını Göster** | Stok azaldığında "Sadece X kaldı" mesajını gösterir |
+| **Düşük Stok Eşiği** | Düşük stok uyarısının göründüğü miktar (varsayılan: 5) |
+| **Kesin Miktarı Göster** | Genel bir uyarı yerine kalan kesin sayıyı gösterir (ör. "Sadece 3 kaldı!") |
 
-### Stokta Yokken Davranış
+### Stokta yok davranışı
 
-**Stokta Yokken Eylem** ayarı, bir ürün stokta kalmadığında müşterilerin ne gördüğünü belirler:
+**Stokta Yok Eylemi** ayarı, bir ürünün stokta bulunmadığında tüketicilerin ne göreceğini belirler:
 
-| Eylem | Müşterilerin gördüğü |
+| Eylem | Tüketicilerin gördüğü |
 |--------|-------------------|
-| **Listelemeden Kaldır** | Ürün, kategori sayfalarından ve arama sonuçlarından kaldırılır |
-| **Mevcut Değil Olarak Göster** | Ürün görünür ancak sepete eklenemez |
-| **Bana Haber Ver butonunu Göster** | Müşteriler, stokların döndüğü zaman e-posta adreslerini kaydolabilir |
-| **Gerçekten sipariş alınabilir** | Müşteriler, stok sıfır iken ürün alabilir |
+| **Listelerden gizle** | Ürün, kategori sayfalarından ve arama sonuçlarından kaldırılır |
+| **Mevcut değil olarak göster** | Ürün görünür ancak sepete eklenemez |
+| **"Bana Bildir" düğmesini göster** | Tüketiciler, stok geri geldiğinde bilgilendirilmek için e-posta adreslerini kaydedebilir |
+| **Sipariş almayı (backorder) izin ver** | Tüketiciler, stok sıfır olsa bile ürünü satın alabilir |
 
-**Stokta Yok Mesajı**'nı ayarlayarak, bir ürün mevcut değilken gösterilen metni özelleştirin (varsayılan: `Stokta Yok`).
+Bir ürün mevcut değilken gösterilen metni özelleştirmek için **Stokta Yok Mesajı** ayarını yapılandırın (varsayılan: `Stokta Yok`).
 
-**Gerçekten sipariş mesajı**'nı ayarlayarak, geri sipariş edilebilir ürünler için gösterilen metni özelleştirin (varsayılan: `Gerçekten sipariş`).
+Sipariş alınabilir (backorder) ürünler için gösterilen metni özelleştirmek için **Sipariş Mesajı (Backorder Message)** ayarını yapılandırın (varsayılan: `Sipariş üzerine mevcut`).
 
-### Kargo ve teslimat görüntüsü
+### Kargo ve teslimat görüntüleme
 
 | Ayar | Açıklama |
 |---------|-------------|
-| **Kargolandığı Yeri Göster** | Ürün sayfasında depo adını göster |
-| **Tahmini Teslimatı Göster** | Depo konumundan hesaplanan tahmini teslimat tarihlerini göster |
+| **"Şuradan Kargolanır" konumunu göster** | Ürün sayfasında depo adını görüntüler |
+| **Tahmini Teslimatı Göster** | Depo konumundan hesaplanan tahmini teslimat tarihlerini görüntüler |
 
-### Genel olarak geri sipariş izni
+### Sipariş almayı izin ver (site genelinde)
 
-**Gerçekten sipariş izin ver**'i kontrol ederek, genel olarak stokta olmayan her ürün için müşterilerin satın almasına izin verin. Bireysel ürünler ve kategoriler bu ayarı geçersiz kılabilir.
+Tüketicilerin varsayılan olarak stokta olmayan herhangi bir ürünü satın almasına izin vermek için **Sipariş Almayı İzin Ver (Allow Backorders)** seçeneğini işaretleyin. Bireysel ürünler ve kategoriler bu ayarı geçersiz kılabilir.
 
-## Stokta Kalmaya Dair Bildirimler
+## Stokta var bildirimleri
 
-Stokta Yokken Eylem ayarını **Bana Haber Ver butonunu Göster** olarak ayarladığınızda, müşteriler ürün stokta kalmaya döndüğünde e-posta almak için ürün sayfasında e-posta adreslerini girebilir.
+Stokta yok eylemini **"Bana Bildir" düğmesini göster** olarak ayarladığınızda, tüketiciler ürün sayfasında e-posta adreslerini girebilir ve ürün yeniden stoklandığında e-posta alabilirler.
 
 ### Bildirim isteklerini görüntüleme
 
-Bu istekleri görmek için **Katalog > Stok Bildirimleri**'ne gidin. Her kayıt şunları gösterir:
-- Müşteri e-posta adresi
-- Ürün ve varyant (varsa)
-- Müşteri bölgesel tercihini seçtiğinde tercih edilen depo (varsa)
-- İstek ne zaman oluşturuldu
-- Bildirim gönderildi (henüz gönderilmemişse boş)
+Tüm tüketici bildirim isteklerini görmek için **Katalog > Stok Bildirimleri** bölümüne gidin. Her kayıt şunları gösterir:
+- Tüketici e-posta adresi
+- Ürün ve varyant (uygunsa)
+- Tercih edilen depo (tüketici bölgesel bir tercih seçtiyse)
+- İsteğin oluşturulma zamanı
+- Bildirim gönderildiğinde (henüz gönderilmediyse boş)
 
-### Bildirimler ne zaman gönderiliyor
+### Bildirimlerin ne zaman gönderildiği
 
-Stok seviyesi sıfırdan yukarıya çıktığında, Spwig otomatik olarak stokta kalmaya dair e-posta gönderir. **Bildirilen Tarih** alanı, e-postanın gönderildiği tarihi kaydeder.
+Spwig, bir ürünün stok seviyesi sıfırın üzerine çıktığında stokta var e-postalarını otomatik olarak gönderir. **Bildirildi (Notified At)** alanı, e-postanın ne zaman gönderildiğini kaydeder.
 
-Müşteriler tek bir bildirim e-postası alır. Bildirildikten sonra, ürün tekrar stokta kalmazsa, tekrar kaydolmak zorundadır.
+Tüketiciler bir bildirim e-postası alır. Bildirim yapıldıktan sonra, ürün ikinci kez stokta yok olursa tekrar kayıt olmaları gerekir.
+
+Tek bir düz uyarıdan fazlasını göndermek isterseniz — örneğin, yeniden stoklanan ürünü bir **Öne Çıkan Ürün** içerik bloğuyla göstermek veya bir gün sonra takip etmek — **Campaign Studio > Journeys** bölümünde bir **Ürün stokta var** yolculuğu oluşturun ve **Aktif** olarak ayarlayın. Bu yolculuk oluşturulduğunda, bekleyen tüketiciler düz tek seferlik e-posta almak yerine bu yolculuğa kaydedilir; aktif bir yolculuk yoksa, bu tek seferlik e-posta yukarıda açıklandığı gibi gönderilmeye devam eder. Tetikleyicinin nasıl çalıştığı hakkında [Tetiklenen Yolculuklar](/help/triggered-journeys) bölümüne bakın.
 
 ### Bildirim isteklerini filtreleme
 
-Aşağıdaki durumları bulmak için admin filtrelerini kullanın:
+Şunları bulmak için yönetici filtrelerini kullanın:
 - Belirli bir ürün için istekler
-- Zaten bildirilen istekler (kimlerin irtibata geçtiğini görmek için)
-- Henüz bekleyen istekler (stokta kalmayı bekleyen müşteriler)
+- Zaten bildirilmiş istekler (kimlerin bilgilendirildiğini görmek için)
+- Hâlâ bekleyen istekler (yeniden stoklanmayı bekleyen tüketiciler)
 
-## Ürün seviyesinde geçersiz kılma
+## Ürün düzeyinde geçersiz kılma
 
-Genel stok görüntüleme ayarları, ürün veya kategori seviyesinde geçersiz kılınabilir. Ürün düzenleme formunda, genel varsayılanlardan farklı olacak şekilde ürün seviyesinde **Stok** bölümünü bulabilirsiniz.
+Site genelindeki stok görüntüleme ayarları, ürün veya kategori bazında geçersiz kılınabilir. Ürün düzenleme formunda, global varsayılandan farklı bir ürün özel **Stok Dışı Eylemi** belirleyebileceğiniz **Stok** bölümünü arayın.
 
-Bu, çoğu ürünün geri sipariş edilebilir olmasını isterseniz ancak bazı ürünleri "Bana Haber Ver" olarak tutmak isterseniz veya belirli bir ürünün stokta kalmadığında gizlenmesini isterseniz yararlıdır.
+Bu, çoğu ürün için sipariş sonrası tedarik (backorder) izni verirken birkaç ürünü "Bana Bildirin" olarak ayarlamak istediğinizde — veya belirli bir ürünün stok tükendiğinde gizlenmesi gerektiğinde — faydalıdır.
 
 ## İpuçları
 
-Tüm markdown formatlamasını, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
-
-- **Düşük Stok Eşiğini** genellikle kullandığınız yeniden sipariş noktasına ayarlayarak, stoklar tamamen tükendiğinde değil, mevcut sınırlı olduğuna dair müşterilere uyarı verin.
-- Stokta yokken ürünleri gizleme yerine **"Bana Bildir" butonunu** gösterme seçeneğini kullanın — kaydolmuş olanlar gerçek talebi temsil eder ve yeniden stoklamak için gerekçelendirme sağlar.
-- **Mümkün olduğunca az** **Miktarı Göster**.
-
-Çoğu mağaza için, "Sadece 3 tane kaldı!" yazısının tam sayı gösterilmesinden daha iyi olduğunu, çünkü stok durumunuzu açığa vurmadan aceleci bir hava yaratır.
+- Müşterilerin tamamen tükenebilmeden önce sınırlı stok durumundan haberdar olmasını sağlamak için, **Düşük Stok Eşiği**ni genellikle kullandığınız yeniden sipariş noktasına ayarlayın.
+- Stok dışı ürünleri gizlemek yerine **"Bana Bildirin" düğmesini göster** seçeneğini kullanın — kayıt olan müşteriler, yeniden stok siparişini haklı kılacak gerçek bir talebi temsil eder.
+- **Kesin Miktarı Göster** seçeneğini dikkatli kullanın. Çoğu mağaza için, tam envanter tablosunu ortaya koymadan aciliyet yaratmak amacıyla "Sadece 3 kaldı!" gösterimi, kesin sayıyı göstermekten daha etkilidir.
 - Yeni bir sipariş vermeden önce stok bildirimleri listesini kontrol edin — bekleyen bildirim isteklerinin sayısı, o ürün için ne kadar talep olduğunu gösterir.
-- Arka sipariş kullanıyorsanız, **Arka Sipariş Mesajı** nı güncelleyerek doğru beklentileri oluşturun (örneğin, "2-3 hafta içinde kargo verilecek - rezervasyon için şimdiden sipariş verin").
-- Stokta kalmayan bildirimleri e-posta pazarlama ile birleştirin: popüler bir ürün yeniden stoklandığında, sadece otomatik bildirim e-postası değil, kaydolmuş tüm kişilere kampanya gönderin.
+- Sipariş sonrası tedarik (backorder) kullanıyorsanız, doğru beklentileri oluşturmak için **Sipariş Sonrası Tedarik Mesajı**nızı güncelleyin (ör. "2-3 hafta içinde kargoya verilir — yerinizi ayırtmak için şimdi sipariş verin").
+- Stok dışı bildirimlerini e-posta pazarlamasıyla birleştirin: popüler bir ürünü yeniden stokladığınızda, yalnızca otomatik bildirim e-postasını değil, kayıtlı herkese bir kampanya gönderin.

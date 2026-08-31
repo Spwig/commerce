@@ -169,7 +169,7 @@ class Command(BaseCommand):
                     f.write(
                         f"**Helpful:** {topic.helpful_count}/{topic.helpful_count + topic.not_helpful_count}"
                     )
-                    if topic.helpfulness_percentage:
+                    if topic.helpfulness_percentage is not None:
                         f.write(f" ({topic.helpfulness_percentage:.1f}%)")
                     f.write("\n\n")
 
@@ -191,7 +191,7 @@ class Command(BaseCommand):
 
                 if include_stats and topic.view_count > 0:
                     topic_data["popularity_score"] = topic.view_count
-                    if topic.helpfulness_percentage:
+                    if topic.helpfulness_percentage is not None:
                         topic_data["quality_score"] = topic.helpfulness_percentage / 100
 
                 f.write(json.dumps(topic_data, ensure_ascii=False) + "\n")

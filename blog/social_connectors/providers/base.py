@@ -10,6 +10,13 @@ from datetime import datetime
 from typing import Any
 
 
+class _SafePostTemplateDict(dict):
+    """Preserve unknown ``{placeholder}`` tokens instead of raising KeyError."""
+
+    def __missing__(self, key: str) -> str:
+        return "{" + key + "}"
+
+
 class SocialConnectorBase(ABC):
     """
     Abstract base class for social media connectors.
@@ -331,9 +338,22 @@ class SocialConnectorBase(ABC):
         """
         if template:
             hashtag_str = " ".join(f"#{tag.strip('#')}" for tag in (hashtags or []))
-            return template.format(
+            values = _SafePostTemplateDict(
                 title=title, excerpt=excerpt, url=url, hashtags=hashtag_str
-            ).strip()
+            )
+            try:
+                return template.format_map(values).strip()
+            except (ValueError, IndexError, KeyError, AttributeError, TypeError):
+                # Literal/unmatched braces (e.g. JSON or CSS in the template),
+                # positional fields, or compound placeholders like
+                # {title.foo}/{title[0]} can't be parsed by format_map.
+                # Substitute the known placeholders directly and leave
+                # everything else untouched so a misconfigured template never
+                # aborts posting.
+                content = template
+                for key, value in values.items():
+                    content = content.replace("{" + key + "}", str(value))
+                return content.strip()
 
         # Default format
         content_parts = []

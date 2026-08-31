@@ -3,6 +3,7 @@ Help System API Serializers
 DRF serializers for help system models
 """
 
+from django.db.models import F
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema_field
@@ -52,7 +53,7 @@ class HelpCategorySerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField())
     def get_topics_count(self, obj):
         """Get number of published topics in this category"""
-        return obj.topics.filter(is_published=True).count()
+        return obj.published_topics_count
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -200,12 +201,15 @@ class HelpFeedbackSerializer(serializers.ModelSerializer):
         feedback = super().create(validated_data)
 
         # Update topic counters
+        # Atomic F() increment so concurrent submissions don't clobber each
+        # other via read-modify-write.
         topic = feedback.topic
         if feedback.helpful:
-            topic.helpful_count += 1
+            topic.helpful_count = F("helpful_count") + 1
+            topic.save(update_fields=["helpful_count"])
         else:
-            topic.not_helpful_count += 1
-        topic.save(update_fields=["helpful_count", "not_helpful_count"])
+            topic.not_helpful_count = F("not_helpful_count") + 1
+            topic.save(update_fields=["not_helpful_count"])
 
         return feedback
 

@@ -100,20 +100,41 @@ class TemporalCacheGuardTests(TestCase):
 
     def test_element_change_bumps_visibility_version(self):
         # Moving/activating an element must invalidate the derived temporal flag.
+        # The bump is deferred to transaction commit, so run the on_commit
+        # callbacks that TestCase's wrapping transaction would otherwise swallow.
         from visibility.models import visibility_config_version
 
         before = visibility_config_version()
-        Element.objects.create(page=self.page, name="moved", element_type="text")
+        with self.captureOnCommitCallbacks(execute=True):
+            Element.objects.create(page=self.page, name="moved", element_type="text")
         self.assertGreater(visibility_config_version(), before)
 
     def test_temporal_flag_invalidated_when_rule_added(self):
         # Flag caches False for a page with no temporal rules...
         self.assertFalse(self.page.has_temporal_visibility_rules())
         # ...then adding a temporal rule via the M2M (no Page.save) bumps the
-        # visibility-config version, so the next read recomputes True immediately.
-        el = Element.objects.create(page=self.page, name="e", element_type="text")
-        el.visibility_rules.add(_group_with(_rule("business_hours", True, operator="is_true")))
+        # visibility-config version on commit, so the next read recomputes True.
+        with self.captureOnCommitCallbacks(execute=True):
+            el = Element.objects.create(page=self.page, name="e", element_type="text")
+            el.visibility_rules.add(_group_with(_rule("business_hours", True, operator="is_true")))
         self.assertTrue(self.page.has_temporal_visibility_rules())
+
+    def test_rolled_back_element_change_does_not_bump(self):
+        # Regression: the version must only bump once the enclosing transaction
+        # commits. A rolled-back change must leave the cached version untouched.
+        from django.db import transaction
+
+        from visibility.models import visibility_config_version
+
+        before = visibility_config_version()
+        with self.captureOnCommitCallbacks(execute=True):
+            try:
+                with transaction.atomic():
+                    Element.objects.create(page=self.page, name="rb", element_type="text")
+                    raise RuntimeError("force rollback")
+            except RuntimeError:
+                pass
+        self.assertEqual(visibility_config_version(), before)
 
     def test_nested_temporal_rule_is_detected(self):
         # A temporal rule buried in a nested child group must still be found.

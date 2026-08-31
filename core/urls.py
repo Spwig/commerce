@@ -82,6 +82,15 @@ urlpatterns += [
     path("i18n/", include("translations.i18n_urls")),
     # Currency switcher API (non-i18n as it's an API)
     path("api/set-currency/", set_currency, name="set_currency"),
+    # Campaign Studio — tokenised unsubscribe (no language prefix; recipients
+    # act from an email link). Must exist before any anonymous marketing sends.
+    path("marketing/", include("email_marketing.urls")),
+    # Storefront newsletter signup + double opt-in confirm. Mounted at
+    # /newsletter/ to match the form action shipped in the page-builder element
+    # and footer widget (no language prefix; anonymous visitors).
+    path("newsletter/", include("email_marketing.public_urls")),
+    # Campaign Studio builder API (staff-only, no language prefix).
+    path("api/email-marketing/", include("email_marketing.api_urls")),
     # Ship-to region selector API (non-i18n as it's an API)
     path("api/set-region/", set_region, name="set_region"),
     # Multi-Currency Management API
@@ -306,6 +315,14 @@ urlpatterns += [
     path("webhooks/payments/<str:provider_slug>/", payment_webhook_handler, name="payment_webhook"),
 ]
 
+# Email provider delivery-event webhooks (bounce / complaint from installed API
+# providers). Public + CSRF-exempt; the handler verifies the provider signature.
+from email_system.webhooks.handlers import email_webhook_handler
+
+urlpatterns += [
+    path("webhooks/email/<str:provider_slug>/", email_webhook_handler, name="email_webhook"),
+]
+
 # Payment provider component static files (JavaScript handlers, CSS, assets)
 from payment_providers.views.component_static import ComponentStaticFileView
 
@@ -351,6 +368,7 @@ urlpatterns += i18n_patterns(
     path("admin/community/", views.community_redirect, name="community_redirect"),
     path("admin/sso/redirect/", views.sso_redirect, name="sso_redirect"),
     path("admin/setup/", include("setup_wizard.urls")),
+    path("admin/campaigns/", include("email_marketing.admin_urls")),
     path("admin/customers/", include("customers.urls_admin")),
     path("admin/accounts/", include("accounts.admin_urls")),
     path("admin/translations/", include("translations.urls")),

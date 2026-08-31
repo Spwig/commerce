@@ -253,6 +253,12 @@ class DKIMHandler:
                     b"date",
                     b"message-id",
                     b"content-type",
+                    # Gmail/Yahoo one-click unsubscribe (RFC 8058) requires the
+                    # List-Unsubscribe-Post header to be covered by the DKIM signature.
+                    # dkimpy over-signs headers absent from a given message, so
+                    # transactional mail without them is unaffected.
+                    b"list-unsubscribe",
+                    b"list-unsubscribe-post",
                 ],
             )
 

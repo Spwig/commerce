@@ -97,7 +97,9 @@ class Command(BaseCommand):
             if manifest_path.exists():
                 try:
                     manifest_data = json.loads(manifest_path.read_text())
-                    features = manifest_data.get("features", {})
+                    features = {}
+                    if isinstance(manifest_data, dict):
+                        features = manifest_data.get("features", {})
                     if isinstance(features, dict):
                         dark_mode_enabled = features.get("dark_mode", False)
                 except (json.JSONDecodeError, KeyError):

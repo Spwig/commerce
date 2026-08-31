@@ -1,0 +1,24 @@
+{
+  "block_type": "image",
+  "name": "Image",
+  "icon": "fas fa-image",
+  "category": "media",
+  "description": "A single image, optionally linked.",
+  "properties": {
+    "src": { "type": "media", "label": "Image", "default": "", "accept": "image/*" },
+    "alt": { "type": "string", "label": "Alt text", "default": "", "translatable": true },
+    "href": { "type": "link", "label": "Link", "default": "" },
+    "align": {
+      "type": "select",
+      "label": "Alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    "width": { "type": "string", "label": "Width (e.g. 300px)", "default": "" }
+  },
+  "defaults": { "src": "", "alt": "", "href": "", "align": "center", "width": "" }
+}

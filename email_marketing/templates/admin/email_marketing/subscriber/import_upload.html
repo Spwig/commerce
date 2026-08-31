@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="../">{% trans 'Subscribers' %}</a>
+  &rsaquo; {% trans 'Import' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="change-list-header">
+  <div>
+    <h1><i class="fas fa-file-import"></i> {% trans "Import subscribers" %}</h1>
+    <p class="subtitle">{% trans "Upload a CSV or Excel file to add contacts to your list." %}</p>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="submit-row">
+    <button type="submit" class="button default">{% trans "Continue" %}</button>
+    <a href="../" class="button cancel-link">{% trans "Cancel" %}</a>
+  </div>
+</form>
+
+<p class="help">
+  {% trans "Columns are matched automatically. An email column is required; first name, last name and language are optional and used to personalise your emails." %}
+</p>
+{% endblock %}

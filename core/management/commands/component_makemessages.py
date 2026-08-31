@@ -3,6 +3,7 @@ Management command for generating translation files per component/app.
 """
 
 import subprocess
+import sys
 from pathlib import Path
 
 from django.conf import settings
@@ -122,12 +123,12 @@ class Command(BaseCommand):
             locale_path = locale_dir / locale / "LC_MESSAGES"
             locale_path.mkdir(parents=True, exist_ok=True)
 
-            # Run makemessages for this specific app
+            # Run makemessages for this specific app using the interpreter that
+            # is currently running this command, whatever its location or name.
             manage_py_path = base_dir / "manage.py"
-            python_path = base_dir / "shop_venv" / "bin" / "python"
 
             cmd = [
-                str(python_path),
+                sys.executable,
                 str(manage_py_path),
                 "makemessages",
                 "--locale",

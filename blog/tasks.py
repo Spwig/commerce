@@ -13,11 +13,63 @@ import logging
 
 from celery import shared_task
 from django.contrib.sites.models import Site
-from django.db import models
+from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+
+class PseudoSubscriber:
+    """Adapt a ``CommunicationPreference`` to the blog-subscriber email interface.
+
+    Registered users who opted into the blog through their communication
+    preferences have no legacy ``BlogSubscriber`` row, so this shim lets them
+    flow through the same notification and digest helpers.
+    """
+
+    def __init__(self, user, prefs):
+        self.email = user.email
+        self.name = user.get_full_name() or user.username
+        self.language_code = prefs.language_code
+        self.unsubscribe_token = prefs.unsubscribe_token
+
+    def get_unsubscribe_url(self, site):
+        return (
+            f"https://{site.domain}/accounts/unsubscribe/"
+            f"{self.unsubscribe_token}/?type=blog_post_published"
+        )
+
+    def get_preferences_url(self, site):
+        return f"https://{site.domain}/accounts/preferences/"
+
+
+def _communication_preference_subscribers(frequency, sent_emails):
+    """Yield pseudo-subscribers for registered users opted into blog email.
+
+    Selects users with a verified marketing email and blog notifications enabled
+    at ``frequency``, excluding any address already handled via a legacy
+    ``BlogSubscriber`` (compared case-insensitively).
+    """
+    from django.db.models.functions import Lower
+
+    from accounts.models import CommunicationPreference
+
+    already_sent = {email.lower() for email in sent_emails}
+    comm_prefs = (
+        CommunicationPreference.objects.filter(
+            email_enabled=True,
+            email_marketing=True,
+            email_verified=True,
+            app_preferences__blog__enabled=True,
+            app_preferences__blog__frequency=frequency,
+        )
+        .select_related("user")
+        .annotate(_user_email_lower=Lower("user__email"))
+        .exclude(_user_email_lower__in=already_sent)
+    )
+    for prefs in comm_prefs:
+        yield PseudoSubscriber(prefs.user, prefs)
 
 
 @shared_task(name="blog.tasks.publish_scheduled_posts")
@@ -35,16 +87,19 @@ def publish_scheduled_posts():
     published_count = 0
     for post in scheduled_posts:
         try:
-            post.status = "published"
-            post.published_at = now
-            post.save(update_fields=["status", "published_at", "updated_at"])
+            with transaction.atomic():
+                post.status = "published"
+                post.published_at = now
+                post.save(update_fields=["status", "published_at", "updated_at"])
 
-            # Trigger subscriber notifications if enabled
-            if post.notify_subscribers and not post.notification_sent:
-                notify_subscribers_of_new_post.delay(post.pk)
-
-            # Trigger auto-shares if enabled
-            trigger_auto_shares_for_post.delay(post.pk)
+                # Enqueue downstream work only once the publish commits, so we
+                # never dispatch for a post whose publication rolled back. Bind
+                # pk per iteration to avoid the late-binding closure trap.
+                if post.notify_subscribers and not post.notification_sent:
+                    transaction.on_commit(
+                        lambda pk=post.pk: notify_subscribers_of_new_post.delay(pk)
+                    )
+                transaction.on_commit(lambda pk=post.pk: trigger_auto_shares_for_post.delay(pk))
 
             published_count += 1
             logger.info(f"Published scheduled blog post: {post.title} (pk={post.pk})")
@@ -92,6 +147,7 @@ def notify_subscribers_of_new_post(post_pk):
         ).distinct()
 
     sent_count = 0
+    had_failures = False
     site = Site.objects.get(pk=1)
 
     # Track emails sent to avoid duplicates
@@ -104,52 +160,27 @@ def notify_subscribers_of_new_post(post_pk):
             sent_count += 1
             sent_emails.add(subscriber.email.lower())
         except Exception as e:
+            had_failures = True
             logger.error(f"Error sending notification to {subscriber.email}: {e}")
 
-    # Also send to registered users with CommunicationPreference blog notifications enabled
-    # (excluding those already sent via BlogSubscriber)
-    from django.contrib.auth import get_user_model
-
-    from accounts.models import CommunicationPreference
-
-    get_user_model()
-
-    # Get users with blog notifications enabled (excluding already-sent emails)
-    comm_prefs = (
-        CommunicationPreference.objects.filter(
-            email_enabled=True,
-            email_marketing=True,
-            email_verified=True,
-            app_preferences__blog__enabled=True,
-            app_preferences__blog__frequency="immediate",
-        )
-        .select_related("user")
-        .exclude(user__email__in=sent_emails)
-    )
-
-    for prefs in comm_prefs:
+    # Also send to registered users who opted in via CommunicationPreference,
+    # excluding those already reached through a legacy BlogSubscriber.
+    for pseudo_subscriber in _communication_preference_subscribers("immediate", sent_emails):
         try:
-            # Create a pseudo-subscriber object for the email sending function
-            class PseudoSubscriber:
-                def __init__(self, user, prefs):
-                    self.email = user.email
-                    self.name = user.get_full_name() or user.username
-                    self.language_code = prefs.language_code
-                    self.unsubscribe_token = prefs.unsubscribe_token
-
-                def get_unsubscribe_url(self, site):
-                    return f"https://{site.domain}/accounts/unsubscribe/{self.unsubscribe_token}/?type=blog_post_published"
-
-                def get_preferences_url(self, site):
-                    return f"https://{site.domain}/accounts/preferences/"
-
-            pseudo_subscriber = PseudoSubscriber(prefs.user, prefs)
             _send_new_post_notification(post, pseudo_subscriber, site)
             sent_count += 1
         except Exception as e:
-            logger.error(f"Error sending notification to {prefs.user.email}: {e}")
+            had_failures = True
+            logger.error(f"Error sending notification to {pseudo_subscriber.email}: {e}")
 
-    # Mark notification as sent
+    # Only mark the post notified once every recipient queued successfully, so a
+    # later attempt can retry the ones that failed instead of skipping the post.
+    if had_failures:
+        logger.warning(
+            f"Not marking post {post_pk} as notified: {sent_count} sent but some deliveries failed"
+        )
+        return sent_count
+
     post.notification_sent = True
     post.save(update_fields=["notification_sent"])
 
@@ -253,10 +284,13 @@ def send_weekly_digest():
     settings = BlogSettings.get_settings()
     now = timezone.now()
 
-    # Check if it's the right day and hour
-    if now.weekday() != settings.weekly_digest_day:
+    # Check if it's the right day and hour. weekly_digest_day uses 0=Sunday,
+    # 1=Monday (see BlogSettings), so use strftime('%w') rather than weekday()
+    # which is 0=Monday.
+    today_dow = int(now.strftime("%w"))
+    if today_dow != settings.weekly_digest_day:
         logger.info(
-            f"Skipping weekly digest: today is {now.weekday()}, scheduled for {settings.weekly_digest_day}"
+            f"Skipping weekly digest: today is {today_dow}, scheduled for {settings.weekly_digest_day}"
         )
         return
 
@@ -283,6 +317,7 @@ def send_weekly_digest():
 
     sent_count = 0
     site = Site.objects.get(pk=1)
+    sent_emails = set()
 
     for subscriber in subscribers:
         # Filter posts by subscriber's category preferences
@@ -299,9 +334,21 @@ def send_weekly_digest():
             )
             subscriber.last_digest_sent_at = now
             subscriber.save(update_fields=["last_digest_sent_at"])
+            sent_emails.add(subscriber.email.lower())
             sent_count += 1
         except Exception as e:
             logger.error(f"Error sending weekly digest to {subscriber.email}: {e}")
+
+    # Registered users opted into weekly blog digests via CommunicationPreference,
+    # excluding anyone already reached through a legacy BlogSubscriber.
+    for pseudo_subscriber in _communication_preference_subscribers("weekly", sent_emails):
+        try:
+            _send_digest_email(
+                subscriber=pseudo_subscriber, posts=posts, digest_type="weekly", site=site
+            )
+            sent_count += 1
+        except Exception as e:
+            logger.error(f"Error sending weekly digest to {pseudo_subscriber.email}: {e}")
 
     logger.info(f"Sent {sent_count} weekly digest emails")
     return sent_count
@@ -351,6 +398,7 @@ def send_monthly_digest():
 
     sent_count = 0
     site = Site.objects.get(pk=1)
+    sent_emails = set()
 
     for subscriber in subscribers:
         # Filter posts by subscriber's category preferences
@@ -367,9 +415,21 @@ def send_monthly_digest():
             )
             subscriber.last_digest_sent_at = now
             subscriber.save(update_fields=["last_digest_sent_at"])
+            sent_emails.add(subscriber.email.lower())
             sent_count += 1
         except Exception as e:
             logger.error(f"Error sending monthly digest to {subscriber.email}: {e}")
+
+    # Registered users opted into monthly blog digests via CommunicationPreference,
+    # excluding anyone already reached through a legacy BlogSubscriber.
+    for pseudo_subscriber in _communication_preference_subscribers("monthly", sent_emails):
+        try:
+            _send_digest_email(
+                subscriber=pseudo_subscriber, posts=posts, digest_type="monthly", site=site
+            )
+            sent_count += 1
+        except Exception as e:
+            logger.error(f"Error sending monthly digest to {pseudo_subscriber.email}: {e}")
 
     logger.info(f"Sent {sent_count} monthly digest emails")
     return sent_count
@@ -495,18 +555,31 @@ def process_auto_share(self, auto_share_pk):
     from .models import BlogPostAutoShare
 
     try:
-        auto_share = BlogPostAutoShare.objects.get(pk=uuid.UUID(auto_share_pk))
+        pk = uuid.UUID(auto_share_pk)
+    except (ValueError, TypeError, AttributeError):
+        logger.error(f"Auto-share {auto_share_pk!r} is not a valid id")
+        return
+
+    # Atomically claim the entry: lock the row, verify it is still eligible, and
+    # transition it to "posting" before releasing the lock. If a concurrent
+    # worker (Celery redelivery or an overlapping retry) already claimed or
+    # finished it, bail out so the external connector is only ever called once.
+    try:
+        with transaction.atomic():
+            auto_share = BlogPostAutoShare.objects.select_for_update().get(pk=pk)
+
+            if auto_share.status in ["posted", "skipped"]:
+                logger.info(f"Auto-share {auto_share_pk} already processed")
+                return
+            if auto_share.status == "posting":
+                logger.info(f"Auto-share {auto_share_pk} is already being processed")
+                return
+
+            auto_share.status = "posting"
+            auto_share.save(update_fields=["status"])
     except BlogPostAutoShare.DoesNotExist:
         logger.error(f"Auto-share {auto_share_pk} not found")
         return
-
-    if auto_share.status in ["posted", "skipped"]:
-        logger.info(f"Auto-share {auto_share_pk} already processed")
-        return
-
-    # Update status to posting
-    auto_share.status = "posting"
-    auto_share.save(update_fields=["status"])
 
     try:
         account = auto_share.social_account
@@ -561,8 +634,11 @@ def process_auto_share(self, auto_share_pk):
 
         auto_share.status = "failed"
         auto_share.error_message = str(e)
-        auto_share.retry_count += 1
+        # calculate_next_retry() indexes the backoff table by retry_count, so
+        # compute the delay for this attempt before incrementing. Otherwise the
+        # first failure would use the second interval (30 min instead of 5 min).
         auto_share.next_retry_at = auto_share.calculate_next_retry()
+        auto_share.retry_count += 1
         auto_share.save()
 
         # Retry if possible

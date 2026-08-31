@@ -7,6 +7,7 @@ import logging
 from typing import Any
 
 from django.core.cache import cache
+from packaging import version
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,21 @@ class ThemeUpdateService:
 
     CACHE_TIMEOUT = 300  # 5 minutes
     ALL_THEMES_CACHE_KEY = "theme_update_service_all_themes"
+
+    @staticmethod
+    def _is_newer_version(latest: str, current: str) -> bool:
+        """Return True only when ``latest`` is a strictly greater SemVer than ``current``."""
+        try:
+            return version.parse(latest) > version.parse(current)
+        except Exception:
+            # Can't compare unparseable versions; treat as no update rather
+            # than assuming inequality means "newer" (which would flag
+            # downgrades as updates).
+            logger.warning(
+                f"Could not compare theme versions (latest={latest!r}, "
+                f"current={current!r}); assuming no update available."
+            )
+            return False
 
     @classmethod
     def _get_all_themes_cached(cls) -> list[dict[str, Any]]:
@@ -57,31 +73,24 @@ class ThemeUpdateService:
                 logger.warning("Could not fetch available themes from update server")
                 return []
 
-            # Get list of installed theme slugs from ComponentRegistry
-            installed_slugs = set(
-                ComponentRegistry.objects.filter(component_type="theme").values_list(
-                    "slug", flat=True
-                )
-            )
+            # Fetch installed theme registry rows once, keyed by slug, to avoid
+            # an N+1 query pattern when annotating each component below.
+            registry_by_slug = {
+                rc.slug: rc for rc in ComponentRegistry.objects.filter(component_type="theme")
+            }
 
             # Annotate each component with installation status
             available_themes = []
             for component in components:
                 slug = component.get("slug")
-                is_installed = slug in installed_slugs
+                registry_comp = registry_by_slug.get(slug)
 
-                component["is_installed"] = is_installed
+                component["is_installed"] = registry_comp is not None
 
-                # Add registry info if exists
-                if is_installed:
-                    try:
-                        registry_comp = ComponentRegistry.objects.get(
-                            slug=slug, component_type="theme"
-                        )
-                        component["registry_current_version"] = registry_comp.current_version
-                        component["has_update"] = registry_comp.update_available
-                    except ComponentRegistry.DoesNotExist:
-                        pass
+                # Add registry info if installed
+                if registry_comp is not None:
+                    component["registry_current_version"] = registry_comp.current_version
+                    component["has_update"] = registry_comp.update_available
 
                 available_themes.append(component)
 
@@ -219,25 +228,40 @@ class ThemeUpdateService:
 
                 changed = False
                 latest_version = server_data.get("current_version")
-                if latest_version and theme_pkg.latest_version != latest_version:
-                    theme_pkg.latest_version = latest_version
-                    theme_pkg.update_available = latest_version != theme_pkg.current_version
-                    changed = True
+                if latest_version:
+                    if theme_pkg.latest_version != latest_version:
+                        theme_pkg.latest_version = latest_version
+                        changed = True
+                    # Recompute on every sync so records stored before the
+                    # older-version fix (e.g. a downgrade wrongly flagged as an
+                    # update) are corrected even when latest_version is unchanged.
+                    update_available = cls._is_newer_version(
+                        latest_version, theme_pkg.current_version
+                    )
+                    if theme_pkg.update_available != update_available:
+                        theme_pkg.update_available = update_available
+                        changed = True
 
+                # Sync metadata fields. Check key presence (not truthiness) so a
+                # server-supplied empty value can clear a previously stored one.
                 for field, key in [
                     ("author", "author_name"),
                     ("thumbnail_url", "thumbnail_url"),
+                    ("author_details", "author_details"),
+                    ("preview_images", "preview_images"),
+                    ("preview_videos", "preview_videos"),
                 ]:
-                    val = server_data.get(key)
-                    if val and getattr(theme_pkg, field) != val:
-                        setattr(theme_pkg, field, val)
-                        changed = True
-
-                for field in ("author_details", "preview_images", "preview_videos"):
-                    val = server_data.get(field)
-                    if val and getattr(theme_pkg, field) != val:
-                        setattr(theme_pkg, field, val)
-                        changed = True
+                    if key in server_data:
+                        val = server_data[key]
+                        # These columns are NOT NULL; a server-supplied null must
+                        # not overwrite a stored value (it would raise an
+                        # IntegrityError on save()). An empty string/list/dict
+                        # still clears the field, preserving the intended fix.
+                        if val is None:
+                            continue
+                        if getattr(theme_pkg, field) != val:
+                            setattr(theme_pkg, field, val)
+                            changed = True
 
                 if changed:
                     theme_pkg.save()
@@ -265,7 +289,7 @@ class ThemeUpdateService:
             if not latest_version:
                 return {"has_update": False, "error": "No version information available"}
 
-            has_update = latest_version != current_version
+            has_update = cls._is_newer_version(latest_version, current_version)
 
             return {
                 "has_update": has_update,

@@ -1,0 +1,132 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Campaign report" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_marketing/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="em-dash">
+
+  <div class="em-dash-header">
+    <div>
+      <h1><i class="fas fa-chart-column"></i> {% trans "Campaign report" %}</h1>
+      <p class="subtitle">
+        {{ campaign.name }}
+        {% if campaign.sent_at %} · {% blocktrans with d=campaign.sent_at|date:"M d, Y" %}sent {{ d }}{% endblocktrans %}{% endif %}
+      </p>
+    </div>
+    <div class="em-dash-actions">
+      <a class="button" href="{% url 'admin:email_marketing_campaign_changelist' %}">
+        <i class="fas fa-arrow-left"></i> {% trans "All campaigns" %}
+      </a>
+      <a class="button" href="{% url 'email_marketing_admin:campaign_recipients' campaign.pk %}">
+        <i class="fas fa-list-ul"></i> {% trans "Recipients" %}
+      </a>
+      <a class="button" href="{% url 'email_marketing_admin:campaign_builder' campaign.pk %}">
+        <i class="fas fa-wand-magic-sparkles"></i> {% trans "Design" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-stats-grid">
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <div class="value">{{ report.recipients }}</div>
+      <div class="label">{% trans "Recipients" %}</div>
+      {% if report.skipped %}<div class="em-dash-sub">{{ report.skipped }} {% trans "skipped" %}{% if report.skipped_suppressed %} · {{ report.skipped_suppressed }} {% trans "suppressed" %}{% endif %}</div>{% endif %}
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-paper-plane"></i></div>
+      <div class="value">{{ report.delivered }}</div>
+      <div class="label">{% trans "Delivered" %}</div>
+      <div class="em-dash-sub">{{ report.delivery_rate }}% {% trans "of attempted" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-envelope-open"></i></div>
+      <div class="value">{{ report.open_rate }}%</div>
+      <div class="label">{% trans "Open rate" %}</div>
+      <div class="em-dash-sub">{{ report.opened }} {% trans "opened" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-hand-pointer"></i></div>
+      <div class="value">{{ report.click_rate }}%</div>
+      <div class="label">{% trans "Click rate" %}</div>
+      <div class="em-dash-sub">{{ report.clicked }} {% trans "clicked" %} · {{ report.click_to_open_rate }}% {% trans "click-to-open" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="value">{{ report.bounce_rate }}%</div>
+      <div class="label">{% trans "Bounce rate" %}</div>
+      <div class="em-dash-sub">{{ report.hard_bounced }} {% trans "hard" %} · {{ report.soft_bounced }} {% trans "soft" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-ban"></i></div>
+      <div class="value">{{ report.complained }}</div>
+      <div class="label">{% trans "Spam complaints" %}</div>
+      <div class="em-dash-sub">{{ report.complaint_rate }}% {% trans "of delivered" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-sack-dollar"></i></div>
+      <div class="value">{{ revenue.revenue_display }}</div>
+      <div class="label">{% trans "Attributed revenue" %}</div>
+      <div class="em-dash-sub">
+        {% blocktrans count orders=revenue.orders %}{{ orders }} order{% plural %}{{ orders }} orders{% endblocktrans %}
+        · {{ revenue.aov_display }} {% trans "AOV" %}
+        · {{ revenue.revenue_per_email_display }}/{% trans "email" %}
+        {% if revenue.roas is not None %} · {{ revenue.roas }}× {% trans "ROAS" %}{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if report.recipients %}
+  <div class="em-charts-grid">
+    <div class="em-chart-card">
+      <h3>{% trans "Engagement over time" %}</h3>
+      <canvas id="emReportChart"></canvas>
+    </div>
+  </div>
+  {{ chart_data|json_script:"em-report-series" }}
+  <script src="{% static 'email_marketing/js/campaign_report.js' %}" defer></script>
+
+  {% if link_clicks %}
+  <div class="em-chart-card em-links-card">
+    <h3><i class="fas fa-link"></i> {% trans "Top links" %}</h3>
+    <div class="em-table-scroll">
+      <table class="em-links-table">
+        <thead>
+          <tr>
+            <th>{% trans "Link" %}</th>
+            <th>{% trans "Clicks" %}</th>
+            <th>{% trans "Unique" %}</th>
+            <th>{% trans "CTR" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for link in link_clicks %}
+          <tr>
+            <td class="em-link-url"><span title="{{ link.url }}">{{ link.url }}</span></td>
+            <td>{{ link.clicks }}</td>
+            <td>{{ link.unique_clickers }}</td>
+            <td>{{ link.ctr }}%</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+  {% else %}
+  <p class="help">{% trans "No sends yet for this campaign. Metrics appear once it has been sent." %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}

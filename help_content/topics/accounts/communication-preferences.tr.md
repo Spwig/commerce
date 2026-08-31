@@ -2,390 +2,395 @@
 title: İletişim Tercihleri
 ---
 
-İletişim tercihleri, müşterilerin mağazanızdan aldıkları e-posta ve SMS mesajlarını kontrol etmelerine olanak tanır. Bu sistem GDPR uyumluluğunu sağlar ve tüm kanallarda müşteri iletişim tercihlerine saygı duymayı sağlar.
+İletişim tercihleri, müşterilerin mağazanızdan hangi e-posta ve SMS mesajlarını alacaklarını kontrol etmelerine olanak tanır. Bu sistem, GDPR uyumluluğunu sağlar ve tüm kanallarda müşteri iletişim tercihlerine saygı göstermenize yardımcı olur.
 
-Yönetici yan çubuğunda **Müşteriler > İletişim Tercihleri**'ne giderek müşteri iletişim tercihlerini yönetin.
+Müşteri iletişim tercihlerini yönetmek için yönetim paneli kenar çubuğunda **Müşteriler > İletişim Tercihleri** bölümüne gidin.
 
-## İletişim Tercihlerini Anlamak
+## İletişim Tercihlerini Anlama
 
-İletişim tercihleri sistemi, müşterilerin aldıkları mesajları ince düzeyde kontrol etmelerine olanak tanır. Bunlar şunları içerir:
+İletişim tercihleri sistemi, müşterilerin aldıkları mesajlar üzerinde ince ayar kontrolü sağlar. Bu şunları içerir:
 
-- **İşlem E-postaları** — Zorunlu sipariş onayları, sevkiyat güncellemeleri, hesap güvenliği e-postaları (her zaman açık)
-- **Pazarlama E-postaları** — Bültenler, kampanyalar, ürün önerileri (onay gerekli)
-- **Uygulama Özel Bildirimleri** — Blog gönderileri, sadakat puanları, referans ödülleri, ortaklık komisyonları
-- **SMS Bildirimleri** — Metin mesajı bildirimleri (TCPA'ya göre açık onay gerekli)
+- **İşlem e-postaları** — Temel sipariş onayları, kargo güncellemeleri, hesap güvenliği e-postaları (her zaman açık)
+- **Pazarlama e-postaları** — Bültenler, promosyonlar, ürün önerileri (opt-in gerektirir)
+- **Uygulama özel bildirimleri** — Blog yazıları, sadakat puanları, referans ödülleri, komisyonlar
+- **SMS bildirimleri** — Metin mesajı bildirimleri (TCPA'ya göre açık opt-in gerektirir)
 
-Tüm pazarlama iletişimleri için müşteri onayı ve e-posta doğrulaması gerekir, böylece GDPR uyumluluğu sağlanır.
+Tüm pazarlama iletişimleri, GDPR uyumluluğunu sağlamak için müşteri onayı ve e-posta doğrulaması gerektirir.
 
 ## Tercih Türleri Açıklaması
 
 ### İşlem İletişimleri (Her Zaman Etkin)
 
-İşlem mesajları, müşterinin hesabını ve siparişlerini ilgilendirir. Bu **müşteriler tarafından devre dışı bırakılamaz**:
+İşlem mesajları, müşterinizin hesabı ve siparişleri için temel öneme sahiptir. Bunları müşteriler **kapatamaz**:
 
 | Tür | Açıklama | Örnekler |
 |------|-------------|----------|
-| **Sipariş Onayları** | Sipariş verildiğinde onay | Sipariş #12345 alınmıştır |
-| **Sevkiyat Güncellemeleri** | Sipariş durumu değiştiğinde bildirimler | Siparişiniz gönderildi |
-| **Ödeme Onayları** | Ödeme alınması, iade işlemi | $49.99 ödeme onaylandı |
+| **Sipariş Onayları** | Sipariş verildiğinde onay | Sipariş #12345 alındı |
+| **Kargo Güncellemeleri** | Sipariş durumu değiştiğinde bildirimler | Siparişiniz kargoya verildi |
+| **Ödeme Onayları** | Ödeme alındı, iade işlendi | 49,99 $ tutarındaki ödeme onaylandı |
 | **Hesap Güvenliği** | Şifre sıfırlama, e-posta doğrulama | Şifrenizi sıfırlayın |
 
-### Pazarlama İletişimleri (Onay Gerekli)
+### Pazarlama İletişimleri (Opt-In Gerektirir)
 
-Pazarlama mesajları, müşteri onayı ve e-posta doğrulaması gerektirir:
+Pazarlama mesajları müşteri onayı ve e-posta doğrulaması gerektirir:
 
 | Tür | Açıklama | Varsayılan |
 |------|-------------|---------|
-| **Bülten** | Genel bültenler ve güncellemeler | Devre dışı bırak |
-| **Satış Kampanyaları** | Satışlar, indirimler, özel teklifler | Devre dışı bırak |
-| **Ürün Önerileri** | Kişiselleştirilmiş ürün önerileri | Devre dışı bırak |
-| **Stokta Tekrar** | Ürünlerin geri döndüğü bildirimleri | Devre dışı bırak |
+| **Bülten** | Genel bültenler ve güncellemeler | Opt-out |
+| **Promosyonel Fırsatlar** | İndirimler, kampanyalar, özel teklifler | Opt-out |
+| **Ürün Önerileri** | Kişiselleştirilmiş ürün önerileri | Opt-out |
+| **Stokta Var** | Ürünler geri geldiğinde bildirimler | Opt-out |
 
-Müşteriler, herhangi bir pazarlama e-postası almadan önce **e-posta adreslerini doğrulamalıdır** (GDPR çift onay gerekli).
+Müşteriler, herhangi bir pazarlama e-postası almadan önce **e-posta adreslerini doğrulamalıdır** (GDPR çift opt-in gereksinimi).
 
-### Uygulama Özel Tercihler
+### Uygulama Özel Tercihleri
 
-Müşteriler, belirli özellikleri kontrol edebilir:
+Müşteriler, belirli özelliklerden gelen bildirimleri kontrol edebilir:
 
 **Blog Bildirimleri**
-- Yeni blog gönderisi (anında, haftalık özeti veya aylık özeti)
-- Kategori özel abonelikleri
+- Yeni blog yazısı yayımlandı (anında, haftalık özet veya aylık özet)
+- Kategori bazlı abonelikler
 - Sıklık tercihleri
 
 **Sadakat Programı**
 - Kazanılan puan bildirimleri
-- Katman yükseltmeleri
-- Ödüller açıldı
-- Yaklaşan süren puanlar
-- Doğum günü bönüsleri
+- Seviye yükseltmeleri
+- Açılan ödüller
+- Yakında sona erecek puanlar
+- Doğum günü bonusları
 - Kampanya teklifleri
 
 **Referans Programı**
-- Ödül verildi (referans veren ve referans verilen)
+- Ödül verildi (referans veren ve referans edilen)
 - Başarılı referans kaydı
-- Ödül yaklaşan süresi
-- Referans davetiye
+- Yakında sona erecek ödül
+- Referans davetleri
 
 **Ortaklık Programı**
 - Kazanılan komisyon
-- Komisyon onaylandı veya reddedildi
-- Ödeme işlendi, tamamlandı veya başarısız oldu
+- Onaylanan veya reddedilen komisyon
+- İşlenen, tamamlanan veya başarısız olan ödeme
 - Aylık performans raporları
 
-### SMS Bildirimleri (Açık Onay Gerekli)
+### SMS Bildirimleri (Açık Opt-In Gerektirir)
 
-Tüm SMS bildirimleri, TCPA düzenlemelerine göre **açık onay** gerektirir. Müşterilerin aktif olarak SMS onay kutusunu işaretlemesi gerekir:
+Tüm SMS bildirimleri, TCPA düzenlemelerine göre **açık opt-in** gerektirir. Müşteriler, SMS opt-in kutusunu aktif olarak işaretlemelidir:
 
-- **İşlem SMS** — Sipariş gönderildi, teslim edildi (onay gerekli)
-- **Pazarlama SMS** — Kampanyalar, özel teklifler (ayrı onay gerekli)
+- **İşlem SMS** — Kargoya verildi, teslim edildi (opt-in gerektirir)
+- **Pazarlama SMS** — Promosyonlar, özel teklifler (ayrı opt-in gerektirir)
 
-İşlem SMS bile onay gerektirir çünkü istenmeyen metin mesajları göndermek, e-posta göndermekten daha sıkı şekilde düzenlenebilir.
+İstenmeyen metin mesajlarının gönderilmesinin e-postadan daha sıkı düzenlenmesi nedeniyle, işlem SMS'leri bile opt-in gerektirir.
 
-## Yönetici'de Müşteri Tercihlerini Yönetme
+## Yönetim Panelinde Müşteri Tercihlerini Yönetme
 
 ### Tüm Tercihleri Görüntüleme
 
-**Müşteriler > İletişim Tercihleri**'ne giderek tüm müşteri tercihlerini görüntüleyin:
+Tüm müşteri tercihlerini görmek için **Müşteriler > İletişim Tercihleri** bölümüne gidin:
 
-| Sütun | Açıklama |
-|--------|-------------|
-| **Kullanıcı E-postası** | Müşterinin e-posta adresi (kullanıcı yönetimi ile bağlantı kurar) |
-| **E-posta Durumu** | E-posta etkinse yeşil ✓, devre dışıysa gri ○ |
-| **SMS Durumu** | SMS etkinse yeşil ✓, devre dışıysa gri ○ |
-| **Pazarlama Durumu** | "Kayıt Oldu" veya "Kayıt Oldu" etiketi |
-| **Doğrulama Durumu** | 📧✓ e-posta doğrulandıysa, 📱✓ telefon numarası doğrulandıysa |
-| **Onay Kaynağı** | Müşterinin onayı nereden verildi (kayıt, ödeme, tercih merkezi) |
-| **Güncellendi** | Tercihlerin son değiştirildiği zaman |
+{
+  "Column": "Açıklama",
+  "--------": "-------------",
+  "**Kullanıcı E-posta Adresi**": "Müşterinin e-posta adresi (kullanıcı admin'ine bağlantı)",
+  "**E-posta Durumu**": "E-posta etkinse yeşil ✓, devre dışıysa gri ○",
+  "**SMS Durumu**": "SMS etkinse yeşil ✓, devre dışıysa gri ○",
+  "**Pazarlama Durumu**": "'Katıldı' ya da 'Katılmadı' etiketi",
+  "**Doğrulama Durumu**": "E-posta doğrulanmışsa 📧✓, SMS doğrulanmışsa 📱✓",
+  "**Rıza Kaynağı**": "Müşterinin rıza gösterdiği yer (kayıt, ödeme, tercih merkezi)",
+  "**Güncelleme Zamanı**": "Tercihlerin değiştirildiği son zaman"
+}
 
 ### Tercihleri Filtreleme
 
-Filtre yan çubuğunu kullanarak müşterileri bulun:
+Filtre kenar çubuğunu kullanarak müşteri bulun:
 
 - **E-posta Etkin** — Evet/Hayır
 - **SMS Etkin** — Evet/Hayır
-- **E-posta Pazarlama** — Evet/Hayır (pazarlama için kayıtlı)
-- **SMS Pazarlama** — Evet/Hayır (SMS pazarlaması için kayıtlı)
-- **E-posta Doğrulandı** — Evet/Hayır (e-posta adresi doğrulandı)
-- **SMS Doğrulandı** — Evet/Hayır (telefon numarası doğrulandı)
-- **Onay Kaynağı** — Kayıt, Ödeme, Tercih Merkezi, API, Göç
-- **Dil Kodu** — İletişimler için tercih edilen dil
+- **E-posta Pazarlama** — Evet/Hayır (pazarlamaya katıldı)
+- **SMS Pazarlama** — Evet/Hayır (SMS pazarlamasına katıldı)
+- **E-posta Doğrulandı** — Evet/Hayır (e-posta adresini doğruladı)
+- **SMS Doğrulandı** — Evet/Hayır (telefon numarasını doğruladı)
+- **Rıza Kaynağı** — Kayıt, Ödeme, Tercih Merkezi, API, Taşıma
+- **Dil Kodu** — İletişim için tercih edilen dil
 
-### Tercihleri Arama
+### Tercihleri Ara
 
-Arama yapmak için:
-- Kullanıcı e-postası
+Aşağıdakileri kullanarak müşteri ara:
+- Kullanıcı e-posta adresi
 - Kullanıcı adı
 - Ad
 - Soyad
-- Ayrılma tokenı
+- İptal token'ı
 
 ### Toplu Eylemler
 
-Birden fazla müşteriyi seçin ve toplu eylemleri uygulayın:
+Çoklu müşteri seçip toplu eylemleri uygula:
 
-**✓ E-posta Adresini Doğrula**
-- Müşteri e-posta adreslerini manuel olarak doğrulayın
-- Başka bir sistemden müşteri aktarımı yaparken yararlıdır
-- Tercih önbelleğini geçersiz kılar ve değişiklikleri hemen uygular
+**✓ E-postayı Doğrula**
+- Kullanıcı e-posta adreslerini manuel olarak doğrula
+- Başka bir sistemden müşteri aktarıldığında yararlıdır
+- Tercih önbelleğini geçersiz kılarak değişiklikleri hemen uygula
 
-**🚫 Tüm Pazarlamadan Ayrılma**
-- Tüm pazarlama iletişimlerini devre dışı bırakır (e-posta, SMS, tüm uygulamalar)
-- İşlem e-postalarını etkin tutar
-- Müşterilerin tamamen ayrılmalarını talep ettiğinde kullanın
-- GDPR'den geri çekme hakkı sağlar
+**🚫 Tüm Pazarlamadan İptal Et**
+- Tüm pazarlama iletilerini (e-posta, SMS, tüm uygulamalar) devre dışı bırakır
+- İşlemli e-postaları devre dışı bırakmaz
+- İstekleri olan müşteriler için kullanılır
+- GDPR'e göre rızanın geri alınmasına saygı gösterir
 
-**📥 CSV'ye Tercihleri Aktar**
-- Müşteri tercihlerini bir tabloya aktarın
+**📥 Tercihleri CSV'ye Aktar**
+- Müşteri tercihlerini tablo belgesine aktar
 - Tüm tercih alanlarını ve uygulama özel ayarlarını içerir
-- Uyum sağlama denetimleri ve analiz için yararlıdır
-- Biçim: CSV, başlıklarla
+- Uyumluluk denetimleri ve analizleri için yararlıdır
+- Biçim: Başlıklarla birlikte CSV
 
-## Müşteri Tercih Merkezi (Kendi Hizmeti)
+## Müşteri Kendi Tercih Merkezini Yönetme
 
-Müşteriler, oturum açtıktan sonra `/accounts/preferences/` adresinde kendi tercihlerini yönetebilir.
+Kullanıcı girişi yaparken /accounts/preferences/ adresinde kendi tercihlerini yönetebilir.
 
 ### Tercih Merkezi Özellikleri
 
 **Hızlı Eylemler**
-- **Tüm Pazarlamaya Abone Ol** — Tüm pazarlama iletişimlerini bir tıklamayla etkinleştir
-- **Tümünden Ayrıl** — Tüm pazarlama iletişimlerini devre dışı bırak (işlem e-postaları hala etkin)
+- **Tüm Pazarlamaya Abone Ol** — Tek tıkla tüm pazarlama iletilerini etkinleştir
+- **Tümünden İptal Et** — Tüm pazarlama iletilerini devre dışı bırak (işlemli e-postalar devam eder)
 
 **Tercih Kartları**
-- **İşlem E-postaları** — Salt okunur (her zaman etkin, "Gerekli" olarak işaretlenir)
-- **Pazarlama İletişimleri** — Aç/Devre dışı bırak, doğrulama etiketiyle
-- **Blog Tercihleri** — Etkinleştir/devre dışı bırak, sıklığı seç (anında, haftalık, aylık)
-- **Sadakat Programı** — Bireysel bildirim türlerini etkinleştir/devre dışı bırak
-- **Referans Programı** — Ödül bildirimlerini etkinleştir/devre dışı bırak
-- **Ortaklık Programı** — Komisyon ve ödeme bildirimlerini etkinleştir/devre dışı bırak
-- **SMS Bildirimleri** — SMS'e abone olun/olmaz (doğrulama durumunu gösterir)
+- **İşlemli E-Postalar** — Okunur (her zaman etkin, "Gerekli" olarak işaretlenir)
+- **Pazarlama İletileri** — Doğrulama etiketi ile aç/kapat
+- **Blog Tercihleri** — Etkin/etkisiz, sıklığı seç (anında, haftalık, aylık)
+- **Loyalty Programı** — Bireysel bildirim türlerini etkin/etkisiz
+- **İlan Programı** — Ödül bildirimlerini etkin/etkisiz
+- **Cari Programı** — Komisyon ve ödeme bildirimlerini etkin/etkisiz
+- **SMS Bildirimleri** — SMS'e katılmak/etmemek (doğrulama durumunu gösterir)
 
-**Gerçek Zamanlı Güncellemeler**
-- Değişiklikler AJAX aracılığıyla hemen kaydedilir
-- Sayfa yeniden yüklemesi gerekmez
-- Kaydedildiğinde görsel geri bildirim verir
+**Ani Güncellemeler**
+- AJAX ile anında kaydeder
+- Sayfa yeniden yüklenebilir gerekmez
+- Kaydolduğunda görsel geri bildirim
 
 ### E-posta Doğrulama Süreci
 
-Bir müşteri pazarlama e-postalarını etkinleştirdiğinde:
+Bir müşteri pazarlama e-postalarını etkinleştirirse:
 
-1. Müşteri "Pazarlama E-postaları"yı AÇIK yapar
-2. Sistem, tekil bir bağlantı ile doğrulama e-postası gönderir
-3. Müşteri doğrulama bağlantısını tıklar
+1. Müşteri, "Pazarlama E-Postaları" nı AÇIKA ALIR
+2. Sistem, benzersiz bir bağlantı ile doğrulama e-postası gönderir
+3. Müşteri doğrulama bağlantısına tıklar
 4. E-posta doğrulanmış olarak işaretlenir (📧✓ etiketi görünür)
-5. Pazarlama e-postaları artık gönderilecektir
+5. Pazarlama e-postaları şimdiden gönderilmeye başlar
 
-**Doğrulanmamış müşteriler, "AÇIK" olduğunda bile pazarlama e-postaları almayacaktır.** Bu, GDPR çift onay uyumluluğunu sağlar.
+**Doğrulanmamış müşteriler**, ayarlar açık olsa bile pazarlama e-postalarını almayacaktır. Bu, GDPR çift onay uygulamasına uygunluk sağlar.
 
-## Bir Tıklamayla Ayrılma
+## Tek Tıkla İptal Etme
 
-Tüm pazarlama e-postalarında, altta bir ayrılma bağlantısı vardır. Bu bağlantıyı tıklattığınızda:
+Tüm pazarlama e-postaları, alt kısmında bir iptal bağlantısı içerir. Bu bağlantıyı tıklayarak:
 
-1. Müşteriyi `/accounts/unsubscribe/<token>/` adresine yönlendirir (oturum açma gerekmez)
-2. Müşterinin neye ayrıldığını gösterir
-3. Opsiyonel geri bildirim (ayrılma nedeni) alır
-4. Pazarlama iletişimlerini devre dışı bırakır
-5. İşlem e-postalarını etkin tutar
-6. Tam tercih merkezine bağlantı sağlar
+1. /accounts/unsubscribe/<token>/ adresine gider (oturum gerekmez)
+2. Neye iptal ettiğinizi gösterir
+3. Opsiyonel geri bildirim (iptal nedeni)
+4. Pazarlama iletilerini devre dışı bırakır
+5. İşlemli e-postaları devre dışı bırakmaz
+6. Tam tercih merkezine link sağlar
 
-Müşteriler her zaman tercih merkezinden tekrar abone olabilir.
+Müşteriler, tercih merkezinden herhangi bir zaman tekrar abone olabilir.
 
-## Uyum & Hukuki Gereksinimler
+## Uyumluluk ve Hukuki Gereklilikler
 
-### GDPR Madde 7 Uyumlu
+### GDPR 7. Maddesi Uygunluğu
 
-Sistem, tam GDPR Madde 7 uyumluluğunu sağlar:
+Sistem, tam olarak GDPR 7. maddesi uygunluğunu sağlar:
 
-**✅ Onay Kanıtı**
-- Onayın verildiği zaman damgası
-- Onay kaynağı (kayıt, ödeme, tercih merkezi)
-- Onay IP adresi
+Tüm markdown formatlamasını, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
+
+**✅ Onam Kanıtı**
+- Onamın verildiği zaman damgası
+- Onam kaynağı (kayıt, ödeme, tercih merkezi)
+- Onamın IP adresi
 - Kullanıcı ajanı (tarayıcı bilgisi)
 
-**✅ Ayırma Onayı**
-- Pazarlama ve işlem e-postaları ayrı onay kutularıdır
-- Her uygulama (blog, sadakat vb.) bireysel onay gerektirir
+**✅ Ayrı Onam**
+- Pazarlama ve işlem e-postaları ayrı anahtarlar olarak yönetilir
+- Her uygulama (blog, sadakat vb.) için ayrı onam gereklidir
 
-**✅ Kolay Geri Çekme**
-- Tüm pazarlama e-postalarında bir tıklamayla geri çekme
-- Tüm oturum açmış müşterilere tercih merkezi erişimi
-- Geri çekme hemen etkili olur
+**✅ Kolay Çekilme**
+- Tüm pazarlama e-postalarında tek tıkla abonelikten çıkma
+- Tüm oturum açan müşteriler için tercih merkezi mevcut
+- Abonelikten çıkma anında geçerli olur
 
-**✅ Ücretsiz Onay**
-- Pazarlama için varsayılan devre dışı bırak (GDPR en iyi uygulama)
-- Ön tanımlı kutular yok (müşterilerin aktif olarak onay vermesi gerekir)
+**✅ Serbestçe Verilen Onam**
+- Pazarlama için varsayılan ayar opt-out'tur (GDPR en iyi uygulama)
+- Ön işaretli kutular yok (müşteriler aktif olarak opt-in yapmalıdır)
 
-**✅ Belirli ve Bilgilendirilmiş Onay**
-- Her tercihin ne kontrol ettiğini açıkça açıklar
-- Uygulama düzeyinde ince tercihler (hepsi ya da hiçbir şey değil)
+**✅ Spesifik ve Bilgilendirilmiş Onam**
+- Her tercihin neyi kontrol ettiğine dair açık açıklamalar
+- İnce ayarlı uygulama düzeyinde tercihler (hepsi veya hiç değil)
 
-**✅ Doğrulanabilir Onay**
-- Pazarlama e-postaları için çift onay
-- E-posta Çıktısı durumuyla denetim izi
+**✅ Doğrulanabilir Onam**
+- Pazarlama e-postaları için çift opt-in
+- EmailOutbox durum takibi ile denetim izi
 
-### TCPA Uyum (Amerika Birleşik Devletleri SMS Düzenlemeleri)
+### TCPA Uyumluluğu (ABD SMS Düzenlemeleri)
 
-Tüm SMS bildirimleri için **açık onay** gerekir:
+Tüm SMS bildirimleri **açık opt-in** gerektirir:
 
-- Müşterilerin aktif olarak SMS onay kutusunu işaretlemesi gerekir
-- Ön tanımlı kutular yasaktır
-- Onayın neye ait olduğunu açıkça açıklar
-- Tercih merkezinden kolayca geri çekme
-- Tüm SMS gönderimleri uyumluluk denetimi için kaydedilir
+- Müşteriler SMS opt-in kutusunu aktif olarak işaretlemelidir
+- Ön işaretli kutulara izin verilmez
+- Ne için opt-in yaptıklarına dair açık açıklama
+- Tercih merkezi üzerinden kolay opt-out
+- Uyumluluk denetimi için tüm SMS gönderimleri kaydedilir
 
-### CAN-SPAM Uyum (Amerika Birleşik Devletleri E-posta Düzenlemeleri)
+### CAN-SPAM Uyumluluğu (ABD E-posta Düzenlemeleri)
 
-Sistem, CAN-SPAM uyumluluğunu sağlar:
+Sistem CAN-SPAM uyumluluğunu sağlar:
 
-- Her pazarlama e-postasında bir geri çekme bağlantısı
-- Geri çekme hemen işlenir (10 iş günü içinde gerekli, biz hemen yaparız)
-- Açık "Kimden" adı (mağazanızın adı)
-- E-posta alt bilgisinde fiziksel adres
-- Yanlış yorumlama başlıkları yok
+- Her pazarlama e-postasında abonelikten çıkma bağlantısı
+- Abonelikten çıkma anında işlenir (10 iş günü içinde yapılması gerekir, biz anında yapıyoruz)
+- Açık "From" adı (mağazanızın adı)
+- E-posta altbilgisinde fiziksel adres
+- Yanıltıcı konu satırları yok
 
-## E-posta Çıktısı'nda E-posta Durumu Anlamı
+## EmailOutbox'ta E-posta Durumunu Anlama
 
-**E-posta Sistemi > E-posta Çıktısı** görüntülerken, tercihlerin e-posta gönderimini nasıl etkilediğini görebilirsiniz:
+**E-posta Sistemi > E-posta Gönderi Kutusu**'nu görüntülerken, tercihlerin e-posta teslimatını nasıl etkilediğini görebilirsiniz:
 
-| Durum | Anlaması | Neden |
+| Durum | Anlam | Neden |
 |--------|---------|--------|
-| **Beklemede** | E-posta gönderme için kuyuya girmiş | Tercihler bu e-posta gönderimini izin veriyor |
-| **Kuyuda** | Gönderme kuyusunda | Tercihler bu e-posta gönderimini izin veriyor |
-| **Atlandı** | E-posta gönderilmemiş | Müşteri tercihleri devre dışı bırakıldı |
+| **Beklemede** | Gönderim için kuyruğa alındı | Tercihler bu e-postaya izin veriyor |
+| **Kuyrukta** | Gönderim kuyruğunda | Tercihler bu e-postaya izin veriyor |
+| **Atlandı** | E-posta gönderilmedi | Müşteri tercihi devre dışı |
 | **Gönderildi** | Başarıyla teslim edildi | E-posta normal şekilde gönderildi |
 
-Bir e-posta **atlandı** olduğunda, `skip_reason` alanı nedenini gösterir:
+Bir e-posta **atlandığında**, `skip_reason` alanı nedenini gösterir:
 
-- **user_preference_disabled** — Müşteri bu e-posta türünü tercihlerde devre dışı bırakmış |
-- **email_not_verified** — Müşteri e-posta adresini doğrulamadı |
-- **email_disabled** — Müşteri tüm e-postaları devre dışı bırakmış (ana anahtar)
+- **user_preference_disabled** — Müşteri bu e-posta türünü tercihlerde devre dışı bıraktı
+- **email_not_verified** — Müşteri e-posta adresini doğrulamadı
+- **email_disabled** — Müşteri tüm e-postaları devre dışı bıraktı (ana anahtar)
 
-Bu denetim izi GDPR uyumluluğu için önemlidir — müşterilerin tercihlerine saygı duyduğunuzu kanıtlar.
+Bu denetim izi GDPR uyumluluğu için önemlidir — müşteri tercihlerine saygı gösterdiğinizi kanıtlayabilirsiniz.
 
-## Tercihler için Site Ayarları
+## Tercihler İçin Site Ayarları
 
-**Ayarlar > Site Ayarları**'na giderek küresel tercih varsayılanlarını yapılandırın:
+Küresel tercih varsayılanlarını yapılandırmak için **Ayarlar > Site Ayarları**'na gidin:
 
-**Pazarlama E-postaları için Çift Onayı Etkinleştir** (Varsayılan: Evet)
-- Pazarlama e-postaları göndermeden önce e-posta doğrulaması gerekir
+**Pazarlama E-postaları İçin Çift Opt-In'i Etkinleştir** (Varsayılan: Evet)
+- Pazarlama e-postaları göndermeden önce e-posta doğrulaması gerektirir
 - GDPR en iyi uygulama
 - Önerilen: Etkin bırakın
 
-**Pazarlama Varsayılan Durumu** (Varsayılan: Hayır - Devre Dışı Bırak)
-- Yeni müşterilerin kaydolduğu varsayılan durum
-- GDPR, varsayılan olarak devre dışı bırakmayı gerektirir
-- Önerilen: Devre dışı bırak (Yanlış) olarak bırakın
+**Varsayılan Pazarlama Opt-In Durumu** (Varsayılan: Hayır - Opt-Out)
+- Yeni müşteriler kayıt olduğunda varsayılan durum
+- GDPR varsayılan olarak opt-out gerektirir
+- Önerilen: Opt-out olarak bırakın (False)
 
-**Tercih Merkezi Etkinleştirildi** (Varsayılan: Evet)
-- Müşterilerin kendi tercihlerini yönetmelerine izin verir
-- GDPR'den geri çekme hakkını gerekir
+**Tercih Merkezi Etkin** (Varsayılan: Evet)
+- Müşterilerin kendi tercihlerini yönetmesine izin verir
+- GDPR'deki onamı geri çekme hakkı için gereklidir
 - Önerilen: Etkin bırakın
 
-**SMS Doğrulama Gerektir** (Varsayılan: Hayır)
-- SMS bildirimleri için telefon numarası doğrulaması gerekir
-- Opsiyonel ama yüksek hacimli SMS göndericiler için önerilir
-- Eğer SMS için çift onay istiyorsanız etkinleştirebilirsiniz
+**SMS Doğrulaması Gerektir** (Varsayılan: Hayır)
+- SMS bildirimleri için telefon numarası doğrulaması gerektirir
+- İsteğe bağlıdır ancak yüksek hacimli SMS göndericileri için önerilir
+- SMS için çift opt-in istiyorsanız etkinleştirilebilir
 
-**Ayrılma Nedenlerini Göster** (Varsayılan: Evet)
-- Müşterilerin ayrılması durumunda isteğe bağlı geri bildirim toplar
-- Neden müşterilerin ayrılması hakkında bilgi verir
-- Önerilen: Görsel analiz için etkin bırakın
+**Abonelikten Çıkma Nedenlerini Göster** (Varsayılan: Evet)
+- Müşteriler abonelikten çıktığında isteğe bağlı geri bildirim toplanır
+- Müşterilerin neden opt-out yaptığını anlamaya yardımcı olur
+- Önerilen: İçgörü için etkin bırakın
 
 ## En İyi Uygulamalar
 
-### 1. Pazarlama İçin Varsayılan Devre Dışı Bırak
+### 1. Pazarlama İçin Varsayılan Olarak Opt-Out
 
-Her zaman pazarlama iletişimlerini **devre dışı bırak** (işaretlenmemiş):
-- GDPR uyumluluğu sağlar
-- Müşterilerle güven kurar
+Pazarlama iletişimini her zaman varsayılan olarak **opt-out** (işaretlenmemiş) yapın:
+- GDPR'a uyumlu
+- Müşterilerle güven inşa eder
 - Spam şikayetlerini azaltır
-- Sadece etkileşimli müşterilere gönderin
+- Yalnızca etkileşimde bulunan müşterilere gönderin
 
-### 2. E-posta Doğrulamasını Zorunlu Kıl
+### 2. E-posta Doğrulaması Gerektirin
 
-**Çift Onayı** etkin tutun:
+**Çift Opt-In**'i etkin tutun:
 - E-posta adreslerinin geçerli olduğunu sağlar
-- Müşterinin gerçekten pazarlama e-postaları almak istediğini onaylar
-- Geri dönüş oranını azaltır
-- GDPR uyumluluğu için gerekli
+- Müşterinin gerçekten pazarlama e-postaları istediğini doğrular
+- Dönme oranını azaltır
+- GDPR uyumluluğu için gereklidir
 
-### 3. Tercihleri Anında Saygın Olun
+### 3. Tercihlere Anında Saygı Gösterin
 
-Bir müşteri tercihlerini değiştirdiğinde:
-- Değişiklikler anında etkili olur
-- Tercih önbelleği geçersiz kılınır
-- Bir sonraki e-posta gönderimi güncellenen tercihleri kontrol eder
-- Ayrılma taleplerine gecikme olmaz
+Tüm markdown biçimlendirmesini, görsel yollarını, kod bloklarını ve teknik terimleri koruyun. /no_think
 
-### 4. Atlanan E-postaları İzleyin
+Müşteri tercihlerini değiştirdiğinde:
+- Değişiklikler anında geçerli olur
+- Tercih önbelleği geçersiz hale gelir
+- Bir sonraki e-posta gönderimi güncellenmiş tercihleri kontrol eder
+- İptal isteklerinin hiçbir gecikme olmadan yerine getirilmesi gerekir
 
-**E-posta Çıktısı**'nı düzenli olarak kontrol edin:
-- Yüksek atlama oranı, müşterilerin ayrılıyor olabileceğini gösterir
-- E-posta içeriğinin geliştirilmesi gerektiğini belirtir
+### 4. E-Posta Atlamalarını İzle
+
+Düzenli olarak **E-Posta Gelen Kutusu**'nda atlanan e-postaları kontrol edin:
+- Yüksek atma oranı, müşterilerin tercih etmediklerini gösterir
+- E-posta içeriğinin geliştirilmesi gerektiğini gösterebilir
 - Tercih sorunlarını belirlemeye yardımcı olur
 
-### 5. Düzenli Uyum Denetimleri
+### 5. Düzenli Uyumluluk Denetimleri
 
-Uyum için tercihleri düzenli olarak aktarın:
-
+Daha fazla uyumluluk için tercihleri periyodik olarak dışa aktarın:
 1. **İletişim Tercihleri**'ne gidin
 2. Tüm müşterileri seçin
-3. **CSV'ye Tercihleri Aktar**'ı seçin
-4. GDPR uyumluluk denetim izi için kaydedin
+3. **Tercihleri CSV'ye Dışa Aktar** seçeneğini seçin
+4. GDPR denetimi için kaydedin
 
-**En az 3 yıl** boyunca aktarımları saklayın, GDPR veri saklama gereksinimlerini karşılamak için.
+GDPR veri saklama gerekliliklerine uyum sağlamak için dışarı aktarmaları **en az 3 yıl** saklayın.
 
-### 6. Açık İletişim
+### 6. Net İletişim
 
-Onay topladığınızda:
-- Basit dil kullanın, yasal jargon yerine
+Rıza toplarken:
+- Yargısal jargon yerine basit dil kullanın
 - Müşterilerin ne alacağını açıklayın
 - Sıklığı gösterin (günlük, haftalık, aylık)
-- Onay kutularını belirgin şekilde gösterin ama ön tanımlı değil
+- Rıza kutularını dikkat çekici ama önceden işaretli olmayan şekilde gösterin
 
-### 7. Tercihlere Göre Segmentasyon
+### 7. Tercihlere Göre Segmentleme
 
 Pazarlama kampanyaları gönderirken:
-- Sadece doğrulanmış ve onay vermiş müşterilere gönderin
-- Uygulama özel tercihlere saygı duyun (blog e-postaları göndermeyin, blogu devre dışı bırakmış müşterilere)
-- Sıklık tercihlerini kullanın (haftalık özeti abonelerine anında e-posta göndermeyin)
+- Sadece doğrulanmış, rıza edilmiş müşterilere gönderin
+- Uygulama özel tercihlerine saygı gösterin (blog e-postalarını blogu kapatmış müşterilere göndermeyin)
+- Sıklık tercihlerine uygun olarak gönderin (haftalık özeti alıcılarına anlık e-posta göndermeyin)
 
 ## İpuçları
 
-**💡 Göndermeden Tercihleri Kontrol Et**
+**💡 Göndermeden Önce Tercihi Kontrol Et**
 
-Sistem, `EmailSendingService.send_template_email()` kullanarak e-posta gönderdiğinizde otomatik olarak tercihleri kontrol eder. Tüm e-posta gönderimlerinin bu hizmeti kullanmasını, doğrudan SMTP çağrılarını kullanmaktan kaçının.
+Sistemin, `EmailSendingService.send_template_email()` kullanarak e-posta gönderirken tercihleri otomatik olarak kontrol ettiği doğrudur. Tüm e-posta gönderilerinin doğrudan SMTP çağrıları yerine bu hizmeti kullandığından emin olun.
 
-**💡 Atlanan E-postalar Normaldir**
+**💡 Atlanan Durum Normaldir**
 
-Çıktıda atlanan e-postaları endişelenmeyin — bu sistemün doğru çalıştığını ve müşteri tercihlerini saygı duymasını gösterir. Gereksiz e-postaları atmak, GDPR cezaları ya da spam şikayetleri riskini azaltmak daha iyidir.
+Müşteri tercihlerini yerine getirdiği için sistem çalışan bir durumdur. İstisnai e-postaları atlamak, GDPR cezalarına veya spam şikâyetlerine maruz kalmaktan daha iyidir.
 
-**💡 Tercih Önbelleği 5 Dakika**
+**💡 Tercih Önbelleği 5 Dakikadır**
 
-Tercih kontrolleri, performans için 5 dakika önbelleğe alınır. Müşteriler tercih merkezi ya da yönetici eylemleri ile tercihleri değiştirdiğinde, önbellek anında geçersiz kılınır ve değişiklikler hemen etkili olur.
+Tercih kontrolü performans için 5 dakika önbelleğe alınır. Müşteriler tercih merkezinden veya yönetici eylemlerinden tercihlerini değiştirdiğinde, değişiklikler hemen geçerli olacak şekilde önbellek hemen geçersiz hale gelir.
 
-**💡 Konuk Müşteriler Kontrolleri Atlar**
+**💡 Misafir Müşteriler Kontrollerden Kaçınır**
 
-Hesapsız konuk sipariş veren müşteriler tüm e-postaları normal şekilde alır, çünkü herhangi bir tercih kaydı yoktur. Bu amaçlıdır — ödeme sırasında e-posta adresini sağlayarak onlar açıkça abone olmuşlardır.
+Hesap sahibi olmayan müşteri (hesap yok) normalde tüm e-postaları alır çünkü tercih kayıtları yoktur. Bu amaçladır — e-posta adresini ödeme anında vermişlerdir.
 
-**💡 İşlem E-postaları Her Zaman Gönderilir**
+**💡 İşlemci E-Postaları Her Zaman Gönderilir**
 
-Sipariş onayları, sevkiyat güncellemeleri ve hesap güvenliği e-postaları **her zaman gönderilir**, tercihler ne olursa olsun. Bu, müşterilere siparişler ve hesaplar hakkında kritik bilgilerin ulaşmasını sağlar.
+Sipariş onayları, kargo güncellemeleri ve hesap güvenliği e-postaları **her zaman gönderilir** tercihlere bakılmaksızın. Müşterilerin siparişleri ve hesapları hakkında kritik bilgilere erişmelerini sağlar.
 
-**💡 Toplu Eylemleri Dikkatle Kullanın**
+**💡 Toplu Eylemleri Dikkatli Kullanın**
 
-"Tüm Pazarlamadan Ayrılma" toplu eylemi **tüm uygulamaları** (blog, sadakat, referanslar, ortaklık) etkiler. Sadece müşteri tamamen ayrılmak istediğini açıkça talep ettiğinde kullanın. Belirli tercihler için bireysel müşteri kayıtlarını düzenleyin.
+"Tüm Pazarlama’dan İptal Et" toplu eylemi, **tüm uygulamaları** (blog, sadakat, öneriler, ortaklık) etkiler. Bu eylemi, açıkça tümünden ayrılmak isteyen müşteriler için kullanın. Belirli tercihler için, bireysel müşteri kayıtlarını düzenleyin.
 
-**💡 Uyum İzini Denetleyin**
+**💡 Uyumluluk için Denetim İzni**
 
-Sistem izler:
-- Onay zaman damgası ve kaynağı
-- IP adresi ve kullanıcı ajanı
+Sistem şunları izler:
+- Rıza zaman damgası ve kaynağı
+- IP adresi ve kullanıcı aracı
 - E-posta doğrulama zaman damgası
-- Her tercih değişikliği E-posta Çıktısı atlandı durumuyla
+- E-Posta Gelen Kutusu'ndaki atma durumu aracılığıyla her tercih değişikliği
 
-Bu iz, GDPR uyumluluğunu kanıtlar, yetkililerin her zaman onay kanıtı talep etmesi durumunda.
+Yetkililerin herhangi bir zaman rıza kanıtını istemesi durumunda GDPR uyumluluğunu kanıtlar.
 
 ## İlgili Konular
 
-- [Müşteri Hesaplarını Yönetme](/help/managing-customer-accounts) — Müşteri profili yönetimi
-- [E-posta Yapılandırması](/help/email-configuration) — SMTP kurulumu ve e-posta şablonları
+- [Müşteri Hesaplarını Yönetme](/help/managing-customer-accounts) — Müşteri profil yönetimi
+- [E-Posta Yapılandırması](/help/email-configuration) — SMTP kurulumu ve e-posta kalıpları

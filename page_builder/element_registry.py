@@ -12,6 +12,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.cache import cache
+from django.db import DatabaseError
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 
@@ -346,7 +347,14 @@ class ElementRegistry:
         return result
 
     def discover_elements(self, force_reload: bool = False) -> None:
-        """Discover all available elements from the filesystem."""
+        """Discover filesystem elements and cache them.
+
+        Only filesystem-backed elements are cached and memoized here. Custom
+        elements are database-backed and are queried live per access (see
+        ``_current_registry``/``_merge_custom_elements``) so registry changes
+        take effect immediately and a transient database error cannot poison
+        the cached filesystem set.
+        """
         cache_key = REGISTRY_CACHE_KEY
 
         # Skip caching in DEBUG mode for immediate config updates during development
@@ -360,6 +368,12 @@ class ElementRegistry:
             if cached_data:
                 self._elements = cached_data.get("elements", {})
                 self._categories = cached_data.get("categories", {})
+                # Defensively strip any database-backed custom elements a prior
+                # build (or a still-running old process during a rolling deploy)
+                # may have baked into the cache. Custom elements are merged in
+                # live now; leaving stale ones here would keep deleted/inactive
+                # elements advertised until the cache TTL expired.
+                self._strip_cached_custom_elements()
                 self._loaded = True
                 return
         elif use_cache and self._loaded and not force_reload:
@@ -424,10 +438,8 @@ class ElementRegistry:
                 logger.error(f"Failed to load element {element_type}: {e}")
                 continue
 
-        # Discover custom elements from database
-        self._discover_custom_elements()
-
-        # Cache the results (production only)
+        # Cache the results (production only). Custom elements are deliberately
+        # excluded from the cache — they are merged in live on every access.
         if use_cache:
             cache_data = {"elements": self._elements, "categories": self._categories}
             cache.set(cache_key, cache_data, timeout=3600)  # Cache for 1 hour
@@ -437,8 +449,49 @@ class ElementRegistry:
             f"Element discovery complete. Found {len(self._elements)} elements in {len(self._categories)} categories."
         )
 
-    def _discover_custom_elements(self) -> None:
-        """Discover custom elements from element_builder database."""
+    def _strip_cached_custom_elements(self) -> None:
+        """Remove any custom (database-backed) elements from the loaded cache.
+
+        Custom elements are no longer cached; they are merged in live on every
+        access. Older caches — written by a previous build or by an old process
+        mid-deploy under the same cache key — may still contain ``custom_*``
+        entries and a ``custom`` category. Drop them so a deleted or deactivated
+        custom element is never served from a stale cache entry.
+        """
+        for element_type in [t for t in self._elements if t.startswith("custom_")]:
+            del self._elements[element_type]
+        self._categories.pop("custom", None)
+
+    def _current_registry(self) -> tuple[dict[str, ElementConfig], dict[str, list[str]]]:
+        """Return the live registry: cached filesystem elements plus a fresh
+        query of active custom elements.
+
+        Filesystem elements are discovered once and cached; custom elements are
+        merged into a fresh snapshot on every call so that database changes are
+        reflected immediately and a transient database failure never mutates or
+        poisons the cached filesystem set.
+        """
+        if not self._loaded:
+            self.discover_elements()
+
+        elements = dict(self._elements)
+        categories = {category: list(types) for category, types in self._categories.items()}
+        self._merge_custom_elements(elements, categories)
+        return elements, categories
+
+    def _merge_custom_elements(
+        self,
+        elements: dict[str, ElementConfig],
+        categories: dict[str, list[str]],
+    ) -> None:
+        """Merge active custom elements from the element_builder database.
+
+        Queried live on every access and never cached or memoized, so creating,
+        activating, deactivating, renaming, or deleting a CustomElement takes
+        effect immediately. A transient database error is not swallowed as an
+        arbitrary exception: it aborts only this merge and is retried on the
+        next access, leaving the cached filesystem registry intact.
+        """
         try:
             # Check if Django apps are ready before accessing database
             from django.apps import apps
@@ -448,76 +501,76 @@ class ElementRegistry:
                 return
 
             from element_builder.models import CustomElement
-
-            for custom_el in CustomElement.objects.filter(
-                is_active=True, root_element__isnull=False
-            ):
-                element_type = f"custom_{custom_el.slug}"
-
-                # Create a CustomElementConfig (wrapper around ElementConfig for DB elements)
-                config = CustomElementConfig(custom_el)
-
-                # Register the element
-                self._elements[element_type] = config
-
-                # Add to 'custom' category
-                if "custom" not in self._categories:
-                    self._categories["custom"] = []
-                self._categories["custom"].append(element_type)
-
-                logger.info(f"Registered custom element: {element_type}")
-
         except ImportError:
             logger.debug("element_builder app not installed, skipping custom elements")
-        except Exception as e:
-            logger.warning(f"Error discovering custom elements: {e}")
+            return
+
+        # A SimpleTestCase blocks all database access on its process-global
+        # connection with DatabaseOperationForbidden (an AssertionError, not a
+        # DatabaseError). Treat that exactly like an unavailable database:
+        # abort this merge and serve filesystem elements only.
+        from django.test.testcases import DatabaseOperationForbidden
+
+        try:
+            custom_elements = list(
+                CustomElement.objects.filter(is_active=True, root_element__isnull=False)
+            )
+        except (DatabaseError, DatabaseOperationForbidden) as e:
+            # A transient (or test-blocked) database failure must not be cached
+            # or persisted: skip the custom elements for this call only and
+            # retry on the next one.
+            logger.warning(f"Skipping custom element discovery, database unavailable: {e}")
+            return
+
+        for custom_el in custom_elements:
+            element_type = f"custom_{custom_el.slug}"
+
+            # Create a CustomElementConfig (wrapper around ElementConfig for DB elements)
+            elements[element_type] = CustomElementConfig(custom_el)
+
+            # Add to 'custom' category
+            custom_category = categories.setdefault("custom", [])
+            if element_type not in custom_category:
+                custom_category.append(element_type)
+
+            logger.info(f"Registered custom element: {element_type}")
 
     def get_element(self, element_type: str) -> ElementConfig | None:
         """Get a specific element configuration."""
-        if not self._loaded:
-            self.discover_elements()
-
-        return self._elements.get(element_type)
+        elements, _ = self._current_registry()
+        return elements.get(element_type)
 
     def get_all_elements(self) -> dict[str, ElementConfig]:
         """Get all registered elements."""
-        if not self._loaded:
-            self.discover_elements()
-
-        return self._elements.copy()
+        elements, _ = self._current_registry()
+        return elements
 
     def get_elements_by_category(self, category: str) -> list[ElementConfig]:
         """Get all elements in a specific category."""
-        if not self._loaded:
-            self.discover_elements()
+        elements, categories = self._current_registry()
 
-        element_types = self._categories.get(category, [])
+        element_types = categories.get(category, [])
         return [
-            self._elements[element_type]
-            for element_type in element_types
-            if element_type in self._elements
+            elements[element_type] for element_type in element_types if element_type in elements
         ]
 
     def get_categories(self) -> list[str]:
         """Get all available categories."""
-        if not self._loaded:
-            self.discover_elements()
-
-        return list(self._categories.keys())
+        _, categories = self._current_registry()
+        return list(categories.keys())
 
     def get_elements_for_visual_builder(self) -> dict[str, Any]:
         """Get elements formatted for the visual builder interface."""
-        if not self._loaded:
-            self.discover_elements()
+        elements, element_categories = self._current_registry()
 
         categories = {}
 
-        for category, element_types in self._categories.items():
+        for category, element_types in element_categories.items():
             category_elements = []
 
             for element_type in element_types:
-                if element_type in self._elements:
-                    element = self._elements[element_type]
+                if element_type in elements:
+                    element = elements[element_type]
                     category_elements.append(
                         {
                             "type": element.element_type,
@@ -536,8 +589,7 @@ class ElementRegistry:
 
     def get_element_metadata(self) -> dict[str, Any]:
         """Return minimal metadata (icon, name, defaults) for all elements, keyed by type."""
-        if not self._loaded:
-            self.discover_elements()
+        elements, _ = self._current_registry()
         return {
             etype: {
                 "icon": el.icon,
@@ -546,26 +598,25 @@ class ElementRegistry:
                 if hasattr(el, "config_data")
                 else {},
             }
-            for etype, el in self._elements.items()
+            for etype, el in elements.items()
         }
 
     def get_elements_for_sidebar(self) -> list[dict[str, Any]]:
         """Get elements formatted for the visual builder sidebar, ordered by category."""
-        if not self._loaded:
-            self.discover_elements()
+        elements, categories = self._current_registry()
 
         result = []
         processed_categories = set()
 
         # Process categories in display order
         for category_key, display_name in CATEGORY_DISPLAY_ORDER:
-            if category_key in self._categories:
-                element_types = self._categories[category_key]
+            if category_key in categories:
+                element_types = categories[category_key]
                 category_elements = []
 
                 for element_type in sorted(element_types):
-                    if element_type in self._elements:
-                        element = self._elements[element_type]
+                    if element_type in elements:
+                        element = elements[element_type]
                         category_elements.append(
                             {
                                 "type": element.element_type,
@@ -587,13 +638,13 @@ class ElementRegistry:
                 processed_categories.add(category_key)
 
         # Add any remaining categories not in display order
-        for category_key, element_types in self._categories.items():
+        for category_key, element_types in categories.items():
             if category_key not in processed_categories:
                 category_elements = []
 
                 for element_type in sorted(element_types):
-                    if element_type in self._elements:
-                        element = self._elements[element_type]
+                    if element_type in elements:
+                        element = elements[element_type]
                         category_elements.append(
                             {
                                 "type": element.element_type,

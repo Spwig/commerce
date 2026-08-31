@@ -3,12 +3,16 @@ Template tags and filters for header/footer widgets.
 """
 
 import json
+import logging
 import re
 from urllib.parse import urlparse
 
 from django import template
+from django.db import DatabaseError
 
 register = template.Library()
+
+logger = logging.getLogger(__name__)
 
 
 @register.filter
@@ -54,6 +58,11 @@ def parse_typography(value):
                 return value
             return ""
     else:
+        return ""
+
+    # Valid JSON can decode to non-dict values (list, str, None); only objects
+    # carry typography properties, so treat anything else as empty.
+    if not isinstance(typo, dict):
         return ""
 
     # Build CSS from JSON object
@@ -189,15 +198,28 @@ def get_payment_method_icons(config):
     methods = []
 
     if config.get("auto_detect"):
+        seen = set()
         try:
             from payment_providers.models import PaymentProviderAccount
 
             active_providers = PaymentProviderAccount.objects.filter(
                 is_active=True, connection_status="connected"
             )
-            seen = set()
             for provider in active_providers:
-                for country_methods in provider.enabled_payment_methods.values():
+                enabled = provider.enabled_payment_methods
+                if not isinstance(enabled, dict):
+                    logger.warning(
+                        "Skipping payment provider %s: enabled_payment_methods is not a dict",
+                        provider.pk,
+                    )
+                    continue
+                for country_methods in enabled.values():
+                    if not isinstance(country_methods, (list, tuple, set)):
+                        logger.warning(
+                            "Skipping malformed payment method list for provider %s",
+                            provider.pk,
+                        )
+                        continue
                     for method_slug in country_methods:
                         if method_slug not in seen and method_slug in PAYMENT_METHOD_ICONS:
                             icon_info = PAYMENT_METHOD_ICONS[method_slug]
@@ -210,8 +232,8 @@ def get_payment_method_icons(config):
                                 }
                             )
                             seen.add(method_slug)
-        except Exception:
-            pass
+        except (ImportError, DatabaseError) as exc:
+            logger.warning("Payment method auto-detection failed: %s", exc)
 
     # Also add manually configured methods (config.methods is a list of slugs)
     if config.get("methods"):
@@ -326,6 +348,16 @@ TRUST_BADGE_PRESETS = {
 }
 
 
+def _preset_to_badge(preset):
+    """Normalize a trust badge preset to the badge contract used by the template."""
+    return {
+        "icon": preset["icon"],
+        "title": preset["label"],
+        "description": "",
+        "image": "",
+    }
+
+
 @register.simple_tag
 def get_trust_badges(config):
     """
@@ -352,13 +384,13 @@ def get_trust_badges(config):
 
     # Legacy format: boolean flags
     if config.get("show_secure") or config.get("show_ssl"):
-        badges.append(TRUST_BADGE_PRESETS["secure_checkout"])
+        badges.append(_preset_to_badge(TRUST_BADGE_PRESETS["secure_checkout"]))
     if config.get("show_guarantee") or config.get("show_money_back"):
-        badges.append(TRUST_BADGE_PRESETS["money_back"])
+        badges.append(_preset_to_badge(TRUST_BADGE_PRESETS["money_back"]))
     if config.get("show_shipping"):
-        badges.append(TRUST_BADGE_PRESETS["free_shipping"])
+        badges.append(_preset_to_badge(TRUST_BADGE_PRESETS["free_shipping"]))
     if config.get("show_support"):
-        badges.append(TRUST_BADGE_PRESETS["support_24_7"])
+        badges.append(_preset_to_badge(TRUST_BADGE_PRESETS["support_24_7"]))
 
     return badges
 

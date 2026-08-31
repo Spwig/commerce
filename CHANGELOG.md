@@ -5,6 +5,236 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-08-31
+
+The biggest Spwig release yet. Its centrepiece is **Campaign Studio** — a
+complete email-marketing suite built right into the admin, so merchants can
+design, automate, send and measure marketing email (and stop paying a
+third-party service for it) without ever leaving Spwig. Around that headline,
+1.8.0 lands a large platform-wide **security-hardening** pass and a broad
+**stability and correctness** sweep — the great majority of both surfaced by
+Spwig's continuous automated code review and validated by the full test suite.
+
+Campaign Studio ships in **every edition, Community included** (email goes out
+through your own configured mail gateway), and is released as **Beta** while we
+gather real-world feedback.
+
+**Upgrading.** The normal update applies this release's new database migrations
+(in the new email-marketing app and the email subsystem) automatically — there
+are no manual migration steps and no breaking API changes. All public API
+additions are backward-compatible, and older SDK/integration clients are
+unaffected.
+
+### Added
+
+- **Campaign Studio — a complete email-marketing suite built into Spwig (Beta).**
+  Design, send, automate and measure marketing email without leaving the admin
+  or paying for a third-party service like Mailchimp. Available on every
+  edition, Community included; email goes out through your own mail gateway, so
+  your list and your sending stay yours. Reach it from the new **Campaign
+  Studio** entry in the Marketing menu.
+  - **Visual email builder.** Compose campaigns from drag-and-drop content
+    blocks — headings, text, images, buttons and layout structure — with shared
+    style, typography and colour controls that match the rest of the admin. A
+    live preview renders in your store's own theme, so an email looks the way it
+    will actually arrive.
+  - **Commerce blocks that pull in live store content.** Drop in real products,
+    a **discount code**, a **gift-card promotion**, or your latest **blog
+    posts**, chosen with built-in pickers — no copy-pasting links or prices.
+  - **Personalization.** Merge fields let you greet each recipient by name and
+    tailor content per contact, with safe handling so a stray field can never
+    break a send or leak data.
+  - **Audiences & segmentation.** Build dynamic segments with a visual rule
+    builder — targeting on customer activity and spend, subscriber tags, and
+    signals from **loyalty, affiliate and RFM** (recency/frequency/value)
+    data — and seed ready-made starter audiences in one click. Contacts unify
+    registered customers and anonymous leads in one list.
+  - **Grow your list from the storefront.** A storefront newsletter signup feeds
+    subscribers straight into Campaign Studio, and you can bulk-import existing
+    contacts from **CSV or Excel** (with names and tags).
+  - **A/B testing.** Test subject lines and content and let Campaign Studio pick
+    the winner automatically, with real statistical-significance scoring rather
+    than guesswork. A/B works across one-off sends, **recurring campaigns** (per
+    occurrence) and individual **journey steps**.
+  - **Triggered journeys.** A visual canvas builds multi-step automations with
+    branching logic, driven by real store events — **abandoned-cart recovery,
+    win-back for lapsing customers, post-delivery review requests, back-in-stock
+    follow-ups,** plus signup and order triggers. Journeys can be exported and
+    imported to share or reuse.
+  - **Recurring campaigns.** Schedule newsletters and digests that assemble
+    themselves — a "new since last send" mode surfaces only products and blog
+    posts added since the last edition, and a freshness policy can hold or skip
+    a send when there's genuinely nothing new to say.
+  - **Campaign analytics & revenue reporting.** Every campaign gets a report
+    with an engagement time series, a link-level click map showing exactly what
+    got clicked, and per-recipient activity. Campaign Studio also attributes
+    real **revenue, orders, average order value, revenue-per-email and ROAS**
+    back to each campaign (and to each journey), so you can see what your email
+    actually earns.
+  - **Deliverability & compliance built in.** One-click unsubscribe (RFC 8058
+    `List-Unsubscribe`), a visible unsubscribe footer on every campaign, DKIM
+    signing and an automatic plain-text version keep you the right side of inbox
+    rules and consent law. Every send is double consent-gated and honours the
+    customer's communication preferences.
+  - **Automatic list hygiene.** Bounces and spam complaints are ingested from
+    your provider and suppressed automatically — with soft-bounce thresholds and
+    a suppression dashboard — so you stop mailing dead or hostile addresses and
+    protect your sender reputation.
+
+- **More reliable email delivery under the hood.** The engine that sends every
+  message — order confirmations, password resets and now marketing campaigns —
+  was reworked to put transactional mail first: time-critical emails always take
+  priority over bulk campaigns, each sending account has its own per-minute
+  budget, and a retry-and-recovery sweep automatically re-sends anything left
+  stuck mid-flight. The result is steadier delivery and fewer surprises when a
+  big campaign and a rush of orders land at the same time.
+
+### Security
+
+1.8.0 is a large, platform-wide security-hardening release. The great majority
+of these fixes were surfaced by Spwig's continuous automated code review, then
+human-reviewed and validated by the full test suite. There are essentially no
+dependency changes in this release — this is hardening of Spwig's own code, not
+a dependency refresh.
+
+- **Richer storefront content is sanitized more strictly.** Spwig's content
+  sanitizer — which cleans merchant- and staff-authored rich text before it
+  reaches shoppers — now scrubs inline CSS against a strict allow-list of safe
+  styling properties and enforces real sandboxing on any embedded frame,
+  dropping frames that request the ability to break out of the sandbox, navigate
+  the top window, or spawn unsandboxed pop-ups. This closes several
+  cross-site-scripting and page-hijack vectors on marketing and content pages
+  that non-owner staff can edit.
+- **GDPR cookie-consent export is injection-safe.** Visitor-supplied fields in
+  the cookie-consent audit export (such as the browser user-agent) are now
+  neutralized so they can never be interpreted as a live formula when the
+  exported file is opened in a spreadsheet — closing a CSV/formula-injection
+  risk in a compliance export.
+- **Storefront search click-tracking respects ownership.** The search analytics
+  click endpoint now verifies that the caller actually owns the search it is
+  recording, so one shopper can no longer register activity against another's
+  search session. The same search surfaces now reject nonsensical numeric
+  input — non-finite or negative price filters and out-of-range result limits
+  are clamped or refused before they reach the database.
+- **Outbound webhooks and gateway callbacks are protected against server-side
+  request forgery.** Webhook destination URLs are validated — and re-validated
+  at delivery time — to reject internal, loopback, and cloud-metadata addresses,
+  closing an SSRF vector and defending against DNS-rebinding. Delivery-event and
+  bounce callbacks are now scoped to the account whose signature verified,
+  rate-limited, and size-capped, and the mail gateway's management key is only
+  ever sent to the operator-pinned trusted address.
+- **Email campaign subject lines can no longer run template code.** Campaign
+  personalization now flows exclusively through an allow-listed set of safe
+  merge fields (first name, store name, unsubscribe link, and so on) resolved by
+  plain text substitution, closing a server-side template-injection vector on
+  the subject line and keeping merged values escaped and header-injection-safe.
+- **Sensitive admin actions require the right permission, not just staff
+  access.** Operational and destructive management endpoints now gate on an
+  explicit permission rather than merely proving admin-site access,
+  login-required forms reject anonymous submissions, and the admin-path guard
+  correctly recognizes every supported language prefix so protection is never
+  bypassed by a locale in the URL.
+- **API tokens are scoped to their purpose.** The help-system's admin metadata
+  endpoint now accepts only tokens actually issued for the help system, so a
+  webhook or integration token can no longer read data outside its remit.
+- **Less sensitive data in logs, exports, and emails.** Crash/error reports now
+  redact sensitive request headers and values before they are recorded, an
+  internal debug context view escapes request-derived data, and
+  region-restricted products can no longer leak into an email sent from a store
+  whose home market doesn't sell them.
+- **Hardened input handling against denial-of-service.** Bulk subscriber imports
+  enforce their row cap while parsing (so a small, highly-compressible file
+  can't balloon into millions of rows), product-feed generation and webhook
+  payloads are bounded and cap their batch sizes, and numerous endpoints now
+  clamp or reject malformed, oversized, or negative parameters before acting on
+  them. Path-prefix matching was also tightened so an unrelated URL can no
+  longer be mistaken for a protected one.
+
+### Fixed
+
+- **Currency and locale correctness across the store.** A pass through the
+  currency and locale layer fixes a helper that ignored the currencies
+  configured in Site Settings, tightens the currency context, template tags,
+  endpoints and the supported-currency model, and corrects a language fallback
+  that previously hard-coded every language missing from the configured list —
+  so the currency selector, prices and translated language names all reflect
+  what the merchant actually set up.
+- **Merchant app sales figures read correctly.** In the Spwig Merchant mobile
+  app, the daily sales chart could show 0 while the headline total was correct,
+  because cross-currency orders without a stored conversion rate zeroed each
+  day's revenue; the daily breakdown now falls back the same way the headline
+  figure does. Product Performance and Top Products also now carry a
+  correctly-sized product thumbnail instead of a full-resolution image or none
+  at all.
+- **Exchange-rate refresh runs reliably.** Correctness fixes across the
+  exchange-rate providers (the scheduled rate fetch, the Fixer and Open Exchange
+  Rates integrations, the provider browse/admin screens and the rate API) make
+  automated currency-rate updates more dependable.
+- **Storefront search and search analytics.** A round of fixes to the search
+  service, fuzzy matching, the engine setup wizard and the analytics service —
+  including scoping the click-count query to only the terms actually shown —
+  makes on-site search more robust and its analytics counts accurate.
+- **Blog routing and rendering.** The catch-all single-segment blog URL no
+  longer shadows more specific blog routes, a custom blog template that
+  references an unknown or unmatched placeholder now degrades gracefully instead
+  of erroring, and a broad correctness pass lands across blog background tasks,
+  the setup wizard, serializers and the front-end and admin views.
+- **Page Builder element handling.** Element definitions with unexpected content
+  no longer crash the tooling, the element-validation command now exits with the
+  right status when it reports problems, the element registry refreshes
+  correctly, and a set of fixes hardens the Page Builder admin and its
+  middleware.
+- **Themes, header/footer and menu builders.** Syncing theme metadata no longer
+  fails when a server sends an empty value for a required field (the stored
+  value is preserved), a design cache-clearing path that left stale entries
+  behind is corrected, and reliability fixes land across CSS/token generation,
+  the header-and-footer models and admin, the menu builder API, and widget
+  preview and rendering.
+- **Media Library.** Setting up the built-in media presets no longer crashes on
+  a duplicate, rendering a submitted media-picker field no longer errors, and
+  the media services, serializers and video-conversion command get a round of
+  robustness fixes — so browsing, picking and converting media is more
+  dependable.
+- **Custom forms and product feeds.** The Form Builder (admin, API and template
+  tags) and the product-feed generator (feed service, admin and setup wizard)
+  each get a correctness pass, so custom forms behave predictably and product
+  feeds generate cleanly.
+- **Merchant dashboard and analytics.** A substantial reliability pass through
+  the merchant dashboard and its shop-analytics service, system-status and log
+  views, plus the SFTP and Dropbox storage providers used for backups, makes
+  dashboard figures and scheduled backups more dependable. Merchant dashboard
+  pages are also no longer misclassified as storefront pages by the caching
+  layer.
+- **WhatsApp notifications use the approved template.** The WhatsApp/SMS
+  template-send path was submitting a free-form message body instead of the
+  approved message template; it now sends a proper templated message, so
+  notifications deliver reliably outside the messaging session window.
+- **In-admin help centre and documentation.** Fixes across help search
+  (including regenerated semantic-search embeddings), the help views and
+  serializers, and the help sync/packaging/export commands, together with a
+  backfill of the translated help articles across every supported language and a
+  refreshed feature list, keep the built-in help accurate and complete.
+- **Platform-wide reliability pass.** Beyond the areas above, continuous code
+  review drove a large batch of small correctness and robustness fixes across
+  the platform core (settings, maintenance, error reporting, licence handling,
+  system checks and background tasks), GeoIP, the SEO generator and the webhook
+  serializers — individually minor, collectively a meaningful stability
+  improvement.
+
+### Changed
+
+- **Installer 1.4.2 — measured container memory limits.** Following 1.4.1, the
+  installer now sets memory limits from measured figures across a three-tier
+  layout, fixing an out-of-memory loop in the background worker and bounding the
+  standard tier so a busy install can't starve the host.
+- **API schema regenerated to match the code.** The versioned API contract
+  (`api-schema.yml` / `.json`) was regenerated over this release so the
+  published schema — which the SDK type generator reads — stays in lock-step
+  with the endpoints. Changes are additive; existing clients are unaffected.
+- **README trimmed.** The editions comparison table was removed from the README
+  in favour of a link to the Spwig starting-points, keeping the top-level docs
+  focused.
+
 ## [1.7.5] - 2026-08-24
 
 A maintenance release that smooths a few customer- and merchant-facing rough

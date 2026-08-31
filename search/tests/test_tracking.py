@@ -257,8 +257,13 @@ class TrackClickApiEndpointTest(TestCase):
     def setUp(self):
         _ensure_site_and_settings()
         self.client = APIClient()
+        # Establish a session for the client and attribute the query to it, so
+        # the ownership check in TrackClickAPIView authorizes the click.
+        self.session_key = self.client.session.session_key
         service = SearchService()
-        self.search_query = service.track_query(query="serum", result_count=1)
+        self.search_query = service.track_query(
+            query="serum", result_count=1, session_key=self.session_key
+        )
 
     def test_click_with_bare_model_name_succeeds(self):
         resp = self.client.post(
@@ -288,3 +293,66 @@ class TrackClickApiEndpointTest(TestCase):
             format="json",
         )
         self.assertEqual(resp.status_code, 400)
+
+    def test_click_against_foreign_query_is_forbidden(self):
+        """A caller must not forge a click against a query owned by another
+        visitor's session — the endpoint returns 403 and records no click."""
+        service = SearchService()
+        foreign_query = service.track_query(
+            query="foreign", result_count=1, session_key="someone-elses-session"
+        )
+        resp = self.client.post(
+            "/api/search/click/",
+            {
+                "search_query_id": foreign_query.id,
+                "content_type": "product",
+                "object_id": 77,
+                "position": 0,
+            },
+            format="json",
+        )
+        self.assertEqual(resp.status_code, 403)
+        self.assertFalse(
+            SearchClick.objects.filter(
+                search_query=foreign_query,
+                object_id=77,
+            ).exists()
+        )
+
+    def test_click_on_user_owned_query_requires_matching_user(self):
+        """A user-owned query cannot be claimed by a *different* authenticated
+        user, even when their session key matches. Ownership of a user-owned
+        query is decided by user id, not by a shared/reused session key."""
+        owner = User.objects.create_user(username="owner", password="pw-12345")
+        attacker = User.objects.create_user(username="attacker", password="pw-12345")
+
+        client = APIClient()
+        client.login(username="attacker", password="pw-12345")
+        # Establish the attacker's session, then attribute the owner's query to
+        # that same session key — reproducing the session overlap the previous
+        # OR-based check trusted.
+        client.get("/api/search/results/", {"q": "ab"})
+        shared_key = client.session.session_key
+
+        service = SearchService()
+        owned_query = service.track_query(
+            query="serum", result_count=1, user=owner, session_key=shared_key
+        )
+
+        resp = client.post(
+            "/api/search/click/",
+            {
+                "search_query_id": owned_query.id,
+                "content_type": "product",
+                "object_id": 99,
+                "position": 0,
+            },
+            format="json",
+        )
+        self.assertEqual(resp.status_code, 403)
+        self.assertFalse(
+            SearchClick.objects.filter(
+                search_query=owned_query,
+                object_id=99,
+            ).exists()
+        )

@@ -48,6 +48,15 @@ def endpoint_wizard(request):
             errors.append(_("Endpoint name is required"))
         if not url:
             errors.append(_("Webhook URL is required"))
+        else:
+            # Apply the same SSRF guard the API serializers use, so the admin
+            # wizard cannot be used to point a webhook at internal addresses.
+            from .serializers import check_webhook_target_url
+
+            try:
+                check_webhook_target_url(url)
+            except ValueError as exc:
+                errors.append(str(exc))
         if not events:
             errors.append(_("At least one event must be selected"))
 

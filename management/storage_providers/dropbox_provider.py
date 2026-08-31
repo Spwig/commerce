@@ -157,17 +157,40 @@ class DropboxStorageProvider(BaseStorageProvider):
         return path
 
     def _ensure_folder(self, dbx):
-        """Create the backup folder if it doesn't exist."""
+        """Create the backup folder, and any missing parents, if it doesn't exist.
+
+        Each path component is created in order so nested paths (e.g.
+        ``/Company/Spwig Backups``) work in an empty Dropbox, and an
+        existing-folder conflict is treated as success so concurrent
+        first-time operations don't fail.
+        """
         import dropbox
 
         folder = self._folder_path()
         try:
             dbx.files_get_metadata(folder)
+            return
         except dropbox.exceptions.ApiError as e:
-            if hasattr(e, "error") and e.error.is_path() and e.error.get_path().is_not_found():
-                dbx.files_create_folder_v2(folder)
-            else:
+            if not (
+                hasattr(e, "error") and e.error.is_path() and e.error.get_path().is_not_found()
+            ):
                 raise
+
+        current = ""
+        for part in folder.strip("/").split("/"):
+            current = f"{current}/{part}"
+            try:
+                dbx.files_create_folder_v2(current)
+            except dropbox.exceptions.ApiError as e:
+                # A concurrent creation or a pre-existing parent yields a
+                # path/conflict error; accept it only if the path is a folder.
+                if not (
+                    hasattr(e, "error") and e.error.is_path() and e.error.get_path().is_conflict()
+                ):
+                    raise
+                meta = dbx.files_get_metadata(current)
+                if not isinstance(meta, dropbox.files.FolderMetadata):
+                    raise
 
     def refresh_credentials_if_needed(self) -> dict[str, Any]:
         """Dropbox SDK handles token refresh automatically via the client."""

@@ -1,0 +1,75 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* New-Campaign wizard — the shared wizard-base.css supplies the stepper, form
+   controls, and navigation; this adds the type-selection cards and review list. */
+
+.em-type-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+}
+.em-type-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border: 2px solid var(--border-color, #e0e0e0);
+  border-radius: 12px;
+  background: var(--body-bg, #fff);
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+  text-decoration: none;
+  color: inherit;
+}
+.em-type-card:hover {
+  border-color: var(--link-fg, #417690);
+  transform: translateY(-2px);
+}
+.em-type-card.selected {
+  border-color: var(--link-fg, #417690);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--link-fg, #417690) 22%, transparent);
+}
+.em-type-card input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.em-type-icon {
+  font-size: 1.5rem;
+  color: var(--link-fg, #417690);
+}
+.em-type-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.em-type-desc {
+  font-size: 0.85rem;
+  color: var(--body-quiet-color, #666);
+  line-height: 1.4;
+}
+.em-type-card--link {
+  border-style: dashed;
+}
+
+.em-invalid {
+  border-color: var(--error-fg, #ba2121) !important;
+}
+
+/* Review list */
+.em-review {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 20px;
+  margin: 0;
+}
+.em-review dt {
+  font-weight: 600;
+  color: var(--body-quiet-color, #555);
+}
+.em-review dd {
+  margin: 0;
+}

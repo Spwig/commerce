@@ -176,6 +176,10 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
                 raise RateFetchError("Rate limit exceeded")
             else:
                 raise RateFetchError(f"HTTP error: {e.response.status_code}")
+        except (RateFetchError, CurrencyNotSupported):
+            # Preserve provider exceptions raised inside the try block instead of
+            # re-wrapping them as a generic RateFetchError below.
+            raise
         except Exception as e:
             logger.error(f"Unexpected error fetching rates: {e}")
             raise RateFetchError(f"Unexpected error: {str(e)}")

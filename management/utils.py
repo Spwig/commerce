@@ -2,7 +2,9 @@
 Management utilities for database, system monitoring, and file operations
 """
 
+import contextlib
 import os
+import re
 import subprocess
 import time
 from datetime import datetime
@@ -12,7 +14,7 @@ import tablib
 from django.conf import settings
 from django.contrib.sessions.models import Session
 from django.core.cache import cache
-from django.db import connection
+from django.db import connection, transaction
 from django.utils import timezone
 
 
@@ -76,11 +78,74 @@ class DatabaseManager:
             return cursor.fetchall()
 
     @staticmethod
+    def _strip_sql_strings(sql):
+        """Remove quoted string/identifier literals, SQL comments, and
+        dollar-quoted literals so the guard cannot be fooled by keywords or
+        semicolons hiding inside them (e.g. `SELECT 1 -- update statistics`
+        or `SELECT $$DELETE; DROP$$`)."""
+        result = []
+        i = 0
+        n = len(sql)
+        while i < n:
+            ch = sql[i]
+            # Line comment: -- ... up to end of line
+            if ch == "-" and i + 1 < n and sql[i + 1] == "-":
+                i += 2
+                while i < n and sql[i] != "\n":
+                    i += 1
+                continue
+            # Block comment: /* ... */ (PostgreSQL allows nesting)
+            if ch == "/" and i + 1 < n and sql[i + 1] == "*":
+                depth = 1
+                i += 2
+                while i < n and depth:
+                    if sql[i] == "/" and i + 1 < n and sql[i + 1] == "*":
+                        depth += 1
+                        i += 2
+                    elif sql[i] == "*" and i + 1 < n and sql[i + 1] == "/":
+                        depth -= 1
+                        i += 2
+                    else:
+                        i += 1
+                continue
+            # Dollar-quoted literal: $$...$$ or $tag$...$tag$
+            if ch == "$":
+                tag_end = None
+                if i + 1 < n and sql[i + 1] == "$":
+                    tag_end = i + 1
+                elif i + 1 < n and (sql[i + 1].isalpha() or sql[i + 1] == "_"):
+                    j = i + 2
+                    while j < n and (sql[j].isalnum() or sql[j] == "_"):
+                        j += 1
+                    if j < n and sql[j] == "$":
+                        tag_end = j
+                if tag_end is not None:
+                    tag = sql[i : tag_end + 1]
+                    end = sql.find(tag, tag_end + 1)
+                    i = n if end == -1 else end + len(tag)
+                    continue
+            # Single-quoted string / double-quoted identifier
+            if ch in ("'", '"'):
+                quote = ch
+                i += 1
+                while i < n:
+                    if sql[i] == quote:
+                        # A doubled quote is an escaped quote, not a terminator.
+                        if i + 1 < n and sql[i + 1] == quote:
+                            i += 2
+                            continue
+                        i += 1
+                        break
+                    i += 1
+                continue
+            result.append(ch)
+            i += 1
+        return "".join(result)
+
+    @staticmethod
     def execute_query(query, fetch_results=True, read_only=False):
         """Execute a SQL query safely"""
         if read_only:
-            import re
-
             stripped = re.sub(
                 r"^(/\*.*?\*/|--[^\n]*\n|\s)+", "", query.strip(), flags=re.DOTALL
             ).upper()
@@ -90,28 +155,54 @@ class DatabaseManager:
                     "error": "Only SELECT, EXPLAIN, SHOW, and WITH queries are allowed.",
                     "execution_time": 0,
                 }
+            # The prefix check alone is not enough: a stacked statement
+            # (`SELECT 1; DROP TABLE users`) starts with an allowed keyword yet
+            # still mutates the database. Reject stacked statements outright,
+            # inspecting the query with string/identifier literals removed so a
+            # semicolon hiding inside a literal cannot fool the split.
+            unquoted = DatabaseManager._strip_sql_strings(stripped)
+            if len([s for s in unquoted.split(";") if s.strip()]) > 1:
+                return {
+                    "success": False,
+                    "error": "Multiple SQL statements are not allowed in read-only mode.",
+                    "execution_time": 0,
+                }
         start_time = time.time()
         try:
-            with connection.cursor() as cursor:
-                cursor.execute(query)
-                execution_time = time.time() - start_time
+            # Authoritative enforcement: run inside a PostgreSQL READ ONLY
+            # transaction so the database itself rejects every data-modifying
+            # statement — including ones a text scan cannot detect, such as
+            # `SELECT nextval('seq')`, `SELECT ... INTO new_table`, or a
+            # side-effecting function call. The block is always rolled back,
+            # which costs nothing (read-only) and undoes the SET LOCAL should
+            # this run nested inside a surrounding request transaction.
+            read_only_tx = transaction.atomic() if read_only else contextlib.nullcontext()
+            with read_only_tx:
+                with connection.cursor() as cursor:
+                    if read_only:
+                        cursor.execute("SET LOCAL transaction_read_only = on")
+                    cursor.execute(query)
+                    execution_time = time.time() - start_time
 
-                if fetch_results and cursor.description:
-                    columns = [desc[0] for desc in cursor.description]
-                    rows = cursor.fetchall()
-                    return {
-                        "success": True,
-                        "columns": columns,
-                        "rows": rows,
-                        "execution_time": execution_time,
-                        "row_count": len(rows),
-                    }
-                else:
-                    return {
-                        "success": True,
-                        "execution_time": execution_time,
-                        "rows_affected": cursor.rowcount,
-                    }
+                    if fetch_results and cursor.description:
+                        columns = [desc[0] for desc in cursor.description]
+                        rows = cursor.fetchall()
+                        result = {
+                            "success": True,
+                            "columns": columns,
+                            "rows": rows,
+                            "execution_time": execution_time,
+                            "row_count": len(rows),
+                        }
+                    else:
+                        result = {
+                            "success": True,
+                            "execution_time": execution_time,
+                            "rows_affected": cursor.rowcount,
+                        }
+                if read_only:
+                    transaction.set_rollback(True)
+                return result
         except Exception as e:
             return {"success": False, "error": str(e), "execution_time": time.time() - start_time}
 
@@ -181,13 +272,33 @@ class DatabaseManager:
         try:
             db_settings = settings.DATABASES["default"]
             timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
+
+            # The backup name becomes a filesystem path component, so restrict it
+            # to a safe character set. This rejects path separators, `..`, and
+            # absolute paths, preventing the backup from escaping the backups dir.
+            if not re.fullmatch(r"[A-Za-z0-9._-]+", backup_name or ""):
+                return {
+                    "success": False,
+                    "error": "Invalid backup name. Use only letters, numbers, "
+                    "dots, hyphens, and underscores.",
+                }
+
             filename = f"{backup_name}_{timestamp}.sql"
 
             if compression == "gzip":
                 filename += ".gz"
 
-            backup_path = os.path.join(settings.MEDIA_ROOT, "backups", filename)
-            os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+            backups_dir = os.path.join(settings.MEDIA_ROOT, "backups")
+            os.makedirs(backups_dir, exist_ok=True)
+
+            # Defence in depth: confirm the resolved destination stays inside the
+            # backups directory even after symlink resolution.
+            backup_path = FileManager.safe_path(backups_dir, filename)
+            if backup_path is None:
+                return {
+                    "success": False,
+                    "error": "Invalid backup name.",
+                }
 
             # Determine how to run pg_dump
             use_docker = False
@@ -261,15 +372,30 @@ class DatabaseManager:
                             "success": False,
                             "error": f"pg_dump failed: {stderr.strip() or 'unknown error'}",
                         }
+                    # pg_dump can succeed while gzip fails (e.g. disk full),
+                    # leaving a truncated .gz. Treat a nonzero gzip exit as
+                    # failure and discard the partial output.
+                    if p2.returncode != 0:
+                        if os.path.exists(backup_path):
+                            os.remove(backup_path)
+                        return {
+                            "success": False,
+                            "error": "gzip compression failed while writing the backup.",
+                        }
             else:
-                result = subprocess.run(cmd, capture_output=True, text=True, env=cmd_env)
+                # Stream pg_dump straight to disk instead of buffering the whole
+                # dump in memory, which can exhaust worker memory on large DBs.
+                with open(backup_path, "w") as f:
+                    result = subprocess.run(
+                        cmd, stdout=f, stderr=subprocess.PIPE, text=True, env=cmd_env
+                    )
                 if result.returncode != 0:
+                    if os.path.exists(backup_path):
+                        os.remove(backup_path)
                     return {
                         "success": False,
                         "error": f"pg_dump failed: {result.stderr.strip() or 'unknown error'}",
                     }
-                with open(backup_path, "w") as f:
-                    f.write(result.stdout)
 
             file_size = os.path.getsize(backup_path)
 
@@ -420,10 +546,16 @@ class FileManager:
     @staticmethod
     def safe_path(base_path, requested_path):
         """Ensure requested path is within base path (security)"""
-        base = os.path.abspath(base_path)
-        requested = os.path.abspath(os.path.join(base, requested_path))
-        if requested == base or requested.startswith(base + os.sep):
-            return requested
+        # Resolve symlinks (not just `..` components) so a symlink under the
+        # base pointing outside it cannot slip a path past the containment check.
+        base = os.path.realpath(base_path)
+        requested = os.path.realpath(os.path.join(base, requested_path))
+        try:
+            if os.path.commonpath([base, requested]) == base:
+                return requested
+        except ValueError:
+            # Different drives / mixed path kinds — treat as outside base.
+            pass
         return None
 
 

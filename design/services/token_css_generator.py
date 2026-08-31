@@ -154,7 +154,7 @@ def generate_tokens_css(
         lines.extend(_generate_zindex_section(tokens["z-index"]))
 
     if "container" in tokens:
-        lines.extend(_generate_container_section(tokens["container"]))
+        lines.extend(_generate_container_section(tokens["container"], responsive_tokens))
 
     # Menu tokens (supports responsive values)
     if "menu" in tokens:
@@ -193,10 +193,6 @@ def generate_tokens_css(
         lines.extend(_generate_widgets_section(tokens["widgets"], responsive_tokens))
 
     lines.append("}")
-
-    # Add responsive container padding if container tokens exist
-    if "container" in tokens:
-        lines.extend(_generate_responsive_container())
 
     # Add responsive media queries for any responsive tokens
     lines.extend(_generate_responsive_media_queries(responsive_tokens))
@@ -259,8 +255,8 @@ def _get_base_value(responsive_value: dict) -> str:
 def _collect_responsive_values(css_var: str, responsive_value: dict, responsive_tokens: dict):
     """Collect responsive values into media query buckets."""
     for breakpoint, value in responsive_value.items():
-        if breakpoint in ("mobile", "sm"):
-            continue  # Base value, no media query needed
+        if breakpoint == "mobile":
+            continue  # Base (mobile-first) value, no media query needed
         min_width = VALID_BREAKPOINTS.get(breakpoint)
         if min_width:
             if min_width not in responsive_tokens:
@@ -547,8 +543,12 @@ def _generate_zindex_section(zindex: dict) -> list:
     return lines
 
 
-def _generate_container_section(container: dict) -> list:
-    """Generate container variables with --theme-container-{name} prefix."""
+def _generate_container_section(container: dict, responsive_tokens: dict) -> list:
+    """Generate container variables with --theme-container-{name} prefix.
+
+    Supports both flat values and responsive objects. Responsive values are
+    collected into responsive_tokens for media query generation.
+    """
     lines = [
         "  /* ==========================================================================",
         "     Container",
@@ -556,30 +556,18 @@ def _generate_container_section(container: dict) -> list:
     ]
 
     for key, value in container.items():
-        value = _transform_value_references(value)
-        lines.append(f"  --theme-container-{key}: {value};")
+        css_var = f"--theme-container-{key}"
+        if _is_responsive_value(value):
+            base_value = _transform_value_references(_get_base_value(value))
+            lines.append(f"  {css_var}: {base_value};")
+            transformed_value = {k: _transform_value_references(v) for k, v in value.items()}
+            _collect_responsive_values(css_var, transformed_value, responsive_tokens)
+        else:
+            value = _transform_value_references(value)
+            lines.append(f"  {css_var}: {value};")
 
     lines.append("")
     return lines
-
-
-def _generate_responsive_container() -> list:
-    """Generate responsive container padding media queries."""
-    return [
-        "",
-        "/* Responsive container padding */",
-        "@media (min-width: 640px) {",
-        "  :root {",
-        "    --theme-container-padding: 1.5rem;",
-        "  }",
-        "}",
-        "",
-        "@media (min-width: 1024px) {",
-        "  :root {",
-        "    --theme-container-padding: 2rem;",
-        "  }",
-        "}",
-    ]
 
 
 def _generate_menu_section(menu: dict, responsive_tokens: dict) -> list:

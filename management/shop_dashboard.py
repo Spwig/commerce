@@ -19,6 +19,24 @@ from setup_wizard.views import get_wizard_groups
 
 from .services import ShopAnalyticsService
 
+# Escape the characters that could otherwise break out of a <script> element,
+# mirroring Django's own json_script filter, so JSON containing user-controlled
+# analytics values (e.g. UTM strings) is safe to embed with |safe.
+_JSON_SCRIPT_ESCAPES = {
+    ord(">"): "\\u003e",
+    ord("<"): "\\u003c",
+    ord("&"): "\\u0026",
+}
+
+
+def _safe_json(obj):
+    """Serialize obj to JSON with <, >, and & escaped as Unicode escapes.
+
+    Produces output that cannot terminate a surrounding <script> tag when the
+    result is rendered into a template via |safe.
+    """
+    return json.dumps(obj).translate(_JSON_SCRIPT_ESCAPES)
+
 
 class ShopDashboardAdmin(admin.ModelAdmin):
     """
@@ -72,9 +90,15 @@ class ShopDashboardAdmin(admin.ModelAdmin):
             custom_start_str = request.GET.get("start_date")
             custom_end_str = request.GET.get("end_date")
             if custom_start_str:
-                custom_start = datetime.fromisoformat(custom_start_str)
+                try:
+                    custom_start = datetime.fromisoformat(custom_start_str)
+                except ValueError:
+                    custom_start = None
             if custom_end_str:
-                custom_end = datetime.fromisoformat(custom_end_str)
+                try:
+                    custom_end = datetime.fromisoformat(custom_end_str)
+                except ValueError:
+                    custom_end = None
 
         # Get date range
         try:
@@ -236,19 +260,19 @@ class ShopDashboardAdmin(admin.ModelAdmin):
             "shipment_summary": shipment_summary,
             "email_campaign_roi": email_campaign_roi,
             "sales_channel_performance": sales_channel_performance,
-            "sales_channel_performance_json": json.dumps(
+            "sales_channel_performance_json": _safe_json(
                 decimal_to_float(sales_channel_performance)
             ),
             "conversion_funnel": conversion_funnel,
-            "conversion_funnel_json": json.dumps(decimal_to_float(conversion_funnel)),
+            "conversion_funnel_json": _safe_json(decimal_to_float(conversion_funnel)),
             "traffic_source_analytics": traffic_source_analytics,
-            "traffic_source_analytics_json": json.dumps(decimal_to_float(traffic_source_analytics)),
+            "traffic_source_analytics_json": _safe_json(decimal_to_float(traffic_source_analytics)),
             "sales_over_time": sales_over_time,
-            "sales_over_time_json": json.dumps(decimal_to_float(sales_over_time)),
+            "sales_over_time_json": _safe_json(decimal_to_float(sales_over_time)),
             "top_products": top_products,
             "visitor_analytics": visitor_analytics,
             "views_over_time": views_over_time,
-            "views_over_time_json": json.dumps(decimal_to_float(views_over_time)),
+            "views_over_time_json": _safe_json(decimal_to_float(views_over_time)),
             "most_viewed_products": most_viewed_products,
             "visitor_geography": visitor_geography,
             "referrer_stats": referrer_stats,

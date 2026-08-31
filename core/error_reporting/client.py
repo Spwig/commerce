@@ -62,7 +62,7 @@ class ErrorReportingClient:
         from component_updates.models import UpdateServerConfig
 
         config = UpdateServerConfig.get_instance()
-        url = f"{config.server_url}/api/v1/error-reports/"
+        url = f"{config.server_url}/api/{config.api_version}/error-reports/"
 
         try:
             response = self.session.post(url, json=payload, timeout=30)
@@ -130,7 +130,7 @@ class BugReportClient:
         from component_updates.models import UpdateServerConfig
 
         config = UpdateServerConfig.get_instance()
-        url = f"{config.server_url}/api/v1/bug-reports/"
+        url = f"{config.server_url}/api/{config.api_version}/bug-reports/"
 
         try:
             response = self.session.post(url, json=payload, timeout=30)

@@ -77,17 +77,35 @@ class WidgetPreviewRenderer:
         from design.header_footer_models import Menu
 
         menu_id = config.get("menu_id")
-        if menu_id:
-            try:
-                menu = Menu.objects.prefetch_related("items").get(pk=menu_id)
-                context["menu"] = menu
-                context["menu_items"] = menu.get_items()
-            except Menu.DoesNotExist:
-                context["menu"] = None
-                context["menu_items"] = []
-        else:
+        if menu_id in (None, ""):
             context["menu"] = None
             context["menu_items"] = []
+            return
+
+        try:
+            # Coerce/validate the primary key up front so bad config
+            # ({"menu_id": "not-an-integer"} or {"menu_id": []}) is treated as a
+            # missing menu rather than raising ValueError/TypeError.
+            menu = Menu.objects.get(pk=int(menu_id))
+        except (Menu.DoesNotExist, ValueError, TypeError):
+            context["menu"] = None
+            context["menu_items"] = []
+            return
+
+        # Load every active item once, ordered, and build the parent/child tree in
+        # memory. Annotating each item's ``_visible_children`` (honoured by
+        # MenuItem.get_children/has_children) and deriving the top-level list from
+        # the same fetch avoids the per-item N+1 queries that menu.get_items() plus
+        # repeated has_children()/get_children() calls would otherwise issue.
+        items = list(menu.items.filter(is_active=True).order_by("order"))
+        children_by_parent = {}
+        for item in items:
+            children_by_parent.setdefault(item.parent_id, []).append(item)
+        for item in items:
+            item._visible_children = children_by_parent.get(item.id, [])
+
+        context["menu"] = menu
+        context["menu_items"] = children_by_parent.get(None, [])
 
     def _build_search_context(self, context, config, request):
         """Build context for search widget"""

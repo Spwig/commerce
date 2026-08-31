@@ -85,11 +85,11 @@
                 {% endif %}
 
                 <!-- Priority Badge -->
-                {% if rule.priority <= 3 %}
+                {% if rule.priority >= 8 %}
                     <span class="list-row-card-badge list-row-card-badge-warning">
                         <i class="fas fa-arrow-up"></i> {% trans "High Priority" %}
                     </span>
-                {% elif rule.priority >= 8 %}
+                {% elif rule.priority <= 3 %}
                     <span class="list-row-card-badge">
                         <i class="fas fa-arrow-down"></i> {% trans "Low Priority" %}
                     </span>

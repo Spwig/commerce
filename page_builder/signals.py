@@ -7,6 +7,7 @@ in ``visibility`` so a time-sensitive page can't be cached for its full timeout.
 The rule/group/membership receivers live in ``visibility.signals``.
 """
 
+from django.db import transaction
 from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.dispatch import receiver
 
@@ -20,11 +21,11 @@ from .models import Element
 # authoring time, so the extra invalidations are cheap.
 @receiver(post_save, sender=Element)
 @receiver(post_delete, sender=Element)
-def _bump_on_element_change(sender, **kwargs):
-    bump_visibility_config_version()
+def _bump_on_element_change(sender, using, **kwargs):
+    transaction.on_commit(bump_visibility_config_version, using=using)
 
 
 @receiver(m2m_changed, sender=Element.visibility_rules.through)
-def _bump_on_element_rule_link_change(sender, action, **kwargs):
+def _bump_on_element_rule_link_change(sender, action, using, **kwargs):
     if action in ("post_add", "post_remove", "post_clear"):
-        bump_visibility_config_version()
+        transaction.on_commit(bump_visibility_config_version, using=using)

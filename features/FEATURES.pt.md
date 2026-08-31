@@ -1,55 +1,53 @@
 # Spwig Features
 
-> 282 recursos · 20 categorias. Toda entrada é derivada de capacidades verificadas por código. Gerado automaticamente a partir do código-fonte do Spwig.
+> 274 recursos · 20 categorias. Toda entrada é derivada de capacidades verificadas por código. Gerado automaticamente a partir do código-fonte do Spwig.
 
 ## Categorias
 
-- [Catálogo de Produtos](#catálogo-de-produtos) (16)
+- [Catálogo de Produtos](#catálogo-de-produtos) (14)
 - [Configurador de Produto 3D](#configurador-de-produto-3d) (4)
 - [Carrinho e Finalização](#carrinho-e-finalização) (17)
 - [Pagamentos](#pagamentos) (13)
 - [Pedidos e Devoluções](#pedidos-e-devoluções) (7)
 - [Entrega e Fornecimento](#entrega-e-fornecimento) (10)
-- [Ponto de Venda](#ponto-de-venda) (23)
+- [Ponto de Venda](#ponto-de-venda) (26)
 - [Assinaturas e Recorrentes](#assinaturas-e-recorrentes) (9)
 - [Análise de Clientes](#análise-de-clientes) (15)
 - [Marketing e Crescimento](#marketing-e-crescimento) (39)
-- [E-mail e comunicações](#e-mail-e-comunicações) (13)
-- [Blog e Conteúdo](#blog-e-conteúdo) (11)
-- [Design e Loja](#design-e-loja) (16)
+- [E-mail e comunicações](#e-mail-e-comunicações) (10)
+- [Blog e Conteúdo](#blog-e-conteúdo) (12)
+- [Design e Loja](#design-e-loja) (14)
 - [Criador de Páginas](#criador-de-páginas) (9)
 - [Biblioteca de Mídia](#biblioteca-de-mídia) (5)
 - [Busca e Descoberta](#busca-e-descoberta) (7)
-- [Internacionalização](#internacionalização) (16)
+- [Internacionalização](#internacionalização) (15)
 - [Comércio Agente](#comércio-agente) (6)
 - [Empresarial e Segurança](#empresarial-e-segurança) (9)
-- [Plataforma e Administração](#plataforma-e-administração) (37)
+- [Plataforma e Administração](#plataforma-e-administração) (33)
 
 ## Catálogo de Produtos
 
 - **Produtos de Reserva** — Mercantores vendem marcos, aluguéis e eventos com regras de disponibilidade, precificação dinâmica, sinalizações, listas de espera, reagendamento, cancelamento e saída de calendário iCal.
-- **Preço e Finalização de Design Personalizado** — Um design configurado é precificado por superfícies, uploads, cliparts e texto, mantido como um rascunho de carrinho com tempo limitado, validado no carrinho e congelado na ordem durante o checkout.
 - **Validação de Campos Personalizados** — Os valores inseridos são verificados contra o tipo de cada campo, sinalizador de obrigatório, intervalos, opções e formatos, com relatório de erros por campo.
 - **Campos Personalizados** — Adicione seus próprios campos com tipo aos produtos, categorias, pedidos e clientes, organizados em grupos e ordenados conforme desejar.
-- **Modelos de Design** — Funcionários criam e gerenciam modelos prontos para uma produto, com travamento de elementos individuais para orientar as edições do cliente.
+- **Configuração do Editor de Design** — Os lojistas configuram alternadores do editor por produto, limites de upload, taxas de preço, superfícies de impressão e modelos de design reutilizáveis.
 - **Entrada de Dados de Campo & Exibição na Loja** — Funcionários entram com valores de campos personalizados nos registros, e os valores agrupados são exibidos na loja com rótulos selecionados e padrões aplicados.
 - **Lixeira de Campos & Recuperação** — Campos e grupos excluídos vão para uma lixeira onde os dados armazenados são retidos para recuperação, ou podem ser removidos permanentemente.
 - **Cartões-presente** — Mercantores emitem cartões-presente financiados e os aceitam como forma de pagamento no checkout com rastreamento de saldo, retenções, capturas e reembolsos.
 - **Gerenciamento de Chaves de Licença** — Mercantores geram automaticamente chaves de licença, impõem limites de ativação de dispositivos, validam licenças localmente ou por meio de provedores externos e notificam integrações sobre eventos de ciclo de vida.
-- **Configuração de Produto com Múltiplas Superfícies** — Funcionários definem superfícies de design por produto com dimensões, zonas, configurações de impressão/DPI, modelos e quais dos textos, uploads e cliparts são permitidos em cada um.
 - **Estoque em Múltiplos Armazéns** — Mercantores rastreiam estoque entre armazéns com alocação, cumprimento na expedição, verificação de disponibilidade, ajustes e um registro imutável de auditoria de movimentação.
-- **Arquivos para Cumprimento Pronto para Impressão** — Após o checkout, o design ordenado é composto por superfície em DPI alvo em arquivos de imagem prontos para impressão para produção.
-- **Editor de Design do Produto** — Clientes personalizam um produto em uma tela de pincelagem com texto, imagens carregadas, cliparts e fontes personalizadas dentro dos limites estabelecidos para cada superfície.
+- **Cumprimento Pronto para Impressão** — No checkout, o design do cliente é fixado ao pedido e renderizado em arquivos prontos para impressão na DPI alvo da superfície.
+- **Editor de Design do Produto** — Os clientes personalizam um produto em um canvas Fabric.js com texto, imagens enviadas, clipart e fontes personalizadas, com precificação ao vivo por design.
 - **Requisitos para Compra de Produtos** — Mercantores bloqueiam compras em produtos necessários que o cliente já possua ou tenha no carrinho, garantindo compatibilidade e caminhos de atualização.
-- **Designs de Clientes Salvos** — Clientes conectados salvam, recarregam e excluem seus próprios designs de produto nomeados em sessões.
+- **Designs de Cliente Salvos** — Clientes conectados salvam designs nomeados, os recarregam posteriormente e excluem os que não desejam mais.
 - **Reserva de Estoque** — Retenção temporária de estoque no nível do carrinho evita venda excessiva a partir do adicionar ao carrinho até o checkout, depois converte-se em alocação de ordem ou cumprimento via POS.
 
 ## Configurador de Produto 3D
 
-- **Configuração do Modelo de Produto 3D** — Anexe um modelo 3D a um produto configurável e armazene sua estrutura de cena analisada para configuração.
-- **Visualizador 3D & AR Interativo** — Mostre aos compradores um visualizador de produto 3D/AR interativo com câmera, iluminação configuráveis e um thumbnail da cena salva.
-- **Biblioteca de Texturas & Materiais** — Faça upload e gerencie ativos de imagem de textura que as opções de configuração aplicam ao modelo.
-- **Opções de Configuração Visual** — Linkar opções de configuração do produto a alterações visuais no modelo 3D: cores dos materiais, visibilidade de peças e geometria substituível.
+- **Visualizador de Produto 3D e AR** — Os compradores visualizam e giram o produto em um visualizador 3D configurável com câmera, iluminação, AR e miniatura gerada automaticamente.
+- **Gerenciamento de Ativos 3D** — Adicione, liste e exclua ativos de textura, geometria e mapeamento de opções de um produto, limitados a esse produto para evitar acesso cruzado.
+- **Configuração do Modelo 3D** — Envie um modelo GLB e o Spwig o analisa em um grafo de cena configurável, mantendo-o atualizado conforme o analisador é atualizado.
+- **Opções Visuais do Produto** — Vincule as opções de slots de configuração de um produto a mudanças visuais ao vivo — cor, textura, troca de peças e mostrar/ocultar partes do modelo.
 
 ## Carrinho e Finalização
 
@@ -112,162 +110,161 @@
 
 ## Ponto de Venda
 
-- **Integração de Leitores de Cartão** — Descubra, atribua e monitore leitores de cartão por terminal e envie telas de boas-vindas personalizadas para o dispositivo.
-- **Montagem de Carrinho e Pesquisa de Cliente** — Navegue pelo catálogo, adicione itens por código de barras/Código SKU, aplique cupons de promoção e anexe ou crie um cliente que entre diretamente.
-- **Conclusão de Venda e Pagamentos por Meios Diversos** — Conclua uma venda com dinheiro, cartão, terminal de cartão, cartão de presente e pagamentos por meios diversos, registrando os pagamentos.
-- **Exibição para o Cliente** — Atribua uma tela secundária voltada ao cliente a um terminal usando um código de associação giratório.
-- **Exibição para o Cliente** — Atribua uma tela secundária que mostre o carrinho em tempo real e o status de pagamento, mais slides promocionais da loja.
-- **Comprovantes Digitais** — Envie comprovantes de ordem aos clientes por e-mail, SMS ou WhatsApp.
-- **Pagamentos com Leitor de Cartão Integrado** — Efetue pagamentos com cartão por meio de um leitor de cartão integrado, criando, capturando e cancelando intenções de pagamento.
-- **Controle de Estoque** — Visualize o estoque e movimentações em locais diferentes e ajuste o estoque do armazém para recebimentos, danos, recontagens e devoluções.
-- **Fidelidade no Balcão** — Visualize os pontos e recompensas de fidelidade antes da venda e conceda os pontos ganhos em pedidos concluídos.
-- **Modo Offline e Sincronização** — Fila de vendas e ajustes de estoque enquanto offline e os reproduza de forma idempotente, mais busque deltas de dados para manter os terminais sincronizados.
-- **Carrinhos Estacionados** — Salve um carrinho em andamento, liste os carrinhos estacionados e restaure um deles mais tarde para atender múltiplos clientes.
-- **Carrinhos Estacionados** — Salve um carrinho em andamento, restaure-o mais tarde e limpe automaticamente os carrinhos estacionados após o seu vencimento.
-- **Comprovantes e Entrega Digital** — Aplique modelos de comprovantes da loja e envie comprovantes por e-mail, SMS, WhatsApp ou um link público de comprovante.
-- **Reembolsos e Anulações** — Reembolse pedidos do POS integralmente ou por item e cancele pedidos da mesma turna com reversão automática do total do turno.
-- **Relatórios de Vendas** — Visualize totais de vendas diárias do POS e métricas de produtos mais vendidos.
-- **Gestão de Turno e Gerenciamento de Dinheiro** — Abra e feche turnos com valor inicial, movimentações de dinheiro entrando/saindo e totais em andamento.
-- **Gestão de Turno** — Abra e feche turnos de atendentes com movimentações de dinheiro entrando/saindo e reconciliação entre o dinheiro esperado e o contado.
-- **Controles de Descontos para Funcionários** — Aplique descontos manuais por linha ou carrinho dentro dos limites por funcionário, com sobreposição de PIN do gerente para valores acima do limite.
-- **Controles de Descontos para Funcionários** — Impor limites de desconto por funcionário e exigir aprovação do PIN do gerente para descontos que os excedam.
-- **Login de Funcionário e Liberação Biométrica do Terminal** — Faça login de funcionários e libere terminais via biométrica WebAuthn, PIN ou cartão de funcionário com auditoria de bloqueio.
-- **Bloqueio e Desbloqueio do Terminal** — Bloqueie e desbloqueie terminais via PIN de atendente/gerente, cartão de funcionário, biométrica ou remoto, com registro completo de auditoria e regras de bloqueio.
-- **Gestão de Terminais** — Registre e emparelhe terminais de POS, retorne sua configuração e registre batidas.
-- **Configuração do Terminal e Emparelhamento de Dispositivos** — Registre terminais de POS, emita códigos de emparelhamento e verifique a conectividade com o provedor de pagamento antes de ir para a linha de frente.
+- **Desbloqueio Biométrico e Senha** — Desbloquear terminais com impressão digital/rosto WebAuthn, cartões de funcionários ou senhas, com bloqueio e escalada de gerente após falhas.
+- **Integração de Leitores de Cartões** — Descobrir, atribuir, marcar e realizar pagamentos com cartões em leitores de hardware, um por terminal.
+- **Exibição Voltada ao Cliente** — Servir a configuração atual do terminal, o modelo de recibo e as manchetes ativas de promoção a uma tela de cliente acoplada.
+- **Exibição Voltada ao Cliente** — Atribuir uma tela secundária a um terminal usando um código de associação numérico único e com tempo limitado.
+- **Entrega de Recibos Digitais** — Enviar recibos de pedidos por e-mail, SMS, WhatsApp e exibir uma página de recibo pública com token para o cliente.
+- **Perfis de Clientes In-Store** — Criar clientes que entram sem marcação e pesquisar perfis existentes com detalhes de pedidos e fidelidade.
+- **Pagamentos com Leitores Integrados** — Realizar pagamentos com cartão presente por meio de leitores conectados com criação, captura, cancelamento e verificação de status.
+- **Modo Offline e Sincronização** — Continuar vendendo offline com sincronização delta de catálogo e envio idempotente de vendas e ajustes de estoque em fila.
+- **Carrinhos Estacionados** — Salvar um carrinho de transação em andamento para atender outro cliente, listá-lo, restaurá-lo ou excluí-lo posteriormente.
+- **Carrinhos Estacionados** — Salvar um carrinho de transação em andamento para recuperação posterior e expirar automaticamente os carrinhos estacionados não restaurados.
+- **Aplicação de Carrinho e Cupons** — Montar carrinhos por produto ou código de barras com seleções de variações/blocos, limites de estoque e cupons de promoção aplicados.
+- **Catálogo e Pesquisa de Código de Barras** — Navegar e pesquisar produtos publicados com estoque no terminal-fábrica e resolver códigos de barras ou SKUs escaneados.
+- **Caixa e Pagamentos com Diversos Meios** — Concluir vendas in-loja pagas em dinheiro, cartão externo, cartão de presente ou uma combinação de meios, com troco e atualizações de estoque.
+- **Pontos de Fidelidade** — Consultar o nível e o saldo de um cliente, pré-visualizar pontos para uma venda e conceder pontos no checkout sem bloqueá-lo.
+- **Recibos Impressos e Digitais** — Gerar recibos de impressora térmica a partir do modelo do terminal e agendar recibos digitais por e-mail, SMS ou WhatsApp.
+- **Reembolsos e Anulações** — Processar reembolsos completos ou parciais e anular vendas da mesma turna, devolvendo estoque e ajustando totais de turna.
+- **Gestão de Turno e Caixa** — Abrir e fechar turnos de atendentes com dinheiro inicial/final, movimentações de caixa e reconciliação da gaveta.
+- **Gestão de Turno e Reconciliação de Caixa** — Abrir e fechar turnos de atendentes com caixa inicial, movimentações de dinheiro e reconciliação entre o esperado e o contado na gaveta.
+- **Controles de Descontos para Funcionários** — Aplicar descontos para funcionários dentro dos limites por funcionário e exigir aprovação de PIN de gerente quando os limites forem excedidos.
+- **Controles de Descontos para Funcionários** — Impor limites de desconto por funcionário, permitindo, recusando ou escalando descontos manuais para aprovação de PIN de gerente.
+- **Login de Funcionários e Controle de Acesso** — Autenticar funcionários com tokens e restringir endpoints do POS com verificações de licença e permissões nomeadas válidas.
+- **Ajustes de Estoque e Estoque entre Localizações** — Ajustar estoque de fábrica com movimentações auditadas e visualizar a disponibilidade de um produto em todas as localizações por distância.
+- **Bloqueio de Terminal e Desbloqueio de Funcionários** — Travar terminais e desbloqueá-los via senha de caixa/gerente, cartão registrado ou biometria, com regras de bloqueio, desbloqueio remoto e registro de auditoria.
+- **Gestão de Terminal** — Atribuir e cadastrar terminais, monitorar batida cardíaca e configuração, e bloquear/desbloquear dispositivos com eventos de desbloqueio auditados.
+- **Gestão de Terminal e Atribuição de Dispositivos** — Habilitar localizações de lojas de varejo e atribuir dispositivos de caixa com um código único que recupere sua configuração.
+- **Relatório de Vendas por Terminal** — Totais diárias por terminal para vendas líquidas/totais, estornos, quantidade de transações, valor médio e divisão por meio de pagamento.
 
 ## Assinaturas e Recorrentes
 
-- **Cancelamento e Reativação** — Cancele assinaturas imediatamente ou no final do período com motivos registrados, expire-as conforme o cronograma e reative assinaturas canceladas elegíveis dentro de uma janela definida.
-- **Recuperação de Pagamento Falhado (Dunning)** — Tenta automaticamente cobranças falhas com backoff, tenta pagar durante um período de graça e cancele somente após esgotar todas as tentativas de recuperação.
-- **Períodos de Teste** — Oferece períodos de teste que se convertem automaticamente em assinaturas pagas ativas quando o teste termina.
-- **Lembretes de E-mails da Vida** — Envie e-mails automatizados para o fim de testes, renovações em andamento e eventos de pagamento vinculados à atividade da assinatura.
-- **Pausa e Retomada** — Assinantes podem pausar uma assinatura ativa e retomá-la posteriormente, manualmente ou em uma data programada de retomada automática.
-- **Motor de Cobrança Recorrente** — Cobra os assinantes em cada ciclo de cobrança e processa eventos de webhook do provedor e eventos de fallback para manter o status da assinatura e os períodos sincronizados.
-- **Métodos de Pagamento Armazenados** — Tokenize com segurança os métodos de pagamento dos clientes, atualize uma carta em uma assinatura e exclua os tokens quando nenhuma assinatura ativa depender deles.
-- **Planos e Preços de Assinatura** — Publique planos e níveis de assinatura com preços recorrentes derivados do produto, descontos por nível e preços por quantidade que os clientes possam navegar e se inscrever.
-- **Aumentos, Reduções e Alterações Programadas** — Permita que os assinantes troquem de plano ou nível com cobranças proporcionais ou créditos, imediatamente ou programados para a próxima renovação, com a opção de cancelar uma alteração pendente.
+- **Histórico de Cobrança** — Os clientes podem visualizar um registro em ordem reversa de cobranças bem-sucedidas, falhas e repetições de assinaturas.
+- **Cancelamento e Reativação** — Cancele assinaturas imediatamente ou ao final do período, expire-as automaticamente e reative-as dentro de uma janela definida.
+- **Recuperação de Pagamento** — Tente automaticamente cobranças de assinatura falhas com backoff durante um período de graça para recuperar pagamentos em dia.
+- **Testes Grátis** — Oferece períodos de teste que se convertem automaticamente em assinaturas pagas e executam a primeira cobrança quando o teste termina.
+- **Pausa e Retomada** — Os clientes podem pausar uma assinatura ativa ou de teste e retomá-la posteriormente, manualmente ou em uma data de retomada programada.
+- **Mudanças de Plano e Adicionais** — Os clientes podem atualizar, reduzir ou agendar mudanças de plano com proporcionalidade e adicionar extras por ciclo a uma assinatura.
+- **Métodos de Pagamento Salvos** — Capture, atualize e remova com segurança o cartão reutilizável usado para cobranças recorrentes de um cliente.
+- **Lembretes de Assinatura** — Envie notificações aos clientes sobre o fim de testes, renovações em andamento e métodos de pagamento expirando.
+- **Assinaturas** — Venda produtos em planos recorrentes com preços em níveis, quantidade ou fixos, e cobre e crie pedidos de renovação automaticamente a cada ciclo.
 
 ## Análise de Clientes
 
-- **Recuperação de Carrinho Abandonado** — Detecta carrinhos abandonados, envia e-mails de recuperação em etapas e marca os carrinhos como recuperados.
-- **Análise de Coorte** — Agrupa clientes por aquisição e acompanha retenção por coorte, receita acumulada e LTV médio ao longo do tempo.
-- **Preferências de Comunicação e Consentimento** — Os clientes controlam quais mensagens de e-mail e SMS recebem, com confirmação dupla verificada e desinscrição em um clique, enquanto as mensagens transacionais permanecem protegidas.
-- **Contas de Clientes e Finalização como Convidado** — Compradores podem comprar como convidado e depois atualizar para uma conta completa, com registros de e-mail duplicados consolidados automaticamente.
-- **Análise de Clientes** — Agrega análises de clientes, incluindo receita por segmento, distribuição de risco de cancelamento e retenção por coorte.
-- **Notas de Clientes** — Permite que os funcionários registrem notas de clientes digitadas com requisitos de follow-up e as marquem como concluídas.
-- **Rastreador de Economias do Cliente** — Resume as economias realidas de vouchers, vendas e fidelidade do cliente e estima economias potenciais futuras.
-- **Segmentação de Clientes** — Atribui cada cliente ao segmento de maior prioridade que atenda aos critérios, com base em gastos, quantidade de pedidos e recência da compra.
-- **Valor Vitalício (LTV)** — Estima o valor vitalício de cada cliente usando métodos de RFM, coorte histórica e probabilístico (BG/NBD) com níveis de valor e risco de cancelamento.
-- **Status de Fidelidade** — Deriva o nível de fidelidade, pontos, progresso para o próximo nível e benefícios do nível do cliente com base em seus gastos.
-- **Insights de Inscrição e Padrões Recomendados** — Mercadores veem tendências de adesão à inscrição e recebem pontuações de engajamento baseadas em regras que sugerem a frequência certa de mensagens por cliente.
-- **Privacidade e Direitos de Dados (GDPR)** — Mercadores podem exportar ou apagar irreversivelmente os dados de um cliente e manter um registro imutável de cada alteração de preferência com limites de retenção.
-- **Recomendações de Produtos** — Classifica os produtos, categorias e marcas favoritas de um cliente e gera recomendações personalizadas em estoque.
-- **Avaliação RFM** — Avalia cada cliente com base em recência, frequência e valor monetário de seu histórico de pedidos entregues.
-- **Login Social** — Os clientes podem fazer login com Google, Apple e outros provedores, desde que os aplicativos OAuth da loja estejam configurados.
+- **Recuperação de Carrinho Abandonado** — Captura carrinhos abandonados, envia e-mails de recuperação com tempo definido e acompanha quais carrinhos foram recuperados.
+- **Análise de Coorte** — Agrupa clientes por mês de aquisição, canal e categoria de primeiro pedido e acompanha retenção, receita e LTV médio ao longo do tempo.
+- **Recomendações de Engajamento** — Cada cliente recebe uma pontuação de engajamento e uma frequência recomendada de mensagens baseada no histórico de compras, gastos e opt-in verificado.
+- **Centro de Preferências de Comunicação** — Os clientes controlam quais e-mails e SMS recebem por canal e por aplicativo, e a entrega é bloqueada para honrar essas escolhas e bloqueios de transação.
+- **Auditoria de Consentimento e Análise** — Toda alteração de preferência é registrada com fonte e IP, e tendências de opt-in e adoção são relatadas em um painel, com logs de auditoria removidos conforme um cronograma de retenção.
+- **Painel de Conta do Cliente** — Fornece aos clientes logados uma visão de autosserviço de estatísticas de pedidos, insights de gastos, economias, status de fidelidade e produtos favoritos.
+- **Painel de Análise do Cliente** — Agrega métricas de clientes, como receita por segmento, distribuição de risco de cancelamento, frequência de compras e retenção de coorte para funcionários.
+- **Privacidade de Dados do Cliente (GDPR)** — Os comerciantes podem exportar os dados de preferência e consentimento de um cliente ou anonimizar irreversivelmente o cliente, preservando os registros financeiros, com limites de retenção de auditoria aplicados.
+- **Notas do Cliente** — Permite que os funcionários registrem notas do cliente com datas de follow-up e rastreamento de conclusão.
+- **Segmentação de Clientes** — Atribui cada cliente a um segmento de maior prioridade que corresponda a ele com base em gastos, pedidos concluídos e recência de compra.
+- **Checkout como Convidado e Criação de Conta** — Compradores podem comprar como convidado e depois se tornarem titulares de conta, com registros duplicados para o mesmo e-mail mesclados automaticamente.
+- **Valor de Vida (LTV)** — Estima o valor atual e previsto de vida de cada cliente usando modelos de RFM, coorte histórica e probabilísticos, com níveis de valor e risco de cancelamento.
+- **Verificação de Opt-In (Email e SMS)** — Verificação de opt-in duplo por email e verificação de SMS TCPA-compatível confirmam o consentimento antes que mensagens de marketing sejam enviadas a um cliente.
+- **Recomendações de Produtos Personalizadas** — Sugere produtos em estoque para cada cliente a partir de suas categorias favoritas, histórico de compras e sinais de produtos relacionados.
+- **Avaliação RFM** — Avalia clientes com base em recência, frequência e valor monetário a partir de seu histórico de pedidos entregues.
 
 ## Marketing e Crescimento
 
-- **Selos de Conquista** — Membros ganham automaticamente selos quando atingem critérios de contagem de pedidos, gastos, sequência, horário ou indicação.
-- **Notificações e Relatórios de Afiliados** — Afiliados recebem e-mails conscientes do idioma para eventos de conta, associação, comissão e pagamento, mais um resumo de desempenho mensal.
+- **Crachás de Conquista** — Membros ganham automaticamente crachás quando atendem critérios de pedidos, gastos, avaliações, sequências, horários ou indicações.
+- **Notificações e Relatórios de Afiliados** — Afiliados recebem e-mails com orientação de idioma para eventos de conta, comissão e pagamento, mais um resumo de desempenho mensal.
+- **Pagamentos de Afiliados** — Comissões aprovadas são agregadas em pagamentos, solicitadas pelos afiliados ou geradas em lote, e pagas via PayPal ou Airwallex com rastreamento de status.
 - **Pagamentos de Afiliados** — Envie pagamentos de comissão de afiliados em lote único ou múltiplo por meio do PayPal ou Airwallex, com estimativas de taxas e chegada e cancelamento em andamento.
-- **Programas de Afiliados** — Crie e execute múltiplos programas de afiliados com comissões percentuais ou fixas, duração de cookies e limites mínimos de pagamento, e ative, pause ou arquive-os.
-- **Recrutamento e Aprovação de Afiliados** — Cadastre afiliados, deixe-os se inscreverem nos programas e aprova, suspenda, rejeite ou aprova automaticamente suas contas e associações.
+- **Programas de Afiliados** — Funcionários criam programas de afiliados com comissões fixas ou percentuais, duração de cookies e limites de pagamento e podem pausar ou arquivá-los.
+- **Cadastro e Aprovação de Afiliados** — Usuários se registram como afiliados, aplicam-se a programas e os funcionários aprovam, suspendem ou rejeitam afiliados e seus membros de programa.
 - **Preenchimento SEO Automático e em Lote** — Preencha automaticamente os metadados SEO em branco ao salvar, ou gere-os para muitos itens em um único lote.
-- **Sincronização Automática de Feed** — Os feeds são regenerados e enviados para os provedores em horários, diários ou semanais, com registro de sincronização e limpeza de feeds expirados.
 - **Geração em Lote e Importação/Exportação de Cupons** — Gere até 1.000 códigos únicos de uma vez e importe ou exporte lotes de cupons como CSV/XLSX.
-- **Comissões e Pagamentos** — Aprovar, rejeitar ou reverter comissões de afiliados e pagar os afiliados via PayPal ou Airwallex por meio de pagamentos baseados em limites ou solicitações de afiliados com rastreamento completo do status.
-- **Conexões de Canal de Feed** — Conecte e gerencie contas de provedores de mercado com credenciais criptografadas, teste de conexão, ativação/desativação e uma conta primária designada.
-- **Componentes do Provedor de Feed** — Instale e atualize componentes do provedor de mercado a partir do registro de componentes.
+- **Gerenciamento de Comissões** — Comissões são calculadas por pedido, aprovadas/rejeitadas/pagas por funcionários, revertidas em devoluções ou devoluções e incorporadas no saldo de cada afiliado.
+- **Histórico de Compartilhamento do Cliente** — Permita que clientes logados visualizem seus próprios totais, por plataforma e últimos compartilhamentos.
+- **Download de Feed** — Baixe o feed mais recente gerado para qualquer conta como um arquivo, com contagem de downloads e datas registradas.
+- **Pré-visualização e Validação de Feed** — Pré-visualize um feed de amostra antes da publicação e marque itens que estejam faltando campos necessários, como id, título, preço ou imagem.
+- **Detecção de Fraude e Revisão de Atribuição** — Avalia indicações para fraude, aplica regras de elegibilidade e aprova, rejeita ou expira atribuições automaticamente ou por funcionários antes que os prêmios sejam pagos.
 - **Cartões Presente e Crédito da Loja** — Emita cartões-presente com voucher, consulte o saldo e resgate contra pedidos até que o saldo seja gasto.
-- **Rastreamento de Link e Atribuição** — Afiliados geram links de rastreamento únicos cujos cliques são registrados e atribuídos a pedidos via cookies de última cliquagem, com limpeza automática de dados de clique expirados.
-- **Campanhas de Fidelidade** — Mercadores executam campanhas multietapa acionadas e programadas que concedem pontos, enviam e-mails, emitem recompensas, concedem selos ou movem membros entre segmentos.
-- **Pontos de Fidelidade** — Clientes ganham pontos em pedidos, ações e concessões manuais contra um livro de registros imutáveis com saldos precisos e reconciliados.
-- **Níveis de Fidelidade** — Membros são promovidos ou rebaixados entre níveis com base em pontos, gastos e pedidos, com um período de carência antes do rebaixamento.
-- **Feeds de Produtos do Marketplace** — Gere feeds de produtos para Google Shopping, Meta e outros mercados em RSS/XML, CSV/TSV ou JSON, com pré-visualizações e exportações baixáveis.
-- **Segmentos de Membros** — Membros são agrupados em segmentos manuais ou baseados em regras (por pontos, gastos, pedidos, recência e muito mais) para direcionamento de campanhas.
+- **Campanhas de Lealdade** — Campanhas baseadas em gatilhos, com etapas múltiplas, visam segmentos e níveis de membros para conceder pontos, enviar e-mails, emitir prêmios ou conceder crachás, com divisões A/B.
+- **Segmentos de Membros de Lealdade** — Segmentos dinâmicos reavaliam membros por nível, pontos, gastos, pedidos, AOV, recência, resgates e outras regras para direcionamento.
+- **Pontos e Prêmios de Lealdade** — Membros ganham pontos a partir de pedidos e ações em um livro de registros imutáveis e os resgatam para descontos, vouchers ou crédito de carteira.
+- **Níveis de Lealdade** — Membros são promovidos ou rebaixados entre níveis com base em pontos, gastos e quantidade de pedidos, com multiplicadores de ganho baseados no nível.
+- **Feeds de Produtos do Marketplace** — Gere feeds do Google Shopping, Facebook/Meta, RSS, XML, CSV/TSV e JSON Lines a partir do seu catálogo publicado, com filtros por categoria, estoque e preço por conta.
+- **Conexões com Provedores do Marketplace** — Conecte e gerencie contas do marketplace com um assistente de configuração guiada, credenciais criptografadas, teste de conexão e uma conta principal designada por loja.
 - **Contas do Provedor de Pagamento** — Conecte, teste, ative/desative, exclua e defina uma conta padrão para cada provedor de pagamento (PayPal, Airwallex).
 - **Componentes do Provedor de Pagamento** — Instale e atualize pacotes de componentes do provedor de pagamento a partir do servidor de atualizações com troca de versão.
 - **Status do Pagamento e Webhooks** — Receba e verifique a assinatura de webhooks do provedor, registre-os para auditoria e reconcilie cada pagamento para concluído, falho ou cancelado.
 - **Proteção de Credenciais do Provedor** — As credenciais do provedor são criptografadas em repouso e mascaradas nos logs.
-- **Atribuição e aprovação de indicações** — A primeira encomenda entregue de um cliente indicado é atribuída ao indicador, e cada atribuição pode ser aprovada, rejeitada ou expirar automaticamente após o período de revisão.
-- **Detecção de fraude em indicações** — Regras de elegibilidade e uma pontuação de risco de fraude de 0 a 100 analisam indicações, com atribuições de alto risco reanalisadas e rejeitadas automaticamente para bloquear abusos.
-- **Análise do funil de indicações** — Mercados veem totais do funil de indicações, conversões, valores de recompensa, melhores indicadores e estatísticas por indicador, com eventos antigos de baixo valor removidos conforme o plano de retenção.
-- **Links e convites de indicação** — Cada cliente recebe um link de indicação único e um código QR que pode ser compartilhado, e pode enviar convites por e-mail diretamente para amigos.
-- **Gerenciamento de recompensas** — Indicadores e, para programas de dois lados, os indicados recebem crédito na carteira, cupons ou benefícios que são emitidos, resgatados, expirados ou revogados automaticamente durante sua vida útil.
-- **Recompensas e resgates** — Membros resgatam pontos por recompensas ou descontos com checagem de estoque, códigos seguros, rastreamento de entrega e reembolsos de pontos em cancelamento ou expiração.
+- **Rastreamento e Análise de Funis de Indicação** — Rastreia cliques, registros e conversões de primeiro pedido por referidos com totais de funis, estatísticas de referidos principais e divisões de status.
+- **Links e Convites de Indicação** — Cada cliente recebe um link de indicação e um código QR único e pode convidar amigos por e-mail com uma mensagem pessoal.
+- **Prêmios de Indicação** — Emitir prêmios em ambos os lados como crédito de carteira, cupons ou benefícios e enviar e-mails aos participantes durante emissão, resgate, expiração e revogação.
+- **Sincronização de Feed Agendada** — Os feeds são regenerados e enviados aos provedores automaticamente em horários agendados, com limpeza de arquivos de feed expirados.
 - **Gerador de conteúdo SEO** — Gerar títulos, descrições e palavras-chave de meta para produtos, categorias, marcas, páginas e posts de blog.
 - **Cobertura e lacunas SEO** — Veja a completude SEO por tipo e geral e liste quais itens estão faltando ou têm problemas de comprimento.
 - **Integrações de provedor SEO** — Conecte, instale e atualize provedores SEO, com uma conta primária obrigatória por site.
-- **Rastreamento de compartilhamento** — Todo compartilhamento feito por um cliente logado ou convidado é validado e registrado com detalhes de plataforma, dispositivo e sessão.
-- **Recompensas e histórico de compartilhamento** — Clientes logados podem ganhar crachás de lealdade ao compartilhar e ver seu próprio histórico e totais de compartilhamento por plataforma.
-- **Painel de análise de compartilhamento** — Funcionários podem revisar totais de compartilhamento, tendências, distribuição por plataforma, conteúdo mais compartilhado e melhores compartilhadores, com busca e filtragem de eventos de compartilhamento individuais.
-- **Contagem de provas sociais de compartilhamento** — Páginas de loja podem exibir contagens de compartilhamento por plataforma e totais para cada produto ou item de conteúdo.
-- **Botões de compartilhamento da loja** — Clientes podem compartilhar produtos, categorias, posts de blog e páginas por meio de botões de compartilhamento configuráveis que os comerciantes ativam por tipo de conteúdo.
+- **Rastreamento de Compartilhamento** — Registre cada evento de compartilhamento de hóspede e de usuário logado e mantenha os totais por conteúdo e plataforma atualizados.
+- **Crachás de Compartilhamento para Ganhar** — Conceda automaticamente crachás de lealdade a membros quando eles compartilharem conteúdo da loja.
+- **Análise de Compartilhamento** — Forneça KPIs de compartilhamento, tendências, divisão por plataforma e conteúdo, além de relatórios pesquisáveis de contagem de compartilhamento e eventos de compartilhamento.
+- **Botões de Compartilhamento na Loja** — Mostre botões de compartilhamento configuráveis em produtos, categorias, posts de blog e páginas, com contagens de compartilhamento por plataforma em tempo real.
+- **Links de Rastreamento e Atribuição** — Afiliados aprovados geram links de rastreamento únicos; cliques definem cookies de atribuição e pedidos são creditados pelo último clique, com limpeza automática de cliques.
 - **Aplicação de cupons** — Clientes aplicam e removem códigos de desconto no checkout com regras de elegibilidade, sobreposição e valor mínimo aplicadas.
 - **Relatório de uso de cupons** — Veja contagens de uso por cupom, clientes únicos, descontos totais e médios, e resgates recentes.
 - **Cupons e descontos** — Crie códigos de desconto percentual, valor fixo ou cartão-presente com regras e restrições de uso.
 
 ## E-mail e comunicações
 
-- **Tradução de modelos por IA** — Modelos são traduzidos automaticamente para múltiplos idiomas com etapa de verificação manual/rejeição para controle de qualidade.
-- **Configuração de DNS e entrega** — Proprietários validam SPF/DKIM/DMARC em resolvers, recebem registros DNS recomendados, assinam com DKIM e-mails de saída e rastreiam histórico de validação.
-- **Fila de e-mails e entrega** — E-mails são agendados respeitando preferências do cliente, enviados pelo provedor da conta, agendados para depois e reenviados ou liberados quando retidos.
-- **Biblioteca de modelos de e-mail** — Proprietários de lojas ativam, clonam e renderizam modelos de e-mail transacionais com marca, com fallback do sistema sempre disponível.
-- **Newsletters** — Proprietários enviam um modelo de newsletter gerenciado por equipe para listas de destinatários resolvidos como e-mails individuais agendados.
-- **Rastreamento de abertura e cliques** — Proprietários veem quando e-mails são abertos e quais links são clicados, com tratamento seguro de redirecionamento e espaço para eventos de reclamação/bounce do provedor.
-- **Configuração de conta de envio** — Proprietários conectam um provedor de e-mail com credenciais criptografadas, testam a conexão e geram chaves DKIM antes de ir para produção.
-- **Consentimento e Envio Seguro de SMS** — Pular mensagens para clientes que se optaram por não receber por tipo de mensagem e bloquear o envio real para números não listados brancos enquanto estiver em modo sandbox.
-- **Mensagens SMS** — Enviar mensagens de texto simples ou baseadas em modelo para clientes por meio de um provedor de SMS configurado e acompanhar o estado de envio/delivered de cada mensagem.
-- **Componentes do Provedor de SMS** — Instalar e atualizar integrações de provedor de SMS pelo mercado de componentes, ativando a versão selecionada.
-- **Configuração do Provedor de SMS** — Adicionar e configurar contas de provedor de SMS/WhatsApp com credenciais validadas, criptografadas, teste de conexão e conta padrão por canal.
-- **Versionamento de Modelo** — Toda edição de modelo é salva em uma captura de tela, para que os responsáveis possam visualizar o histórico e voltar para qualquer versão anterior.
-- **Mensagens WhatsApp** — Enviar mensagens de modelo WhatsApp aprovadas previamente com parâmetros e acompanhar seu resultado na caixa de saída.
+- **Tradução de Modelo de Email** — Os comerciantes recebem modelos de email traduzidos automaticamente de acordo com o idioma do site, com verificação humana de cada tradução.
+- **Entregabilidade e Autenticação** — Os comerciantes validam SPF/DKIM/DMARC, recebem registros DNS recomendados, assinam com DKIM emails de saída e testam conexões com provedores.
+- **Rastreamento de Entrega** — Os comerciantes veem aberturas e cliques de emails por meio de pixels de rastreamento e links reescritos, com eventos de provedor para rejeições e reclamações.
+- **Atribuição de Link de Campanha por Email** — Links de emails de marketing são automaticamente etiquetados com parâmetros UTM e de atribuição, para que pedidos gerados por campanhas possam ser rastreados.
+- **Fila de Entrega de Email** — Emails são colocados na fila, agendados, enviados pelo provedor configurado, repetidos em caso de falha e podem ser retidos ou liberados.
+- **Modelos de Email** — Os comerciantes enviam emails transacionais e de marketing a partir de modelos localizados e estilizados com tema, que podem ser ativados, clonados e editados.
+- **Notificações por SMS** — Enviar SMS transacionais e com modelos para os clientes com substituição de variáveis e rastreamento do status de entrega.
+- **Configuração do Provedor de SMS** — Navegar, instalar, configurar, testar e atualizar provedores de SMS/WhatsApp com credenciais criptografadas e uma conta padrão por canal.
+- **Versão de Modelo** — Os comerciantes fazem snapshots das edições de modelo, revertam para versões anteriores e clonam modelos do sistema para personalizar de forma segura.
+- **Mensagens por WhatsApp** — Enviar modelos de WhatsApp aprovados previamente com parâmetros para os clientes e rastrear a entrega na caixa de saída.
 
 ## Blog e Conteúdo
 
-- **Importação e Exportação de Anúncios** — Exportar anúncios com seus ajustes de exibição, data de expiração, imagens, traduções e destinos de link, e importá-los em outra loja, atualizando ou removendo por título.
-- **Janelas Pop-up de Anúncios** — Abrir uma janela modal para um anúncio com seu corpo completo, imagem de banner ou de fundo e sobreposição, um link de ação resolvida e fechar por meio de botão, fundo ou tecla de escape.
+- **Caixas de diálogo de Anúncio** — Abra um modal com o corpo completo do anúncio e uma imagem exibida como banner ou fundo de sobreposição.
+- **Agendamento e Direcionamento de Anúncios** — Defina um prazo para que os anúncios parem de ser exibidos automaticamente, com ativação/desativação por anúncio e regras de visibilidade armazenadas.
 - **Posts de Blog e Modos de Conteúdo** — Criar, editar, publicar e despublicar posts de blog escritos em texto rico ou construídos com o construtor de páginas.
 - **Categorias e Tags** — Organizar posts com categorias hierárquicas e tags planas que os leitores podem navegar.
+- **Links Cliquáveis em Anúncios** — Linkar um anúncio a um produto, categoria, postagem de blog, página ou URL personalizada, ou deixá-lo não clicável.
 - **Assinantes por E-mail** — Os leitores se inscrevem com confirmação dupla e recebem e-mails de novos posts, resumos semanais ou mensais de acordo com suas preferências.
-- **Anúncios Multilíngues** — Exibir o título, corpo e texto do link do anúncio no idioma do comprador usando traduções armazenadas por idioma.
+- **Anúncios Multilíngues** — Exiba o título, corpo e texto do link do anúncio no idioma do visitante, usando traduções por idioma armazenadas.
 - **Engajamento do Leitor** — Mostrar o tempo estimado de leitura e posts relacionados, e acompanhar as contagens de visualizações por postagem.
 - **Feed RSS** — Publicar um feed RSS configurável de posts recentes com resumo ou conteúdo completo e envios de imagens-chave.
 - **Publicação Agendada** — Definir uma data e hora futuras para um post e tê-lo publicado automaticamente.
 - **Compartilhamento Automático nas Redes** — Conectar contas de redes sociais e compartilhar automaticamente posts ao publicar, com atualização de token e repetição de compartilhamentos falhos.
-- **Anúncios da Loja** — Exibir anúncios agendados, ordenados por prioridade para os compradores que se auto-escondem assim que expirarem, cada um vinculado a um produto, categoria, postagem de blog, página ou URL personalizada.
+- **Banners de Anúncio na Loja** — Mostre anúncios habilitados na zona de notificação da loja, ordenados por prioridade, com rotação e desistência por sessão.
 
 ## Design e Loja
 
-- **Cascata de Tokens de 4 Níveis** — Tokens de design resolvem em uma ordem de prioridade fixa (marca, tema, componente, sistema) para que as substituições fiquem previsíveis.
 - **Ações Automatizadas de Formulário** — Cada submissão pode disparar e-mails de resposta automática, e-mails de notificação para sua equipe e webhooks assinados para sistemas externos.
-- **Personalização da Marca** — Alterar cores, tipografia, espaçamento e tokens de componente sem código e visualizar o resultado antes da publicação.
+- **Personalização da Marca** — Substitua cores, tipografia e tokens de espaçamento sem código e veja-os compilados em uma folha de estilo de marca em cache.
+- **Mercado de Componentes e Embalagem** — Empacote, assine, valide, verifique e renderize componentes de loja instaláveis com imporção de posicionamento com base em níveis.
 - **Lógica Condicional** — Regras exibem, ocultam, exigem ou definem campos e etapas com base no que o visitante digita.
-- **CSS Personalizado** — Injetar trechos de CSS nomeados que são sanitizados para remover regras perigosas antes de chegarem à loja virtual.
-- **Modo Escuro** — Temas geram CSS de modo escuro com variantes responsivas que respondem à preferência do visitante pelo sistema.
+- **Cascata de Tokens de Design** — Tokens de design resolvem por meio de uma ordem de prioridade entre fontes de marca, tema e sistema com reconciliação atômica.
 - **Criador de Formulários** — Funcionários criam e editam formulários de múltiplas etapas em um construtor visual com campos reordenáveis e duplicação em um clique.
 - **Lixeira de Formulários** — Formulários excluídos são enviados para uma lixeira, onde os funcionários podem restaurá-los ou removê-los permanentemente.
-- **Criador de Cabeçalho e Rodapé** — Monte zonas de cabeçalho e rodapé com widgets usando predefinições do tema e visualize cada widget como ele será renderizado.
-- **Níveis de Segurança de Páginas** — Os níveis de página regem quais componentes e personalizações de token são permitidos em páginas sensíveis.
+- **Criador de Cabeçalho, Rodapé e Navegação** — Instale pré-configurações de cabeçalho/rodapé e visualize widgets e menus de navegação personalizados para o visitante atual.
+- **Níveis de Segurança da Página** — Regras por nível sanitizam HTML/CSS autorizados e controlam quais componentes e tokens são permitidos em cada página.
 - **Exportação de Respostas** — Baixe respostas concluídas como CSV com metadados de submissão e valores por campo.
 - **Proteção contra Spam** — Um campo de isca bloqueia envios de robôs no navegador; as configurações do reCAPTCHA são configuráveis, mas ainda não são impostas do lado do servidor.
 - **Submissões e Uploads de Arquivos** — Visitantes enviam formulários com campos obrigatórios validados e anexos de arquivos e podem salvar rascunhos parciais para terminar depois.
-- **Ferramentas para Desenvolvedores de Temas** — Crie temas em uma sessão isolada de desenvolvimento, estagie arquivos do SDK do Tema com compilação e validação de CSS em tempo real.
-- **Sistema de Temas** — Instale, ative e atualize pacotes de temas da loja, com predefinições e tokens integrados aplicados automaticamente.
-- **Componentes Confiáveis** — Componentes da loja são validados, assinados e verificados para integridade antes de serem renderizados, detectando modificações não autorizadas.
+- **SDK de Tema e Componente** — Sessões de desenvolvimento proprietárias permitem que os desenvolvedores enviem, validem, compilem e empacotem temas e componentes em um sandbox.
+- **Sistema de Tema** — Instale, ative, visualize e atualize pacotes de tema com versão que compilam em CSS ativo da loja.
 
 ## Criador de Páginas
 
-- **Criador de Elementos Personalizados** — Funcionários podem criar, nomear, listar, pesquisar, editar e excluir elementos personalizados reutilizáveis a partir de um construtor de administração.
-- **Rascunho, Publicação e Histórico de Versões** — Páginas são salvas como rascunhos numerados, publicadas com rastreamento de histórico e podem ser revertidas para qualquer instantâneo anterior.
-- **Vinculação de Dados Dinâmicos** — Vincule campos de conteúdo de elemento a dados de modelo em tempo real, para que os elementos renderizem valores reais de produtos e registros na loja virtual.
-- **Regras de Visibilidade de Elementos** — Mostre ou oculte elementos de página com base em geografia, usuário, dispositivo, horário, comportamento e condições comerciais combinadas em grupos de regras aninhadas AND/OR.
-- **Páginas Multilíngues** — Traduza conteúdo de página e elemento por idioma, via IA ou entrada manual, com texto-fonte mantido como recuperação.
-- **Configurações de Página & SEO** — Configure metadados por página, exigência de autenticação, cabeçalho/rodapé e configurações de design.
-- **Modelos de Página & Duplicação** — Crie novas páginas de rascunho a partir de modelos reutilizáveis ou duplique uma página existente com seus elementos aninhados.
-- **Editor Visual de Elementos** — Construa a estrutura de um elemento adicionando, movendo, editando e excluindo elementos aninhados com predefinições de layout de múltiplas colunas e visualização em tempo real da área de trabalho.
-- **Criador Visual de Páginas** — Funcionários constroem páginas da loja virtual a partir de elementos aninhados e reordenáveis que são renderizados na loja ativa, com miniaturas de visualização geradas automaticamente.
+- **Criador de Elemento Personalizado** — Componha visualmente elementos de página reutilizáveis a partir de primitivos, os organize em layouts de múltiplas colunas e visualize o resultado em uma tela de construção.
+- **Biblioteca de Elementos Personalizados** — Crie, nomeie, procure, filtre e gerencie uma biblioteca de elementos personalizados salvos para reutilização em toda a loja.
+- **Histórico de Versões de Rascunho e Publicação** — Todo o editável é salvo como um rascunho com versão que os comerciantes podem publicar, e qualquer versão anterior pode ser restaurada.
+- **Vinculação de Dados Dinâmicos** — Vincule o conteúdo do elemento a campos de modelo de loja em tempo real para que elementos personalizados renderizem dados de produto e catálogo atuais na loja.
+- **Páginas Multilíngues** — O conteúdo da página e do elemento é fornecido no idioma do visitante com recuperação para o idioma base quando uma tradução estiver ausente.
+- **Modelos de Página e Elemento** — Comerciantes criam novas páginas a partir de modelos reutilizáveis, duplicam páginas ou elementos inteiros e começam com páginas padrão fornecidas.
+- **Configurações da Página & SEO** — Comerciantes editam metadados da página, acesso, apresentação, tema, mídia e traduções, incluindo campos SEO por página.
+- **Regras de Visibilidade e Personalização** — Comerciantes mostram, ocultam ou personalizam elementos da página por visitante por regras incluindo acesso baseado em tempo e acesso exigindo login.
+- **Editor Visual de Página** — Comerciantes constroem e organizam o conteúdo da página adicionando, editando, reordenando, duplicando e excluindo elementos, com visualizações automáticas de páginas.
 
 ## Biblioteca de Mídia
 
@@ -289,80 +286,75 @@
 
 ## Internacionalização
 
-- **Tradução de Conteúdo por IA** — Mercadores traduzem produtos, páginas e outro conteúdo para idiomas ativos usando IA, com travamento por campo e controles de repetição ou cancelamento de trabalho.
-- **Moeda e Idioma Automáticos** — Sugere e armazena a moeda e o idioma certos por visitante com base no país detectado, com padrões por país.
-- **Atualizações Automáticas de Taxa** — Busca de taxa programada com suporte de provedor, seleção de prioridade de fonte e limpeza de taxas antigas armazenadas.
-- **Conversão de Moeda** — Converte valores entre moedas usando uma taxa resolvida com marcação opcional e arredondamento para moeda-alvo.
-- **Provedores de Taxa de Câmbio** — Conecta, instala, atualiza e gerencia provedores externos de taxa de câmbio, com um designado como fonte primária do site.
-- **Provedores Externos de Tradução** — Mercadores conectam e testam contas de provedor de tradução terceirizado com credenciais criptografadas.
-- **Regras de Negócio Geográficas** — Dispara ações como definir moeda, mostrar banners ou redirecionar com base no país, região, mobile e status de VPN do visitante.
-- **Gerenciamento de Provedor de GeoIP** — Permite que o pessoal configure, teste, ative e verifique a disponibilidade de provedores de geolocalização no admin.
-- **Detecção de Localização do Visitante** — Resolve o país, região e cidade de cada visitante a partir de seu IP com dica de navegador, classificação de robô/dispositivo e correção manual.
-- **Taxas de Câmbio de Ordem Trancadas** — Cada ordem registra a taxa resolvida exata e sua fonte, para que as ordens históricas mantenham sua conversão original.
-- **Taxas de Câmbio Manuais** — Defina, edite, ative, trave e gerencie em massa suas próprias taxas de par de moedas que prevalecem sobre as taxas dos provedores.
-- **Idiomas da Loja** — Mercadores ativam, desativam, ordenam e definem o idioma padrão para sua loja.
-- **Personalização de Texto na Loja** — Mercadores substituem, traduzem automaticamente, travam e importam/exportam qualquer string da interface da loja por idioma.
-- **Cobertura e Progresso de Tradução** — Mercadores veem quão grande conteúdo foi traduzido por idioma e acompanham o progresso de trabalho de tradução em lote antes e durante as execuções.
-- **Análise de Visitante e Tráfego** — Rastreia visualizações de página e sessões, depois relata KPIs do painel, tendências diárias, jornadas de sessão, atribuição de campanha e divisão por país/dispositivo.
-- **Retenção de Dados de Visitantes** — Exclui automaticamente registros antigos de visualizações de páginas e registros de visitantes obsoletos em janelas de retenção configuráveis, mantendo estatísticas agregadas.
+- **Tradução de Conteúdo por IA** — Traduzir produtos, páginas e outro conteúdo para outros idiomas usando modelos de IA locais, executados como trabalhos rastreados.
+- **Moeda e Idioma Automáticos** — Detecta o local de um visitante para sugerir a moeda e idioma certos, armazena as preferências escolhidas e permite que eles corrigirem um local incorreto.
+- **Atribuição de Tráfego de Campanha** — Agrupa contagens de visitantes, visualizações de páginas e páginas por sessão por UTM fonte, meio e campanha para atribuir tráfego a campanhas de marketing.
+- **Provedores Externos de Tradução** — Conectar e testar contas de provedores de tradução terceirizados com credenciais criptografadas como alternativa para modelos locais.
+- **Regras de Negócio Geográficas** — Dispara ações como definição de moeda, exibição de banner ou redirecionamento com base no país, região, dispositivo móvel ou status de VPN do visitante.
+- **Detecção de GeoIP** — Resolve cada IP do visitante para país, região e cidade por meio de uma cascata de provedores configuráveis, testáveis com detecção de VPN/proxy.
+- **Gerenciamento de Idiomas** — Ativar, desativar, reordenar e configurar em massa idiomas da loja, e permitir que os clientes mudem de idioma.
+- **Provedores de Taxa de Câmbio em Tempo Real** — Buscar e atualizar automaticamente as taxas de moeda de provedores externos em um horário programado, com prioridade de fallback de provedor e uma fonte primária única.
+- **Taxas de Câmbio de Ordem Trancadas** — Armazenar um instantâneo imutável da taxa de câmbio e sua origem em cada pedido para registros históricos e contábeis precisos.
+- **Taxas Manuais de Câmbio** — Definir e gerenciar suas próprias taxas de par de moedas, ativá-las ou desativá-las e travá-las para que sincronizações de provedor não as substituam.
+- **Conversão de Moedas Múltiplas** — Converter valores entre moedas usando taxas armazenadas em cache, manuais ou em tempo real com marcação opcional e arredondamento correto para a moeda-alvo.
+- **Relatório de Cobertura de Tradução** — Verificar a cobertura de tradução geral e por idioma em conteúdo, modelos de e-mail e strings da interface do usuário, e o trabalho necessário para concluí-lo.
+- **Trava de Tradução** — Travar campos específicos ou strings da interface por idioma para que traduções manuais nunca sejam sobrescritas por execuções automáticas.
+- **Tradução e Substituição de Strings da Interface** — Traduzir automaticamente as strings da interface da loja e substituir quaisquer uma delas por idioma, com importação/exportação de pacotes de tradução.
+- **Análise de Visitantes** — Registra visualizações de páginas e sessões, classifica robôs e dispositivos e relata tráfego diário, KPIs, jornadas de sessão e divisão por país/dispositivo com limpeza automática dos dados.
 
 ## Comércio Agente
 
-- **Verificação de Identidade do Agente** — Todo pedido do agente é verificado criptograficamente contra um diretório de chaves buscado antes de ser confiável.
-- **Controles de Confiança e Segurança do Agente** — Mercadores definem quem pode ler ou comprar, bloquear ou desbloquear agentes individuais, avaliar sua preparação e cancelar imediatamente o acesso de todos os agentes.
-- **Checkout Agente** — Agentes de IA podem montar um carrinho, adicionar endereços e envio, e concluir um checkout pago em nome do comprador.
-- **Descoberta de Agentes de Compras por IA** — Agentes de compras por IA podem descobrir, pesquisar e ler seu catálogo em tempo real por meio de pontos de extremidade UCP, ACP e MCP.
-- **Mandatos de Ordem Assinada** — Cada pedido de agente pago recebe um mandato AP2 assinado pelo comerciante atestando o valor e os itens, recuperável pelo agente proprietário.
-- **Cadeia de Verificação de Auditoria do Agente** — Todo evento do agente é anexado a uma cadeia de hash vinculada a HMAC, que pode ser reverificada para provar que não foi alterada.
+- **Controles de Identidade e Confiança do Agente** — Apenas agentes com assinatura criptográfica podem realizar transações, com verificação por agente, limites de gasto, limites de pagamento e controles de bloqueio.
+- **Checkout Agenciado** — Agentes de IA podem criar um carrinho, adicionar detalhes do comprador e endereço de envio e realizar ou cancelar um pedido repreçado e pago em nome do consumidor.
+- **Controles de Comércio Agenciado** — Ative ou desative o comércio agenciado por protocolo com um interruptor de emergência, uma verificação de preparação e um histórico de auditoria imutável de eventos do agente.
+- **Descoberta de Produtos pelo Agente de IA** — Agentes de compras de IA podem descobrir, pesquisar e ler seu catálogo em tempo real por meio de padrões UCP, ACP e MCP.
+- **Mandatos de Pagamento e Ordem Assinados** — Cada pedido de agente pago e sua etapa de pagamento são atestados com um mandato AP2 assinado e verificável.
+- **Gerenciamento de Chaves de Assinatura** — Gera, gira e substitui as chaves de assinatura de transporte e mandato da loja, publicando chaves públicas como JWKS para que os agentes as verifiquem.
 
 ## Empresarial e Segurança
 
-- **Controle de Acesso do Administrador** — Porta que determina quais áreas administrativas cada membro da equipe pode abrir com base em seus papéis, incluindo contas de leitura exclusiva e superusuários com permissões especiais.
-- **Provisionamento Automático de Usuários** — Login SSO pela primeira vez cria uma conta de equipe correspondente, e os nomes são mantidos sincronizados com as reivindicações do provedor em cada login.
-- **Configuração do Provedor de Identidade** — Armazena os pontos de extremidade, credenciais e mapeamentos de reivindicações de um provedor de OpenID Connect, com o segredo do cliente criptografado em repouso.
-- **Autenticação Única para Aplicativos Móveis** — Funcionários entram no aplicativo móvel de administração por meio do mesmo provedor de identidade, com emissão de token por dispositivo.
-- **Permissões de Funcionário do Ponto de Venda** — Controle quais funcionários podem usar o Ponto de Venda e quais ações e limites se aplicam, combinados em todos os papéis de um usuário para o login.
-- **Controle de Papel e Acesso** — Grupos de provedor de identidade definem permissões de funcionários e administradores, restringem o acesso de login a funcionários e atendem a MFA para usuários SSO.
-- **Autenticação Única (Web)** — Funcionários entram no admin por meio do seu provedor de identidade OpenID Connect existente, em vez de uma senha separada.
-- **Atribuição de Funcionários** — Adicione ou remova funcionários de um papel, com permissões de acesso atualizadas imediatamente.
-- **Papéis e Permissões de Funcionários** — Crie, edite, clone e exclua papéis de funcionários com níveis de acesso por categoria ou acesso total, mais oito papéis pré-definidos prontos.
+- **Controle de Acesso** — Todo acesso à área de administração e ação é controlado pelo papel de um funcionário, com acesso somente para visualização ou total, conforme a categoria de permissão.
+- **Provisionamento Automático de Funcionários** — Contas de funcionários são criadas na primeira entrada e seus nomes mantidos em sincronia com as reivindicações do provedor de identidade.
+- **Controle de Acesso Baseado em Grupo** — A participação no grupo do provedor de identidade determina quem recebe acesso de funcionário e superusuário, e bloqueia entradas de não-funcionários.
+- **Configuração do Provedor de Identidade** — Conecte qualquer provedor OIDC por meio de descoberta, com segredo do cliente criptografado em repouso e URLs de descoberta protegidas contra SSRF.
+- **Entrada do Admin por Mobile** — Funcionários entram no aplicativo móvel de administração pelo mesmo provedor de identidade em dispositivos registrados.
+- **Permissões de Funcionário do Ponto de Venda** — Controle quais funcionários podem acessar terminais de Ponto de Venda e quais ações eles podem realizar, resolvidas em todos os seus papéis atribuídos.
+- **Papéis e Permissões de Funcionários** — Defina papéis personalizados de funcionários com permissões granulares de administração e Ponto de Venda, incluindo configurações prontas como Dono da Loja, Gerente e Caixa.
+- **Entrada Única de Funcionários** — Funcionários entram no admin usando o provedor de identidade da sua empresa em vez de senhas separadas para as lojas.
+- **Atribuição de Membros da Equipe** — Adicione ou remova funcionários de papéis para controlar quem tem acesso a quê.
 
 ## Plataforma e Administração
 
-- **Remoção de Complementos** — Desinstale pacotes de idioma e utilitários, limpando seus dados e atualizando o registro.
-- **Importação de Tipos de Produto Avançados** — Leva em conta reservas, pacotes, cartões-presente, assinaturas, produtos configuráveis e complementos de produtos para seus tipos correspondentes de produto Spwig.
-- **Tokens de API e Controle de Acesso** — Acesso programático é bloqueado por tokens com escopos de leitura/escrita, restrições de tipo e IP, data de expiração e registro de uso.
-- **HTTPS Automático (Let's Encrypt)** — Certificados Let's Encrypt gratuitos são emitidos por meio de validação HTTP e renovados automaticamente para que a loja permaneça em HTTPS.
-- **Repetições Automáticas e Integridade do Ponto de Extremidade** — Entregas falhas repetem com backoff exponencial, pontos de extremidade com problemas são desativados automaticamente e administradores podem repeti-los ou reativá-los manualmente.
-- **SSL Próprio** — Faça o upload de seu próprio certificado PEM e chave, ou use um certificado autoassinado gerado, e o utilize imediatamente.
-- **Marketplace de Componentes** — Navegue pelo catálogo de componentes disponíveis do servidor de atualizações e os instale na loja.
-- **Marketplace de Componentes** — Navegue, filtre e instale temas, widgets e componentes de provedor do marketplace Spwig com o status de instalação local exibido.
-- **Avaliações e Classificações de Componentes** — Leia avaliações de componentes do marketplace e envie sua própria classificação de 1 a 5 estrelas com título e comentário.
-- **Atualizações de Componentes** — Mantenha os componentes instalados atualizados verificando novas versões, verificando, instalando e ativando-as por meio de canais de atualização.
-- **Reparo de Link e Imagem de Conteúdo** — Varra o HTML de produtos, blogs e categorias migrados para redefinir hiperlinks internos para seus novos alvos Spwig e baixar imagens inline para a biblioteca de mídia.
-- **Consenso de Cookies e Auditoria GDPR** — As escolhas de cookies dos visitantes são normalizadas, classificadas e armazenadas como um registro auditável de consentimento GDPR.
-- **Conexão de Domínio Personalizado** — Aponte seu próprio domínio para sua loja, verifique a posse e volte para o subdomínio myspwig.com padrão a qualquer momento.
-- **Logs de Entrega e Estatísticas de Saúde** — Visualize registros de entrega filtráveis e taxa de sucesso, tempo de resposta e saúde por ponto final, com registros antigos automaticamente limpos segundo um cronograma de retenção.
-- **Teste de Ponto Final e Modo Sandbox** — Envie um evento sintético para verificar a acessibilidade e o tempo, e bloquee entregas externas enquanto estiver no modo sandbox.
-- **Relatório de Erros e Bugs** — Erros do lado do backend e frontend são capturados, deduplicados por impressão digital e os relatos de bugs dos comerciantes são transmitidos para o servidor de atualizações para suporte.
-- **Entrega Direcionada por Eventos** — Eventos da loja são embalados e enviados para cada ponto final inscrito, de forma síncrona ou em segundo plano.
-- **Controle de Trabalho de Importação e Recuperação** — Cancele, tente novamente ou redefina trabalhos de importação, execute novamente itens individuais que falharam, recupere trabalhos cujo trabalhador foi encerrado e limpe os registros de trabalhos concluídos.
-- **Centro de Ajuda e Pesquisa na Loja** — Mercadores e funcionários encontram respostas por meio de pesquisa de palavras-chave e semântica, com sugestões conscientes do contexto, rastreamento de visualizações e feedback sobre a utilidade.
-- **Verificação de Assinatura de Entrada** — Webhooks recebidos são autenticados com uma verificação de assinatura HMAC constante e com data, e rejeitados se inválidos ou obsoletos.
-- **Gerenciamento de Licença** — Busque e verifique uma licença recém-assinada e segredos do servidor de atualizações e persista os dados da licença atualizados.
-- **Integridade de Licenciamento e Instalação** — O consentimento da licença é registrado, a identidade da instalação é verificada quanto a adulteração com uma impressão digital HMAC, e segredos da plataforma são renovados automaticamente antes da expiração.
-- **Reversão de Migração** — Reverta uma importação ou sincronização da loja dentro de sua janela de reversão, removendo os registros que ela criou, mas mantendo as linhas que você dependeu desde então.
-- **Compra de Componentes Pagos** — Veja quais componentes pagos a licença da loja permite e obtenha um link de compra no spwig.com para os demais.
-- **Assinatura de Payload e Segredos** — Todo payload de saída é assinado com HMAC-SHA256 e segredos de ponto final podem ser girados conforme necessário.
-- **Atualizações da Plataforma** — Verifique e execute atualizações de versão completa da plataforma com verificações iniciais, verificação de pacotes e janelas de atualização programadas hospedadas.
-- **Notificações de Vendas em Tempo Real** — Eventos de vendas, reembolsos e cadastro de desenvolvedores são adicionados a um log de evento de Bell de Vendas somente para HQ para monitoramento em tempo real.
-- **Correções de Segurança** — Detecte correções de segurança faltantes para a versão atual da plataforma e as aplique ou reverta.
-- **Seleção de Moeda do Comprador** — Visitantes podem escolher uma moeda suportada para sua sessão, validada contra as moedas configuradas no site.
-- **Exclusão Suave e Recuperação** — Registros são ocultados na exclusão, mas mantidos, para que objetos excluídos acidentalmente possam ser restaurados inteiros.
-- **Monitoramento de SSL** — Monitore o domínio, emissor, data de expiração e validade de cada certificado, com renovação automática antes que os certificados sejam expirados.
-- **Assistente de Migração de Loja** — Importar produtos, categorias, clientes e pedidos do WooCommerce, Shopify, Magento ou CSV com mapeamento de campos e transformação de valores.
-- **Configurações da Loja e Validação de Configuração** — Configurações globais do site são mantidas como um único registro autoritativo e rejeitam alterações incompatíveis, como desativar modos de armazém ou moeda em uso.
-- **Sincronização entre Lojas** — Migrar configurações ou dados completos entre duas lojas Spwig por meio de pontos de extremidade autenticados por token, incluindo transferência de mídia.
-- **Dispositivos Confiáveis e Lembrete de 2FA** — Usuários podem marcar um dispositivo como confiável para pular a 2FA até que expire ou seja revogado, com limpeza automática de dispositivos expirados e revogados.
-- **Reversão de Atualizações e Recuperação** — Reverter componentes ou correções para uma versão funcional anterior, com verificações de saúde pós-instalação e travas de atualização para garantir a estabilidade.
-- **Pontos de Extremidade de Webhook** — Criar, editar, ativar e excluir pontos de extremidade de webhook e escolher quais eventos da loja cada um se inscreve.
+- **Importação de Tipo de Produto Avançado** — Leva pacotes, produtos compostos/configuráveis, assinaturas, reservas, cartões-presente e personalizações de produtos da loja de origem, resolvendo links entre produtos em uma segunda passagem.
+- **Tokens de Acesso à API** — O acesso programático é controlado por tokens de API com escopo e restrição de IP, validados por solicitação com rastreamento de uso.
+- **HTTPS e Certificados SSL Automáticos** — Emita e renove automaticamente certificados gratuitos Let's Encrypt via HTTP-01, com redirecionamento HTTPS, HSTS e fallback de autoassinado.
+- **Repetições Automáticas e Saúde do Ponto Final** — Falhas transitórias são repetidas com backoff exponencial limitado, pontos finais falhos são desativados automaticamente e podem ser redefinidos, e entregas falhas podem ser repetidas manualmente.
+- **Traga Seu Próprio Certificado** — Faça o upload do seu próprio certificado PEM e chave, incluindo certificados da Cloudflare, com extração de metadados e alertas de desvio de domínio.
+- **Mercado de Componentes** — Navegue pelo catálogo Spwig e instale temas, widgets e componentes de provedor, verificados por verificação de soma de verificação e dependência.
+- **Mercado de Componentes** — Mercados navegam, filtram e visualizam temas, widgets e componentes de provedor do mercado Spwig, cada um anotado com seu status de instalação local.
+- **Avaliações e Classificações de Componentes** — Mercados lêem avaliações de componentes e submetem suas próprias classificações de 1 a 5 estrelas atribuídas à sua loja.
+- **Atualizações e Reversão de Componentes** — Detecte atualizações disponíveis de componentes, aplique-as com verificações de saúde pós-instalação e reverta para uma versão anterior se uma verificação falhar.
+- **Migração de Links e Imagens** — Varre o HTML de produtos, blogs e categorias migradas para redefinir links internos para seus novos objetos Spwig e baixar imagens referenciadas para a biblioteca de mídia.
+- **Consentimento de Cookies e Auditoria GDPR** — As escolhas de cookies dos visitantes são normalizadas, classificadas e armazenadas como registros de auditoria GDPR.
+- **Configuração de Domínio Personalizado** — Conecte seu próprio domínio à loja, com validação DNS, configuração NGINX e verificações de acessibilidade realizadas do início ao fim.
+- **Monitoramento de Entrega e Retenção de Registros** — Estatísticas de 24 horas por ponto final (contagens, taxa de sucesso, tempo de resposta, saúde) estão disponíveis e registros de entrega concluídos são removidos após um período configurável de retenção.
+- **Relatório de Erros e Bugs** — Os erros da aplicação são capturados, deduplicados e enviados em lote ao servidor de atualização, e a equipe pode enviar relatórios de bugs sanitizados com contexto do navegador.
+- **Entrega Direcionada por Eventos** — Eventos da loja são enviados para pontos finais inscritos (explícitos ou com wildcard) como cargas úteis HTTP POST, com cada tentativa de entrega e seu resultado registrados.
+- **Central de Ajuda no Aplicativo** — Lojistas e equipe encontram respostas por meio de busca por palavras-chave e semântica sobre tópicos de ajuda, com sugestões contextuais em cada página e feedback de utilidade.
+- **Pacotes de Idioma** — Instale e remova pacotes por idioma que implantam traduções da interface, conteúdo de ajuda e strings de modelo de e-mail.
+- **Gerenciamento de Licenças** — Busque e verifique uma licença recém-assinada e segredos relacionados no servidor de atualizações e persista as mudanças.
+- **Licenciamento e Integridade da Instalação** — A loja registra a aceitação de licença versionada, verifica a impressão digital da instalação, atualiza os segredos da plataforma e rastreia períodos de carência de revogação.
+- **Domínios Personalizados Gerenciados (Hosted)** — Em instalações hospedadas, adicione, verifique e remova um domínio personalizado por meio da plataforma de hospedagem, revertendo para o subdomínio myspwig.com quando desconectado.
+- **Controle de Job de Migração e Rollback** — Cancela, repete, redefine ou faz rollback total de uma importação, recupera jobs cujo trabalhador falhou e repõe itens individuais que falharam sem perder pedidos reais.
+- **Instalação de Componente em Um Clique** — Mercados instalam componentes gratuitos ou com direito à instalação diretamente do mercado via gerenciador de atualizações.
+- **Compras de Componentes Pagos** — Mercados verificam seus direitos de licença e compram componentes pagos por meio de checkout em spwig.com, depois instalam o que possuem.
+- **Atualizações da Plataforma e Correções** — Execute atualizações de versão da plataforma em azul-verde com pré-requisitos, verificação de pacote, verificações de saúde, reversão e relatórios de correção.
+- **Alertas de Sino de Vendas** — Eventos de venda, reembolso e inscrição de desenvolvedores são registrados em um feed exclusivo da sede para visibilidade em tempo real.
+- **Testes Seguros em Ambiente de Sandbox** — No modo sandbox, entregas externas são registradas como bloqueadas em vez de enviadas, enquanto alvos localhost ainda recebem eventos de teste.
+- **Cargas Úteis Assinadas e Verificadas** — Toda carga útil é assinada com HMAC-SHA256, segredos podem ser girados conforme necessário e receptores podem verificar assinaturas com uma verificação de tolerância de idade.
+- **Exclusão Suave e Recuperação** — Os registros podem ser excluídos suavemente e restaurados para proteger contra perda acidental, com um caminho de exclusão definitiva para remoção permanente.
+- **Sincronização Spwig-para-Spwig** — Mova configurações ou dados completos entre duas instâncias Spwig por meio de pontos finais autenticados, com verificações de compatibilidade de versão, transferência de mídia e rollback.
+- **Monitoramento de SSL** — Monitore o domínio, emissor, data de validade e validade do certificado em tempo real, preservando o status atualizado para a loja.
+- **Assistente de Migração da Loja** — Importe categorias, produtos, clientes e pedidos de WooCommerce, Shopify, Magento ou CSV com verificações de conexão pré-importação, mapeamento de campos e transferência de mídia.
+- **Autenticação em Duas Etapas para Dispositivos Confiáveis** — Os usuários podem marcar um dispositivo como confiável para pular a 2FA em logins futuros, com validação, revogação e limpeza automática de expiração.
+- **Pontos Finais de Webhook** — Registre, configure, atualize e exclua pontos finais de webhook com inscrições de eventos por ponto final, configurações de repetição e tempo limite e um teste de conectividade.

@@ -5,10 +5,10 @@ Provides business metrics and analytics for the Shop Dashboard
 
 import logging
 from datetime import datetime, timedelta
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.core.cache import cache
-from django.db.models import Avg, Count, DecimalField, F, Q, Sum, Value
+from django.db.models import Avg, Count, DecimalField, F, Prefetch, Q, Sum, Value
 from django.db.models.functions import Coalesce, TruncDate, TruncMonth, TruncWeek
 from django.utils import timezone
 
@@ -23,12 +23,23 @@ class ShopAnalyticsService:
 
     CACHE_TIMEOUT = 900  # 15 minutes
 
+    # Normalized (locale-stripped) path prefix for storefront product-detail pages,
+    # matching Product.get_absolute_url() and geoip.tracking.normalize_url_path().
+    PRODUCT_URL_PREFIX = "/product/"
+
     @staticmethod
     def _base_sum(field="total_amount"):
-        """Sum using base-currency field with fallback to raw amount for mixed-currency reporting."""
+        """Sum base-currency amounts, coalescing each row to its raw amount first.
+
+        Coalescing per row (rather than summing the whole base column and only
+        falling back when it is entirely null) keeps legacy rows with a null
+        base amount in the total for mixed-currency reporting.
+        """
         return Coalesce(
-            Sum(f"{field}_base", output_field=DecimalField()),
-            Sum(field, output_field=DecimalField()),
+            Sum(
+                Coalesce(f"{field}_base", field, output_field=DecimalField()),
+                output_field=DecimalField(),
+            ),
             Value(0, output_field=DecimalField()),
         )
 
@@ -40,6 +51,86 @@ class ShopAnalyticsService:
             Avg(field, output_field=DecimalField()),
             Value(0, output_field=DecimalField()),
         )
+
+    @staticmethod
+    def _money_to_float(value, default=0.0):
+        """Convert a Money/Decimal/number to float, falling back on malformed values.
+
+        Only genuinely unconvertible field values fall back to ``default``;
+        unexpected errors are left to propagate to the caller.
+        """
+        try:
+            amount = value.amount if hasattr(value, "amount") else value
+            return float(amount)
+        except (TypeError, ValueError, InvalidOperation):
+            return default
+
+    @staticmethod
+    def _primary_image_url(product):
+        """Return the small-thumbnail URL for a product's primary (or first) image.
+
+        Reads from the prefetched ``images`` cache so callers can render a list
+        of products without issuing a query per row.
+        """
+        images = list(product.images.all())
+        if not images:
+            return None
+        primary = next((img for img in images if img.is_primary), images[0])
+        if primary and primary.media_asset:
+            return primary.media_asset.get_thumbnail("small")
+        return None
+
+    @classmethod
+    def _product_view_events(cls, start_date: datetime, end_date: datetime):
+        """Timestamped product-detail page views within the period (human traffic only).
+
+        Uses geoip.PageView (period-scoped) so product-view counts line up with
+        the other funnel/analytics stages instead of cumulative lifetime counters.
+        """
+        from geoip.models import PageView
+
+        return PageView.objects.filter(
+            timestamp__gte=start_date,
+            timestamp__lt=end_date,
+            is_bot=False,
+            url_path__startswith=cls.PRODUCT_URL_PREFIX,
+        )
+
+    @classmethod
+    def _slug_from_product_path(cls, url_path: str) -> str:
+        """Extract the product slug from a normalized /product/<slug>/ path."""
+        remainder = url_path[len(cls.PRODUCT_URL_PREFIX) :].strip("/")
+        return remainder.split("/")[0] if remainder else ""
+
+    @staticmethod
+    def _to_base_amount(value, base_currency, converter):
+        """Return ``value`` expressed in the store base currency as a Decimal.
+
+        Money values carrying a non-base currency are converted individually;
+        plain Decimals (legacy rows without currency context) are assumed to be
+        in the base currency already.
+        """
+        from exchange_rates.providers.base import RateFetchError
+
+        if value is None:
+            return Decimal("0.00")
+        if hasattr(value, "amount"):
+            amount = Decimal(str(value.amount))
+            currency = str(value.currency) if getattr(value, "currency", None) else base_currency
+        else:
+            amount = Decimal(str(value))
+            currency = base_currency
+        if currency == base_currency:
+            return amount
+        try:
+            return converter.convert(amount, currency, base_currency)
+        except RateFetchError:
+            logger.warning(
+                "No exchange rate for %s->%s; using unconverted amount in profit report",
+                currency,
+                base_currency,
+            )
+            return amount
 
     @staticmethod
     def get_date_range_for_period(
@@ -532,10 +623,11 @@ class ShopAnalyticsService:
             compare: Whether to include comparison with previous period
 
         Returns:
-            Dict with campaign performance including visitors, conversions, revenue
+            Dict with campaign performance including visitor counts per campaign.
+            Order/revenue metrics are omitted: orders carry no persisted campaign
+            or session attribution, so they cannot be reliably tied to a campaign.
         """
         from geoip.models import VisitorLocation
-        from orders.models import Order
 
         # Get visitors with UTM data (exclude bots and admin traffic)
         current_visitors = VisitorLocation.objects.filter(
@@ -552,60 +644,20 @@ class ShopAnalyticsService:
         ).annotate(visitor_count=Count("id"))
 
         for group in campaign_groups:
-            utm_source = group["utm_source"]
-            utm_medium = group["utm_medium"]
-            utm_campaign = group["utm_campaign"]
-
-            # Get session keys for this campaign
-            list(
-                current_visitors.filter(
-                    utm_source=utm_source, utm_medium=utm_medium, utm_campaign=utm_campaign
-                ).values_list("session_key", flat=True)
-            )
-
-            # Count orders from these sessions (using session key matching)
-            # Note: This is a simplified approach - in production you'd want to track
-            # session_key on Order model for accurate attribution
-            campaign_orders = Order.objects.filter(
-                created_at__gte=start_date,
-                created_at__lt=end_date,
-                status__in=["processing", "shipped", "delivered"],
-            )
-
-            order_stats = campaign_orders.aggregate(
-                revenue=Coalesce(
-                    Sum("total_amount_base", output_field=DecimalField()),
-                    Sum("total_amount", output_field=DecimalField()),
-                    Value(0, output_field=DecimalField()),
-                ),
-                order_count=Count("id"),
-            )
-
-            # Calculate conversion rate
-            visitors = group["visitor_count"]
-            orders = order_stats["order_count"]
-            conversion_rate = (
-                (Decimal(orders) / Decimal(visitors) * 100) if visitors > 0 else Decimal("0.00")
-            )
-
+            # Orders have no session_key/campaign field, so there is no reliable
+            # way to attribute revenue to a specific campaign. Report visitor
+            # counts only rather than duplicating global order totals per row.
             campaigns.append(
                 {
-                    "utm_source": utm_source,
-                    "utm_medium": utm_medium,
-                    "utm_campaign": utm_campaign,
-                    "visitors": visitors,
-                    "orders": orders,
-                    "revenue": order_stats["revenue"] or Decimal("0.00"),
-                    "conversion_rate": conversion_rate,
-                    "revenue_per_visitor": (order_stats["revenue"] or Decimal("0.00"))
-                    / Decimal(visitors)
-                    if visitors > 0
-                    else Decimal("0.00"),
+                    "utm_source": group["utm_source"],
+                    "utm_medium": group["utm_medium"],
+                    "utm_campaign": group["utm_campaign"],
+                    "visitors": group["visitor_count"],
                 }
             )
 
-        # Sort by revenue
-        campaigns.sort(key=lambda x: x["revenue"], reverse=True)
+        # Sort by visitors (most-visited campaigns first)
+        campaigns.sort(key=lambda x: x["visitors"], reverse=True)
 
         result = {
             "campaigns": campaigns,
@@ -1039,7 +1091,15 @@ class ShopAnalyticsService:
         Returns:
             Dict with profit metrics including revenue, COGS, refunds, profit, margin
         """
+        from core.models import SiteSettings
+        from exchange_rates.services.exchange_service import ExchangeRateService
         from orders.models import Order, OrderItem, Refund
+
+        # Revenue is aggregated in base currency, so COGS and refunds must be too.
+        # Product costs and refund/order-item amounts can be in other currencies;
+        # convert each to base before combining to avoid mixing currencies.
+        base_currency = SiteSettings.get_settings().default_currency
+        converter = ExchangeRateService()
 
         # Get current period orders
         current_orders = Order.objects.filter(
@@ -1072,11 +1132,11 @@ class ShopAnalyticsService:
         refund_amount = Decimal("0.00")
 
         for refund in refunds_for_orders:
-            # Sum up total refund amounts
-            if hasattr(refund.total_amount, "amount"):
-                refund_amount += Decimal(str(refund.total_amount.amount))
+            # Sum up total refund amounts in base currency
+            if refund.total_amount_base is not None:
+                refund_amount += refund.total_amount_base
             else:
-                refund_amount += Decimal(str(refund.total_amount))
+                refund_amount += cls._to_base_amount(refund.total_amount, base_currency, converter)
 
             # Track refunded quantities per item
             if refund.items_json:
@@ -1096,9 +1156,11 @@ class ShopAnalyticsService:
                 kept_qty = item.quantity - refunded_qty
 
                 if kept_qty > 0:
-                    # Convert cost to decimal
-                    item_cogs = Decimal(str(item.product.cost.amount)) * kept_qty
-                    cogs += item_cogs
+                    # Convert per-unit cost to base currency before multiplying
+                    unit_cost_base = cls._to_base_amount(
+                        item.product.cost, base_currency, converter
+                    )
+                    cogs += unit_cost_base * kept_qty
 
         # Store refunds for display
         refunds = refund_amount
@@ -1134,19 +1196,22 @@ class ShopAnalyticsService:
                 kept_qty = item.quantity - refunded_qty
 
                 if kept_qty > 0:
-                    # Calculate revenue per unit
-                    product_revenue = (
-                        Decimal(str(item.total_price.amount))
-                        if hasattr(item.total_price, "amount")
-                        else Decimal(str(item.total_price))
-                    )
+                    # Calculate revenue per unit in base currency
+                    if item.total_price_base is not None:
+                        product_revenue = item.total_price_base
+                    else:
+                        product_revenue = cls._to_base_amount(
+                            item.total_price, base_currency, converter
+                        )
                     revenue_per_unit = (
                         product_revenue / item.quantity if item.quantity > 0 else Decimal("0.00")
                     )
 
                     # Only count revenue and COGS for items that were kept
                     kept_revenue = revenue_per_unit * kept_qty
-                    product_cogs = Decimal(str(item.product.cost.amount)) * kept_qty
+                    product_cogs = (
+                        cls._to_base_amount(item.product.cost, base_currency, converter) * kept_qty
+                    )
 
                     product_profits[product_id]["revenue"] += kept_revenue
                     product_profits[product_id]["cogs"] += product_cogs
@@ -1213,11 +1278,13 @@ class ShopAnalyticsService:
             prev_refund_amount = Decimal("0.00")
 
             for refund in prev_refunds_for_orders:
-                # Sum up total refund amounts
-                if hasattr(refund.total_amount, "amount"):
-                    prev_refund_amount += Decimal(str(refund.total_amount.amount))
+                # Sum up total refund amounts in base currency
+                if refund.total_amount_base is not None:
+                    prev_refund_amount += refund.total_amount_base
                 else:
-                    prev_refund_amount += Decimal(str(refund.total_amount))
+                    prev_refund_amount += cls._to_base_amount(
+                        refund.total_amount, base_currency, converter
+                    )
 
                 # Track refunded quantities per item
                 if refund.items_json:
@@ -1237,8 +1304,10 @@ class ShopAnalyticsService:
                     kept_qty = item.quantity - refunded_qty
 
                     if kept_qty > 0:
-                        item_cogs = Decimal(str(item.product.cost.amount)) * kept_qty
-                        prev_cogs += item_cogs
+                        unit_cost_base = cls._to_base_amount(
+                            item.product.cost, base_currency, converter
+                        )
+                        prev_cogs += unit_cost_base * kept_qty
 
             # Store refunds for display
             prev_refunds = prev_refund_amount
@@ -1353,41 +1422,36 @@ class ShopAnalyticsService:
 
         recent_carts_list = []
         for abandoned in recent_carts:
-            try:
-                user = abandoned.user
-                cart_items = abandoned.cart.items.all()[:3]  # First 3 items for preview
+            user = abandoned.user
+            cart_items = abandoned.cart.items.all()[:3]  # First 3 items for preview
 
-                items_preview = [
-                    {
-                        "product_name": item.product.name if item.product else item.product_name,
-                        "quantity": item.quantity,
-                        "unit_price": float(item.unit_price.amount)
-                        if hasattr(item.unit_price, "amount")
-                        else float(item.unit_price),
-                    }
-                    for item in cart_items
-                ]
+            # Only the monetary conversion is recoverable per field (malformed
+            # price data falls back to 0.0); any other error propagates so a
+            # real cart is never silently dropped from the dashboard.
+            items_preview = [
+                {
+                    "product_name": item.product.name if item.product else item.product_name,
+                    "quantity": item.quantity,
+                    "unit_price": cls._money_to_float(item.unit_price),
+                }
+                for item in cart_items
+            ]
 
-                recent_carts_list.append(
-                    {
-                        "id": abandoned.id,
-                        "user_id": user.id,
-                        "user_name": user.get_full_name() or user.username,
-                        "user_email": user.email,
-                        "abandoned_at": abandoned.abandoned_at.isoformat(),
-                        "days_since_abandonment": abandoned.days_since_abandonment,
-                        "total_items": abandoned.total_items,
-                        "total_value": float(abandoned.total_value.amount)
-                        if hasattr(abandoned.total_value, "amount")
-                        else float(abandoned.total_value),
-                        "recovery_emails_sent": abandoned.recovery_emails_sent,
-                        "estimated_reason": abandoned.get_estimated_reason_display(),
-                        "items_preview": items_preview,
-                    }
-                )
-            except Exception as e:
-                logger.error(f"Error processing abandoned cart {abandoned.id}: {e}")
-                continue
+            recent_carts_list.append(
+                {
+                    "id": abandoned.id,
+                    "user_id": user.id,
+                    "user_name": user.get_full_name() or user.username,
+                    "user_email": user.email,
+                    "abandoned_at": abandoned.abandoned_at.isoformat(),
+                    "days_since_abandonment": abandoned.days_since_abandonment,
+                    "total_items": abandoned.total_items,
+                    "total_value": cls._money_to_float(abandoned.total_value),
+                    "recovery_emails_sent": abandoned.recovery_emails_sent,
+                    "estimated_reason": abandoned.get_estimated_reason_display(),
+                    "items_preview": items_preview,
+                }
+            )
 
         result["recent_carts"] = recent_carts_list
 
@@ -1647,6 +1711,10 @@ class ShopAnalyticsService:
         total_customers = 0
         total_lifetime_value = Decimal("0.00")
 
+        # Load all customer metrics once and reuse for every segment, rather than
+        # re-scanning the full table inside the loop.
+        all_metrics = list(CustomerMetrics.objects.select_related("user").all())
+
         # Count customers in each segment
         for segment in segments:
             # Get all customer metrics
@@ -1654,9 +1722,6 @@ class ShopAnalyticsService:
             segment_ltv = Decimal("0.00")
             segment_aov = Decimal("0.00")
             segment_order_count = 0
-
-            # Iterate through all customer metrics to find matches
-            all_metrics = CustomerMetrics.objects.select_related("user").all()
 
             for metrics in all_metrics:
                 if segment.matches_user(metrics):
@@ -1745,25 +1810,20 @@ class ShopAnalyticsService:
             .order_by("-revenue")[:limit]
         )
 
+        # Fetch every product (with images prefetched) in one query, then render
+        # from the map instead of querying per row.
+        product_ids = [item["product_id"] for item in top_items]
+        product_map = {
+            product.id: product
+            for product in Product.objects.filter(id__in=product_ids).prefetch_related(
+                "images__media_asset__thumbnails"
+            )
+        }
+
         results = []
         for item in top_items:
-            # Get product details for image
-            try:
-                product = Product.objects.prefetch_related("images__media_asset__thumbnails").get(
-                    id=item["product_id"]
-                )
-                # Get primary image or first image
-                primary_image = product.images.filter(is_primary=True).first()
-                if not primary_image:
-                    primary_image = product.images.first()
-                # Use thumbnail for better performance (300x300)
-                image_url = (
-                    primary_image.media_asset.get_thumbnail("small")
-                    if (primary_image and primary_image.media_asset)
-                    else None
-                )
-            except Product.DoesNotExist:
-                image_url = None
+            product = product_map.get(item["product_id"])
+            image_url = cls._primary_image_url(product) if product else None
 
             results.append(
                 {
@@ -2020,32 +2080,45 @@ class ShopAnalyticsService:
         """
         from catalog.models import Product
 
-        # Get most viewed published products
-        top_products = (
-            Product.objects.filter(status="published")
-            .prefetch_related("images__media_asset__thumbnails")
-            .order_by("-views_count")[:limit]
+        # Aggregate period-scoped product-detail page views per URL, then map
+        # each path back to its product (cumulative views_count is not
+        # period-specific).
+        view_counts = (
+            cls._product_view_events(start_date, end_date)
+            .values("url_path")
+            .annotate(views=Count("id"))
         )
 
-        results = []
-        for product in top_products:
-            # Get primary image or first image
-            primary_image = product.images.filter(is_primary=True).first()
-            if not primary_image:
-                primary_image = product.images.first()
-            # Use thumbnail for better performance (300x300)
-            image_url = (
-                primary_image.media_asset.get_thumbnail("small")
-                if (primary_image and primary_image.media_asset)
-                else None
-            )
+        slug_views: dict[str, int] = {}
+        for row in view_counts:
+            slug = cls._slug_from_product_path(row["url_path"])
+            if slug:
+                slug_views[slug] = slug_views.get(slug, 0) + row["views"]
 
+        if not slug_views:
+            return []
+
+        top_slugs = sorted(slug_views, key=slug_views.get, reverse=True)[:limit]
+
+        # Fetch the matching products (with images prefetched) in one query.
+        product_map = {
+            product.slug: product
+            for product in Product.objects.filter(
+                status="published", slug__in=top_slugs
+            ).prefetch_related("images__media_asset__thumbnails")
+        }
+
+        results = []
+        for slug in top_slugs:
+            product = product_map.get(slug)
+            if not product:
+                continue
             results.append(
                 {
                     "product_id": product.id,
                     "name": product.name,
-                    "image_url": image_url,
-                    "views": product.views_count,
+                    "image_url": cls._primary_image_url(product),
+                    "views": slug_views[slug],
                 }
             )
 
@@ -2534,31 +2607,19 @@ class ShopAnalyticsService:
 
         # Get pending commissions (awaiting approval) - use base currency amounts
         pending_commissions = Commission.objects.filter(status="pending").aggregate(
-            total=Coalesce(
-                Sum("amount_base", output_field=DecimalField()),
-                Sum("amount", output_field=DecimalField()),
-                Value(0, output_field=DecimalField()),
-            ),
+            total=cls._base_sum("amount"),
             count=Count("id"),
         )
 
         # Get approved commissions (approved but not yet paid) - use base currency amounts
         approved_commissions = Commission.objects.filter(status="approved").aggregate(
-            total=Coalesce(
-                Sum("amount_base", output_field=DecimalField()),
-                Sum("amount", output_field=DecimalField()),
-                Value(0, output_field=DecimalField()),
-            ),
+            total=cls._base_sum("amount"),
             count=Count("id"),
         )
 
         # Get pending and processing payouts - use base currency amounts
         pending_payouts = Payout.objects.filter(status__in=["pending", "processing"]).aggregate(
-            total=Coalesce(
-                Sum("amount_base", output_field=DecimalField()),
-                Sum("amount", output_field=DecimalField()),
-                Value(0, output_field=DecimalField()),
-            ),
+            total=cls._base_sum("amount"),
             count=Count("id"),
         )
 
@@ -2969,27 +3030,32 @@ class ShopAnalyticsService:
         today = timezone.now().date()
 
         # Query orders with shipments that are late
+        active_shipment_statuses = [
+            "created",
+            "labeled",
+            "in_transit",
+            "out_for_delivery",
+            "exception",
+        ]
         late_orders = (
             Order.objects.filter(
                 estimated_delivery_date__lt=today,
-                shipments__status__in=[
-                    "created",
-                    "labeled",
-                    "in_transit",
-                    "out_for_delivery",
-                    "exception",
-                ],
+                shipments__status__in=active_shipment_statuses,
             )
             .select_related("carrier")
-            .prefetch_related("shipments")
+            .prefetch_related(
+                Prefetch(
+                    "shipments",
+                    queryset=Shipment.objects.filter(status__in=active_shipment_statuses),
+                    to_attr="active_shipments",
+                )
+            )
             .distinct()
         )
 
         for order in late_orders[:10]:  # Limit to 10 most recent
-            # Get most recent shipment for this order
-            shipment = order.shipments.filter(
-                status__in=["created", "labeled", "in_transit", "out_for_delivery", "exception"]
-            ).first()
+            # Get most recent active shipment from the prefetched list
+            shipment = order.active_shipments[0] if order.active_shipments else None
 
             if shipment:
                 days_late = (today - order.estimated_delivery_date).days
@@ -3192,7 +3258,7 @@ class ShopAnalyticsService:
         Get conversion funnel analytics showing drop-offs at each stage
 
         Funnel stages:
-        1. Product Views - Sum of all product views
+        1. Product Views - Product-detail page views in the period
         2. Add to Cart - Carts created
         3. Checkout Started - CheckoutSession created
         4. Payment Initiated - CheckoutSession reached payment step
@@ -3206,19 +3272,13 @@ class ShopAnalyticsService:
             Dict with stages, conversion rates, and drop-offs
         """
         from cart.models import Cart, CheckoutSession
-        from catalog.models import Product
         from orders.models import Order
 
         # Stage 1: Product Views
-        # Sum views_count for all products (only counting products viewed in period)
-        # Note: Product.views_count is cumulative, so we use VisitorLocation data if available
-        # For now, use total views as proxy
-        total_product_views = (
-            Product.objects.filter(status="published", views_count__gt=0).aggregate(
-                total_views=Sum("views_count")
-            )["total_views"]
-            or 0
-        )
+        # Count timestamped product-detail page views within the period so this
+        # stage is period-scoped like every other funnel stage (cumulative
+        # Product.views_count would count views from before start_date).
+        total_product_views = cls._product_view_events(start_date, end_date).count()
 
         # Stage 2: Add to Cart (Carts created in period)
         add_to_cart_count = Cart.objects.filter(

@@ -1,0 +1,284 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/*
+ * Campaign Studio — CANVAS styles, injected INTO the canvas Shadow DOM.
+ *
+ * The shadow root also loads the shop's compiled theme CSS (element rules like
+ * h1/h2/body + tokens) and Font Awesome. This file provides the builder chrome
+ * that lives inside the canvas (block wrappers, controls, selection) and the
+ * structural layout of each block — but deliberately does NOT set typography on
+ * headings/text, so the theme's own element rules and tokens drive the brand
+ * look. Selectors are bare (no .em-canvas prefix): the shadow root isolates them.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+.em-canvas-inner {
+  min-height: 400px;
+  padding: 8px 0;
+  /* Baseline body look from theme tokens (theme `body {}` can't match this div). */
+  font-family: var(--theme-font-family-body, var(--theme-font-sans, system-ui, sans-serif));
+  color: var(--theme-color-text, #1a1a1a);
+}
+
+.em-empty {
+  text-align: center;
+  color: var(--theme-color-text, #999);
+  opacity: 0.6;
+  padding: 60px 20px;
+}
+.em-empty i {
+  font-size: 32px;
+  opacity: 0.5;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* ---- Block chrome (selection + controls) ---- */
+.em-block-wrapper {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.em-block-wrapper:hover {
+  border-color: rgba(65, 118, 144, 0.4);
+}
+.em-block-wrapper.is-selected {
+  border-color: #417690;
+}
+.em-block-controls {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  display: none;
+  gap: 2px;
+  background: #417690;
+  border-radius: 0 0 0 4px;
+}
+.em-block-wrapper.is-selected .em-block-controls,
+.em-block-wrapper:hover .em-block-controls {
+  display: flex;
+}
+.em-block-controls button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.em-block-handle {
+  cursor: grab;
+}
+
+/* ---- Block layout (structure only; theme drives typography) ---- */
+.em-block {
+  padding: 0 24px;
+}
+.em-block-heading {
+  margin: 8px 24px;
+}
+.em-block-text {
+  margin: 8px 24px;
+}
+.em-block-image {
+  margin: 8px 0;
+}
+.em-image {
+  max-width: 100%;
+  height: auto;
+}
+.em-image-placeholder {
+  background: color-mix(in srgb, var(--theme-color-text, #000) 8%, transparent);
+  color: var(--theme-color-text, #666);
+  padding: 40px;
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 200px;
+}
+.em-block-button {
+  margin: 12px 24px;
+}
+.em-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  background: var(--theme-color-primary, #2563eb);
+  color: var(--theme-color-on-primary, #ffffff);
+}
+
+/* ---- Structure + commerce blocks ---- */
+.em-block-divider {
+  padding: 8px 24px;
+}
+.em-divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+.em-block-spacer {
+  width: 100%;
+}
+.em-block-product {
+  text-align: center;
+  padding: 16px 24px;
+}
+.em-product-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.em-product-name {
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+.em-product-price {
+  color: var(--theme-color-text, #333);
+  margin-bottom: 10px;
+}
+.em-was {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 6px;
+}
+.em-block-grid {
+  display: flex;
+  gap: 12px;
+  padding: 12px 24px;
+}
+.em-grid-item {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+.em-grid-item .em-product-img {
+  border-radius: 4px;
+}
+.em-product-empty {
+  margin: 12px 24px;
+  padding: 24px;
+  border: 1px dashed color-mix(in srgb, var(--theme-color-text, #000) 25%, transparent);
+  border-radius: 6px;
+  text-align: center;
+  color: var(--theme-color-text, #777);
+  opacity: 0.75;
+}
+.em-product-empty i {
+  margin-right: 6px;
+}
+.em-block-voucher,
+.em-block-giftcard {
+  text-align: center;
+  padding: 16px 24px;
+}
+.em-voucher-heading,
+.em-giftcard-heading {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.em-voucher-code {
+  display: inline-block;
+  border: 2px dashed #999;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 4px 0 10px;
+}
+.em-voucher-desc,
+.em-giftcard-sub {
+  color: var(--theme-color-text, #555);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.em-block-giftcard .em-product-img {
+  margin-bottom: 10px;
+}
+/* Blog posts block — list (image left) and grid (side by side) layouts. */
+.em-block-blog {
+  padding: 16px 24px;
+}
+.em-blog-heading {
+  font-weight: 700;
+  font-size: 1.15em;
+  margin-bottom: 12px;
+}
+.em-blog-item {
+  text-decoration: none;
+  color: inherit;
+}
+.em-blog-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.em-blog-title {
+  font-weight: 700;
+}
+.em-blog-date {
+  font-size: 0.8em;
+  color: #888;
+  margin: 2px 0;
+}
+.em-blog-excerpt {
+  font-size: 0.9em;
+  color: var(--theme-color-text, #555);
+  margin: 4px 0;
+}
+.em-blog-more {
+  color: var(--theme-color-primary, #2563eb);
+  font-size: 0.9em;
+}
+.em-blog-thumb {
+  flex: 0 0 auto;
+}
+.em-blog-thumb img {
+  display: block;
+  object-fit: cover;
+  border-radius: 6px;
+}
+/* List: stacked rows, thumbnail to the left. */
+.em-blog-list .em-blog-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.em-blog-list .em-blog-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.em-blog-list .em-blog-thumb img {
+  width: 120px;
+  height: auto;
+}
+/* Grid: columns side by side. */
+.em-blog-grid .em-blog-items {
+  display: flex;
+  gap: 12px;
+}
+.em-blog-grid .em-blog-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.em-blog-grid .em-blog-thumb img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 6px;
+}
+
+/* Merge-field sample highlight in the canvas preview. */
+.em-merge {
+  background: color-mix(in srgb, var(--theme-color-primary, #2563eb) 14%, transparent);
+  color: var(--theme-color-primary, #2563eb);
+  border-radius: 3px;
+  padding: 0 3px;
+}

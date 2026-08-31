@@ -42,6 +42,8 @@ class Command(BaseCommand):
             batch_size=10,
             force=options["force"],
             webp_only=False,
+            avif=False,
+            avif_only=False,
         )
 
         self.stdout.write(self.style.SUCCESS("✅ Favicon thumbnail regeneration complete!"))

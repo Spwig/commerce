@@ -200,7 +200,7 @@ class Command(BaseCommand):
                     f.write("### ViewSets\n")
                     for viewset in app_apis["viewsets"]:
                         f.write(
-                            f"- **{viewset['name']}**: {viewset['docstring'].split('\\n')[0]}\n"
+                            f"- **{viewset['name']}**: {viewset['docstring'].splitlines()[0]}\n"
                         )
                         if viewset["methods"]:
                             f.write(
@@ -213,7 +213,7 @@ class Command(BaseCommand):
                 if app_apis["api_views"]:
                     f.write("### API Views\n")
                     for view in app_apis["api_views"]:
-                        f.write(f"- **{view['name']}**: {view['docstring'].split('\\n')[0]}\n")
+                        f.write(f"- **{view['name']}**: {view['docstring'].splitlines()[0]}\n")
                         if view["methods"]:
                             f.write(
                                 "  - Methods: "

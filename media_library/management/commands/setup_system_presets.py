@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError, transaction
 
 from media_library.models import ImageSizePreset
 
@@ -292,14 +293,39 @@ class Command(BaseCommand):
         updated_count = 0
 
         for preset_data in self.SYSTEM_PRESETS:
-            preset, created = ImageSizePreset.objects.get_or_create(
-                slug=preset_data["slug"],
-                defaults={
-                    **preset_data,
-                    "is_system_preset": True,
-                    "is_active": True,
-                },
-            )
+            # Resolve by both unique identifiers (slug and name) so a preset
+            # whose name is already taken under a different slug does not trip
+            # the model's unique-name constraint on insert.
+            preset = ImageSizePreset.objects.filter(slug=preset_data["slug"]).first()
+            created = False
+            if preset is None:
+                try:
+                    # Wrap in a savepoint so a concurrent-insert IntegrityError
+                    # doesn't poison the surrounding transaction.
+                    with transaction.atomic():
+                        preset = ImageSizePreset.objects.create(
+                            **preset_data,
+                            is_system_preset=True,
+                            is_active=True,
+                        )
+                    created = True
+                except IntegrityError:
+                    # A concurrent run inserted the same slug, or the name is
+                    # already taken under a different slug. Re-resolve by slug:
+                    # if it now exists we fall through to the update path,
+                    # otherwise the conflict is on the unique name.
+                    preset = ImageSizePreset.objects.filter(slug=preset_data["slug"]).first()
+                    if preset is None:
+                        name_conflict = ImageSizePreset.objects.filter(
+                            name=preset_data["name"]
+                        ).first()
+                        conflict_slug = name_conflict.slug if name_conflict else "unknown"
+                        raise CommandError(
+                            f"Cannot create system preset '{preset_data['name']}' "
+                            f"(slug '{preset_data['slug']}'): the name is already used by "
+                            f"an existing preset with slug '{conflict_slug}'. "
+                            "Rename or remove the conflicting preset and rerun."
+                        )
 
             if created:
                 created_count += 1

@@ -771,11 +771,12 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
                 for account in active_list:
                     badge_color = "#007bff" if account.is_default else "#6c757d"
                     default_marker = " ⭐ DEFAULT" if account.is_default else ""
+                    provider_name = account.component.name if account.component else account.name
                     account_badges.append(f"""
                         <span style="background-color: {badge_color}; color: white; padding: 4px 12px;
                                      border-radius: 4px; display: inline-block; margin: 4px 4px 4px 0;
                                      font-size: 12px; font-weight: 500;">
-                            {conditional_escape(account.component.name)}: {conditional_escape(account.from_email)}{default_marker}
+                            {conditional_escape(provider_name)}: {conditional_escape(account.from_email)}{default_marker}
                         </span>
                     """)
 
@@ -1541,11 +1542,28 @@ class CustomUserAdmin(BaseUserAdmin):
     # Add the verification email action
     actions = [send_verification_email]
 
+    def get_queryset(self, request):
+        """Batch role and email-verification lookups to avoid changelist N+1s."""
+        from allauth.account.models import EmailAddress
+        from django.db.models import Exists, OuterRef
+
+        qs = super().get_queryset(request)
+        email_records = EmailAddress.objects.filter(user=OuterRef("pk"), email=OuterRef("email"))
+        return qs.prefetch_related("groups__staff_role").annotate(
+            _email_has_record=Exists(email_records),
+            _email_verified=Exists(email_records.filter(verified=True)),
+        )
+
     def display_roles(self, obj):
         """Show colored role badges for the user."""
-        from staff_roles.services import get_user_roles
-
-        roles = get_user_roles(obj)
+        roles = sorted(
+            (
+                role
+                for group in obj.groups.all()
+                if (role := getattr(group, "staff_role", None)) is not None
+            ),
+            key=lambda role: (role.sort_order, role.display_name),
+        )
         if obj.is_superuser and not roles:
             return mark_safe(
                 '<span style="background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Owner</span>'
@@ -1572,30 +1590,26 @@ class CustomUserAdmin(BaseUserAdmin):
 
     def email_verified(self, obj):
         """Display email verification status with icon."""
-        from allauth.account.models import EmailAddress
-
         if not obj.email:
             return format_html(
                 '<span style="color: var(--body-quiet-color);" title="{}">—</span>', _("No email")
             )
 
-        try:
-            email_address = EmailAddress.objects.get(user=obj, email=obj.email)
-            if email_address.verified:
-                return format_html(
-                    '<span style="color: var(--success-fg, #28a745);" title="{}">'
-                    '<i class="fas fa-check-circle"></i>'
-                    "</span>",
-                    _("Email verified"),
-                )
-            else:
-                return format_html(
-                    '<span style="color: var(--warning-fg, #ffc107);" title="{}">'
-                    '<i class="fas fa-exclamation-circle"></i>'
-                    "</span>",
-                    _("Not verified"),
-                )
-        except EmailAddress.DoesNotExist:
+        if obj._email_verified:
+            return format_html(
+                '<span style="color: var(--success-fg, #28a745);" title="{}">'
+                '<i class="fas fa-check-circle"></i>'
+                "</span>",
+                _("Email verified"),
+            )
+        elif obj._email_has_record:
+            return format_html(
+                '<span style="color: var(--warning-fg, #ffc107);" title="{}">'
+                '<i class="fas fa-exclamation-circle"></i>'
+                "</span>",
+                _("Not verified"),
+            )
+        else:
             return format_html(
                 '<span style="color: var(--error-fg, #dc3545);" title="{}">'
                 '<i class="fas fa-times-circle"></i>'
@@ -2051,12 +2065,26 @@ class BugReportAdmin(admin.ModelAdmin):
         )
 
 
+def _csv_safe_cell(value):
+    """Neutralise CSV/formula injection in an externally controlled cell.
+
+    A cell beginning with ``= + - @`` or a control char is executed as a formula
+    by Excel/Sheets. Visitor-supplied fields (user agent, email) are attacker
+    controlled, so prefix such cells with a single quote to keep them inert as
+    text. Non-string values pass through unchanged.
+    """
+    if isinstance(value, str) and value and value[0] in ("=", "+", "-", "@", "\t", "\r", "\n"):
+        return "'" + value
+    return value
+
+
 @admin.register(CookieConsentLog)
 class CookieConsentLogAdmin(admin.ModelAdmin):
     """Read-only audit trail for GDPR Article 7(1) cookie consent compliance."""
 
     list_display = ["timestamp", "action", "ip_address", "user_email", "consent_summary"]
     list_filter = ["action", "timestamp"]
+    list_select_related = ["user"]
     search_fields = ["ip_address", "user__email", "session_key"]
     readonly_fields = [
         "timestamp",
@@ -2106,10 +2134,13 @@ class CookieConsentLogAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.has_perm("core.view_cookieconsentlog")
+
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
-    @admin.action(description=_("Export selected as CSV"))
+    @admin.action(description=_("Export selected as CSV"), permissions=["view"])
     def export_consent_csv(self, request, queryset):
         import csv
 
@@ -2138,12 +2169,12 @@ class CookieConsentLogAdmin(admin.ModelAdmin):
                     log.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
                     log.get_action_display(),
                     log.ip_address or "",
-                    log.user_agent,
-                    log.user.email if log.user_id else "",
+                    _csv_safe_cell(log.user_agent),
+                    _csv_safe_cell(log.user.email if log.user_id else ""),
                     log.session_key,
                     d.get("analytics", False),
                     d.get("marketing", False),
                     d.get("functional", False),
                 ]
             )
-        self.message_user(request, _("{} record(s) exported.").format(queryset.count()))
+        return response

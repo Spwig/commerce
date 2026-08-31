@@ -8,8 +8,8 @@ element structure and provides element-specific translation management.
 import os
 
 from django.conf import settings
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.core.management.commands.makemessages import Command as MakeMessagesCommand
 
 from page_builder.element_registry import get_registry
 
@@ -104,6 +104,7 @@ class Command(BaseCommand):
             extensions = ["html", "txt", "py"]
 
         # Process each element
+        failures = []
         for element_type, element_config in elements_to_process.items():
             if not element_config.supports_translation:
                 self.stdout.write(
@@ -120,7 +121,14 @@ class Command(BaseCommand):
                 locale_dir.mkdir(parents=True, exist_ok=True)
 
             # Generate translations for this element
-            self._generate_element_translations(element_config, locales, options)
+            failures.extend(self._generate_element_translations(element_config, locales, options))
+
+        if failures:
+            raise CommandError(
+                "Translation generation failed for {} locale(s):\n{}".format(
+                    len(failures), "\n".join(failures)
+                )
+            )
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -129,14 +137,17 @@ class Command(BaseCommand):
         )
 
     def _generate_element_translations(self, element_config, locales, options):
-        """Generate translation files for a specific element."""
+        """Generate translation files for a specific element.
+
+        Returns a list of failure descriptions (empty when every locale
+        succeeded) so the caller can surface them as a CommandError.
+        """
         element_dir = element_config.base_path
         element_type = element_config.element_type
 
         # Prepare makemessages options
         makemessages_options = {
             "verbosity": options.get("verbosity", 1),
-            "interactive": False,
             "domain": options.get("domain", "django"),
             "extensions": options.get("extensions", ["html", "txt", "py"]),
             "ignore_patterns": options.get("ignore_patterns", []),
@@ -149,6 +160,7 @@ class Command(BaseCommand):
         # Save current working directory
         original_cwd = os.getcwd()
 
+        failures = []
         try:
             # Change to element directory
             os.chdir(str(element_dir))
@@ -156,19 +168,19 @@ class Command(BaseCommand):
             for locale in locales:
                 self.stdout.write(f"  Generating {locale} translation for {element_type}...")
 
-                # Set up makemessages command for this locale
-                makemessages_cmd = MakeMessagesCommand()
-                makemessages_cmd.stdout = self.stdout
-                makemessages_cmd.stderr = self.stderr
-                makemessages_cmd.style = self.style
-
                 # Update options for this locale
                 locale_options = makemessages_options.copy()
                 locale_options["locale"] = [locale]
 
                 try:
-                    # Run makemessages for this element and locale
-                    makemessages_cmd.handle(**locale_options)
+                    # Run makemessages for this element and locale. call_command
+                    # fills in the argparse defaults that handle() requires.
+                    call_command(
+                        "makemessages",
+                        stdout=self.stdout,
+                        stderr=self.stderr,
+                        **locale_options,
+                    )
 
                     # Check if po file was created
                     po_file = (
@@ -189,10 +201,13 @@ class Command(BaseCommand):
 
                 except Exception as e:
                     self.stdout.write(self.style.ERROR(f"    ✗ Failed to generate {locale}: {e}"))
+                    failures.append(f"{element_type}/{locale}: {e}")
 
         finally:
             # Restore original working directory
             os.chdir(original_cwd)
+
+        return failures
 
     def _compile_element_translations(self, element_config, locales):
         """Compile translation files for an element (optional step)."""

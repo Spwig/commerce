@@ -187,6 +187,15 @@ CRYPTOCURRENCIES = {
 }
 
 
+def is_selectable_currency(code):
+    """Return True when ``code`` is a real, merchant-selectable currency.
+
+    Excludes unknown codes plus the obsolete and special-purpose codes that
+    list_all_currencies also hides, keeping activation in step with the listing.
+    """
+    return code in CURRENCIES and code not in OBSOLETE_CURRENCIES and code not in SPECIAL_CURRENCIES
+
+
 def get_currency_flag(currency_code):
     """Get country flag image path for a currency code"""
     currency_to_country = {
@@ -420,7 +429,7 @@ def list_all_currencies(request):
         currencies = []
         for code, currency_obj in CURRENCIES.items():
             # Skip obsolete and special currencies
-            if code in OBSOLETE_CURRENCIES or code in SPECIAL_CURRENCIES:
+            if not is_selectable_currency(code):
                 continue
 
             # Apply search filter
@@ -545,8 +554,8 @@ def activate_currencies(request):
             for code in codes:
                 code = code.upper()
 
-                # Validate currency code
-                if code not in CURRENCIES:
+                # Reject unknown, obsolete, and special-purpose codes
+                if not is_selectable_currency(code):
                     invalid.append(code)
                     continue
 

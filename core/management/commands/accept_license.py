@@ -18,7 +18,7 @@ Usage:
 import os
 import pydoc
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -69,17 +69,17 @@ class Command(BaseCommand):
             self.stderr.write(
                 self.style.ERROR("LICENSE.txt not found. Cannot proceed with license acceptance.")
             )
-            return
+            raise CommandError("LICENSE.txt not found. Cannot proceed with license acceptance.")
 
         license_version = service.extract_license_version(license_text) or "1.0.0"
 
-        # Determine acceptance mode
-        auto_accept = (
-            options["auto_accept"] or os.environ.get("SPWIG_ACCEPT_LICENSE", "").lower() == "true"
-        )
+        # Determine acceptance mode and audit source
+        cli_accept = options["auto_accept"]
+        env_accept = os.environ.get("SPWIG_ACCEPT_LICENSE", "").lower() == "true"
 
-        if auto_accept:
-            self._auto_accept(service, license_version)
+        if cli_accept or env_accept:
+            accepted_via = "cli" if cli_accept else "env"
+            self._auto_accept(service, license_version, accepted_via)
         else:
             self._interactive_accept(service, license_text, license_version)
 
@@ -165,11 +165,11 @@ class Command(BaseCommand):
             )
         )
 
-    def _auto_accept(self, service, license_version):
+    def _auto_accept(self, service, license_version, accepted_via):
         """Auto-accept license (unattended mode)."""
         self.stdout.write(f"Auto-accepting license v{license_version}...")
 
-        service.record_acceptance(accepted_via="env")
+        service.record_acceptance(accepted_via=accepted_via)
 
         self.stdout.write(
             self.style.SUCCESS(f"License v{license_version} auto-accepted. Proceeding with setup.")

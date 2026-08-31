@@ -41,6 +41,8 @@ def get_tier_config() -> dict:
     if cached is not None:
         return cached
 
+    fallback = {"services": {}, "upgrade_url": "https://updates.spwig.com/upgrade/"}
+
     server_url = getattr(settings, "UPDATE_SERVER_URL", None) or "https://updates.spwig.com"
     try:
         response = requests.get(
@@ -49,9 +51,12 @@ def get_tier_config() -> dict:
         )
         response.raise_for_status()
         data = response.json()
+        if not isinstance(data, dict) or not isinstance(data.get("services"), dict):
+            logger.debug("Tier config response has unexpected shape: %r", data)
+            data = fallback
     except Exception as e:
         logger.debug("Tier config fetch failed: %s", e)
-        data = {"services": {}, "upgrade_url": "https://updates.spwig.com/upgrade/"}
+        data = fallback
 
     cache.set(CACHE_KEY, data, timeout=CACHE_TIMEOUT)
     return data

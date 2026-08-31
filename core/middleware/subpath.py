@@ -24,6 +24,19 @@ from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 
 
+def _is_under_prefix(path, prefix):
+    """Return True if ``path`` lies at or under ``prefix`` on a segment boundary.
+
+    A bare ``startswith`` treats ``/shopping`` as being under ``/shop``; this
+    guard only matches when ``path`` equals ``prefix`` or the character that
+    follows the prefix is a real boundary: ``/`` (next segment), or ``?``/``#``
+    (start of the query string or fragment on a redirect Location).
+    """
+    return path == prefix or (
+        path.startswith(prefix) and path[len(prefix) : len(prefix) + 1] in ("/", "?", "#")
+    )
+
+
 class SubpathMiddleware(MiddlewareMixin):
     """
     Middleware to handle running Django under a URL subpath.
@@ -79,7 +92,11 @@ class SubpathMiddleware(MiddlewareMixin):
             script_name = getattr(request, "script_name", "")
 
             # If location is absolute path without script name, add it
-            if script_name and location.startswith("/") and not location.startswith(script_name):
+            if (
+                script_name
+                and location.startswith("/")
+                and not _is_under_prefix(location, script_name)
+            ):
                 # Don't modify if it's a full URL
                 if not location.startswith(("http://", "https://")):
                     response["Location"] = script_name + location

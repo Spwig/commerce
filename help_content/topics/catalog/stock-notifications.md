@@ -16,6 +16,7 @@ keywords:
   - inventory alert
   - restock notification
   - stock settings
+  - back in stock journey
 url_patterns:
   - /admin/catalog/stockdisplaysettings/
   - /admin/catalog/stocknotification/
@@ -23,6 +24,7 @@ related:
   - inventory-warehouses
   - add-product
   - stock-bulk-actions
+  - triggered-journeys
 published: true
 ---
 
@@ -87,6 +89,8 @@ Navigate to **Catalog > Stock Notifications** to see all customer notification r
 Spwig sends back-in-stock emails automatically when a product's stock level rises above zero. The **Notified At** field records when the email was sent.
 
 Customers receive one notification email. Once notified, they need to sign up again if the product goes out of stock a second time.
+
+If you'd rather send more than a single plain alert — for example, showing the restocked product with a **Featured Product** content block, or following up a day later — build a **Product back in stock** journey in **Campaign Studio > Journeys** and set it **Active**. Once that journey exists, waiting customers are enrolled into it instead of receiving the plain one-off email; with no active journey, this one-off email keeps sending exactly as described above. See [Triggered Journeys](/help/triggered-journeys) for how the trigger behaves.
 
 ### Filtering notification requests
 

@@ -1,0 +1,22 @@
+<div class="em-block em-abandoned-cart">
+  {% if heading %}<div class="em-heading" style="text-align:center;font-weight:bold;font-size:20px;">{{ heading }}</div>{% endif %}
+  {% if items %}
+  {% for item in items %}
+  <div class="em-cart-line" style="display:flex;align-items:center;gap:12px;padding:6px 0;">
+    {% if item.image %}<img class="em-product-img" src="{{ item.image.fallback }}" alt="{{ item.name }}" style="width:56px;border-radius:4px;">{% endif %}
+    <div>
+      <div class="em-product-name">{{ item.name }}</div>
+      {% if item.variant %}<div style="color:#888;font-size:12px;">{{ item.variant }}</div>{% endif %}
+      <div class="em-product-price">{% if item.on_sale and item.was_price %}<span class="em-was">{{ item.was_price }}</span> {% endif %}{{ item.price }}{% if item.quantity > 1 %} × {{ item.quantity }}{% endif %}</div>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="em-product-empty" style="color:#888;font-style:italic;padding:8px 0;">
+    <i class="fas fa-cart-arrow-down"></i> Each recipient's own left-behind cart items appear here at send time.
+  </div>
+  {% endif %}
+  <div style="text-align:center;padding-top:8px;">
+    <span class="em-btn" style="display:inline-block;background:#2563eb;color:#fff;border-radius:6px;padding:12px 24px;">{{ button_text|default:'Return to cart' }}</span>
+  </div>
+</div>

@@ -10,6 +10,11 @@ Used by template filters in core.templatetags.language_tags to display
 language information in the language switcher dropdown.
 """
 
+from django.core.cache import cache
+
+SITE_LANGUAGE_METADATA_CACHE_KEY = "site_language_metadata"
+SITE_LANGUAGE_METADATA_CACHE_TTL = 300
+
 LANGUAGE_METADATA = {
     "en": {"flag": "🇺🇸", "native_name": "English", "dir": "ltr"},
     "es": {"flag": "🇪🇸", "native_name": "Español", "dir": "ltr"},
@@ -31,6 +36,29 @@ LANGUAGE_METADATA = {
 }
 
 
+def _get_site_language_metadata():
+    """
+    Build a {code: {flag, native_name, dir}} mapping from active SiteLanguage
+    records, cached and invalidated by the translations SiteLanguage signals.
+    """
+    metadata = cache.get(SITE_LANGUAGE_METADATA_CACHE_KEY)
+    if metadata is None:
+        metadata = {}
+        try:
+            from translations.models import SiteLanguage
+
+            for lang in SiteLanguage.objects.filter(is_active=True):
+                metadata[lang.code] = {
+                    "flag": lang.flag or "🌐",
+                    "native_name": lang.native_name or lang.code.upper(),
+                    "dir": "rtl" if lang.rtl else "ltr",
+                }
+        except Exception:
+            metadata = {}
+        cache.set(SITE_LANGUAGE_METADATA_CACHE_KEY, metadata, SITE_LANGUAGE_METADATA_CACHE_TTL)
+    return metadata
+
+
 def get_language_info(code):
     """
     Get metadata for a language code with fallback.
@@ -40,7 +68,9 @@ def get_language_info(code):
 
     Returns:
         dict: Dictionary containing 'flag', 'native_name', and 'dir' keys.
-              Returns fallback values for unknown language codes.
+              Known codes come from LANGUAGE_METADATA; otherwise the merchant's
+              active SiteLanguage configuration is consulted before falling back
+              to generic values.
 
     Example:
         >>> get_language_info('en')
@@ -49,6 +79,11 @@ def get_language_info(code):
         >>> get_language_info('unknown')
         {'flag': '🌐', 'native_name': 'UNKNOWN', 'dir': 'ltr'}
     """
-    return LANGUAGE_METADATA.get(
-        code, {"flag": "🌐", "native_name": code.upper() if code else "UNKNOWN", "dir": "ltr"}
-    )
+    if code in LANGUAGE_METADATA:
+        return LANGUAGE_METADATA[code]
+
+    site_metadata = _get_site_language_metadata().get(code)
+    if site_metadata is not None:
+        return site_metadata
+
+    return {"flag": "🌐", "native_name": code.upper() if code else "UNKNOWN", "dir": "ltr"}

@@ -1,0 +1,47 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+{% if subscribers %}
+<div class="list-row-cards">
+  {% for s in subscribers %}
+  <div class="list-row-card">
+    {% include "admin/includes/action_checkbox.html" with pk=s.pk %}
+    <div class="list-row-card-icon"><i class="fas fa-user"></i></div>
+    <div class="list-row-card-content">
+      <h3 class="list-row-card-title">
+        <a href="{% url 'admin:email_marketing_subscriber_change' s.pk %}">{{ s.email }}</a>
+      </h3>
+      <p class="list-row-card-subtitle">
+        {% if s.user %}<i class="fas fa-id-badge"></i> {% trans "Registered customer" %}{% else %}<i class="fas fa-user-secret"></i> {% trans "Anonymous lead" %}{% endif %}
+      </p>
+      <div class="list-row-card-badges">
+        {% if s.status == "active" %}
+        <span class="list-row-card-badge list-row-card-badge-success"><i class="fas fa-check-circle"></i> {{ s.get_status_display }}</span>
+        {% elif s.status == "unsubscribed" or s.status == "bounced" or s.status == "complained" %}
+        <span class="list-row-card-badge list-row-card-badge-error"><i class="fas fa-ban"></i> {{ s.get_status_display }}</span>
+        {% else %}
+        <span class="list-row-card-badge list-row-card-badge-warning"><i class="fas fa-clock"></i> {{ s.get_status_display }}</span>
+        {% endif %}
+        <span class="list-row-card-badge list-row-card-badge-primary">{{ s.get_source_display }}</span>
+        {% if s.marketing_verified %}<span class="list-row-card-badge"><i class="fas fa-shield-alt"></i> {% trans "Verified" %}</span>{% endif %}
+        {% for tag in s.tags.all %}<span class="list-row-card-badge"><i class="fas fa-tag"></i> {{ tag.name }}</span>{% endfor %}
+      </div>
+      <div class="list-row-card-meta">
+        <span class="list-row-card-meta-item"><i class="fas fa-calendar-alt"></i> {{ s.created_at|date:"M d, Y" }}</span>
+        {% if s.last_sent_at %}<span class="list-row-card-meta-item"><i class="fas fa-paper-plane"></i> {% trans "Last sent" %}: {{ s.last_sent_at|date:"M d, Y" }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="list-row-card-actions">
+      <a href="{% url 'admin:email_marketing_subscriber_change' s.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}"><i class="fas fa-pen"></i></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+  <div class="list-row-card card-empty-state">
+    <div class="card-empty-state-icon opacity-50"><i class="fas fa-user"></i></div>
+    <p class="card-empty-state-title">{% trans "No subscribers found." %}</p>
+    <p class="card-empty-state-subtitle">{% trans "Try adjusting your filters or search." %}</p>
+  </div>
+</div>
+{% endif %}

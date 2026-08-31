@@ -36,6 +36,8 @@ class Command(BaseCommand):
         has_gz = 0
         has_both = 0
         original_size = 0
+        br_original_size = 0  # original size of files that have a .br variant
+        gz_original_size = 0  # original size of files that have a .gz variant
         br_size = 0
         gz_size = 0
         missing_br = []  # (path, size) tuples
@@ -65,12 +67,14 @@ class Command(BaseCommand):
 
                 if file_has_br:
                     has_br += 1
+                    br_original_size += file_size
                     br_size += os.path.getsize(br_path)
                 else:
                     missing_br.append((filepath, file_size))
 
                 if file_has_gz:
                     has_gz += 1
+                    gz_original_size += file_size
                     gz_size += os.path.getsize(gz_path)
 
                 if file_has_br and file_has_gz:
@@ -107,11 +111,11 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.MIGRATE_HEADING("Size Savings"))
         self.stdout.write(f"  Original total:  {fmt_size(original_size)}")
-        if has_br and original_size:
-            br_saving = (1 - br_size / original_size) * 100
+        if has_br and br_original_size:
+            br_saving = (1 - br_size / br_original_size) * 100
             self.stdout.write(f"  Brotli total:    {fmt_size(br_size)} ({br_saving:.0f}% smaller)")
-        if has_gz and original_size:
-            gz_saving = (1 - gz_size / original_size) * 100
+        if has_gz and gz_original_size:
+            gz_saving = (1 - gz_size / gz_original_size) * 100
             self.stdout.write(f"  Gzip total:      {fmt_size(gz_size)} ({gz_saving:.0f}% smaller)")
         self.stdout.write("")
 

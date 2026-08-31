@@ -60,8 +60,12 @@ def get_primary_language():
         try:
             from core.models import SiteSettings
 
-            primary = SiteSettings.objects.values_list("default_language", flat=True).get(pk=1)
+            # Singleton row — read whatever primary key it actually has rather
+            # than assuming pk=1, so a deleted-and-recreated row still resolves.
+            primary = SiteSettings.objects.values_list("default_language", flat=True).first()
         except Exception:
+            primary = None
+        if not primary:
             from django.conf import settings
 
             primary = getattr(settings, "LANGUAGE_CODE", "en")

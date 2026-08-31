@@ -4,6 +4,7 @@ This creates a .zip package with help topics, translations, and manifest.
 """
 
 import json
+import re
 import tempfile
 import zipfile
 from datetime import UTC, datetime
@@ -11,12 +12,24 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import to_locale
 
 from core.models import HelpCategory, HelpTopic
+
+# Identifier formats for values that become part of on-disk package paths.
+# Both must start alphanumeric (rejecting "..") and forbid path separators.
+COMPONENT_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
+VERSION_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
 class Command(BaseCommand):
     help = "Generate help content package for update server distribution"
+
+    @staticmethod
+    def _validate_identifier(label, value, pattern):
+        """Reject values that could inject path separators into package paths."""
+        if not pattern.match(value):
+            raise CommandError(f"Invalid {label} '{value}': must match {pattern.pattern}")
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -49,7 +62,13 @@ class Command(BaseCommand):
         component = options["component"]
         all_components = options["all_components"]
 
-        if not output_dir.exists():
+        self._validate_identifier("version", version, VERSION_RE)
+        self._validate_identifier("component", component, COMPONENT_RE)
+
+        if output_dir.exists():
+            if not output_dir.is_dir():
+                raise CommandError(f"Output path is not a directory: {output_dir}")
+        else:
             output_dir.mkdir(parents=True)
 
         # Get topics to package
@@ -61,6 +80,8 @@ class Command(BaseCommand):
             package_name = f"help_{component}-{version}"
 
         if not topics.exists():
+            if all_components:
+                raise CommandError("No published topics found")
             raise CommandError(f"No published topics found for component: {component}")
 
         self.stdout.write(f"Packaging {topics.count()} help topics...")
@@ -128,33 +149,45 @@ class Command(BaseCommand):
 
                 self.stdout.write(f"  Exported: {topic.slug}")
 
-            # Generate translation files for each language
-            # Note: This exports the .po files from Django's locale directories
+            # Generate translation files for each configured language.
+            # Note: This exports the .po files from Django's locale directories.
+            # English is the source language and is always present without a
+            # locale directory; every other configured locale is copied when it
+            # has compiled translations available.
+            included_languages = ["en"]
             locale_base = Path(settings.BASE_DIR) / "locale"
             if locale_base.exists():
-                for lang_code in ["es", "fr", "de", "ja", "pt", "zh_Hans", "zh_Hant", "ru", "ar"]:
-                    lang_dir = locale_base / lang_code / "LC_MESSAGES"
+                import shutil
+
+                for lang_code, _lang_name in settings.LANGUAGES:
+                    if lang_code == "en":
+                        continue
+
+                    # settings.LANGUAGES uses codes like "zh-hans"; the locale
+                    # directories on disk use Django's locale form ("zh_Hans").
+                    locale_name = to_locale(lang_code)
+                    lang_dir = locale_base / locale_name / "LC_MESSAGES"
                     po_file = lang_dir / "django.po"
                     mo_file = lang_dir / "django.mo"
 
                     if po_file.exists():
                         # Copy translation files
-                        dest_dir = package_path / "locale" / lang_code / "LC_MESSAGES"
+                        dest_dir = package_path / "locale" / locale_name / "LC_MESSAGES"
                         dest_dir.mkdir(parents=True, exist_ok=True)
-
-                        import shutil
 
                         shutil.copy2(po_file, dest_dir / "django.po")
                         if mo_file.exists():
                             shutil.copy2(mo_file, dest_dir / "django.mo")
 
+                        included_languages.append(lang_code)
                         self.stdout.write(f"  Included translations: {lang_code}")
+
+            # Display name shared by the manifest and README.
+            component_display = "All" if all_components else component.title()
 
             # Create manifest
             manifest = {
-                "name": f"Help Content - {component.title()}"
-                if not all_components
-                else "Help Content - All",
+                "name": f"Help Content - {component_display}",
                 "slug": package_name,
                 "type": "help_content",
                 "version": version,
@@ -165,7 +198,7 @@ class Command(BaseCommand):
                 "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
                 "topics_count": topics.count(),
                 "categories_count": categories.count(),
-                "languages": ["en", "es", "fr", "de", "ja", "pt", "zh-hans", "zh-hant", "ru", "ar"],
+                "languages": included_languages,
                 "changelog": [
                     {
                         "version": version,
@@ -179,7 +212,11 @@ class Command(BaseCommand):
                 json.dump(manifest, f, indent=2, ensure_ascii=False)
 
             # Create README
-            readme = f"""# Help Content Package - {component.title()}
+            language_names = dict(settings.LANGUAGES)
+            languages_list = "\n".join(
+                f"- {language_names.get(code, code)} ({code})" for code in included_languages
+            )
+            readme = f"""# Help Content Package - {component_display}
 
 Version: {version}
 Topics: {topics.count()}
@@ -196,21 +233,12 @@ This package can be installed through the Spwig admin interface:
 
 - categories.json: Help topic categories
 - topics/: Individual help topic markdown files
-- locale/: Translation files for 10 languages
+- locale/: Translation files for {len(included_languages)} languages
 - manifest.json: Package metadata
 
 ## Languages Supported
 
-- English (en)
-- Spanish (es)
-- French (fr)
-- German (de)
-- Japanese (ja)
-- Portuguese (pt)
-- Chinese Simplified (zh-hans)
-- Chinese Traditional (zh-hant)
-- Russian (ru)
-- Arabic (ar)
+{languages_list}
 
 ## Generated
 

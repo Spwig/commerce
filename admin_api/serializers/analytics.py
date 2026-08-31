@@ -26,6 +26,8 @@ class TopProductSerializer(serializers.Serializer):
     units_sold = serializers.IntegerField()
     revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
     currency = serializers.CharField()
+    image_url = serializers.CharField(allow_null=True, required=False)
+    image_sources = serializers.DictField(required=False, allow_null=True)
 
 
 class OrderStatusBreakdownSerializer(serializers.Serializer):

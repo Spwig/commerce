@@ -20,6 +20,20 @@ from .models import Element, Page, PageVersion
 logger = logging.getLogger(__name__)
 
 
+def _parse_limit(request, default, maximum=50):
+    """Parse the ``limit`` query param into a non-negative, bounded integer.
+
+    Falls back to ``default`` when the value is missing or non-numeric, and
+    clamps the result to ``[0, maximum]`` so a bad value can neither crash the
+    view with a ``ValueError`` nor reach queryset slicing with a negative index.
+    """
+    try:
+        limit = int(request.GET.get("limit", default))
+    except (TypeError, ValueError):
+        limit = default
+    return max(0, min(limit, maximum))
+
+
 def staff_required_api(view_func):
     """Custom decorator for API views that require staff access"""
 
@@ -2100,7 +2114,7 @@ def get_link_sources(request):
 
     source_type = request.GET.get("type", "all")
     search = request.GET.get("search", "").strip()
-    limit = min(int(request.GET.get("limit", 10)), 50)
+    limit = _parse_limit(request, 10)
 
     result = {}
 
@@ -2263,7 +2277,7 @@ def product_search(request):
 
     search = request.GET.get("search", "").strip()
     ids_param = request.GET.get("ids", "").strip()
-    limit = min(int(request.GET.get("limit", 20)), 50)
+    limit = _parse_limit(request, 20)
 
     products_qs = (
         Product.objects.filter(status="published", hide_from_storefront=False)

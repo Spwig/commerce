@@ -147,6 +147,7 @@ class GeoLocationAdmin(admin.ModelAdmin):
         # Accuracy metrics
         corrections = (
             VisitorLocation.objects.exclude(actual_country__isnull=True)
+            .exclude(actual_country="")
             .exclude(actual_country=F("resolved_country"))
             .count()
         )
@@ -509,7 +510,12 @@ class VisitorLocationAdmin(admin.ModelAdmin):
         # Add annotation for was_corrected (use different name to avoid property conflict)
         return qs.annotate(
             _was_corrected_annotated=Case(
-                When(actual_country__isnull=False, then=~Q(actual_country=F("resolved_country"))),
+                When(
+                    Q(actual_country__isnull=False)
+                    & ~Q(actual_country="")
+                    & ~Q(actual_country=F("resolved_country")),
+                    then=True,
+                ),
                 default=False,
                 output_field=BooleanField(),
             )

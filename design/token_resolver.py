@@ -98,6 +98,7 @@ class TokenResolver:
         self.theme = theme
         self.component = component
         self._resolved_tokens = None  # Lazy-loaded cache
+        self._single_token_cache_keys: set[str] = set()  # Track single-token cache keys
         logger.debug(
             f"TokenResolver initialized: tier={page_tier}, "
             f"theme={theme.name if theme else 'None'}, "
@@ -123,6 +124,7 @@ class TokenResolver:
             Color: #FF5733 from Brand Builder
         """
         cache_key = self._get_cache_key(token_name)
+        self._single_token_cache_keys.add(cache_key)
         cached_token = cache.get(cache_key)
 
         if cached_token is not None:
@@ -352,8 +354,12 @@ class TokenResolver:
         Example:
             >>> resolver.clear_cache()
         """
-        # Clear specific token caches (would need to know all token names)
-        # For now, clear the all-tokens cache
+        # Clear single-token caches created by resolve_token()
+        for cache_key in self._single_token_cache_keys:
+            cache.delete(cache_key)
+        self._single_token_cache_keys.clear()
+
+        # Clear the all-tokens caches
         for token_type in [
             "color",
             "font",

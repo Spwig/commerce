@@ -1,0 +1,130 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "A/B test" %} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_marketing/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="em-dash">
+
+  <div class="change-list-header">
+    <div>
+      <h1><i class="fas fa-flask-vial"></i> {% trans "A/B test" %}</h1>
+      <p class="subtitle">
+        {{ test.campaign.name }} ·
+        {% if test.test_type == "subject" %}{% trans "Subject line test" %}{% else %}{% trans "Content test" %}{% endif %} ·
+        {% trans "winner by" %} {{ test.get_winner_metric_display|lower }}
+      </p>
+    </div>
+    <div class="change-list-header-actions">
+      <a class="button" href="{% url 'email_marketing_admin:campaign_builder' test.campaign.id %}">
+        <i class="fas fa-arrow-left"></i> {% trans "Back to the builder" %}
+      </a>
+    </div>
+  </div>
+
+  {% if test.status == "draft" %}
+  <div class="info-box">
+    {% blocktrans with pct=test.sample_percent hrs=test.test_window_hours %}Ready to start. {{ pct }}% of your audience will be split across the variants below; after {{ hrs }} hours the winner is picked automatically{% endblocktrans %}{% if test.auto_send_winner %} {% trans "and sent to the rest" %}{% endif %}.
+  </div>
+  {% elif test.status == "testing" %}
+  <div class="info-box">
+    <i class="fas fa-hourglass-half"></i>
+    {% blocktrans with when=test.decide_at|date:"M d, H:i" %}Test running — the winner is decided automatically around {{ when }}.{% endblocktrans %}
+  </div>
+  {% elif test.status == "complete" %}
+  <div class="info-box">
+    <i class="fas fa-trophy"></i>
+    {% if test.winner %}{% blocktrans with label=test.winner.label %}Variant {{ label }} won.{% endblocktrans %}{% endif %}
+    {% if test.auto_send_winner %} {% trans "The winner has been sent to the rest of your audience." %}{% endif %}
+  </div>
+  {% elif test.status == "cancelled" %}
+  <div class="info-box">{% trans "This test was cancelled." %}</div>
+  {% endif %}
+
+  {% if significance %}
+  <div class="info-box">
+    {% if significance.verdict == "significant" %}
+    <i class="fas fa-circle-check"></i>
+    {% blocktrans with label=significance.leader pct=significance.confidence %}This is a statistically clear result — {{ pct }}% confidence that Variant {{ label }} is genuinely best.{% endblocktrans %}
+    {% elif significance.verdict == "inconclusive" %}
+    <i class="fas fa-circle-question"></i>
+    {% blocktrans with label=significance.leader pct=significance.confidence %}Too close to call — only {{ pct }}% confidence that Variant {{ label }} is best (we look for 95%). A bigger audience or a longer window would help.{% endblocktrans %}
+    {% else %}
+    <i class="fas fa-circle-info"></i>
+    {% trans "Not enough data yet to tell the variants apart with confidence — the sample is too small. Grow the audience or let the test run longer." %}
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Variant results -->
+  <div class="list-row-cards">
+    {% for v in variant_rows %}
+    <div class="list-row-card {% if v.is_winner %}selected{% endif %}">
+      <div class="list-row-card-icon"><i class="fas fa-vial"></i></div>
+      <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+          {% trans "Variant" %} {{ v.label }}
+          {% if v.is_winner %}<span class="list-row-card-badge list-row-card-badge-success"><i class="fas fa-trophy"></i> {% trans "Winner" %}</span>{% endif %}
+          {% if significance and v.label == significance.leader %}
+            {% if not v.is_winner and test.status == "testing" %}<span class="list-row-card-badge list-row-card-badge-info"><i class="fas fa-arrow-trend-up"></i> {% trans "Leading" %}</span>{% endif %}
+            {% if significance.verdict == "significant" %}<span class="list-row-card-badge list-row-card-badge-success">{{ significance.confidence }}% {% trans "confidence" %}</span>
+            {% elif significance.verdict == "inconclusive" %}<span class="list-row-card-badge list-row-card-badge-warning">{% trans "Inconclusive" %} · {{ significance.confidence }}%</span>
+            {% else %}<span class="list-row-card-badge">{% trans "Not enough data" %}</span>{% endif %}
+          {% endif %}
+        </h3>
+        <p class="list-row-card-subtitle">{{ v.subject|default:"—" }}</p>
+        <div class="list-row-card-meta">
+          <span class="list-row-card-meta-item"><i class="fas fa-users"></i> {{ v.recipients }} {% trans "recipients" %}</span>
+          <span class="list-row-card-meta-item"><i class="fas fa-envelope-open"></i> {{ v.open_rate }}% {% trans "opens" %}</span>
+          <span class="list-row-card-meta-item"><i class="fas fa-hand-pointer"></i> {{ v.click_rate }}% {% trans "clicks" %}</span>
+        </div>
+      </div>
+      <div class="list-row-card-actions">
+        {% if is_content and test.status == "draft" %}
+        <a class="list-row-card-action" href="{% url 'email_marketing_admin:campaign_builder' v.campaign_id %}" title="{% trans 'Edit this variant’s design' %}"><i class="fas fa-pen"></i></a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if test.status == "testing" or test.status == "complete" %}
+  <div class="em-charts-grid">
+    <div class="em-chart-card">
+      <h3>{% trans "Open & click rate by variant" %}</h3>
+      <canvas id="ab-compare-chart"></canvas>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Actions -->
+  <div class="submit-row">
+    {% if test.status == "draft" %}
+    <form method="post" action="{% url 'email_marketing_admin:ab_test_start' test.id %}">
+      {% csrf_token %}
+      <button type="submit" class="button primary"><i class="fas fa-play"></i> {% trans "Start test" %}</button>
+    </form>
+    {% endif %}
+    {% if test.status == "draft" or test.status == "testing" %}
+    <form method="post" action="{% url 'email_marketing_admin:ab_test_cancel' test.id %}">
+      {% csrf_token %}
+      <button type="submit" class="button"><i class="fas fa-times"></i> {% trans "Cancel test" %}</button>
+    </form>
+    {% endif %}
+  </div>
+
+</div>
+
+{{ chart_data|json_script:"ab-chart-data" }}
+<script src="{% static 'email_marketing/js/ab_detail.js' %}" defer></script>
+{% endblock %}

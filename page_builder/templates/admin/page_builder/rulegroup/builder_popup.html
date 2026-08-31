@@ -133,10 +133,12 @@
         </div>
     </div>
 
+    <!-- User-authored rule data, HTML-safe escaped via json_script -->
+    {{ rules_tree|json_script:"rule-builder-popup-tree" }}
+
     <script type="application/json" id="rule-builder-popup-config">
     {
         "groupId": {{ rule_group.id|default:"null" }},
-        "initialRulesTree": {{ rules_tree_json|safe }},
         "ruleTypes": {{ rule_types_json|safe }},
         "operators": {{ operators_json|safe }},
         "isPopup": true,

@@ -9,6 +9,7 @@ Note: WhatsApp Business API requires:
 3. Twilio WhatsApp-enabled number or WhatsApp Sandbox for testing
 """
 
+import json
 import logging
 from typing import Any
 
@@ -53,6 +54,15 @@ class TwilioWhatsAppProvider(SMSProviderBase):
                     "description": "Optional: Content template SID prefix for approved templates",
                     "required": False,
                 },
+                "content_templates": {
+                    "type": "object",
+                    "title": "Content Templates",
+                    "description": (
+                        "Optional: Mapping of template name to its approved Twilio "
+                        'Content SID (e.g. {"order_receipt": "HXxxxxxxxx"})'
+                    ),
+                    "required": False,
+                },
             },
         }
 
@@ -80,6 +90,28 @@ class TwilioWhatsAppProvider(SMSProviderBase):
         if not normalized.startswith("whatsapp:"):
             return f"whatsapp:{normalized}"
         return normalized
+
+    def _resolve_content_sid(self, template_name: str) -> str:
+        """Resolve a template name to its configured Twilio Content SID.
+
+        Raises:
+            ValueError: If the template name has no configured Content SID.
+        """
+        templates = self.credentials.get("content_templates") or {}
+        # The credential wizard stores every field as a form string, so an
+        # object-typed field arrives as a JSON string that must be parsed
+        # back into a mapping before lookup.
+        if isinstance(templates, str):
+            try:
+                templates = json.loads(templates)
+            except (ValueError, TypeError):
+                raise ValueError("content_templates is not valid JSON")
+        if not isinstance(templates, dict):
+            raise ValueError("content_templates must be a mapping of name to Content SID")
+        content_sid = templates.get(template_name)
+        if not content_sid:
+            raise ValueError(f"Unknown WhatsApp template: {template_name!r}")
+        return content_sid
 
     def test_connection(self) -> dict[str, Any]:
         """Test Twilio WhatsApp connection."""
@@ -180,39 +212,23 @@ class TwilioWhatsAppProvider(SMSProviderBase):
             self.validate_credentials()
             client = self._get_client()
 
+            # Resolve the requested template to its approved Content SID.
+            # Sending a template message (rather than a free-form body) is
+            # required outside WhatsApp's 24-hour session window.
+            content_sid = self._resolve_content_sid(template_name)
+
             # Format numbers for WhatsApp
             to_number = self._format_whatsapp_number(phone)
             from_number = self._format_whatsapp_number(self.credentials["from_number"])
 
-            # For Twilio WhatsApp templates, we need to use Content API
-            # or the freeform approach with template syntax
-            #
-            # Option 1: Using Content Templates (requires content_sid)
-            # Option 2: Using template syntax in body (for sandbox)
-            #
-            # We'll use the freeform approach with variables for now,
-            # as it works with Twilio Sandbox and simple use cases
-
-            # Build message from template params
-            # Standard Twilio template format: {{1}}, {{2}}, etc.
-            message_parts = [f"Thank you for shopping at {template_params.get('1', 'our store')}!"]
-
-            if template_params.get("2"):
-                message_parts.append(f"Order #{template_params['2']}")
-
-            if template_params.get("3"):
-                message_parts.append(f"Total: {template_params['3']}")
-
-            if template_params.get("4"):
-                message_parts.append(f"View your receipt: {template_params['4']}")
-
-            message = "\n".join(message_parts)
-
-            # Send message
+            # Send the approved template via Twilio's Content API. All template
+            # parameters are passed as JSON-encoded content variables so the
+            # placeholders defined by the template are populated verbatim.
             msg = client.messages.create(
                 to=to_number,
                 from_=from_number,
-                body=message,
+                content_sid=content_sid,
+                content_variables=json.dumps(template_params),
             )
 
             logger.info(f"Twilio WhatsApp template sent: {msg.sid} to {to_number}")

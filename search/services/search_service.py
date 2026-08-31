@@ -13,7 +13,7 @@ from typing import Any
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Count, Q
 
 from core.utils import get_default_currency
 
@@ -326,10 +326,19 @@ class SearchService:
             q_objects |= self._build_translation_query("name", term, language)
             q_objects |= self._build_translation_query("description", term, language)
 
-        categories = Category.objects.filter(
-            q_objects,
-            is_active=True,
-        ).distinct()
+        categories = (
+            Category.objects.filter(
+                q_objects,
+                is_active=True,
+            )
+            .annotate(
+                published_product_count=Count(
+                    "products",
+                    filter=Q(products__status="published", products__is_deleted=False),
+                )
+            )
+            .distinct()
+        )
 
         if engine and engine.excluded_categories.exists():
             categories = categories.exclude(pk__in=engine.excluded_categories.all())
@@ -365,7 +374,7 @@ class SearchService:
                     "url": f"/category/{category.slug}/",
                     "thumbnail": thumbnail,
                     "thumbnail_sources": thumbnail_sources,
-                    "product_count": category.products.filter(status="published").count(),
+                    "product_count": category.published_product_count,
                     "is_translated": is_translated,
                 }
             )

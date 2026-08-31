@@ -35,6 +35,9 @@ def personalize_nav(request):
     except (ValueError, TypeError):
         return JsonResponse({"error": "invalid JSON"}, status=400)
 
+    if not isinstance(payload, dict):
+        return JsonResponse({"error": "invalid JSON"}, status=400)
+
     ids = payload.get("widget_placement_ids")
     if not isinstance(ids, list):
         return JsonResponse({"error": "widget_placement_ids required"}, status=400)

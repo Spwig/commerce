@@ -1,4 +1,7 @@
-from django.contrib import admin
+import logging
+
+from django.contrib import admin, messages
+from django.db import DatabaseError
 from django.db.models import Count, Q
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -10,6 +13,8 @@ from exchange_rates.models import (
     ExchangeRateProviderAccount,
     ManualExchangeRate,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @admin.register(ExchangeRateProviderAccount)
@@ -147,21 +152,30 @@ class ExchangeRateProviderAccountAdmin(admin.ModelAdmin):
 
             logo_url = ""
             if manifest_path.exists():
-                with open(manifest_path) as f:
-                    manifest = json.load(f)
+                try:
+                    with open(manifest_path) as f:
+                        manifest = json.load(f)
+                except (json.JSONDecodeError, OSError):
+                    logger.warning(
+                        "Skipping logo for provider %s: invalid manifest at %s",
+                        provider.component.slug,
+                        manifest_path,
+                    )
+                    manifest = None
 
-                logo_file = manifest.get("logo", {})
-                if isinstance(logo_file, dict):
-                    logo_filename = logo_file.get("file", "")
-                else:
-                    logo_filename = logo_file if logo_file else ""
+                if manifest is not None:
+                    logo_file = manifest.get("logo", {})
+                    if isinstance(logo_file, dict):
+                        logo_filename = logo_file.get("file", "")
+                    else:
+                        logo_filename = logo_file if logo_file else ""
 
-                if logo_filename:
-                    logo_path = provider_dir / logo_filename
-                    if logo_path.exists():
-                        logo_url = static(
-                            f"exchange_rate_provider/{provider.component.slug}/current/{logo_filename}"
-                        )
+                    if logo_filename:
+                        logo_path = provider_dir / logo_filename
+                        if logo_path.exists():
+                            logo_url = static(
+                                f"exchange_rate_provider/{provider.component.slug}/current/{logo_filename}"
+                            )
 
             provider.logo_url = logo_url
 
@@ -278,6 +292,7 @@ class ExchangeRateAdmin(admin.ModelAdmin):
 class ExchangeRateHistoryAdmin(admin.ModelAdmin):
     list_display = ["currency_pair", "rate", "provider_name", "order_link", "created_at"]
     list_filter = ["base_currency", "target_currency", "created_at"]
+    list_select_related = ["order"]
     search_fields = ["base_currency", "target_currency", "order__order_number"]
     readonly_fields = ["created_at"]
 
@@ -374,20 +389,34 @@ class ManualExchangeRateAdmin(admin.ModelAdmin):
 
             SiteSettings.get_settings()
 
-            # Get latest provider rate for each currency pair
-            for rate in all_rates:
-                db_rate = (
+            # Get the latest provider rate for every currency pair in a single
+            # bulk query, then keep the newest row per pair. Avoids running one
+            # query per manual rate (N+1) on the changelist.
+            pairs = {(r.base_currency, r.target_currency) for r in all_rates}
+            if pairs:
+                pair_filter = Q()
+                for base_currency, target_currency in pairs:
+                    pair_filter |= Q(
+                        base_currency=base_currency,
+                        target_currency=target_currency,
+                    )
+
+                latest_by_pair = {}
+                provider_qs = (
                     ExchangeRate.objects.filter(
-                        base_currency=rate.base_currency,
-                        target_currency=rate.target_currency,
+                        pair_filter,
                         provider_account__is_active=True,
                     )
+                    .select_related("provider_account__component")
                     .order_by("-fetched_at")
-                    .first()
                 )
+                for db_rate in provider_qs:
+                    key = (db_rate.base_currency, db_rate.target_currency)
+                    if key not in latest_by_pair:
+                        latest_by_pair[key] = db_rate
 
-                if db_rate:
-                    provider_rates[f"{rate.base_currency}/{rate.target_currency}"] = {
+                for (base_currency, target_currency), db_rate in latest_by_pair.items():
+                    provider_rates[f"{base_currency}/{target_currency}"] = {
                         "rate": str(db_rate.rate),
                         "provider": db_rate.provider_account.name
                         or db_rate.provider_account.component.name,
@@ -395,8 +424,14 @@ class ManualExchangeRateAdmin(admin.ModelAdmin):
                         if db_rate.fetched_at
                         else None,
                     }
-        except Exception:
-            pass
+        except DatabaseError:
+            logger.exception("Failed to load provider rates for manual rate comparison")
+            provider_rates = {}
+            self.message_user(
+                request,
+                _("Could not load provider rates for comparison. Please try again."),
+                level=messages.WARNING,
+            )
 
         extra_context["provider_rates"] = provider_rates
 

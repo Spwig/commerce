@@ -17,11 +17,30 @@ from decimal import Decimal
 
 from babel.numbers import format_currency as babel_format_currency
 from django import template
+from django.core.cache import cache
 from django.utils.html import format_html
 from djmoney.money import Money
 
 register = template.Library()
 logger = logging.getLogger(__name__)
+
+# The singleton SiteSettings is read while formatting every amount. Cache it
+# briefly so a list of N products/metrics doesn't issue N identical
+# ``get_or_create(pk=1)`` queries. Mirrors the pattern already used for this
+# same singleton in ``core.middleware.error_reporting``.
+_SETTINGS_CACHE_KEY = "currency_tags:site_settings"
+_SETTINGS_CACHE_TTL = 60  # seconds
+
+
+def _get_site_settings():
+    """Return the singleton SiteSettings, cached to avoid a per-amount N+1."""
+    settings_obj = cache.get(_SETTINGS_CACHE_KEY)
+    if settings_obj is None:
+        from core.models import SiteSettings
+
+        settings_obj = SiteSettings.get_settings()
+        cache.set(_SETTINGS_CACHE_KEY, settings_obj, _SETTINGS_CACHE_TTL)
+    return settings_obj
 
 
 @register.filter
@@ -130,9 +149,7 @@ def show_price(context, product, show_original=False, css_class=""):
 
     currency = getattr(request, "currency", None)
     if not currency:
-        from core.models import SiteSettings
-
-        currency = SiteSettings.get_settings().default_currency
+        currency = _get_site_settings().default_currency
 
     try:
         # Get price in customer's currency
@@ -187,9 +204,7 @@ def show_sale_price(context, product, show_original=False):
 
     currency = getattr(request, "currency", None)
     if not currency:
-        from core.models import SiteSettings
-
-        currency = SiteSettings.get_settings().default_currency
+        currency = _get_site_settings().default_currency
 
     try:
         # Check if product has sale price
@@ -474,8 +489,6 @@ def _format_money_display(amount, currency_code, locale=None):
     """
     from django.utils.translation import get_language
 
-    from core.models import SiteSettings
-
     try:
         # Get locale from current language or settings
         if not locale:
@@ -497,7 +510,7 @@ def _format_money_display(amount, currency_code, locale=None):
             amount = amount.quantize(Decimal("0.01"))
 
         # Check if locale formatting is enabled
-        settings = SiteSettings.get_settings()
+        settings = _get_site_settings()
         if settings.enable_locale_formatting:
             # Use Babel for locale-aware formatting
             formatted = babel_format_currency(amount, currency_code, locale=locale)

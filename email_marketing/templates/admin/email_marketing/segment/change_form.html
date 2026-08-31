@@ -1,0 +1,17 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'email_marketing/css/segment_rule_builder.css' %}">
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+  {# Data for the rule-builder JS (XSS-safe via json_script). #}
+  {{ rule_fields|json_script:"em-rule-fields" }}
+  {{ operator_labels|json_script:"em-operator-labels" }}
+  <script id="em-segment-config" type="application/json">{"countUrl": "{{ segment_count_url|escapejs }}"}</script>
+  <script src="{% static 'email_marketing/js/segment_rule_builder.js' %}" defer></script>
+{% endblock %}

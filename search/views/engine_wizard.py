@@ -3,6 +3,7 @@ Search Engine Setup Wizard Views
 Multi-step wizard for creating and configuring search engines
 """
 
+from django import forms
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect
@@ -35,6 +36,19 @@ WEIGHT_FIELDS = [
     ("weight_categories", _("Categories Weight"), 0.8, _("Relevance weight for category names")),
     ("weight_brands", _("Brands Weight"), 0.7, _("Relevance weight for brand names")),
 ]
+
+
+class SearchEngineWizardForm(forms.ModelForm):
+    """Validate the core SearchEngine fields collected across the wizard.
+
+    Running the collected values through a ModelForm enforces the model's
+    SlugField format, field lengths, and slug uniqueness that
+    ``objects.create()`` would otherwise skip.
+    """
+
+    class Meta:
+        model = SearchEngine
+        fields = ["name", "slug", "is_active"]
 
 
 class WizardSessionMixin:
@@ -98,16 +112,21 @@ class EngineWizardStep1View(WizardSessionMixin, TemplateView):
         if not slug:
             slug = slugify(name)
 
-        # Check for duplicate slug
-        if SearchEngine.objects.filter(slug=slug).exists():
-            messages.error(request, _("An engine with this slug already exists."))
+        # Validate name/slug through the model form: this enforces the
+        # SlugField format, the model's max lengths, and slug uniqueness,
+        # and rejects an empty slug (e.g. slugify() of "中文" yields "").
+        form = SearchEngineWizardForm({"name": name, "slug": slug, "is_active": is_active})
+        if not form.is_valid():
+            for field_errors in form.errors.values():
+                for error in field_errors:
+                    messages.error(request, error)
             return self.get(request, *args, **kwargs)
 
-        # Store in session
+        # Store the cleaned values in session
         self.update_wizard_data(
-            name=name,
-            slug=slug,
-            is_active=is_active,
+            name=form.cleaned_data["name"],
+            slug=form.cleaned_data["slug"],
+            is_active=form.cleaned_data["is_active"],
         )
 
         return redirect("search_admin:engine_wizard_step2")
@@ -229,15 +248,27 @@ class EngineWizardStep4View(WizardSessionMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         wizard_data = self.get_wizard_data()
 
+        # Re-validate the collected wizard state before creating the engine.
+        # A staff user can POST here directly without any prior steps, and
+        # objects.create() would happily persist an engine with an empty
+        # name/slug; the model form guarantees the required fields are valid.
+        form = SearchEngineWizardForm(
+            {
+                "name": wizard_data.get("name", ""),
+                "slug": wizard_data.get("slug", ""),
+                "is_active": wizard_data.get("is_active", True),
+            }
+        )
+        if not form.is_valid():
+            messages.warning(request, _("Please complete the wizard steps."))
+            return redirect("search_admin:engine_wizard_step1")
+
         try:
             # Create the search engine
-            engine = SearchEngine.objects.create(
-                name=wizard_data.get("name", ""),
-                slug=wizard_data.get("slug", ""),
-                is_active=wizard_data.get("is_active", True),
-                content_types=wizard_data.get("content_types", []),
-                weight_overrides=wizard_data.get("weight_overrides", {}),
-            )
+            engine = form.save(commit=False)
+            engine.content_types = wizard_data.get("content_types", [])
+            engine.weight_overrides = wizard_data.get("weight_overrides", {})
+            engine.save()
 
             # Clear wizard session data
             self.clear_wizard_data()

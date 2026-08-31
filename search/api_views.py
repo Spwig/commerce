@@ -2,6 +2,8 @@
 DRF API views for search endpoints.
 """
 
+import math
+
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
@@ -11,7 +13,7 @@ from rest_framework.views import APIView
 
 from core.api.authentication import HeadlessAPIMixin
 
-from .models import SearchEngine, SearchSettings
+from .models import SearchEngine, SearchQuery, SearchSettings
 from .serializers import (
     AutocompleteResponseSerializer,
     SearchEngineSerializer,
@@ -49,6 +51,23 @@ def get_language_from_request(request) -> str:
             return first_lang.split("-")[0][:10]
 
     return "en"
+
+
+def click_is_authorized(search_query, user, session_key: str) -> bool:
+    """Return True when the caller owns the referenced search query.
+
+    A click may only be attributed to a query the caller created. For a
+    user-owned query, ownership requires the authenticated caller's id to match
+    the query's ``user_id`` — a matching session key is not sufficient, since a
+    session key can outlive/kiosk-share across users. Session-key ownership is
+    only honoured for anonymous queries (``user_id is None``). Prevents forging
+    clicks against another visitor's sequential ``search_query_id``.
+    """
+    if search_query.user_id is not None:
+        # User-owned query: the authenticated caller must be that user.
+        return user is not None and search_query.user_id == user.pk
+    # Anonymous query: fall back to session-key ownership.
+    return bool(session_key) and search_query.session_key == session_key
 
 
 class AutocompleteAPIView(HeadlessAPIMixin, APIView):
@@ -98,7 +117,9 @@ class AutocompleteAPIView(HeadlessAPIMixin, APIView):
         limit = request.GET.get("limit")
         if limit:
             try:
-                limit = int(limit)
+                # Clamp to a sane range so a negative/oversized value can't reach
+                # the service (negative slicing / unbounded result sets).
+                limit = max(1, min(50, int(limit)))
             except ValueError:
                 limit = None
 
@@ -110,8 +131,10 @@ class AutocompleteAPIView(HeadlessAPIMixin, APIView):
             limit=limit,
         )
 
-        # Track the query if settings allow
-        if results.get("total_count", 0) >= 0 and "redirect" not in results:
+        # Track the query if settings allow. The search service always includes
+        # a `redirect` key (None when nothing matched), so test its value —
+        # `"redirect" not in results` would always be False and never track.
+        if results.get("total_count", 0) >= 0 and results.get("redirect") is None:
             search_service.track_query(
                 query=query,
                 result_count=results.get("total_count", 0),
@@ -205,12 +228,18 @@ class SearchResultsAPIView(HeadlessAPIMixin, APIView):
                 pass
         if request.GET.get("min_price"):
             try:
-                filters["min_price"] = float(request.GET.get("min_price"))
+                # float("nan")/float("inf") do not raise; reject non-finite
+                # values so they can't reach the ORM price filter.
+                min_price = float(request.GET.get("min_price"))
+                if math.isfinite(min_price):
+                    filters["min_price"] = min_price
             except ValueError:
                 pass
         if request.GET.get("max_price"):
             try:
-                filters["max_price"] = float(request.GET.get("max_price"))
+                max_price = float(request.GET.get("max_price"))
+                if math.isfinite(max_price):
+                    filters["max_price"] = max_price
             except ValueError:
                 pass
         if request.GET.get("in_stock"):
@@ -371,14 +400,27 @@ class TrackClickAPIView(HeadlessAPIMixin, APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        user = request.user if request.user.is_authenticated else None
+        session_key = request.session.session_key or ""
+
+        # Authorize the referenced query before recording a click, so a caller
+        # can't forge clicks against another visitor's sequential query ID.
+        try:
+            search_query = SearchQuery.objects.get(pk=serializer.validated_data["search_query_id"])
+        except SearchQuery.DoesNotExist:
+            return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
+
+        if not click_is_authorized(search_query, user, session_key):
+            return Response({"success": False}, status=status.HTTP_403_FORBIDDEN)
+
         search_service = SearchService()
         success = search_service.track_click(
-            search_query_id=serializer.validated_data["search_query_id"],
+            search_query_id=search_query.id,
             content_type_str=serializer.validated_data["content_type"],
             object_id=serializer.validated_data["object_id"],
             position=serializer.validated_data.get("position", 0),
-            user=request.user if request.user.is_authenticated else None,
-            session_key=request.session.session_key or "",
+            user=user,
+            session_key=session_key,
         )
 
         return Response({"success": success})

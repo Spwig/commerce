@@ -120,6 +120,51 @@ _PG_VARIANTS = {
 _HEADING_BASE = "page_builder/css/elements/heading.css"
 
 
+def _snapshot_registry(reg):
+    """Capture the process-global ElementRegistry's mutable state so a test
+    that calls reload() can restore it afterwards. discover_elements() clears
+    the `_elements`/`_categories` dicts in place, so shallow copies suffice.
+
+    The cache entry is captured too: reload() deletes and rewrites
+    REGISTRY_CACHE_KEY with a DB-less registry (the custom-element query is
+    forbidden under SimpleTestCase). Restoring only the in-memory fields would
+    leave that poisoned cache behind — a later lookup with `_loaded=False`
+    reads it back and silently loses every DB-backed custom element."""
+    from django.core.cache import cache
+
+    from page_builder.element_registry import REGISTRY_CACHE_KEY
+
+    return {
+        "elements": dict(reg._elements),
+        "categories": {k: list(v) for k, v in reg._categories.items()},
+        "loaded": reg._loaded,
+        "base_properties": reg._base_properties,
+        "cache": cache.get(REGISTRY_CACHE_KEY),
+    }
+
+
+def _restore_registry(reg, snapshot):
+    """Restore a snapshot taken by _snapshot_registry so the global registry
+    (including its DB-backed custom elements) is left exactly as it was."""
+    from django.core.cache import cache
+
+    from page_builder.element_registry import REGISTRY_CACHE_KEY
+
+    reg._elements = dict(snapshot["elements"])
+    reg._categories = {k: list(v) for k, v in snapshot["categories"].items()}
+    reg._loaded = snapshot["loaded"]
+    reg._base_properties = snapshot["base_properties"]
+
+    # Undo reload()'s rewrite of the versioned cache key. If there was no entry
+    # before, drop the poisoned one so the next lookup re-discovers from a
+    # DB-capable context; otherwise put the original entry back verbatim.
+    cached = snapshot["cache"]
+    if cached is None:
+        cache.delete(REGISTRY_CACHE_KEY)
+    else:
+        cache.set(REGISTRY_CACHE_KEY, cached, timeout=3600)
+
+
 class _FakeChildManager:
     """Stand-in for Element.child_elements so the collector's
     `.filter(is_active=True).exists()` recursion guard short-circuits."""
@@ -157,9 +202,22 @@ class ConditionalElementCssTest(SimpleTestCase):
         # table via _discover_custom_elements; that query is forbidden under
         # SimpleTestCase but is swallowed by the collector's broad except, so
         # filesystem elements (product_grid, heading) still register.
+        #
+        # reload() mutates the process-global singleton and marks it loaded with
+        # only filesystem elements, which would silently strip DB-backed custom
+        # elements from every later test. Snapshot the singleton's state so
+        # tearDownClass can restore it and leave the global registry untouched.
         from page_builder.element_registry import get_registry
 
+        cls._registry_snapshot = _snapshot_registry(get_registry())
         get_registry().reload()
+
+    @classmethod
+    def tearDownClass(cls):
+        from page_builder.element_registry import get_registry
+
+        _restore_registry(get_registry(), cls._registry_snapshot)
+        super().tearDownClass()
 
     def _collect(self, *elements):
         from page_builder.views import PageView
@@ -333,10 +391,20 @@ class CollectElementScriptsManifestTest(SimpleTestCase):
         super().setUpClass()
         # Force a fresh disk read so a stale registry (possible under
         # --reuse-db / a long-lived worker) cannot mask the real product_grid
-        # `scripts` config. Mirrors ConditionalElementCssTest.setUpClass.
+        # `scripts` config. Mirrors ConditionalElementCssTest.setUpClass,
+        # including the snapshot/restore that keeps the process-global registry
+        # (and its DB-backed custom elements) intact for later tests.
         from page_builder.element_registry import get_registry
 
+        cls._registry_snapshot = _snapshot_registry(get_registry())
         get_registry().reload()
+
+    @classmethod
+    def tearDownClass(cls):
+        from page_builder.element_registry import get_registry
+
+        _restore_registry(get_registry(), cls._registry_snapshot)
+        super().tearDownClass()
 
     def _collect(self, *elements):
         from page_builder.views import PageView

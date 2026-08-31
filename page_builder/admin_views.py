@@ -237,14 +237,14 @@ def filter_visibility_rules(request):
     # Priority filter
     priority = request.GET.get("priority", "")
     if priority == "high":
-        rules = rules.filter(priority__lte=3)
+        rules = rules.filter(priority__gte=8)
     elif priority == "medium":
         rules = rules.filter(priority__gte=4, priority__lte=7)
     elif priority == "low":
-        rules = rules.filter(priority__gte=8)
+        rules = rules.filter(priority__lte=3)
 
-    # Order by priority, then by name
-    rules = rules.order_by("priority", "name")
+    # Order by priority (higher first), then by name
+    rules = rules.order_by("-priority", "name")
 
     # Render partial template
     html = render_to_string(
@@ -253,6 +253,22 @@ def filter_visibility_rules(request):
     )
 
     return JsonResponse({"html": html, "count": rules.count()})
+
+
+def _resolve_toggle_state(request, current):
+    """Return the desired active state from the request body, toggling by default.
+
+    Falls back to toggling ``current`` whenever the body is absent, not valid JSON,
+    or a JSON value that is not an object, so a malformed payload can never raise
+    instead of applying the documented toggle behaviour.
+    """
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return not current
+    if not isinstance(data, dict):
+        return not current
+    return data.get("is_active", not current)
 
 
 @staff_member_required
@@ -267,15 +283,7 @@ def toggle_visibility_rule_status(request, rule_id):
     try:
         rule = VisibilityRule.objects.get(pk=rule_id)
 
-        # Parse the request body to get the desired state
-        try:
-            data = json.loads(request.body)
-            is_active = data.get("is_active", not rule.is_active)
-        except (json.JSONDecodeError, KeyError):
-            # Toggle if no specific value provided
-            is_active = not rule.is_active
-
-        rule.is_active = is_active
+        rule.is_active = _resolve_toggle_state(request, rule.is_active)
         rule.save(update_fields=["is_active"])
 
         return JsonResponse(
@@ -357,15 +365,7 @@ def toggle_rule_group_status(request, group_id):
     try:
         group = RuleGroup.objects.get(pk=group_id)
 
-        # Parse the request body to get the desired state
-        try:
-            data = json.loads(request.body)
-            is_active = data.get("is_active", not group.is_active)
-        except (json.JSONDecodeError, KeyError):
-            # Toggle if no specific value provided
-            is_active = not group.is_active
-
-        group.is_active = is_active
+        group.is_active = _resolve_toggle_state(request, group.is_active)
         group.save(update_fields=["is_active"])
 
         return JsonResponse(
@@ -525,7 +525,10 @@ def rule_builder_view(request, group_id=None):
         "rule_group": rule_group,
         "all_groups": all_groups,
         "saved_rules": saved_rules,
-        "saved_rules_json": json.dumps(saved_rules_data),
+        # Raw objects for CSP-safe ``json_script`` rendering in the template.
+        "saved_rules_data": saved_rules_data,
+        "rules_tree": rules_tree,
+        # JSON-string form kept for callers/tests inspecting the serialised tree.
         "rules_tree_json": json.dumps(rules_tree),
         "rule_types_json": json.dumps(rule_types_by_category),
         "operators_json": json.dumps(operators),
@@ -536,8 +539,19 @@ def rule_builder_view(request, group_id=None):
     return TemplateResponse(request, "admin/page_builder/rulegroup/builder.html", context)
 
 
-def _build_rules_tree(group):
-    """Build a nested tree structure for a rule group"""
+def _build_rules_tree(group, visited=None):
+    """Build a nested tree structure for a rule group.
+
+    ``visited`` tracks the group IDs already expanded on the current path so that a
+    cyclic ``parent_group`` relationship stops instead of recursing until a
+    RecursionError.
+    """
+    if visited is None:
+        visited = set()
+    if group.id in visited:
+        return None
+    visited.add(group.id)
+
     members = (
         RuleGroupMember.objects.filter(rule_group=group).select_related("rule").order_by("order")
     )
@@ -571,9 +585,11 @@ def _build_rules_tree(group):
             }
         )
 
-    # Add child groups recursively
+    # Add child groups recursively, skipping any already-visited (cyclic) group
     for child_group in group.child_groups.all().order_by("priority", "name"):
-        tree["children"].append(_build_rules_tree(child_group))
+        child_tree = _build_rules_tree(child_group, visited)
+        if child_tree is not None:
+            tree["children"].append(child_tree)
 
     return tree
 
@@ -706,6 +722,9 @@ def rule_builder_popup_view(request, group_id=None):
         "rule_group": rule_group,
         "all_groups": all_groups,
         "saved_rules": saved_rules,
+        # Raw object for CSP-safe ``json_script`` rendering in the template.
+        "rules_tree": rules_tree,
+        # JSON-string form kept for callers/tests inspecting the serialised tree.
         "rules_tree_json": json.dumps(rules_tree),
         "rule_types_json": json.dumps(rule_types_by_category),
         "operators_json": json.dumps(operators),

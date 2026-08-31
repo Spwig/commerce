@@ -30,9 +30,14 @@ def unified_header_management_view(request):
     default_header = HeaderTemplate.objects.filter(is_default=True).first()
 
     # Get all headers with widget placement counts and page counts
-    headers = HeaderTemplate.objects.annotate(
-        widget_count=Count("widget_placements"), page_count=Count("pages")
-    ).order_by("-is_default", "-is_active", "name")
+    headers = (
+        HeaderTemplate.objects.select_related("created_by")
+        .annotate(
+            widget_count=Count("widget_placements", distinct=True),
+            page_count=Count("pages", distinct=True),
+        )
+        .order_by("-is_default", "-is_active", "name")
+    )
 
     # Apply search filter
     if search_query:
@@ -107,8 +112,10 @@ def unified_footer_management_view(request):
     default_footer = FooterTemplate.objects.filter(is_default=True).first()
 
     # Get all footers with widget placement counts
-    footers = FooterTemplate.objects.annotate(widget_count=Count("widget_placements")).order_by(
-        "-is_default", "-is_active", "name"
+    footers = (
+        FooterTemplate.objects.select_related("created_by")
+        .annotate(widget_count=Count("widget_placements", distinct=True))
+        .order_by("-is_default", "-is_active", "name")
     )
 
     # Apply search filter

@@ -33,8 +33,9 @@ class ErrorReportingMiddleware(MiddlewareMixin):
         try:
             self._capture_error(request, exception)
         except Exception:
-            # Never let error reporting itself cause a secondary failure
-            pass
+            # Never let error reporting itself cause a secondary failure,
+            # but always record why the capture failed so it is observable.
+            logger.exception("Failed to capture error report for unhandled exception")
         return None
 
     def _capture_error(self, request, exception):
@@ -77,6 +78,7 @@ class ErrorReportingMiddleware(MiddlewareMixin):
             try:
                 settings_obj = SiteSettings.get_settings()
             except Exception:
+                logger.exception("Failed to load SiteSettings for error reporting")
                 return None
             if settings_obj:
                 cache.set(SETTINGS_CACHE_KEY, settings_obj, SETTINGS_CACHE_TTL)

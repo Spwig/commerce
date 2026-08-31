@@ -417,6 +417,69 @@ class TestIframeSandboxValidation:
         result = sanitizer.validate_iframe_sandbox(html)
         assert result is False
 
+    def test_blocks_sandbox_escape_combination(self):
+        """allow-scripts + allow-same-origin lets framed content drop its own
+        sandbox, so it must be rejected as effectively unsandboxed."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = (
+            '<iframe src="https://example.com" sandbox="allow-scripts allow-same-origin"></iframe>'
+        )
+        assert sanitizer.validate_iframe_sandbox(html) is False
+
+    def test_sandbox_substring_in_other_attribute_is_not_accepted(self):
+        """A "sandbox=" substring inside another attribute value (e.g. title)
+        must not satisfy the sandbox requirement."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = '<iframe src="https://example.com" title="sandbox=x"></iframe>'
+        assert sanitizer.validate_iframe_sandbox(html) is False
+
+    def test_enforce_drops_escaping_iframe_during_sanitize(self):
+        """End-to-end: sanitize() removes a Tier C iframe whose sandbox grants
+        the script+same-origin escape combination."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = (
+            '<iframe src="https://example.com" sandbox="allow-scripts allow-same-origin"></iframe>'
+        )
+        result = sanitizer.sanitize_html(html)
+        assert "<iframe" not in result
+
+    def test_blocks_top_navigation_token(self):
+        """allow-top-navigation lets framed content redirect the top window
+        (phishing) and must be rejected."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = (
+            '<iframe src="https://example.com" '
+            'sandbox="allow-scripts allow-top-navigation"></iframe>'
+        )
+        assert sanitizer.validate_iframe_sandbox(html) is False
+
+    def test_blocks_popups_escape_token(self):
+        """allow-popups-to-escape-sandbox spawns non-sandboxed popups and must
+        be rejected."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = (
+            '<iframe src="https://example.com" '
+            'sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>'
+        )
+        assert sanitizer.validate_iframe_sandbox(html) is False
+
+    def test_enforce_drops_frame_escaping_iframe_during_sanitize(self):
+        """End-to-end: sanitize_html() removes a Tier C iframe whose sandbox
+        grants a frame-escaping token."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = (
+            '<iframe src="https://example.com" '
+            'sandbox="allow-scripts allow-top-navigation"></iframe>'
+        )
+        assert "<iframe" not in sanitizer.sanitize_html(html)
+
+    def test_enforce_drops_unsandboxed_iframe_during_sanitize(self):
+        """End-to-end: sanitize_html() removes a Tier C iframe with no sandbox
+        attribute at all."""
+        sanitizer = ContentSanitizer(tier="C")
+        html = '<iframe src="https://example.com"></iframe>'
+        assert "<iframe" not in sanitizer.sanitize_html(html)
+
 
 @pytest.mark.django_db
 class TestDangerousPatternDetection:

@@ -2,258 +2,262 @@
 title: Preferensi Komunikasi
 ---
 
-Preferensi komunikasi memungkinkan pelanggan mengontrol email dan pesan SMS yang mereka terima dari toko Anda. Sistem ini memastikan kepatuhan terhadap GDPR dan membantu Anda menghormati preferensi komunikasi pelanggan di semua saluran.
+Preferensi komunikasi memungkinkan pelanggan untuk mengontrol email dan pesan SMS apa yang mereka terima dari toko Anda. Sistem ini memastikan kepatuhan GDPR dan membantu Anda menghormati preferensi komunikasi pelanggan di semua saluran.
 
-Navigasikan ke **Pelanggan > Preferensi Komunikasi** di bilah sisi admin untuk mengelola preferensi komunikasi pelanggan.
+Navigasi ke **Pelanggan > Preferensi Komunikasi** di bilah sisi admin untuk mengelola preferensi komunikasi pelanggan.
 
 ## Memahami Preferensi Komunikasi
 
-Sistem preferensi komunikasi memberi pelanggan kendali granular terhadap pesan yang mereka terima. Ini mencakup:
+Sistem preferensi komunikasi memberikan pelanggan kontrol terperinci atas pesan yang mereka terima. Ini mencakup:
 
-- **Email Transaksional** — Konfirmasi pesanan penting, pembaruan pengiriman, email keamanan akun (selalu aktif)
-- **Email Pemasaran** — Surat berita, promosi, rekomendasi produk (memerlukan pendaftaran)
-- **Pemberitahuan Aplikasi Khusus** — Posting blog, poin loyalitas, hadiah referensi, komisi afiliasi
-- **Pemberitahuan SMS** — Pemberitahuan melalui pesan teks (memerlukan pendaftaran eksplisit sesuai TCPA)
+- **Email transaksional** — Konfirmasi pesanan penting, pembaruan pengiriman, email keamanan akun (selalu aktif)
+- **Email pemasaran** — Buletin, promosi, rekomendasi produk (memerlukan opt-in)
+- **Notifikasi khusus aplikasi** — Artikel blog, poin loyalitas, hadiah rujukan, komisi afiliasi
+- **Notifikasi SMS** — Notifikasi pesan teks (memerlukan opt-in eksplisit sesuai TCPA)
 
-Semua komunikasi pemasaran memerlukan persetujuan pelanggan dan verifikasi email untuk memastikan kepatuhan terhadap GDPR.
+Semua komunikasi pemasaran memerlukan persetujuan pelanggan dan verifikasi email untuk memastikan kepatuhan GDPR.
 
 ## Penjelasan Jenis Preferensi
 
 ### Komunikasi Transaksional (Selalu Aktif)
 
-Pesan transaksional penting untuk akun dan pesanan pelanggan. Pesan-pesan ini **tidak dapat dinonaktifkan** oleh pelanggan:
+Pesan transaksional sangat penting untuk akun dan pesanan pelanggan Anda. Pesan ini **tidak dapat dinonaktifkan** oleh pelanggan:
 
 | Jenis | Deskripsi | Contoh |
 |------|-------------|----------|
-| **Konfirmasi Pesanan** | Konfirmasi ketika pesanan ditempatkan | Pesanan #12345 telah diterima |
-| **Pembaruan Pengiriman** | Pemberitahuan ketika status pesanan berubah | Pesanan Anda telah dikirim |
-| **Konfirmasi Pembayaran** | Pembayaran diterima, pengembalian dana diproses | Pembayaran $49.99 telah dikonfirmasi |
-| **Keamanan Akun** | Reset kata sandi, verifikasi email | Reset kata sandi Anda |
+| **Konfirmasi Pesanan** | Konfirmasi saat pesanan dibuat | Pesanan #12345 telah diterima |
+| **Pembaruan Pengiriman** | Notifikasi saat status pesanan berubah | Pesanan Anda telah dikirim |
+| **Konfirmasi Pembayaran** | Pembayaran diterima, pengembalian dana diproses | Pembayaran $49.99 dikonfirmasi |
+| **Keamanan Akun** | Pengaturan ulang kata sandi, verifikasi email | Atur ulang kata sandi Anda |
 
-### Komunikasi Pemasaran (Pendaftaran Diperlukan)
+### Komunikasi Pemasaran (Wajib Opt-In)
 
 Pesan pemasaran memerlukan persetujuan pelanggan dan verifikasi email:
 
 | Jenis | Deskripsi | Default |
 |------|-------------|---------|
-| **Surat Berita** | Surat berita umum dan pembaruan | Non-aktif |
-| **Tawaran Pemasaran** | Penjualan, diskon, tawaran khusus | Non-aktif |
-| **Rekomendasi Produk** | Rekomendasi produk pribadi | Non-aktif |
-| **Kembali ke Stok** | Pemberitahuan ketika produk kembali ke stok | Non-aktif |
+| **Buletin** | Buletin umum dan pembaruan | Opt-out |
+| **Penawaran Promosional** | Penjualan, diskon, penawaran khusus | Opt-out |
+| **Rekomendasi Produk** | Saran produk yang dipersonalisasi | Opt-out |
+| **Kembali Stok** | Notifikasi saat produk kembali tersedia | Opt-out |
 
-Pelanggan harus **memverifikasi alamat email mereka** sebelum menerima email pemasaran apa pun (persyaratan GDPR double opt-in).
+Pelanggan harus **memverifikasi alamat email mereka** sebelum menerima email pemasaran apa pun (persyaratan double opt-in GDPR).
 
-### Preferensi Aplikasi Khusus
+### Preferensi Khusus Aplikasi
 
-Pelanggan dapat mengontrol pemberitahuan dari fitur khusus:
+Pelanggan dapat mengontrol notifikasi dari fitur tertentu:
 
-**Pemberitahuan Blog**
-- Posting blog baru diterbitkan (segera, digest mingguan, atau digest bulanan)
-- Langganan kategori khusus
+**Notifikasi Blog**
+- Artikel blog baru diterbitkan (seketika, ringkasan mingguan, atau ringkasan bulanan)
+- Langganan khusus kategori
 - Preferensi frekuensi
 
 **Program Loyalitas**
-- Pemberitahuan poin yang diperoleh
-- Peningkatan tingkat
-- Hadiah yang dibuka
-- Poin yang segera kedaluwarsa
+- Notifikasi poin yang diperoleh
+- Kenaikan tier
+- Hadiah terbuka
+- Poin segera kedaluwarsa
 - Bonus ulang tahun
-- Tawaran kampanye
+- Penawaran kampanye
 
-**Program Referensi**
-- Hadiah diberikan (pemilik referensi dan penerima referensi)
-- Pendaftaran sukses referensi
-- Hadiah yang segera kedaluwarsa
-- Undangan referensi
+**Program Rujukan**
+- Hadiah diterbitkan (pemberi rujukan dan yang dirujuk)
+- Pendaftaran rujukan berhasil
+- Hadiah segera kedaluwarsa
+- Undangan rujukan
 
 **Program Afiliasi**
-- Komisi yang diperoleh
+- Komisi diperoleh
 - Komisi disetujui atau ditolak
 - Pembayaran diproses, selesai, atau gagal
 - Laporan kinerja bulanan
 
-### Pemberitahuan SMS (Pendaftaran Eksplisit Diperlukan)
+### Notifikasi SMS (Wajib Opt-In Eksplisit)
 
-Semua pemberitahuan SMS memerlukan **pendaftaran eksplisit** sesuai regulasi TCPA. Pelanggan harus secara aktif menandai kotak pendaftaran SMS:
+Semua notifikasi SMS memerlukan **opt-in eksplisit** sesuai peraturan TCPA. Pelanggan harus secara aktif mencentang kotak opt-in SMS:
 
-- **SMS Transaksional** — Pesanan dikirim, terkirim (pendaftaran diperlukan)
-- **SMS Pemasaran** — Promosi, tawaran khusus (pendaftaran terpisah diperlukan)
+- **SMS Transaksional** — Pesanan dikirim, diterima (opt-in diperlukan)
+- **SMS Pemasaran** — Promosi, penawaran khusus (opt-in terpisah diperlukan)
 
-Bahkan SMS transaksional memerlukan pendaftaran karena mengirimkan pesan teks yang tidak diminta diatur lebih ketat daripada email.
+Bahkan SMS transaksional memerlukan opt-in karena pengiriman pesan teks yang tidak diminta diatur lebih ketat daripada email.
 
 ## Mengelola Preferensi Pelanggan di Admin
 
-### Melihat Semua Preferensi
+### Menampilkan Semua Preferensi
 
-Navigasikan ke **Pelanggan > Preferensi Komunikasi** untuk melihat semua preferensi pelanggan:
+Navigasi ke **Pelanggan > Preferensi Komunikasi** untuk melihat semua preferensi pelanggan:
 
-| Kolom | Deskripsi |
-|--------|-------------|
-| **Email Pengguna** | Alamat email pelanggan (tautan ke admin pengguna) |
-| **Status Email** | Tanda centang hijau ✓ jika email aktif, lingkaran abu-abu ○ jika dinonaktifkan |
-| **Status SMS** | Tanda centang hijau ✓ jika SMS aktif, lingkaran abu-abu ○ jika dinonaktifkan |
-| **Status Pemasaran** | Badge "Opted In" atau "Opted Out" |
-| **Status Verifikasi** | 📧✓ jika email diverifikasi, 📱✓ jika SMS diverifikasi |
-| **Sumber Persetujuan** | Di mana pelanggan memberikan persetujuan (pendaftaran, checkout, pusat preferensi) |
-| **Diperbarui Pada** | Waktu terakhir preferensi diubah |
+{
+  "Column": "Deskripsi",
+  "--------": "-------------",
+  "**User Email**": "Alamat surel pelanggan (terhubung ke admin pengguna)",
+  "**Email Status**": "Hijau ✓ jika surel diaktifkan, abu-abu ○ jika dinonaktifkan",
+  "**SMS Status**": "Hijau ✓ jika SMS diaktifkan, abu-abu ○ jika dinonaktifkan",
+  "**Marketing Status**": "Badge 'Opted In' atau 'Opted Out'",
+  "**Verification Status**": "📧✓ jika surel diverifikasi, 📱✓ jika SMS diverifikasi",
+  "**Consent Source**": "Di mana pelanggan menyetujui (pendaftaran, checkout, pusat preferensi)",
+  "**Updated At**": "Waktu terakhir preferensi diubah"
+}
 
-### Memfilter Preferensi
+### Pencarian Preferensi
 
-Gunakan bilah sisi filter untuk menemukan pelanggan:
+Gunakan sidebar filter untuk menemukan pelanggan:
 
 - **Email Aktif** — Ya/Tidak
 - **SMS Aktif** — Ya/Tidak
-- **Email Pemasaran** — Ya/Tidak (telah mendaftar untuk pemasaran)
-- **SMS Pemasaran** — Ya/Tidak (telah mendaftar untuk SMS pemasaran)
-- **Email Diverifikasi** — Ya/Tidak (telah memverifikasi alamat email)
-- **SMS Diverifikasi** — Ya/Tidak (telah memverifikasi nomor telepon)
+- **Email Pemasaran** — Ya/Tidak (telah menyetujui pemasaran)
+- **SMS Pemasaran** — Ya/Tidak (telah menyetujui pemasaran SMS)
+- **Email Diverifikasi** — Ya/Tidak (telah memverifikasi alamat surel mereka)
+- **SMS Diverifikasi** — Ya/Tidak (telah memverifikasi nomor telepon mereka)
 - **Sumber Persetujuan** — Pendaftaran, Checkout, Pusat Preferensi, API, Migrasi
-- **Kode Bahasa** — Bahasa yang dipilih untuk komunikasi
+- **Kode Bahasa** — Bahasa unggulan untuk komunikasi
 
-### Mencari Preferensi
+### Pencarian Preferensi
 
 Cari pelanggan berdasarkan:
-- Email pengguna
+- Alamat surel pengguna
 - Nama pengguna
 - Nama depan
 - Nama belakang
-- Token batal langganan
+- Token pembatalan langganan
 
 ### Tindakan Massal
 
 Pilih beberapa pelanggan dan terapkan tindakan massal:
 
 **✓ Tandai Email sebagai Diverifikasi**
-- Verifikasi alamat email pelanggan secara manual
+- Memverifikasi alamat surel pelanggan secara manual
 - Berguna ketika mengimpor pelanggan dari sistem lain
-- Membatalkan cache preferensi untuk menerapkan perubahan segera
+- Menghapus cache preferensi untuk menerapkan perubahan secara langsung
 
-**🚫 Batal Langganan dari Semua Pemasaran**
-- Menonaktifkan semua komunikasi pemasaran (email, SMS, semua aplikasi)
-- Menyimpan komunikasi transaksional tetap aktif
-- Gunakan ini untuk pelanggan yang meminta untuk sepenuhnya batal langganan
-- Mematuhi hak GDPR untuk menarik persetujuan
+**🚫 Batalkan Langganan Semua Pemasaran**
+- Menonaktifkan semua komunikasi pemasaran (surel, SMS, semua aplikasi)
+- Tetap mempertahankan email transaksional yang aktif
+- Gunakan ini untuk pelanggan yang meminta untuk sepenuhnya tidak lagi berlangganan
+- Mematuhi hak untuk menarik persetujuan sesuai GDPR
 
 **📥 Ekspor Preferensi ke CSV**
-- Ekspor preferensi pelanggan ke spreadsheet
-- Termasuk semua bidang preferensi dan pengaturan aplikasi khusus
+- Mengekspor preferensi pelanggan ke spreadsheet
+- Termasuk semua bidang preferensi dan pengaturan khusus aplikasi
 - Berguna untuk audit kepatuhan dan analisis
 - Format: CSV dengan header
 
-## Pusat Preferensi Self-Service Pelanggan
+## Pusat Preferensi Pengguna
 
-Pelanggan dapat mengelola preferensi mereka sendiri di `/accounts/preferences/` saat mereka masuk.
+Pelanggan dapat mengelola preferensi mereka sendiri di `/accounts/preferences/` ketika masuk.
 
 ### Fitur Pusat Preferensi
 
 **Tindakan Cepat**
-- **Langganan ke Semua Pemasaran** — Aktifkan semua komunikasi pemasaran dengan satu klik
-- **Batal Langganan dari Semua** — Nonaktifkan semua komunikasi pemasaran (komunikasi transaksional tetap aktif)
+- **Langgani Semua Pemasaran** — Mengaktifkan semua komunikasi pemasaran dalam satu klik
+- **Batal Langganan Semua** — Menonaktifkan semua komunikasi pemasaran (email transaksional tetap aktif)
 
 **Kartu Preferensi**
-- **Email Transaksional** — Hanya baca (selalu aktif, ditandai sebagai "Diperlukan")
-- **Komunikasi Pemasaran** — Nyalakan/matikan dengan badge verifikasi
-- **Preferensi Blog** — Nyalakan/matikan, pilih frekuensi (segera, mingguan, bulanan)
-- **Program Loyalitas** — Nyalakan/matikan jenis pemberitahuan individu
-- **Program Referensi** — Nyalakan/matikan pemberitahuan hadiah
-- **Program Afiliasi** — Nyalakan/matikan pemberitahuan komisi dan pembayaran
-- **Pemberitahuan SMS** — Pilih untuk mendaftar atau batal langganan SMS (menampilkan status verifikasi)
+- **Email Transaksional** — Baca saja (selalu aktif, dicatat sebagai "Wajib")
+- **Komunikasi Pemasaran** — Menyalakan/mematikan dengan badge verifikasi
+- **Preferensi Blog** — Aktifkan/matikan, pilih frekuensi (segera, mingguan, bulanan)
+- **Program loyalitas** — Aktifkan/matikan jenis notifikasi individu
+- **Program rujukan** — Aktifkan/matikan pemberitahuan hadiah
+- **Program afiliasi** — Aktifkan/matikan pemberitahuan komisi dan pembayaran
+- **Notifikasi SMS** — Mengaktifkan/mematikan SMS (menampilkan status verifikasi)
 
-**Pembaruan Waktu Nyata**
+**Pembaruan Real-Time**
 - Perubahan disimpan secara langsung melalui AJAX
 - Tidak diperlukan reload halaman
-- Umpan balik visual saat disimpan
+- Umpan balik visual ketika disimpan
 
 ### Proses Verifikasi Email
 
 Ketika pelanggan mengaktifkan email pemasaran:
 
-1. Pelanggan menyalakan "Email Pemasaran" ke ON
+1. Pelanggan menggeser "Email Pemasaran" ke ON
 2. Sistem mengirim email verifikasi dengan tautan unik
 3. Pelanggan mengklik tautan verifikasi
-4. Email ditandai sebagai diverifikasi (badges 📧✓ muncul)
-5. Email pemasaran akan dikirim sekarang
+4. Email ditandai sebagai diverifikasi (badge 📧✓ muncul)
+5. Email pemasaran akan dikirimkan sekarang
 
-**Pelanggan yang belum diverifikasi TIDAK akan menerima email pemasaran** bahkan jika toggle ON. Ini memastikan kepatuhan double opt-in GDPR.
+**Pelanggan yang belum diverifikasi TIDAK akan menerima email pemasaran** meskipun saklar dalam keadaan ON. Hal ini memastikan kepatuhan terhadap double opt-in GDPR.
 
-## Batal Langganan Satu Klik
+## Pembatalan Langganan Satu Klik
 
-Semua email pemasaran menyertakan tautan batal langganan di bagian bawah. Mengklik tautan ini:
+Semua email pemasaran mencakup tautan pembatalan langganan di bagian bawah. Klik tautan ini:
 
-1. Membawa pelanggan ke `/accounts/unsubscribe/<token>/` (tidak memerlukan login)
-2. Menampilkan apa yang mereka batal langganan
-3. Memungkinkan umpan balik opsional (alasan batal langganan)
+1. Mengarahkan pelanggan ke `/accounts/unsubscribe/<token>/` (tidak memerlukan login)
+2. Menampilkan apa yang sedang dibatalkan langgangannya
+3. Memungkinkan umpan balik opsional (alasan pembatalan langganan)
 4. Menonaktifkan komunikasi pemasaran
-5. Menyimpan komunikasi transaksional tetap aktif
-6. Menyediakan tautan ke pusat preferensi penuh
+5. Tetap mempertahankan email transaksional yang aktif
+6. Menyediakan tautan ke pusat preferensi lengkap
 
-Pelanggan dapat mendaftar kembali kapan saja melalui pusat preferensi.
+Pelanggan dapat berlangganan kembali kapan saja melalui pusat preferensi.
 
-## Kepatuhan & Persyaratan Hukum
+## Persyaratan Kepatuhan & Hukum
 
-### Kepatuhan Artikel 7 GDPR
+### Kepatuhan GDPR Pasal 7
 
-Sistem memastikan kepatuhan penuh terhadap Artikel 7 GDPR:
+Sistem memastikan kepatuhan penuh terhadap Pasal 7 GDPR:
+
+Preserve semua format markdown, jalur gambar, blok kode, dan istilah teknis.
 
 **✅ Bukti Persetujuan**
-- Timestamp saat persetujuan diberikan
-- Sumber persetujuan (pendaftaran, checkout, pusat preferensi)
+- Stempel waktu saat persetujuan diberikan
+- Sumber persetujuan (registrasi, checkout, pusat preferensi)
 - Alamat IP persetujuan
 - User agent (informasi browser)
 
 **✅ Persetujuan Terpisah**
 - Email pemasaran dan transaksional adalah toggle terpisah
-- Setiap aplikasi (blog, loyalitas, dll.) memerlukan persetujuan individu
+- Setiap aplikasi (blog, loyalitas, dll.) memerlukan persetujuan individual
 
-**✅ Penarikan Persetujuan yang Mudah**
-- Batal langganan satu klik di semua email pemasaran
+**✅ Penarikan yang Mudah**
+- Berlangganan ulang dengan satu klik di semua email pemasaran
 - Pusat preferensi tersedia untuk semua pelanggan yang masuk
-- Batal langganan berlaku segera
+- Pembatalan berlangganan berlaku segera
 
-**✅ Persetujuan yang Diberikan Secara Bebas**
-- Default adalah non-aktif untuk pemasaran (praktik terbaik GDPR)
-- Tidak ada kotak centang yang sudah dicentang (pelanggan harus secara aktif mendaftar)
+**✅ Persetujuan Diberikan Secara Bebas**
+- Default adalah opt-out untuk pemasaran (praktik terbaik GDPR)
+- Tidak ada kotak yang sudah dicentang sebelumnya (pelanggan harus secara aktif memilih opt-in)
 
-**✅ Persetujuan yang Spesifik dan Diberikan dengan Informasi**
-- Deskripsi jelas tentang apa yang dikontrol setiap preferensi
-- Preferensi tingkat aplikasi yang granular (tidak semua atau tidak sama sekali)
+**✅ Persetujuan Spesifik dan Terinformasi**
+- Deskripsi yang jelas tentang apa yang dikendalikan oleh setiap preferensi
+- Preferensi tingkat aplikasi yang granular (bukan semua-atau-tidak-ada)
 
 **✅ Persetujuan yang Dapat Diverifikasi**
 - Double opt-in untuk email pemasaran
 - Jejak audit melalui pelacakan status EmailOutbox
 
-### Kepatuhan TCPA (Regulasi SMS USA)
+### Kepatuhan TCPA (Regulasi SMS AS)
 
-Semua pemberitahuan SMS memerlukan **pendaftaran eksplisit**:
+Semua notifikasi SMS memerlukan **opt-in eksplisit**:
 
-- Pelanggan harus secara aktif menandai kotak pendaftaran SMS
-- Tidak ada kotak centang yang sudah dicentang
-- Deskripsi jelas tentang apa yang mereka pendaftarkan
-- Batal langganan yang mudah melalui pusat preferensi
+- Pelanggan harus secara aktif mencentang kotak opt-in SMS
+- Kotak yang sudah dicentang sebelumnya tidak diizinkan
+- Deskripsi yang jelas tentang apa yang mereka pilih untuk diikuti
+- Opt-out yang mudah melalui pusat preferensi
 - Semua pengiriman SMS dicatat untuk audit kepatuhan
 
-### Kepatuhan CAN-SPAM (Regulasi Email USA)
+### Kepatuhan CAN-SPAM (Regulasi Email AS)
 
 Sistem memastikan kepatuhan CAN-SPAM:
 
-- Tautan batal langganan di setiap email pemasaran
-- Batal langganan diproses segera (dalam 10 hari kerja yang diperlukan, kami melakukannya secara instan)
-- Nama "Dari" yang jelas (nama toko Anda)
+- Tautan pembatalan berlangganan di setiap email pemasaran
+- Pembatalan berlangganan diproses segera (diwajibkan dalam 10 hari kerja, kami melakukannya secara instan)
+- Nama "From" yang jelas (nama toko Anda)
 - Alamat fisik di footer email
-- Tidak ada judul subjek yang menipu
+- Tidak ada baris subjek yang menipu
 
 ## Memahami Status Email di EmailOutbox
 
-Ketika melihat **Sistem Email > Email Outbox**, Anda akan melihat bagaimana preferensi memengaruhi pengiriman email:
+Saat melihat **Sistem Email > Kotak Keluar Email**, Anda akan melihat bagaimana preferensi memengaruhi pengiriman email:
 
 | Status | Arti | Alasan |
 |--------|---------|--------|
-| **Menunggu** | Email dalam antrian untuk dikirim | Preferensi memungkinkan email ini |
-| **Dalam Antrian** | Dalam antrian pengiriman | Preferensi memungkinkan email ini |
-| **Dilewati** | Email tidak dikirim | Preferensi pelanggan dinonaktifkan |
-| **Dikirim** | Berhasil dikirim | Email dikirim secara normal |
+| **Pending** | Email antre untuk dikirim | Preferensi mengizinkan email ini |
+| **Queued** | Dalam antrean pengiriman | Preferensi mengizinkan email ini |
+| **Skipped** | Email tidak dikirim | Preferensi pelanggan dinonaktifkan |
+| **Sent** | Berhasil dikirim | Email dikirim secara normal |
 
-Ketika sebuah email **dilewati**, bidang `skip_reason` menunjukkan mengapa:
+Ketika email **dilewati**, field `skip_reason` menunjukkan alasannya:
 
 - **user_preference_disabled** — Pelanggan menonaktifkan jenis email ini di preferensi
 - **email_not_verified** — Pelanggan belum memverifikasi alamat email mereka
@@ -263,130 +267,130 @@ Jejak audit ini penting untuk kepatuhan GDPR — Anda dapat membuktikan bahwa An
 
 ## Pengaturan Situs untuk Preferensi
 
-Navigasikan ke **Pengaturan > Pengaturan Situs** untuk mengonfigurasi default preferensi global:
+Navigasi ke **Pengaturan > Pengaturan Situs** untuk mengonfigurasi default preferensi global:
 
 **Aktifkan Double Opt-In untuk Email Pemasaran** (Default: Ya)
 - Memerlukan verifikasi email sebelum mengirim email pemasaran
 - Praktik terbaik GDPR
-- Direkomendasikan: Biarkan aktif
+- Rekomendasi: Biarkan aktif
 
-**Status Default Pendaftaran Pemasaran** (Default: Tidak - Non-aktif)
-- Status default ketika pelanggan baru mendaftar
-- GDPR memerlukan non-aktif default
-- Direkomendasikan: Biarkan sebagai non-aktif (False)
+**Status Opt-In Pemasaran Default** (Default: Tidak - Opt-Out)
+- Status default saat pelanggan baru mendaftar
+- GDPR memerlukan opt-out secara default
+- Rekomendasi: Biarkan sebagai opt-out (False)
 
-**Pusat Preferensi Aktif** (Default: Ya)
+**Pusat Preferensi Diaktifkan** (Default: Ya)
 - Memungkinkan pelanggan mengelola preferensi mereka sendiri
-- Diperlukan untuk hak GDPR menarik persetujuan
-- Direkomendasikan: Biarkan aktif
+- Diperlukan untuk hak GDPR untuk menarik persetujuan
+- Rekomendasi: Biarkan aktif
 
-**Memerlukan Verifikasi SMS** (Default: Tidak)
-- Memerlukan verifikasi nomor telepon untuk pemberitahuan SMS
-- Opsional tetapi direkomendasikan untuk pengirim SMS volume tinggi
+**Wajibkan Verifikasi SMS** (Default: Tidak)
+- Memerlukan verifikasi nomor telepon untuk notifikasi SMS
+- Opsional tetapi direkomendasikan untuk pengirim SMS bervolume tinggi
 - Dapat diaktifkan jika Anda ingin double opt-in untuk SMS
 
-**Tampilkan Alasan Batal Langganan** (Default: Ya)
-- Kumpulkan umpan balik opsional ketika pelanggan batal langganan
-- Membantu memahami mengapa pelanggan memilih untuk batal langganan
-- Direkomendasikan: Biarkan aktif untuk wawasan
+**Tampilkan Alasan Pembatalan Berlangganan** (Default: Ya)
+- Mengumpulkan umpan balik opsional saat pelanggan membatalkan berlangganan
+- Membantu memahami mengapa pelanggan memilih untuk keluar
+- Rekomendasi: Biarkan aktif untuk wawasan
 
 ## Praktik Terbaik
 
-### 1. Default ke Non-aktif untuk Pemasaran
+### 1. Default ke Opt-Out untuk Pemasaran
 
-Selalu default komunikasi pemasaran ke **non-aktif** (tidak dicentang):
+Selalu defaultkan komunikasi pemasaran ke **opt-out** (tidak dicentang):
 - Mematuhi GDPR
 - Membangun kepercayaan dengan pelanggan
 - Mengurangi keluhan spam
-- Hanya kirim ke pelanggan yang aktif
+- Hanya kirim ke pelanggan yang terlibat
 
-### 2. Memerlukan Verifikasi Email
+### 2. Wajibkan Verifikasi Email
 
-Biarkan **Double Opt-In** aktif:
+Biarkan **Double Opt-In** tetap aktif:
 - Memastikan alamat email valid
-- Mengonfirmasi pelanggan benar-benar ingin menerima email pemasaran
-- Mengurangi tingkat pengembalian
+- Memastikan pelanggan benar-benar ingin email pemasaran
+- Mengurangi tingkat pantulan (bounce rate)
 - Diperlukan untuk kepatuhan GDPR
 
-### 3. Hormati Preferensi Langsung
+### 3. Hormati Preferensi Segera
+
+Simpan semua format markdown, jalur gambar, blok kode, dan istilah teknis.
 
 Ketika pelanggan mengubah preferensi:
 - Perubahan berlaku segera
-- Cache preferensi dibatalkan
+- Cache preferensi dinonaktifkan
 - Pengiriman email berikutnya akan memeriksa preferensi yang diperbarui
-- Tidak ada penundaan dalam mematuhi permintaan batal langganan
+- Tidak ada penundaan dalam menghormati permintaan pembatalan langganan
 
 ### 4. Pantau Email yang Dilewati
 
-Periksa secara teratur **Email Outbox** untuk email yang dilewati:
-- Tingkat lewati tinggi menunjukkan pelanggan sedang batal langganan
-- Mungkin menunjukkan konten email perlu diperbaiki
+Periksa **Email Outbox** secara rutin untuk email yang dilewati:
+- Tingkat skip yang tinggi menunjukkan pelanggan sedang membatalkan langganan
+- Dapat menjadi sinyal bahwa konten email perlu diperbaiki
 - Membantu mengidentifikasi masalah preferensi
 
 ### 5. Audit Kepatuhan Berkala
 
 Ekspor preferensi secara berkala untuk kepatuhan:
-1. Navigasikan ke **Preferensi Komunikasi**
+1. Navigasi ke **Communication Preferences**
 2. Pilih semua pelanggan
-3. Pilih **Ekspor Preferensi ke CSV**
+3. Pilih **Export Preferences to CSV**
 4. Simpan untuk jejak audit GDPR
 
-Simpan ekspor untuk **paling tidak 3 tahun** untuk mematuhi persyaratan retensi data GDPR.
+Simpan ekspor selama **minimal 3 tahun** untuk mematuhi persyaratan retensi data GDPR.
 
 ### 6. Komunikasi yang Jelas
 
-Ketika mengumpulkan persetujuan:
-- Gunakan bahasa sederhana, bukan istilah hukum
+Saat mengumpulkan persetujuan:
+- Gunakan bahasa yang sederhana, bukan jargon hukum
 - Jelaskan apa yang akan diterima pelanggan
-- Tunjukkan frekuensi (harian, mingguan, bulanan)
-- Jadikan kotak pendaftaran terlihat tetapi tidak dicentang secara default
+- Tampilkan frekuensi (harian, mingguan, bulanan)
+- Buat kotak opt-in menonjol tetapi tidak dicentang sebelumnya
 
 ### 7. Segmentasi Berdasarkan Preferensi
 
-Ketika mengirim kampanye pemasaran:
-- Hanya kirim ke pelanggan yang diverifikasi dan telah mendaftar
-- Hormati preferensi aplikasi khusus (jangan kirim email blog ke pelanggan yang menonaktifkan blog)
-- Gunakan preferensi frekuensi (jangan kirim email segera ke pelanggan yang berlangganan digest mingguan)
+Saat mengirim kampanye pemasaran:
+- Hanya kirim ke pelanggan yang terverifikasi dan telah memilih untuk berlangganan
+- Hormati preferensi spesifik aplikasi (jangan kirim email blog ke pelanggan yang menonaktifkan blog)
+- Gunakan preferensi frekuensi (jangan kirim email segera ke pelanggan langganan ringkasan mingguan)
 
 ## Tips
 
 **💡 Periksa Preferensi Sebelum Mengirim**
 
-Sistem secara otomatis memeriksa preferensi ketika Anda mengirim email menggunakan `EmailSendingService.send_template_email()`. Pastikan semua pengiriman email menggunakan layanan ini, bukan panggilan SMTP langsung.
+Sistem secara otomatis memeriksa preferensi saat Anda mengirim email menggunakan `EmailSendingService.send_template_email()`. Pastikan semua pengiriman email menggunakan layanan ini, bukan panggilan SMTP langsung.
 
 **💡 Status Dilewati adalah Normal**
 
-Jangan khawatir dengan email yang dilewati di outbox — ini berarti sistem bekerja dengan benar dan menghormati preferensi pelanggan. Lebih baik melewati email yang tidak diinginkan daripada mengambil risiko denda GDPR atau keluhan spam.
+Jangan panik dengan email yang dilewati di outbox — ini berarti sistem bekerja dengan benar dan menghormati preferensi pelanggan. Lebih baik melewatkan email yang tidak diinginkan daripada berisiko terkena denda GDPR atau keluhan spam.
 
-**💡 Cache Preferensi 5 Menit**
+**💡 Cache Preferensi adalah 5 Menit**
 
-Pemeriksaan preferensi dikach untuk 5 menit untuk kinerja. Ketika pelanggan mengubah preferensi melalui pusat preferensi atau tindakan admin, cache dibatalkan segera sehingga perubahan berlaku langsung.
+Pemeriksaan preferensi di-cache selama 5 menit untuk performa. Ketika pelanggan mengubah preferensi melalui pusat preferensi atau tindakan admin, cache segera dinonaktifkan sehingga perubahan berlaku langsung.
 
 **💡 Pelanggan Tamu Melewati Pemeriksaan**
 
-Pelanggan checkout tamu (tanpa akun) akan menerima semua email secara normal karena mereka tidak memiliki catatan preferensi. Ini disengaja — mereka mendaftar dengan menyediakan email mereka di checkout.
+Pelanggan checkout tamu (tanpa akun) akan menerima semua email secara normal karena mereka tidak memiliki catatan preferensi. Ini disengaja — mereka memilih untuk berlangganan dengan memberikan email mereka saat checkout.
 
 **💡 Email Transaksional Selalu Dikirim**
 
-Konfirmasi pesanan, pembaruan pengiriman, dan email keamanan akun **selalu dikirim** tanpa memandang preferensi. Ini memastikan pelanggan menerima informasi penting tentang pesanan dan akun mereka.
+Konfirmasi pesanan, pembaruan pengiriman, dan email keamanan akun **selalu dikirim** terlepas dari preferensi. Ini memastikan pelanggan menerima informasi penting tentang pesanan dan akun mereka.
 
-**💡 Gunakan Tindakan Massal dengan Hati-Hati**
+**💡 Gunakan Aksi Massal dengan Hati-hati**
 
-Tindakan massal "Batal Langganan dari Semua Pemasaran" memengaruhi **semua aplikasi** (blog, loyalitas, referensi, afiliasi). Hanya gunakan ini untuk pelanggan yang secara eksplisit meminta untuk sepenuhnya batal langganan. Untuk preferensi tertentu, edit catatan pelanggan individu.
+Aksi massal "Unsubscribe from All Marketing" memengaruhi **semua aplikasi** (blog, loyalitas, rujukan, afiliasi). Hanya gunakan ini untuk pelanggan yang secara eksplisit meminta untuk sepenuhnya membatalkan langganan. Untuk preferensi spesifik, edit catatan pelanggan individu.
 
 **💡 Jejak Audit untuk Kepatuhan**
 
 Sistem melacak:
-- Timestamp persetujuan dan sumber
+- Stempel waktu dan sumber persetujuan
 - Alamat IP dan user agent
-- Timestamp verifikasi email
-- Setiap perubahan preferensi melalui status skipped EmailOutbox
+- Stempel waktu verifikasi email
+- Setiap perubahan preferensi melalui status dilewati EmailOutbox
 
-Jejak audit ini membuktikan kepatuhan GDPR jika otoritas meminta bukti persetujuan.
+Jejak audit ini membuktikan kepatuhan GDPR jika otoritas pernah meminta bukti persetujuan.
 
 ## Topik Terkait
 
-- [Mengelola Akun Pelanggan](/help/managing-customer-accounts) — Manajemen profil pelanggan
-- [Konfigurasi Email](/help/email-configuration) — Pengaturan SMTP dan template email
-
-Ingat: Pertahankan semua format markdown, jalur gambar, blok kode, dan istilah teknis persis seperti yang ditunjukkan dalam aturan preservasi.
+- [Managing Customer Accounts](/help/managing-customer-accounts) — Manajemen profil pelanggan
+- [Email Configuration](/help/email-configuration) — Pengaturan SMTP dan template email

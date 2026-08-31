@@ -14,7 +14,8 @@ style="{% base_styles element %}">
         <p class="newsletter__subtitle">{{ element.content.description }}</p>
         {% endif %}
 
-        <form class="newsletter__form" method="post" action="{{ element.content.action_url|default:'#' }}">
+        {% url 'newsletter:subscribe' as newsletter_subscribe_url %}
+        <form class="newsletter__form" method="post" action="{{ element.content.action_url|default:newsletter_subscribe_url }}">
             {% csrf_token %}
             <input type="email"
                    name="email"

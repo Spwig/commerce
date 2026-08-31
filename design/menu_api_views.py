@@ -6,7 +6,7 @@ Following rules_llm.md API documentation standards with drf-spectacular.
 """
 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +28,8 @@ from .menu_serializers import (
     MenuItemSerializer,
     MenuListSerializer,
     MenuReorderSerializer,
+    MenuStructureSerializer,
+    MenuTokensSerializer,
 )
 
 
@@ -73,7 +75,11 @@ from .menu_serializers import (
 class MenuListAPIView(generics.ListCreateAPIView):
     """List all menus or create a new one"""
 
-    queryset = Menu.objects.all().order_by("location", "name")
+    queryset = (
+        Menu.objects.annotate(active_item_count=Count("items", filter=Q(items__is_active=True)))
+        .all()
+        .order_by("location", "name")
+    )
     serializer_class = MenuListSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -436,19 +442,21 @@ class QuickAddSourcesAPIView(APIView):
                 pages_qs = pages_qs.filter(Q(title__icontains=search) | Q(slug__icontains=search))
             # Get total count before limiting
             pages_total = pages_qs.count()
-            result["pages"] = list(
-                pages_qs.values("id", "title", "slug", "page_type")[: self.RESULT_LIMIT]
-            )
+            # Fetch the limited instances once so get_absolute_url() is resolved
+            # from real objects instead of one extra query per row.
+            page_objs = list(pages_qs[: self.RESULT_LIMIT])
+            result["pages"] = [
+                {
+                    "id": page_obj.id,
+                    "title": page_obj.title,
+                    "slug": page_obj.slug,
+                    "page_type": page_obj.page_type,
+                    "url": page_obj.get_absolute_url(),
+                }
+                for page_obj in page_objs
+            ]
             result["pages_total"] = pages_total
             result["pages_has_more"] = pages_total > self.RESULT_LIMIT
-
-            # Add URL for each page
-            for page in result["pages"]:
-                try:
-                    page_obj = Page.objects.get(pk=page["id"])
-                    page["url"] = page_obj.get_absolute_url()
-                except Exception:
-                    page["url"] = f"/{page['slug']}/"
 
         # Get categories
         if source_type in ("all", "categories"):
@@ -461,19 +469,21 @@ class QuickAddSourcesAPIView(APIView):
                 )
             # Get total count before limiting
             categories_total = categories_qs.count()
-            result["categories"] = list(
-                categories_qs.values("id", "name", "slug", "parent_id")[: self.RESULT_LIMIT]
-            )
+            # Fetch the limited instances once so get_absolute_url() is resolved
+            # from real objects instead of one extra query per row.
+            category_objs = list(categories_qs[: self.RESULT_LIMIT])
+            result["categories"] = [
+                {
+                    "id": cat_obj.id,
+                    "name": cat_obj.name,
+                    "slug": cat_obj.slug,
+                    "parent_id": cat_obj.parent_id,
+                    "url": cat_obj.get_absolute_url(),
+                }
+                for cat_obj in category_objs
+            ]
             result["categories_total"] = categories_total
             result["categories_has_more"] = categories_total > self.RESULT_LIMIT
-
-            # Add URL for each category
-            for cat in result["categories"]:
-                try:
-                    cat_obj = Category.objects.get(pk=cat["id"])
-                    cat["url"] = cat_obj.get_absolute_url()
-                except Exception:
-                    cat["url"] = f"/category/{cat['slug']}/"
 
         return Response(result)
 
@@ -673,7 +683,9 @@ class MenuTokensAPIView(APIView):
         """Update menu tokens"""
         from .theme_models import ThemeBranding
 
-        tokens = request.data.get("tokens", {})
+        serializer = MenuTokensSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tokens = serializer.validated_data["tokens"]
 
         # Get or create ThemeBranding
         branding, created = ThemeBranding.objects.get_or_create(pk=1)
@@ -768,8 +780,13 @@ class MenuSaveStructureAPIView(APIView):
     def post(self, request, pk):
         menu = get_object_or_404(Menu, pk=pk)
 
-        menu_data = request.data.get("menu", {})
-        items_data = request.data.get("items", [])
+        # Validate the whole payload before touching the DB, so malformed items
+        # (null nodes, wrong field types, bad references) return 400 rather than
+        # crashing mid-write with a 500.
+        serializer = MenuStructureSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        menu_data = serializer.validated_data.get("menu", {})
+        items_data = serializer.validated_data.get("items", [])
 
         # Update menu properties
         if menu_data:
@@ -801,33 +818,31 @@ class MenuSaveStructureAPIView(APIView):
             """Recursively process menu items"""
             for idx, item_data in enumerate(items):
                 item_id = item_data.get("id")
-                children = item_data.pop("children", [])
+                children = item_data.get("children", [])
 
-                # Prepare item fields
+                # Prepare item fields. References are always written from the
+                # submitted value (None when null/absent) so an existing item's
+                # page/category link can be cleared, not silently retained.
                 item_fields = {
                     "menu": menu,
                     "parent": parent,
                     "order": idx,
-                    "title": item_data.get("title", ""),
-                    "item_type": item_data.get("item_type", "link"),
-                    "url": item_data.get("url", ""),
-                    "target": item_data.get("target", "_self"),
-                    "icon": item_data.get("icon", ""),
-                    "badge_text": item_data.get("badge_text", ""),
-                    "badge_color": item_data.get("badge_color", ""),
-                    "style_config": item_data.get("style_config", {}),
-                    "widget_config": item_data.get("widget_config", {}),
-                    "tree_config": item_data.get("tree_config", {}),
-                    "visibility_rules": item_data.get("visibility_rules", []),
-                    "css_classes": item_data.get("css_classes", ""),
-                    "is_active": item_data.get("is_active", True),
+                    "title": item_data["title"],
+                    "item_type": item_data["item_type"],
+                    "url": item_data["url"],
+                    "target": item_data["target"],
+                    "icon": item_data["icon"],
+                    "badge_text": item_data["badge_text"],
+                    "badge_color": item_data["badge_color"],
+                    "style_config": item_data["style_config"],
+                    "widget_config": item_data["widget_config"],
+                    "tree_config": item_data["tree_config"],
+                    "visibility_rules": item_data["visibility_rules"],
+                    "css_classes": item_data["css_classes"],
+                    "is_active": item_data["is_active"],
+                    "page_reference_id": item_data["page_reference_id"],
+                    "category_reference_id": item_data["category_reference_id"],
                 }
-
-                # Handle references
-                if item_data.get("page_reference_id"):
-                    item_fields["page_reference_id"] = item_data["page_reference_id"]
-                if item_data.get("category_reference_id"):
-                    item_fields["category_reference_id"] = item_data["category_reference_id"]
 
                 if item_id and item_id in existing_ids:
                     # Update existing item

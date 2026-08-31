@@ -153,11 +153,15 @@ class ComponentSchemaValidator:
         return len(self.errors) == 0, self.errors
 
     def _validate_required_files(self, component_dir: Path) -> bool:
-        """Check that all required files exist."""
+        """Check that all required files exist and are regular files."""
         for filename in self.REQUIRED_FILES:
             file_path = component_dir / filename
             if not file_path.exists():
                 self.errors.append(f"Required file missing: {filename}")
+                return False
+
+            if not file_path.is_file():
+                self.errors.append(f"Required path is not a file: {filename}")
                 return False
 
         return True
@@ -255,6 +259,15 @@ class ComponentSchemaValidator:
                 full_path = component_dir / asset_path
                 if not full_path.exists():
                     self.errors.append(f"Asset file does not exist: {asset_path}")
+                    return False
+
+                # Reject paths that escape the component directory, including via
+                # ".." traversal or symlinks pointing outside the package. resolve()
+                # follows symlinks, so an escaping link resolves outside component_dir.
+                resolved_root = component_dir.resolve()
+                resolved_asset = full_path.resolve()
+                if resolved_asset != resolved_root and resolved_root not in resolved_asset.parents:
+                    self.errors.append(f"Asset path escapes component directory: {asset_path}")
                     return False
 
                 if not full_path.is_file():

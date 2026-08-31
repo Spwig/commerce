@@ -1,0 +1,156 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Set up A/B test" %} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'email_marketing/css/wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container em-wizard">
+
+  <div class="wizard-header">
+    <a href="{% url 'email_marketing_admin:campaign_builder' campaign.id %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> {% trans "Back to the builder" %}
+    </a>
+    <h1><i class="fas fa-flask-vial"></i> {% trans "Set up an A/B test" %}</h1>
+    <p class="wizard-subtitle">{% blocktrans with name=campaign.name %}Test two or more versions of “{{ name }}” on a slice of your audience, then send the winner to the rest.{% endblocktrans %}</p>
+  </div>
+
+  <div class="wizard-steps">
+    <div class="step active" data-step="1">
+      <div class="step-number">1</div>
+      <div class="step-label">{% trans "What to test" %}</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="2">
+      <div class="step-number">2</div>
+      <div class="step-label">{% trans "Variants" %}</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="3">
+      <div class="step-number">3</div>
+      <div class="step-label">{% trans "Settings" %}</div>
+    </div>
+  </div>
+
+  <form id="ab-form" method="post">
+    {% csrf_token %}
+
+    <div class="wizard-content">
+      <!-- Step 1: what to test -->
+      <div class="wizard-step" data-step="1">
+        <h2 class="step-title"><i class="fas fa-vials"></i> {% trans "What do you want to test?" %}</h2>
+        <p class="step-description">{% trans "Pick the one thing that differs between versions." %}</p>
+        <div class="em-type-cards">
+          <label class="em-type-card selected">
+            <input type="radio" name="test_type" value="subject" checked>
+            <span class="em-type-icon"><i class="fas fa-heading"></i></span>
+            <span class="em-type-name">{% trans "Subject line" %}</span>
+            <span class="em-type-desc">{% trans "Same email, different subject lines. Measured by open rate. The most common test." %}</span>
+          </label>
+          <label class="em-type-card">
+            <input type="radio" name="test_type" value="content">
+            <span class="em-type-icon"><i class="fas fa-swatchbook"></i></span>
+            <span class="em-type-name">{% trans "Content" %}</span>
+            <span class="em-type-desc">{% trans "Different email designs. Measured by click rate. You'll design each version after this." %}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 2: variants -->
+      <div class="wizard-step" data-step="2" hidden>
+        <h2 class="step-title"><i class="fas fa-clone"></i> {% trans "Your variants" %}</h2>
+
+        <div class="form-section" id="ab-subject-variants">
+          <p class="step-description">{% trans "Enter a subject line for each version (2–4)." %}</p>
+          <div id="ab-subject-rows">
+            <div class="form-group ab-subject-row">
+              <label>{% trans "Subject A" %} <span class="required">*</span></label>
+              <input type="text" name="subject" class="form-control" value="{{ campaign.subject }}">
+            </div>
+            <div class="form-group ab-subject-row">
+              <label>{% trans "Subject B" %} <span class="required">*</span></label>
+              <input type="text" name="subject" class="form-control">
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" id="ab-add-subject">
+            <i class="fas fa-plus"></i> {% trans "Add another subject" %}
+          </button>
+        </div>
+
+        <div class="form-section" id="ab-content-variants" hidden>
+          <p class="step-description">{% trans "How many designs do you want to compare? You'll edit each in the visual builder after creating the test." %}</p>
+          <div class="form-group">
+            <label for="ab-num-variants">{% trans "Number of variants" %}</label>
+            <select id="ab-num-variants" name="num_variants" class="form-control">
+              <option value="2" selected>{% trans "2 (A / B)" %}</option>
+              <option value="3">{% trans "3 (A / B / C)" %}</option>
+              <option value="4">{% trans "4 (A / B / C / D)" %}</option>
+            </select>
+          </div>
+          <div class="info-box">{% trans "Every variant starts as a copy of your current design so you only change what you want to test." %}</div>
+        </div>
+      </div>
+
+      <!-- Step 3: settings + review -->
+      <div class="wizard-step" data-step="3" hidden>
+        <h2 class="step-title"><i class="fas fa-sliders"></i> {% trans "Test settings" %}</h2>
+        <div class="form-section">
+          <div class="form-group">
+            <label for="ab-sample">{% trans "Test sample" %}</label>
+            <select id="ab-sample" name="sample_percent" class="form-control">
+              <option value="20" selected>{% trans "20% — test a fifth, send winner to the rest" %}</option>
+              <option value="30">{% trans "30%" %}</option>
+              <option value="50">{% trans "50%" %}</option>
+              <option value="100">{% trans "100% — split the whole list, no winner send" %}</option>
+            </select>
+            <p class="help-text">{% trans "The share of your audience used for the test, split evenly across variants. The rest receives the winner." %}</p>
+          </div>
+          <div class="form-group">
+            <label for="ab-metric">{% trans "Winner decided by" %}</label>
+            <select id="ab-metric" name="winner_metric" class="form-control">
+              {% for value, label in metric_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ab-window">{% trans "Test window (hours)" %}</label>
+            <input type="number" id="ab-window" name="test_window_hours" class="form-control" value="4" min="1" max="168">
+            <p class="help-text">{% trans "How long to gather opens/clicks before picking the winner." %}</p>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" name="auto_send_winner" checked> {% trans "Automatically send the winner to the rest of the audience" %}</label>
+          </div>
+        </div>
+        <div class="info-box">
+          <dl class="em-review">
+            <dt>{% trans "Testing" %}</dt><dd id="ab-review-type">—</dd>
+            <dt>{% trans "Variants" %}</dt><dd id="ab-review-variants">—</dd>
+            <dt>{% trans "Sample" %}</dt><dd id="ab-review-sample">—</dd>
+            <dt>{% trans "Winner by" %}</dt><dd id="ab-review-metric">—</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-navigation">
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-secondary" id="ab-prev" hidden>
+          <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </button>
+        <button type="button" class="btn btn-primary" id="ab-next">
+          {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        <button type="submit" class="btn btn-success btn-large" id="ab-create" hidden>
+          <i class="fas fa-flask-vial"></i> {% trans "Create test" %}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script src="{% static 'email_marketing/js/ab_setup.js' %}" defer></script>
+{% endblock %}

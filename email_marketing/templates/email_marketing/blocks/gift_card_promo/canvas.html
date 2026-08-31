@@ -1,0 +1,6 @@
+<div class="em-block em-block-giftcard">
+  {% if image %}<img class="em-product-img" src="{{ image }}" alt="{{ heading }}">{% endif %}
+  {% if heading %}<div class="em-giftcard-heading">{{ heading }}</div>{% endif %}
+  {% if subheading %}<div class="em-giftcard-sub">{{ subheading|linebreaksbr }}</div>{% endif %}
+  {% if button_url %}<a class="em-btn" href="{{ button_url }}">{{ button_text|default:'Buy a gift card' }}</a>{% endif %}
+</div>

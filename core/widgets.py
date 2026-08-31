@@ -50,7 +50,7 @@ class KeyValueWidget(forms.Widget):
         keys = data.getlist(f"{name}_keys")
         values = data.getlist(f"{name}_values")
         result = {}
-        for k, v in zip(keys, values, strict=True):
+        for k, v in zip(keys, values, strict=False):
             k = k.strip()
             if k:
                 result[k] = v.strip()

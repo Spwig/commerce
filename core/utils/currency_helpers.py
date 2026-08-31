@@ -304,7 +304,6 @@ def get_enabled_currencies():
     from moneyed import CURRENCIES
 
     from core.models import SiteSettings
-    from core.supported_currency_model import SupportedCurrency
 
     try:
         settings = SiteSettings.get_settings()
@@ -319,8 +318,8 @@ def get_enabled_currencies():
                 ]
             return [(default_currency, default_currency)]
 
-        # Get active currencies from SupportedCurrency model
-        active_codes = SupportedCurrency.get_active_codes()
+        # Get enabled currencies from site settings
+        active_codes = settings.supported_currencies
 
         if not active_codes:
             # If no currencies are active, return default currency only

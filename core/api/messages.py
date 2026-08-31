@@ -14,7 +14,13 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from rest_framework import serializers, status, viewsets
-from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (
+    action,
+    api_view,
+    authentication_classes,
+    permission_classes,
+    throttle_classes,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -186,6 +192,7 @@ def get_contact_subjects(request):
 @api_view(["POST"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([AllowAny])
+@throttle_classes([ContactFormThrottle, AuthenticatedContactThrottle])
 def submit_contact_form(request):
     """
     Submit a contact form message.
@@ -299,17 +306,33 @@ class CustomerMessageViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
     permission_classes = [IsAuthenticated]
 
+    def get_throttles(self):
+        # Only throttle the write path (follow-up submissions). Read-heavy
+        # list/retrieve GETs must not consume the submission quota.
+        if self.action == "follow_up":
+            return [AuthenticatedContactThrottle()]
+        return super().get_throttles()
+
     def get_serializer_class(self):
         if self.action == "retrieve":
             return MessageDetailSerializer
         return MessageListSerializer
 
     def get_queryset(self):
-        """Get messages for the authenticated user (by user FK or email fallback)"""
+        """Get messages for the authenticated user.
+
+        Authorised strictly by the user FK. Legacy anonymous messages are
+        matched by email only when the account owns a verified EmailAddress
+        for that address; otherwise an attacker who registers a victim's
+        email (verification is optional) could read their messages.
+        """
+        from allauth.account.models import EmailAddress
+
         user = self.request.user
-        queryset = CustomerMessage.objects.filter(
-            Q(user=user) | Q(email=user.email, user__isnull=True)
-        ).order_by("-created_at")
+        message_filter = Q(user=user)
+        if EmailAddress.objects.filter(user=user, email=user.email, verified=True).exists():
+            message_filter |= Q(email=user.email, user__isnull=True)
+        queryset = CustomerMessage.objects.filter(message_filter).order_by("-created_at")
 
         # Prefetch replies for detail view
         if self.action == "retrieve":

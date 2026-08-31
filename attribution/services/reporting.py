@@ -94,6 +94,32 @@ def revenue_by_campaign(start=None, end=None):
     ]
 
 
+def campaign_revenue(slugs, start=None, end=None):
+    """Attributed revenue / orders / AOV for one or more campaign slugs.
+
+    ``slugs`` may be a single slug or an iterable (e.g. an A/B parent plus its
+    variant children, or a recurring template plus its occurrences — each a
+    distinct ``attribution.Campaign``). Reads the same current-model, base-currency
+    primary rows as the rest of this module, so it reconciles with the channel and
+    campaign overviews. Returns zeros when nothing is attributed yet.
+    """
+    if isinstance(slugs, str):
+        slugs = [slugs]
+    slugs = [s for s in slugs if s]
+    if not slugs:
+        return {"revenue": Decimal("0.00"), "orders": 0, "aov": Decimal("0.00")}
+
+    agg = (
+        _current_primary(start, end)
+        .filter(campaign_ref__slug__in=slugs)
+        .aggregate(revenue=Sum("amount_base"), orders=Count("order", distinct=True))
+    )
+    revenue = _q(agg["revenue"])
+    orders = agg["orders"] or 0
+    aov = (revenue / orders).quantize(Decimal("0.01")) if orders else Decimal("0.00")
+    return {"revenue": revenue, "orders": orders, "aov": aov}
+
+
 _BUCKETS = {"day": TruncDay, "week": TruncWeek, "month": TruncMonth}
 
 

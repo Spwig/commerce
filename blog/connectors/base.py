@@ -291,21 +291,19 @@ class SocialConnectorRegistry:
 
             # Find installed social connector components
             connectors = ComponentRegistry.objects.filter(
-                component_type="social_connector", is_enabled=True
-            )
+                component_type="social_connector_provider"
+            ).exclude(current_version__isnull=True)
 
             for component in connectors:
                 try:
                     # Load from components_data via file-path-based import
-                    provider_dir = INTEGRATIONS_DIR / "social_connector" / component.component_key
+                    provider_dir = INTEGRATIONS_DIR / component.component_type / component.slug
                     current_path = provider_dir / "current"
                     if not current_path.exists():
-                        logger.warning(
-                            f"No current version for social connector {component.component_key}"
-                        )
+                        logger.warning(f"No current version for social connector {component.slug}")
                         continue
 
-                    module_name = f"social_connector_{component.component_key}"
+                    module_name = f"social_connector_{component.slug}"
                     module = import_component_module(current_path, "connector", module_name)
 
                     # Get the connector class (should be named <Name>Connector)
@@ -315,7 +313,7 @@ class SocialConnectorRegistry:
                         cls.register(connector)
 
                 except Exception as e:
-                    logger.error(f"Failed to load social connector {component.component_key}: {e}")
+                    logger.error(f"Failed to load social connector {component.slug}: {e}")
 
         except Exception as e:
             logger.error(f"Failed to load social connectors from components: {e}")

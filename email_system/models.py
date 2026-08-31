@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.functions import Upper
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -398,6 +399,8 @@ class EmailTemplate(SoftDeleteModel):
             ("blog_post_published", _("Blog: Post Published")),
             ("blog_subscriber_welcome", _("Blog: Subscriber Welcome")),
             ("blog_subscription_confirmed", _("Blog: Subscription Confirmed")),
+            # Newsletter
+            ("newsletter_signup_confirm", _("Newsletter: Confirm Subscription")),
             # Cart Recovery
             ("cart_abandoned_1h", _("Cart: Abandoned (1 Hour)")),
             ("cart_abandoned_24h", _("Cart: Abandoned (24 Hours)")),
@@ -986,6 +989,17 @@ class EmailOutbox(models.Model):
         help_text=_("Attachment file references"),
     )
 
+    # Marketing-attribution campaign slug (utm_campaign). Set by the sender
+    # (e.g. Campaign Studio) so tracked links tag this email's specific campaign;
+    # blank for transactional mail. Read by the tracking layer — email_system does
+    # not interpret it beyond passing it through as utm_campaign.
+    attribution_campaign = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("attribution campaign"),
+        help_text=_("utm_campaign slug for revenue attribution; blank for transactional mail."),
+    )
+
     # Template reference
     template_type = models.CharField(
         max_length=64,
@@ -1032,6 +1046,13 @@ class EmailOutbox(models.Model):
         blank=True, verbose_name=_("error message"), help_text=_("Error details if sending failed")
     )
 
+    # Priority bands (lower number = higher priority). Transactional mail (order
+    # confirmations, password resets) must beat marketing (campaigns/journeys) on a
+    # shared SMTP account: only rows at PRIORITY_MARKETING or worse are throttled by
+    # the per-account send budget; everything else (incl. the default 5) always sends.
+    PRIORITY_TRANSACTIONAL = 2
+    PRIORITY_MARKETING = 8
+
     # Priority (lower number = higher priority)
     priority = models.PositiveSmallIntegerField(
         default=5,
@@ -1062,7 +1083,12 @@ class EmailOutbox(models.Model):
         indexes = [
             models.Index(fields=["site", "status"]),
             models.Index(fields=["status", "queued_at"]),
+            # Priority-ordered drain (the pending sweep orders by priority, queued_at).
+            models.Index(fields=["status", "priority", "queued_at"], name="email_outbox_sweep_idx"),
             models.Index(fields=["to_email"]),
+            # Case-insensitive address lookups (iexact → UPPER(to_email)) — used by
+            # the soft-bounce threshold count and the webhook/gateway outbox match.
+            models.Index(Upper("to_email"), name="email_outbox_to_email_ci"),
             models.Index(fields=["provider_message_id"]),
             models.Index(fields=["template_type"]),
         ]
@@ -1503,3 +1529,42 @@ class ScheduledEmail(models.Model):
 
     def __str__(self):
         return f"{self.template_type} → {self.recipient_email} ({self.get_status_display()})"
+
+
+class EmailProviderWebhook(models.Model):
+    """Audit record + idempotency key for an inbound email-provider delivery-event
+    webhook (bounce / complaint / delivered). One row per (provider, event_id).
+
+    The webhook endpoint is public, so this records what was received, whether the
+    signature verified, and whether it was processed — a redelivered event is a
+    no-op, and every ingestion stays traceable.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    provider_slug = models.CharField(max_length=100, db_index=True, verbose_name=_("provider"))
+    event_id = models.CharField(max_length=255, verbose_name=_("provider event id"))
+    event_type = models.CharField(max_length=64, blank=True, verbose_name=_("event type"))
+    payload = models.JSONField(default=dict, verbose_name=_("payload"))
+    headers = models.JSONField(default=dict, blank=True, verbose_name=_("headers"))
+    signature_verified = models.BooleanField(default=False, verbose_name=_("signature verified"))
+    processed = models.BooleanField(default=False, db_index=True, verbose_name=_("processed"))
+    processing_error = models.TextField(blank=True, verbose_name=_("processing error"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("received at"))
+    processed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("processed at"))
+
+    class Meta:
+        verbose_name = _("email provider webhook")
+        verbose_name_plural = _("email provider webhooks")
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["provider_slug", "event_id"],
+                name="uniq_email_webhook_provider_event",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["provider_slug", "event_type"]),
+        ]
+
+    def __str__(self):
+        return f"{self.provider_slug}:{self.event_id} ({self.event_type})"

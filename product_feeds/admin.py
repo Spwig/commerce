@@ -341,6 +341,7 @@ class ProductFeedAdmin(admin.ModelAdmin):
         "download_count",
     ]
     list_filter = ["feed_format", "generated_at", "account"]
+    list_select_related = ["account", "account__component"]
     search_fields = ["account__name", "account__component__name"]
     readonly_fields = [
         "generated_at",
@@ -386,6 +387,7 @@ class FeedSyncLogAdmin(admin.ModelAdmin):
         "started_at",
     ]
     list_filter = ["status", "sync_type", "started_at", "account"]
+    list_select_related = ["account", "account__component"]
     search_fields = ["account__name", "error_message"]
     readonly_fields = [
         "started_at",

@@ -1,0 +1,29 @@
+{% load i18n %}
+<div class="em-activity">
+  <p class="em-activity-recipient"><i class="fas fa-user"></i> {{ send.subscriber.email }}</p>
+  {% if events %}
+  <ul class="em-activity-list">
+    {% for e in events %}
+    <li class="em-activity-item em-activity-{{ e.event_type }}">
+      <span class="em-activity-icon">
+        {% if e.event_type == "opened" %}<i class="fas fa-envelope-open"></i>
+        {% elif e.event_type == "clicked" %}<i class="fas fa-hand-pointer"></i>
+        {% elif e.event_type == "bounced" %}<i class="fas fa-triangle-exclamation"></i>
+        {% elif e.event_type == "complained" %}<i class="fas fa-ban"></i>
+        {% elif e.event_type == "delivered" %}<i class="fas fa-paper-plane"></i>
+        {% elif e.event_type == "unsubscribed" %}<i class="fas fa-user-slash"></i>
+        {% else %}<i class="fas fa-circle-info"></i>{% endif %}
+      </span>
+      <span class="em-activity-detail">
+        <span class="em-activity-type">{{ e.get_event_type_display }}</span>
+        {% if e.event_type == "clicked" and e.event_data.url %}<span class="em-activity-url" title="{{ e.event_data.url }}">{{ e.event_data.url }}</span>{% endif %}
+        {% if e.event_type == "bounced" and e.bounce_reason %}<span class="em-activity-note">{{ e.bounce_reason }}</span>{% endif %}
+      </span>
+      <span class="em-activity-time">{{ e.occurred_at|date:"M d, Y H:i" }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="help">{% trans "No tracked opens or clicks yet for this recipient." %}</p>
+  {% endif %}
+</div>

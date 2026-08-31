@@ -35,6 +35,7 @@ class ImageProcessor:
             # Open image and force load to avoid lazy loading issues
             img = Image.open(image_file)
             img.load()  # Force PIL to fully load image data into memory
+            img = self.fix_orientation(img)  # Apply EXIF orientation before encoding
 
             has_transparency = img.mode in ("RGBA", "LA", "P")
 
@@ -86,6 +87,7 @@ class ImageProcessor:
         try:
             img = Image.open(image_file)
             img.load()  # Force PIL to fully load image data into memory
+            img = self.fix_orientation(img)  # Apply EXIF orientation before encoding
 
             has_transparency = img.mode in ("RGBA", "LA", "P")
 
@@ -96,7 +98,7 @@ class ImageProcessor:
             elif has_transparency:
                 # Flatten to RGB with white background (matches WebP behaviour)
                 background = Image.new("RGB", img.size, (255, 255, 255))
-                if img.mode == "P":
+                if img.mode in ("P", "LA"):
                     img = img.convert("RGBA")
                 background.paste(img, mask=img.split()[-1] if img.mode == "RGBA" else None)
                 img = background
@@ -372,28 +374,13 @@ class ImageProcessor:
 
     def fix_orientation(self, img):
         """
-        Fix image orientation based on EXIF data
+        Fix image orientation based on EXIF data.
+
+        Uses ImageOps.exif_transpose, which honours all eight EXIF
+        orientation values, including the mirrored ones (2, 4, 5, 7).
         """
         try:
-            # Get EXIF data
-            exif = img.getexif()
-            if exif:
-                orientation_key = None
-                for key in ExifTags.TAGS:
-                    if ExifTags.TAGS[key] == "Orientation":
-                        orientation_key = key
-                        break
-
-                if orientation_key and orientation_key in exif:
-                    orientation = exif[orientation_key]
-
-                    # Rotate based on orientation
-                    if orientation == 3:
-                        img = img.rotate(180, expand=True)
-                    elif orientation == 6:
-                        img = img.rotate(270, expand=True)
-                    elif orientation == 8:
-                        img = img.rotate(90, expand=True)
+            img = ImageOps.exif_transpose(img)
         except Exception:
             pass
 

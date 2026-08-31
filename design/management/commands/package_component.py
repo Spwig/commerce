@@ -82,7 +82,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("❌ Validation failed"))
             for error in errors:
                 self.stdout.write(self.style.ERROR(f"  Error: {error}"))
-            return
+            raise CommandError("Component structure validation failed")
 
         self.stdout.write(self.style.SUCCESS("✅ Structure validation passed"))
 
@@ -135,3 +135,4 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"❌ Failed to create package: {e}"))
+            raise CommandError(f"Failed to create package: {e}") from e

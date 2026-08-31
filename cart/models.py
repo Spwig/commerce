@@ -1016,6 +1016,24 @@ class CartItem(models.Model):
                     "base_unit_price_currency",
                 ]
         super().save(*args, **kwargs)
+        # Keep the parent cart's updated_at as a reliable "last activity" timestamp so
+        # the cart-abandonment detector can find genuinely-idle carts: the item's own
+        # auto_now doesn't move the cart, and it's mutated through several services.
+        if self.cart_id:
+            from django.utils import timezone
+
+            Cart.objects.filter(pk=self.cart_id).update(updated_at=timezone.now())
+
+    def delete(self, *args, **kwargs):
+        # Removing an item is activity too — bump the cart so it isn't wrongly judged
+        # idle-since-the-last-add.
+        cart_id = self.cart_id
+        result = super().delete(*args, **kwargs)
+        if cart_id:
+            from django.utils import timezone
+
+            Cart.objects.filter(pk=cart_id).update(updated_at=timezone.now())
+        return result
 
 
 class Wishlist(DesignMixin):

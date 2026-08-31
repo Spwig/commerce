@@ -1,0 +1,26 @@
+{% if posts %}
+<div class="em-block em-block-blog em-blog-{{ layout|default:'list' }}">
+  {% if heading %}<div class="em-blog-heading">{{ heading }}</div>{% endif %}
+  <div class="em-blog-items">
+    {% for post in posts %}
+    <a class="em-blog-item" href="{{ post.url }}">
+      {% if show_image == 'yes' and post.image %}
+      <picture class="em-blog-thumb">
+        {% if post.image.avif %}<source type="image/avif" srcset="{{ post.image.avif }}">{% endif %}
+        {% if post.image.webp %}<source type="image/webp" srcset="{{ post.image.webp }}">{% endif %}
+        <img src="{{ post.image.fallback }}" alt="{{ post.title }}">
+      </picture>
+      {% endif %}
+      <span class="em-blog-body">
+        <span class="em-blog-title">{{ post.title }}</span>
+        {% if show_date == 'yes' and post.date %}<span class="em-blog-date">{{ post.date }}</span>{% endif %}
+        {% if show_excerpt == 'yes' and post.excerpt %}<span class="em-blog-excerpt">{{ post.excerpt }}</span>{% endif %}
+        <span class="em-blog-more">{{ read_more_text|default:'Read more' }} &rarr;</span>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="em-block em-product-empty"><i class="fas fa-newspaper"></i> No published blog posts yet — publish a post to feature it.</div>
+{% endif %}

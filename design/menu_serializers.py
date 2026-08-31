@@ -2,6 +2,7 @@
 Serializers for menu builder API
 """
 
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from .header_footer_models import Menu, MenuItem
@@ -146,6 +147,12 @@ class MenuListSerializer(serializers.ModelSerializer):
         ]
 
     def get_item_count(self, obj):
+        # Prefer the annotated count (set by the list queryset) to avoid an
+        # extra COUNT query per menu; fall back for un-annotated instances
+        # (e.g. the object returned straight after a create).
+        annotated = getattr(obj, "active_item_count", None)
+        if annotated is not None:
+            return annotated
         return obj.items.filter(is_active=True).count()
 
     def get_location_display(self, obj):
@@ -216,4 +223,95 @@ class MenuReorderSerializer(serializers.Serializer):
     def validate_items(self, value):
         if not value:
             raise serializers.ValidationError("Items list cannot be empty")
+        return value
+
+
+class MenuStructureMenuSerializer(serializers.Serializer):
+    """Validate the editable menu-level properties of a save-structure request."""
+
+    name = serializers.CharField(required=False)
+    display_type = serializers.CharField(required=False)
+    location = serializers.CharField(required=False)
+    custom_css = serializers.CharField(required=False, allow_blank=True)
+    css_classes = serializers.CharField(required=False, allow_blank=True)
+    global_style = serializers.JSONField(required=False)
+    mobile_config = serializers.JSONField(required=False)
+
+
+class MenuStructureItemSerializer(serializers.Serializer):
+    """Validate a single (recursive) node of a save-structure request.
+
+    Guards the write loop against malformed payloads: null items, wrong field
+    types, unknown ``item_type`` values, non-existent page/category references,
+    and children that are not a list of valid items.
+    """
+
+    id = serializers.IntegerField(required=False, allow_null=True)
+    title = serializers.CharField(required=False, allow_blank=True, default="")
+    item_type = serializers.ChoiceField(
+        choices=MenuItem.ITEM_TYPE_CHOICES, required=False, default="link"
+    )
+    url = serializers.CharField(required=False, allow_blank=True, default="")
+    target = serializers.CharField(required=False, allow_blank=True, default="_self")
+    icon = serializers.CharField(required=False, allow_blank=True, default="")
+    badge_text = serializers.CharField(required=False, allow_blank=True, default="")
+    badge_color = serializers.CharField(required=False, allow_blank=True, default="")
+    css_classes = serializers.CharField(required=False, allow_blank=True, default="")
+    is_active = serializers.BooleanField(required=False, default=True)
+    page_reference_id = serializers.IntegerField(required=False, allow_null=True, default=None)
+    category_reference_id = serializers.IntegerField(required=False, allow_null=True, default=None)
+    style_config = serializers.JSONField(required=False, default=dict)
+    widget_config = serializers.JSONField(required=False, default=dict)
+    tree_config = serializers.JSONField(required=False, default=dict)
+    visibility_rules = serializers.JSONField(required=False, default=list)
+
+    def get_fields(self):
+        fields = super().get_fields()
+        # Recursive children: each child is validated as a full item structure.
+        fields["children"] = MenuStructureItemSerializer(many=True, required=False, default=list)
+        return fields
+
+    def validate_page_reference_id(self, value):
+        if value is not None:
+            from page_builder.models import Page
+
+            if not Page.objects.filter(pk=value).exists():
+                raise serializers.ValidationError(_("Referenced page does not exist."))
+        return value
+
+    def validate_category_reference_id(self, value):
+        if value is not None:
+            from catalog.models import Category
+
+            if not Category.objects.filter(pk=value).exists():
+                raise serializers.ValidationError(_("Referenced category does not exist."))
+        return value
+
+
+class MenuStructureSerializer(serializers.Serializer):
+    """Validate a complete menu-structure save request before any DB writes."""
+
+    menu = MenuStructureMenuSerializer(required=False)
+    items = MenuStructureItemSerializer(many=True, required=False, default=list)
+
+
+class MenuTokensSerializer(serializers.Serializer):
+    """Validate the design-token payload before it is written to ThemeBranding.
+
+    ``tokens`` must be an object mapping token names to flat values (or a
+    responsive object); a non-object body would later crash CSS generation
+    when it calls ``value.items()``.
+    """
+
+    tokens = serializers.DictField(required=False, default=dict)
+
+    def validate_tokens(self, value):
+        for token_name, token_value in value.items():
+            if not isinstance(token_name, str):
+                raise serializers.ValidationError(_("Token names must be strings."))
+            if not isinstance(token_value, (str, int, float, dict)):
+                raise serializers.ValidationError(
+                    _("Token '%(name)s' must be a string, number, or object.")
+                    % {"name": token_name}
+                )
         return value

@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Journey report" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_marketing/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="em-dash">
+
+  <div class="em-dash-header">
+    <div>
+      <h1><i class="fas fa-chart-column"></i> {% trans "Journey report" %}</h1>
+      <p class="subtitle">{{ journey.name }}</p>
+    </div>
+    <div class="em-dash-actions">
+      <a class="button" href="{% url 'admin:email_marketing_journey_changelist' %}">
+        <i class="fas fa-arrow-left"></i> {% trans "All journeys" %}
+      </a>
+      <a class="button" href="{% url 'email_marketing_admin:journey_builder' journey.pk %}">
+        <i class="fas fa-diagram-project"></i> {% trans "Design" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-stats-grid">
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-user-plus"></i></div>
+      <div class="value">{{ funnel.enrolled }}</div>
+      <div class="label">{% trans "Enrolled" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-person-walking"></i></div>
+      <div class="value">{{ funnel.active }}</div>
+      <div class="label">{% trans "Active now" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-flag-checkered"></i></div>
+      <div class="value">{{ funnel.completed }}</div>
+      <div class="label">{% trans "Completed" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-ban"></i></div>
+      <div class="value">{{ funnel.cancelled }}</div>
+      <div class="label">{% trans "Exited" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-sack-dollar"></i></div>
+      <div class="value">{{ revenue.revenue_display }}</div>
+      <div class="label">{% trans "Attributed revenue" %}</div>
+      <div class="em-dash-sub">
+        {% blocktrans count orders=revenue.orders %}{{ orders }} order{% plural %}{{ orders }} orders{% endblocktrans %}
+        · {{ revenue.aov_display }} {% trans "AOV" %}
+        · {{ revenue.revenue_per_enrollee_display }}/{% trans "enrollee" %}
+      </div>
+    </div>
+  </div>
+
+  {% if revenue.steps %}
+  <div class="em-chart-card em-links-card">
+    <h3><i class="fas fa-list-ol"></i> {% trans "Revenue by step" %}</h3>
+    <div class="em-table-scroll">
+      <table class="em-links-table">
+        <thead>
+          <tr>
+            <th>{% trans "Step" %}</th>
+            <th>{% trans "Revenue" %}</th>
+            <th>{% trans "Orders" %}</th>
+            <th>{% trans "Sent" %}</th>
+            <th>{% trans "Opens" %}</th>
+            <th>{% trans "Clicks" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for step in revenue.steps %}
+          <tr>
+            <td class="em-link-url">
+              {{ step.label|default:_("Email step") }}
+              {% if step.ab %}<span class="list-row-card-badge list-row-card-badge-info"><i class="fas fa-flask"></i> {% trans "A/B" %}</span>{% endif %}
+            </td>
+            <td>{{ step.revenue_display }}</td>
+            <td>{{ step.orders }}</td>
+            <td>{{ step.engagement.sent }}</td>
+            <td>{{ step.engagement.opened }}</td>
+            <td>{{ step.engagement.clicked }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not funnel.enrolled %}
+  <p class="help">{% trans "No enrollments yet. Metrics appear once customers enter this journey." %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}

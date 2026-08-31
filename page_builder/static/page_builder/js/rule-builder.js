@@ -20,8 +20,10 @@ class RuleBuilder {
     this.groupId = this.config.groupId;
     this.groupName = this.config.groupName || '';
     this.logicOperator = this.config.logicOperator || 'AND';
-    this.rulesTree = this.config.initialRulesTree || [];
-    this.savedRules = this.config.savedRules || [];
+    const treeEl = document.getElementById('rule-builder-tree');
+    this.rulesTree = treeEl ? JSON.parse(treeEl.textContent) : [];
+    const savedRulesEl = document.getElementById('rule-builder-saved-rules');
+    this.savedRules = savedRulesEl ? JSON.parse(savedRulesEl.textContent) : [];
     this.selectedRule = null;
     this.sortableInstances = [];
 

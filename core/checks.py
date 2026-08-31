@@ -53,12 +53,22 @@ def check_license_public_key(app_configs, **kwargs):
         )
     else:
         try:
-            content = public_key_path.read_text()
-            if "-----BEGIN PUBLIC KEY-----" not in content:
+            from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
+            from cryptography.hazmat.primitives.serialization import load_pem_public_key
+
+            key_bytes = public_key_path.read_bytes()
+
+            try:
+                public_key = load_pem_public_key(key_bytes)
+                is_valid_key = isinstance(public_key, RSAPublicKey)
+            except Exception:
+                is_valid_key = False
+
+            if not is_valid_key:
                 errors.append(
                     Error(
                         "License public key is not a valid PEM file",
-                        hint=f"File at {public_key_path} does not contain a valid PEM public key.",
+                        hint=f"File at {public_key_path} does not contain a valid RSA PEM public key.",
                         id="spwig.license.E002",
                     )
                 )

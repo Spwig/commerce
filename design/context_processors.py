@@ -4,9 +4,12 @@ Context Processors for Design App
 Provides utility assets and other data to design templates (branding builder, header builder, etc.).
 """
 
+import logging
 from typing import Any
 
 from django.http import HttpRequest
+
+logger = logging.getLogger(__name__)
 
 
 def design_settings(request: HttpRequest) -> dict[str, Any]:
@@ -27,6 +30,7 @@ def design_settings(request: HttpRequest) -> dict[str, Any]:
         settings = GlobalDesignSettings.get_settings()
         return {"design_settings": settings}
     except Exception:
+        logger.exception("Failed to load global design settings; rendering without branding")
         return {"design_settings": None}
 
 

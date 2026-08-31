@@ -1,392 +1,393 @@
 ---
-title: Preferenze di Comunicazione
+title: Preferenze di comunicazione
 ---
 
-Le preferenze di comunicazione consentono ai clienti di controllare quali email e messaggi SMS ricevono dal tuo negozio. Questo sistema garantisce la conformità al GDPR e ti aiuta a rispettare le preferenze di comunicazione dei clienti in tutti i canali.
+Le preferenze di comunicazione consentono ai clienti di controllare quali e-mail e messaggi SMS ricevono dal tuo negozio. Questo sistema garantisce la conformità al GDPR e ti aiuta a rispettare le preferenze di comunicazione dei clienti su tutti i canali.
 
-Naviga verso **Customers > Communication Preferences** nel menu laterale di amministrazione per gestire le preferenze di comunicazione dei clienti.
+Accedi a **Clienti > Preferenze di comunicazione** nella barra laterale di amministrazione per gestire le preferenze di comunicazione dei clienti.
 
-## Comprendere le Preferenze di Comunicazione
+## Comprensione delle preferenze di comunicazione
 
-Il sistema delle preferenze di comunicazione dà ai clienti un controllo dettagliato sui messaggi che ricevono. Questo include:
+Il sistema di preferenze di comunicazione offre ai clienti un controllo dettagliato sui messaggi che ricevono. Questo include:
 
-- **Email transazionali** — Conferma dell'ordine, aggiornamenti di spedizione, email di sicurezza dell'account (sempre attive)
-- **Email di marketing** — Newsletter, promozioni, suggerimenti di prodotti (richiede l'iscrizione)
-- **Notifiche specifiche dell'app** — Post del blog, punti fedeltà, premi di reclutamento, commissioni affiliati
-- **Notifiche SMS** — Notifiche tramite messaggio di testo (richiede un'iscrizione esplicita per TCPA)
+- **E-mail transazionali** — Conferme degli ordini essenziali, aggiornamenti di spedizione, e-mail di sicurezza dell'account (sempre attive)
+- **E-mail di marketing** — Newsletter, promozioni, raccomandazioni di prodotti (richiede opt-in)
+- **Notifiche specifiche dell'app** — Post del blog, punti fedeltà, premi di referral, commissioni di affiliazione
+- **Notifiche SMS** — Notifiche tramite messaggio di testo (richiede opt-in esplicito secondo TCPA)
 
-Tutte le comunicazioni di marketing richiedono il consenso del cliente e la verifica dell'indirizzo email per garantire la conformità al GDPR.
+Tutte le comunicazioni di marketing richiedono il consenso del cliente e la verifica dell'e-mail per garantire la conformità al GDPR.
 
-## Spiegazione dei Tipi di Preferenze
+## Tipi di preferenze spiegati
 
-### Comunicazioni Transazionali (Sempre Abilitate)
+### Comunicazioni transazionali (sempre attive)
 
-Le comunicazioni transazionali sono essenziali per l'account e gli ordini del cliente. Queste **non possono essere disattivate** dai clienti:
+I messaggi transazionali sono essenziali per l'account e gli ordini del tuo cliente. Questi **non possono essere disattivati** dai clienti:
 
 | Tipo | Descrizione | Esempi |
 |------|-------------|----------|
-| **Conferma Ordine** | Conferma quando l'ordine è stato effettuato | L'ordine #12345 è stato ricevuto |
-| **Aggiornamenti di Spedizione** | Notifiche quando lo stato dell'ordine cambia | Il tuo ordine è stato spedito |
-| **Conferma di Pagamento** | Pagamento ricevuto, rimborso processato | Pagamento di $49.99 confermato |
-| **Sicurezza dell'Account** | Reimpostazione della password, verifica email | Reimposta la password |
+| **Conferme degli ordini** | Conferma quando l'ordine viene effettuato | L'ordine #12345 è stato ricevuto |
+| **Aggiornamenti di spedizione** | Notifiche quando lo stato dell'ordine cambia | Il tuo ordine è stato spedito |
+| **Conferme di pagamento** | Pagamento ricevuto, rimborso elaborato | Pagamento di $49.99 confermato |
+| **Sicurezza dell'account** | Reimpostazione della password, verifica dell'e-mail | Reimposta la tua password |
 
-### Comunicazioni di Marketing (Richiesta di Iscrizione)
+### Comunicazioni di marketing (richiede opt-in)
 
-Le comunicazioni di marketing richiedono il consenso del cliente e la verifica dell'indirizzo email:
+I messaggi di marketing richiedono il consenso del cliente e la verifica dell'e-mail:
 
-| Tipo | Descrizione | Default |
+| Tipo | Descrizione | Predefinito |
 |------|-------------|---------|
-| **Newsletter** | Newsletter e aggiornamenti generali | Opt-out |
-| **Offerte Promozionali** | Vendite, sconti, offerte speciali | Opt-out |
-| **Suggerimenti di Prodotti** | Suggerimenti personalizzati di prodotti | Opt-out |
-| **Torna in Magazzino** | Notifiche quando i prodotti tornano in magazzino | Opt-out |
+| **Newsletter** | Newsletter generali e aggiornamenti | Opt-out |
+| **Offerte promozionali** | Saldi, sconti, offerte speciali | Opt-out |
+| **Raccomandazioni di prodotti** | Suggerimenti di prodotti personalizzati | Opt-out |
+| **Rientro in magazzino** | Notifiche quando i prodotti tornano disponibili | Opt-out |
 
-I clienti devono **verificare il loro indirizzo email** prima di ricevere qualsiasi email di marketing (richiesta di doppia iscrizione per il GDPR).
+I clienti devono **verificare il proprio indirizzo e-mail** prima di ricevere qualsiasi e-mail di marketing (requisito di doppio opt-in del GDPR).
 
-### Preferenze Specifiche dell'App
+### Preferenze specifiche dell'app
 
 I clienti possono controllare le notifiche da funzionalità specifiche:
 
-**Notifiche del Blog**
-- Nuovo post del blog pubblicato (immediato, digest settimanale o mensile)
-- Sottoscrizioni specifiche per la categoria
+**Notifiche del blog**
+- Nuovo post del blog pubblicato (immediato, digest settimanale o digest mensile)
+- Abbonamenti specifici per categoria
 - Preferenze di frequenza
 
-**Programma Fedeltà**
-- Notifiche sui punti guadagnati
-- Aggiornamenti del livello
+**Programma di fedeltà**
+- Notifiche di punti guadagnati
+- Promozioni di livello
 - Premi sbloccati
-- Punti che scadranno presto
+- Punti in scadenza imminente
 - Bonus di compleanno
 - Offerte di campagna
 
-**Programma di Reclutamento**
-- Premio assegnato (reclutatore e reclutato)
-- Registrazione riuscita del reclutato
-- Premio che scadrà presto
-- Inviti al reclutamento
+**Programma di referral**
+- Premio emesso (referente e referito)
+- Iscrizione di referral riuscita
+- Premio in scadenza imminente
+- Inviti di referral
 
-**Programma Affiliato**
-- Commissioni guadagnate
-- Commissioni approvate o rifiutate
-- Pagamento processato, completato o fallito
-- Rapporti di prestazioni mensili
+**Programma di affiliazione**
+- Commissione guadagnata
+- Commissione approvata o rifiutata
+- Pagamento elaborato, completato o fallito
+- Report di performance mensili
 
-### Notifiche SMS (Richiesta di Iscrizione Esplicita)
+### Notifiche SMS (richiede opt-in esplicito)
 
-Tutte le notifiche SMS richiedono **un'iscrizione esplicita** in base alle regolamentazioni TCPA. I clienti devono attivamente selezionare la casella di iscrizione SMS:
+Tutte le notifiche SMS richiedono **opt-in esplicito** secondo le normative TCPA. I clienti devono spuntare attivamente la casella di opt-in SMS:
 
-- **SMS transazionali** — Ordine spedito, consegnato (richiede iscrizione)
-- **SMS di marketing** — Promozioni, offerte speciali (richiede iscrizione separata)
+- **SMS transazionali** — Ordine spedito, consegnato (richiede opt-in)
+- **SMS di marketing** — Promozioni, offerte speciali (richiede opt-in separato)
 
-Anche gli SMS transazionali richiedono l'iscrizione perché l'invio di messaggi di testo non richiesti è regolamentato in modo più rigoroso rispetto alle email.
+Anche gli SMS transazionali richiedono l'opt-in perché l'invio di messaggi di testo non richiesti è regolato più rigorosamente rispetto alle e-mail.
 
-## Gestione delle Preferenze dei Clienti nell'Amministrazione
+## Gestione delle preferenze dei clienti nell'area di amministrazione
 
-### Visualizzare Tutte le Preferenze
+### Visualizzazione di tutte le preferenze
 
-Naviga verso **Customers > Communication Preferences** per visualizzare tutte le preferenze dei clienti:
+Accedi a **Clienti > Preferenze di comunicazione** per visualizzare tutte le preferenze dei clienti:
 
 | Colonna | Descrizione |
 |--------|-------------|
-| **Email dell'Utente** | Indirizzo email del cliente (collega all'amministrazione utente) |
+| **Email Utente** | Indirizzo email del cliente (collegato all'admin utente) |
 | **Stato Email** | ✓ verde se le email sono abilitate, ○ grigio se disabilitate |
 | **Stato SMS** | ✓ verde se gli SMS sono abilitati, ○ grigio se disabilitati |
-| **Stato Marketing** | Etichetta "Opted In" o "Opted Out" |
-| **Stato di Verifica** | 📧✓ se l'email è verificata, 📱✓ se l'SMS è verificato |
-| **Fonte del Consenso** | Dove il cliente ha dato il consenso (registrazione, checkout, centro preferenze) |
-| **Aggiornato a** | Ultimo momento in cui le preferenze sono state modificate |
+| **Stato Marketing** | Badge "Iscritto" o "Disiscritto" |
+| **Stato Verifica** | 📧✓ se email verificata, 📱✓ se SMS verificato |
+| **Origine Consenso** | Dove il cliente ha acconsentito (registrazione, checkout, centro preferenze) |
+| **Aggiornato Il** | Ultimo momento in cui le preferenze sono state modificate |
 
-### Filtrare le Preferenze
+### Filtraggio Preferenze
 
-Utilizza il pannello laterale di filtro per trovare clienti:
+Usa la barra laterale dei filtri per trovare i clienti:
 
 - **Email Abilitata** — Sì/No
-- **SMS Abilitata** — Sì/No
-- **Email Marketing** — Sì/No (iscritto al marketing)
-- **SMS Marketing** — Sì/No (iscritto al marketing SMS)
-- **Email Verificata** — Sì/No (ha verificato l'indirizzo email)
-- **SMS Verificata** — Sì/No (ha verificato il numero di telefono)
-- **Fonte del Consenso** — Registrazione, Checkout, Centro Preferenze, API, Migrato
+- **SMS Abilitato** — Sì/No
+- **Marketing Email** — Sì/No (iscritto al marketing)
+- **Marketing SMS** — Sì/No (iscritto al marketing SMS)
+- **Email Verificata** — Sì/No (ha verificato il proprio indirizzo email)
+- **SMS Verificato** — Sì/No (ha verificato il proprio numero di telefono)
+- **Origine Consenso** — Registrazione, Checkout, Centro Preferenze, API, Migrazione
 - **Codice Lingua** — Lingua preferita per le comunicazioni
 
-### Cercare le Preferenze
+### Ricerca Preferenze
 
-Cerca i clienti per:
-- Email dell'utente
+Cerca clienti per:
+- Email utente
 - Nome utente
 - Nome
 - Cognome
-- Token di annullamento
+- Token di disiscrizione
 
-### Azioni di Gruppo
+### Azioni di Massa
 
-Seleziona diversi clienti e applica azioni di gruppo:
+Seleziona più clienti e applica azioni di massa:
 
-**✓ Marca l'Email come Verificata**
+**✓ Segna Email come Verificata**
 - Verifica manualmente gli indirizzi email dei clienti
 - Utile quando si importano clienti da un altro sistema
-- Invalida la cache delle preferenze per applicare immediatamente i cambiamenti
+- Invalida la cache delle preferenze per applicare le modifiche immediatamente
 
-**🚫 Annulla l'iscrizione a Tutto il Marketing**
-- Disattiva tutte le comunicazioni di marketing (email, SMS, tutte le app)
-- Mantieni le email transazionali abilitate
-- Usa questa opzione per i clienti che richiedono di essere completamente annullati
-- Rispetta il diritto di ritirare il consenso del GDPR
+**🚫 Disiscrivi da Tutto il Marketing**
+- Disabilita tutte le comunicazioni di marketing (email, SMS, tutte le app)
+- Mantiene abilitate le email transazionali
+- Usa questa opzione per i clienti che richiedono la disiscrizione completa
+- Rispetta il diritto GDPR di revocare il consenso
 
-**📥 Esporta le Preferenze in CSV**
+**📥 Esporta Preferenze in CSV**
 - Esporta le preferenze dei clienti in un foglio di calcolo
-- Include tutti i campi delle preferenze e le impostazioni specifiche delle app
+- Include tutti i campi delle preferenze e le impostazioni specifiche dell'app
 - Utile per audit di conformità e analisi
 - Formato: CSV con intestazioni
 
-## Centro delle Preferenze Self-Service del Cliente
+## Centro Preferenze Self-Service per Clienti
 
-I clienti possono gestire le loro preferenze da `/accounts/preferences/` quando sono connessi.
+I clienti possono gestire le proprie preferenze in `/accounts/preferences/` quando sono connessi.
 
-### Funzionalità del Centro delle Preferenze
+### Funzionalità del Centro Preferenze
 
-**Azioni Veloci**
+**Azioni Rapide**
 - **Iscriviti a Tutto il Marketing** — Abilita tutte le comunicazioni di marketing con un clic
-- **Annulla l'iscrizione a Tutto** — Disattiva tutte le comunicazioni di marketing (le comunicazioni transazionali rimangono abilitate)
+- **Disiscriviti da Tutto** — Disabilita tutte le comunicazioni di marketing (le transazionali restano abilitate)
 
-**Carte delle Preferenze**
-- **Email Transazionali** — Solo lettura (sempre abilitate, contrassegnate come "Obbligatorio")
-- **Comunicazioni di Marketing** — Attiva/Disattiva con etichetta di verifica
-- **Preferenze del Blog** — Abilita/Disabilita, seleziona frequenza (immediata, settimanale, mensile)
-- **Programma Fedeltà** — Abilita/Disabilita tipi specifici di notifiche
-- **Programma di Reclutamento** — Abilita/Disabilita notifiche sui premi
-- **Programma Affiliato** — Abilita/Disabilita notifiche sulle commissioni e i pagamenti
-- **Notifiche SMS** — Iscriviti/Annulla l'iscrizione agli SMS (mostra lo stato di verifica)
+**Schede Preferenze**
+- **Email Transazionali** — Sola lettura (sempre abilitate, contrassegnate come "Obbligatorie")
+- **Comunicazioni di Marketing** — Attiva/disattiva con badge di verifica
+- **Preferenze Blog** — Abilita/disabilita, seleziona la frequenza (immediata, settimanale, mensile)
+- **Programma Fedeltà** — Abilita/disabilita i singoli tipi di notifica
+- **Programma di Referral** — Abilita/disabilita le notifiche sui premi
+- **Programma di Affiliazione** — Abilita/disabilita le notifiche su commissioni e pagamenti
+- **Notifiche SMS** — Iscriviti/disiscriviti dagli SMS (mostra lo stato di verifica)
 
 **Aggiornamenti in Tempo Reale**
-- I cambiamenti vengono salvati immediatamente tramite AJAX
-- Non è necessario un rinfresco della pagina
-- Feedback visivo quando sono stati salvati
+- Le modifiche vengono salvate immediatamente tramite AJAX
+- Nessun ricaricamento della pagina richiesto
+- Feedback visivo quando salvato
 
-### Procedura di Verifica Email
+### Processo di Verifica Email
 
 Quando un cliente abilita le email di marketing:
 
 1. Il cliente attiva "Email di Marketing" su ON
-2. Il sistema invia un'email di verifica con un link unico
+2. Il sistema invia un'email di verifica con un link univoco
 3. Il cliente clicca sul link di verifica
-4. L'email viene contrassegnata come verificata (compare l'etichetta 📧✓)
-5. Le email di marketing saranno ora inviate
+4. L'email viene contrassegnata come verificata (compare il badge 📧✓)
+5. Le email di marketing verranno ora inviate
 
-**I clienti non verificati NON riceveranno email di marketing** anche se l'interruttore è su ON. Questo garantisce la conformità alla doppia iscrizione del GDPR.
+**I clienti non verificati NON riceveranno email di marketing** anche se l'interruttore è su ON. Questo garantisce la conformità al doppio opt-in GDPR.
 
-## Annullamento Istantaneo
+## Disiscrizione con Un Clic
 
-Tutte le email di marketing includono un link per annullare l'iscrizione nel piè di pagina. Cliccando su questo link:
+Tutte le email di marketing includono un link di disiscrizione nel piè di pagina. Cliccando su questo link:
 
-1. Porta il cliente a `/accounts/unsubscribe/<token>/` (nessun login richiesto)
-2. Mostra da cosa si sta annullando l'iscrizione
-3. Permette un feedback opzionale (motivo dell'annullamento)
-4. Disattiva le comunicazioni di marketing
-5. Mantieni le email transazionali abilitate
-6. Fornisce un link al centro completo delle preferenze
+1. Il cliente viene reindirizzato a `/accounts/unsubscribe/<token>/` (nessun login richiesto)
+2. Viene mostrato da cosa si sta disiscrivendo
+3. È possibile fornire un feedback opzionale (motivo della disiscrizione)
+4. Le comunicazioni di marketing vengono disabilitate
+5. Le email transazionali restano abilitate
+6. Viene fornito un link al centro preferenze completo
 
-I clienti possono riascriversi in qualsiasi momento tramite il centro delle preferenze.
+I clienti possono riiscriversi in qualsiasi momento tramite il centro preferenze.
 
 ## Conformità e Requisiti Legali
 
 ### Conformità all'Articolo 7 del GDPR
 
-Il sistema garantisce la conformità completa all'Articolo 7 del GDPR:
+Il sistema garantisce la piena conformità all'Articolo 7 del GDPR:
 
-**✅ Prova del Consenso**
-- Orario in cui è stato dato il consenso
+
+**✅ Prova del consenso**
+- Timestamp del momento in cui è stato dato il consenso
 - Fonte del consenso (registrazione, checkout, centro preferenze)
 - Indirizzo IP del consenso
-- User agent (informazioni del browser)
+- User agent (informazioni sul browser)
 
-**✅ Consenso Separato**
-- Email di marketing e transazionali sono interruttori separati
+**✅ Consenso separato**
+- Le email di marketing e transazionali sono interruttori separati
 - Ogni app (blog, fedeltà, ecc.) richiede un consenso individuale
 
-**✅ Ritiro Facile**
-- Annullamento istantaneo in tutte le email di marketing
-- Centro delle preferenze disponibile per tutti i clienti connessi
-- L'annullamento ha effetto immediato
+**✅ Facile revoca**
+- Disiscrizione con un clic in tutte le email di marketing
+- Centro preferenze disponibile per tutti i clienti connessi
+- La disiscrizione ha effetto immediato
 
-**✅ Consenso Libero**
-- Default è opt-out per il marketing (migliore pratica GDPR)
-- Nessuna casella pre-selezionata (i clienti devono attivamente iscriversi)
+**✅ Consenso dato liberamente**
+- L'impostazione predefinita per il marketing è opt-out (migliore pratica GDPR)
+- Nessuna casella pre-selezionata (i clienti devono optare attivamente)
 
-**✅ Consenso Specifico e Informato**
-- Descrizione chiara di cosa ogni preferenza controlla
-- Preferenze dettagliate a livello di app (non tutto o niente)
+**✅ Consenso specifico e informato**
+- Descrizioni chiare di ciò che ogni preferenza controlla
+- Preferenze granulari a livello di app (non tutto o niente)
 
-**✅ Consenso Verificabile**
-- Doppia iscrizione per email di marketing
-- Tracciamento dell'audit tramite lo stato EmailOutbox
+**✅ Consenso verificabile**
+- Double opt-in per le email di marketing
+- Traccia di audit tramite il monitoraggio dello stato di EmailOutbox
 
-### Conformità TCPA (Regolamentazioni SMS USA)
+### Conformità TCPA (Regolamenti SMS USA)
 
-Tutte le notifiche SMS richiedono **un'iscrizione esplicita**:
+Tutte le notifiche SMS richiedono un **opt-in esplicito**:
 
-- I clienti devono attivamente selezionare la casella di iscrizione SMS
-- Non sono ammesse caselle pre-selezionate
-- Descrizione chiara di cosa stanno iscrivendosi
-- Annullamento facile tramite il centro delle preferenze
-- Tutte le spedizioni SMS sono registrate per l'audit di conformità
+- I clienti devono spuntare attivamente la casella di opt-in SMS
+- Non sono consentite caselle pre-selezionate
+- Descrizione chiara di ciò in cui stanno optando
+- Facile opt-out tramite il centro preferenze
+- Tutti gli invii SMS sono registrati per l'audit di conformità
 
-### Conformità CAN-SPAM (Regolamentazioni Email USA)
+### Conformità CAN-SPAM (Regolamenti Email USA)
 
 Il sistema garantisce la conformità CAN-SPAM:
 
-- Link per annullare l'iscrizione in ogni email di marketing
-- Annullamento processato immediatamente (richiesto entro 10 giorni lavorativi, lo facciamo istantaneamente)
+- Link di disiscrizione in ogni email di marketing
+- Disiscrizione elaborata immediatamente (richiesti 10 giorni lavorativi, lo facciamo istantaneamente)
 - Nome "Da" chiaro (il nome del tuo negozio)
-- Indirizzo fisico nel piè di pagina email
-- Nessun titolo ingannevole
+- Indirizzo fisico nel piè di pagina dell'email
+- Nessuna riga dell'oggetto ingannevole
 
-## Comprendere lo Stato Email in EmailOutbox
+## Comprensione dello stato delle email in EmailOutbox
 
-Quando si visualizza **Email System > Email Outbox**, si vedrà come le preferenze influenzano la consegna delle email:
+Quando si visualizza **Sistema Email > Casella di uscita email**, si vedrà come le preferenze influenzano la consegna delle email:
 
 | Stato | Significato | Motivo |
 |--------|---------|--------|
-| **In Attesa** | Email in coda per l'invio | Le preferenze permettono l'invio di questa email |
-| **In Coda** | In coda per l'invio | Le preferenze permettono l'invio di questa email |
-| **Saltata** | Email non inviata | Le preferenze del cliente sono disattivate |
+| **In attesa** | Email in coda per l'invio | Le preferenze consentono questa email |
+| **In coda** | Nella coda di invio | Le preferenze consentono questa email |
+| **Saltata** | Email non inviata | Preferenza del cliente disabilitata |
 | **Inviata** | Consegnata con successo | Email inviata normalmente |
 
-Quando un'email è **saltata**, il campo `skip_reason` mostra il motivo:
+Quando un'email viene **saltata**, il campo `skip_reason` mostra il motivo:
 
-- **user_preference_disabled** — Il cliente ha disattivato questo tipo di email nelle preferenze
+- **user_preference_disabled** — Il cliente ha disabilitato questo tipo di email nelle preferenze
 - **email_not_verified** — Il cliente non ha verificato il proprio indirizzo email
-- **email_disabled** — Il cliente ha disattivato tutte le email (interruttore principale)
+- **email_disabled** — Il cliente ha disabilitato tutte le email (interruttore principale)
 
-Questo tracciamento dell'audit è importante per la conformità al GDPR — puoi dimostrare di aver rispettato le preferenze del cliente.
+Questa traccia di audit è importante per la conformità GDPR — puoi dimostrare di aver rispettato le preferenze dei clienti.
 
-## Impostazioni del Sito per le Preferenze
+## Impostazioni del sito per le preferenze
 
-Naviga verso **Settings > Site Settings** per configurare le impostazioni globali delle preferenze:
+Vai a **Impostazioni > Impostazioni del sito** per configurare i valori predefiniti globali delle preferenze:
 
-**Abilita Doppia Iscrizione per Email di Marketing** (Default: Sì)
-- Richiede la verifica dell'indirizzo email prima di inviare email di marketing
-- Migliore pratica del GDPR
-- Consigliato: Mantieni abilitato
+**Abilita Double Opt-In per le email di marketing** (Predefinito: Sì)
+- Richiede la verifica dell'email prima di inviare email di marketing
+- Migliore pratica GDPR
+- Raccomandato: Lascia abilitato
 
-**Stato Predefinito per l'Iscrizione al Marketing** (Default: No - Opt-Out)
-- Stato predefinito quando i nuovi clienti si registrano
-- Il GDPR richiede l'opt-out predefinito
-- Consigliato: Mantieni come opt-out (False)
+**Stato predefinito di opt-in per il marketing** (Predefinito: No - Opt-Out)
+- Stato predefinito quando nuovi clienti si registrano
+- Il GDPR richiede l'opt-out come predefinito
+- Raccomandato: Lascia come opt-out (False)
 
-**Centro delle Preferenze Abilitato** (Default: Sì)
-- Permette ai clienti di gestire le proprie preferenze
-- Richiesto per il diritto di ritirare il consenso del GDPR
-- Consigliato: Mantieni abilitato
+**Centro preferenze abilitato** (Predefinito: Sì)
+- Consente ai clienti di gestire le proprie preferenze
+- Necessario per il diritto GDPR di revocare il consenso
+- Raccomandato: Lascia abilitato
 
-**Richiedi Verifica SMS** (Default: No)
-- Richiedi la verifica del numero di telefono per le notifiche SMS
-- Opzionale ma consigliato per i mittenti di SMS ad alto volume
-- Può essere abilitato se si desidera una doppia iscrizione per SMS
+**Richiedi verifica SMS** (Predefinito: No)
+- Richiede la verifica del numero di telefono per le notifiche SMS
+- Facoltativo ma raccomandato per i mittenti SMS ad alto volume
+- Può essere abilitato se si desidera il double opt-in per gli SMS
 
-**Mostra Motivi di Annullamento** (Default: Sì)
-- Raccogli un feedback opzionale quando i clienti si annullano
-- Aiuta a comprendere il motivo per cui i clienti si annullano
-- Consigliato: Mantieni abilitato per ottenere informazioni
+**Mostra motivi della disiscrizione** (Predefinito: Sì)
+- Raccoglie feedback facoltativi quando i clienti si disiscrivono
+- Aiuta a capire perché i clienti optano per l'uscita
+- Raccomandato: Lascia abilitato per ottenere informazioni
 
-## Migliori Pratiche
+## Migliori pratiche
 
-### 1. Default a Opt-Out per Marketing
+### 1. Predefinito Opt-Out per il marketing
 
-Imponi sempre il marketing a **opt-out** (non selezionato):
+Imposta sempre le comunicazioni di marketing su **opt-out** (non spuntato):
 - Conforme al GDPR
 - Costruisce fiducia con i clienti
-- Riduce le lamentele per spam
-- Invia solo a clienti attivi
+- Riduce le segnalazioni di spam
+- Invia solo a clienti coinvolti
 
-### 2. Richiedi Verifica Email
+### 2. Richiedi la verifica dell'email
 
-Mantieni **Doppia Iscrizione** abilitata:
+Mantieni il **Double Opt-In** abilitato:
 - Garantisce che gli indirizzi email siano validi
-- Conferma che i clienti desiderano effettivamente ricevere email di marketing
+- Conferma che il cliente desidera effettivamente le email di marketing
 - Riduce il tasso di rimbalzo
-- Richiesto per la conformità al GDPR
+- Necessario per la conformità GDPR
 
-### 3. Rispetta le Preferenze Immediatamente
+### 3. Rispetta le preferenze immediatamente
+
+Mantieni tutte le formattazioni markdown, i percorsi delle immagini, i blocchi di codice e i termini tecnici.
 
 Quando un cliente modifica le preferenze:
-- Le modifiche entrano in vigore immediatamente
+- Le modifiche hanno effetto immediato
 - La cache delle preferenze viene invalidata
-- L'invio successivo delle email controllerà le preferenze aggiornate
-- Nessun ritardo nell'adempimento delle richieste di annullamento
+- La prossima invio di email verificherà le preferenze aggiornate
+- Nessun ritardo nel rispettare le richieste di disiscrizione
 
-### 4. Monitora le Email Saltate
+### 4. Monitoraggio delle email saltate
 
-Controlla regolarmente **Email Outbox** per le email saltate:
-- Un alto tasso di email saltate indica che i clienti si annullano
-- Potrebbe segnalare che il contenuto delle email necessita di miglioramento
-- Aiuta a identificare problemi di preferenza
+Controlla regolarmente la **Cassetta di uscita email** per le email saltate:
+- Un alto tasso di salti indica che i clienti stanno disiscrivendosi
+- Potrebbe segnalare la necessità di migliorare il contenuto delle email
+- Aiuta a identificare problemi di preferenze
 
-### 5. Audit di Conformità Regolari
+### 5. Audit di conformità periodici
 
 Esporta le preferenze periodicamente per la conformità:
-1. Naviga verso **Communication Preferences**
+1. Vai a **Preferenze di comunicazione**
 2. Seleziona tutti i clienti
-3. Scegli **Export Preferences to CSV**
-4. Salva per l'audit trail del GDPR
+3. Scegli **Esporta preferenze in CSV**
+4. Salva per la traccia di audit GDPR
 
-Archivia le esportazioni per **almeno 3 anni** per rispettare i requisiti di conservazione dei dati del GDPR.
+Conserva le esportazioni per **almeno 3 anni** per rispettare i requisiti di conservazione dei dati GDPR.
 
-### 6. Comunicazione Chiara
+### 6. Comunicazione chiara
 
-Quando si raccoglie il consenso:
+Quando raccogli il consenso:
 - Usa un linguaggio semplice, non gergo legale
 - Spiega cosa riceveranno i clienti
 - Mostra la frequenza (giornaliera, settimanale, mensile)
-- Rende le caselle di iscrizione prominenti ma non pre-selezionate
+- Rendi evidenti le caselle di opt-in ma non precompilate
 
-### 7. Segmenta per Preferenze
+### 7. Segmentazione per preferenza
 
-Quando si inviano campagne di marketing:
+Quando invii campagne di marketing:
 - Invia solo a clienti verificati e iscritti
-- Rispetta le preferenze specifiche delle app (non inviare email del blog a clienti che hanno disattivato il blog)
-- Usa le preferenze di frequenza (non inviare email immediate a clienti che ricevono digest settimanali)
+- Rispetta le preferenze specifiche dell'app (non inviare email del blog a clienti che hanno disabilitato il blog)
+- Usa le preferenze di frequenza (non inviare email immediate agli abbonati al digest settimanale)
 
-## Siti Utili
+## Suggerimenti
 
-**💡 Controlla le Preferenze Prima di Inviare**
+**💡 Verifica le preferenze prima dell'invio**
 
-Il sistema controlla automaticamente le preferenze quando invii email utilizzando `EmailSendingService.send_template_email()`. Assicurati che tutte le email utilizzino questo servizio, non chiamate SMTP dirette.
+Il sistema verifica automaticamente le preferenze quando invii email utilizzando `EmailSendingService.send_template_email()`. Assicurati che tutti gli invii di email utilizzino questo servizio, non chiamate SMTP dirette.
 
-**💡 Lo Stato Saltato è Normale**
+**💡 Lo stato "Saltato" è normale**
 
-Non preoccuparti per le email saltate nell'outbox — ciò significa che il sistema sta funzionando correttamente e rispetta le preferenze dei clienti. È meglio saltare le email non richieste che rischiare sanzioni del GDPR o lamentele per spam.
+Non allarmarti per le email saltate nella cassetta di uscita — significa che il sistema funziona correttamente e rispetta le preferenze dei clienti. È meglio saltare email indesiderate che rischiare multe GDPR o reclami per spam.
 
-**💡 Cache delle Preferenze a 5 Minuti**
+**💡 La cache delle preferenze è di 5 minuti**
 
-I controlli delle preferenze sono memorizzati per 5 minuti per le prestazioni. Quando i clienti modificano le preferenze tramite il centro delle preferenze o azioni di amministrazione, la cache viene immediatamente invalidata in modo che le modifiche abbiano effetto subito.
+Le verifiche delle preferenze sono in cache per 5 minuti per le prestazioni. Quando i clienti modificano le preferenze tramite il centro preferenze o azioni di amministrazione, la cache viene invalidata immediatamente in modo che le modifiche abbiano effetto subito.
 
-**💡 I Clienti Guest Saltano i Controlli**
+**💡 I clienti ospiti bypassano le verifiche**
 
-I clienti che effettuano il checkout come ospiti (nessun account) riceveranno tutte le email normalmente poiché non hanno un record di preferenze. Questo è intenzionale — si sono iscritti fornendo il loro indirizzo email al checkout.
+I clienti che effettuano l'acquisto come ospiti (senza account) riceveranno tutte le email normalmente perché non hanno un record di preferenze. Questo è intenzionale — hanno optato in fornendo la loro email al checkout.
 
-**💡 Email Transazionali Inviate Sempre**
+**💡 Le email transazionali vengono sempre inviate**
 
-Le conferme degli ordini, gli aggiornamenti di spedizione e le email di sicurezza dell'account **vengono sempre inviate** indipendentemente dalle preferenze. Questo garantisce che i clienti ricevano informazioni critiche sui loro ordini e account.
+Le confermi ordini, gli aggiornamenti di spedizione e le email di sicurezza dell'account **vengono sempre inviate** indipendentemente dalle preferenze. Questo assicura che i clienti ricevano informazioni critiche sui loro ordini e account.
 
-**💡 Usa le Azioni di Gruppo con Cura**
+**💡 Usa le azioni di massa con cautela**
 
-L'azione di gruppo "Annulla l'iscrizione a Tutto il Marketing" influisce su **tutte le app** (blog, fedeltà, reclutamento, affiliato). Usa questa solo per i clienti che hanno richiesto esplicitamente di essere completamente annullati. Per preferenze specifiche, modifica i record dei clienti singolarmente.
+L'azione di massa "Disiscrivi da tutto il marketing" influisce su **tutte le app** (blog, fedeltà, referral, affiliazione). Usa questa opzione solo per i clienti che hanno richiesto esplicitamente di essere completamente disiscritti. Per preferenze specifiche, modifica i record individuali dei clienti.
 
-**💡 Tracciamento dell'Audit per la Conformità**
+**💡 Traccia di audit per la conformità**
 
 Il sistema traccia:
-- Orario e fonte del consenso
+- Timestamp e origine del consenso
 - Indirizzo IP e user agent
-- Orario di verifica dell'email
-- Ogni modifica delle preferenze tramite lo stato EmailOutbox saltato
+- Timestamp della verifica email
+- Ogni modifica delle preferenze tramite lo stato "saltato" di EmailOutbox
 
-Questo tracciamento dell'audit dimostra la conformità al GDPR se le autorità richiedono prove del consenso.
+Questa traccia di audit dimostra la conformità GDPR se le autorità richiedono mai prove del consenso.
 
-## Argomenti Correlati
+## Argomenti correlati
 
-- [Gestione Account Cliente](/help/managing-customer-accounts) — Gestione del profilo del cliente
-- [Configurazione Email](/help/email-configuration) — Configurazione SMTP e modelli email
-
-Ricorda: Preserva tutto il formattaggio markdown, i percorsi delle immagini, i blocchi di codice e i termini tecnici esattamente come mostrato nelle regole di conservazione.
+- [Gestione degli account dei clienti](/help/managing-customer-accounts) — Gestione del profilo del cliente
+- [Configurazione email](/help/email-configuration) — Configurazione SMTP e modelli di email

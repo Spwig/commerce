@@ -248,10 +248,15 @@ class TestRequestValidation:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_semantic_search_validates_threshold(self, api_client, admin_user):
-        """Test that invalid threshold triggers fallback to keyword search."""
+        """Test that an out-of-range threshold is rejected with a 400.
+
+        Request validation runs before the keyword-search fallback, so invalid
+        input surfaces as a proper 400 instead of being silently degraded into a
+        successful keyword search.
+        """
         api_client.force_authenticate(user=admin_user)
 
-        # Threshold out of range - view catches validation error and falls back
+        # Threshold out of range - serializer validation rejects the request
         response = api_client.post(
             "/api/core/help/topics/semantic_search/",
             {
@@ -261,8 +266,8 @@ class TestRequestValidation:
             },
         )
 
-        # View catches all exceptions and falls back to keyword search
-        assert response.status_code == status.HTTP_200_OK
+        # Invalid input is rejected, not swallowed by the fallback
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 # ============================================================================
@@ -412,8 +417,9 @@ class TestFallbackBehavior:
 
             # Should still return 200 OK (fallback to keyword search)
             assert response.status_code == status.HTTP_200_OK
-            # Should return results (from keyword search fallback)
-            assert isinstance(response.data, list)
+            # Fallback preserves the success-path envelope, tagged as keyword
+            assert response.data["search_type"] == "keyword"
+            assert isinstance(response.data["results"], list)
 
 
 # ============================================================================

@@ -1,55 +1,53 @@
 # Spwig Features
 
-> 282 functies · 20 categorieën. Elke inschrijving is afgeleid van realistische, geverifieerde functionaliteiten. Automatisch gegenereerd uit de Spwig broncode.
+> 274 functies · 20 categorieën. Elke inschrijving is afgeleid van realistische, geverifieerde functionaliteiten. Automatisch gegenereerd uit de Spwig broncode.
 
 ## Categorieën
 
-- [Productcatalogus](#productcatalogus) (16)
+- [Productcatalogus](#productcatalogus) (14)
 - [3D Productconfigurator](#3d-productconfigurator) (4)
 - [Winkelwagen & Afrekenen](#winkelwagen-afrekenen) (17)
 - [Betalen](#betalen) (13)
 - [Bestellingen en retourneren](#bestellingen-en-retourneren) (7)
 - [Verzending en uitvoering](#verzending-en-uitvoering) (10)
-- [Punt van Verkoop](#punt-van-verkoop) (23)
+- [Punt van Verkoop](#punt-van-verkoop) (26)
 - [Abonnementen & Herhalende](#abonnementen-herhalende) (9)
 - [Klantanalyse](#klantanalyse) (15)
 - [Marketing & Groei](#marketing-groei) (39)
-- [E-mail en communicatie](#e-mail-en-communicatie) (13)
-- [Blog & inhoud](#blog-inhoud) (11)
-- [Ontwerp & winkeluitstraling](#ontwerp-winkeluitstraling) (16)
+- [E-mail en communicatie](#e-mail-en-communicatie) (10)
+- [Blog & inhoud](#blog-inhoud) (12)
+- [Ontwerp & winkeluitstraling](#ontwerp-winkeluitstraling) (14)
 - [Pagina Bouwer](#pagina-bouwer) (9)
 - [Media Bibliotheek](#media-bibliotheek) (5)
 - [Zoeken en ontdekken](#zoeken-en-ontdekken) (7)
-- [Internationaal](#internationaal) (16)
+- [Internationaal](#internationaal) (15)
 - [Agentic Commercie](#agentic-commercie) (6)
 - [Enterprise & Beveiliging](#enterprise-beveiliging) (9)
-- [Platform & Beheer](#platform-beheer) (37)
+- [Platform & Beheer](#platform-beheer) (33)
 
 ## Productcatalogus
 
 - **Reserveringsproducten** — Handelaars verkopen afspraken, huur en evenementen met beschikbaarheidsregels, dynamische prijsbepaling, aanbetalingen, wachtlijsten, opnieuw plannen, annuleringen en iCal kalenderuitvoer.
-- **Aangepaste ontwerp prijs & checkout** — Een aangepast ontwerp wordt bepaald op basis van oppervlakken, uploaden, clipart en tekst, opgeslagen als een tijdelijke winkelwagen, gevalideerd in de winkelwagen en bevroren op de bestelling bij de checkout.
 - **Aangepaste veldvalidatie** — Ingevoerde waarden worden gecontroleerd op het type veld, vereiste vlag, bereiken, keuzes en indelingen, met foutmeldingen per veld.
 - **Aangepaste velden** — Voeg zelf getypte velden toe aan producten, categorieën, bestellingen en klanten, georganiseerd in groepen en in de volgorde die je wilt.
-- **Ontwerp sjablonen** — Medewerkers creëren en beheren klaarstaande canvas-sjablonen voor een product, met het vergrendelen van individuele elementen om klantbewerkingen te begeleiden.
+- **Instellingen ontwerpeditor** — Handelaars configureren per product editor-opties, uploadlimieten, tarieven, drukoppervlakken en herbruikbare ontwerpsjablonen.
 - **Veldgegevens invoer & winkelweergave** — Medewerkers voeren aangepaste veldwaarden in op documenten, en gegroepeerde waarden worden weergegeven op de winkel met geselecteerde labels en standaardwaarden toegepast.
 - **Veldafvalbak & Herstel** — Verwijderde velden en groepen gaan naar een afvalbak waaropgeslagen gegevens worden behouden voor herstel, of kunnen permanent worden verwijderd.
 - **Cadeaubonnen** — Handelaars verstrekken gefundeerde cadeaubonnen en accepteren ze als betaling bij de checkout met balansvolg, vastleggen, ophalen en terugbetalingen.
 - **Licentiebeheer** — Handelaars genereren automatisch licentiecodes, handhaaf apparaatactivatiegrenzen, valideren licenties lokaal of via externe leveranciers, en melden integraties van levenscyclusgebeurtenissen.
-- **Multi-oppervlak productinstelling** — Medewerkers definiëren per product ontwerpoppervlakken met afmetingen, zones, print/DPI-instellingen, mockups en welke van tekst, uploaden en clipart op elk toegestaan zijn.
 - **Multi-winkelwagen inventaris** — Handelaars volgen voorraad over winkelwagens met toewijzing, uitvoering bij verzending, beschikbaarheidscontrole, aanpassingen en een onveranderbare bewegingsaudittrail.
-- **Printklaar uitvoeringsbestanden** — Na checkout wordt het bestelde ontwerp gecombineerd per oppervlak op doel-DPI tot printklaar afbeeldingsbestanden voor productie.
-- **Productontwerpeditor** — Klanten personaliseren een product op een live canvas met tekst, geüploade afbeeldingen, clipart en aangepaste fonten binnen de grenzen die voor elk oppervlak zijn ingesteld.
+- **Druklustige afhandeling** — Bij het afrekenen wordt het ontwerp van de klant aan de bestelling gekoppeld en omgezet in drukklaar bestanden op de doel-DPI van het oppervlak.
+- **Productontwerpeditor** — Klanten personaliseren een product op een Fabric.js-canvas met tekst, geüploade afbeeldingen, clipart en aangepaste lettertypes, met live prijsbepaling per ontwerp.
 - **Productaankoopvereisten** — Handelaars bepalen aankoop op vereiste voorafgaande producten die de klant al bezit of in winkelwagen heeft, compatibiliteit en upgrade-wegen afdwingen.
-- **Opgeslagen klantontwerpen** — Aangemelde klanten bewaren, herladen en verwijderen hun eigen geneste productontwerpen over sessies heen.
+- **Opgeslagen klantontwerpen** — Ingelogde klanten slaan ontwerpen met een naam op, laden ze later opnieuw in en verwijderen ontwerpen die ze niet meer nodig hebben.
 - **Voorraadreservering** — Tijdelijke winkelwagen voorraad houden voorkomen overselling vanaf winkelwagen tot checkout, en converteren naar bestelallocaties of POS-uitvoering.
 
 ## 3D Productconfigurator
 
-- **3D Productmodelinstelling** — Koppel een 3D-model aan een configurabele product en sla de geparseerde scene-structuur op voor configuratie.
-- **Interactieve 3D & AR-beviewer** — Toon winkelende klanten een interactieve 3D/AR-productviewer met configurabele camera, verlichting en een opgeslagen scene-thumbnail.
-- **Texturen & materiaalbibliotheek** — Upload en beheer texturen en afbeeldingsbestanden die configuratieopties op het model toepassen.
-- **Visuele configuratieopties** — Link productconfiguraties met visuele veranderingen op het 3D-model: materialenkleuren, onderdeelzichtbaarheid en verwisselbare geometrie.
+- **3D- en AR-productviewer** — Kopers bekijken en draaien het product in een configureerbare 3D-viewer met camera, verlichting, AR en automatisch gegenereerde miniaturen.
+- **3D-beheer van assets** — Voeg assets toe, toon ze in een lijst en verwijder ze voor de textuur, geometrie en optiemapping van een product, beperkt tot dat product om toegang tussen producten te voorkomen.
+- **Instelling 3D-model** — Upload een GLB-model en Spwig parseert het naar een configureerbare scènegraf, die bijgewerkt blijft naarmate de parser wordt geüpdatet.
+- **Visuele productopties** — Koppel de opties van de configuratie-slots van een product aan live visuele wijzigingen — kleur, textuur, onderdelenwissels en tonen/verbergen van modelonderdelen.
 
 ## Winkelwagen & Afrekenen
 
@@ -112,162 +110,161 @@
 
 ## Punt van Verkoop
 
-- **Kaartlezerintegratie** — Ontdek, wijs toe en bewaak kaartlezers per terminal en stuur gemarkeerde startpagina's naar het apparaat.
-- **Winkelwagen bouwen & Klantopzoeken** — Blader door het catalogus, voeg artikelen toe via barcode/SKU, pas promo-wissels toe en voeg een wandelende klant toe of maak er een aan.
-- **Kassa & Split-Tender Betalingen** — Voltooi een verkoop via contant geld, kaart, terminal-kaart, cadeaukaart en opdelende betalingen, en registreer betalingen.
-- **Klantgerichte Weergave** — Koppel een tweede klantgerichte scherm aan een terminal met een roterend koppelingscode.
-- **Klantgerichte Weergave** — Koppel een tweede scherm dat live winkelwagen en betalingsstatus toont plus opslaggerichte promoschermen.
-- **Digitale Facturen** — Stuur bestellingfacturen naar klanten via e-mail, SMS of WhatsApp.
-- **Geïntegreerde Kaartlezer Betalingen** — Neem kaartbetalingen aan via een geïntegreerde kaartlezer door betalingsintenties te maken, vast te leggen en te annuleren.
-- **Voorraadbeheer** — Bekijk voorraad en bewegingen over locaties en pas opslagvoorraad aan voor ontvangst, beschadiging, heropname en retours.
-- **Loyaliteit aan de balie** — Bekijk loyaliteitspunten en beloningen vóór een verkoop en verstrekk de verdiende punten op voltooide bestellingen.
-- **Offline Modus & Synchronisatie** — Wacht voorgestelde verkoopcijfers en voorraadwijzigingen terwijl je offline bent en herhaal ze idempotent, plus haal gegevensdelta's op om terminals in sync te houden.
-- **Geparkeerde winkelwagens** — Sla een middeninvoerwagen op, lijst geparkeerde winkelwagens op en herstel er eentje later om meerdere klanten te bedienen.
-- **Geparkeerde winkelwagens** — Sla een middeninvoerwagen op, herstel deze later en wis geparkeerde winkelwagens automatisch na verloop van de termijn.
-- **Facturen & Digitale Levering** — Pas opslaggerichte factuur sjablonen toe en stuur facturen via e-mail, SMS, WhatsApp of een openbare factuurlink.
-- **Terugbetalingen & Ongeldig maken** — Verstrekk volledige of gedeeltelijke terugbetalingen van POS-bestellingen en annuleer dezelfde shift-bestellingen met automatische shift-totaal omkering.
-- **Verkoopcijfers Rapportage** — Bekijk dagelijkse POS-verkoopcijfers en metingen van de meest verkochte producten.
-- **Shift & Geldbeheer** — Open en sluit shifts met openingssaldo, geldbewegingen en lopende totalen.
-- **Shift Beheer** — Open en sluit kassashifts met geldbewegingen en vergelijk het verwachte geld met het gemeten geld bij afrekening.
-- **Medewerker Kortingscontroles** — Pas handmatige lijn- of winkelwagenkortingen toe binnen per-medewerker grenzen, met manager-PIN overschrijding voor bedragen boven de grenzen.
-- **Medewerker Kortingscontroles** — Handhaaf per-medewerker kortingsgrenzen en vereis manager-PIN goedkeuring voor kortingen die deze overschrijden.
-- **Medewerker Inlog & Biometrische Terminal Ontgrendeling** — Meld medewerkers aan en ontgrendel terminals via WebAuthn biometrie, PIN of medewerkerkaart met uitlogboekingscontrole.
-- **Terminal Ontgrendelen & Beveiligen** — Ontgrendel en vergrendel terminals via kassierer/manager PIN, medewerkerkaart, biometrie of externe beheerder, met volledige auditlogboek en vergrendelingsregels.
-- **Terminal Beheer** — Registreer en koppel POS-terminals, haal hun configuratie op en registreer hartslag.
-- **Terminal-instellingen en apparaatkoppeling** — Registreer POS-terminals, stuur koppelingcodes uit en controleer de verbondenheid met de betalingsprovider voordat u live gaat.
+- **Biometrische vergrendeling** — Verrijks terminals met WebAuthn vingerafdruk/face, medewerkerskaarten of PINs, met uitloggen en beheerdersescalatie na falen.
+- **Kaartleesintegratie** — Ontdek, toewijzen, merken en betalen met kaarten op hardwareleesapparatuur met één per terminal.
+- **Klantgerichte weergave** — Dien de huidige configuratie van de terminal, ontvangstpatroon en actieve promotieschermen naar een aangesloten klantweergave.
+- **Klantgerichte weergave** — Koppel een tweede scherm aan een terminal met een eenmalig, tijdelijk nummercode voor koppeling.
+- **Digitale ontvangstbezorging** — Stuur bestellingsontvangst per e-mail, SMS, of WhatsApp en dien een gecodeerde publieke ontvangstpagina aan de klant.
+- **Inwinkelklantprofielen** — Creëer geduplicateerde bezoeker en zoek bestaande profielen met hun bestel- en loyaliteitsgegevens.
+- **Geïntegreerde kaartleesbetalingen** — Neem kaartbetalingen op afstand via aangesloten lezers met aanmaken, vastleggen, annuleren en statuspollen.
+- **Offline-modus & synchronisatie** — Blijf verkopen in offline-modus met delta-catalogussynchronisatie en idempotente upload van opgeschoepte verkoopcijfers en stockaanpassingen.
+- **Geparkeerde winkelwagens** — Sla een middeninvoerwagen op om een andere klant te bedienen, en voeg deze later weer toe, herstel of verwijder deze.
+- **Geparkeerde winkelwagens** — Sla een middeninvoerwagen op voor later ophalen en stel automatisch verlopen van niet-herstelde geparkeerde winkelwagens in.
+- **POS-wagen & kortingsbon toepassing** — Bouw winkelwagens op basis van product of barcode met variant/bundelkeuzes, voorraadlimieten en toegewezen kortingsbonnen.
+- **POS-catalogus & barcode-opzoeking** — Blader en zoek gepubliceerde producten met terminal-warehouse voorraad en lost gescande barcodes of SKU's op.
+- **POS-afrekenen & splitsing betalingen** — Voltooi winkelverkopen met contant, externe kaart, cadeaubon of een mengsel van betalingen, met wisselgeld en voorraadsupdates.
+- **POS-loyaliteitspunten** — Bekijk de klantenschaal en balans, preview punten voor een verkoop en verleend punten bij afrekenen zonder het afrekenen te blokkeren.
+- **Afdrukken & digitale ontvangst** — Genereer thermische printerontvangst vanaf de terminalpatroon en wachtrij e-mail, SMS of WhatsApp digitale ontvangstbezorging.
+- **Terugbetalingen & annuleringen** — Verwerk volledige of gedeeltelijke terugbetalingen en annuleer dezelfde shiftverkoopcijfers, retourneer voorraad en pas shift-totals aan.
+- **Shift & Contantgeldbeheer** — Open en sluit kassierschichten met opening/closing contantgeld, contantgeld-in-uit bewegingen en kassa-reconciliation.
+- **Shiftbeheer & kassa-reconciliation** — Open en sluit kassierschichten met openingssaldo, contantgeldbewegingen en verwachting versus gecntroleerde kassa-reconciliation.
+- **Medewerkerskortingbeheer** — Pas medewerkerskortingen binnen per-medewerker limieten en vereis manager PIN-goedkeuring wanneer limieten worden overschreden.
+- **Medewerkerskortingbeheer** — Handhaaf per-medewerker kortinglimieten, laat toe, weiger of verhoog handmatige kortingen voor manager PIN-goedkeuring.
+- **Medewerkerlogin & toegangsbeheer** — Authenticatie medewerkers met tokens en poort POS-eindpunten achter geldige licentie en geneste toestemmingen.
+- **Stockaanpassingen & Locaties** — Pas opslagstock aan met geverifieerde bewegingen en bekijk een product beschikbaarheid overal locaties per afstand.
+- **Terminalvergrendeling & medewerkerontgrendeling** — Vergrendel terminals en ontgrendel ze via kassier/manager PIN, geregistreerde kaart of biometrie, met uitlogregels, externe ontgrendeling en auditlogboek.
+- **Terminalbeheer** — Koppel en registreer terminals, monitor heartbeat en configuratie, en vergrendel/ontgrendel apparaten met geverifieerde ontgrendelgebeurtenissen.
+- **Terminalbeheer & apparaatkoppeling** — Schakel detailwinkels en koppel registerapparatuur met een unieke code die hun configuratie ophaalt.
+- **Terminal Verkoopcijfers** — Dagelijkse totalen per terminal voor netto/totaalverkopen, terugbetalingen, transactie-aantal, gemiddelde waarde en betalingsmethode verdeling.
 
 ## Abonnementen & Herhalende
 
-- **Annulering & Heractiveren** — Schakel abonnementen direct of aan het einde van de periode met opgeslagen redenen uit, zet ze op schema in werking, en activeer geschikte geannuleerde abonnementen binnen een ingesteld venster.
-- **Niet-gevallen betaling (Dunning)** — Herhaal automatisch mislukte betalingen met terugkeer, probeer opnieuw te betalen tijdens een graaceperiode en annuleer pas nadat alle pogingen tot herstel zijn uitgeput.
-- **Gratis proeven** — Bied proeftijden aan die automatisch worden omgezet in betaalde, actieve abonnementen wanneer de proefperiode eindigt.
-- **Levenscyclus Herinneringsmails** — Verstuur automatische e-mails voor eindigende proeven, aankomende vernieuwingen en betalingsgebeurtenissen die gerelateerd zijn aan abonnementsactiviteit.
-- **Pauzeren & Hervatten** — Abonnees kunnen een actief abonnement pauaseren en het later hervatten, zowel handmatig als op een ingestelde automatische hervatungsdatum.
-- **Herhalende Facturatie Engine** — Factureert abonnees op elke factuurperiode en verwerkt provider-webhook- en fallback-gebeurtenissen om de abonnementsstatus en -periodes synchroon te houden.
-- **Opgeslagen Betalingsmethoden** — Tokeniseer veilig klantbetalingen, werk de kaart bij op een abonnement en verwijder tokens wanneer er geen actief abonnement meer van afhangt.
-- **Abonnementsplannen & Prijsstelling** — Publiceer abonnementsplannen en niveaus met herhalende prijzen afgeleid van producten, trediscontos en hoeveelheidsprijzen die klanten kunnen bekijken en abonneren op.
-- **Opwaarderingen, Omlaagwaarderingen & Geplande Veranderingen** — Laat abonnees plannen of niveaus veranderen met gedeeltelijke kosten of kredieten, zowel direct als gepland voor de volgende vernieuwing, met de optie om een uitstaande verandering te annuleren.
+- **Factuurhistoriek** — Klanten kunnen een chronologisch oplopende opslag van succesvolle, mislukte en opnieuw geprobeerde abonnementsfactureringen bekijken.
+- **Annulering & Heractiveren** — Abonnementen direct of aan het einde van de periode annuleren, automatisch verlopen laten en binnen een bepaalde termijn heractiveren.
+- **Herstel van mislukte betalingen** — Mislukte abonnementsfactureringen automatisch opnieuw proberen met terugstelstrategie tijdens een graaceperiode om verloren betalingen te herstellen.
+- **Gratis proeven** — Biedt proeftijden aan die automatisch worden omgezet in betaalde abonnementen en de eerste facturering lopen wanneer de proefperiode eindigt.
+- **Pauzeren & Hervatten** — Klanten kunnen een actief of proefabonnement pauaseren en het later handmatig of op een gespecificeerd automatisch hervat-datum hervatten.
+- **Planwijzigingen & Extra's** — Klanten kunnen planwijzigingen met pro-rata en extra's per cyclus aanpassen, opwaarden, afwaarden of plannen opschorten.
+- **Opgeslagen betalingsmethoden** — Vastleggen, bijwerken en verwijderen van de herbruikbare kaart die wordt gebruikt voor de herhalende factureringen van klanten.
+- **Abonnementsherinneringen** — Verzendt klanten meldingen over einde van proeven, aankomende vernieuwingen en verlopen betalingsmethoden.
+- **Abonnementen** — Verkoopt producten op herhalende plannen met gestructureerde, hoeveelheids- of vaste prijs, en factureert en maakt automatisch vernieuwingsbestellingen per cyclus.
 
 ## Klantanalyse
 
-- **Verlaten Wagen Herstel** — Detecteert verlaten winkelwagens, stuurt gestage herstel-e-mails en markeert winkelwagens als hersteld.
-- **Cohortanalyse** — Groepeert klanten op aankoop en volgt per-cohort-retentie, cumulatief omzet, en gemiddelde LTV over tijd.
-- **Communicatievoorkeuren & Toestemming** — Klanten bepalen welke e-mail- en SMS-berichten ze ontvangen, met geverifieerde dubbele opt-in en een-klik afmelden, terwijl transactiegerelateerde berichten beschermd blijven.
-- **Klantaccounts & Gastafrekening** — Kopers kunnen als gast kopen en later upgraden naar een volledig account, met automatisch geconsolideerde e-mailgegevens.
-- **Klantanalyse** — Verzamelt kruis-klantanalyse, inclusief omzet per segment, verliesrisico-distributie, en cohortretentie.
-- **Klantnotities** — Stelt medewerkers in staat om getypte klantnotities op te nemen met volgacties en deze als voltooid aan te duiden.
-- **Klantbesparingstracker** — Samenvatting van de gerealiseerde voucher-, sale- en loyaliteitsbesparing en estimeert mogelijke toekomstige besparing.
-- **Klantsegmentatie** — Wijs elke klant toe aan het hoogste prioriteitsovereenkomstige segment op basis van uitgaven, aantal bestellingen en aankooprecency.
-- **Lifetijdswaarde (LTV)** — Schat de levenslange waarde van elke klant met RFM, cohort-historisch, en probabilistisch (BG/NBD) methoden met waarde-tiers en verliesrisico.
-- **Loyaliteitsstatus** — Leidt de loyaliteitstier, punten, voortgang naar de volgende tier, en tier-baten af van hun uitgaven.
-- **Inzichten in deelname & Aanbevolen standaardinstellingen** — Handelsreizigers zien opt-in-aanvaardingstrends en krijgen regelgebaseerde betrokkenheidsscores die de juiste berichtfrequentie per klant suggereren.
-- **Privacy & Gegevensrechten (GDPR)** — Handelsreizigers kunnen klantgegevens exporteren of onherroepelijk wissen en een onveranderbare audittrail houden van elke voorkeurswijziging met opslaglimieten.
-- **Productaanbevelingen** — Rangschikt de favoriete producten, categorieën en merken van een klant en genereert op voorraad gemaakte persoonlijke aanbevelingen.
-- **RFM-beoordeling** — Beoordeelt elke klant op de recency, frequentie en geldwaarde van hun geleverde bestellingen.
-- **Sociale inlog** — Klanten kunnen inloggen met Google, Apple en andere providers wanneer de OAuth-apps van de winkel zijn geconfigureerd.
+- **Herstel van verlaten winkelwagentje** — Vangt verlaten winkelwagentjes op, stuurt op tijd gezette herstel-e-mails en houdt bij welke winkelwagentjes zijn hersteld.
+- **Cohortanalyse** — Groepeert klanten per aankoopmaand, -kanal en -aankoopcategorie en volgt de terughouding, omzet en gemiddelde LTV over tijd.
+- **Aanbevelingen voor communicatiefrequentie** — Elke klant krijgt een betrokkenheidsscore en een aanbevolen berichtfrequentie op basis van bestellinggeschiedenis, uitgaven en geverifieerde opt-in.
+- **Voorkeuren voor communicatie** — Klanten bepalen welke e-mails en SMS ze per kanaal en per app ontvangen, en levering is beperkt om die keuzes en transactiebeveiligingen te respecteren.
+- **Toestemmingstoezicht & Analyse** — Elke voorkeurswijziging wordt gelogd met bron en IP, en opt-in trends en adoptie worden gerapporteerd op een dashboard, met auditlogboeken die op een opslagtermijn worden geschoond.
+- **Klantenpaneel** — Geeft ingelogde klanten een zelfbedieningsoverzicht van hun bestellingsstatistieken, uitgave-insight, besparingen, loyaliteitsstatus en favoriete producten.
+- **Klantenanalysepaneel** — Verzamelt kruis-klantenmetingen zoals omzet per segment, churn-risico-distributie, aankoopfrequentie en cohort-retentie voor personeel.
+- **Klantgegevensprivacy (GDPR)** — Handelaars kunnen de voorkeuren en toestemmingsgegevens van een klant exporteren of de klant onherroepelijk anoniem maken terwijl de financiële gegevens worden behouden, met gecontroleerde auditopslag.
+- **Klantnotities** — Staft medewerkers toe om getypte klantnotities op te slaan met volgdatum en voltooiingsvolgordes.
+- **Klantsegmentatie** — Wijs elke klant toe aan hun belangrijkste overeenkomstige segment op basis van uitgaven, voltooide bestellingen en aankooprecency.
+- **Gastafrekening & Accountaanmaking** — Kopers kunnen als gast kopen en later volledige accounthouders worden, met automatisch samengevoegde records voor dezelfde e-mail.
+- **Lifetimewaarde (LTV)** — Berekent de huidige en voorspelde levenslange waarde per klant met RFM, cohorthistorische en probabilistische modellen, met waarde niveaus en churn-risico niveaus.
+- **Opt-In-verificatie (E-mail & SMS)** — E-mail dubbele opt-in en TCPA-compliant SMS-verificatie bevestigen toestemming voordat marketingberichten worden verzonden naar een klant.
+- **Gepersonaliseerde productaanbevelingen** — Stelt inkoopproducten voor voor elke klant uit hun favoriete categorieën, aankoopgeschiedenis en gerelateerde productsignalen.
+- **RFM-beoordeling** — Beoordeelt klanten op recency, frequentie en geldwaarde van hun geleverde bestellinggeschiedenis.
 
 ## Marketing & Groei
 
-- **Prestatie-achtergronden** — Leden verdienen automatisch vlaggen wanneer ze aan criteria voor bestellingen, uitgaven, reeksen, tijdstippen of verwijzingen voldoen.
-- **Affiliate-notificaties & Rapportages** — Affiliates ontvangen taalbewuste e-mails voor account-, lidmaatschaps-, commissie- en uitbetalingsevents, plus een maandelijkse prestatie-samenvatting.
+- **Prestatie-Emblemen** — Leden verdienen automatisch emblemen wanneer ze bestel-, besteed-, beoordelings-, reeks-, tijds- of verwijzingscriteria voldoen.
+- **Affiliate-notificaties & rapportages** — Affiliates ontvangen taalbewuste e-mails voor account-, commissie- en uitbetalingsevents, plus een maandelijkse prestatie-samenvatting.
+- **Affiliate-uitbetalingen** — Goedgekeurde commissies worden geaggregeerd tot uitbetalingen - aangevraagd door affiliates of gegenereerd in bulk - en uitgebetaald via PayPal of Airwallex met statusvolginken.
 - **Affiliate-uitbetalingen** — Verstuur enkelvoudige of gebatchte affiliate-commisies via PayPal of Airwallex, met schattingen van kosten/aankomstetijden en annulering tijdens het verwerken.
-- **Affiliate-programma's** — Maak en voer meerdere affiliate-programma's met procentuele of vaste commissies, cookie-levensduur, en minimale uitbetalingsschakels, en activeer, pauzeer of archieveer ze.
-- **Affiliate-afzending & Goedkeuring** — Meld affiliates aan, laat hen zich aanmelden bij programma's en keur, stel op, weiger of activeer automatisch hun rekeningen en lidmaatschappen.
+- **Affiliate-programma's** — Medewerkers creëren affiliate-programma's met vaste of procentuele commissies, cookie-levensduur en uitbetalingsschakels, en kunnen ze pauseren of archiveren.
+- **Affiliate-inschrijving & goedkeuring** — Gebruikers registreren zich als affiliate, sturen programma's aan, en medewerkers goedkeuren, tijdelijk verbannen of afwijzen van affiliates en hun programma-deelnames.
 - **Automatische & Bulk SEO-vul** — Vul ontbrekende SEO-metadata automatisch bij opslaan, of genereer het voor veel items in één batch.
-- **Automatische Feed-sync** — Feeds worden opnieuw gegenereerd en geüpload volgens uren, dagen of wekelijks schema, met sync-logboek en opruimen van verlopen feeds.
 - **Bulk-achterstevroren generatie & Import/Export** — Genereer maximaal 1.000 unieke codes tegelijk en importeer of exporteer achterstevrorenbatches als CSV/XLSX.
-- **Commissies & Uitbetalingen** — Bevestig, weiger of herroep affiliate-commisies en betaal affiliates via PayPal of Airwallex via drempelgebaseerde of affiliate-aangevraagde uitbetalingen met volledige statusvolgbeheer.
-- **Feed-kanaalverbindingen** — Verbind en beheer marktplekproviderrekeningen met versleutelde referenties, verbindingstesten, inschakelen/uitschakelen, en een aangewezen primaire account.
-- **Feed-provider-componenten** — Installeer en update marktplekfeed-providercomponenten vanuit de componentenregister.
+- **Commissiebeheer** — Commissies worden berekend per bestelling, goedgekeurd/afgeweigerd/uitgebetaald door medewerkers, omgekeerd bij retouren of retourneringen, en opgeteld in het saldo van elke affiliate.
+- **Klant delen geschiedenis** — Laat ingelogde klanten hun totale, per-platform en meest recente delingen bekijken.
+- **Feed Download** — Download de nieuwste gegenereerde feed voor elk account als bestand, met geregistreerde downloadtellingen en tijdstempels.
+- **Feed Preview & Validatie** — Bekijk een voorbeeldfeed voordat je deze publiceert en markeer items die vereiste velden mist, zoals id, titel, prijs of afbeelding.
+- **Fraudedetectie & toewijzingenbeoordeling** — Beoordeelt verwijzingen op fraude, handhaaft geschiktheidsregels en autoriseert, afwijst of verstrekt toewijzingen voordat beloningen worden uitgekeerd.
 - **Geschenkkaarten & Winkelbon** — Verstrekk achterstevroren met voucher, controleer balansen, en inwisselen tegen bestellingen tot het balansbedrag is opgebruikt.
-- **Link-achtervolging & Toewijzing** — Affiliates genereren unieke tracking-links waarvan de klikken worden vastgelegd en toegeschreven aan bestellingen via laatste-klik-cookies, met automatische opruiming van verlopen klikgegevens.
-- **Loyaliteitscampagnes** — Handelsreizigers voeren geactiveerde en geplande meervoudige campagnes uit die punten verlenen, e-mails sturen, beloningen verstrekken, vlaggen verlenen of leden verplaatsen tussen segmenten.
-- **Loyaliteitspunten** — Klanten verdienen punten op bestellingen, acties en handmatige beloningen tegen een onveranderlijk ledger met nauwkeurige, gecorrigeerde balansen.
-- **Loyaliteitsniveaus** — Leden worden gepromoveerd of gedegradeerd over niveaus heen op basis van levenslange punten, uitgaven en bestellingen, met een graantijd voordat ze worden gegradeerd.
-- **Marktplekproductfeeds** — Genereer productfeeds voor Google Shopping, Meta en andere markten in RSS/XML, CSV/TSV of JSON, met voorvertoningen en downloadbare exporten.
-- **Lidsegmenten** — Leden worden ingedeeld in handmatige of regelgebaseerde segmenten (via punten, uitgaven, bestellingen, recency en meer) voor campagnedoelgroepen.
+- **Loyaliteitscampagnes** — Gebeurtenisgebaseerde, meerpuntsreiscampagnes richten zich tot lidsegmenten en -tiers om punten te verlenen, e-mails te sturen, beloningen uit te reiken of emblemen te verlenen, met A/B-splitsingen.
+- **Loyaliteitslidsegmenten** — Dynamische segmenten herschatten leden op basis van niveaus, punten, besteding, bestellingen, AOV, recency, inzet en andere regels voor doelgerichte campagnes.
+- **Loyaliteitspunten & beloningen** — Leden verdienen punten van bestellingen en acties op een onveranderlijke boekhouding en inwisselen voor kortingen, bonnen of portemonnee-credit.
+- **Loyaliteittiers** — Leden worden gepromoveerd of gepromote over niveaus op basis van levenslange punten, besteding en aantal bestellingen, met tier-gebaseerde vermenigvuldigers toegepast.
+- **Marktplein Productfeeds** — Genereer Google Shopping, Facebook/Meta, RSS, XML, CSV/TSV en JSON Lines-feeds vanaf je gepubliceerde catalogus, met per-account categorie, voorraad en prijsfilters.
+- **Marktplein Provider Verbindingen** — Verbind en beheer marktplaatsaccounts met een begeleidende setup-wizard, versleutelde referenties, verbindingstests en een aangewezen primaire account per winkel.
 - **Uitbetalingenproviderrekeningen** — Verbind, test, inschakelen/uitschakelen, verwijder en stel een standaardaccount in voor elke uitbetalingenprovider (PayPal, Airwallex).
 - **Uitbetalingenprovidercomponenten** — Installeer en update uitbetalingenprovidercomponentpakketten vanuit de update-server met versie-switching.
 - **Uitbetalingenstatus & Webhooks** — Verwerk en verifieer provider-webhooks met handtekening, log ze voor audit, en herleid elke uitbetaling naar voltooid, mislukt of geannuleerd.
 - **Bescherming van providerreferenties** — Providerreferenties worden versleuteld op rust en gemaskeerd in logboeken.
-- **Referentie-toewijzing en goedkeuring** — De eerste aankomende bestelling van een doorverwezen klant wordt toegeschreven aan de verwekker, en elke toewijzing kan worden goedgekeurd, afgewezen of automatisch verlopen na de beoordelingsperiode.
-- **Fraudebescherming bij verwijzingen** — Selectieregels en een fraude-riscore van 0-100 schermen verwijzingen, waarbij hoge risico's opnieuw worden beoordeeld en automatisch worden afgewezen om misbruik te blokkeren.
-- **Analyse van verwijzingsfunnele** — Handelaren zien totale verwijzingsfunnele, conversies, beloningswaarden, top-verwekkers en statistieken per verwekker, met oude laagwaardige gebeurtenissen die op een opvolg-schedule worden verwijderd.
-- **Verwijzingslinks en uitnodigingen** — Elke klant krijgt een unieke verwijzingslink en QR-code die ze kunnen delen, en ze kunnen uitnodigingen rechtstreeks per e-mail sturen naar vrienden.
-- **Beloningsbeheer** — Verwekkers en, bij dubbele kantprogramma's, verwijzers krijgen automatisch wallet-credits, kortingen of voordelen, die in hun levenscyclus worden uitgegeven, ingelost, verlopen of ingetrokken.
-- **Beloningen en inlözing** — Leden kunnen punten inwisselen voor beloningen of kortingen met voorraadcontrole, beveiligde codes, volgnummerbeheer en puntenvergoeding bij annulering of vervaldatum.
+- **Referral-funnelvolginken & analyse** — Volgt kliks, inschrijvingen en eerste-bestellingconversies per verwijzer met funnel-totals, top-verwijzerstatistieken en statusverdelingen.
+- **Verwijzingenlinken & uitnodigingen** — Elke klant krijgt een unieke verwijzinglink en QR-code en kan vrienden uitnodigen per e-mail met een persoonlijk bericht.
+- **Verwijzingenbeloningen** — Verstrekt dubbelzijdige beloningen als portemonnee-credit, coupons of voordelen en e-mails deelnemers over uitgifte, inwisseling, vervaldatum en intrekking.
+- **Geplande Feed Synchronisatie** — Feeds worden automatisch herberekend en naar leveranciers gestuurd op basis van uren, dagen of wekelijks schema, met automatisch opruimen van verlopen feedbestanden.
 - **SEO-inhoudsgenerator** — Genereer meta-titels, -beschrijvingen en -sleutelwoorden voor producten, categorieën, merken, pagina's en blogartikelen.
 - **SEO-dekking en -gaten** — Bekijk de SEO-finish en lijst welke items ontbreken of problemen hebben met lengte.
 - **SEO-provider-integraties** — Verbind, installeer en update SEO-provider, met per site enkelvoudige provider-account verplicht gesteld.
-- **Volg- en delenbeheer** — Elke deling door een ingelogde klant of gast wordt gevalideerd en geregistreerd met details over platform, apparaat en sessie.
-- **Delenbeloningen en -geschiedenis** — Ingelogde klanten kunnen loyaliteitsbadges verdienen voor delen en hun eigen delengeschiedenis en -totaal per platform bekijken.
-- **Dashboard met delenanalyse** — Medewerkers kunnen delingen, trends, platformverdeling, populairste inhoud en populairste delers bekijken, met zoeken en filteren van individuele delingevenementen.
-- **Sociale bewijsdelingen** — Winkelpagina's kunnen live per-platform en totale delingen tonen voor elk product of inhoudsitem.
-- **Winkelpagina's met delenknoppen** — Klanten kunnen producten, categorieën, blogartikelen en pagina's delen via aanpasbare delenknoppen die handelaars per inhoudstype kunnen uitschakelen.
+- **Delen volgen** — Houd elke gast- en ingelogde delingsgebeurtenis bij en houd per-inhoud, per-platform delingstotalen op de hoogte.
+- **Delen om beloningen te verdienen** — Verstrek automatisch loyaliteitsbadges aan leden wanneer ze winkelinhoud delen.
+- **Delingsanalyse** — Geef medewerkers delings KPI's, trends, platform- en inhoudsverdelingen, plus zoekbare delingsaantallen en delingsgebeurtenisrapporten.
+- **Winkelwagen delenknoppen** — Toon aanpasbare sociale delingsknoppen op producten, categorieën, blogberichten en pagina's, met live per-platform delingsaantallen.
+- **Linkvolginken & toewijzingen** — Goedgekeurde affiliates genereren unieke linkvolginken; kliks zetten toewijzingencookies en bestellingen worden gecrediteerd op basis van laatste klik, met automatische klik-opruiming.
 - **Kortingscode toepassen** — Klanten passen en verwijderen kortingscodes bij de kassa met geverifieerde voorwaarden, stapelbaarheid en minimale waarde.
 - **Rapportage van kortingscodegebruik** — Bekijk het aantal keer dat elke kortingscode is gebruikt, het aantal unieke klanten, het totale en het gemiddelde kortingsbedrag, en de meest recente inzendingen.
 - **Kortingen en coupons** — Maak procentuele, vaste waarde- of cadeaukaartkortingen aan met gebruikswaarden en beperkingen.
 
 ## E-mail en communicatie
 
-- **AI-sjabloonvertaling** — Sjablonen worden automatisch vertaald naar meerdere talen met een handmatige verificatie/afwijzing stap voor kwaliteitscontrole.
-- **DNS en leverbaarheid** — Eigenaren valideren SPF/DKIM/DMARC over resolvers, krijgen aanbevolen DNS-gegevens, DKIM-ondersteunen uitgaande e-mails en volgen validatiegeschiedenis.
-- **E-mailwachtrij en levering** — E-mails worden in de wachtrij gezet, verstuurd via het accountprovider, gepland voor later, en opnieuw geprobeerd of vrijgegeven wanneer ze worden vastgehouden.
-- **E-mailsjabloonbibliotheek** — Winkelbeheerders activeren, klonen en tonen geregistreerde transactie-e-mailsjablonen met altijd een systeemval in acht genomen.
-- **Nieuwsbrieven** — Eigenaren sturen een door personeel beheerde nieuwsbrief naar geselecteerde e-mailadressen als individuele wachtrij-e-mails.
-- **Open- en klikvolg** — Eigenaren zien wanneer e-mails zijn geopend en welke links zijn aangeklikt, met veilige omleidingen en ruimte voor provider-bounce/complaint gebeurtenissen.
-- **Instellingen voor verzendaccount** — Eigenaren verbinden een e-mailprovider met versleutelde referenties, testen de verbinding en genereren DKIM-sleutels voordat ze live gaan.
-- **SMS-toestemming & veilig verzenden** — Overslaan van berichten naar klanten die per berichttype zijn geïsoleerd, en blokkeren van echte verzending naar niet-geautoriseerde nummers terwijl in de sandboxmodus wordt gewerkt.
-- **SMS-berichten verzenden** — Stuur gewone of gebaseerde op sjabloon opgeleverde tekstberichten naar klanten via een geconfigureerde SMS-provider en houd de verzend-/leveringsstatus van elk bericht bij.
-- **SMS-provideronderdelen** — Installeer en werk SMS-providerintegraties bij uit de componentenmarktplaats, en activeer de geselecteerde versie.
-- **SMS-providerinstellingen** — Voeg SMS/WhatsApp-provideraccounts toe en configureer deze met gevalideerde, versleutelde referenties, testen van verbindingen en een standaardaccount per kanaal.
-- **Versiebeheer sjablonen** — Elke bewerking van een sjabloon wordt opgeslagen, zodat eigenaren de geschiedenis kunnen bekijken en terugkomen op een eerdere versie.
-- **WhatsApp-berichten verzenden** — Verzend vooraf goedgekeurde parameteriserende WhatsApp-sjabloonberichten en houd het resultaat ervan bij in de uitgaande mailbox.
+- **AI-vertaalding** — Handelaars krijgen e-mailtemplates automatisch vertaald per site-taal met menselijke verificatie van elke vertaling.
+- **Afleverbaarheid & Authenticatie** — Handelaars valideren SPF/DKIM/DMARC, krijgen aanbevolen DNS-instellingen, DKIM-ondersteunen uitgaande e-mails en testen providerverbindingen.
+- **Aflevering & Betrokkenheid Volgen** — Handelaars zien e-mailopeningen en klikken via tracking pixels en omgeschreven links, met providergebeurtenissen voor afwijzingen en klachten.
+- **E-mailcampagne Link Toewijzing** — Marketing-e-mailkoppelingen worden automatisch aangeduid met UTM- en toewijzingsparameters zodat bestellingen die via campagnes worden gemaakt, gevolgd kunnen worden.
+- **E-mail Aflevering Wachtrij** — E-mails worden in de wachtrij gezet, gepland, verzonden via de geconfigureerde provider, opnieuw geprobeerd bij falen, en kunnen worden vastgehouden of vrijgegeven.
+- **E-mail Sjablonen** — Handelaars sturen transactie- en marketing-e-mails van gecustomiseerde, thema-gezinde sjablonen die geactiveerd, gekloond en bewerkt kunnen worden.
+- **SMS-notificaties** — Stuur transactie- en geïdentificeerde SMS naar klanten met variabele vervanging en volgstatus van de levering.
+- **Instellingen van SMS-verstrekkers** — Bladeren, installeren, configureren, testen en bijwerken van SMS/WhatsApp-verstrekkers met versleutelde referenties en een standaardaccount per kanaal.
+- **Sjabloon Versiebeheer** — Handelaars nemen bewerkingswijzigingen in sjablonen op, gaan terug naar eerdere versies en klonen systeemsjablonen om veilig te customiseren.
+- **WhatsApp-berichten** — Stuur vooraf goedgekeurde parametergebaseerde WhatsApp-sjablonen naar klanten en volg de levering in de uitgaande post.
 
 ## Blog & inhoud
 
-- **Aankondiging importeren & exporteren** — Exporteer aankondigingen met hun weergavespecificaties, vervaldatum, afbeeldingen, vertalingen en linkdoelen, en importeer ze in een andere winkel, waarbij ze bij titel worden bijgewerkt of verwijderd.
-- **Aankondigingsvensters** — Open een modaal venster voor een aankondiging met de volledige tekst, banner- of achtergrondafbeelding en overlay, een geresolveerde call-to-action-link en sluit het met een knop, achtergrond of Escape-toets.
+- **Aankondiging popup modalen** — Open een modaal met de volledige aankondigingstekst en een afbeelding die als banner of overlay-achtergrond wordt weergegeven.
+- **Aankondigingsscheduling en gerichte aankondigingen** — Stel een vervaldatum in zodat aankondigingen automatisch stoppen met tonen, met per-aankondiging inschakelen/uitschakelen en opgeslagen zichtbaarheidsregels.
 - **Blogartikels & inhoudsmodi** — Maak, bewerk, publiceer en ontpubliceer blogartikels die zijn geschreven in rijke tekst of zijn opgebouwd met de pagina-builder.
 - **Categorieën & tags** — Organiseer artikelen met hiërarchische categorieën en vlakke tags die lezers kunnen doorzoeken.
+- **Klikbare aankondigingskoppelingen** — Koppel een aankondiging aan een product, categorie, blogbericht, pagina of aangepaste URL, of laat het niet-klikbaar.
 - **E-mailabonnees** — Lezers abonneren met dubbele opt-in en ontvangen nieuwste post-, wekelijkse of maandelijkse samenvattingse-mails op basis van hun voorkeuren.
-- **Multilinguale aankondigingen** — Toon de titel, inhoud en linktekst van aankondigingen in de taal van de koper met opgeslagen vertalingen per taal.
+- **Meertalige aankondigingen** — Toon aankondigingsnaam, tekst en koppelingstekst in het taal van de bezoeker, met opgeslagen vertalingen per taal.
 - **Leesinteractie** — Toon het geschatte leestijd en gerelateerde artikelen, en houd het aantal keer dat elk artikel is bekeken bij.
 - **RSS-feed** — Publiceer een aanpasbare RSS-feed van recente artikelen met een samenvatting of volledige inhoud en afbeeldingsbijlagen.
 - **Gepland publiceren** — Stel een toekomstige datum en tijd in voor een artikel en laat het automatisch publiceren.
 - **Sociale automatisch delen** — Verbind sociale accounts en deel artikelen automatisch bij publicatie, met vernieuwing van tokens en opnieuw proberen van mislukte delingen.
-- **Winkel aankondigingen** — Toon geplande, prioriterende aankondigingen aan kopers die automatisch worden verborgen zodra ze verlopen, elk met een link naar een product, categorie, blogartikel, pagina of aangepaste URL.
+- **Winkelwinkel aankondigingsbanners** — Toon ingeschakelde aankondigingen in de winkel, geordend op prioriteit, met rotatie en per-sessie afwijzing.
 
 ## Ontwerp & winkeluitstraling
 
-- **4-niveaus token-aflopende** — Ontwerp tokens worden opgelost in een vast prioriteitsvolgorde (merk, thema, component, systeem), zodat overschrijvingen voorspelbaar blijven.
 - **Automatiseerde formulieracties** — Elke inzending kan automatisch antwoorden per e-mail, notificatie e-mails naar jouw team, en ondertekende webhooks naar externe systemen activeren.
-- **Merk aanpassing** — Verander kleuren, lettertypen, ruimtes en component tokens zonder code en preview het resultaat voordat je het publiceert.
+- **Merkbijpassing** — Vervang kleuren, typografie en ruimte tokens zonder code en zie ze gecompileerd naar een opgeslagen merkstylesheet.
+- **Componentenmarktplein en verpakking** — Verpak, onderteken, valideer, verifieer en teken installabele winkelcomponenten met laaggerichte plaatsingsbevoegdheid.
 - **Voorwaardelijke logica** — Regels tonen, verbergen, vereisen of instellen van velden en stappen op basis van wat de bezoeker invoert.
-- **Aangepaste CSS** — Voeg geneste CSS-snippets toe die worden gemanipuleerd om gevaarlijke regels te verwijderen voordat ze de winkeluitstraling bereiken.
-- **Donkere modus** — Thema's genereren donkermodus-CSS met responsieve varianten die reageren op de systeemkeuze van de bezoeker.
+- **Design Token Kettingreactie** — Design tokens lossen op via een prioriteitsvolgorde over merk, thema en systeembronnen met atomaire afstemming.
 - **Formulierbouwer** — Medewerkers bouwen en bewerken meerdere stappen formulieren in een visuele bouwer met herordenbare velden en eenklik duplicatie.
 - **Formulier Prullenbak** — Verwijderde formulieren gaan naar een prullenbak waar medewerkers ze kunnen herstellen of permanent verwijderen.
-- **Koptekst & Voettekst Bouwer** — Bouw koptekst- en voettekst zones op met widgets met behulp van thema-instellingen en bekijk elke widget zoals deze erop zal uitzien.
-- **Pagina Beveiliging Niveaus** — Pagina niveaus bepalen welke onderdelen en token aanpassingen toegestaan zijn op gevoelige pagina's.
+- **Hoofd, voetnoot en navigatiebouwer** — Installeer hoofd/voetnoot voorgestelde instellingen en preview widgets en gecertificeerde navigatiemenu's voor de huidige bezoeker.
+- **Pagina Beveiligingstarieven** — Per laag regels zuiveren aangepaste HTML/CSS en bepalen welke componenten en tokens toegestaan zijn op elke pagina.
 - **Respons Export** — Download voltooide reacties als CSV met inzending metadata en per-veld waarden.
 - **Spam Bescherming** — Een vangstokveld blokkeert bot inzendingen in de browser; reCAPTCHA instellingen zijn instelbaar maar nog niet verplicht op de server.
 - **Inzendingen & Bestandsupload** — Bezoekers sturen formulieren met geverifieerde verplichte velden en bestandsbijlagen en kunnen tijdelijke concepten opslaan om later af te maken.
-- **Thema Ontwikkelaars Tools** — Bouw thema's in een geïsoleerde ontwikkelings sessie, stuur bestanden vanuit de Thema SDK met live CSS compileren en validatie.
-- **Thema Systeem** — Installeer, activeer en update thema pakketten vanuit de marktplek, met ingebouwde instellingen en tokens die automatisch worden toegepast.
-- **Vertrouwde Componenten** — Marktplek componenten worden gevalideerd, ondertekend en gecontroleerd op integriteit voordat ze worden weergegeven, en detecteren vervalsing.
+- **Thema en Component SDK** — Medewerkerseigen ontwikkelingssessies laten ontwikkelaars pushen, valideren, compileren en verpakken thema's en componenten in een sandbox.
+- **Thema Systeem** — Installeer, activeer, preview en update versie-thema pakketten die gecompileerd worden naar de live CSS van de winkel.
 
 ## Pagina Bouwer
 
-- **Aangepaste Element Bouwer** — Medewerkers kunnen herbruikbare aangepaste elementen aanmaken, noemen, opzoeken, bewerken en verwijderen vanuit een beheerder bouwer.
-- **Concept, Publicatie & Versiegeschiedenis** — Pagina's worden opgeslagen als genummerde concepten, publiceren met geschiedenis tracking, en kunnen worden teruggedraaid naar elk voorafgaand momentopname.
-- **Dynamische Data Binding** — Koppel element inhoud velden aan live model data zodat elementen real-time product en opslagwaarden weergeven op de winkel.
-- **Element Zichtbaarheidsregels** — Toon of verberg pagina elementen op basis van geografie, gebruiker, apparaat, tijd, gedrag en handel voldoen gecombineerd in geneste EN/OR regel groepen.
-- **Multitaal Pagina's** — Vertaal pagina en element inhoud per taal, via AI of handmatig invoeren, met bron tekst als fallback.
-- **Pagina Instellingen & SEO** — Configureer per-pagina metadata, authenticatie vereisten, koptekst/voettekst, en ontwerp instellingen.
-- **Pagina Sjablonen & Duplicatie** — Maak nieuwe concept pagina's aan vanuit herbruikbare sjablonen of duplicate een bestaande pagina met haar geneste elementen.
-- **Visueel Element Bewerker** — Bouw de structuur van een element door geneste elementen toe te voegen, te verplaatsen, te bewerken en te verwijderen met meerdere kolom lay-out instellingen en live canvas preview.
-- **Visueel Pagina Bouwer** — Medewerkers bouwen winkelpagina's vanuit geneste, herordenbare elementen die worden weergegeven op de live winkel, met automatisch gegenereerde voorbeeld thumbnail.
+- **Aangepaste Elementbouwer** — Bouw herbruikbare pagina-elementen visueel vanuit primitieven, rangschik ze in meerdere kolommen layout, en preview het resultaat op een bouwplank.
+- **Aangepaste Elementenbibliotheek** — Creëer, noem, zoek, filter en beheer een bibliotheek van opgeslagen aangepaste elementen voor herbruik in de winkel.
+- **Concept en publicatie versiegeschiedenis** — Elke bewerking wordt opgeslagen als een versie-ontwerp dat handelsreizigers kunnen publiceren, en elke vorige versie kan worden hersteld.
+- **Dynamische Data Binding** — Koppel elementinhoud aan live winkelmodelvelden zodat aangepaste elementen de huidige product- en catalogusgegevens op de winkelweergave tonen.
+- **Multiculturele Pagina's** — Pagina- en elementinhoud wordt aangeboden in de taal van de bezoeker met terugval naar de basis taal wanneer een vertaling ontbreekt.
+- **Pagina- en Elementen sjablonen** — Handelsreizigers creëren nieuwe pagina's vanuit herbruikbare sjablonen, dupliceren hele pagina's of elementen, en beginnen met opgeleverde standaardpagina's.
+- **Pagina-instellingen & SEO** — Handelsreizigers bewerken paginametadata, toegang, presentatie, thema, media en vertalingen, inclusief per-pagina SEO-velden.
+- **Zichtbaarheid & Personalisatie Regels** — Handelsreizigers tonen, verbergen of personaliseren paginabeeldelementen per bezoeker via regels, inclusief tijdgebonden en inlogverplichte toegang.
+- **Visuele Paginabewerker** — Handelsreizigers bouwen en rangschikken pagininhoud door elementen toe te voegen, te bewerken, te herordenen, te dupliceren en te verwijderen, met automatisch gegenereerde paginavoorbeelden.
 
 ## Media Bibliotheek
 
@@ -289,80 +286,75 @@
 
 ## Internationaal
 
-- **AI Inhoudstraductie** — Handelaren vertalen producten, pagina's en andere inhoud naar actieve talen met AI, met per-veld vergrendeling en controle voor opnieuw proberen/annuleren van taken.
-- **Automatische Munt- en Taalkeuze** — Stelt de juiste munt en taal per bezoeker voor op basis van hun gedetecteerde land, met standaardinstellingen per land.
-- **Automatische Tariefbijwerkingen** — Geplande leveranciersgebaseerde tariefophaal voor ondersteunde munten, met bronprioriteitselectie en opruimen van verouderde gecachte tarieven.
-- **Valutaconversie** — Converteer bedragen tussen munten met een opgelost tarief, met optionele mark-up en afronden op doelvaluta.
-- **Wisselkoersleveranciers** — Verbind, installeer, werk up, en beheer externe wisselkoersleveranciers, met één die als primaire bron van de site is.
-- **Externe vertaalproviders** — Handelaren verbinden en testen derde partij vertaalprovider accounts met versleutelde referenties.
-- **Geo-bedrijfsregels** — Activeert acties zoals het instellen van munt, het tonen van banieren of omleidingen op basis van bezoekerland, regio, mobiel en VPN-status.
-- **GeoIP-beheer van leveranciers** — Laat medewerkers toe om te configureren, te testen, te wisselen en de beschikbaarheid van geolocatieleveranciers te controleren vanuit de beheerder.
-- **GeoIP-bezoekerlocatiedetectie** — Lost het land, de regio en de stad van elke bezoeker op basis van hun IP op met browser-hint-terugval, bot/apparaatclassificatie en handmatige correctie.
-- **Vastgelegde bestelwisselkoersen** — Elk bestelling registreert het exacte opgeloste tarief en de bron, zodat historische bestellingen hun oorspronkelijke conversie behouden.
-- **Handmatige wisselkoersen** — Stel, bewerk, activeer, vergrendel en beheer op grote schaal uw eigen wisselkoersen die voorrang krijgen op leverancierskoersen.
-- **Winkeltaal** — Handelaren activeren, deactiveren, ordenen en instellen van de standaardtaal voor hun winkel.
-- **Winkelwagen Tekst Aanpassing** — Handelaren overschrijven, automatisch vertalen, vergrendelen en importeren/exporteren van elke winkelwagen UI-tekst per taal.
-- **Vertaling Dekking & Voortgang** — Handelaren zien hoeveel inhoud vertaald is per taal en volgen de voortgang van bulkvertaalklussen voor en tijdens uitvoeringen.
-- **Bezoeker & Verkeersanalyse** — Volgt pagina-afbeeldingen en sessies, rapporteert dashboard KPI's, dagelijkse trends, sessie-ritten, campagne-attributie en land/apparaatverdeling.
-- **Bezoekersgegevensopslag** — Verwijdert automatisch oude ruwe paginabezoeken en verouderde bezoekerstijden op configurabebare opslagtermijnen, terwijl geaggregeerde statistieken worden behouden.
+- **AI-tekstvertaling** — Vertaal producten, pagina's en andere inhoud naar andere talen met behulp van lokale AI-modellen, uitgevoerd als geregistreerde taken.
+- **Automatische Wisselkoers & Taal** — Detecteert de locatie van bezoekers om de juiste wisselkoers en taal aan te raden, slaat hun gekozen voorkeuren op en laat ze correcte locaties aanpassen.
+- **Campaign Verkeersattributie** — Verzamelt bezoekersaantallen, pagina-afbeeldingen en pagina's per sessie op basis van UTM bron, medium en campagne om verkeer toe te rekenen aan marketingcampagnes.
+- **Externe vertaalverstrekkers** — Verbind en test derde-partij vertaalverstrekkers met versleutelde referenties als alternatief voor lokale modellen.
+- **Geo Zakelijke Regels** — Activeert acties zoals het instellen van wisselkoersen, het tonen van een banner of doorsturen op basis van land, regio, mobiele of VPN-status van bezoekers.
+- **GeoIP Detectie** — Lost elke bezoekerse-ip op naar land, regio en stad via een aanpasbare, testbare leverancierscascade met VPN/proxy detectie.
+- **Taalbeheer** — Activeer, deactiveer, herorden en bulkconfigureer winkelwagen-talen en laat klanten de taal veranderen.
+- **Live-wisselkoersenverstrekkers** — Haal automatisch wisselkoersen op en verfris ze op een schema, met voorkeurstoewijzing van verstrekkers en een enkele primaire bron.
+- **Vastgelegde orderwisselkoersen** — Sla een onveranderlijke weergave van de wisselkoers en haar bron op per bestelling voor nauwkeurige historische en boekhoudkundige opslag.
+- **Handmatige wisselkoersen** — Stel uw eigen wisselkoersen in, beheer ze, activeer of deactiveer ze en zet ze vast zodat synchronisaties van verstrekkers ze niet overschrijven.
+- **Meerwaarmonetaire conversie** — Converteer bedragen tussen munten met gecacheerde, handmatige of live koersen met optionele opslag en correcte afronding van doelwisselkoersen.
+- **Rapportage van vertaalcovers** — Bekijk de totale en per-taal vertaalcovers in de inhoud, e-mail sjablonen en UI-teksten, en het werk dat nodig is om het volledig te maken.
+- **Vertaalsleutels** — Vergrendel specifieke velden of UI-teksten per taal zodat handmatige vertalingen nooit worden overschreven door automatische lopende taken.
+- **UI-tekstvertaling en overschrijvingen** — Vertaal winkel UI-teksten automatisch en overschrijf enige van hen per taal, met import/export van vertaalsets.
+- **Bezoeker Analyse** — Volgt pagina-afbeeldingen en sessies, classificeert robots en apparaten, en rapporteert dagelijks verkeer, KPI's, sessiejourneys en land/apparaatverdelingen met automatische gegevensopslag.
 
 ## Agentic Commercie
 
-- **Agent Identiteitsverificatie** — Elk agentenverzoek wordt cryptografisch geverifieerd tegen een opgehaalde sleutelmap voordat het wordt geaccepteerd.
-- **Agent Vertrouwen & Veiligheidscontroles** — Handelsreizigers stellen vast wie mogen lezen of kopen, individuele agents kunnen blokkeren of ontblokkeren, hun bereidheid beoordelen en alle agenten toegang onmiddellijk beëindigen.
-- **Agentic Afrekenen** — AI-agents kunnen een winkelwagen opbouwen, adressen en verzendmethoden toevoegen en een betaalde afrekening op de manier van de koper afronden.
-- **AI Winkelagent Ontdekking** — AI-winkelagenten kunnen je live catalogus ontdekken, zoeken en lezen via UCP, ACP en MCP eindpunten.
-- **Ondertekende Bestelverplichtingen** — Elke betaalde agentenbestelling krijgt een door de handelaar ondertekende AP2 verplichting die het bedrag en de lijnitems bevestigt, op te halen door de betreffende agent.
-- **Onveranderbare Agenten Audit Trail** — Elk agentenevenement wordt toegevoegd aan een HMAC-gekoppelde hashketen die opnieuw kan worden geverifieerd om aan te tonen dat het niet is aangepast.
+- **Agent-identiteit en vertrouwenscontroles** — Alleen cryptografisch ondertekende agents mogen transacties uitvoeren, met per-agentverificatie, uitgabecaps, betaalmiddelenlimieten en blokkeringcontroles.
+- **Agentic Checkout** — AI-agents kunnen een winkelwagen aanmaken, kopers- en verzendgegevens toevoegen en een herschatte, betaalde bestelling plaatsen of annuleren namens een koper.
+- **Agentic Commerce-controles** — Schakel agentic commerce per protocol in of uit met een noodstop, een voorbereidingscontrole en een onveranderbare audittrail van agentgebeurtenissen.
+- **AI-Agent Productontdekking** — AI-winkelagenten kunnen je live-catalogus ontdekken, zoeken en lezen via UCP-, ACP- en MCP-standaarden.
+- **Onderpand van Betaal- en Bestelverplichtingen** — Elke betaalde agentenbestelling en haar betaalde verplichting wordt bevestigd met een ondertekend, verifieerbaar AP2-verplichting.
+- **Winkelondertekeningssleutels** — Genereert, roteert en vervangt de transport- en verplichtingssleutels van de winkel, en publiceert openbare sleutels als een JWKS voor agents om te verifiëren.
 
 ## Enterprise & Beveiliging
 
-- **Admin Toegangscontrole** — Deze poort bepaalt welke admin-gebieden elk medewerker kan openen op basis van hun rollen, inclusief leesrechten en supergebruikersoverschrijding.
-- **Automatische Gebruikersaanmaking** — Eerste SSO-aanmeldingen creëren een overeenkomstig medewerkersticket, en namen worden gesynchroniseerd vanaf leveranciersclaims bij elke inlog.
-- **Identiteitsprovider Instelling** — Sla één OpenID Connect provider's eindpunten, referenties en claimtoewijzingen op, met het clientgeheim versleuteld op de schijf.
-- **Mobiele App Single Sign-On** — Medewerkers melden zich aan bij de admin mobiele app via dezelfde identiteitsprovider, met per-apparaat token-uitgifte.
-- **POS Medewerkersbevoegdheden** — Beheer welke medewerkers het POS mogen gebruiken en welke acties en beperkingen van toepassing zijn, gecombineerd over alle rollen van een gebruiker bij aanmelding.
-- **Rol & Toegangscontrole** — Identiteitsprovider groepen stellen medewerkers- en beheerdersbevoegdheden in, beperken de aanmelding tot medewerkers en voldoen aan MFA voor SSO-gebruikers.
-- **Single Sign-On (Web)** — Medewerkers melden zich aan bij de admin via uw bestaande OpenID Connect identiteitsprovider in plaats van een apart wachtwoord.
-- **Medewerker Toewijzing** — Voeg medewerkers toe of verwijder ze uit een rol, met onmiddellijke vernieuwing van hun toegangsbevoegdheden.
-- **Medewerkersrollen & Bevoegdheden** — Maak, bewerk, kloon en verwijder medewerkersrollen met per-categorie weergave- of volledige toegangslevels, plus acht klaar vooraf gedefinieerde rollen.
+- **Admin Toegangsbeheer** — Elke admin-omgeving en actie wordt beveiligd door de rol van een medewerker, met weergave-alleen of volledige toegang dieper per toestemmingcategorie.
+- **Automatische Medewerker Aanmaken** — Medewerkersaccounts worden aangemaakt bij de eerste aanmelding en hun namen worden gesynchroniseerd met claims van de identiteitsprovider.
+- **Groep Gebaseerd Toegangsbeheer** — Groepsmemberschappen van de identiteitsprovider bepalen wie toegang krijgt tot medewerkers- en supergebruikers, en blokkeert niet-medewerkers aanmeldingen.
+- **Identiteitsprovider Instelling & Beveiliging** — Verbind elke OIDC-provider via ontdekking, met het clientgeheim versleuteld op rust en ontdekking URLs SSRF-geveild.
+- **Mobiele Admin Aanmelden** — Medewerkers melden zich aan bij de mobiele admin-app via dezelfde identiteitsprovider op geregistreerde apparaten.
+- **POS Medewerker Toestemmingen** — Controleer welke medewerkers toegang hebben tot POS-terminals en welke acties ze kunnen uitvoeren, opgelost over alle toegewezen rollen.
+- **Medewerker Rollen & Toestemmingen** — Bepaal aangepaste medewerkerrollen met gedetailleerde admin- en POS-toestemmingen, inclusief klaar gemaakte voorgestelde rollen zoals Winkelhouder, Manager en Kassamedewerker.
+- **Medewerker Single Sign-On** — Medewerkers melden zich aan bij de admin met uw bedrijfsidentiteitsprovider in plaats van aparte winkelparool.
+- **Team Lid Toewijzing** — Voeg medewerkers toe of verwijder ze uit rollen om te controleren wie toegang heeft tot wat.
 
 ## Platform & Beheer
 
-- **Add-on Verwijdering** — Verwijder taalpakketten en hulpmiddelen, opschonen van hun gegevens en bijwerken van de registratie.
-- **Geavanceerde Producttype Import** — Breng boeking, bundels, cadeaucheques, abonnementen, geconfigureerde producten en productbijlagen over naar hun overeenkomende Spwig producttypen.
-- **API Tokens & Toegangscontrole** — Programmatische toegang wordt beheerd door database-gebaseerde tokens met lees-/schrijfscopes, type en IP-beperkingen, vervaldatum en gebruiksgeschiedenis.
-- **Automatische HTTPS (Let's Encrypt)** — Gratis Let's Encrypt certificaten worden uitgegeven via HTTP validatie en automatisch vernieuwd zodat de winkel op HTTPS blijft.
-- **Automatische Herhaalproeven & Eindpuntgezondheid** — Mislukte leveringen proberen opnieuw met exponentiële terugval, ongezonde eindpunten zetten automatisch uit, en beheerders kunnen ze handmatig opnieuw proberen of activeren.
-- **Breng Uw Eigen SSL-certificaat** — Upload uw eigen PEM-certificaat en sleutel, of val terug op een gegenereerd zelfondertekend certificaat, en dien het onmiddellijk af.
-- **Component Marketplace** — Blader door de catalogus met beschikbare onderdelen van de update-server en installeer ze in de winkel.
-- **Component Marketplace** — Blader, filter en installeer thema's, widgets en leveranciersonderdelen van het Spwig-marketplace met weergave van de lokale installatietoestand.
-- **Component Beoordelingen & Beoordelingen** — Lees beoordelingen over marktplaatsonderdelen en stuur jouw eigen 1- tot 5-sterren beoordeling met titel en opmerking.
-- **Component Updates** — Houd geïnstalleerde onderdelen op de hoogte door nieuwe versies te controleren, te verifiëren, te installeren en te activeren via updatekanalen.
-- **Inhoudslink en afbeeldingsherstel** — Scant gemigreerde product-, blog- en categorie-HTML om interne koppelingen opnieuw te verbinden met hun nieuwe Spwig-doelen en haal inline-afbeeldingen op in de mediabibliotheek.
-- **Cookie-toestemming & GDPR-beoordeling** — Bezoekerskeuzes voor cookies worden geclassificeerd en opgeslagen als een controleerbaar GDPR-toestemmingsticket.
-- **Aangepaste domeinverbinding** — Wijs je eigen domein aan je winkel toe, verifieer de eigenaar en schakel terug naar het standaardmyspwig.com-subdomein op elk moment.
-- **Leveringslogboeken & Gezondheidsstatistieken** — Bekijk filterbare leveringsgegevens en per-eindpunt 24-uurs succespercentage, reactietijd en gezondheid, met automatisch opschonen van oude gegevens op basis van opslagtermijn.
-- **Eindpunttest & Sandbox-modus** — Stuur een synthetische testgebeurtenis om bereikbaarheid en tijdsduur te controleren en blokkeer externe leveringen terwijl in sandbox-modus.
-- **Fout- en bugrapportage** — Backend- en frontend-fouten worden vastgelegd, gecategoriseerd op basis van vingerafdruk, en handelsbugrapporten worden verzonden naar de update-server voor ondersteuning.
-- **Gebeurtenisgebaseerde levering** — Winkelgebeurtenissen worden verpakt en verzonden naar elk abonnee-eindpunt, synchroon of op de achtergrond.
-- **Importtaakbeheer & Herstel** — Annuleer, herhaal of reset importtaken, voer individuele mislukte items opnieuw uit, herstel taken waarvan de werknemer is gestopt, en trim logboeken van voltooide taken.
-- **Inwinkelcentrale & Zoeken** — Handelsreizigers en medewerkers vinden antwoorden via trefwoorden en semantische zoekopdrachten, met contextgevoelige suggesties, weergavevolg en feedback over nuttigheid.
-- **Inkomende handtekeningverificatie** — Inkomende webhooks worden geverifieerd met een tijdstempel, constante tijd HMAC-handtekeningcontrole en afgewezen als deze ongeldig of verouderd zijn.
-- **Licentiebeheer** — Haal en verifieer een netjes ondertekende licentie en geheimen op van de update-server en bewaar de bijgewerkte licentiegegevens.
-- **Licentie & Installatie-integriteit** — Licentie-acceptatie wordt vastgelegd, de installatie-identiteit wordt gecontroleerd op vervalsing met een HMAC-vingerafdruk, en platformgeheimen worden automatisch vernieuwd voor het vervaldatum.
-- **Migratie terugdraaien** — Herstel een import of winkel-sync binnen het terugdraaivenvenster, verwijder de records die het heeft gecreëerd, terwijl rijen die je sindsdien hebt geïnvesteerd worden behouden.
-- **Betaalde componenten aankoop** — Bekijk welke betaalde onderdelen de licentie van de winkel toegestaan en krijg een spwig.com aankooplink voor de rest.
-- **Payload-handtekening & Geheimen** — Elke uitgaande payload wordt ondertekend met HMAC-SHA256, en eindpuntgeheimen kunnen op aanvraag worden gewisseld.
-- **Platform-upgrades** — Controleer op en voer volledige platformversie-upgrades uit met voorchecks, pakketverificatie en geplande gehoste upgrade-vensters.
-- **Real-time Verkoopcijfers** — Verkoopcijfers, terugbetalingen en ontwikkelaarsregistraties worden toegevoegd aan een HQ-alleen Sales Bell-gebeurtenislogboek voor live-monitoring.
-- **Beveiligingshotfixes** — Detecteer ontbrekende hotfixes voor de huidige platformversie en pas ze toe of draai ze terug.
-- **Koperwisselkoersselectie** — Bezoekers kunnen een ondersteunde munt voor hun sessie kiezen, geverifieerd tegen de opgeslagen muntsoorten van de site.
-- **Zacht verwijderen & Herstellen** — Gegevens worden verborgen bij verwijdering, maar behouden, zodat per ongeluk verwijderde objecten intact kunnen worden hersteld.
-- **SSL-monitoring** — Volg elk certificaat's domein, uitgever, vervaldatum en geldigheid, met automatische vernieuwing voorafgaand aan het vervallen van certificaten.
-- **Winkel Migratie Wizard** — Producten, categorieën, klanten en bestellingen importeren vanaf WooCommerce, Shopify, Magento of CSV met veldtoewijzing en waarde-transformatie.
-- **Winkelinstellingen & Configuratie Validatie** — Algemene site-instellingen worden opgeslagen als een enkelvoudig autoritatief register en ontkennen onverenigbare wijzigingen, zoals het uitschakelen van in gebruik zijnde opslagplaatsen of muntmodussen.
-- **Winkel-tot-Winkel Synchronisatie** — Migreer instellingen of volledige gegevenscategorieën tussen twee Spwig-winkels via token-verificatie-afspraken, inclusief media-overdracht.
-- **Vertrouwde Apparaten & 2FA Onthouden** — Gebruikers kunnen een apparaat als vertrouwd markeren om 2FA over te slaan tot het verloopt of wordt ingetrokken, met automatische opschoning van verlopen en ingetrokken apparaten.
-- **Update Terugdraaien & Herstel** — Componenten of hotfixes terugdraaien naar een eerder werkende versie, met gezondheidscontroles na installatie en update vergrendelingen om stabiliteit te garanderen.
-- **Webhook Eindpunten** — Maak, bewerk, activeer en verwijder webhook-eindpunten en kies welke winkelgebeurtenissen elk ervan zich aansluit.
+- **Geavanceerde Producttype Import** — Breng bundels, samengestelde/geconfigureerde producten, abonnementen, reservaties, cadeaucheques en productaanspattingen over naar de bronwinkel, waarbij kruisproductkoppelingen in een tweede fase worden opgelost.
+- **API-toegangstokens** — Programmatische toegang wordt beheerd door bereiksgelimiteerde, IP-beperkte API-tokens die per verzoek worden gevalideerd met gebruikstracking.
+- **Automatische HTTPS & SSL-certificaten** — Verstuur en verleng automatisch gratis Let's Encrypt-certificaten via HTTP-01, met HTTPS-omleiding, HSTS en een zelfondertekend fallback.
+- **Automatische Herproeven & Endpoint Gezondheid** — Tijdelijke storingen worden opnieuw geprobeerd met beperkte exponentiële terugval, falende eindpunten schakelen automatisch uit en kunnen worden gereset, en mislukte leveringen kunnen handmatig opnieuw worden geprobeerd.
+- **Breng uw eigen certificaat** — Upload uw eigen PEM-certificaat en sleutel, inclusief Cloudflare Origin-certificaten, met metadata-extractie en waarschuwingen voor domein-mismatch.
+- **Componentenmarkt** — Blader door het Spwig-catalogus en installeer thema's, widgets en leverancierscomponenten, geverifieerd door controlecode en afhankelijkheidscontroles.
+- **Componentenmarkt** — Handelaars bladeren, filteren en bekijken thema's, widgets en leverancierscomponenten uit de Spwig-markt, elk aangegeven met hun lokale installatiestatus.
+- **Componentenbeoordelingen en -beoordelingen** — Handelaars lezen componentenbeoordelingen en sturen hun eigen 1- tot 5-sterrenbeoordelingen toe aan hun winkel.
+- **Componentenupdates en terugval** — Detecteer beschikbare componentenupdates, pas ze toe met post-installatiegezondheidscontroles en zet terug naar een eerdere versie als een controle mislukt.
+- **Inhoudslink & Afbeeldingsmigratie** — Scans gemigreerde product-, blog- en categorie-HTML om interne links te herleiden naar hun nieuwe Spwig-objecten en afbeeldingen die worden verwezen naar de media-bibliotheek te halen.
+- **Cookie-toestemming & GDPR-audit** — Cookiekeuzes van bezoekers worden genormaliseerd, geclassificeerd en opgeslagen als GDPR-auditrecords.
+- **Aangepast domeininstellingen** — Verbind uw eigen domein met de winkel, met DNS-validatie, NGINX-configuratie en bereikbaarheidscontroles die eind tot eind worden afgehandeld.
+- **Leveringsmonitoring & Logopslag** — Per-eindpunt 24-uurs statistieken (aantallen, succespercentage, responsduur, gezondheid) zijn beschikbaar, en voltooide leveringsgegevens worden verwijderd na een configurabele opslagperiode.
+- **Fout- en bugrapportage** — Applicatiefouten worden vastgelegd, gedupliceerd en in batches naar de update-server gestuurd, en medewerkers kunnen gesaniteerde bugrapporten indienen met browsercontext.
+- **Gebeurtenis-geïnspireerde Levering** — Winkelgebeurtenissen worden gestuurd naar abonnees ( expliciet of wildcard) als HTTP POST-payloads, met elke levering en het daaruit voortkomende resultaat opgeslagen.
+- **In-app helpcentrum** — Handelaars en medewerkers vinden antwoorden via trefwoord- en semantische zoekopdrachten over helponderwerpen, met contextuele suggesties op elke pagina en feedback over nuttigheid.
+- **Taalpakketten** — Installeer en verwijder per-taalpakketten die interfacevertalingen, hulpinhoud en e-mail- en sjabloonreeksen implementeren.
+- **Licentiebeheer** — Haal een netjes ondertekende licentie en gerelateerde geheimen op van de update-server en bewaar de wijzigingen.
+- **Licensie- en installatie-integriteit** — De winkel registreert versiebeheerde licentieaanvaarding, verifieert de installatievingerafdruk, vernieuwt platformgeheimen en houdt gratieperiodes voor intrekking bij.
+- **Beheerde aangepaste domeinen (gehost)** — Bij gehost geïnstalleerd, voeg, verifieer en verwijder een aangepast domein via de hostingplatform, met terugkeer naar het myspwig.com-subdomein wanneer losgekoppeld.
+- **Migratie Job Control & Terugval** — Annuleer, herhaal, reset of voer volledig terug naar een vorige staat van een import, herstel taken waarvan de werknemer is gestopt, en probeer individuele mislukte items opnieuw zonder echte bestellingen te verliezen.
+- **Eén-klik-componentinstallatie** — Handelaars installeren gratis of toegewezen componenten direct vanuit de markt via de updatebeheerder.
+- **Betaalde Componentaankoop** — Handelaars controleren hun licentiebevoegdheden en kopen betaalde componenten via een checkout op spwig.com, en installeer wat ze bezitten.
+- **Platform-upgrades en hotfixes** — Voer blauw-groene platformversie-upgrades uit met voorcontroles, pakketverificatie, gezondheidscontroles, terugval en hotfixrapportage.
+- **Verkoopsignalen** — Verkoop-, terugbetalings- en ontwikkelaarsregistratiegebeurtenissen worden gelogd in een feed die uitsluitend voor het hoofdkantoor is, voor realtime inzicht.
+- **Sandbox-veilige Test** — In sandbox-modus worden externe leveringen opgeslagen als geblokkeerd in plaats van verstuurd, terwijl lokale host-doelen nog steeds testgebeurtenissen ontvangen.
+- **Ondertekende & Geverifieerde Payloads** — Elke payload wordt ondertekend met HMAC-SHA256, geheimes kunnen op aanvraag worden gewisseld, en ontvangers kunnen handtekeningen verifiëren met een leeftijdstolerantie-check.
+- **Zacht verwijderen & herstel** — Records kunnen zacht worden verwijderd en hersteld om per ongeluk verloren gegevens te beschermen, met een pad voor definitieve verwijdering.
+- **Spwig-na-Spwig Sync** — Verplaats instellingen of volledige gegevens tussen twee Spwig-instances via geauthentificeerde eindpunten, met versiecompatibiliteitscontrole, media-overdracht en terugval.
+- **SSL-monitoring** — Volg live-certificaat domein, uitgever, vervaldatum en geldigheid, en behoud vernieuwde status voor de winkel.
+- **Spwig-Migratie Wizard** — Importeer categorieën, producten, klanten en bestellingen van WooCommerce, Shopify, Magento of CSV met voorafgaande verbindingstests, veldtoewijzing en media-overdracht.
+- **Tweefactorauthenticatie voor vertrouwde apparaten** — Gebruikers kunnen een apparaat als vertrouwd markeren om 2FA over te slaan bij toekomstige inlogpogingen, met validatie, intrekking en automatische verlopen-cleanup.
+- **Webhook Eindpunten** — Registreer, configureer, update en verwijder webhook-eindpunten met per-eindpunt gebeurtenisabonnementen, opnieuw proberen en time-outinstellingen en een connectiviteits-test.

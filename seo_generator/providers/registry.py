@@ -139,12 +139,16 @@ class ProviderRegistry:
 
         from seo_generator.models import SEOProviderAccount
 
-        try:
-            account = SEOProviderAccount.objects.get(
-                Q(provider_key=provider_key) | Q(component__slug=provider_key), is_active=True
+        account = (
+            SEOProviderAccount.objects.filter(
+                Q(provider_key=provider_key) | Q(component__slug=provider_key),
+                is_active=True,
             )
-            return account.get_provider_instance()
-        except SEOProviderAccount.DoesNotExist:
+            .order_by("-is_primary", "priority", "name")
+            .first()
+        )
+        if account is None:
             raise ProviderNotAvailable(
                 f"Provider '{provider_key}' not configured. Set up a provider account first."
             )
+        return account.get_provider_instance()

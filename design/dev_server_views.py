@@ -15,6 +15,7 @@ from functools import wraps
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.http import JsonResponse, StreamingHttpResponse
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import (
@@ -61,6 +62,27 @@ def require_dev_token(view_func):
         return view_func(request, *args, **kwargs)
 
     return wrapper
+
+
+def parse_json_object(request):
+    """Parse the request body as a JSON object.
+
+    Returns a ``(data, error_response)`` tuple: on success ``data`` is the
+    decoded ``dict`` (an empty dict for an empty body) and ``error_response``
+    is ``None``; on failure ``data`` is ``None`` and ``error_response`` is a
+    ``JsonResponse`` describing the problem. This guards against valid JSON
+    that decodes to a non-object (``[]``, ``null``, ``"text"``, ``1``), which
+    would otherwise crash callers that expect ``dict`` semantics.
+    """
+    try:
+        data = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        return None, JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not isinstance(data, dict):
+        return None, JsonResponse({"error": "Request body must be a JSON object"}, status=400)
+
+    return data, None
 
 
 # ========== Session Management ==========
@@ -126,10 +148,9 @@ def dev_connect(request):
         )
 
     # Parse request data
-    try:
-        data = json.loads(request.body) if request.body else {}
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    data, error = parse_json_object(request)
+    if error:
+        return error
 
     theme_name = data.get("theme_name", "")
     if not theme_name:
@@ -148,7 +169,7 @@ def dev_connect(request):
         {
             "token": session.token,
             "expires_at": session.expires_at.isoformat(),
-            "theme_dev_url": f"/api/theme-dev/preview/?token={session.token}",
+            "theme_dev_url": f"{reverse('theme_dev:preview_url')}?token={session.token}",
             "message": f"Connected as {user.username}",
         }
     )
@@ -246,18 +267,20 @@ def dev_status(request):
 @require_dev_token
 def dev_sync_files(request):
     """Sync individual files from SDK."""
-    try:
-        data = json.loads(request.body) if request.body else {}
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    data, error = parse_json_object(request)
+    if error:
+        return error
 
     files = data.get("files", [])
-    if not files:
-        return JsonResponse({"error": "No files provided"}, status=400)
+    if not isinstance(files, list) or not files:
+        return JsonResponse({"error": "files must be a non-empty list"}, status=400)
 
     # Decode base64 content where needed
     processed_files = []
     for file_data in files:
+        if not isinstance(file_data, dict):
+            return JsonResponse({"error": "Each file must be a JSON object"}, status=400)
+
         processed = {"path": file_data.get("path", ""), "checksum": file_data.get("checksum", "")}
 
         content = file_data.get("content", "")
@@ -265,8 +288,8 @@ def dev_sync_files(request):
 
         if encoding == "base64":
             try:
-                processed["content"] = base64.b64decode(content)
-            except Exception:
+                processed["content"] = base64.b64decode(content, validate=True)
+            except (ValueError, TypeError):
                 return JsonResponse(
                     {"error": f"Failed to decode base64 for {processed['path']}"}, status=400
                 )
@@ -485,18 +508,29 @@ def dev_component_detail(request, component_name):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 @dev_server_enabled
-@require_dev_token
 def dev_preview_url(request):
-    """Get the preview URL for the dev theme."""
-    session = request.dev_session
+    """Get the preview URL for the dev theme.
 
-    # The preview URL would load the shop with the dev theme applied
+    Authenticated via a ``token`` query parameter (like the watch stream) so
+    the returned URLs are directly navigable in a browser, which cannot send
+    the ``X-Dev-Token`` header.
+    """
+    token = request.GET.get("token", "")
+    if not token:
+        return JsonResponse({"error": "Missing token parameter"}, status=401)
+
+    service = get_dev_server_service()
+    session = service.validate_token(token)
+    if not session:
+        return JsonResponse({"error": "Invalid or expired token"}, status=401)
+
+    # The preview URL loads the shop storefront with the dev theme applied.
     preview_url = f"/?dev_theme={session.token}"
 
     return JsonResponse(
         {
             "preview_url": preview_url,
             "theme_name": session.theme_name,
-            "watch_url": f"/api/theme-dev/watch/?token={session.token}",
+            "watch_url": f"{reverse('theme_dev:watch')}?token={session.token}",
         }
     )

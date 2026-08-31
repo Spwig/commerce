@@ -39,9 +39,7 @@ class LanguageDetectionMiddleware(MiddlewareMixin):
 
             # Get all active languages from translation service
             languages = []
-            for lang in SiteLanguage.objects.filter(is_active=True).order_by(
-                "display_order", "name"
-            ):
+            for lang in SiteLanguage.objects.filter(is_active=True).order_by("order", "name"):
                 languages.append((lang.code, lang.name))
 
             # Cache for 1 hour

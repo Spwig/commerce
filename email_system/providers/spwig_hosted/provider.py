@@ -30,6 +30,7 @@ from email_system.providers.base import (
     EmailProviderError,
     EmailProviderRateLimitError,
     SendResult,
+    recipients_refused,
 )
 
 logger = logging.getLogger(__name__)
@@ -256,6 +257,12 @@ class SpwigHostedMailProvider(EmailProviderBase):
                 logger.warning("Gateway rate limit for %s: %s", self.auth_user, e)
                 raise EmailProviderRateLimitError(f"Rate limit exceeded: {e}")
             raise EmailProviderError(f"Sender refused: {e}")
+
+        except smtplib.SMTPRecipientsRefused as e:
+            # A per-recipient rejection at submission is a bounce, not a generic
+            # failure — surface it so the send path can suppress a dead address.
+            logger.warning("Gateway refused recipients: %s", e)
+            raise recipients_refused(e) from e
 
         except smtplib.SMTPException as e:
             logger.error("Gateway send error: %s", e)

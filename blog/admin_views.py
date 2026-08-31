@@ -47,7 +47,14 @@ def filter_blog_categories(request):
         return JsonResponse({"error": "Invalid request"}, status=400)
 
     # Start with all categories
-    categories = BlogCategory.objects.select_related("parent").prefetch_related("children", "posts")
+    categories = BlogCategory.objects.select_related("parent", "image_asset").prefetch_related(
+        "children",
+        "posts",
+        Prefetch(
+            "image_asset__thumbnails",
+            queryset=MediaThumbnail.objects.filter(size_preset="small"),
+        ),
+    )
 
     # Search filter
     search = request.GET.get("search", "").strip()
@@ -115,11 +122,11 @@ def filter_blog_tags(request):
     # Usage filter
     usage_filter = request.GET.get("usage", "")
     if usage_filter:
-        tags = tags.annotate(post_count=Count("posts"))
+        tags = tags.annotate(num_posts=Count("posts"))
         if usage_filter == "used":
-            tags = tags.filter(post_count__gt=0)
+            tags = tags.filter(num_posts__gt=0)
         elif usage_filter == "unused":
-            tags = tags.filter(post_count=0)
+            tags = tags.filter(num_posts=0)
 
     # Order by name
     tags = tags.order_by("name")
@@ -145,8 +152,18 @@ def filter_blog_subscribers(request):
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
 
+    # Mirror the changelist's view/change permission gate — staff_member_required
+    # alone would let any staff user enumerate subscriber emails and metadata.
+    if not (
+        request.user.has_perm("blog.view_blogsubscriber")
+        or request.user.has_perm("blog.change_blogsubscriber")
+    ):
+        return JsonResponse({"error": "Forbidden"}, status=403)
+
     # Start with all subscribers
-    subscribers = BlogSubscriber.objects.prefetch_related("subscribed_categories")
+    subscribers = BlogSubscriber.objects.select_related("user").prefetch_related(
+        "subscribed_categories"
+    )
 
     # Search filter
     search = request.GET.get("search", "").strip()

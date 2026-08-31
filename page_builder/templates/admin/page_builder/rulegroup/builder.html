@@ -660,6 +660,10 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toast-container"></div>
 
+    <!-- User-authored rule data, HTML-safe escaped via json_script -->
+    {{ rules_tree|json_script:"rule-builder-tree" }}
+    {{ saved_rules_data|json_script:"rule-builder-saved-rules" }}
+
     <!-- JavaScript Configuration (JSON data island - no executable code) -->
     <script type="application/json" id="rule-builder-config">
     {
@@ -670,8 +674,6 @@
         "apiGroupsUrl": "{% url "page_builder_api:rule_groups" %}",
         "apiRulesUrl": "{% url "page_builder_api:rules" %}",
         "csrfToken": "{{ csrf_token }}",
-        "initialRulesTree": {{ rules_tree_json|safe }},
-        "savedRules": {{ saved_rules_json|safe }},
         "translations": {
             "save": "{% trans "Save" %}",
             "saving": "{% trans "Saving..." %}",

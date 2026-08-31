@@ -1300,7 +1300,32 @@ class CheckoutService:
         # captures the holds and debits the cards.
         CheckoutService._settle_if_fully_tendered(order)
 
+        # A converted cart should stop any cart-abandonment journey it triggered.
+        # Best-effort + on-commit so it never affects order creation.
+        CheckoutService._cancel_cart_abandonment(cart.id)
+
         return True, _("Order created successfully"), order
+
+    @staticmethod
+    def _cancel_cart_abandonment(cart_id):
+        """Exit the cart-abandonment journey for a cart that just converted."""
+        try:
+            from django.contrib.sites.models import Site
+            from django.db import transaction
+
+            from email_marketing.services.journeys import cancel_enrollments
+
+            transaction.on_commit(
+                lambda: cancel_enrollments(
+                    Site.objects.get(pk=1), f"cart:{cart_id}", reason="cart converted"
+                )
+            )
+        except Exception:  # noqa: BLE001 — recovery-journey cleanup must never break checkout
+            import logging
+
+            logging.getLogger("email_marketing").warning(
+                "Cart-abandonment cancel hook failed for cart %s", cart_id, exc_info=True
+            )
 
     @staticmethod
     def _settle_if_fully_tendered(order):

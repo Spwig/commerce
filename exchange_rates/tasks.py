@@ -106,9 +106,17 @@ def update_exchange_rates(self, site_id=None, base_currency=None, force=False):
             total_success += success_count
             total_failure += failure_count
 
-            # Update last_sync_at on active providers
+            # Reflect the outcome on active providers: only mark success when no
+            # fetch failed, and only advance last_sync_at when a rate was fetched
+            # so a total failure doesn't suppress the next interval-based retry.
+            provider_updates = {
+                "sync_status": "success" if failure_count == 0 else "error",
+            }
+            if success_count > 0:
+                provider_updates["last_sync_at"] = timezone.now()
+
             ExchangeRateProviderAccount.objects.filter(site=site, is_active=True).update(
-                last_sync_at=timezone.now(), sync_status="success"
+                **provider_updates
             )
 
             logger.info(

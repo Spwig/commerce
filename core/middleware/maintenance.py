@@ -47,14 +47,6 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
         "/webhooks/",  # Webhooks for payment/shipping providers
     )
 
-    # Paths that match setup wizard (with language prefix support)
-    SETUP_PATHS = (
-        "/setup/",
-        "/en/setup/",
-        "/admin/setup/",
-        "/en/admin/setup/",
-    )
-
     def process_request(self, request):
         """
         Check maintenance mode and return maintenance page or None.
@@ -156,29 +148,33 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
         - Request is for setup wizard
         - User is authenticated staff member
         """
+        from django.utils.translation import get_language_from_path
+
         path = request.path
 
         # Check allowed paths (also handles language-prefixed paths like /en/theme/)
-        # Strip language prefix if present (e.g., /en/theme/ -> /theme/)
+        # Strip the language prefix if present, recognising prefixes exactly the
+        # way Django's i18n_patterns routing does. A hardcoded two-letter check
+        # would miss configured extended locales (e.g. /zh-hans/admin/setup/),
+        # blocking valid admin/setup routes during maintenance.
         stripped_path = path
-        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
-            stripped_path = path[3:]  # Remove /xx/ prefix
+        if get_language_from_path(path) is not None:
+            # The matched code may differ in case from the URL segment, so strip
+            # the actual first segment rather than reconstructing from the code.
+            next_slash = path.find("/", 1)
+            if next_slash != -1:
+                stripped_path = path[next_slash:]  # Remove /<lang> prefix
 
         for allowed in self.ALLOWED_PATHS:
             if path.startswith(allowed) or stripped_path.startswith(allowed):
                 return True
 
-        # Check setup paths (with language prefix support)
-        for setup_path in self.SETUP_PATHS:
-            if path.startswith(setup_path):
-                return True
-
-        # Check for any language prefix + admin/setup
-        # Handles /de/admin/setup/, /fr/setup/, etc.
-        path_parts = path.strip("/").split("/")
-        if len(path_parts) >= 2:
-            if "setup" in path_parts[:3] or "admin" in path_parts[:2]:
-                return True
+        # Setup wizard: only the exact supported route shapes bypass, so a
+        # storefront URL that merely contains a "setup"/"admin" segment (e.g.
+        # /shop/setup/kit, /en/blog/setup, /foo/admin/orders/) is not let through.
+        # stripped_path covers language-prefixed variants (/de/admin/setup/).
+        if stripped_path.startswith("/setup/") or stripped_path.startswith("/admin/setup/"):
+            return True
 
         # Check secret bypass
         if self._check_secret(request):

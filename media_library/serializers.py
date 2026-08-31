@@ -9,6 +9,24 @@ from .models import MediaAsset, MediaFolder, MediaProcessingJob, MediaThumbnail,
 from .services import ImageProcessor
 from .video_services import VideoProcessor
 
+# Sentinel distinguishing an omitted field from an explicit null in partial updates.
+_UNSET = object()
+
+
+class AssetCountMixin:
+    """Expose ``asset_count`` from a queryset ``Count('assets')`` annotation.
+
+    Serializes the annotated value when the caller annotated the queryset
+    (avoiding an N+1 count query per object), and falls back to a live count
+    when the object is serialized without the annotation (e.g. nested).
+    """
+
+    def get_asset_count(self, obj) -> int:
+        count = getattr(obj, "asset_count", None)
+        if count is not None:
+            return count
+        return obj.assets.count()
+
 
 class PictureSourcesSerializer(serializers.Serializer):
     """Responsive image source set for a storefront <picture> element.
@@ -36,7 +54,7 @@ class PictureSourcesSerializer(serializers.Serializer):
     fallback_srcset = serializers.CharField(allow_null=True, required=False)
 
 
-class MediaFolderSerializer(serializers.ModelSerializer):
+class MediaFolderSerializer(AssetCountMixin, serializers.ModelSerializer):
     """Serializer for media folders"""
 
     asset_count = serializers.SerializerMethodField()
@@ -55,11 +73,8 @@ class MediaFolderSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "slug", "path", "created_at"]  # slug is auto-generated from name
 
-    def get_asset_count(self, obj) -> int:
-        return obj.assets.count()
 
-
-class TagSerializer(serializers.ModelSerializer):
+class TagSerializer(AssetCountMixin, serializers.ModelSerializer):
     """Serializer for tags"""
 
     asset_count = serializers.SerializerMethodField()
@@ -68,9 +83,6 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ["id", "name", "slug", "asset_count"]
         read_only_fields = ["id", "slug"]  # slug is auto-generated from name
-
-    def get_asset_count(self, obj) -> int:
-        return obj.assets.count()
 
 
 class MediaThumbnailSerializer(serializers.ModelSerializer):
@@ -652,6 +664,14 @@ class MediaAssetCreateSerializer(serializers.ModelSerializer):
                                 job.status_message = f"Conversion failed: {str(e)}"
                                 job.completed_at = timezone.now()
                                 job.save()
+                    elif job:
+                        # No conversion queued — synchronous processing is done, so
+                        # complete the job here instead of leaving it perpetually active.
+                        job.status = "completed"
+                        job.progress = 100
+                        job.status_message = "Video processing completed"
+                        job.completed_at = timezone.now()
+                        job.save()
 
                     # Clean up temp file
                     os.unlink(tmp_path)
@@ -788,11 +808,11 @@ class MediaAssetUpdateSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
-        folder_id = validated_data.pop("folder_id", None)
+        folder_id = validated_data.pop("folder_id", _UNSET)
         tag_ids = validated_data.pop("tag_ids", None)
 
-        # Update folder
-        if folder_id is not None:
+        # Update folder (an explicit null clears it; an omitted field leaves it)
+        if folder_id is not _UNSET:
             if folder_id:
                 try:
                     folder = MediaFolder.objects.get(id=folder_id)

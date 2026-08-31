@@ -1,0 +1,16 @@
+{% if product %}
+<div class="em-block em-block-product">
+  {% if product.image %}
+  <a href="{{ product.url }}"><picture>
+    {% if product.image.avif %}<source type="image/avif" srcset="{{ product.image.avif }}">{% endif %}
+    {% if product.image.webp %}<source type="image/webp" srcset="{{ product.image.webp }}">{% endif %}
+    <img class="em-product-img" src="{{ product.image.fallback }}" alt="{{ product.name }}">
+  </picture></a>
+  {% endif %}
+  <div class="em-product-name">{{ product.name }}</div>
+  <div class="em-product-price">{% if product.on_sale and product.was_price %}<span class="em-was">{{ product.was_price }}</span>{% endif %}{{ product.price }}</div>
+  <a class="em-btn" href="{{ product.url }}">{{ button_text|default:'Shop now' }}</a>
+</div>
+{% else %}
+<div class="em-block em-product-empty"><i class="fas fa-star"></i> Enter a published product ID to feature it.</div>
+{% endif %}
