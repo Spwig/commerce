@@ -2,7 +2,7 @@
 title: Configuración de correo electrónico
 ---
 
-La configuración de correo electrónico controla cómo tu tienda envía correos electrónicos transaccionales — confirmaciones de pedido, notificaciones de envío, restablecimiento de contraseña y más. Spwig incluye un servidor SMTP integrado y admite proveedores de correo electrónico externos para una mayor entrega.
+La configuración de correo electrónico controla cómo su tienda envía correos electrónicos transaccionales: confirmaciones de pedidos, notificaciones de envío, restablecimientos de contraseña y más. Spwig incluye un servidor SMTP integrado y admite proveedores de correo electrónico externos para una mayor entrega.
 
 ![Cuentas de correo electrónico](/static/core/admin/img/help/email-configuration/email-accounts.webp)
 
@@ -10,134 +10,154 @@ La configuración de correo electrónico controla cómo tu tienda envía correos
 
 | Proveedor | Descripción |
 |----------|-------------|
-| **Servidor SMTP integrado** | Servidor de correo electrónico gratuito y autoalojado incluido con Spwig. Firma automática DKIM. |
-| **Gmail API** | Envía mediante tu cuenta de Gmail o Google Workspace usando la autenticación OAuth. |
-| **SMTP genérico** | Conecta cualquier servidor SMTP (SendGrid, Mailgun, Amazon SES o tu propio servidor de correo). |
+| **SMTP integrado** | Servidor de correo electrónico alojado por sí mismo gratuito incluido con Spwig. Firma DKIM automática. |
+| **API de Gmail** | Envíe a través de su cuenta de Gmail o Google Workspace usando la autenticación OAuth. |
+| **SMTP genérico** | Conéctese a cualquier servidor SMTP (SendGrid, Mailgun, Amazon SES, o su propio servidor de correo). |
 
-## Configuración de correo electrónico
+## Configuración del correo electrónico
 
-Navega a **Configuración > Cuentas de correo electrónico** y haz clic en **Añadir cuenta de correo electrónico** para iniciar el asistente de configuración.
+Navegue hasta **Configuración > Cuentas de correo electrónico** y haga clic en **Añadir cuenta de correo electrónico** para iniciar el asistente de configuración.
 
 ### Paso 1: Seleccionar proveedor
 
-Elige tu proveedor de correo electrónico. El servidor SMTP integrado es la opción más sencilla para comenzar — no requiere cuentas externas.
+Elija su proveedor de correo electrónico. El servidor SMTP integrado es la opción más sencilla para comenzar, ya que no requiere cuentas externas.
 
 ### Paso 2: Configurar credenciales
 
-Introduce las credenciales para tu proveedor elegido:
+Ingrese las credenciales para su proveedor elegido:
 
-- **Servidor SMTP integrado** — No se necesitan credenciales. El servidor funciona en tu instalación de Spwig.
-- **Gmail API** — Autenticación mediante OAuth de Google. Te redirigirán a iniciar sesión con tu cuenta de Google.
-- **SMTP genérico** — Introduce la dirección del servidor SMTP, el puerto, el nombre de usuario y la contraseña.
+- **SMTP integrado** — No se necesitan credenciales. El servidor funciona en su instalación de Spwig.
+- **API de Gmail** — Autenticación mediante Google OAuth. Será redirigido para iniciar sesión con su cuenta de Google.
+- **SMTP genérico** — Ingrese la dirección del servidor SMTP, puerto, nombre de usuario y contraseña.
 
 ### Paso 3: Configuración del remitente
 
-Establece la identidad del remitente para los correos electrónicos salientes:
+Establezca la identidad del remitente para los correos electrónicos salientes:
 
-- **Correo electrónico de remitente** — La dirección de correo electrónico que aparece en el campo "De" (por ejemplo, orders@yourstore.com)
-- **Nombre del remitente** — El nombre que se muestra junto a la dirección de correo electrónico (por ejemplo, "Nombre de tu tienda")
-- **Correo electrónico de respuesta** — Dónde se dirigen las respuestas del cliente (puede diferir de la dirección de remitente)
+- **Correo electrónico desde** — La dirección de correo electrónico que aparece en el campo "De" (por ejemplo, pedidos@tutienda.com)
+- **Nombre del remitente** — El nombre de visualización junto a la dirección de correo electrónico (por ejemplo, "Nombre de tu tienda")
+- **Correo electrónico de respuesta** — A dónde se dirigen las respuestas de los clientes (puede diferir de la dirección de correo electrónico desde)
 
-### Paso 4: Validación DNS
+### Paso 4: Validación de DNS
 
-Verifica los registros de autenticación de correo electrónico de tu dominio. El asistente comprueba tres registros DNS:
+Verifique los registros de autenticación de correo electrónico de su dominio. El asistente comprueba tres registros DNS:
 
 | Registro | Propósito |
 |--------|---------|
-| **SPF** | Autoriza tu servidor para enviar correo electrónico en nombre de tu dominio |
-| **DKIM** | Firma digitalmente los correos electrónicos para probar que no han sido manipulados |
-| **DMARC** | Indica a los servidores receptores qué hacer con los correos electrónicos que no pasan las pruebas SPF/DKIM |
+| **SPF** | Autoriza a su servidor para enviar correo electrónico en nombre de su dominio |
+| **DKIM** | Firma digitalmente los correos electrónicos para demostrar que no han sido alterados |
+| **DMARC** | Indica a los servidores receptores qué hacer con los correos electrónicos que no pasen las pruebas SPF/DKIM |
 
 Para cada registro, el asistente muestra:
-- **Estado actual** — Si el registro está correctamente configurado
-- **Valor requerido** — El registro DNS exacto que debe añadirse en tu registrador de dominio
-- **Estado de propagación** — Si los cambios recientes han surtido efecto (los cambios DNS pueden tardar hasta 48 horas)
+- **Estado actual** — Si el registro está configurado correctamente
+- **Valor requerido** — El registro DNS exacto que agregar en su registrador de dominios
+- **Estado de propagación** — Si los cambios recientes han tenido efecto (los cambios de DNS pueden tardar hasta 48 horas)
 
-El servidor SMTP integrado genera automáticamente claves DKIM para tu dominio.
+El servidor SMTP integrado genera automáticamente las claves DKIM para su dominio.
 
-### Paso 5: Enviar correo electrónico de prueba
+### Paso 5: Enviar correo de prueba
 
-Envía un correo electrónico de prueba para verificar que todo funcione:
-1. Introduce una dirección de correo electrónico del destinatario
-2. Haz clic en **Enviar prueba**
-3. Revisa tu bandeja de entrada para el mensaje de prueba
-4. Verifica que el correo llegue sin advertencias de spam
+Envíe un correo de prueba para verificar que todo funcione:
+1. Ingrese una dirección de correo electrónico del destinatario
+2. Haga clic en **Enviar correo de prueba**
+3. Verifique su bandeja de entrada para el mensaje de prueba
+4. Verifique que el correo llegue sin advertencias de spam
 
 ### Paso 6: Guardar y activar
 
-Guarda la configuración y establece la cuenta como activa. Marca como **Predeterminada** si debe ser la cuenta de correo electrónico principal.
+Guarde la configuración y marque la cuenta como activa. Márcalo como **Predeterminado** si debe ser la cuenta de correo electrónico principal.
 
 ## Plantillas de correo electrónico
 
-Spwig incluye más de 30 plantillas de correo electrónico para cada evento transaccional. Navega a **Configuración > Plantillas de correo electrónico** para gestionarlas.
+Spwig incluye más de 30 plantillas de correo electrónico para cada evento transaccional. Navegue hasta **Configuración > Plantillas de correo electrónico** para gestionarlas.
 
-### Tipos de plantillas
+### Tipos de plantilla
 
 Las plantillas cubren todos los eventos de la tienda, incluyendo:
 - **Ciclo de vida del pedido** — Confirmación, procesamiento, enviado, entregado, cancelado
 - **Pago** — Recibo, confirmación de reembolso, pago fallido
 - **Cuenta del cliente** — Bienvenida, restablecimiento de contraseña, verificación de correo electrónico
-- **Tarjetas regalo** — Entrega, notificación de saldo
+- **Tarjetas de regalo** — Entrega, notificación de saldo
 - **Envío** — Actualizaciones de seguimiento, confirmación de entrega
 - **Productos digitales** — Enlaces de descarga, claves de licencia
-- **Marketing** — Recuperación de carritos abandonados, solicitudes de reseñas
+- **Marketing** — Recuperación de carrito abandonado, solicitudes de reseña
 
-### Personalización de plantillas
+### Personalizar plantillas
 
-1. Navega a la lista de plantillas
-2. Haz clic en una plantilla para editarla
-3. Modifica la línea de asunto, encabezado, contenido del cuerpo y pie de página
-4. Usa variables de plantilla (por ejemplo, `{{ order.number }}`, `{{ customer.name }}`) para contenido dinámico
-5. Previsualiza el correo electrónico antes de guardar
+1. Navegue hasta la lista de plantillas
+2. Haga clic en una plantilla para editarla
+3. Modifique la línea de asunto, el encabezado, el contenido del cuerpo y el pie de página
+4. Use variables de plantilla (por ejemplo, `{{ order.number }}`, `{{ customer.name }}`) para contenido dinámico
+5. Vaya a la vista previa del correo electrónico antes de guardar
 
 ### Soporte multilingüe
 
-Las plantillas de correo electrónico admiten múltiples idiomas:
-- Cada plantilla puede tener traducciones para todos los idiomas activos de tu tienda
+Preserve all markdown formatting, image paths, code blocks, and technical terms.
+
+Las plantillas de correo electrónico admiten varios idiomas:
+- Cada plantilla puede tener traducciones para todos los idiomas activos de su tienda
 - El sistema envía correos electrónicos en el idioma preferido del cliente
-- **Cadena de retroceso de idioma** — Si no hay una traducción disponible, el sistema retrocede al idioma predeterminado de la tienda
-- Usa la función **Traducción con IA** para traducir automáticamente las plantillas a otros idiomas
+- **Cadena de respaldo de idioma** — Si no está disponible una traducción, el sistema recurre al idioma predeterminado de la tienda
+- Utilice la función **Traducción con IA** para traducir automáticamente las plantillas a otros idiomas
 
 ### Clonar plantillas
 
 Para crear una versión personalizada de una plantilla del sistema:
-1. Abre la plantilla que deseas modificar
-2. Haz clic en **Clonar plantilla**
-3. Edita la versión clonada
-4. La clonación tiene prioridad sobre la plantilla original del sistema
+1. Abra la plantilla que desea modificar
+2. Haga clic en **Clonar plantilla**
+3. Edite la versión clonada
+4. El clon tiene prioridad sobre la plantilla del sistema original
 
 ## Cola de correos electrónicos
 
-Supervisa los correos electrónicos salientes en **Configuración > Cola de correos electrónicos**:
+Monitoree los correos salientes en **Configuración > Cola de correos**:
 
-- **En cola** — Correos electrónicos esperando para ser enviados
+- **En cola** — Correos esperando ser enviados
 - **Enviando** — Actualmente en transmisión
-- **Enviados** — Entregados con éxito
-- **Fallidos** — No se pudieron entregar (con detalles del error)
-- **Rechazados** — Rechazados por el servidor de correo del destinatario
+- **Enviado** — Entregado con éxito
+- **Fallido** — No se pudo entregar (con detalles del error)
+- **Rebotado** — Rechazado por el servidor de correo del destinatario
 
-Haz clic en cualquier correo electrónico para ver sus detalles completos, incluyendo destinatario, asunto, hora de envío y estado de entrega.
+Haga clic en cualquier correo para ver todos sus detalles, incluidos el destinatario, el asunto, la hora de envío y el estado de entrega.
 
 ## Seguimiento de entrega
 
-Rastrea la participación en correos electrónicos:
-- **Abridos** — Cuántos destinatarios abrieron el correo electrónico
-- **Clics** — Clics en enlaces dentro del correo electrónico
-- **Rechazos** — Seguimiento de rechazos duros y suaves
-- **Reclamos** — Informes de spam de los destinatarios
+Realice un seguimiento de la interacción con los correos:
+- **Aperturas** — Cuántos destinatarios abrieron el correo
+- **Clics** — Clics en los enlaces dentro del correo
+- **Rebotes** — Seguimiento de rebotes duros y suaves
+- **Quejas** — Informes de spam de los destinatarios
 
 ## Múltiples cuentas
 
-Puedes configurar múltiples cuentas de correo electrónico:
-- **Cuenta predeterminada** — Se usa para todos los correos electrónicos salientes a menos que se anule
-- **Cuenta de respaldo** — Si la cuenta predeterminada falla, los correos electrónicos se colocan en cola para reintentar
-- Usa cuentas diferentes para diferentes propósitos (por ejemplo, una para correos electrónicos transaccionales, otra para marketing)
+Puede configurar varias cuentas de correo electrónico:
+- **Cuenta predeterminada** — Se utiliza para todos los correos salientes a menos que se anule
+- **Respaldo** — Si la cuenta predeterminada falla, los correos se ponen en cola para reintentar
+- Use cuentas diferentes para diferentes propósitos (por ejemplo, una para correos transaccionales y otra para marketing)
+
+## Modo de entrega de correo
+
+Vaya a **Configuración > Configuración de la tienda** para controlar cómo su tienda maneja los correos salientes. Estos ajustes son útiles durante el desarrollo y las pruebas.
+
+| Modo | Descripción |
+|------|-------------|
+| **En vivo** | Los correos se entregan normalmente a destinatarios reales |
+| **Pausado** | Los correos se retienen en la cola y no se envían hasta que vuelva a cambiar a En vivo |
+| **Solo registro** | Los correos se registran en la bandeja de salida pero nunca se entregan |
+
+### Redirección de prueba de correo
+
+Establezca una dirección de **Correo de redirección de prueba** para interceptar todos los correos salientes y redirigirlos a una única dirección. Cuando se establece, cada correo, independientemente del destinatario real, va a esa dirección en su lugar. Esto es útil para probar plantillas de correo sin enviar accidentalmente a clientes reales. Deje en blanco para enviar correos a destinatarios reales.
+
+### Lista blanca de correo en modo sandbox
+
+En modo sandbox o de desarrollo, puede restringir la entrega de correos a una lista blanca de direcciones aprobadas. Solo se entregarán los correos a direcciones en la lista blanca. Todos los demás correos se registran pero nunca se envían. El correo del administrador siempre se incluye automáticamente. Puede agregar hasta 10 direcciones.
 
 ## Consejos
 
-- Comienza con el **servidor SMTP integrado** para una configuración rápida, luego cambia a un proveedor externo si necesitas mayores volúmenes de envío o mejor entrega.
-- Siempre configura los registros **SPF, DKIM y DMARC** — sin ellos, los correos electrónicos tienen mucha más probabilidad de terminar en carpetas de spam.
-- Envía un **correo electrónico de prueba** después de cualquier cambio de configuración para verificar que la entrega funcione.
-- Supervisa regularmente la cola de correos electrónicos para **fallidos** o **rechazados** — indican problemas de entrega.
-- Usa una **dirección de remitente profesional** (por ejemplo, orders@yourstore.com) en lugar de una dirección de correo electrónico gratuita para una mayor confianza y entrega.
-- Mantén tus plantillas concisas — los correos electrónicos transaccionales deben entregar información rápidamente, no ser boletines de marketing.
+- Comience con el servidor **SMTP integrado** para una configuración rápida, luego cambie a un proveedor externo si necesita volúmenes de envío más altos o una mejor entregabilidad.
+- Configure siempre los registros **SPF, DKIM y DMARC** — sin ellos, es mucho más probable que los correos terminen en las carpetas de spam.
+- Envíe un **correo de prueba** después de cualquier cambio de configuración para verificar que la entrega funcione.
+- Monitoree la cola de correos regularmente en busca de correos **fallidos** o **rebotados** — estos indican problemas de entregabilidad.
+- Use una **dirección de remitente profesional** (por ejemplo, orders@yourstore.com) en lugar de una dirección de correo gratuita para una mejor confianza y entregabilidad.
+- Mantenga sus plantillas concisas — los correos transaccionales deben entregar información rápidamente, no ser boletines de marketing.

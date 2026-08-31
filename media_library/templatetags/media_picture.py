@@ -45,14 +45,15 @@ def _sources_from_thumbnail(thumb):
     }
 
 
-def _resolve_url_sources(url):
+def _resolve_url_sources(url, size_preset=None):
     """Resolve a stored media URL (thumbnail rendition OR full-size) to sources.
 
     A URL may point at a per-preset MediaThumbnail file (``{id}_{preset}.webp``)
     or at the asset's own full-size file (``{id}.webp``). Match the thumbnail
     first so its exact-size AVIF/WebP siblings are served; fall back to the
-    asset. Unrecognised/external URLs return a plain fallback so the caller
-    just renders a normal <img>.
+    asset, resolving it at ``size_preset`` so a requested preset yields that
+    rendition rather than the full-size one. Unrecognised/external URLs return a
+    plain fallback so the caller just renders a normal <img>.
     """
     import os
     from urllib.parse import urlparse
@@ -78,7 +79,7 @@ def _resolve_url_sources(url):
 
     asset = MediaAsset.resolve_from_url(url)
     if asset:
-        return asset.get_picture_sources()
+        return asset.get_picture_sources(size_preset)
     return _empty_sources(url)
 
 
@@ -92,12 +93,13 @@ def resolve_sources(source, size_preset=None):
         return source.get_picture_sources(size_preset)
     if isinstance(source, str):
         # An asset object + preset resolves precisely; a bare URL is resolved
-        # (and cached) against thumbnail then full-size renditions.
-        cache_key = f"picture_sources:url:{source}"
+        # (and cached) against thumbnail then full-size renditions. The preset is
+        # part of the cache key so distinct renditions of one URL don't collide.
+        cache_key = f"picture_sources:url:{size_preset or ''}:{source}"
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
-        result = _resolve_url_sources(source)
+        result = _resolve_url_sources(source, size_preset)
         cache.set(cache_key, result, _SOURCES_CACHE_TTL)
         return result
     # Unknown type (e.g. a model exposing get_picture_sources) — duck-type it.

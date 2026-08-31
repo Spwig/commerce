@@ -1057,6 +1057,12 @@ def languages_bulk_update_api(request):
                 first_active.is_default = True
                 first_active.save()
 
+        # Bulk .update() bypasses the SiteLanguage signals, so clear the
+        # language-metadata caches explicitly.
+        from translations.signals import invalidate_site_language_caches
+
+        invalidate_site_language_caches()
+
         # Get updated counts
         active_count = SiteLanguage.objects.filter(is_active=True).count()
         total_count = SiteLanguage.objects.count()

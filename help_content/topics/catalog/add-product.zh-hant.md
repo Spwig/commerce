@@ -1,232 +1,210 @@
 ---
-title: 新增商品
+title: 新增產品
 ---
 
-<!-- screenshots-needed:
-- url: /admin/catalog/product/<id>/change/
-  filename: inventory-tab.webp
-  description: 库存標籤，捲動以顯示實體屬性、運費，
-    和預購卡一起（需要勾選需要運費，選擇首選運費包裝，
-    和勾選預購並填入發行日期和訊息，讓所有新欄位一次可見）。
-  save-to: core/static/core/admin/img/help/add-product/
-  viewport: 1440x900
-  notes: 取代現有的 inventory-tab.webp，這張圖片在運費
-    和預購卡出現之前就已存在，現在已不符合即時表單。
-- url: /admin/catalog/product/<id>/change/
-  filename: tags-card.webp
-  description: 基本資訊標籤，捲動至標籤卡，顯示已套用幾個標籤
-    在商品的標籤選擇器中。
-  save-to: core/static/core/admin/img/help/add-product/
-  viewport: 1440x900
-- url: /admin/catalog/product/<id>/change/
-  filename: advanced-tab.webp
-  description: 進階標籤顯示商品頁面設定卡（頁面範本下拉選單選擇非預設選項）
-    和下方的技術細節卡。
-  save-to: core/static/core/admin/img/help/add-product/
-  viewport: 1440x900
--->
+本指南將引導您在商店中建立新產品。產品表單分為多個區塊，涵蓋基本資訊、媒體、定價、庫存、SEO 等內容——您可以一次填寫所有內容，也可以稍後回來完成各區塊。
 
-此指南將引導您完成在商店中建立新商品的過程。商品表單分為多個部分，涵蓋基本資訊、媒體、定價、庫存、SEO 等 - 您可以一次填寫所有內容，或稍後再回來完成某些部分。
+## 開始使用
 
-## 開始
+從側邊欄導覽至 **Products > All Products** 以查看您的產品目錄。點擊右上角的 **+ Add Product** 按鈕以開啟產品建立表單。
 
-從側邊欄導覽至 **Products > All Products** 以查看您的商品目錄。點擊右上角的 **+ 新增商品** 按鈣以開啟商品建立表單。
-
-![商品清單頁面](/static/core/admin/admin/img/help/add-product/product-list-page.webp)
+![產品列表頁面](/static/core/admin/img/help/add-product/product-list-page.webp)
 
 ## 基本資訊
 
-**基本資訊** 區域是您定義商品核心身分的地方。
+**Basic Information** 區塊是用來定義產品核心識別資訊的地方。
 
-![新增商品表單](/static/core/admin/admin/img/help/add-product/add-product-form.webp)
+![新增產品表單](/static/core/admin/img/help/add-product/add-product-form.webp)
 
 ### 必填欄位
 
-保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
-
-- **名稱** — 顯示給客戶的產品名稱。
-
-點擊地球圖示以新增其他語言的翻譯。
-- **Slug** — 友好網址的名稱（自動產生）。
-
-如需自定義，請進行調整。
+- **Name** — 顯示給客戶的產品名稱。點擊地球圖示以新增其他語言的翻譯。
+- **Slug** — 名稱的 URL 友善版本（自動產生）。如有需要可自訂。
 - **SKU** — 您的內部庫存單位代碼。
-- **產品類型** — 選擇：簡單、變動、數位、套裝組合、禮品卡、自定義、可配置或預訂。
-- **分類** — 將產品分配到某個分類中，以便進行組織和商店目錄導航。
+- **Product Type** — 從以下選項中選擇：Simple、Variable、Digital、Bundle、Gift Card、Customizable、Configurable 或 Booking。
+- **Category** — 將產品指派給類別，以便於組織和店面導覽。
 
-### 狀態和可見性
+### 狀態與可見性
 
-位於表單底部的 **狀態** 部分：
+位於表單底部的 **Status** 區塊中：
 
-- **狀態** — 在編輯時設為 **草稿**，準備銷售時設為 **已發佈**，或設為 **已停售** 以標示不再提供的產品。
-- **是否為特色產品** — 勾選以在您的商店目錄中強調此產品。
-- **是否為數位產品** — 勾選以標示此產品包含數位下載（檔案、許可證）。可以與任何產品類型結合使用。
-- **隱藏於商店目錄** — 在目錄清單中隱藏此產品，同時保持其作為組裝選項或套裝組合組件的可用性。
+- **Status** — 工作期間設為 **Draft**，準備銷售時設為 **Published**，不再提供的產品則設為 **Discontinued**。
+- **Is Featured** — 勾選以在您的店面中突出顯示此產品。
+- **Is Digital Product** — 如果此產品包含數位下載（檔案、授權），請勾選。可與任何產品類型結合使用。
+- **Hide from Storefront** — 將產品隱藏於目錄列表中，同時保留其作為配置器選項或捆綁組件的可用性。
 
-### 可選欄位
+### 選填欄位
 
-- **品牌** — 如果適用，關聯至一個品牌。
-- **標籤** — 在此選項卡下方的 **標籤** 卡片中指派一個或多個標籤。標籤與集合不同——它們是用於組織和過濾產品的快速、自由格式標籤，而不是商品陳列的分組。開始輸入以搜尋現有標籤，或輸入新名稱以即時建立一個新標籤。請參閱 **產品標籤** 助手主題以直接建立、重新命名和批量刪除標籤。
+- **Brand** — 如適用，請與品牌關聯。
+- **Tags** — 在此標籤頁下方的 **Tags** 卡片中指派一個或多個標籤。
+
+標籤與類別分開，它們是用於組織和過濾產品的快速、自由格式標籤，而不是商品推廣分組。
+
+開始輸入以搜尋現有的標籤，或輸入新名稱以即時建立一個。
+
+請參閱 **產品標籤** 助手主題以了解如何直接建立、重新命名和批量刪除標籤。
+
+![基本資訊標籤中的標籤卡，標籤選擇器中套用兩個標籤](/static/core/admin/img/help/add-product/tags-card.webp)
 
 ### 產品描述
 
 - **簡短描述** — 出現在產品清單和卡片中。請保持簡潔且有說服力。
-- **完整描述** — 顯示在產品詳情頁的詳細產品描述。使用豐富文字編輯器來新增格式、圖片、影片和表格。
+- **完整描述** — 產品詳細描述，顯示在產品詳情頁面。請使用豐富文字編輯器來新增格式、圖片、影片和表格。
 
 兩個描述欄位都支援翻譯功能 — 點擊地球圖示以提供其他語言的內容。
 
 ### 特性和規格
 
+**產品細節** 部分包含兩個結構化資料欄位：
+
+- **特點** — 產品亮點的關鍵-值對（例如："電池壽命：20小時"）。
+- **規格** — 產品頁面的規格標籤中的技術細節（例如："處理器：Intel i7"）。
+
+## 媒體
+
+**媒體** 部分讓您使用內建的媒體資料庫管理產品圖片。
+
+![媒體標籤](/static/core/admin/img/help/add-product/media-tab.webp)
+
+1. 點擊 **+ 從媒體資料庫新增圖片** 以開啟媒體選擇器。
+2. 選擇現有的圖片或直接上傳新圖片。
+3. 拖動圖片以重新排序 — **第一張圖片** 會成為清單和卡片中顯示的主要產品圖片。
+
+**相簿類型** 欄位位於圖片清單下方的 **相簿設定** 卡片中，用來控制 storefront 中圖片的顯示方式：標準相簿、輪播、網格版型、放大相簿或360°檢視。
+
+## 價格
+
+設定產品的定價並配置促銷。
+
+![定價標籤](/static/core/admin/img/help/add-product/pricing-tab.webp)
+
+### 常規定價
+
 保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
 
-The **Product Details** section contains two structured data fields:
+- **Regular Price** — 顧客將看到的標準零售價。
 
-- **Features** — Key-value pairs for product highlights (e.g., "Battery Life: 20 hours").
-- **Specifications** — Technical details for the specifications tab on the product page (e.g., "Processor: Intel i7").
+貨幣與價格金額一併設定。
+- **Cost** — 您的貨品成本，用於利潤計算。
 
-## Media
+此資訊絕不會顯示給顧客。
 
-The **Media** section lets you manage product images using the integrated Media Library.
+### 促銷設定
 
-![Media tab](/static/core/admin/img/help/add-product/media-tab.webp)
+設定限時折扣：
 
-1. Click **+ Add Images from Media Library** to open the media picker.
-2. Select existing images or upload new ones directly.
-3. Drag images to reorder them — the **first image** becomes the primary product image shown in listings and cards.
+- **Sale Type** — 可選擇：無促銷、固定促銷價、金額折扣或百分比折扣。
+- **Sale Value** — 折扣金額或百分比。
+- **Sale Start Date / Sale End Date** — 排程促銷的啟用與結束時間。留空則立即開始或無結束日期。
 
-The **Gallery Type** field, in the **Gallery Settings** card below the image list, controls how images are displayed on the storefront: Standard Gallery, Carousel, Grid Layout, Zoom Gallery, or 360° View.
+### 多幣別定價
 
-## Pricing
+如果您的商店已啟用多幣別，將出現 **Pricing Strategy** 欄位：
 
-Set your product's pricing and configure sales.
+- **Dynamic Pricing** — 其他幣別的價格將使用您設定的匯率自動計算。
+- **Fixed Pricing** — 使用下方出現的 **Multi-Currency Pricing** 區塊，為每個幣別獨立設定特定價格。
 
-![Pricing tab](/static/core/admin/img/help/add-product/pricing-tab.webp)
+## 庫存
 
-### Regular pricing
+管理庫存數量、出貨行為及實體產品屬性。
 
-- **Regular Price** — The standard retail price customers will see. The currency is set alongside the price amount.
-- **Cost** — Your cost of goods, used for profit calculations. This is never shown to customers.
-
-### Sale settings
-
-Configure temporary discounts:
-
-- **Sale Type** — Choose from: No Sale, Fixed Sale Price, Amount Off, or Percentage Off.
-- **Sale Value** — The discount amount or percentage.
-- **Sale Start Date / Sale End Date** — Schedule when the sale activates and expires. Leave empty for an immediate start or no end date.
-
-### Multi-currency pricing
-
-If multi-currency is enabled on your store, a **Pricing Strategy** field appears:
-
-- **Dynamic Pricing** — Prices in other currencies are automatically calculated using your configured exchange rates.
-- **Fixed Pricing** — Set a specific price for each currency independently using the **Multi-Currency Pricing** section that appears below.
-
-## Inventory
-
-Preserve all markdown formatting, image paths, code blocks, and technical terms.
-
-管理庫存數量、運輸行為和實體產品屬性。
-
-![庫存標籤](/static/core/admin/img/help/add-product/inventory-tab.webp)
+![Inventory tab](/static/core/admin/img/help/add-product/inventory-tab.webp)
 
 ### 庫存管理
 
-- **追蹤庫存** — 啟用以追蹤庫存數量（預設已啟用）。
-- **低庫存門檻** — 當庫存低於此數字時收到通知（預設：5）。
-- **允許預購** — 啟用以在庫存不足時接受訂單。
-- **庫存不足時的動作** — 當此產品庫存不足時覆蓋網站或分類的預設行為：隱藏它、顯示為不可用、顯示「通知我」按鈕，或允許預購。
+- **Track Inventory** — 啟用以追蹤庫存數量（預設為啟用）。
+- **Low Stock Threshold** — 當庫存低於此數值時收到警示（預設：5）。
+- **Allow Backorders** — 啟用以在缺貨時仍接受訂單。新產品預設使用 **Settings > Store Settings > Commerce** 中的 **Allow Backorders by Default** 值，但您可以隨時在此針對每個產品進行覆寫。
+- **Out of Stock Action** — 當此產品缺貨時，覆寫全站或類別的預設行為：隱藏該產品、顯示為無法購買、顯示「通知我」按鈕，或允許預購。
 
-庫存數量會根據倉庫進行管理。保存產品後，使用表單底部的 **庫存項目** 部分（或導航至 **產品 > 庫存項目**）來設置每個倉庫地點的數量。
+庫存數量依倉庫管理。儲存產品後，使用表單底部的 **Stock Items** 區塊（或前往 **Products > Stock Items**）來設定每個倉庫地點的數量。
 
 ### 實體屬性
 
-輸入產品的重量（kg）和尺寸（長度、寬度、高度，單位：cm），以進行準確的運輸計算。
+輸入商品的重量（kg）和尺寸（長度、寬度、高度，單位：cm），以進行準確的運費計算。
 
-### 運輸
+### 運費
 
-- **需要運輸** — 該產品是否需要運送到客戶。預設為實體產品啟用；你的 storefront 和結帳會使用它來判斷是否收集運輸地址並為訂單提供運費估算。Spwig 會自動關閉數位產品、預訂和禮品卡產品的此功能，因為這些產品從來不會被寄送 —— 你不需要（也不能）重新啟用此功能。對於外觀類似數位產品的實體產品，請保持此選項為已勾選，例如一張列印的禮品卡，會以盒子運送。
-- **首選運輸包裝** — 選擇你已設定的運輸包裝之一。設定後，會使用包裝本身的尺寸進行運費計算，而不是使用此產品的重量和尺寸 —— 當產品始終使用相同的標準盒子或信封時非常有用。留空以使用產品本身的實體屬性。在 **運輸 > 包裝** 下管理可用的包裝。
+- **需要運費** — 該商品是否需要運送到客戶。預設情況下，實體商品需要運費；你的商店和結賬流程會使用此選項來判斷是否需要收集運費地址並為訂單提供運費報價。Spwig會自動關閉數位商品、預訂商品和禮品卡商品的運費功能，因為這些商品從來不會被寄送 —— 你無法重新打開這些商品類型的運費功能。如果你的實體商品看起來像數位商品（例如，裝在盒內的列印禮品卡），請保持此選項為已勾選。
+- **首選運費包裝** — 選擇你已設定的運費包裝之一。設定後，會使用該包裝本身的尺寸進行運費計算，而不是使用上面的產品重量和尺寸 —— 當商品始終使用相同的標準盒子或信封時非常實用。留空以使用產品本身的物理屬性。在 **運費 > 包裝** 下管理可用的包裝。
 
 ### 預購
 
-保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
+使用 **預購** 卡片來在商品沒有庫存時進行銷售 —— 對於你希望在上市前開始接受訂單的即將推出的產品非常有用：
 
-使用 **預購** 卡片在商品沒有庫存時進行銷售 - 對於您希望提前開始接受訂單的即將推出的產品非常有用：
+- **是否為預購** — 啟用此選項，讓客戶在商品缺貨時也能購買此商品。
+- **預購發售日期** — 顯示給客戶的預期可用日期。
+- **預購訊息** — 顯示給客戶的短自定訊息，最多 200 個字元（例如："預計 2026 年 3 月發貨"）。
 
-- **是否為預購** — 啟用此選項，讓顧客即使在商品缺貨時也能購買此商品。
-- **預購發售日期** — 顯示給顧客的預期可用日期。
-- **預購訊息** — 顯示給顧客的短自定訊息，最多 200 個字元（例如："預計 2026 年 3 月發貨"）。
+### 商品識別碼
 
-### 產品識別碼
+用於市場平台清單和庫存系統的標準商品代碼：
 
-用於市場平台清單和庫存系統的標準產品代碼：
-
-- **GTIN** — 全球貿易項目編號
-- **EAN** — 歐洲產品編號
-- **UPC** — 統一產品代碼（美國）
+- **GTIN** — 全球交易項目編號
+- **EAN** — 歐洲商品編號
+- **UPC** — 統一商品編碼（美國）
 - **ISBN** — 用於書籍
 - **ASIN** — 亞馬遜識別碼
 - **MPN** — 製造商零件編號
 
-### 國際運輸 / 海關
+### 國際運費 / 關稅
 
-適用於國際運輸（展開 **國際運輸 / 海關** 部分）：
+保留所有 markdown 格式、圖片路徑、代碼塊和技術術語。
 
-- **HS Code** — 通用系統分類代碼
-- **原產國** — 產品製造國家
-- **海關單元價格** — 海關申報單元價格
-- **出口許可編號** — 僅適用於受控或限制物品
-- **出口許可有效期** — 出口許可的有效期
+用於國際運輸（展開**國際運輸/海關**部分）：
+
+- **HS編碼** — 統一分類代碼
+- **原產國** — 產品製造地
+- **海關單價** — 海關申報的單位金額
+- **出口許可編號** — 僅限於受控或限制物品
+- **出口許可到期日** — 出口許可的到期日
 
 ## SEO
 
-優化您的產品的搜索引擎可見度。
+優化您的產品的搜索引擎可見性。
 
-![SEO 標籤](/static/core/admin/img/help/add-product/seo-tab.webp)
+![SEO標籤](/static/core/admin/img/help/add-product/seo-tab.webp)
 
-- **Meta 標題** — 在搜索引擎結果中顯示的標題。點擊地圖圖示進行翻譯。
-- **Meta 描述** — 搜索結果的簡短描述（最多 160 個字元）。點擊地圖圖示進行翻譯。
-- **自動產生 SEO** — 勾選以在保存產品時自動產生 SEO 內容。
+- **Meta標題** — 在搜索引擎結果中顯示的標題。點擊地球圖示以進行翻譯。
+- **Meta描述** — 用於搜索引擎結果的簡短描述（最多160個字符）。點擊地球圖示以進行翻譯。
+- **自動產生SEO** — 勾選以在保存產品時自動產生SEO內容。
 
-即時 **搜尋結果預覽** 顯示您的產品在 Google 搜索結果中將如何顯示。
+即時**搜索結果預覽**顯示您的產品在Google搜索結果中將如何顯示。
 
-## 產品頁面設定
+## 產品頁面設置
 
-在 **高階** 標籤中，**產品頁面設定** 卡片讓您控制此產品 storefront 頁面的外觀：
+在**高級**選項卡中，**產品頁面設置**卡片讓您控制此產品 storefront 頁面的外觀：
 
-- **頁面模板** — 覆蓋網站預設的商品頁面佈局，為此商品選擇：經典、全寬度、相册焦點或數位。
-
-將其設為 **使用網站預設** 以繼承設計設定中指定的佈局 — 大多數商品應保持預設，以便模板變更自動套用。
-- **顯示相關商品** — 在頁面底部顯示相關商品。
+- **頁面模板** — 覆蓋網站預設的產品頁面版式，用於此產品：經典、全寬度、畫廊焦點或數位。保留設為**使用網站預設**以繼承設計設置中指定的版式 - 大多數產品應保持預設，以便模板更改自動應用。
+- **顯示相關產品** — 在頁面底部顯示相關產品。
 - **顯示評論** — 顯示客戶評論。
-- **顯示規格** — 顯示規格選項卡。
+- **顯示規格** — 顯示規格標籤。
 
-**相册類型** 字段 — 控制商品圖片顯示方式（標準相册、滑動圖片、網格佈局、放大相册或360°檢視） — 請在 **媒體** 標籤中單獨設定。
+**畫廊類型**欄位 - 控制產品圖片顯示方式（標準畫廊、幻燈片、網格佈局、放大畫廊或360°檢視） - 請在**媒體**選項卡中單獨設置。
 
-## 銷售管道
+![高級選項卡顯示產品頁面設置卡片，包含頁面模板下拉選單，以及下方的技術細節卡片](/static/core/admin/img/help/add-product/advanced-tab.webp)
 
-**銷售管道** 字段（在狀態部分）控制商品可以銷售的地點：
+## 銷售渠道
 
-- **所有管道** — 線上和實體店（POS）均可銷售。
-- **僅限在線** — 不可在POS終端銷售。
-- **僅限實體店** — 不在線上市；僅可在您的實體店購買。
+**銷售渠道** 欄位（位於狀態區塊）控制產品可在哪裡銷售：
 
-也有一個 **條碼** 字段用於POS條碼掃描。
+- **所有渠道** — 線上與實體店面（POS）皆可銷售。
+- **僅限線上** — 無法透過 POS 終端機銷售。
+- **僅限實體店面** — 不在線上展示；僅可在您的實體店面購買。
 
-## 保存您的商品
+另提供 **條碼** 欄位，供 POS 條碼掃描使用。
 
-當您準備好時，請使用右上角的保存按鈕。當您將狀態設為 **已發佈** 後，商品將會出現在 storefront 中。
+## 儲存您的產品
+
+準備就緒後，請使用右上角的儲存按鈕。當產品狀態設定為 **已發布** 時，產品將顯示在商店前端。
 
 ## 提示
 
-保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
-
-- 以 **草稿** 状态開始，這樣您可以在客戶看到產品之前完善它。
-- 上傳多張圖片 —— 具有多張照片的產品轉化率更高。
-- 填寫 **SEO** 字段以提高在搜索引擎中的可發現性。
-- 使用 **分類**, **品牌** 和 **標籤** 來幫助客戶導覽您的目錄。
-- 對於變量產品（例如不同尺寸或顏色），請選擇 **變量產品** 類型，並在保存後新增變體。
-- 使用 **特點** 和 **規格** 來新增結構化產品資料，這些資料會在產品頁面的專門標籤中顯示。
-- 如果 **需要運輸** 選項無法保持勾選狀態，請查看 **產品類型** —— Spwig 會自動關閉數位、預訂和禮品卡產品的運輸功能，因為這些產品都不會被實際寄送。
-- 為始終使用相同盒子運送的產品設置 **預ferred 運輸包裝** —— 這可以節省您不必始終同步該產品的重量和尺寸與實際使用的盒子。
+- 建議先使用 **草稿** 狀態，以便在客戶看到之前完善產品資訊。
+- 上傳多張圖片 — 擁有數張照片的產品轉換率較高。
+- 填寫 **SEO** 欄位，以提升在搜尋引擎中的可見度。
+- 使用 **分類**、**品牌** 和 **標籤** 協助客戶瀏覽您的商品目錄。
+- 對於變體產品（例如不同尺寸或顏色），請選擇 **變體產品** 類型，並在儲存後新增變體。
+- 使用 **特色** 和 **規格** 新增結構化產品資料，這些資料將顯示在產品頁面的專屬分頁中。
+- 如果 **需要運送** 無法保持勾選狀態，請檢查 **產品類型** — Spwig 會自動為數位、預約和禮券產品關閉運送功能，因為這些產品均無實體寄送需求。
+- 為總是使用相同包裝盒出貨的產品設定 **首選運送包裝** — 這可省去您不斷同步該產品自身重量與尺寸與實際使用包裝盒資訊的麻煩。

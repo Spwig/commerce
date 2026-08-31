@@ -117,7 +117,7 @@ def get_english_base_files(template_dir):
 
 class Command(SeedCommand):
     seed_name = "email_templates"
-    seed_version = 7
+    seed_version = 8
     help = "Seed all email templates (English base + 16 language translations) from markdown files"
 
     def seed(self) -> int:

@@ -6,6 +6,7 @@ All API endpoints are consolidated here to be included outside i18n_patterns.
 from django.urls import include, path
 
 from . import api_views
+from .api.urls import urlpatterns as translation_urlpatterns
 from .views import personalize_page
 
 app_name = "page_builder_api"
@@ -49,8 +50,10 @@ urlpatterns = [
         api_views.capture_page_thumbnail,
         name="capture_thumbnail",
     ),
-    # Translation API endpoints (from page_builder.api.urls)
-    path("translation/", include("page_builder.api.urls")),
+    # Translation API endpoints (from page_builder.api.urls). Include the inner
+    # urlpatterns directly (without their app_name) so the routes stay flat under
+    # page_builder_api instead of nesting into page_builder_api:page_builder_api.
+    path("translation/", include(translation_urlpatterns)),
     # Public Pages API (Headless Frontend)
     path("public/legal/", api_views.get_legal_pages, name="public_legal_pages"),
     path("public/type/<str:page_type>/", api_views.get_page_by_type, name="public_page_by_type"),

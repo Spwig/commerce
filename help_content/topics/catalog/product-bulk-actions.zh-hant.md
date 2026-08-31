@@ -2,7 +2,7 @@
 title: 商品批量操作
 ---
 
-在 **商品** 列表中，您可以一次性对多个商品进行操作，而不是逐一打开每个商品。在商品网格上方工具栏的 **批量操作** 下拉菜单中，您可以发布或取消发布商品，将其设为特色或取消特色，将数据导出为 CSV 文件，检查哪些商品已准备好进行国际运输，或删除它们——所有操作均可在一步中完成。
+在 **商品** 列表中，您可以一次性对多个商品进行操作，而不是逐一打开每个商品。在商品网格上方的工具栏中的 **批量操作** 下拉菜单中，您可以发布或取消发布商品，将其设为特色或取消特色，将数据导出为 CSV，检查哪些商品已准备好进行国际运输，或删除它们——所有操作均可在一步中完成。
 
 导航至 **商品 > 所有商品** 以使用这些操作。
 
@@ -21,35 +21,37 @@ title: 商品批量操作
 
 | Action | What it does |
 |--------|---------------|
-| **Mark as Published** | 將所選商品的狀態設為已發佈，使其在 storefront 中可見。 |
-| **Mark as Draft** | 將所選商品的狀態設為草稿，使其在您編輯時隱藏在 storefront 中。 |
-| **Mark as Featured** | 在所選商品上啟用 **Is Featured**。 |
-| **Remove Featured** | 在所選商品上停用 **Is Featured**。 |
-| **Export to CSV** | 下載所選商品的 ID、名稱、SKU、狀態、特色標誌和價格的 CSV 檔案。 |
-| **Export Customs Data (CSV)** | 下載所選商品的海關資訊 CSV 檔案。請參閱下方。 |
-| **Check International Shipping Readiness** | 顯示哪些所選商品具備國際運輸所需的海關資料。請參閱下方。 |
-| **Delete Selected** | 將所選商品移至回收筒，需確認提示。 |
+| **Mark as Published** | Sets the selected products' status to Published so they're visible on the storefront. |
+| **Mark as Draft** | Sets the selected products' status to Draft, hiding them from the storefront while you keep editing. |
+| **Mark as Featured** | Enables **Is Featured** on the selected products. |
+| **Remove Featured** | Disables **Is Featured** on the selected products. |
+| **Export to CSV** | Downloads a CSV of the selected products' ID, name, SKU, status, featured flag, and price. |
+| **Export Customs Data (CSV)** | Downloads a CSV of customs information for the selected products. See below. |
+| **Check International Shipping Readiness** | Shows a summary of which selected products have the customs data they need for international shipments. See below. |
+| **Delete Selected** | Moves the selected products to the recycle bin, after a confirmation prompt. |
 
 ## Export Customs Data (CSV)
 
-當您需要海關申報單交給貨運代理、快遞或海關經紀人時使用此功能——例如，在大型國際運輸前，或在設置需要 HS 編碼和來源資料的新型運輸商時。
+Use this when you need a customs declaration sheet to hand to a freight forwarder, courier, or customs broker — for example, before a large international shipment, or when setting up a new carrier that asks for HS codes and origin data up front.
 
-選擇商品，從下拉選單中選擇 **Export Customs Data (CSV)**，然後點擊 **Apply**。 Spwig 會下載名為 `product_customs_data.csv` 的檔案，每個商品一列，包含以下欄位：
+Select the products, choose **Export Customs Data (CSV)** from the dropdown, and click **Apply**. Spwig downloads a file named `product_customs_data.csv` with one row per product and these columns:
 
 | Column | Source |
 |--------|--------|
-| **SKU** | 商品的 SKU |
-| **Name** | 商品名稱 |
-| **HS Code** | 和諧系統分類代碼 |
-| **Country of Origin** | 商品製造地 |
-| **Customs Unit Price** | 海關申報單的單位價格 |
-| **Export License** | 如果商品需要，出口許可證號 |
-| **License Expiry** | 如果設置了出口許可證的到期日 |
-| **International Ready** | `Yes` 或 `No` —— 商品是否具備國際運輸所需的最低資料（請參閱下方） |
+| **SKU** | The product's SKU |
+| **Name** | The product name |
+| **HS Code** | The Harmonized System classification code |
+| **Country of Origin** | Where the product is manufactured |
+| **Customs Unit Price** | The declared value per unit for customs |
+| **Export License** | The export license number, if the product requires one |
+| **License Expiry** | The export license's expiration date, if set |
+| **International Ready** | `Yes` or `No` — whether the product has the minimum data required for international shipping (see below) |
 
-這些欄位來自產品表單中的 **國際運輸 / 海關** 部分。
+Preserve all markdown formatting, image paths, code blocks, and technical terms.
 
-如果某個產品缺少其中一個欄位，在匯出時該欄位將為空白 - 在依賴此檔案進行實際運輸前，請在產品中填寫缺失的資料。
+這些欄位來自產品表單的 **國際運輸 / 海關** 部分。
+
+如果某個產品缺少其中一個欄位，在匯出時該欄位將留空 - 在依賴此檔案進行實際運輸前，請在產品中填寫缺失的資料。
 
 ## 檢查國際運輸準備狀態
 
@@ -57,10 +59,10 @@ title: 商品批量操作
 
 選擇產品，選擇 **檢查國際運輸準備狀態**，然後點擊 **套用**。 Spwig 會根據三個必要欄位 - **HS 稅則編碼**、**原產國** 和 **海關單價** - 檢查每個選中的產品，並顯示總結結果的通知：
 
-- 如果每個選中的產品都填寫了所有三個欄位，您將看到確認所有產品都已準備好的訊息。
-- 如果某些產品缺少資料，通知會報告有多少個已準備好，有多少個未準備好，並列出每個未準備好的產品以及其缺少的欄位（例如，「藍色陶瓷杯（缺少：hs_code, country_of_origin）」）。如果超過 10 個產品缺少資料，通知會列出前 10 個，並告訴您還有多少個更多。
+- 如果每個選中的產品都填寫了所有三個欄位，您將看到確認所有產品都已準備好。
+- 如果有些產品缺少資料，通知會報告有多少個已準備好，有多少個未準備好，並列出每個未準備好的產品以及其缺失的欄位（例如，「藍色陶瓷杯（缺失：hs_code, country_of_origin）」）。如果超過 10 個產品缺少資料，通知會列出前 10 個，並告訴您還有多少個。
 
-此操作僅讀取資料 - 它不會變更產品上的任何內容，因此在您填寫目錄中的海關資訊時，可以安全地經常運行。
+此操作僅讀取資料 - 它不會變更產品上的任何內容，因此在您填寫目錄中的海關資訊時，可以安全地經常運行此操作。
 
 **出口許可編號** 和 **出口許可到期日** 不屬於準備狀態檢查的一部分。它們僅適用於受控或限制物品，因此產品可以「準備好」國際運輸而沒有它們。
 
@@ -68,8 +70,8 @@ title: 商品批量操作
 
 保留所有 markdown 格式、圖片路徑、程式碼區塊和技術術語。
 
-- 在您收到第一笔国际订单之前，对整个商品目录（或一次一个类别）运行 **检查国际运输准备状态** —— 比在货物已经到达边境时才发现缺少 HS 编码要快得多。
-- 保留 **导出海关数据 (CSV)** 供经纪人和承运商使用，并使用 **检查国际运输准备状态** 作为您内部的待办清单 —— CSV 是一份记录，准备状态检查是待办清单。
+- 在您收到第一份国际订单之前，对整个商品目录（或一次一个类别）运行 **检查国际运输准备状态** —— 比在货物已经到达边境时才发现缺少 HS 编码要快得多。
+- 保留 **导出海关数据 (CSV)** 供经纪人和承运商使用，并使用 **检查国际运输准备状态** 作为您内部的待办清单 —— CSV 是一份记录，准备状态检查是一份待办清单。
 - 在添加新产品时，在产品表单（在 **国际运输 / 海关** 下）填写 **HS 编码**、**原产国** 和 **海关单价**，以免之后需要批量处理。
 - 当您滚动时，产品网格会自动加载更多产品（无限滚动），并且您的复选框选择会在新产品加载时保留 —— 您可以滚动以构建大量选择，然后再应用操作。
 

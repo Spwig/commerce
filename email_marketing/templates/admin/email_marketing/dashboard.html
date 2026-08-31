@@ -1,0 +1,168 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Campaign Studio" %} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_marketing/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="em-dash">
+
+  <div class="em-dash-header">
+    <div>
+      <h1><i class="fas fa-paper-plane"></i> {% trans "Campaign Studio" %} <span class="em-beta-badge">{% trans "Beta" %}</span></h1>
+      <p class="subtitle">
+        {% blocktrans with start=start_date|date:"M d" end=end_date|date:"M d, Y" %}Overview for the last 30 days ({{ start }} – {{ end }}){% endblocktrans %}
+      </p>
+    </div>
+    <div class="em-dash-actions">
+      <a class="button primary" href="{% url 'email_marketing_admin:campaign_wizard' %}">
+        <i class="fas fa-plus"></i> {% trans "New Campaign" %}
+      </a>
+      <a class="button" href="{% url 'admin:email_marketing_journey_add' %}">
+        <i class="fas fa-diagram-project"></i> {% trans "New Journey" %}
+      </a>
+      <a class="button" href="{% url 'admin:email_marketing_segment_add' %}">
+        <i class="fas fa-filter"></i> {% trans "New Segment" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-stats-grid">
+    <a class="dashboard-stat-card em-dash-link" href="{% url 'admin:email_marketing_subscriber_changelist' %}">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <div class="value">{{ total_subscribers|default:0 }}</div>
+      <div class="label">{% trans "Active subscribers" %}</div>
+      <div class="em-dash-sub"><i class="fas fa-arrow-up"></i> {{ new_subscribers|default:0 }} {% trans "new (30d)" %}</div>
+    </a>
+    <a class="dashboard-stat-card em-dash-link" href="{% url 'admin:email_marketing_campaign_changelist' %}">
+      <div class="icon"><i class="fas fa-envelope-open-text"></i></div>
+      <div class="value">{{ campaigns_sent|default:0 }}</div>
+      <div class="label">{% trans "Campaigns sent (30d)" %}</div>
+      <div class="em-dash-sub">{{ active_campaigns|default:0 }} {% trans "scheduled / sending" %}</div>
+    </a>
+    <a class="dashboard-stat-card em-dash-link" href="{% url 'admin:email_marketing_journey_changelist' %}">
+      <div class="icon"><i class="fas fa-diagram-project"></i></div>
+      <div class="value">{{ active_journeys|default:0 }}</div>
+      <div class="label">{% trans "Active journeys" %}</div>
+      <div class="em-dash-sub">{{ enrolled_active|default:0 }} {% trans "enrolled now" %}</div>
+    </a>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-paper-plane"></i></div>
+      <div class="value">{{ sends_30d|default:0 }}</div>
+      <div class="label">{% trans "Emails sent (30d)" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-envelope-open"></i></div>
+      <div class="value">{{ open_rate|default:0 }}%</div>
+      <div class="label">{% trans "Open rate" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-hand-pointer"></i></div>
+      <div class="value">{{ click_rate|default:0 }}%</div>
+      <div class="label">{% trans "Click rate" %}</div>
+    </div>
+    {% if email_revenue_display %}
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-sack-dollar"></i></div>
+      <div class="value">{{ email_revenue_display }}</div>
+      <div class="label">{% trans "Attributed revenue (30d)" %}</div>
+      <div class="em-dash-sub">{% trans "from email, all campaigns" %}</div>
+    </div>
+    {% endif %}
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-flask"></i></div>
+      <div class="value">{{ ab_running|default:0 }}</div>
+      <div class="label">{% trans "A/B tests running" %}</div>
+      {% if journey_ab_steps %}<div class="em-dash-sub">{{ journey_ab_steps }} {% trans "journey step(s) testing" %}</div>{% endif %}
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-flag-checkered"></i></div>
+      <div class="value">{{ ab_decided_30d|default:0 }}</div>
+      <div class="label">{% trans "A/B tests decided (30d)" %}</div>
+      {% if journey_ab_winners %}<div class="em-dash-sub">{{ journey_ab_winners }} {% trans "journey winner(s) locked" %}</div>{% endif %}
+    </div>
+    <a class="dashboard-stat-card em-dash-link" href="{% url 'admin:email_marketing_suppressionentry_changelist' %}">
+      <div class="icon"><i class="fas fa-ban"></i></div>
+      <div class="value">{{ suppressed_total|default:0 }}</div>
+      <div class="label">{% trans "Suppressed addresses" %}</div>
+      {% if suppressed_new %}<div class="em-dash-sub"><i class="fas fa-arrow-up"></i> {{ suppressed_new }} {% trans "new (30d)" %}</div>{% endif %}
+    </a>
+  </div>
+
+  <div class="em-charts-grid">
+    <div class="em-chart-card">
+      <h3><i class="fas fa-user-plus"></i> {% trans "Subscriber growth" %}</h3>
+      <canvas id="emGrowthChart"></canvas>
+    </div>
+    <div class="em-chart-card">
+      <h3><i class="fas fa-paper-plane"></i> {% trans "Emails sent" %}</h3>
+      <canvas id="emSendsChart"></canvas>
+    </div>
+  </div>
+
+  <div class="em-recent-grid">
+    <div class="em-recent-card">
+      <h3><i class="fas fa-envelope-open-text"></i> {% trans "Recent campaigns" %}</h3>
+      {% if recent_campaigns %}
+      <ul class="em-recent-list">
+        {% for c in recent_campaigns %}
+        <li>
+          <a href="{% url 'admin:email_marketing_campaign_change' c.pk %}">{{ c.name }}</a>
+          <span class="em-badge em-badge--{{ c.status }}">{{ c.get_status_display }}</span>
+          <span class="em-recent-meta">{{ c.get_campaign_type_display }} · {{ c.sent_count }} {% trans "sent" %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="em-empty">{% trans "No campaigns yet." %} <a href="{% url 'email_marketing_admin:campaign_wizard' %}">{% trans "Create your first" %}</a></p>
+      {% endif %}
+    </div>
+    <div class="em-recent-card">
+      <h3><i class="fas fa-diagram-project"></i> {% trans "Active journeys" %}</h3>
+      {% if active_journey_list %}
+      <ul class="em-recent-list">
+        {% for j in active_journey_list %}
+        <li>
+          <a href="{% url 'admin:email_marketing_journey_change' j.pk %}">{{ j.name }}</a>
+          <span class="em-recent-meta">{{ j.get_trigger_event_display }} · {{ j.enrolled_count }} {% trans "enrolled" %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="em-empty">{% trans "No active journeys." %} <a href="{% url 'admin:email_marketing_journey_add' %}">{% trans "Build one" %}</a></p>
+      {% endif %}
+    </div>
+    <div class="em-recent-card">
+      <h3><i class="fas fa-flask"></i> {% trans "Recent A/B tests" %}</h3>
+      {% if recent_ab_tests %}
+      <ul class="em-recent-list">
+        {% for t in recent_ab_tests %}
+        <li>
+          <a href="{% url 'email_marketing_admin:ab_test_detail' t.id %}">{{ t.campaign_name }}</a>
+          <span class="em-badge">{{ t.status_display }}</span>
+          {% if t.verdict == "significant" %}<span class="list-row-card-badge list-row-card-badge-success">{{ t.confidence }}% {% trans "confidence" %}</span>
+          {% elif t.verdict == "inconclusive" %}<span class="list-row-card-badge list-row-card-badge-warning">{% trans "Inconclusive" %}</span>
+          {% elif t.verdict == "insufficient" %}<span class="list-row-card-badge">{% trans "Not enough data" %}</span>{% endif %}
+          <span class="em-recent-meta">{{ t.test_type_display }}{% if t.winner_label %} · {% trans "Winner" %} {{ t.winner_label }}{% elif t.leader %} · {% trans "Leading" %} {{ t.leader }}{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="em-empty">{% trans "No A/B tests yet." %} <a href="{% url 'email_marketing_admin:campaign_wizard' %}">{% trans "Start a campaign" %}</a></p>
+      {% endif %}
+    </div>
+  </div>
+
+  {{ chart_data|json_script:"em-dash-data" }}
+  <script src="{% static 'email_marketing/js/dashboard.js' %}" defer></script>
+</div>
+{% endblock %}

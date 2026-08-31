@@ -65,6 +65,11 @@ class BlogCategorySerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField())
     def get_post_count(self, obj) -> int:
         """Count published posts in this category."""
+        # Prefer the queryset annotation (avoids an N+1 count per category);
+        # fall back to a direct query when the serializer is used unannotated.
+        annotated = getattr(obj, "published_post_count", None)
+        if annotated is not None:
+            return annotated
         return obj.posts.filter(status="published").count()
 
     def to_representation(self, instance):
@@ -276,6 +281,7 @@ class BlogPostDetailSerializer(BlogPostListSerializer):
         if not settings.show_related_posts:
             return []
         related = obj.get_related_posts(limit=settings.related_posts_count)
+        related = related.select_related("category", "featured_image").prefetch_related("tags")
         return BlogPostListSerializer(
             related,
             many=True,
@@ -388,9 +394,15 @@ class BlogPostWriteSerializer(serializers.ModelSerializer):
                     qs = qs.exclude(pk=instance.pk)
             data["slug"] = slug
 
-        # Scheduled posts must have a scheduled_at time
-        if data.get("status") == "scheduled" and not data.get("scheduled_at"):
-            if not (self.instance and self.instance.scheduled_at):
+        # Scheduled posts must have a scheduled_at time. Evaluate the effective
+        # value: an explicitly submitted value wins (including an explicit null),
+        # otherwise fall back to the existing instance value.
+        if data.get("status") == "scheduled":
+            if "scheduled_at" in data:
+                effective_scheduled_at = data["scheduled_at"]
+            else:
+                effective_scheduled_at = getattr(self.instance, "scheduled_at", None)
+            if not effective_scheduled_at:
                 raise serializers.ValidationError(
                     {"scheduled_at": "A scheduled_at datetime is required for scheduled posts."}
                 )
@@ -431,8 +443,9 @@ class BlogSubscribeSerializer(serializers.Serializer):
         choices=BlogSubscriber.FREQUENCY_CHOICES,
         required=False,
     )
-    category_ids = serializers.ListField(
-        child=serializers.IntegerField(),
+    category_ids = serializers.PrimaryKeyRelatedField(
+        queryset=BlogCategory.objects.all(),
+        many=True,
         required=False,
         default=list,
     )
@@ -449,8 +462,9 @@ class BlogPreferencesSerializer(serializers.Serializer):
 
     notification_frequency = serializers.ChoiceField(choices=BlogSubscriber.FREQUENCY_CHOICES)
     subscribed_categories = BlogCategorySlimSerializer(many=True, read_only=True)
-    subscribed_category_ids = serializers.ListField(
-        child=serializers.IntegerField(),
+    subscribed_category_ids = serializers.PrimaryKeyRelatedField(
+        queryset=BlogCategory.objects.all(),
+        many=True,
         write_only=True,
         required=False,
         default=list,

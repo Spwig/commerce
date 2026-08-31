@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "orders",
     "providers_common",  # Shared UI components for provider browse pages
     "email_system",  # Transactional email provider system
+    "email_marketing",  # Campaign Studio — native EDM authoring & email campaigns
     "shipping",  # Shipping provider management and fulfillment
     "exchange_rates",  # Multi-currency exchange rate providers
     "product_feeds",  # Product feed syndication (Google Merchant, Facebook, etc.)
@@ -452,6 +453,9 @@ def _extend_languages_from_packs(base_languages):
     no DB access required.
     """
     import json as _json
+    import logging as _logging
+
+    logger = _logging.getLogger(__name__)
 
     packs_file = BASE_DIR / "installed_language_packs.json"
     if not packs_file.exists():
@@ -459,14 +463,28 @@ def _extend_languages_from_packs(base_languages):
     try:
         with open(packs_file) as f:
             data = _json.load(f)
-        extended = list(base_languages)
-        existing_codes = {code for code, _ in extended}
-        for code, info in data.get("packs", {}).items():
-            if code not in existing_codes:
-                extended.append((code, _(info["name"])))
-        return extended
-    except Exception:
+    except (OSError, ValueError):
+        logger.exception("Failed to read language packs metadata from %s", packs_file)
         return base_languages
+
+    packs = data.get("packs") if isinstance(data, dict) else None
+    if not isinstance(packs, dict):
+        logger.warning(
+            "Malformed language packs metadata in %s; expected a 'packs' mapping", packs_file
+        )
+        return base_languages
+
+    extended = list(base_languages)
+    existing_codes = {code for code, _ in extended}
+    for code, info in packs.items():
+        if code in existing_codes:
+            continue
+        name = info.get("name") if isinstance(info, dict) else None
+        if not name:
+            logger.warning("Skipping malformed language pack entry %r in %s", code, packs_file)
+            continue
+        extended.append((code, _(name)))
+    return extended
 
 
 LANGUAGES = _extend_languages_from_packs(_BUILTIN_LANGUAGES)
@@ -1390,6 +1408,91 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=7, minute=0),  # once daily at 07:00 UTC
         "options": {"expires": 3600},
     },
+    "drain-campaign-outbox": {
+        # Campaign Studio batch-send worker. Delivers a throttled batch of queued
+        # campaign emails every minute (rate via CAMPAIGN_SEND_RATE_PER_MINUTE).
+        # Runs on ALL editions — Community sends on the merchant's own gateway.
+        "task": "email_marketing.drain_campaign_outbox",
+        "schedule": 60.0,
+        "options": {"expires": 55.0},
+    },
+    "drain-pending-outbox": {
+        # Transactional/journey safety-net: delivers stranded queued outbox rows
+        # (lost on-commit dispatch) and reclaims rows stuck in "sending". The
+        # transactional fast path is the on-commit dispatch; this guarantees
+        # eventual delivery and is the only sender for journey-step emails.
+        "task": "email_system.drain_pending_outbox",
+        "schedule": 90.0,
+        "options": {"expires": 85.0},
+    },
+    "retry-failed-emails": {
+        # Retry failed sends whose backoff has elapsed, so a transient SMTP failure
+        # doesn't permanently lose a transactional email (backoff via
+        # EMAIL_RETRY_BACKOFF_MINUTES keeps it from hammering a flaky recipient).
+        "task": "email_system.retry_failed_emails",
+        "schedule": crontab(minute="*/5"),
+        "options": {"expires": 280},
+    },
+    "process-scheduled-email-campaigns": {
+        # Dispatches marketing campaigns whose scheduled send time has arrived.
+        "task": "email_marketing.process_scheduled_campaigns",
+        "schedule": 60.0,
+        "options": {"expires": 55.0},
+    },
+    "process-recurring-email-campaigns": {
+        # Fires recurring campaign schedules: spawns a broadcast occurrence per
+        # due schedule (or skips/holds per the merchant's freshness policy).
+        "task": "email_marketing.process_recurring_campaigns",
+        "schedule": crontab(minute="*/5"),  # every 5 minutes
+        "options": {"expires": 290},
+    },
+    "process-email-journey-steps": {
+        # Sends due triggered-journey step emails and advances enrollments.
+        "task": "email_marketing.process_journey_steps",
+        "schedule": crontab(minute="*/5"),  # every 5 minutes
+        "options": {"expires": 290},
+    },
+    "process-due-ab-tests": {
+        # Decides A/B tests whose test window has elapsed (pick + send the winner).
+        "task": "email_marketing.process_due_ab_tests",
+        "schedule": crontab(minute="*/5"),  # every 5 minutes
+        "options": {"expires": 290},
+    },
+    "process-journey-ab-winners": {
+        # Auto-optimise journey A/B steps: lock the winning variant once significant.
+        "task": "email_marketing.process_journey_ab_winners",
+        "schedule": crontab(minute="*/15"),  # every 15 minutes
+        "options": {"expires": 880},
+    },
+    "detect-abandoned-carts": {
+        # Enrol idle non-empty carts into cart-abandonment journeys. No-op unless an
+        # active cart-abandonment journey exists.
+        "task": "email_marketing.detect_abandoned_carts",
+        "schedule": crontab(minute="*/15"),  # every 15 minutes
+        "options": {"expires": 880},
+    },
+    "detect-lapsed-customers": {
+        # Enrol lapsed customers into win-back journeys. No-op unless an active
+        # win-back journey exists.
+        "task": "email_marketing.detect_lapsed_customers",
+        "schedule": crontab(hour=3, minute=30),  # once daily at 03:30 UTC
+        "options": {"expires": 3600},
+    },
+    "refresh-email-segments": {
+        # Rebuilds cached member counts for dynamic marketing segments.
+        "task": "email_marketing.refresh_segments",
+        "schedule": crontab(minute=30),  # hourly at :30
+        "options": {"expires": 3600},
+    },
+    "poll-hosted-gateway-bounces": {
+        # Pulls delayed bounces/complaints from the Spwig mail gateway into list
+        # hygiene. Runs on ALL editions but no-ops unless this is a hosted install
+        # with the gateway management API configured (Community sends on its own
+        # gateway → nothing to poll).
+        "task": "email_marketing.poll_hosted_gateway_bounces",
+        "schedule": crontab(minute=45),  # hourly at :45
+        "options": {"expires": 3300},
+    },
     "reap-stalled-migrations": {
         # Returns migration jobs whose worker died to a state the merchant can
         # act on. Without it a killed worker leaves the job "running" for ever,
@@ -1902,6 +2005,76 @@ SHIPPING_ORIGIN_COUNTRY = env("SHIPPING_ORIGIN_COUNTRY", default="US")
 # Webhook timeout for provider callbacks
 SHIPPING_WEBHOOK_TIMEOUT = 30  # seconds
 EMAIL_WEBHOOK_TIMEOUT = 30  # seconds
+
+# --- Transactional email delivery (outbox drainer) --------------------------
+# Fast lane: send_template_email dispatches an async delivery on commit. Turn off
+# to fall back to the (broken) queue-only behaviour — a code-free rollback lever.
+EMAIL_AUTO_DISPATCH = env.bool("EMAIL_AUTO_DISPATCH", default=True)
+# Safety-net sweep (email_system.drain_pending_outbox): re-delivers stranded queued
+# rows and reclaims rows stuck in "sending".
+EMAIL_PENDING_SWEEP_ENABLED = env.bool("EMAIL_PENDING_SWEEP_ENABLED", default=True)
+# Don't sweep a row until it's been queued this long (lets the fast path win first).
+EMAIL_PENDING_SWEEP_GRACE_SECONDS = env.int("EMAIL_PENDING_SWEEP_GRACE_SECONDS", default=120)
+# A row stuck in "sending" longer than this is treated as an orphaned claim.
+EMAIL_PENDING_SWEEP_STUCK_SECONDS = env.int("EMAIL_PENDING_SWEEP_STUCK_SECONDS", default=600)
+# Upper bound on how old a queued row may be and still be swept — guards against a
+# first run mailing the entire historical backlog of stale confirmations/reset links.
+EMAIL_PENDING_SWEEP_MAX_AGE_HOURS = env.int("EMAIL_PENDING_SWEEP_MAX_AGE_HOURS", default=24)
+EMAIL_PENDING_SWEEP_BATCH = env.int("EMAIL_PENDING_SWEEP_BATCH", default=200)
+# Optional hard floor (ISO-8601): never deliver rows queued before this instant.
+# Set to the go-live time on an install with a large pre-existing queued backlog.
+EMAIL_PENDING_SWEEP_FLOOR = env("EMAIL_PENDING_SWEEP_FLOOR", default=None)
+
+# --- Per-account SMTP send budget (transactional-first throttling) ----------
+# The merchant's SMTP/gateway ceiling in sends/minute. UNSET/0 disables throttling
+# (the default — the platform can't guess a merchant's limit). When set, marketing
+# (campaigns/journeys) may only send while the minute's total stays under
+# (ceiling - reserve); transactional mail always sends and is still counted, so a
+# transactional burst makes marketing yield more. Set this to your provider's safe
+# rate to guarantee transactional headroom on a shared account.
+EMAIL_ACCOUNT_SEND_RATE_PER_MINUTE = env.int("EMAIL_ACCOUNT_SEND_RATE_PER_MINUTE", default=0)
+# Sends/minute always kept free for transactional mail (only meaningful when the
+# ceiling is set).
+EMAIL_TRANSACTIONAL_RESERVE_PER_MINUTE = env.int(
+    "EMAIL_TRANSACTIONAL_RESERVE_PER_MINUTE", default=30
+)
+
+# Minimum wait between retry attempts for a failed send (the retry-failed beat honours
+# this so a flaky/greylisting recipient isn't hammered every tick).
+EMAIL_RETRY_BACKOFF_MINUTES = env.int("EMAIL_RETRY_BACKOFF_MINUTES", default=15)
+# A CampaignSend stuck in "sending" longer than this (worker died mid-batch) is
+# reclaimed to queued by the campaign drainer.
+EMAIL_CAMPAIGN_STUCK_SECONDS = env.int("EMAIL_CAMPAIGN_STUCK_SECONDS", default=600)
+# Max stuck CampaignSends reclaimed per drainer tick (the rest follow on later ticks).
+EMAIL_CAMPAIGN_REAP_BATCH = env.int("EMAIL_CAMPAIGN_REAP_BATCH", default=500)
+
+# --- Cart-abandonment journey trigger ---------------------------------------
+# How long a cart must sit idle (no item activity) before it's eligible for a
+# cart-abandonment journey; the max age still eligible (a floor so a first run can't
+# enroll ancient carts); and the per-scan batch size.
+CART_ABANDONED_AFTER_MINUTES = env.int("CART_ABANDONED_AFTER_MINUTES", default=60)
+CART_ABANDONED_MAX_AGE_DAYS = env.int("CART_ABANDONED_MAX_AGE_DAYS", default=7)
+CART_ABANDONED_BATCH = env.int("CART_ABANDONED_BATCH", default=500)
+
+# --- Win-back (lapsed customer) journey trigger -----------------------------
+# Days since last purchase before a customer is "lapsed"; the max age still
+# eligible (a floor so a first run doesn't blast customers lapsed years ago, and
+# the natural re-win-back cadence); and the per-scan batch.
+WIN_BACK_AFTER_DAYS = env.int("WIN_BACK_AFTER_DAYS", default=90)
+WIN_BACK_MAX_AGE_DAYS = env.int("WIN_BACK_MAX_AGE_DAYS", default=365)
+WIN_BACK_BATCH = env.int("WIN_BACK_BATCH", default=500)
+
+# Spwig Mail Gateway management API — used only by hosted installs to PULL the
+# gateway's delayed bounce/complaint log into list hygiene (email_marketing's
+# poll_hosted_gateway_bounces). Both unset on Community / self-hosted installs, so
+# the poll task is a no-op there. URL falls back to the account's gateway_host.
+SPWIG_MAIL_GATEWAY_API_URL = env("SPWIG_MAIL_GATEWAY_API_URL", default=None)
+SPWIG_MAIL_GATEWAY_API_KEY = env("SPWIG_MAIL_GATEWAY_API_KEY", default=None)
+
+# List hygiene: how many recent soft bounces for one address before it is
+# suppressed as effectively undeliverable (a single soft bounce is transient).
+EMAIL_SOFT_BOUNCE_THRESHOLD = env.int("EMAIL_SOFT_BOUNCE_THRESHOLD", default=5)
+EMAIL_SOFT_BOUNCE_WINDOW_DAYS = env.int("EMAIL_SOFT_BOUNCE_WINDOW_DAYS", default=30)
 
 # Rate cache TTL (time to live)
 SHIPPING_RATE_CACHE_TTL = 300  # 5 minutes

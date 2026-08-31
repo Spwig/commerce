@@ -1,0 +1,253 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Campaign Studio dashboard. Stat cards reuse admin-base .dashboard-stats-grid /
+   .dashboard-stat-card; this file adds the header, charts, and recent-activity
+   layout only. */
+
+.em-dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 8px 0 20px;
+}
+.em-dash-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+/* "Beta" status pill next to the Campaign Studio title. */
+.em-beta-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--link-fg, #417690);
+}
+.em-dash-header .subtitle {
+  margin: 4px 0 0;
+  color: var(--body-quiet-color, #666);
+  font-size: 0.9rem;
+}
+.em-dash-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Make stat cards that link feel clickable without changing admin-base styling. */
+.em-dash-link {
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.em-dash-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+.em-dash-sub {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--body-quiet-color, #777);
+}
+.em-dash-sub .fa-arrow-up {
+  color: #2e7d32;
+}
+
+/* Charts */
+.em-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.em-chart-card {
+  background: var(--body-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.em-chart-card h3 {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  color: var(--body-fg, #333);
+}
+.em-chart-card canvas {
+  height: 240px !important;
+  max-height: 240px;
+}
+
+/* Top links table (campaign report) */
+.em-links-card {
+  margin: 0 0 24px;
+}
+.em-table-scroll {
+  overflow-x: auto;
+}
+.em-links-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.em-links-table th,
+.em-links-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+.em-links-table th:not(:first-child),
+.em-links-table td:not(:first-child) {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
+}
+.em-links-table .em-link-url {
+  word-break: break-all;
+  max-width: 480px;
+}
+
+/* Recipients — results header + per-recipient activity timeline */
+.results-info {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+}
+.results-info h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.em-activity-recipient {
+  margin: 0 0 12px;
+  font-weight: 600;
+  color: var(--body-fg, #333);
+}
+.em-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.em-activity-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+.em-activity-item:last-child {
+  border-bottom: none;
+}
+.em-activity-icon {
+  flex: 0 0 auto;
+  color: var(--link-fg, #417690);
+}
+.em-activity-detail {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.em-activity-type {
+  font-weight: 600;
+}
+.em-activity-url {
+  font-size: 0.85rem;
+  color: var(--body-quiet-color, #666);
+  word-break: break-all;
+}
+.em-activity-note {
+  font-size: 0.85rem;
+  color: var(--body-quiet-color, #666);
+}
+.em-activity-time {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  color: var(--body-quiet-color, #8a8a8a);
+  white-space: nowrap;
+}
+
+/* Recent activity */
+.em-recent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin: 0 0 24px;
+}
+.em-recent-card {
+  background: var(--body-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.em-recent-card h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+.em-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.em-recent-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 9px 0;
+  border-top: 1px solid var(--border-color, #eee);
+}
+.em-recent-list li:first-child {
+  border-top: none;
+}
+.em-recent-list a {
+  font-weight: 600;
+}
+.em-recent-meta {
+  color: var(--body-quiet-color, #777);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+.em-empty {
+  color: var(--body-quiet-color, #777);
+  font-size: 0.88rem;
+  margin: 6px 0;
+}
+
+/* Status badge (reuses admin-base list-row-card-badge palette idea, scoped). */
+.em-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--body-quiet-color, #888) 18%, transparent);
+  color: var(--body-quiet-color, #555);
+}
+.em-badge--sent {
+  background: color-mix(in srgb, #2e7d32 18%, transparent);
+  color: #2e7d32;
+}
+.em-badge--sending,
+.em-badge--scheduled {
+  background: color-mix(in srgb, var(--link-fg, #417690) 18%, transparent);
+  color: var(--link-fg, #417690);
+}
+.em-badge--failed {
+  background: color-mix(in srgb, #c62828 18%, transparent);
+  color: #c62828;
+}
+
+@media (max-width: 767px) {
+  .em-chart-card canvas {
+    height: 200px !important;
+  }
+}

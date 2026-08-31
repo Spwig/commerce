@@ -36,14 +36,20 @@ class WidgetPlacementCreateSerializer(serializers.Serializer):
     is_active = serializers.BooleanField(default=True)
     header_id = serializers.IntegerField(required=False, allow_null=True)
     footer_id = serializers.IntegerField(required=False, allow_null=True)
-    override_config = serializers.JSONField(required=False, default=dict)
+    override_config = serializers.DictField(required=False, default=dict)
 
     def validate(self, data):
-        """Ensure either header_id or footer_id is provided"""
-        if not data.get("header_id") and not data.get("footer_id"):
+        """Ensure exactly one existing header or footer is referenced"""
+        header_id = data.get("header_id")
+        footer_id = data.get("footer_id")
+        if not header_id and not footer_id:
             raise serializers.ValidationError("Must specify either header_id or footer_id")
-        if data.get("header_id") and data.get("footer_id"):
+        if header_id and footer_id:
             raise serializers.ValidationError("Cannot specify both header_id and footer_id")
+        if header_id and not HeaderTemplate.objects.filter(pk=header_id).exists():
+            raise serializers.ValidationError({"header_id": "Header not found"})
+        if footer_id and not FooterTemplate.objects.filter(pk=footer_id).exists():
+            raise serializers.ValidationError({"footer_id": "Footer not found"})
         return data
 
 
@@ -53,7 +59,7 @@ class WidgetPlacementUpdateSerializer(serializers.Serializer):
     zone = serializers.CharField(required=False)
     order = serializers.IntegerField(required=False)
     is_active = serializers.BooleanField(required=False)
-    override_config = serializers.JSONField(required=False)
+    override_config = serializers.DictField(required=False)
 
 
 class ReorderPlacementItemSerializer(serializers.Serializer):

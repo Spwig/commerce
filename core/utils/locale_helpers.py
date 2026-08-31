@@ -294,9 +294,11 @@ def get_all_timezones() -> list[tuple[str, str]]:
 
             if offset:
                 total_seconds = int(offset.total_seconds())
-                hours = total_seconds // 3600
-                minutes = abs(total_seconds % 3600) // 60
-                offset_str = f"UTC{hours:+d}:{minutes:02d}" if minutes else f"UTC{hours:+d}"
+                sign = "-" if total_seconds < 0 else "+"
+                magnitude = abs(total_seconds)
+                hours = magnitude // 3600
+                minutes = (magnitude % 3600) // 60
+                offset_str = f"UTC{sign}{hours}:{minutes:02d}" if minutes else f"UTC{sign}{hours}"
             else:
                 offset_str = "UTC±0"
 

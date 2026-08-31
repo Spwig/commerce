@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="../">{% trans 'Subscribers' %}</a>
+  &rsaquo; {% trans 'Import' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="change-list-header">
+  <div>
+    <h1><i class="fas fa-clipboard-check"></i> {% trans "Review this import" %}</h1>
+    <p class="subtitle">{% trans "Check the numbers below, then import." %}</p>
+  </div>
+</div>
+
+<div class="dashboard-card">
+  <div class="dashboard-stats-grid">
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-user-plus"></i></div>
+      <div class="value">{{ preview.new_count }}</div>
+      <div class="label">{% trans "New contacts" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-user-check"></i></div>
+      <div class="value">{{ preview.existing_emails|length }}</div>
+      <div class="label">{% trans "Already on your list" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="value">{{ preview.invalid_rows|length }}</div>
+      <div class="label">{% trans "Skipped (invalid)" %}</div>
+    </div>
+  </div>
+</div>
+
+{% if invalid_sample %}
+<h3>{% trans "Rows we couldn't read" %}</h3>
+<ul>
+  {% for r in invalid_sample %}
+  <li>{% blocktrans with line=r.line email=r.email reason=r.reason %}Row {{ line }} ({{ email }}): {{ reason }}{% endblocktrans %}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if preview.sample_duplicates %}
+<p class="help">
+  {% blocktrans with sample=preview.sample_duplicates|join:", " %}Already on your list (a sample): {{ sample }}{% endblocktrans %}
+  {% if duplicate_strategy == "update" %}— {% trans "their name and language will be updated." %}{% else %}— {% trans "these will be left unchanged." %}{% endif %}
+</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="confirm" value="1">
+  <p>
+    {% blocktrans count counter=preview.valid_count %}This will import {{ counter }} contact.{% plural %}This will import {{ counter }} contacts.{% endblocktrans %}
+    {% if tag %}{% blocktrans with name=tag.name %}Everyone will be tagged “{{ name }}”.{% endblocktrans %}{% endif %}
+  </p>
+  <div class="submit-row">
+    <button type="submit" class="button default"><i class="fas fa-file-import"></i> {% trans "Import now" %}</button>
+    <a href="../" class="button cancel-link">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

@@ -2,20 +2,20 @@
 title: Préférences de communication
 ---
 
-Les préférences de communication permettent aux clients de contrôler les e-mails et les messages SMS qu'ils reçoivent de votre magasin. Ce système garantit la conformité au RGPD et vous aide à respecter les préférences de communication des clients sur tous les canaux.
+Les préférences de communication permettent aux clients de contrôler les e-mails et messages SMS qu'ils reçoivent de votre magasin. Ce système garantit la conformité RGPD et vous aide à respecter les préférences de communication des clients sur tous les canaux.
 
-Accédez à **Clients > Préférences de communication** dans le menu latéral d'administration pour gérer les préférences de communication des clients.
+Accédez à **Clients > Préférences de communication** dans la barre latérale d'administration pour gérer les préférences de communication des clients.
 
 ## Comprendre les préférences de communication
 
-Le système de préférences de communication donne aux clients un contrôle granulaire sur les messages qu'ils reçoivent. Cela inclut :
+Le système de préférences de communication permet aux clients de contrôler précisément les messages qu'ils reçoivent. Cela comprend :
 
-- **E-mails transactionnels** — Confirmations essentielles des commandes, mises à jour d'expédition, e-mails de sécurité du compte (toujours activés)
-- **E-mails de marketing** — Lettres d'information, promotions, recommandations de produits (nécessite un consentement)
-- **Notifications spécifiques à l'application** — Articles de blog, points de fidélité, récompenses de parrainage, commissions d'affiliation
-- **Notifications SMS** — Notifications par message texte (nécessite un consentement explicite selon le TCPA)
+- **E-mails transactionnels** — Confirmations de commande, mises à jour d'expédition, e-mails de sécurité de compte (toujours activés)
+- **E-mails marketing** — Lettres d'information, promotions, recommandations de produits (nécessite une validation d'opt-in)
+- **Notifications spécifiques à l'application** — Articles de blog, points de fidélité, récompenses de parrainage, commissions d'associé
+- **Notifications par SMS** — Notifications par message texte (nécessite une validation d'opt-in explicite selon le TCPA)
 
-Toutes les communications de marketing nécessitent le consentement du client et la vérification de l'e-mail pour garantir la conformité RGPD.
+Toutes les communications marketing nécessitent la permission du client et la vérification par courriel pour garantir la conformité RGPD.
 
 ## Explication des types de préférences
 
@@ -25,23 +25,23 @@ Les messages transactionnels sont essentiels pour le compte et les commandes de 
 
 | Type | Description | Exemples |
 |------|-------------|----------|
-| **Confirmations de commande** | Confirmation lorsque la commande est passée | La commande #12345 a été reçue |
-| **Mises à jour d'expédition** | Notifications lorsque le statut de la commande change | Votre commande a été expédiée |
+| **Confirmations de commande** | Confirmation lors de la passation de commande | La commande #12345 a été reçue |
+| **Mises à jour d'expédition** | Notifications lors du changement de statut de commande | Votre commande a été expédiée |
 | **Confirmations de paiement** | Paiement reçu, remboursement traité | Paiement de 49,99 $ confirmé |
-| **Sécurité du compte** | Réinitialisation du mot de passe, vérification de l'e-mail | Réinitialisez votre mot de passe |
+| **Sécurité du compte** | Réinitialisation de mot de passe, vérification par courriel | Réinitialisez votre mot de passe |
 
-### Communications de marketing (consentement requis)
+### Communications marketing (opt-in requis)
 
-Les messages de marketing nécessitent le consentement du client et la vérification de l'e-mail :
+Les messages marketing nécessitent la permission du client et la vérification par courriel :
 
-| Type | Description | Défaut |
-|------|-------------|---------|
-| **Lettre d'information** | Lettres d'information et mises à jour générales | Désabonné |
-| **Offres promotionnelles** | Ventes, réductions, offres spéciales | Désabonné |
-| **Recommandations de produits** | Suggestions de produits personnalisées | Désabonné |
-| **Retour en stock** | Notifications lors du retour des produits | Désabonné |
+| Type | Description | Valeur par défaut |
+|------|-------------|------------------|
+| **Newsletter** | Lettres d'information et mises à jour générales | Option de désactivation |
+| **Offres promotionnelles** | Ventes, remises, offres spéciales | Option de désactivation |
+| **Recommandations de produits** | Suggestions de produits personnalisées | Option de désactivation |
+| **Produit de retour en stock** | Notifications lors du retour des produits | Option de désactivation |
 
-Les clients doivent **vérifier leur adresse e-mail** avant de recevoir tout e-mail de marketing (exigence RGPD de double consentement).
+Les clients doivent **vérifier leur adresse courriel** avant de recevoir des e-mails marketing (exigence RGPD de double opt-in).
 
 ### Préférences spécifiques à l'application
 
@@ -49,143 +49,143 @@ Les clients peuvent contrôler les notifications provenant de fonctionnalités s
 
 **Notifications de blog**
 - Nouvel article de blog publié (immédiat, résumé hebdomadaire ou mensuel)
-- Abonnements spécifiques à la catégorie
+- Abonnements aux catégories spécifiques
 - Préférences de fréquence
 
 **Programme de fidélité**
-- Notifications sur les points gagnés
-- Mises à niveau de niveau
+- Notifications de points gagnés
+- Passage de niveau
 - Récompenses déverrouillées
-- Points proches de l'expiration
-- Bonus d'anniversaire
+- Points bientôt expirants
+- Cadeaux d'anniversaire
 - Offres de campagne
 
 **Programme de parrainage**
-- Récompense attribuée (parrain et parrainé)
-- Inscription réussie de parrainage
-- Récompense proche de l'expiration
+- Récompense octroyée (parrain et parrainé)
+- Inscription réussie au parrainage
+- Récompense bientôt expirante
 - Invitations de parrainage
 
-**Programme d'affiliation**
+**Programme d'associé**
 - Commission gagnée
-- Commission approuvée ou rejetée
-- Paiement traité, terminé ou échoué
-- Rapports mensuels de performance
+- Approbation ou rejet de la commission
+- Paiement traité, achevé ou échoué
+- Rapports mensuels sur les performances
 
-### Notifications SMS (consentement explicite requis)
+### Notifications par SMS (opt-in explicite requis)
 
-Toutes les notifications SMS nécessitent un **consentement explicite** selon les réglementations TCPA. Les clients doivent activer la case à cocher de consentement SMS :
+Toutes les notifications par SMS nécessitent un **opt-in explicite** selon les réglementations TCPA. Les clients doivent cocher la case d'opt-in SMS activement :
 
-- **SMS transactionnels** — Commande expédiée, livrée (consentement requis)
-- **SMS de marketing** — Promotions, offres spéciales (consentement séparé requis)
+- **SMS transactionnels** — Commande expédiée, livrée (opt-in requis)
+- **SMS marketing** — Promotions, offres spéciales (opt-in séparé requis)
 
-Même les SMS transactionnels nécessitent un consentement car l'envoi de messages texte non sollicités est réglementé plus strictement que l'e-mail.
+Même les SMS transactionnels nécessitent un opt-in, car l'envoi de messages texte non sollicités est plus réglementé que le courriel.
 
 ## Gestion des préférences des clients dans l'administration
 
-### Afficher toutes les préférences
+### Affichage de toutes les préférences
 
 Accédez à **Clients > Préférences de communication** pour voir toutes les préférences des clients :
 
 | Colonne | Description |
 |--------|-------------|
-| **E-mail utilisateur** | Adresse e-mail du client (lien vers l'administration utilisateur) |
-| **Statut e-mail** | ✓ vert si les e-mails sont activés, ○ gris si désactivés |
-| **Statut SMS** | ✓ vert si les SMS sont activés, ○ gris si désactivés |
-| **Statut marketing** | Étiquette "Opted In" ou "Opted Out" |
+| **E-mail de l'utilisateur** | Adresse e-mail du client (lien vers l'administration utilisateur) |
+| **Statut de l'e-mail** | Vert ✓ si les e-mails sont activés, gris ○ si désactivés |
+| **Statut du SMS** | Vert ✓ si les SMS sont activés, gris ○ si désactivés |
+| **Statut du marketing** | Badge « Inscrit » ou « Désinscrit » |
 | **Statut de vérification** | 📧✓ si l'e-mail est vérifié, 📱✓ si le SMS est vérifié |
-| **Source de consentement** | Endroit où le client a donné son consentement (enregistrement, checkout, centre de préférences) |
-| **Mis à jour à** | Dernière fois où les préférences ont été modifiées |
+| **Source du consentement** | Lieu où le client a donné son consentement (inscription, paiement, centre de préférences) |
+| **Mis à jour le** | Dernière modification des préférences |
 
 ### Filtrage des préférences
 
-Utilisez le menu latéral de filtre pour trouver des clients :
+Utilisez la barre latérale de filtres pour trouver des clients :
 
 - **E-mail activé** — Oui/Non
 - **SMS activé** — Oui/Non
-- **Marketing par e-mail** — Oui/Non (souscrit au marketing)
-- **Marketing par SMS** — Oui/Non (souscrit au marketing par SMS)
+- **Marketing par e-mail** — Oui/Non (inscrit au marketing par e-mail)
+- **Marketing par SMS** — Oui/Non (inscrit au marketing par SMS)
 - **E-mail vérifié** — Oui/Non (a vérifié son adresse e-mail)
 - **SMS vérifié** — Oui/Non (a vérifié son numéro de téléphone)
-- **Source de consentement** — Enregistrement, Checkout, Centre de préférences, API, Migration
+- **Source du consentement** — Inscription, Paiement, Centre de préférences, API, Migration
 - **Code de langue** — Langue préférée pour les communications
 
-### Recherche de préférences
+### Recherche des préférences
 
 Recherchez des clients par :
-- E-mail utilisateur
+- E-mail de l'utilisateur
 - Nom d'utilisateur
 - Prénom
-- Nom de famille
-- Jeton de désabonnement
+- Nom
+- Jeton de désinscription
 
-### Actions en bloc
+### Actions groupées
 
-Sélectionnez plusieurs clients et appliquez des actions en bloc :
+Sélectionnez plusieurs clients et appliquez des actions groupées :
 
 **✓ Marquer l'e-mail comme vérifié**
-- Vérifiez manuellement les adresses e-mail des clients
+- Vérifier manuellement les adresses e-mail des clients
 - Utile lors de l'importation de clients depuis un autre système
-- Invalide le cache des préférences pour appliquer les changements immédiatement
+- Invalide le cache des préférences pour appliquer les modifications immédiatement
 
-**🚫 Désabonner de toute la communication marketing**
+**🚫 Désinscrire de tout le marketing**
 - Désactive toutes les communications marketing (e-mail, SMS, toutes les applications)
-- Garde les e-mails transactionnels activés
-- Utilisez cela pour les clients qui souhaitent être entièrement désabonnés
-- Respecte le droit RGPD de se désabonner
+- Conserve les e-mails transactionnels activés
+- À utiliser pour les clients qui demandent à être entièrement désinscrits
+- Respecte le droit au retrait du consentement au titre du RGPD
 
-**📥 Exporter les préférences au format CSV**
-- Exporter les préférences des clients vers une feuille de calcul
-- Inclut tous les champs de préférences et les paramètres spécifiques à l'application
+**📥 Exporter les préférences vers CSV**
+- Exporter les préférences des clients vers un tableur
+- Inclut tous les champs de préférences et les paramètres spécifiques aux applications
 - Utile pour les audits de conformité et l'analyse
 - Format : CSV avec en-têtes
 
-## Centre de préférences de l'utilisateur (auto-service)
+## Centre de préférences en libre-service pour les clients
 
-Les clients peuvent gérer leurs propres préférences à `/accounts/preferences/` lorsqu'ils sont connectés.
+Les clients peuvent gérer leurs propres préférences sur `/accounts/preferences/` lorsqu'ils sont connectés.
 
 ### Fonctionnalités du centre de préférences
 
 **Actions rapides**
-- **S'abonner à toute la communication marketing** — Activer toutes les communications marketing en un clic
-- **Désabonner de tout** — Désactiver toutes les communications marketing (les e-mails transactionnels restent activés)
+- **S'abonner à tout le marketing** — Activer toutes les communications marketing en un clic
+- **Se désinscrire de tout** — Désactiver toutes les communications marketing (les e-mails transactionnels restent activés)
 
 **Cartes de préférences**
-- **E-mails transactionnels** — En lecture seule (toujours activés, marqués comme "Requis")
-- **Communications marketing** — Activer/désactiver avec un badge de vérification
-- **Préférences du blog** — Activer/désactiver, sélectionner la fréquence (immédiat, hebdomadaire, mensuel)
+- **E-mails transactionnels** — Lecture seule (toujours activés, marqués comme « Obligatoire »)
+- **Communications marketing** — Activation/désactivation avec badge de vérification
+- **Préférences du blog** — Activer/désactiver, sélectionner la fréquence (immédiate, hebdomadaire, mensuelle)
 - **Programme de fidélité** — Activer/désactiver les types de notifications individuels
 - **Programme de parrainage** — Activer/désactiver les notifications de récompenses
-- **Programme d'affiliation** — Activer/désactiver les notifications de commission et de paiement
-- **Notifications SMS** — S'abonner/désabonner aux SMS (affiche l'état de vérification)
+- **Programme d'affiliation** — Activer/désactiver les notifications de commissions et de paiements
+- **Notifications SMS** — S'inscrire/se désinscrire des SMS (affiche le statut de vérification)
 
 **Mises à jour en temps réel**
-- Les changements sont sauvegardés immédiatement via AJAX
-- Aucun rechargement de page nécessaire
-- Feedback visuel lors de la sauvegarde
+- Les modifications sont enregistrées immédiatement via AJAX
+- Aucun rechargement de page requis
+- Retour visuel lors de l'enregistrement
 
 ### Processus de vérification de l'e-mail
 
 Lorsqu'un client active les e-mails marketing :
 
-1. Le client bascule "E-mails marketing" sur ON
+1. Le client active « E-mails marketing »
 2. Le système envoie un e-mail de vérification avec un lien unique
 3. Le client clique sur le lien de vérification
-4. L'e-mail est marqué comme vérifié (badge 📧✓ apparaît)
+4. L'e-mail est marqué comme vérifié (le badge 📧✓ apparaît)
 5. Les e-mails marketing seront désormais envoyés
 
-**Les clients non vérifiés ne recevront PAS les e-mails marketing** même si le basculement est sur ON. Cela garantit la conformité RGPD avec le double consentement.
+**Les clients non vérifiés ne recevront PAS d'e-mails marketing** même si l'interrupteur est activé. Cela garantit la conformité au double opt-in du RGPD.
 
-## Désabonnement d'un clic
+## Désinscription en un clic
 
-Tous les e-mails marketing incluent un lien de désabonnement dans le pied de page. En cliquant sur ce lien :
+Tous les e-mails marketing incluent un lien de désinscription dans le pied de page. En cliquant sur ce lien :
 
 1. Le client est redirigé vers `/accounts/unsubscribe/<token>/` (aucune connexion requise)
-2. Affiche ce à quoi le client se désabonne
-3. Permet un retour d'information optionnel (raison du désabonnement)
-4. Désactive les communications marketing
-5. Garde les e-mails transactionnels activés
-6. Fournit un lien vers le centre complet des préférences
+2. Il voit de quoi il se désinscrit
+3. Il peut fournir un retour facultatif (raison de la désinscription)
+4. Les communications marketing sont désactivées
+5. Les e-mails transactionnels restent activés
+6. Un lien vers le centre de préférences complet est fourni
 
 Les clients peuvent se réabonner à tout moment via le centre de préférences.
 
@@ -195,197 +195,199 @@ Les clients peuvent se réabonner à tout moment via le centre de préférences.
 
 Le système garantit une conformité complète à l'article 7 du RGPD :
 
-**✅ Preuve de consentement**
-- Horodatage de la date d'accord
-- Source du consentement (enregistrement, checkout, centre de préférences)
+
+**✅ Preuve du consentement**
+- Horodatage du moment où le consentement a été donné
+- Source du consentement (inscription, paiement, centre de préférences)
 - Adresse IP du consentement
-- User agent (informations du navigateur)
+- Agent utilisateur (informations sur le navigateur)
 
 **✅ Consentement séparé**
-- Les e-mails marketing et transactionnels sont des basculeurs séparés
+- Les e-mails marketing et transactionnels sont des options distinctes
 - Chaque application (blog, fidélité, etc.) nécessite un consentement individuel
 
-**✅ Désistement facile**
-- Désabonnement d'un clic dans tous les e-mails marketing
+**✅ Retrait facile**
+- Désinscription en un clic dans tous les e-mails marketing
 - Centre de préférences disponible pour tous les clients connectés
-- Le désabonnement prend effet immédiatement
+- La désinscription prend effet immédiatement
 
 **✅ Consentement librement donné**
-- État par défaut est désabonné pour le marketing (meilleilleure pratique RGPD)
-- Aucune case précochée (les clients doivent activer le consentement)
+- Par défaut, l'option est désactivée pour le marketing (meilleure pratique RGPD)
+- Aucune case pré-cochée (les clients doivent s'inscrire activement)
 
-**✅ Consentement spécifique et informé**
-- Descriptions claires de ce que chaque préférence contrôle
+**✅ Consentement spécifique et éclairé**
+- Des descriptions claires de ce que chaque préférence contrôle
 - Préférences granulaires au niveau de l'application (pas tout ou rien)
 
 **✅ Consentement vérifiable**
-- Double opt-in pour les e-mails marketing
-- Journal des transactions via le statut de suivi EmailOutbox
+- Double inscription pour les e-mails marketing
+- Piste d'audit via le suivi de l'état de la boîte d'envoi (EmailOutbox)
 
-### Conformité au TCPA (règlementations des SMS aux États-Unis)
+### Conformité TCPA (Réglementations SMS aux États-Unis)
 
-Toutes les notifications SMS nécessitent un **consentement explicite** :
+Toutes les notifications SMS nécessitent un **opt-in explicite** :
 
-- Les clients doivent activer la case de consentement SMS
-- Aucune case précochée autorisée
-- Description claire de ce à quoi ils s'abonnent
-- Désabonnement facile via le centre de préférences
-- Tous les envois SMS sont enregistrés pour l'audit de conformité
+- Les clients doivent cocher activement la case d'opt-in SMS
+- Les cases pré-cochées ne sont pas autorisées
+- Description claire de ce à quoi ils s'inscrivent
+- Désinscription facile via le centre de préférences
+- Tous les envois SMS sont journalisés pour l'audit de conformité
 
-### Conformité au CAN-SPAM (règlementations des e-mails aux États-Unis)
+### Conformité CAN-SPAM (Réglementations e-mail aux États-Unis)
 
-Le système garantit la conformité CAN-SPAM :
+Le système assure la conformité CAN-SPAM :
 
-- Lien de désabonnement dans chaque e-mail marketing
-- Désabonnement traité immédiatement (dans les 10 jours ouvrés requis, nous le faisons instantanément)
-- Nom clair dans le champ "De" (le nom de votre boutique)
+- Lien de désinscription dans chaque e-mail marketing
+- Désinscription traitée immédiatement (10 jours ouvrables requis, nous le faisons instantanément)
+- Nom "De" clair (le nom de votre boutique)
 - Adresse physique dans le pied de page de l'e-mail
-- Aucun objet trompeur
+- Pas de lignes d'objet trompeuses
 
 ## Comprendre l'état des e-mails dans EmailOutbox
 
-Lorsque vous consultez **Système e-mail > Boîte de sortie e-mail**, vous verrez comment les préférences affectent la livraison des e-mails :
+Lors de la consultation de **Système d'e-mails > Boîte d'envoi**, vous verrez comment les préférences affectent la livraison des e-mails :
 
-| État | Signification | Raison |
+| Statut | Signification | Raison |
 |--------|---------|--------|
-| **En attente** | E-mail en file d'attente pour l'envoi | Les préférences permettent cet e-mail |
-| **En file d'attente** | Dans la file d'envoi | Les préférences permettent cet e-mail |
+| **En attente** | E-mail mis en file d'attente pour envoi | Les préférences autorisent cet e-mail |
+| **En file d'attente** | Dans la file d'attente d'envoi | Les préférences autorisent cet e-mail |
 | **Ignoré** | E-mail non envoyé | Préférence du client désactivée |
-| **Envoyé** | Envoyé avec succès | E-mail envoyé normalement |
+| **Envoyé** | Livré avec succès | E-mail envoyé normalement |
 
-Quand un e-mail est **ignoré**, le champ `skip_reason` indique pourquoi :
+Lorsqu'un e-mail est **ignoré**, le champ `skip_reason` indique la raison :
 
-- **user_preference_disabled** — Le client a désactivé ce type d'e-mail dans les préférences
+- **user_preference_disabled** — Le client a désactivé ce type d'e-mail dans ses préférences
 - **email_not_verified** — Le client n'a pas vérifié son adresse e-mail
-- **email_disabled** — Le client a désactivé tous les e-mails (bascule principal)
+- **email_disabled** — Le client a désactivé tous les e-mails (interrupteur principal)
 
-Ce journal des transactions est important pour la conformité RGPD — vous pouvez prouver que vous avez respecté les préférences du client.
+Cette piste d'audit est importante pour la conformité RGPD — vous pouvez prouver que vous avez respecté les préférences des clients.
 
 ## Paramètres du site pour les préférences
 
-Accédez à **Paramètres > Paramètres du site** pour configurer les paramètres de préférences globaux :
+Accédez à **Paramètres > Paramètres du site** pour configurer les préférences par défaut globales :
 
-**Activer le double opt-in pour les e-mails marketing** (Par défaut : Oui)
-- Exige la vérification de l'e-mail avant l'envoi des e-mails marketing
+**Activer la double inscription pour les e-mails marketing** (Par défaut : Oui)
+- Nécessite la vérification de l'e-mail avant l'envoi d'e-mails marketing
 - Meilleure pratique RGPD
-- Recommandé : Laissez activé
+- Recommandé : Laisser activé
 
-**État par défaut du consentement marketing** (Par défaut : Non - Désabonné)
-- État par défaut lors de l'enregistrement des nouveaux clients
-- RGPD exige un désabonnement par défaut
-- Recommandé : Laissez comme désabonné (Faux)
+**État d'opt-in marketing par défaut** (Par défaut : Non - Opt-Out)
+- État par défaut lors de l'inscription de nouveaux clients
+- Le RGPD exige l'opt-out par défaut
+- Recommandé : Laisser en opt-out (False)
 
 **Centre de préférences activé** (Par défaut : Oui)
 - Permet aux clients de gérer leurs propres préférences
-- Requis pour le droit RGPD de se désabonner
-- Recommandé : Laissez activé
+- Requis pour le droit RGPD de retirer le consentement
+- Recommandé : Laisser activé
 
-**Exiger la vérification du SMS** (Par défaut : Non)
+**Exiger la vérification SMS** (Par défaut : Non)
 - Exiger la vérification du numéro de téléphone pour les notifications SMS
-- Optionnel mais recommandé pour les envoyeurs de SMS à grande échelle
-- Peut être activé si vous souhaitez un double opt-in pour le SMS
+- Optionnel mais recommandé pour les expéditeurs SMS à fort volume
+- Peut être activé si vous souhaitez une double inscription pour les SMS
 
-**Afficher les raisons du désabonnement** (Par défaut : Oui)
-- Collecter un retour d'information optionnel lors du désabonnement des clients
-- Aide à comprendre pourquoi les clients s'abonnent
-- Recommandé : Laissez activé pour des insights
+**Afficher les raisons de désinscription** (Par défaut : Oui)
+- Collecter des commentaires facultatifs lorsque les clients se désinscrivent
+- Aide à comprendre pourquoi les clients se désinscrivent
+- Recommandé : Laisser activé pour les analyses
 
-## Bonnes pratiques
+## Meilleures pratiques
 
-### 1. Préférez le désabonnement par défaut pour le marketing
+### 1. Opt-Out par défaut pour le marketing
 
-Définissez toujours les communications marketing sur **désabonné** (non cochée) :
+Définissez toujours les communications marketing sur **opt-out** (non coché) par défaut :
 - Conforme au RGPD
-- Construit la confiance des clients
-- Réduit les plaintes contre les spams
-- Envoie uniquement aux clients engagés
+- Crée la confiance avec les clients
+- Réduit les plaintes pour spam
+- N'envoyez qu'aux clients engagés
 
 ### 2. Exiger la vérification de l'e-mail
 
-Gardez **Double Opt-In** activé :
-- Assure que les adresses e-mail sont valides
+Gardez la **double inscription** activée :
+- S'assure que les adresses e-mail sont valides
 - Confirme que le client souhaite réellement recevoir des e-mails marketing
 - Réduit le taux de rebond
 - Requis pour la conformité RGPD
 
 ### 3. Respecter les préférences immédiatement
 
+
+
 Lorsqu'un client modifie ses préférences :
-- Les changements prennent effet immédiatement
+- Les modifications prennent effet immédiatement
 - Le cache des préférences est invalidé
-- L'envoi d'e-mail suivant vérifiera les préférences mises à jour
-- Aucun délai pour respecter les demandes de désabonnement
+- Le prochain envoi d'e-mail vérifiera les préférences mises à jour
+- Aucun délai dans le respect des demandes de désinscription
 
 ### 4. Surveiller les e-mails ignorés
 
-Vérifiez régulièrement **la boîte de sortie des e-mails** pour les e-mails ignorés :
-- Un taux d'ignorance élevé indique que les clients s'abonnent
-- Peut signaler que le contenu des e-mails a besoin d'amélioration
+Vérifiez régulièrement la **Boîte d'envoi des e-mails** pour les e-mails ignorés :
+- Un taux d'ignorance élevé indique que les clients se désinscrivent
+- Peut signaler que le contenu des e-mails doit être amélioré
 - Aide à identifier les problèmes de préférences
 
-### 5. Audit de conformité régulier
+### 5. Audits de conformité réguliers
 
-Exporter les préférences périodiquement pour la conformité :
+Exportez les préférences périodiquement pour la conformité :
 1. Accédez à **Préférences de communication**
 2. Sélectionnez tous les clients
-3. Choisissez **Exporter les préférences au format CSV**
-4. Enregistrez pour le journal d'audit RGPD
+3. Choisissez **Exporter les préférences vers CSV**
+4. Enregistrez pour la piste d'audit GDPR
 
-Conservez les exports pendant **au moins 3 ans** pour respecter les exigences de conservation des données RGPD.
+Conservez les exports **pendant au moins 3 ans** pour vous conformer aux exigences de conservation des données du RGPD.
 
 ### 6. Communication claire
 
-Lors de la collecte de consentement :
-- Utilisez un langage simple, pas des termes juridiques
+Lors de la collecte du consentement :
+- Utilisez un langage simple, pas de jargon juridique
 - Expliquez ce que les clients recevront
-- Montrez la fréquence (quotidienne, hebdomadaire, mensuelle)
-- Mettez en évidence les cases d'abonnement mais ne les précochez pas
+- Indiquez la fréquence (quotidienne, hebdomadaire, mensuelle)
+- Rendez les cases de consentement visibles mais non pré-cochées
 
-### 7. Segmenter par préférences
+### 7. Segmenter par préférence
 
 Lors de l'envoi de campagnes marketing :
-- Envoyez uniquement aux clients vérifiés et abonnés
-- Respectez les préférences spécifiques aux applications (ne envoyez pas d'e-mails de blog aux clients ayant désactivé le blog)
-- Utilisez les préférences de fréquence (ne envoyez pas d'e-mails immédiats aux abonnés de résumé hebdomadaire)
+- N'envoyez qu'aux clients vérifiés et ayant consenti
+- Respectez les préférences spécifiques aux applications (n'envoyez pas d'e-mails de blog aux clients qui ont désactivé le blog)
+- Utilisez les préférences de fréquence (n'envoyez pas d'e-mails immédiats aux abonnés du digest hebdomadaire)
 
 ## Conseils
 
-**💡 Vérifiez les préférences avant d'envoyer**
+**💡 Vérifier les préférences avant l'envoi**
 
-Le système vérifie automatiquement les préférences lors de l'envoi d'e-mails via `EmailSendingService.send_template_email()`. Assurez-vous que tous les envois d'e-mails utilisent ce service et non des appels SMTP directs.
+Le système vérifie automatiquement les préférences lorsque vous envoyez des e-mails en utilisant `EmailSendingService.send_template_email()`. Assurez-vous que tous les envois d'e-mails utilisent ce service, et non des appels SMTP directs.
 
-**💡 L'état "Ignoré" est normal**
+**💡 Le statut ignoré est normal**
 
-Ne soyez pas inquiet des e-mails ignorés dans la boîte de sortie — cela signifie que le système fonctionne correctement et respecte les préférences du client. C'est mieux de ne pas envoyer les e-mails non souhaités que de risquer des amendes RGPD ou des plaintes contre les spams.
+Ne vous alarmez pas des e-mails ignorés dans la boîte d'envoi — cela signifie que le système fonctionne correctement et respecte les préférences des clients. Il est préférable d'ignorer les e-mails non désirés que de risquer des amendes RGPD ou des plaintes pour spam.
 
 **💡 Le cache des préférences est de 5 minutes**
 
-Les vérifications de préférences sont mises en cache pendant 5 minutes pour des performances. Lorsque les clients modifient leurs préférences via le centre de préférences ou des actions d'administration, le cache est immédiatement invalidé afin que les changements prennent effet immédiatement.
+Les vérifications de préférences sont mises en cache pendant 5 minutes pour des raisons de performance. Lorsque les clients modifient leurs préférences via le centre de préférences ou des actions administrateur, le cache est immédiatement invalidé pour que les modifications prennent effet immédiatement.
 
 **💡 Les clients invités contournent les vérifications**
 
-Les clients ayant effectué un achat en tant qu'invités (sans compte) recevront tous les e-mails normalement car ils n'ont aucun enregistrement de préférences. C'est intentionnel — ils se sont abonnés en fournissant leur e-mail lors de la validation.
+Les clients en paiement invité (sans compte) recevront tous les e-mails normalement car ils n'ont pas d'enregistrement de préférences. C'est intentionnel — ils ont consenti en fournissant leur e-mail lors du paiement.
 
 **💡 Les e-mails transactionnels sont toujours envoyés**
 
-Les confirmations de commande, les mises à jour d'expédition et les e-mails de sécurité du compte **sont toujours envoyés** indépendamment des préférences. Cela garantit que les clients reçoivent des informations critiques sur leurs commandes et comptes.
+Les confirmations de commande, les mises à jour d'expédition et les e-mails de sécurité du compte **sont toujours envoyés** indépendamment des préférences. Cela garantit que les clients reçoivent des informations essentielles sur leurs commandes et leurs comptes.
 
-**💡 Utilisez les actions en bloc avec soin**
+**💡 Utiliser les actions groupées avec prudence**
 
-L'action en bloc "Désabonner de toute la communication marketing" affecte **toutes les applications** (blog, fidélité, parrainage, affiliation). Utilisez-la uniquement pour les clients qui ont explicitement demandé d'être entièrement désabonnés. Pour des préférences spécifiques, modifiez les enregistrements clients individuellement.
+L'action groupée « Se désinscrire de tout le marketing » affecte **toutes les applications** (blog, fidélité, parrainage, affiliation). N'utilisez ceci que pour les clients qui ont explicitement demandé à être entièrement désinscrits. Pour des préférences spécifiques, modifiez les enregistrements individuels des clients.
 
-**💡 Journal des transactions pour la conformité**
+**💡 Piste d'audit pour la conformité**
 
 Le système suit :
 - Horodatage et source du consentement
-- Adresse IP et user agent
-- Horodatage de vérification de l'e-mail
-- Chaque modification de préférence via le statut de saut EmailOutbox
+- Adresse IP et agent utilisateur
+- Horodatage de la vérification de l'e-mail
+- Chaque modification de préférence via le statut ignoré de la Boîte d'envoi des e-mails
 
-Ce journal des transactions prouve la conformité RGPD si les autorités demandent des preuves de consentement.
+Cette piste d'audit prouve la conformité au RGPD si les autorités demandent des preuves de consentement.
 
-## Sujets liés
+## Sujets connexes
 
-- [Gestion des comptes client](/help/managing-customer-accounts) — Gestion du profil client
+- [Gestion des comptes clients](/help/managing-customer-accounts) — Gestion des profils clients
 - [Configuration des e-mails](/help/email-configuration) — Configuration SMTP et modèles d'e-mails
-

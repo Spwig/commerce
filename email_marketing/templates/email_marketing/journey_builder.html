@@ -1,0 +1,121 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ journey.name }} | {% trans "Journey Builder" %} | Spwig</title>
+  <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+  <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+  <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'email_marketing/css/journey_builder.css' %}">
+</head>
+<body class="jb-body" data-theme="{{ admin_theme|default:'light' }}">
+
+  <form id="jb-csrf" hidden>{% csrf_token %}</form>
+
+  <header class="jb-toolbar">
+    <a class="button jb-back" href="{% url 'admin:email_marketing_journey_change' journey.id %}">
+      <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <div class="jb-toolbar-heading">
+      <h1 class="jb-toolbar-title">{{ journey.name }}</h1>
+      <div class="jb-trigger-summary">
+        <span class="jb-chip"><i class="fas fa-bolt"></i> {{ builder_config.trigger }}</span>
+        {% if builder_config.audience %}
+          <span class="jb-chip"><i class="fas fa-users"></i> {{ builder_config.audience }}</span>
+        {% else %}
+          <span class="jb-chip"><i class="fas fa-users"></i> {% trans "All subscribers" %}</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="jb-toolbar-actions">
+      <span class="jb-save-status" id="jb-save-status"></span>
+      <span class="jb-status-pill" id="jb-status-pill"></span>
+      <button type="button" class="button" data-action="templates"><i class="fas fa-wand-magic-sparkles"></i> {% trans "Templates" %}</button>
+      <button type="button" class="button" data-action="import"><i class="fas fa-file-import"></i> {% trans "Import" %}</button>
+      <button type="button" class="button" data-action="export"><i class="fas fa-file-export"></i> {% trans "Export" %}</button>
+      <button type="button" class="button" data-action="fit"><i class="fas fa-expand"></i> {% trans "Fit" %}</button>
+      <button type="button" class="button jb-status-btn" id="jb-status-btn" data-action="toggle-status"></button>
+    </div>
+  </header>
+
+  <!-- Validation issues surfaced when Activate is blocked. -->
+  <div class="jb-issues" id="jb-issues" hidden>
+    <div class="jb-issues-head">
+      <span class="jb-issues-title" id="jb-issues-title"></span>
+      <button type="button" class="jb-issues-close" data-action="close-issues" aria-label="{% trans 'Dismiss' %}"><i class="fas fa-times"></i></button>
+    </div>
+    <ul class="jb-issues-list" id="jb-issues-list"></ul>
+  </div>
+
+  <input type="file" id="jb-import-file" accept="application/json,.json" hidden>
+
+  <!-- Template picker (reuses the shared admin-modal component styles) -->
+  <div class="admin-modal-overlay" id="jb-template-overlay" role="dialog" aria-modal="true" aria-label="{% trans 'Start from a template' %}">
+    <div class="admin-modal admin-modal--lg">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title"><i class="fas fa-wand-magic-sparkles"></i> {% trans "Start from a template" %}</h2>
+        <button type="button" class="admin-modal-close" data-action="close-templates" aria-label="{% trans 'Close' %}">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="admin-modal-body">
+        <p class="jb-template-intro">{% trans "Pick a starting point. It replaces the current flow, and re-links any emails or segments it can match by name." %}</p>
+        <div class="jb-template-grid" id="jb-template-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jb-workspace">
+
+    <aside class="jb-palette" aria-label="{% trans 'Steps' %}">
+      <h2 class="jb-palette-heading">{% trans "Add a step" %}</h2>
+      <p class="jb-palette-hint">{% trans "Drag onto the canvas, or click to add." %}</p>
+      <div class="jb-palette-items">
+        {% for item in palette_data %}
+          <button type="button" class="jb-palette-item" draggable="true"
+                  data-node-type="{{ item.node_type }}" title="{{ item.description }}">
+            <i class="{{ item.icon }}"></i>
+            <span class="jb-palette-item-name">{{ item.name }}</span>
+            <span class="jb-palette-item-desc">{{ item.description }}</span>
+          </button>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <main class="jb-canvas-wrap" id="jb-canvas-wrap">
+      <!-- journey_builder.js renders the SVG edge layer + node divs inside here. -->
+      <div class="jb-canvas" id="jb-canvas">
+        <svg class="jb-edges" id="jb-edges" aria-hidden="true"></svg>
+        <div class="jb-nodes" id="jb-nodes"></div>
+      </div>
+      <div class="jb-canvas-empty" id="jb-canvas-empty" hidden>
+        <i class="fas fa-diagram-project"></i>
+        <p>{% trans "Drag a step from the left, or start from a template." %}</p>
+        <button type="button" class="button jb-empty-cta" data-action="templates">
+          <i class="fas fa-wand-magic-sparkles"></i> {% trans "Browse templates" %}
+        </button>
+      </div>
+    </main>
+
+    <aside class="jb-config" id="jb-config" aria-label="{% trans 'Step settings' %}">
+      <div class="jb-config-empty" id="jb-config-empty">
+        <i class="fas fa-sliders"></i>
+        <p>{% trans "Select a step to configure it." %}</p>
+      </div>
+      <div class="jb-config-form" id="jb-config-form" hidden></div>
+    </aside>
+
+  </div>
+
+  {{ nodes_data|json_script:"jb-nodes-data" }}
+  {{ edges_data|json_script:"jb-edges-data" }}
+  {{ palette_data|json_script:"jb-palette-data" }}
+  {{ campaigns_data|json_script:"jb-campaigns-data" }}
+  {{ segments_data|json_script:"jb-segments-data" }}
+  {{ builder_config|json_script:"jb-config-data" }}
+
+  <script src="{% static 'email_marketing/js/journey_builder.js' %}" defer></script>
+</body>
+</html>

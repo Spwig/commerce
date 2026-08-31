@@ -5,6 +5,7 @@ SFTP storage provider using paramiko.
 import io
 import logging
 import os
+import shlex
 import stat
 from collections.abc import Callable
 from datetime import UTC
@@ -169,7 +170,7 @@ class SFTPStorageProvider(BaseStorageProvider):
                 "remote_directory": remote_dir,
             }
             try:
-                _, stdout, _ = ssh.exec_command(f"df -B1 {remote_dir}")
+                _, stdout, _ = ssh.exec_command(f"df -B1 {shlex.quote(remote_dir)}")
                 output = stdout.read().decode().strip().split("\n")
                 if len(output) >= 2:
                     parts = output[1].split()

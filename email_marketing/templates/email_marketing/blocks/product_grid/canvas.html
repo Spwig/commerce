@@ -1,0 +1,19 @@
+{% if products %}
+<div class="em-block em-block-grid">
+  {% for p in products %}
+  <div class="em-grid-item">
+    {% if p.image %}
+    <a href="{{ p.url }}"><picture>
+      {% if p.image.avif %}<source type="image/avif" srcset="{{ p.image.avif }}">{% endif %}
+      {% if p.image.webp %}<source type="image/webp" srcset="{{ p.image.webp }}">{% endif %}
+      <img class="em-product-img" src="{{ p.image.fallback }}" alt="{{ p.name }}">
+    </picture></a>
+    {% endif %}
+    <div class="em-product-name">{{ p.name }}</div>
+    <div class="em-product-price">{% if p.on_sale and p.was_price %}<span class="em-was">{{ p.was_price }}</span>{% endif %}{{ p.price }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="em-block em-product-empty"><i class="fas fa-table-cells"></i> No matching products yet — add products to your catalog.</div>
+{% endif %}

@@ -108,18 +108,33 @@ class TrackingService:
     def _attribution_campaign(self, email_outbox_id) -> str | None:
         """utm_campaign for this email, or None if it should not be attributed.
 
-        Only marketing / re-engagement emails are tagged (see
-        ``is_marketing_template_type``). Best-effort: any lookup failure returns
-        None so tracking is never affected.
+        Prefers the specific campaign slug the sender stamped on the outbox
+        (``attribution_campaign`` — set by Campaign Studio so revenue credits the
+        exact campaign). Falls back to the coarse ``template_type`` for other
+        marketing / re-engagement emails (see ``is_marketing_template_type``).
+        Best-effort: any lookup failure returns None so tracking is never affected.
         """
         try:
             from email_system.models import EmailOutbox
 
-            template_type = (
+            row = (
                 EmailOutbox.objects.filter(id=email_outbox_id)
-                .values_list("template_type", flat=True)
+                .values("attribution_campaign", "template_type")
                 .first()
             )
+            if not row:
+                return None
+            if row["attribution_campaign"]:
+                # Backstop against future drift: never attribution-tag transactional
+                # mail even if a slug was somehow stamped on it — a stray "email" touch
+                # would misattribute the recipient's next order. (Marketing types incl.
+                # promotional_offers pass; only truly transactional types are blocked.)
+                from accounts.constants import TRANSACTIONAL_EMAIL_TYPES
+
+                if row["template_type"] in TRANSACTIONAL_EMAIL_TYPES:
+                    return None
+                return row["attribution_campaign"]
+            template_type = row["template_type"]
             return template_type if is_marketing_template_type(template_type) else None
         except Exception:
             logger.debug("attribution: could not resolve email campaign", exc_info=True)

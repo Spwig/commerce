@@ -2,21 +2,21 @@
 title: Konfigurasi Email
 ---
 
-Konfigurasi email mengontrol cara toko Anda mengirimkan email transaksional — konfirmasi pesanan, notifikasi pengiriman, pengaturan ulang kata sandi, dan lainnya. Spwig menyertakan server SMTP bawaan dan mendukung penyedia email eksternal untuk tingkat pengantaran yang lebih tinggi.
+Konfigurasi email mengontrol cara toko Anda mengirim email transaksional — konfirmasi pesanan, notifikasi pengiriman, reset kata sandi, dan lainnya. Spwig menyertakan server SMTP bawaan dan mendukung penyedia email eksternal untuk tingkat pengiriman yang lebih tinggi.
 
 ![Akun email](/static/core/admin/img/help/email-configuration/email-accounts.webp)
 
-## Penyedia yang Tersedia
+## Penyedia Tersedia
 
 | Penyedia | Deskripsi |
 |----------|-------------|
-| **SMTP Bawaan** | Server email gratis, self-hosted yang disertakan dengan Spwig. Tanda tangan DKIM otomatis. |
-| **Gmail API** | Kirim melalui akun Gmail atau Google Workspace Anda menggunakan otentikasi OAuth. |
+| **SMTP Bawaan** | Server email self-hosted gratis yang disertakan dengan Spwig. Penandatanganan DKIM otomatis. |
+| **Gmail API** | Kirim melalui akun Gmail atau Google Workspace Anda menggunakan autentikasi OAuth. |
 | **SMTP Umum** | Hubungkan server SMTP apa pun (SendGrid, Mailgun, Amazon SES, atau server email Anda sendiri). |
 
-## Menyiapkan Email
+## Mengatur Email
 
-Navigasikan ke **Pengaturan > Akun Email** dan klik **Tambahkan Akun Email** untuk memulai wizard pengaturan.
+Buka **Settings > Email Accounts** dan klik **Add Email Account** untuk memulai wizard pengaturan.
 
 ### Langkah 1: Pilih Penyedia
 
@@ -24,34 +24,34 @@ Pilih penyedia email Anda. Server SMTP bawaan adalah opsi paling sederhana untuk
 
 ### Langkah 2: Konfigurasi Kredensial
 
-Masukkan kredensial untuk penyedia yang dipilih:
+Masukkan kredensial untuk penyedia yang Anda pilih:
 
-- **SMTP Bawaan** — Tidak diperlukan kredensial. Server berjalan pada instalasi Spwig Anda.
-- **Gmail API** — Otentikasi melalui Google OAuth. Anda akan dialihkan untuk masuk dengan akun Google Anda.
+- **SMTP Bawaan** — Tidak memerlukan kredensial. Server berjalan pada instalasi Spwig Anda.
+- **Gmail API** — Autentikasi melalui Google OAuth. Anda akan diarahkan untuk masuk dengan akun Google Anda.
 - **SMTP Umum** — Masukkan alamat server SMTP, port, nama pengguna, dan kata sandi.
 
 ### Langkah 3: Konfigurasi Pengirim
 
 Atur identitas pengirim untuk email keluar:
 
-- **Dari Email** — Alamat email yang muncul di bidang 'Dari' (contoh: orders@yourstore.com)
-- **Dari Nama** — Nama tampilan di sebelah alamat email (contoh: 'Nama Toko Anda')
-- **Balas Ke Email** — Tempat balasan pelanggan dialihkan (dapat berbeda dari alamat Dari)
+- **From Email** — Alamat email yang muncul di field "From" (misalnya, orders@yourstore.com)
+- **From Name** — Nama tampilan di samping alamat email (misalnya, "Nama Toko Anda")
+- **Reply-To Email** — Ke mana balasan pelanggan diarahkan (dapat berbeda dari alamat From)
 
 ### Langkah 4: Validasi DNS
 
-Verifikasi catatan otentikasi email domain Anda. Wizard memeriksa tiga catatan DNS:
+Verifikasi catatan autentikasi email domain Anda. Wizard memeriksa tiga catatan DNS:
 
 | Catatan | Tujuan |
 |--------|---------|
-| **SPF** | Mengizinkan server Anda mengirimkan email atas nama domain Anda |
-| **DKIM** | Menandatangani digital email untuk membuktikan bahwa mereka tidak dimanipulasi |
-| **DMARC** | Memberi tahu server penerima apa yang harus dilakukan dengan email yang gagal pemeriksaan SPF/DKIM |
+| **SPF** | Mengotorisasi server Anda untuk mengirim email atas nama domain Anda |
+| **DKIM** | Menandatangani email secara digital untuk membuktikan bahwa email tidak telah diubah |
+| **DMARC** | Memberitahu server penerima apa yang harus dilakukan dengan email yang gagal pemeriksaan SPF/DKIM |
 
 Untuk setiap catatan, wizard menampilkan:
 - **Status saat ini** — Apakah catatan dikonfigurasi dengan benar
-- **Nilai yang diperlukan** — Catatan DNS yang tepat untuk ditambahkan di registrar domain Anda
-- **Status penyebaran** — Apakah perubahan terbaru telah berlaku (perubahan DNS dapat memakan waktu hingga 48 jam)
+- **Nilai yang diperlukan** — Catatan DNS persis yang harus ditambahkan di registrar domain Anda
+- **Status propagasi** — Apakah perubahan baru-baru ini telah berlaku (perubahan DNS dapat memakan waktu hingga 48 jam)
 
 Server SMTP bawaan secara otomatis menghasilkan kunci DKIM untuk domain Anda.
 
@@ -59,33 +59,33 @@ Server SMTP bawaan secara otomatis menghasilkan kunci DKIM untuk domain Anda.
 
 Kirim email uji untuk memverifikasi semuanya berfungsi:
 1. Masukkan alamat email penerima
-2. Klik **Kirim Uji**
+2. Klik **Send Test** (Kirim Uji)
 3. Periksa kotak masuk Anda untuk pesan uji
 4. Verifikasi email tiba tanpa peringatan spam
 
 ### Langkah 6: Simpan dan Aktifkan
 
-Simpan konfigurasi dan atur akun sebagai aktif. Tandai sebagai **Default** jika akun tersebut harus menjadi akun email utama.
+Simpan konfigurasi dan setel akun sebagai aktif. Tandai sebagai **Default** (Bawaan) jika ini harus menjadi akun email utama.
 
 ## Template Email
 
-Spwig menyertakan lebih dari 30 template email untuk setiap acara transaksional. Navigasikan ke **Pengaturan > Template Email** untuk mengelolanya.
+Spwig menyertakan 30+ template email untuk setiap peristiwa transaksional. Buka **Settings > Email Templates** untuk mengelolanya.
 
 ### Jenis Template
 
-Template mencakup semua acara toko termasuk:
-- **Siklus Pesanan** — Konfirmasi, pemrosesan, dikirim, diterima, dibatalkan
-- **Pembayaran** — Struk, konfirmasi pengembalian dana, pembayaran gagal
-- **Akun Pelanggan** — Selamat datang, pengaturan ulang kata sandi, verifikasi email
-- **Kartu Hadiah** — Pengiriman, pemberitahuan saldo
+Template mencakup semua peristiwa toko termasuk:
+- **Siklus Hidup Pesanan** — Konfirmasi, pemrosesan, dikirim, diterima, dibatalkan
+- **Pembayaran** — Kuitansi, konfirmasi pengembalian dana, pembayaran gagal
+- **Akun Pelanggan** — Selamat datang, reset kata sandi, verifikasi email
+- **Kartu Hadiah** — Pengiriman, notifikasi saldo
 - **Pengiriman** — Pembaruan pelacakan, konfirmasi pengiriman
-- **Produk Digital** — Tautan unduh, kunci lisensi
-- **Pemasaran** — Pemulihan keranjang yang ditinggalkan, permintaan ulasan
+- **Produk Digital** — Tautan unduhan, kunci lisensi
+- **Pemasaran** — Pemulihan keranjang ditinggalkan, permintaan ulasan
 
 ### Menyesuaikan Template
 
-1. Navigasikan ke daftar template
-2. Klik template untuk mengedit
+1. Buka daftar template
+2. Klik template untuk diedit
 3. Ubah baris subjek, header, konten tubuh, dan footer
 4. Gunakan variabel template (misalnya, `{{ order.number }}`, `{{ customer.name }}`) untuk konten dinamis
 5. Pratinjau email sebelum menyimpan
@@ -93,51 +93,69 @@ Template mencakup semua acara toko termasuk:
 ### Dukungan Multi-Bahasa
 
 Template email mendukung beberapa bahasa:
-- Setiap template dapat memiliki terjemahan untuk semua bahasa aktif toko Anda
-- Sistem mengirimkan email dalam bahasa yang disukai pelanggan
+- Setiap template dapat memiliki terjemahan untuk semua bahasa aktif di toko Anda
+- Sistem mengirim email dalam bahasa yang diinginkan pelanggan
 - **Rantai fallback bahasa** — Jika terjemahan tidak tersedia, sistem kembali ke bahasa default toko
-- Gunakan fitur **Terjemahan AI** untuk menerjemahkan otomatis template ke bahasa lain
+- Gunakan fitur **Terjemahan AI** untuk menerjemahkan template ke bahasa lain secara otomatis
 
-### Menyalin Template
+### Mengkloning Template
 
-Untuk membuat versi disesuaikan dari template sistem:
-1. Buka template yang ingin Anda ubah
-2. Klik **Salin Template**
-3. Edit versi yang disalin
-4. Salinan mengambil prioritas atas template sistem asli
+Untuk membuat versi kustom dari template sistem:
+1. Buka template yang ingin Anda modifikasi
+2. Klik **Klon Template**
+3. Edit versi yang diklon
+4. Klon memiliki prioritas lebih tinggi daripada template sistem asli
 
-## Antrian Email
+## Antrean Email
 
-Lacak email keluar di **Pengaturan > Antrian Email**:
+Pantau email yang keluar di **Pengaturan > Antrean Email**:
 
-- **Diantrikan** — Email yang menunggu untuk dikirim
-- **Mengirim** — Saat ini sedang ditransmisikan
-- **Dikirim** — Berhasil dikirimkan
-- **Gagal** — Tidak dapat dikirimkan (dengan detail kesalahan)
-- **Dibalas** — Ditolak oleh server email penerima
+- **Dalam Antrean** — Email yang menunggu untuk dikirim
+- **Mengirim** — Sedang dalam proses transmisi
+- **Terkirim** — Berhasil dikirim
+- **Gagal** — Tidak dapat dikirim (dengan detail kesalahan)
+- **Bounce** — Ditolak oleh server email penerima
 
-Klik email apa pun untuk melihat detail lengkap termasuk penerima, subjek, waktu pengiriman, dan status pengiriman.
+Klik email mana pun untuk melihat detail lengkapnya, termasuk penerima, subjek, waktu pengiriman, dan status pengiriman.
 
 ## Pelacakan Pengiriman
 
-Lacak keterlibatan email:
+Pantau keterlibatan email:
 - **Pembukaan** — Berapa banyak penerima yang membuka email
-- **Klik** — Klik tautan dalam email
-- **Dibalas** — Pelacakan balasan keras dan lunak
+- **Klik** — Klik tautan di dalam email
+- **Bounce** — Pelacakan bounce keras dan lunak
 - **Keluhan** — Laporan spam dari penerima
 
-## Akun Multi
+## Beberapa Akun
 
 Anda dapat mengonfigurasi beberapa akun email:
-- **Akun Default** — Digunakan untuk semua email keluar kecuali diganti
-- **Fallback** — Jika akun default gagal, email akan diantrikan untuk dicoba kembali
-- Gunakan akun berbeda untuk tujuan berbeda (misalnya, satu untuk email transaksional, yang lain untuk pemasaran)
+- **Akun Default** — Digunakan untuk semua email keluar kecuali jika ditimpa
+- **Fallback** — Jika akun default gagal, email masuk ke antrean untuk dicoba lagi
+- Gunakan akun yang berbeda untuk tujuan yang berbeda (misalnya, satu untuk email transaksional, yang lain untuk pemasaran)
+
+## Mode Pengiriman Email
+
+Buka **Pengaturan > Pengaturan Toko** untuk mengontrol bagaimana toko Anda menangani email keluar. Pengaturan ini berguna selama pengembangan dan pengujian.
+
+| Mode | Deskripsi |
+|------|-------------|
+| **Live** | Email dikirim secara normal ke penerima asli |
+| **Dijeda** | Email ditahan dalam antrean dan tidak dikirim sampai Anda beralih kembali ke Live |
+| **Hanya Log** | Email dicatat di kotak keluar tetapi tidak pernah dikirim |
+
+### Email Pengalihan Uji
+
+Atur alamat **Email Pengalihan Uji** untuk memotong semua email keluar dan mengalihkannya ke satu alamat. Ketika diatur, setiap email — terlepas dari penerima aslinya — akan dikirim ke alamat tersebut. Ini berguna untuk menguji template email tanpa tidak sengaja mengirim ke pelanggan asli. Kosongkan untuk mengirim email ke penerima sebenarnya.
+
+### Daftar Putih Email Sandbox
+
+Dalam mode sandbox atau pengembangan, Anda dapat membatasi pengiriman email ke daftar putih alamat yang disetujui. Hanya email ke alamat dalam daftar putih yang akan dikirim. Semua email lainnya dicatat tetapi tidak pernah dikirim. Email admin selalu dimasukkan secara otomatis. Anda dapat menambahkan hingga 10 alamat.
 
 ## Tips
 
-- Mulailah dengan **Server SMTP Bawaan** untuk pengaturan cepat, lalu beralih ke penyedia eksternal jika Anda membutuhkan volume pengiriman yang lebih tinggi atau pengantaran yang lebih baik.
-- Selalu konfigurasikan **SPF, DKIM, dan DMARC** — tanpa mereka, email jauh lebih mungkin berakhir di folder spam.
-- Kirim **email uji** setelah setiap perubahan konfigurasi untuk memverifikasi pengiriman berfungsi.
-- Pantau antrian email secara teratur untuk **gagal** atau **dibalas** email — ini menunjukkan masalah pengantaran.
-- Gunakan **alamat pengirim profesional** (misalnya, orders@yourstore.com) daripada alamat email gratis untuk kepercayaan dan pengantaran yang lebih baik.
-- Pertahankan template Anda ringkas — email transaksional harus menyampaikan informasi secara cepat, bukan sebagai surat kabar pemasaran.
+- Mulai dengan server **SMTP Bawaan** untuk pengaturan cepat, lalu beralih ke penyedia eksternal jika Anda membutuhkan volume pengiriman yang lebih tinggi atau keterjangkauan yang lebih baik.
+- Selalu konfigurasikan rekaman **SPF, DKIM, dan DMARC** — tanpa mereka, email jauh lebih mungkin masuk ke folder spam.
+- Kirim **email uji** setelah setiap perubahan konfigurasi untuk memverifikasi bahwa pengiriman berfungsi.
+- Pantau antrean email secara teratur untuk email **gagal** atau **bounce** — ini menunjukkan masalah keterjangkauan.
+- Gunakan **alamat pengirim profesional** (misalnya, orders@yourstore.com) alih-alih alamat email gratis untuk kepercayaan dan keterjangkauan yang lebih baik.
+- Jaga template Anda tetap ringkas — email transaksional harus menyampaikan informasi dengan cepat, bukan menjadi buletin pemasaran.

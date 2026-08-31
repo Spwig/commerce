@@ -70,8 +70,8 @@
                     <option value="error" {% if request.GET.connection_status == 'error' %}selected{% endif %}>
                         {% trans "Error" %} ({{ error_count }})
                     </option>
-                    <option value="pending" {% if request.GET.connection_status == 'pending' %}selected{% endif %}>
-                        {% trans "Pending" %} ({{ pending_count }})
+                    <option value="unknown" {% if request.GET.connection_status == 'unknown' %}selected{% endif %}>
+                        {% trans "Untested" %} ({{ pending_count }})
                     </option>
                 </select>
 

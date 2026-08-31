@@ -69,6 +69,19 @@ BUG_REPORT_RATE_LIMIT = 10  # per hour per user
 VALID_CONSENT_KEYS = {"console_logs", "page_url", "browser_info", "navigation"}
 
 
+def _sliced_text(data, key, max_length):
+    """Return a text field truncated to max_length.
+
+    User-supplied JSON fields may arrive as non-strings (numbers, lists,
+    ``null``); slicing those directly raises TypeError. Treat any non-string
+    value as absent so the endpoint never crashes on a malformed field.
+    """
+    value = data.get(key, "")
+    if not isinstance(value, str):
+        return ""
+    return value[:max_length]
+
+
 @require_POST
 def submit_bug_report(request):
     """
@@ -105,6 +118,11 @@ def submit_bug_report(request):
             status=400,
         )
 
+    # description must be a string; a truthy non-string (number, list, bool)
+    # would pass the check above and later crash on slicing.
+    if not isinstance(description, str):
+        return JsonResponse({"error": "Invalid description"}, status=400)
+
     from core.models import BugReport
 
     valid_categories = [c[0] for c in BugReport.CATEGORY_CHOICES]
@@ -127,7 +145,7 @@ def submit_bug_report(request):
         consent_flags = {}
 
     # Validate contact_email format if provided
-    contact_email = data.get("contact_email", "")[:254]
+    contact_email = _sliced_text(data, "contact_email", 254)
     if contact_email:
         from django.core.exceptions import ValidationError as DjangoValidationError
         from django.core.validators import validate_email
@@ -143,12 +161,12 @@ def submit_bug_report(request):
         severity=severity,
         browser_data=sanitized_browser_data,
         consent_flags=consent_flags,
-        contact_name=data.get("contact_name", "")[:200],
+        contact_name=_sliced_text(data, "contact_name", 200),
         contact_email=contact_email,
         contact_consent=bool(data.get("contact_consent", False)),
         submitted_by=request.user,
-        page_url=data.get("page_url", "")[:500],
-        admin_section=data.get("admin_section", "")[:200],
+        page_url=_sliced_text(data, "page_url", 500),
+        admin_section=_sliced_text(data, "admin_section", 200),
     )
 
     # Send immediately via Celery

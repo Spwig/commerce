@@ -67,7 +67,8 @@ def parse_frontmatter(content):
     if content.startswith("---\n"):
         parts = content.split("---\n", 2)
         if len(parts) >= 3:
-            frontmatter = yaml.safe_load(parts[1]) or {}
+            data = yaml.safe_load(parts[1])
+            frontmatter = data if isinstance(data, dict) else {}
             body = parts[2].strip()
 
     return frontmatter, body

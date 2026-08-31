@@ -23,8 +23,6 @@ urlpatterns = [
     path("category/<slug:slug>/", views.category_posts, name="category"),
     # Tag pages
     path("tag/<slug:slug>/", views.tag_posts, name="tag"),
-    # Post detail
-    path("<slug:slug>/", views.post_detail, name="detail"),
     # Subscriber endpoints
     path("subscribe/", views.subscribe, name="subscribe"),
     path("verify/<str:token>/", views.verify_subscription, name="verify"),
@@ -32,4 +30,6 @@ urlpatterns = [
     path("preferences/<str:token>/", views.subscription_preferences, name="preferences"),
     # RSS Feed
     path("feed/rss/", views.BlogRSSFeed(), name="rss_feed"),
+    # Post detail (catch-all single segment — must stay below literal routes)
+    path("<slug:slug>/", views.post_detail, name="detail"),
 ]

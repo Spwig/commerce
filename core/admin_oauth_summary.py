@@ -199,10 +199,11 @@ def generate_oauth_providers_summary():
         return mark_safe("".join(summary_parts))
 
     except ImportError:
-        return mark_safe("""
+        unavailable_text = _("Social authentication module not available")
+        return mark_safe(f"""
             <div class="oauth-warning-box">
                 <div class="oauth-warning-title">
-                    <i class="fas fa-times-circle"></i> {_('Social authentication module not available')}
+                    <i class="fas fa-times-circle"></i> {unavailable_text}
                 </div>
             </div>
         """)

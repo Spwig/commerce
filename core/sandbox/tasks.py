@@ -36,8 +36,9 @@ def report_tamper_to_server(self, event: str, url: str, ip: str):
             "ip": ip,
         }
 
+        api_version = (config.api_version or "v1").strip("/")
         response = requests.post(
-            f"{config.server_url.rstrip('/')}/api/v1/installations/tamper-report/",
+            f"{config.server_url.rstrip('/')}/api/{api_version}/installations/tamper-report/",
             json=payload,
             timeout=10,
             headers={"Content-Type": "application/json"},
@@ -45,8 +46,16 @@ def report_tamper_to_server(self, event: str, url: str, ip: str):
 
         if response.status_code == 200:
             logger.info(f"Tamper report sent to update server: event={event}")
+        elif 400 <= response.status_code < 500 and response.status_code != 429:
+            # Client errors (bad request, unauthorized, etc.) won't succeed on
+            # a retry, so log and stop rather than exhausting the retry budget.
+            logger.warning(
+                f"Update server rejected tamper report with {response.status_code}; not retrying"
+            )
         else:
-            logger.warning(f"Update server returned {response.status_code} for tamper report")
+            # Transient failures (5xx, 429) — raise so the exception reaches
+            # self.retry below and the report is re-sent.
+            response.raise_for_status()
 
     except Exception as exc:
         logger.error(f"Failed to send tamper report: {exc}")

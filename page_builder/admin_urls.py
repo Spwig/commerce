@@ -13,6 +13,14 @@ from . import admin_views, views
 
 app_name = "page_builder_admin"
 
+
+def _utility_template_view(utility_name):
+    """Serve an installed utility's current template, matching the installer layout."""
+    return staff_member_required(
+        TemplateView.as_view(template_name=f"utilities/{utility_name}/current/template.html")
+    )
+
+
 urlpatterns = [
     # Admin AJAX Endpoints
     path("page/filter/", admin_views.filter_pages, name="filter_pages"),
@@ -68,39 +76,27 @@ urlpatterns = [
     # Utility template URLs (migrated from page_builder/urls.py)
     path(
         "utilities/color_picker/template/",
-        staff_member_required(
-            TemplateView.as_view(template_name="components/utilities/color_picker/template.html")
-        ),
+        _utility_template_view("color_picker"),
         name="color_picker_template",
     ),
     path(
         "utilities/gradient_creator/template/",
-        staff_member_required(
-            TemplateView.as_view(
-                template_name="components/utilities/gradient_creator/template.html"
-            )
-        ),
+        _utility_template_view("gradient_creator"),
         name="gradient_creator_template",
     ),
     path(
         "utilities/border_editor/template/",
-        staff_member_required(
-            TemplateView.as_view(template_name="components/utilities/border_editor/template.html")
-        ),
+        _utility_template_view("border_editor"),
         name="border_editor_template",
     ),
     path(
         "utilities/shadow_editor/template/",
-        staff_member_required(
-            TemplateView.as_view(template_name="components/utilities/shadow_editor/template.html")
-        ),
+        _utility_template_view("shadow_editor"),
         name="shadow_editor_template",
     ),
     path(
         "utilities/unit_selector/template/",
-        staff_member_required(
-            TemplateView.as_view(template_name="components/utilities/unit_selector/template.html")
-        ),
+        _utility_template_view("unit_selector"),
         name="unit_selector_template",
     ),
 ]

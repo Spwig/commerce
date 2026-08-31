@@ -248,7 +248,11 @@ class StorageWizardStep3View(WizardSessionMixin, View):
             return redirect("admin:management_storage_wizard_step2")
 
         is_default = request.POST.get("is_default") == "on"
-        retention_days = int(request.POST.get("retention_days", 0) or 0)
+        try:
+            retention_days = int(request.POST.get("retention_days", 0) or 0)
+        except (TypeError, ValueError):
+            messages.error(request, _("Please enter a valid retention period."))
+            return self.get(request)
 
         # Encrypt credentials before saving
         encrypted = encrypt_credentials(wizard_data["credentials"])
@@ -290,6 +294,9 @@ def test_connection_view(request):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
+        return JsonResponse({"success": False, "message": "Invalid JSON."}, status=400)
+
+    if not isinstance(data, dict):
         return JsonResponse({"success": False, "message": "Invalid JSON."}, status=400)
 
     provider_type = data.get("provider_type")

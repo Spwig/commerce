@@ -18,9 +18,40 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse
 
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+# Matches a genuine ``sandbox`` attribute on an iframe's opening tag and captures
+# its value. The required leading whitespace stops the substring ``sandbox=``
+# inside another attribute's value (e.g. ``title="sandbox=x"``) from satisfying
+# the presence check.
+_IFRAME_SANDBOX_ATTR_RE = re.compile(
+    r"""\ssandbox(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]*)))?""",
+    re.IGNORECASE,
+)
+_IFRAME_OPEN_TAG_RE = re.compile(r"<iframe\b[^>]*>", re.IGNORECASE)
+
+# Granting both ``allow-scripts`` and ``allow-same-origin`` lets framed content
+# run script with same-origin access and thereby remove its own sandbox — the
+# standard sandbox escape. An iframe requesting both is treated as unsandboxed.
+_SANDBOX_ESCAPE_TOKENS = frozenset({"allow-scripts", "allow-same-origin"})
+
+# Individually dangerous sandbox tokens: any one of these lets framed content
+# reach outside its frame (redirect the top window to a phishing page, spawn a
+# non-sandboxed popup, trigger downloads, or open modal dialogs). Merchant
+# marketing embeds have no need for them, so an iframe requesting any is dropped.
+_SANDBOX_FORBIDDEN_TOKENS = frozenset(
+    {
+        "allow-top-navigation",
+        "allow-top-navigation-by-user-activation",
+        "allow-top-navigation-to-custom-protocols",
+        "allow-popups-to-escape-sandbox",
+        "allow-downloads",
+        "allow-modals",
+    }
+)
 
 
 class ContentSanitizer:
@@ -169,6 +200,87 @@ class ContentSanitizer:
         "javascript",
     ]
 
+    # Inline CSS properties Bleach is allowed to keep on a `style` attribute.
+    # Anything outside this allow-list (including the dangerous properties
+    # above) is dropped by the CSS sanitizer.
+    ALLOWED_CSS_PROPERTIES = [
+        "color",
+        "background",
+        "background-color",
+        "background-image",
+        "background-position",
+        "background-repeat",
+        "background-size",
+        "font",
+        "font-family",
+        "font-size",
+        "font-style",
+        "font-weight",
+        "line-height",
+        "letter-spacing",
+        "word-spacing",
+        "text-align",
+        "text-decoration",
+        "text-transform",
+        "text-shadow",
+        "text-indent",
+        "white-space",
+        "vertical-align",
+        "list-style",
+        "list-style-type",
+        "list-style-position",
+        "margin",
+        "margin-top",
+        "margin-right",
+        "margin-bottom",
+        "margin-left",
+        "padding",
+        "padding-top",
+        "padding-right",
+        "padding-bottom",
+        "padding-left",
+        "border",
+        "border-top",
+        "border-right",
+        "border-bottom",
+        "border-left",
+        "border-color",
+        "border-style",
+        "border-width",
+        "border-radius",
+        "box-shadow",
+        "width",
+        "height",
+        "max-width",
+        "max-height",
+        "min-width",
+        "min-height",
+        "display",
+        "flex",
+        "flex-direction",
+        "flex-wrap",
+        "justify-content",
+        "align-items",
+        "align-content",
+        "align-self",
+        "gap",
+        "grid-template-columns",
+        "grid-template-rows",
+        "grid-gap",
+        "position",
+        "top",
+        "right",
+        "bottom",
+        "left",
+        "float",
+        "clear",
+        "overflow",
+        "opacity",
+        "cursor",
+        "transform",
+        "transition",
+    ]
+
     # External domains whitelist (configurable via settings)
     DEFAULT_ALLOWED_DOMAINS = [
         "fonts.googleapis.com",
@@ -193,6 +305,11 @@ class ContentSanitizer:
         self.allowed_tags = self._get_allowed_tags()
         self.allowed_attrs = self._get_allowed_attrs()
         self.allowed_protocols = self.ALLOWED_PROTOCOLS.copy()
+
+        # Bleach 6.x strips every `style` value unless a CSS sanitizer is
+        # supplied; this keeps safe merchant styling while dropping dangerous
+        # properties via the allow-list above.
+        self.css_sanitizer = CSSSanitizer(allowed_css_properties=self.ALLOWED_CSS_PROPERTIES)
 
         # Merge default and custom allowed domains
         self.allowed_domains = self.DEFAULT_ALLOWED_DOMAINS.copy()
@@ -250,18 +367,21 @@ class ContentSanitizer:
                 f"Content will be heavily sanitized."
             )
 
-        # Use bleach to clean HTML
+        # Use bleach to clean HTML. The CSS sanitizer keeps allow-listed
+        # inline style properties instead of Bleach blanking every value.
         cleaned = bleach.clean(
             html,
             tags=self.allowed_tags,
             attributes=self.allowed_attrs,
             protocols=self.allowed_protocols,
+            css_sanitizer=self.css_sanitizer,
             strip=True,  # Remove disallowed tags entirely
         )
 
-        # Additional sanitization for Tier C (has style attribute)
-        if self.tier == "C" and "style" in cleaned:
-            cleaned = self._sanitize_inline_styles(cleaned)
+        # Tier C keeps iframes; drop any that lack the mandatory sandbox
+        # attribute enforced by validate_iframe_sandbox().
+        if self.tier == "C":
+            cleaned = self._enforce_iframe_sandbox(cleaned)
 
         return cleaned
 
@@ -343,27 +463,36 @@ class ContentSanitizer:
 
         return css.strip()
 
-    def _sanitize_inline_styles(self, html: str) -> str:
+    def _enforce_iframe_sandbox(self, html: str) -> str:
         """
-        Sanitize inline style attributes in HTML.
+        Remove iframe elements that lack an acceptable sandbox attribute.
+
+        Bleach keeps whitelisted iframe tags verbatim, so unsandboxed iframes
+        would otherwise survive even though validate_iframe_sandbox() rejects
+        them. Each iframe element is re-validated and dropped if unsafe.
 
         Args:
-            html: HTML with potentially dangerous inline styles
+            html: Cleaned HTML that may contain iframe elements
 
         Returns:
-            HTML with sanitized inline styles
+            HTML with unsandboxed iframes removed
         """
-        # Find all style attributes
-        pattern = r'style\s*=\s*["\']([^"\']*)["\']'
+        if "<iframe" not in html.lower():
+            return html
 
-        def sanitize_match(match):
-            css = match.group(1)
-            clean_css = self.sanitize_css(css)
-            if clean_css:
-                return f'style="{clean_css}"'
+        def drop_unsandboxed(match):
+            element = match.group(0)
+            if self.validate_iframe_sandbox(element):
+                return element
+            logger.warning("Removing iframe without acceptable sandbox attribute")
             return ""
 
-        return re.sub(pattern, sanitize_match, html)
+        return re.sub(
+            r"<iframe\b[^>]*>.*?</iframe>",
+            drop_unsandboxed,
+            html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
 
     def _contains_dangerous_pattern(self, content: str) -> bool:
         """
@@ -414,9 +543,32 @@ class ContentSanitizer:
         if self.tier in ["A", "B"]:
             return False
 
-        # Tier C: iframe must have sandbox attribute
-        if "sandbox=" not in iframe_html:
-            logger.warning("iframe without sandbox attribute detected")
+        # Tier C: require a genuine sandbox attribute on the opening tag and
+        # forbid the allow-scripts + allow-same-origin escape combination.
+        # Scope the search to the opening tag so inner content can't spoof it,
+        # and require the attribute proper (not a substring in another value).
+        open_tag_match = _IFRAME_OPEN_TAG_RE.search(iframe_html)
+        open_tag = open_tag_match.group(0) if open_tag_match else iframe_html
+
+        sandbox_match = _IFRAME_SANDBOX_ATTR_RE.search(open_tag)
+        if not sandbox_match:
+            logger.warning("iframe without a real sandbox attribute detected")
+            return False
+
+        value = sandbox_match.group(1) or sandbox_match.group(2) or sandbox_match.group(3) or ""
+        tokens = {token.lower() for token in value.split()}
+        if _SANDBOX_ESCAPE_TOKENS.issubset(tokens):
+            logger.warning(
+                "iframe sandbox grants both allow-scripts and allow-same-origin "
+                "(sandbox escape); treating as unsandboxed"
+            )
+            return False
+        forbidden = tokens & _SANDBOX_FORBIDDEN_TOKENS
+        if forbidden:
+            logger.warning(
+                "iframe sandbox grants frame-escaping token(s) %s; dropping",
+                ", ".join(sorted(forbidden)),
+            )
             return False
 
         return True

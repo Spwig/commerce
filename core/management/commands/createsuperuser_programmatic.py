@@ -17,7 +17,7 @@ Usage:
         --username merchant
 """
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -42,6 +42,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from django.contrib.auth import get_user_model
+        from django.contrib.auth.hashers import identify_hasher
 
         User = get_user_model()
         email = options["email"]
@@ -64,6 +65,21 @@ class Command(BaseCommand):
             is_staff=True,
             is_superuser=True,
         )
+        # Validate that the supplied value is a complete, well-formed password
+        # encoding before storing it, so we never create an account with an
+        # unusable password hash. identify_hasher() confirms the algorithm is
+        # enabled; the hasher's own decode() then parses every structural
+        # component and raises on a malformed payload. We deliberately avoid
+        # check_password() here: it returns False (rather than raising) for some
+        # malformed encodings — notably Argon2, which catches verification
+        # errors — so its ignored return value cannot be trusted as a validity
+        # signal.
+        try:
+            hasher = identify_hasher(password_hash)
+            hasher.decode(password_hash)
+        except Exception as exc:
+            raise CommandError(f"Invalid password hash: {exc}") from exc
+
         # Set pre-hashed password directly, bypassing set_password()
         user.password = password_hash
         user.save()

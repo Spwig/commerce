@@ -127,6 +127,28 @@ class DKIMHandlerTestCase(TestCase):
         self.assertIn(b"d=example.com", signed_message)
         self.assertIn(b"s=test", signed_message)
 
+    def test_list_unsubscribe_headers_are_signed(self):
+        """Gmail/Yahoo one-click (RFC 8058) needs List-Unsubscribe-Post DKIM-aligned."""
+        private_key, public_key = self.handler.generate_key_pair()
+        self.handler.store_keys(private_key, public_key, account=self.account)
+
+        message = (
+            b"From: sender@example.com\r\n"
+            b"To: recipient@example.com\r\n"
+            b"Subject: Test Message\r\n"
+            b"Date: Mon, 28 Oct 2024 00:00:00 +0000\r\n"
+            b"Message-ID: <test@example.com>\r\n"
+            b"List-Unsubscribe: <https://example.com/marketing/unsubscribe/tok/>\r\n"
+            b"List-Unsubscribe-Post: List-Unsubscribe=One-Click\r\n"
+            b"\r\n"
+            b"This is a test message body.\r\n"
+        )
+        signed_message = self.handler.sign_message(message, account=self.account)
+        # The DKIM-Signature h= tag (in the header block) must cover both headers.
+        signature_block = signed_message.split(b"\r\n\r\n", 1)[0].lower()
+        self.assertIn(b"list-unsubscribe", signature_block)
+        self.assertIn(b"list-unsubscribe-post", signature_block)
+
     def test_signature_validation(self):
         """Generated signatures verify against a mocked DNS lookup."""
         private_key, public_key = self.handler.generate_key_pair()

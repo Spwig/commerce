@@ -1,55 +1,53 @@
 # Spwig Features
 
-> 282 features · 20 categories. Every entry is derived from real, code-verified capabilities. Auto-generated from the Spwig source code.
+> 274 features · 20 categories. Every entry is derived from real, code-verified capabilities. Auto-generated from the Spwig source code.
 
 ## Categories
 
-- [Product Catalog](#product-catalog) (16)
+- [Product Catalog](#product-catalog) (14)
 - [3D Product Configurator](#3d-product-configurator) (4)
 - [Cart & Checkout](#cart-checkout) (17)
 - [Payments](#payments) (13)
 - [Orders & Returns](#orders-returns) (7)
 - [Shipping & Fulfillment](#shipping-fulfillment) (10)
-- [Point of Sale](#point-of-sale) (23)
+- [Point of Sale](#point-of-sale) (26)
 - [Subscriptions & Recurring](#subscriptions-recurring) (9)
 - [Customer Analytics](#customer-analytics) (15)
 - [Marketing & Growth](#marketing-growth) (39)
-- [Email & Communications](#email-communications) (13)
-- [Blog & Content](#blog-content) (11)
-- [Design & Storefront](#design-storefront) (16)
+- [Email & Communications](#email-communications) (10)
+- [Blog & Content](#blog-content) (12)
+- [Design & Storefront](#design-storefront) (14)
 - [Page Builder](#page-builder) (9)
 - [Media Library](#media-library) (5)
 - [Search & Discovery](#search-discovery) (7)
-- [Internationalization](#internationalization) (16)
+- [Internationalization](#internationalization) (15)
 - [Agentic Commerce](#agentic-commerce) (6)
 - [Enterprise & Security](#enterprise-security) (9)
-- [Platform & Administration](#platform-administration) (37)
+- [Platform & Administration](#platform-administration) (33)
 
 ## Product Catalog
 
 - **Booking Products** — Merchants sell appointments, rentals, and events with availability rules, dynamic pricing, deposits, waitlists, rescheduling, cancellation, and iCal calendar output.
-- **Custom Design Pricing & Checkout** — A configured design is priced by surfaces, uploads, clipart, and text, held as a time-limited cart draft, validated at cart, and frozen onto the order at checkout.
 - **Custom Field Validation** — Entered values are checked against each field's type, required flag, ranges, choices, and formats, with per-field error reporting.
 - **Custom Fields** — Add your own typed fields to products, categories, orders, and customers, organized into groups and ordered as you like.
-- **Design Templates** — Staff author and manage ready-made canvas templates for a product, with locking of individual elements to guide customer edits.
+- **Design Editor Setup** — Merchants configure per-product editor toggles, upload limits, pricing rates, print surfaces, and reusable design templates.
 - **Field Data Entry & Storefront Display** — Staff enter custom-field values on records, and grouped values display on the storefront with select labels and defaults applied.
 - **Field Recycle Bin & Recovery** — Deleted fields and groups go to a recycle bin where stored data is retained for restore, or can be permanently removed.
 - **Gift Cards** — Merchants issue funded gift cards and accept them as tender at checkout with balance tracking, holds, captures, and refunds.
 - **License Key Management** — Merchants auto-generate license keys, enforce device activation limits, validate licenses locally or via external providers, and notify integrations of lifecycle events.
-- **Multi-Surface Product Setup** — Staff define per-product design surfaces with dimensions, zones, print/DPI settings, mockups, and which of text, uploads, and clipart are allowed on each.
 - **Multi-Warehouse Inventory** — Merchants track stock across warehouses with allocation, fulfillment on shipment, availability checks, adjustments, and an immutable movement audit trail.
-- **Print-Ready Fulfillment Files** — After checkout the ordered design is composited per surface at target DPI into print-ready image files for production.
-- **Product Design Editor** — Customers personalize a product on a live canvas with text, uploaded images, clipart, and custom fonts within the limits set for each surface.
+- **Print-Ready Fulfillment** — At checkout a customer's design is frozen to the order and rendered into print-ready files at the surface's target DPI.
+- **Product Design Editor** — Customers personalize a product on a Fabric.js canvas with text, uploaded images, clipart, and custom fonts, with live per-design pricing.
 - **Product Purchase Requirements** — Merchants gate purchases on required prerequisite products the customer already owns or has in cart, enforcing compatibility and upgrade paths.
-- **Saved Customer Designs** — Signed-in customers save, reload, and delete their own named product designs across sessions.
+- **Saved Customer Designs** — Signed-in customers save named designs, reload them later, and delete ones they no longer want.
 - **Stock Reservation** — Temporary cart-level stock holds prevent overselling from add-to-cart through checkout, then convert into order allocations or POS fulfillment.
 
 ## 3D Product Configurator
 
-- **3D Product Model Setup** — Attach a 3D model to a configurable product and store its parsed scene structure for configuration.
-- **Interactive 3D & AR Viewer** — Show shoppers an interactive 3D/AR product viewer with configurable camera, lighting, and a saved scene thumbnail.
-- **Texture & Material Library** — Upload and manage texture image assets that configuration options apply to the model.
-- **Visual Configuration Options** — Link product configuration options to visual changes on the 3D model: material colors, part visibility, and swappable geometry.
+- **3D & AR Product Viewer** — Shoppers view and rotate the product in a configurable 3D viewer with camera, lighting, AR, and auto-generated thumbnail.
+- **3D Asset Management** — Add, list, and delete a product's texture, geometry, and option-mapping assets, scoped to that product to prevent cross-product access.
+- **3D Model Setup** — Upload a GLB model and Spwig parses it into a configurable scene graph, keeping it current as the parser updates.
+- **Visual Product Options** — Link a product's configuration-slot options to live visual changes — color, texture, part swaps, and show/hide of model parts.
 
 ## Cart & Checkout
 
@@ -112,162 +110,161 @@
 
 ## Point of Sale
 
-- **Card Reader Integration** — Discover, assign, and monitor card readers per terminal and push branded splash screens to the device.
-- **Cart Building & Customer Lookup** — Browse the catalog, add items by barcode/SKU, apply promo vouchers, and attach or create a walk-in customer.
-- **Checkout & Split-Tender Payments** — Complete a sale across cash, card, terminal-card, gift-card, and split tenders, recording payments.
-- **Customer-Facing Display** — Pair a secondary customer-facing screen to a terminal using a rotating pairing code.
-- **Customer-Facing Display** — Pair a secondary screen that shows live cart and payment status plus store-scoped promotional slides.
-- **Digital Receipts** — Send order receipts to customers by email, SMS, or WhatsApp.
-- **Integrated Card Reader Payments** — Take card payments through an integrated card reader by creating, capturing, and cancelling payment intents.
-- **Inventory Control** — View stock and movements across locations and adjust warehouse stock for receipts, damage, recounts, and returns.
-- **Loyalty at the Counter** — Preview loyalty points and rewards before a sale and award earned points on completed orders.
-- **Offline Mode & Sync** — Queue sales and stock adjustments while offline and replay them idempotently, plus fetch data deltas to keep terminals in sync.
-- **Parked Carts** — Save a mid-transaction cart, list parked carts, and restore one later to serve multiple customers.
-- **Parked Carts** — Save a mid-transaction cart, restore it later, and auto-clear parked carts after their expiry.
-- **Receipts & Digital Delivery** — Apply store-scoped receipt templates and send receipts by email, SMS, WhatsApp, or a public receipt link.
-- **Refunds & Voids** — Refund POS orders in full or by item, and void same-shift orders with automatic shift-total reversal.
-- **Sales Reporting** — View daily POS sales totals and top-selling product metrics.
-- **Shift & Cash Management** — Open and close shifts with opening float, cash-in/out movements, and running totals.
-- **Shift Management** — Open and close cashier shifts with cash-in/out movements and expected-versus-counted cash reconciliation.
-- **Staff Discount Controls** — Apply manual line or cart discounts within per-staff limits, with manager-PIN override for over-limit amounts.
-- **Staff Discount Controls** — Enforce per-staff discount limits and require manager PIN approval for discounts that exceed them.
-- **Staff Login & Biometric Terminal Unlock** — Log staff in and unlock terminals via WebAuthn biometrics, PIN, or staff card with lockout auditing.
-- **Terminal Lock & Unlock** — Lock and unlock terminals via cashier/manager PIN, staff card, biometrics, or remote admin, with full audit logging and lockout rules.
-- **Terminal Management** — Register and pair POS terminals, return their configuration, and record heartbeats.
-- **Terminal Setup & Device Pairing** — Register POS terminals, issue pairing codes, and verify payment provider connectivity before going live.
+- **Biometric & PIN Terminal Unlock** — Unlock terminals with WebAuthn fingerprint/face, staff cards, or PINs, with lockout and manager escalation after failures.
+- **Card Reader Integration** — Discover, assign, brand, and take card payments on hardware readers bound one-per-terminal.
+- **Customer-Facing Display** — Serve the terminal's current config, receipt template, and active promotional slides to a paired customer screen.
+- **Customer-Facing Display** — Pair a secondary screen to a terminal using a single-use, time-limited numeric pairing code.
+- **Digital Receipt Delivery** — Send order receipts by email, SMS, or WhatsApp and serve a tokenised public receipt page to the shopper.
+- **In-Store Customer Profiles** — Create deduplicated walk-in customers and search existing profiles with their order and loyalty details.
+- **Integrated Card Reader Payments** — Take card-present payments through connected readers with create, capture, cancel, and status polling.
+- **Offline Mode & Sync** — Keep selling offline with delta catalog sync and idempotent upload of queued sales and stock adjustments.
+- **Parked Carts** — Save a mid-transaction cart to serve another customer, then list, restore, or delete it later.
+- **Parked Carts** — Save a mid-transaction cart for later retrieval and auto-expire unrestored parked carts.
+- **POS Cart & Voucher Application** — Build carts by product or barcode with variant/bundle selections, stock limits, and applied promo vouchers.
+- **POS Catalog & Barcode Lookup** — Browse and search published products with terminal-warehouse stock, and resolve scanned barcodes or SKUs.
+- **POS Checkout & Split-Tender Payments** — Complete in-store sales paid by cash, external card, gift card, or a mix of tenders, with change and stock updates.
+- **POS Loyalty Points** — Look up a customer's tier and balance, preview points for a sale, and award points on checkout without blocking it.
+- **Printed & Digital Receipts** — Generate thermal-printer receipts from the terminal's template and queue email, SMS, or WhatsApp digital receipts.
+- **Refunds & Voids** — Process full or partial refunds and void same-shift sales, returning stock and adjusting shift totals.
+- **Shift & Cash Management** — Open and close cashier shifts with opening/closing cash, cash-in/out movements, and drawer reconciliation.
+- **Shift Management & Cash Reconciliation** — Open and close cashier shifts with opening float, cash movements, and expected-versus-counted drawer reconciliation.
+- **Staff Discount Controls** — Apply staff discounts within per-staff limits and require manager PIN approval when limits are exceeded.
+- **Staff Discount Controls** — Enforce per-staff discount limits, allowing, rejecting, or escalating manual discounts for manager PIN approval.
+- **Staff Login & Access Control** — Authenticate staff with tokens and gate POS endpoints behind valid licence and named permission checks.
+- **Stock Adjustments & Cross-Location Stock** — Adjust warehouse stock with audited movements and view a product's availability across all locations by distance.
+- **Terminal Lock & Staff Unlock** — Lock terminals and unlock them via cashier/manager PIN, registered card, or biometrics, with lockout rules, remote unlock, and audit logging.
+- **Terminal Management** — Pair and register terminals, monitor heartbeat and config, and lock/unlock devices with audited unlock events.
+- **Terminal Management & Device Pairing** — Enable retail store locations and pair register devices with a unique code that retrieves their configuration.
+- **Terminal Sales Reporting** — Daily per-terminal totals for net/total sales, refunds, transaction count, average value, and payment-method breakdown.
 
 ## Subscriptions & Recurring
 
-- **Cancellation & Reactivation** — Cancel subscriptions immediately or at period end with recorded reasons, expire them on schedule, and reactivate eligible canceled subscriptions within a set window.
-- **Failed Payment Recovery (Dunning)** — Automatically retries failed charges with backoff, re-attempts payment during a grace period, and cancels only after recovery attempts are exhausted.
-- **Free Trials** — Offer trial periods that automatically convert to paid, active subscriptions when the trial ends.
-- **Lifecycle Reminder Emails** — Send automated emails for trials ending, upcoming renewals, and payment events tied to subscription activity.
-- **Pause & Resume** — Subscribers can pause an active subscription and resume it later, either manually or on a set auto-resume date.
-- **Recurring Billing Engine** — Charges subscribers on each billing cycle and processes provider webhook and fallback events to keep subscription status and periods in sync.
-- **Stored Payment Methods** — Securely tokenize customer payment methods, update the card on a subscription, and delete tokens when no active subscription depends on them.
-- **Subscription Plans & Pricing** — Publish subscription plans and tiers with product-derived recurring prices, tier discounts, and quantity pricing that customers can browse and subscribe to.
-- **Upgrades, Downgrades & Scheduled Changes** — Let subscribers switch plans or tiers with prorated charges or credits, either immediately or scheduled for the next renewal, with the option to cancel a pending change.
+- **Billing History** — Customers can view a reverse-chronological record of successful, failed, and retried subscription charges.
+- **Cancellation & Reactivation** — Cancel subscriptions immediately or at period end, expire them automatically, and reactivate within a set window.
+- **Failed Payment Recovery** — Automatically retry failed subscription charges with backoff during a grace period to recover lapsed payments.
+- **Free Trials** — Offer trial periods that automatically convert to paid subscriptions and run first billing when the trial ends.
+- **Pause & Resume** — Customers can pause an active or trial subscription and resume it later, manually or on a scheduled auto-resume date.
+- **Plan Changes & Add-ons** — Customers can upgrade, downgrade, or schedule plan changes with proration and add per-cycle extras to a subscription.
+- **Saved Payment Methods** — Securely capture, update, and remove the reusable card used for a customer's recurring charges.
+- **Subscription Reminders** — Send customers notifications for ending trials, upcoming renewals, and expiring payment methods.
+- **Subscriptions** — Sell products on recurring plans with tiered, quantity, or flat pricing, and automatically charge and create renewal orders each cycle.
 
 ## Customer Analytics
 
-- **Abandoned Cart Recovery** — Detects abandoned carts, sends staged recovery emails, and marks carts as recovered.
-- **Cohort Analysis** — Groups customers by acquisition and tracks per-cohort retention, cumulative revenue, and average LTV over time.
-- **Communication Preferences & Consent** — Customers control which email and SMS messages they receive, with verified double opt-in and one-click unsubscribe, while transactional messages stay protected.
-- **Customer Accounts & Guest Checkout** — Shoppers can buy as a guest and later upgrade to a full account, with duplicate email records consolidated automatically.
-- **Customer Analytics** — Aggregates cross-customer analytics including revenue by segment, churn-risk distribution, and cohort retention.
-- **Customer Notes** — Lets staff record typed customer notes with follow-up requirements and mark them completed.
-- **Customer Savings Tracker** — Summarizes a customer's realized voucher, sale, and loyalty savings and estimates potential future savings.
-- **Customer Segmentation** — Assigns each customer to the highest-priority matching segment based on spend, order count, and purchase recency.
-- **Lifetime Value (LTV)** — Estimates each customer's lifetime value using RFM, cohort-historical, and probabilistic (BG/NBD) methods with value tiers and churn risk.
-- **Loyalty Status** — Derives a customer's loyalty tier, points, progress to the next tier, and tier benefits from their spend.
-- **Opt-In Insights & Recommended Defaults** — Merchants see opt-in adoption trends and get rule-based engagement scores that suggest the right message frequency per customer.
-- **Privacy & Data Rights (GDPR)** — Merchants can export or irreversibly erase a customer's data and keep an immutable audit trail of every preference change with retention limits.
-- **Product Recommendations** — Ranks a customer's favorite products, categories, and brands and generates in-stock personalized recommendations.
-- **RFM Scoring** — Scores each customer on recency, frequency, and monetary value from their delivered-order history.
-- **Social Login** — Customers can sign in with Google, Apple, and other providers once the store's OAuth apps are configured.
+- **Abandoned Cart Recovery** — Captures abandoned carts, sends timed recovery emails, and tracks which carts were recovered.
+- **Cohort Analysis** — Groups customers by acquisition month, channel, and first-purchase category and tracks retention, revenue, and average LTV over time.
+- **Communication Frequency Recommendations** — Each customer gets an engagement score and a recommended messaging frequency based on order history, spend, and verified opt-in.
+- **Communication Preference Center** — Customers control which emails and SMS they receive per channel and per app, and delivery is gated to honour those choices and transactional locks.
+- **Consent Audit & Preference Analytics** — Every preference change is logged with source and IP, and opt-in trends and adoption are reported on a dashboard, with audit logs pruned on a retention schedule.
+- **Customer Account Dashboard** — Gives logged-in customers a self-service view of their order stats, spending insights, savings, loyalty status, and favorite products.
+- **Customer Analytics Dashboard** — Aggregates cross-customer metrics like revenue by segment, churn-risk distribution, purchase frequency, and cohort retention for staff.
+- **Customer Data Privacy (GDPR)** — Merchants can export a customer's preference and consent data or irreversibly anonymise the customer while preserving financial records, with audit retention limits enforced.
+- **Customer Notes** — Lets staff record typed customer notes with follow-up dates and completion tracking.
+- **Customer Segmentation** — Assigns each customer to their highest-priority matching segment based on spend, completed orders, and purchase recency.
+- **Guest Checkout & Account Creation** — Shoppers can buy as a guest and later become full account holders, with duplicate records for the same email merged automatically.
+- **Lifetime Value (LTV)** — Estimates each customer's current and predicted lifetime value using RFM, cohort-historical, and probabilistic models, with value tiers and churn-risk levels.
+- **Opt-In Verification (Email & SMS)** — Email double-opt-in and TCPA-compliant SMS verification confirm consent before marketing messages are sent to a customer.
+- **Personalized Product Recommendations** — Suggests in-stock products for each customer from their favorite categories, purchase history, and related-product signals.
+- **RFM Scoring** — Scores customers on recency, frequency, and monetary value from their delivered-order history.
 
 ## Marketing & Growth
 
-- **Achievement Badges** — Members automatically earn badges when they meet order-count, spend, streak, timing, or referral criteria.
-- **Affiliate Notifications & Reports** — Affiliates receive language-aware emails for account, membership, commission, and payout events plus a monthly performance summary.
+- **Achievement Badges** — Members automatically earn badges when they meet order, spend, review, streak, timing, or referral criteria.
+- **Affiliate Notifications & Reports** — Affiliates receive language-aware emails for account, commission, and payout events plus a monthly performance summary.
+- **Affiliate Payouts** — Approved commissions are aggregated into payouts—requested by affiliates or generated in batch—and paid out via PayPal or Airwallex with status tracking.
 - **Affiliate Payouts** — Send single or batched affiliate commission payouts through PayPal or Airwallex, with fee/arrival estimates and in-flight cancellation.
-- **Affiliate Programs** — Create and run multiple affiliate programs with percentage or fixed commissions, cookie lifetimes, and minimum payout thresholds, and activate, pause, or archive them.
-- **Affiliate Recruitment & Approval** — Sign up affiliates, let them apply to programs, and approve, suspend, reject, or auto-approve their accounts and memberships.
+- **Affiliate Programs** — Staff create affiliate programs with fixed or percentage commissions, cookie lifetimes and payout thresholds, and can pause or archive them.
+- **Affiliate Signup & Approval** — Users register as affiliates, apply to programs, and staff approve, suspend, or reject affiliates and their program memberships.
 - **Automatic & Bulk SEO Fill-In** — Fill missing SEO metadata automatically on save, or generate it for many items in one batch.
-- **Automatic Feed Sync** — Feeds regenerate and upload to providers on hourly, daily, or weekly schedules, with sync logging and cleanup of expired feeds.
 - **Bulk Voucher Generation & Import/Export** — Generate up to 1,000 unique codes at once and import or export voucher batches as CSV/XLSX.
-- **Commissions & Payouts** — Approve, reject, or reverse affiliate commissions and pay affiliates via PayPal or Airwallex through threshold-based or affiliate-requested payouts with full status tracking.
-- **Feed Channel Connections** — Connect and manage marketplace provider accounts with encrypted credentials, connection testing, enable/disable, and a designated primary account.
-- **Feed Provider Components** — Install and update marketplace feed provider components from the component registry.
+- **Commission Management** — Commissions are calculated per order, approved/rejected/paid by staff, reversed on refunds or returns, and rolled into each affiliate's balance.
+- **Customer Share History** — Let signed-in customers view their own total, per-platform, and most recent shares.
+- **Feed Download** — Download the latest generated feed for any account as a file, with download counts and timestamps tracked.
+- **Feed Preview & Validation** — Preview a sample feed before publishing and flag items missing required fields like id, title, price, or image.
+- **Fraud Detection & Attribution Review** — Scores referrals for fraud, enforces eligibility rules, and auto- or staff-approves, rejects, or expires attributions before rewards are paid.
 - **Gift Cards & Store Credit** — Issue voucher-backed gift cards, check balances, and redeem against orders until the balance is spent.
-- **Link Tracking & Attribution** — Affiliates generate unique tracking links whose clicks are recorded and attributed to orders via last-click cookies, with automatic cleanup of expired click data.
-- **Loyalty Campaigns** — Merchants run triggered and scheduled multi-step campaigns that award points, send emails, issue rewards, award badges, or move members between segments.
-- **Loyalty Points** — Customers earn points on orders, actions, and manual awards against an immutable ledger with accurate, reconciled balances.
-- **Loyalty Tiers** — Members are promoted or demoted across tiers based on lifetime points, spend, and orders, with a grace period before demotion.
-- **Marketplace Product Feeds** — Generate product feeds for Google Shopping, Meta, and other marketplaces in RSS/XML, CSV/TSV, or JSON, with previews and downloadable exports.
-- **Member Segments** — Members are grouped into manual or rule-based segments (by points, spend, orders, recency, and more) for campaign targeting.
+- **Loyalty Campaigns** — Trigger-based, multi-step journey campaigns target member segments and tiers to award points, send emails, issue rewards, or grant badges, with A/B splits.
+- **Loyalty Member Segments** — Dynamic segments re-evaluate members by tier, points, spend, orders, AOV, recency, redemptions, and other rules for targeting.
+- **Loyalty Points & Rewards** — Members earn points from orders and actions on an immutable ledger and redeem them for discounts, vouchers, or wallet credit.
+- **Loyalty Tiers** — Members are promoted or demoted across tiers by lifetime points, spend, and order count, with tier-based earning multipliers applied.
+- **Marketplace Product Feeds** — Generate Google Shopping, Facebook/Meta, RSS, XML, CSV/TSV, and JSON Lines feeds from your published catalog with per-account category, stock, and price filters.
+- **Marketplace Provider Connections** — Connect and manage marketplace accounts with a guided setup wizard, encrypted credentials, connection testing, and a designated primary account per store.
 - **Payout Provider Accounts** — Connect, test, enable/disable, delete, and set a default account for each payout provider (PayPal, Airwallex).
 - **Payout Provider Components** — Install and update payout-provider component packages from the update server with version switching.
 - **Payout Status & Webhooks** — Ingest and signature-verify provider webhooks, log them for audit, and reconcile each payout to completed, failed, or cancelled.
 - **Provider Credential Protection** — Provider credentials are encrypted at rest and masked in logs.
-- **Referral Attribution & Approval** — A referred customer's first delivered order is attributed to the referrer, and each attribution can be approved, rejected, or auto-expired after the review period.
-- **Referral Fraud Detection** — Eligibility rules and a 0-100 fraud risk score screen referrals, with high-risk attributions rescreened and auto-rejected to block abuse.
-- **Referral Funnel Analytics** — Merchants see referral funnel totals, conversions, reward values, top referrers, and per-referrer stats, with old low-value events pruned on a retention schedule.
-- **Referral Links & Invitations** — Each customer gets a unique referral link and QR code they can share, and can email invitations directly to friends.
-- **Referral Rewards** — Referrers and, for double-sided programs, referees receive wallet credit, coupons, or perks that are issued, redeemed, expired, or revoked automatically across their lifecycle.
-- **Rewards & Redemption** — Members redeem points for rewards or discounts with stock checks, secure codes, fulfillment tracking, and point refunds on cancel or expiry.
+- **Referral Funnel Tracking & Analytics** — Tracks clicks, signups, and first-order conversions per referrer with funnel totals, top-referrer stats, and status breakdowns.
+- **Referral Links & Invitations** — Each customer gets a unique referral link and QR code, and can invite friends by email with a personal message.
+- **Referral Rewards** — Issues double-sided rewards as wallet credit, coupons, or perks, and emails participants across issuance, redemption, expiry, and revocation.
+- **Scheduled Feed Sync** — Feeds regenerate and push to providers automatically on hourly, daily, or weekly schedules, with expired feed files cleaned up on their own.
 - **SEO Content Generator** — Generate meta titles, descriptions, and keywords for products, categories, brands, pages, and blog posts.
 - **SEO Coverage & Gaps** — See per-type and overall SEO completeness and list which items are missing or have length issues.
 - **SEO Provider Integrations** — Connect, install, and update SEO providers, with one primary provider account enforced per site.
-- **Share Event Tracking** — Every share by a logged-in customer or guest is validated and recorded with platform, device, and session details.
-- **Share Rewards & History** — Logged-in customers can earn loyalty badges for sharing and view their own share history and totals by platform.
-- **Sharing Analytics Dashboard** — Staff can review share totals, trends, platform distribution, top content, and top sharers, with search and filtering of individual share events.
-- **Social Proof Share Counts** — Storefront pages can display live per-platform and total share counts for each product or content item.
-- **Storefront Share Buttons** — Customers can share products, categories, blog posts, and pages via configurable share buttons that merchants toggle per content type.
+- **Share Tracking** — Record every guest and logged-in share event and keep per-content, per-platform share totals up to date.
+- **Share-to-Earn Badges** — Automatically award loyalty badges to members when they share store content.
+- **Sharing Analytics** — Give staff sharing KPIs, trends, platform and content breakdowns, plus searchable share-count and share-event reports.
+- **Storefront Share Buttons** — Show configurable social share buttons on products, categories, blog posts, and pages, with live per-platform share counts.
+- **Tracking Links & Attribution** — Approved affiliates generate unique tracking links; clicks set attribution cookies and orders are credited by last-click, with automatic click cleanup.
 - **Voucher Application** — Customers apply and remove discount codes at checkout with eligibility, stacking, and minimum-value rules enforced.
 - **Voucher Usage Reporting** — See per-voucher usage counts, unique customers, total and average discount, and recent redemptions.
 - **Vouchers & Coupons** — Create percentage, fixed-value, or gift-card discount codes with usage rules and restrictions.
 
 ## Email & Communications
 
-- **AI Template Translation** — Templates are auto-translated into multiple languages with a manual verify/reject step for quality control.
-- **DNS & Deliverability Setup** — Owners validate SPF/DKIM/DMARC across resolvers, get recommended DNS records, DKIM-sign outgoing mail, and track validation history.
-- **Email Queue & Delivery** — Emails are queued respecting customer preferences, sent via the account provider, scheduled for later, and retried or released when held.
-- **Email Template Library** — Store owners activate, clone, and render branded transactional email templates with a system fallback always in place.
-- **Newsletters** — Owners send a staff-managed newsletter template to resolved recipient lists as individual queued emails.
-- **Open & Click Tracking** — Owners see when emails are opened and which links are clicked, with safe redirect handling and room for provider bounce/complaint events.
-- **Sending Account Setup** — Owners connect a mail provider with encrypted credentials, test the connection, and generate DKIM keys before going live.
-- **SMS Consent & Safe Sending** — Skip messages to customers who opted out by message type, and block real delivery to non-whitelisted numbers while in sandbox mode.
-- **SMS Messaging** — Send plain or template-based text messages to customers through a configured SMS provider and track each message's send/delivery state.
-- **SMS Provider Components** — Install and update SMS-provider integrations from the component marketplace, activating the selected version.
-- **SMS Provider Setup** — Add and configure SMS/WhatsApp provider accounts with validated, encrypted credentials, connection testing, and a default account per channel.
-- **Template Versioning** — Every template edit is snapshotted so owners can view history and revert to any prior version.
-- **WhatsApp Messaging** — Send pre-approved parameterized WhatsApp template messages and track their outcome in the outbox.
+- **AI Template Translation** — Merchants get email templates auto-translated per site language with human verification of each translation.
+- **Deliverability & Authentication** — Merchants validate SPF/DKIM/DMARC, get recommended DNS records, DKIM-sign outgoing mail, and test provider connections.
+- **Delivery & Engagement Tracking** — Merchants see email opens and clicks via tracking pixels and rewritten links, with provider events for bounces and complaints.
+- **Email Campaign Link Attribution** — Marketing email links are auto-tagged with UTM and attribution parameters so campaign-driven orders can be tracked.
+- **Email Delivery Queue** — Emails are queued, scheduled, sent through the configured provider, retried on failure, and can be held or released.
+- **Email Templates** — Merchants send transactional and marketing emails from localized, theme-styled templates that can be activated, cloned, and edited.
+- **SMS Notifications** — Send transactional and templated SMS to customers with variable substitution and delivery status tracking.
+- **SMS Provider Setup** — Browse, install, configure, test, and update SMS/WhatsApp providers with encrypted credentials and a default account per channel.
+- **Template Versioning** — Merchants snapshot template edits, revert to earlier versions, and clone system templates to customize safely.
+- **WhatsApp Messaging** — Send pre-approved parameterized WhatsApp templates to customers and track delivery in the outbox.
 
 ## Blog & Content
 
-- **Announcement Import & Export** — Export announcements with their display settings, expiry, images, translations, and link targets, and import them into another store, updating or removing by title.
-- **Announcement Pop-ups** — Open a modal for an announcement with its full body, banner or background image and overlay, a resolved call-to-action link, and close via button, backdrop, or Escape.
+- **Announcement Pop-up Modals** — Open a modal with the full announcement body and an image shown as a banner or overlay background.
+- **Announcement Scheduling & Targeting** — Set an expiry so announcements stop showing automatically, with per-announcement enable/disable and stored visibility rules.
 - **Blog Posts & Content Modes** — Create, edit, publish, and unpublish blog posts written in rich text or built with the page builder.
 - **Categories & Tags** — Organize posts with hierarchical categories and flat tags that readers can browse.
+- **Clickable Announcement Links** — Link an announcement to a product, category, blog post, page, or custom URL, or leave it non-clickable.
 - **Email Subscribers** — Readers subscribe with double opt-in and receive new-post, weekly, or monthly digest emails by their preferences.
-- **Multilingual Announcements** — Display announcement title, body, and link text in the shopper's language using stored per-language translations.
+- **Multilingual Announcements** — Display announcement title, body, and link text in the visitor's language using stored per-language translations.
 - **Reader Engagement** — Show estimated reading time and related posts, and track per-post view counts.
 - **RSS Feed** — Publish a configurable RSS feed of recent posts with excerpt or full content and featured-image enclosures.
 - **Scheduled Publishing** — Set a future date and time for a post and have it publish automatically.
 - **Social Auto-Sharing** — Connect social accounts and auto-share posts on publish, with token refresh and retry of failed shares.
-- **Store Announcements** — Show scheduled, priority-ordered announcements to shoppers that auto-hide once they expire, each linking to a product, category, blog post, page, or custom URL.
+- **Store Announcement Banners** — Show enabled announcements in the storefront notification zone, ordered by priority, with rotation and per-session dismissal.
 
 ## Design & Storefront
 
-- **4-Level Token Cascade** — Design tokens resolve in a fixed priority order (brand, theme, component, system) so overrides stay predictable.
 - **Automated Form Actions** — Each submission can trigger auto-reply emails, notification emails to your team, and signed webhooks to external systems.
-- **Brand Customization** — Change colors, typography, spacing, and component tokens without code and preview the result before publishing.
+- **Brand Customization** — Override colors, typography, and spacing tokens without code and see them compiled into a cached brand stylesheet.
+- **Component Marketplace & Packaging** — Package, sign, validate, verify, and render installable storefront components with tier-aware placement enforcement.
 - **Conditional Logic** — Rules show, hide, require, or preset fields and steps based on what the visitor enters.
-- **Custom CSS** — Inject named CSS snippets that are sanitized to strip dangerous rules before they reach the storefront.
-- **Dark Mode** — Themes generate dark-mode CSS with responsive variants that respond to the visitor's system preference.
+- **Design Token Cascade** — Design tokens resolve through a priority order across brand, theme, and system sources with atomic reconciliation.
 - **Form Builder** — Staff build and edit multi-step forms in a visual builder with reorderable fields and one-click duplication.
 - **Form Recycle Bin** — Deleted forms move to a recycle bin where staff can restore them or permanently remove them.
-- **Header & Footer Builder** — Assemble header and footer zones from widgets using theme presets and preview each widget as it will render.
-- **Page Security Tiers** — Page tiers govern which components and token customizations are allowed on sensitive pages.
+- **Header, Footer & Navigation Builder** — Install header/footer presets and preview widgets and personalized navigation menus for the current visitor.
+- **Page Security Tiers** — Per-tier rules sanitize authored HTML/CSS and control which components and tokens are permitted on each page.
 - **Response Export** — Download completed responses as a CSV with submission metadata and per-field values.
 - **Spam Protection** — A honeypot field blocks bot submissions in the browser; reCAPTCHA settings are configurable but not yet enforced server-side.
 - **Submissions & File Uploads** — Visitors submit forms with validated required fields and file attachments, and can save partial drafts to finish later.
-- **Theme Developer Tools** — Build themes in an isolated dev session, staging files from the Theme SDK with live CSS compile and validation.
-- **Theme System** — Install, activate, and update theme packages from the marketplace, with bundled presets and tokens applied automatically.
-- **Trusted Components** — Marketplace components are validated, signed, and integrity-checked before they render, detecting tampering.
+- **Theme & Component SDK** — Staff-owned development sessions let developers push, validate, compile, and package themes and components in a sandbox.
+- **Theme System** — Install, activate, preview, and update versioned theme packages that compile into the storefront's live CSS.
 
 ## Page Builder
 
-- **Custom Element Builder** — Staff can create, name, list, search, edit, and delete reusable custom elements from an admin builder.
-- **Draft, Publish & Version History** — Pages save as numbered drafts, publish with history tracking, and can be reverted to any prior snapshot.
-- **Dynamic Data Binding** — Bind element content fields to live model data so elements render real product and record values on the storefront.
-- **Element Visibility Rules** — Show or hide page elements based on geography, user, device, time, behavior, and commerce conditions combined into nested AND/OR rule groups.
-- **Multilingual Pages** — Translate page and element content per language, via AI or manual entry, with source text kept as fallback.
-- **Page Settings & SEO** — Configure per-page metadata, authentication requirement, header/footer, and design settings.
-- **Page Templates & Duplication** — Create new draft pages from reusable templates or duplicate an existing page with its nested elements.
-- **Visual Element Editor** — Build an element's structure by adding, moving, editing, and deleting nested elements with multi-column layout presets and live canvas preview.
-- **Visual Page Builder** — Staff build storefront pages from nested, reorderable elements that render to the live store, with auto-generated preview thumbnails.
+- **Custom Element Builder** — Visually compose reusable page elements from primitives, arrange them in multi-column layouts, and preview the result on a builder canvas.
+- **Custom Element Library** — Create, name, search, filter, and manage a library of saved custom elements for reuse across the store.
+- **Draft & Publish Version History** — Every edit is saved as a versioned draft that merchants can publish, and any prior version can be restored.
+- **Dynamic Data Binding** — Bind element content to live store model fields so custom elements render current product and catalog data on the storefront.
+- **Multilingual Pages** — Page and element content is served in the visitor's locale with fallback to the base language when a translation is missing.
+- **Page & Element Templates** — Merchants create new pages from reusable templates, duplicate whole pages or elements, and start from shipped default pages.
+- **Page Settings & SEO** — Merchants edit page metadata, access, presentation, theme, media, and translations, including per-page SEO fields.
+- **Visibility & Personalization Rules** — Merchants show, hide, or personalize page elements per visitor by rules including time-based and login-required access.
+- **Visual Page Editor** — Merchants build and arrange page content by adding, editing, reordering, duplicating, and deleting elements, with auto-generated page previews.
 
 ## Media Library
 
@@ -289,80 +286,75 @@
 
 ## Internationalization
 
-- **AI Content Translation** — Merchants translate products, pages, and other content into active languages using AI, with per-field locking and job retry/cancel controls.
-- **Automatic Currency & Language** — Suggests and stores the right currency and language per visitor based on their detected country, with per-country defaults.
-- **Automatic Rate Updates** — Scheduled provider-backed rate fetching for supported currencies, with source-priority selection and cleanup of stale cached rates.
-- **Currency Conversion** — Convert amounts between currencies using a resolved rate with optional markup and target-currency rounding.
-- **Exchange Rate Providers** — Connect, install, update, and manage external currency-rate providers, with one designated as the site's primary source.
-- **External Translation Providers** — Merchants connect and test third-party translation provider accounts with encrypted credentials.
-- **Geo Business Rules** — Triggers actions such as setting currency, showing banners, or redirecting based on visitor country, region, mobile, and VPN status.
-- **GeoIP Provider Management** — Lets staff configure, test, toggle, and check availability of geolocation providers from the admin.
-- **GeoIP Visitor Location Detection** — Resolves each visitor's country, region, and city from their IP with browser-hint fallback, bot/device classification, and manual correction.
-- **Locked Order Exchange Rates** — Each order records the exact resolved rate and its source, so historical orders keep their original conversion.
-- **Manual Exchange Rates** — Set, edit, activate, lock, and bulk-manage your own currency-pair rates that take precedence over provider rates.
-- **Store Languages** — Merchants activate, deactivate, order, and set the default language for their storefront.
-- **Storefront Text Customization** — Merchants override, auto-translate, lock, and import/export any storefront UI string per language.
-- **Translation Coverage & Progress** — Merchants see how much content is translated per language and track bulk translation job progress before and during runs.
-- **Visitor & Traffic Analytics** — Tracks page views and sessions, then reports dashboard KPIs, daily trends, session journeys, campaign attribution, and country/device breakdowns.
-- **Visitor Data Retention** — Automatically purges old raw page views and stale visitor records on configurable retention windows while keeping aggregated stats.
+- **AI Content Translation** — Translate products, pages, and other content into other languages using local AI models, run as tracked jobs.
+- **Automatic Currency & Language** — Detects a visitor's location to suggest the right currency and language, stores their chosen preferences, and lets them correct a wrong location.
+- **Campaign Traffic Attribution** — Aggregates visitor counts, page views, and pages per session by UTM source, medium, and campaign to attribute traffic to marketing campaigns.
+- **External Translation Providers** — Connect and test third-party translation provider accounts with encrypted credentials as an alternative to local models.
+- **Geo Business Rules** — Triggers actions such as setting currency, showing a banner, or redirecting based on visitor country, region, mobile, or VPN status.
+- **GeoIP Detection** — Resolves each visitor's IP to country, region, and city through a configurable, testable provider cascade with VPN/proxy detection.
+- **Language Management** — Activate, deactivate, reorder, and bulk-configure storefront languages, and let shoppers switch language.
+- **Live Exchange Rate Providers** — Automatically pull and refresh currency rates from external providers on a schedule, with provider priority fallback and a single primary source.
+- **Locked Order Exchange Rates** — Store an immutable snapshot of the exchange rate and its source on each order for accurate historical and accounting records.
+- **Manual Exchange Rates** — Set and manage your own currency-pair rates, activate or deactivate them, and lock them so provider syncs don't overwrite them.
+- **Multi-Currency Conversion** — Convert amounts between currencies using cached, manual, or live rates with optional markup and correct target-currency rounding.
+- **Translation Coverage Reporting** — See overall and per-language translation coverage across content, email templates, and UI strings, and the work needed to complete it.
+- **Translation Locking** — Lock specific fields or UI strings per language so manual translations are never overwritten by automatic runs.
+- **UI String Translation & Overrides** — Auto-translate storefront UI strings and override any of them per language, with import/export of translation packs.
+- **Visitor Analytics** — Tracks page views and sessions, classifies bots and devices, and reports daily traffic, KPIs, session journeys, and country/device breakdowns with automatic data retention cleanup.
 
 ## Agentic Commerce
 
-- **Agent Identity Verification** — Every agent request is cryptographically signature-verified against a fetched key directory before it is trusted.
-- **Agent Trust & Safety Controls** — Merchants set who may read or buy, block or unblock individual agents, gauge readiness, and kill all agent access instantly.
-- **Agentic Checkout** — AI agents can build a cart, add addresses and shipping, and complete a paid checkout on the buyer's behalf.
-- **AI Shopping Agent Discovery** — AI shopping agents can discover, search, and read your live catalog through UCP, ACP, and MCP endpoints.
-- **Signed Order Mandates** — Each paid agent order gets a merchant-signed AP2 mandate attesting the amount and line items, retrievable by the owning agent.
-- **Tamper-Evident Agent Audit Trail** — Every agent event is appended to an HMAC-linked hash chain that can be re-verified to prove it was not altered.
+- **Agent Identity & Trust Controls** — Only cryptographically signed agents can transact, with per-agent verification, spend caps, tender limits, and block controls.
+- **Agentic Checkout** — AI agents can create a cart, add buyer and shipping details, and place or cancel a repriced, paid order on a shopper's behalf.
+- **Agentic Commerce Controls** — Turn agentic commerce on or off per protocol with an emergency kill switch, a readiness check, and an immutable audit trail of agent events.
+- **AI Agent Product Discovery** — AI shopping agents can discover, search, and read your live catalog through UCP, ACP, and MCP standards.
+- **Signed Payment & Order Mandates** — Each paid agent order and its payment leg is attested with a signed, verifiable AP2 mandate.
+- **Store Signing Keys** — Generates, rotates, and retires the store's transport and mandate signing keys, publishing public keys as a JWKS for agents to verify.
 
 ## Enterprise & Security
 
-- **Admin Access Control** — Gate which admin areas each staff member can open based on their roles, including read-only accounts and superuser overrides.
-- **Automatic User Provisioning** — First-time SSO sign-ins create a matching staff account, and names are kept in sync from provider claims on each login.
-- **Identity Provider Setup** — Store one OpenID Connect provider's endpoints, credentials, and claim mappings, with the client secret encrypted at rest.
-- **Mobile App Single Sign-On** — Staff sign in to the admin mobile app through the same identity provider, with per-device token issuance.
-- **POS Staff Permissions** — Control which staff can use the POS and what actions and limits apply, merged across all of a user's roles for login.
-- **Role & Access Control** — Identity-provider groups set staff and admin permissions, restrict sign-in to staff, and satisfy MFA for SSO users.
-- **Single Sign-On (Web)** — Staff sign in to the admin through your existing OpenID Connect identity provider instead of a separate password.
-- **Staff Assignment** — Add or remove staff members from a role, with their access permissions refreshed immediately.
-- **Staff Roles & Permissions** — Create, edit, clone, and delete staff roles with per-category view or full access levels, plus eight ready-made predefined roles.
+- **Admin Access Control** — Every admin area and action is gated by a staff member's role, with view-only or full access enforced per permission category.
+- **Automatic Staff Provisioning** — Staff accounts are created on first sign-in and their names kept in sync from identity-provider claims.
+- **Group-Based Access Control** — Identity-provider group membership determines who gets staff and superuser access, and blocks non-staff sign-ins.
+- **Identity Provider Setup & Security** — Connect any OIDC provider via discovery, with the client secret encrypted at rest and discovery URLs SSRF-protected.
+- **Mobile Admin Sign-On** — Staff log into the admin mobile app through the same identity provider on registered devices.
+- **POS Staff Permissions** — Control which staff can access POS terminals and what actions they can perform, resolved across all their assigned roles.
+- **Staff Roles & Permissions** — Define custom staff roles with granular admin and POS permissions, including ready-made presets like Store Owner, Manager, and Cashier.
+- **Staff Single Sign-On** — Staff sign in to the admin using your company's identity provider instead of separate store passwords.
+- **Team Member Assignment** — Add or remove staff members from roles to control who has access to what.
 
 ## Platform & Administration
 
-- **Add-on Removal** — Uninstall language packs and utilities, cleaning up their data and updating the registry.
-- **Advanced Product Type Import** — Carries over bookings, bundles, gift cards, subscriptions, configurable products, and product add-ons into their matching Spwig product types.
-- **API Tokens & Access Control** — Programmatic access is gated by database-backed tokens with read/write scopes, type and IP restrictions, expiry, and usage recording.
-- **Automatic HTTPS (Let's Encrypt)** — Free Let's Encrypt certificates are issued over HTTP validation and renewed automatically so the store stays on HTTPS.
-- **Automatic Retries & Endpoint Health** — Failed deliveries retry with exponential backoff, unhealthy endpoints auto-disable, and admins can retry or re-enable them manually.
-- **Bring Your Own SSL Certificate** — Upload your own PEM certificate and key, or fall back to a generated self-signed certificate, and serve it immediately.
-- **Component Marketplace** — Browse the catalogue of available components from the update server and install them into the store.
-- **Component Marketplace** — Browse, filter, and install themes, widgets, and provider components from the Spwig marketplace with local install status shown.
-- **Component Reviews & Ratings** — Read reviews on marketplace components and submit your own 1-to-5 star rating with title and comment.
-- **Component Updates** — Keep installed components current by checking for new versions, verifying, installing, and activating them across update channels.
-- **Content Link & Image Repair** — Scans migrated product, blog, and category HTML to relink internal hyperlinks to their new Spwig targets and pull inline images into the media library.
-- **Cookie Consent & GDPR Audit** — Visitor cookie choices are normalized, classified, and stored as an auditable GDPR consent record.
-- **Custom Domain Connection** — Point your own domain at your store, verify ownership, and revert to the default myspwig.com subdomain at any time.
-- **Delivery Logs & Health Stats** — View filterable delivery records and per-endpoint 24-hour success rate, response time, and health, with old records auto-purged on a retention schedule.
-- **Endpoint Testing & Sandbox Mode** — Send a synthetic test event to check reachability and timing, and block external deliveries while in sandbox mode.
-- **Error & Bug Reporting** — Backend and frontend errors are captured, deduplicated by fingerprint, and merchant bug reports are transmitted to the update server for support.
-- **Event-Driven Delivery** — Store events are packaged and sent to every subscribed endpoint, synchronously or in the background.
-- **Import Job Control & Recovery** — Cancel, retry, or reset import jobs, re-run individual failed items, recover jobs whose worker died, and trim logs from finished jobs.
-- **In-Store Help Center & Search** — Merchants and staff find answers via keyword and semantic help search, with context-aware suggestions, view tracking, and helpfulness feedback.
-- **Inbound Signature Verification** — Incoming webhooks are authenticated with a timestamped, constant-time HMAC signature check and rejected if invalid or stale.
-- **License Management** — Fetch and verify a freshly signed license and secrets from the update server and persist the updated license data.
-- **Licensing & Installation Integrity** — License acceptance is recorded, the installation identity is tamper-checked with an HMAC fingerprint, and platform secrets are auto-refreshed before expiry.
-- **Migration Rollback** — Reverse an import or store-sync within its rollback window, removing records it created while retaining rows you have since depended on.
-- **Paid Component Purchasing** — See which paid components the store's license entitles it to and get a spwig.com purchase link for the rest.
-- **Payload Signing & Secrets** — Every outgoing payload is signed with HMAC-SHA256, and endpoint secrets can be rotated on demand.
-- **Platform Upgrades** — Check for and run full platform version upgrades with prechecks, package verification, and scheduled hosted upgrade windows.
-- **Real-Time Sales Notifications** — Sales, refunds, and developer-signup events are appended to an HQ-only Sales Bell event log for live monitoring.
-- **Security Hotfixes** — Detect missing hotfixes for the current platform version and apply or roll them back.
-- **Shopper Currency Selection** — Visitors can pick a supported currency for their session, validated against the site's configured currencies.
-- **Soft Delete & Restore** — Records are hidden on deletion but retained, so accidentally deleted objects can be restored intact.
-- **SSL Monitoring** — Track each certificate's domain, issuer, expiry, and validity, with automatic renewal before certificates lapse.
-- **Store Migration Wizard** — Import products, categories, customers, and orders from WooCommerce, Shopify, Magento, or CSV with field mapping and value transformation.
-- **Store Settings & Config Validation** — Global site settings persist as a single authoritative record and reject incompatible changes such as disabling in-use warehouse or currency modes.
-- **Store-to-Store Sync** — Migrate settings or full data categories between two Spwig stores over token-authenticated endpoints, including media transfer.
-- **Trusted Devices & 2FA Remembering** — Users can mark a device as trusted to skip 2FA until it expires or is revoked, with automatic cleanup of expired and revoked devices.
-- **Update Rollback & Recovery** — Revert components or hotfixes to a prior working version, with post-install health checks and update locks to guard stability.
-- **Webhook Endpoints** — Create, edit, activate, and delete webhook endpoints and pick which store events each one subscribes to.
+- **Advanced Product Type Import** — Carries bundles, composite/configurable products, subscriptions, bookings, gift cards, and product customizations across from the source store, resolving cross-product links in a second pass.
+- **API Access Tokens** — Programmatic access is controlled by scoped, IP-restricted API tokens that are validated per request with usage tracking.
+- **Automatic HTTPS & SSL Certificates** — Issue and auto-renew free Let's Encrypt certificates over HTTP-01, with HTTPS redirection, HSTS, and a self-signed fallback.
+- **Automatic Retries & Endpoint Health** — Transient failures are retried with capped exponential backoff, failing endpoints auto-disable and can be reset, and failed deliveries can be retried manually.
+- **Bring Your Own Certificate** — Upload your own PEM certificate and key, including Cloudflare Origin certificates, with metadata extraction and domain-mismatch warnings.
+- **Component Marketplace** — Browse the Spwig catalogue and install themes, widgets, and provider components, verified by checksum and dependency checks.
+- **Component Marketplace** — Merchants browse, filter, and view themes, widgets, and provider components from the Spwig marketplace, each annotated with its local install status.
+- **Component Reviews & Ratings** — Merchants read component reviews and submit their own 1-to-5 star ratings attributed to their store.
+- **Component Updates & Rollback** — Detect available component updates, apply them with post-install health checks, and roll back to a prior version if a check fails.
+- **Content Link & Image Migration** — Scans migrated product, blog, and category HTML to re-point internal links to their new Spwig objects and pull referenced images into the media library.
+- **Cookie Consent & GDPR Audit** — Visitor cookie choices are normalized, classified, and stored as GDPR audit records.
+- **Custom Domain Setup** — Connect your own domain to the store, with DNS validation, NGINX configuration, and reachability checks handled end to end.
+- **Delivery Monitoring & Log Retention** — Per-endpoint 24-hour stats (counts, success rate, response time, health) are available, and completed delivery records are pruned after a configurable retention period.
+- **Error & Bug Reporting** — Application errors are captured, deduplicated, and batched to the update server, and staff can file sanitized bug reports with browser context.
+- **Event-Driven Delivery** — Store events are pushed to subscribed endpoints (explicit or wildcard) as HTTP POST payloads, with each delivery attempt and its outcome recorded.
+- **In-App Help Center** — Merchants and staff find answers through keyword and semantic search over help topics, with contextual suggestions on each page and helpfulness feedback.
+- **Language Packs** — Install and remove per-language packs that deploy interface translations, help content, and email-template strings.
+- **License Management** — Fetch and verify a freshly signed license and related secrets from the update server and persist changes.
+- **Licensing & Installation Integrity** — The store records versioned license acceptance, verifies its installation fingerprint, refreshes platform secrets, and tracks revocation grace periods.
+- **Managed Custom Domains (Hosted)** — On hosted installs, add, verify, and remove a custom domain through the hosting platform, reverting to the myspwig.com subdomain when detached.
+- **Migration Job Control & Rollback** — Cancel, retry, reset, or fully roll back an import, recover jobs whose worker died, and reattempt individual failed items without losing real orders.
+- **One-Click Component Install** — Merchants install free or entitled components directly from the marketplace via the update manager.
+- **Paid Component Purchases** — Merchants check their license entitlements and buy paid components through a spwig.com checkout, then install what they own.
+- **Platform Upgrades & Hotfixes** — Run blue-green platform version upgrades with prechecks, package verification, health checks, rollback, and hotfix reporting.
+- **Sales Bell Alerts** — Sale, refund, and developer-signup events are logged to an HQ-only feed for real-time visibility.
+- **Sandbox-Safe Testing** — In sandbox mode, external deliveries are recorded as blocked instead of being sent while localhost targets still receive test events.
+- **Signed & Verified Payloads** — Every payload is signed with HMAC-SHA256, secrets can be rotated on demand, and receivers can verify signatures with an age-tolerance check.
+- **Soft Delete & Recovery** — Records can be soft-deleted and restored to protect against accidental loss, with a hard-delete path for permanent removal.
+- **Spwig-to-Spwig Sync** — Move settings or full data between two Spwig instances over authenticated endpoints, with version compatibility checks, media transfer, and rollback.
+- **SSL Monitoring** — Track the live certificate's domain, issuer, expiry, and validity, persisting refreshed status for the store.
+- **Store Migration Wizard** — Import categories, products, customers, and orders from WooCommerce, Shopify, Magento, or CSV with pre-import connection checks, field mapping, and media transfer.
+- **Trusted-Device Two-Factor** — Users can mark a device as trusted to skip 2FA on future logins, with validation, revocation, and automatic expiry cleanup.
+- **Webhook Endpoints** — Register, configure, update, and delete webhook endpoints with per-endpoint event subscriptions, retry and timeout settings, and a connectivity test.

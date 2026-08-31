@@ -1,10 +1,10 @@
 ---
-title: Acciones en masa para productos
+title: Acciones en masa de productos
 ---
 
-La lista de **Productos** le permite actuar en muchos productos a la vez en lugar de abrir cada uno individualmente. Desde el menú desplegable de **Acciones en masa** en la barra de herramientas sobre la cuadrícula de productos, puede publicar o no publicar productos, destacarlos o desmarcarlos, exportar datos a CSV, verificar si los productos están listos para envíos internacionales o eliminarlos, todo en un solo paso.
+La lista de **Productos** le permite actuar en muchos productos a la vez en lugar de abrir cada uno por separado. Desde el menú desplegable de **Acciones en masa** en la barra de herramientas sobre la cuadrícula de productos, puede publicar o no publicar productos, destacarlos o no, exportar datos a CSV, verificar si los productos están listos para envíos internacionales o eliminarlos, todo en un solo paso.
 
-Navegue a **Productos > Todos los productos** para usar estas acciones.
+Navegue hasta **Productos > Todos los productos** para usar estas acciones.
 
 ![La barra de herramientas de la lista de productos con tres tarjetas de producto seleccionadas y el menú desplegable de Acciones en masa que muestra cada opción, incluyendo Exportar datos aduaneros (CSV) y Verificar la preparación para envíos internacionales](/static/core/admin/img/help/product-bulk-actions/bulk-actions-dropdown.webp)
 
@@ -24,7 +24,7 @@ Las acciones que cambian o exportan datos se ejecutan inmediatamente; **Eliminar
 | **Marcar como Publicado** | Establece el estado de los productos seleccionados como Publicado para que aparezcan en la tienda. |
 | **Marcar como Borrador** | Establece el estado de los productos seleccionados como Borrador, ocultándolos de la tienda mientras los edita. |
 | **Marcar como Destacado** | Habilita **Es Destacado** en los productos seleccionados. |
-| **Eliminar destacado** | Deshabilita **Es Destacado** en los productos seleccionados. |
+| **Eliminar Destacado** | Deshabilita **Es Destacado** en los productos seleccionados. |
 | **Exportar a CSV** | Descarga un CSV de los ID, nombre, SKU, estado, bandera destacada y precio de los productos seleccionados. |
 | **Exportar datos aduaneros (CSV)** | Descarga un CSV de la información aduanera para los productos seleccionados. Vea a continuación. |
 | **Verificar preparación para envíos internacionales** | Muestra un resumen de cuáles de los productos seleccionados tienen los datos aduaneros necesarios para envíos internacionales. Vea a continuación. |
@@ -34,7 +34,7 @@ Las acciones que cambian o exportan datos se ejecutan inmediatamente; **Eliminar
 
 Úselo cuando necesite una hoja de declaración aduanera para entregarle a un transportista, mensajero o corredor aduanero: por ejemplo, antes de un gran envío internacional, o al configurar un nuevo transportista que pida códigos HS y datos de origen de antemano.
 
-Seleccione los productos, elija **Exportar datos aduaneros (CSV)** del menú desplegable y haga clic en **Aplicar**. Spwig descarga un archivo llamado `product_customs_data.csv` con una fila por producto y estas columnas:
+Seleccione los productos, elija **Exportar datos aduaneros (CSV)** desde el menú desplegable y haga clic en **Aplicar**. Spwig descarga un archivo llamado `product_customs_data.csv` con una fila por producto y estas columnas:
 
 | Columna | Origen |
 |--------|--------|
@@ -60,14 +60,14 @@ Seleccione los productos, elija **Verificar preparación para envíos internacio
 
 Si más de 10 productos tienen datos faltantes, la notificación lista los primeros 10 y le indica cuántos más hay.
 
-Esta acción solo lee datos, no cambia nada en los productos, por lo que es seguro ejecutarla tanto como desee mientras complete la información de aduanas en su catálogo.
+Esta acción solo lee datos: no cambia nada en los productos, por lo que es seguro ejecutarla tanto como desee mientras complete la información de aduanas en su catálogo.
 
 **Número de licencia de exportación** y **Fecha de vencimiento de la licencia de exportación** no forman parte de la verificación de listado. Solo aplican a artículos controlados o restringidos, por lo que un producto puede estar "listo" para envío internacional sin ellos.
 
 ## Consejos
 
 - Ejecute **Verificar la preparación para envío internacional** en todo su catálogo (o por categoría a la vez) antes de su primer pedido internacional: es mucho más rápido que descubrir un código HS faltante cuando un envío ya está en la frontera.
-- Mantenga **Datos de aduanía de exportación (CSV)** para entregar a agentes y transportistas, y **Verificar la preparación para envío internacional** para su propia lista de verificación interna: el CSV es un registro, la verificación de preparación es una lista de tareas.
+- Mantenga **Datos de aduanía de exportación (CSV)** para entregárselo a agentes y transportistas, y **Verificar la preparación para envío internacional** para su propia lista de verificación interna: el CSV es un registro, la verificación de preparación es una lista de tareas.
 - Complete **Código HS**, **País de origen** y **Precio unitario de aduanía** en el formulario del producto (debajo de **Envío internacional / Aduanas**) a medida que agrega nuevos productos, para que no termine haciendo esto en masa más tarde.
-- La cuadrícula de productos carga más productos automáticamente a medida que desplaza (desplazamiento infinito), y sus selecciones de casilla de verificación se mantienen a medida que nuevos productos se cargan: así que puede desplazar para construir una selección grande antes de aplicar una acción. Sin embargo, cambiar un filtro o recargar la página borra su selección, así que aplique la acción antes de ajustar los filtros.
+- La cuadrícula de productos carga más productos automáticamente a medida que desplaza (desplazamiento infinito), y sus selecciones de casilla de verificación se mantienen a medida que se cargan nuevos productos: así que puede desplazar para construir una selección grande antes de aplicar una acción. Sin embargo, cambiar un filtro o recargar la página borra su selección, así que aplique la acción antes de ajustar los filtros.
 - **Marcar como borrador** es una forma rápida de retirar varios productos del catálogo de inmediato: por ejemplo, antes de un recuento de existencias - sin cambiar nada más sobre ellos.

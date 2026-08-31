@@ -1,0 +1,22 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if original %}
+<div class="change-list-header">
+  <div>
+    <h1><i class="fas fa-diagram-project"></i> {% trans "Journey flow" %}</h1>
+    <p class="subtitle">{% trans "Design the steps, waits and branches on the visual canvas." %}</p>
+  </div>
+  <div class="change-list-header-actions">
+    <a class="button" href="{% url 'email_marketing_admin:journey_report' original.pk %}">
+      <i class="fas fa-chart-column"></i> {% trans "Report" %}
+    </a>
+    <a class="button" href="{% url 'email_marketing_admin:journey_builder' original.pk %}">
+      <i class="fas fa-diagram-project"></i> {% trans "Design journey" %}
+    </a>
+  </div>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

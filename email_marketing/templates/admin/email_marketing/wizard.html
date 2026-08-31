@@ -1,0 +1,140 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "New Campaign" %} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'email_marketing/css/wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container em-wizard">
+
+  <div class="wizard-header">
+    <a href="{% url 'email_marketing_admin:dashboard' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> {% trans "Back to Campaign Studio" %}
+    </a>
+    <h1><i class="fas fa-paper-plane"></i> {% trans "New Campaign" %}</h1>
+    <p class="wizard-subtitle">{% trans "Choose how it sends, set the basics, then design it in the visual builder." %}</p>
+  </div>
+
+  <div class="wizard-steps">
+    <div class="step active" data-step="1">
+      <div class="step-number">1</div>
+      <div class="step-label">{% trans "Type" %}</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="2">
+      <div class="step-number">2</div>
+      <div class="step-label">{% trans "Details" %}</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="3">
+      <div class="step-number">3</div>
+      <div class="step-label">{% trans "Review" %}</div>
+    </div>
+  </div>
+
+  <form id="em-wizard-form" method="post">
+    {% csrf_token %}
+
+    <div class="wizard-content">
+      <!-- Step 1: Type -->
+      <div class="wizard-step" data-step="1">
+        <h2 class="step-title"><i class="fas fa-layer-group"></i> {% trans "How should this campaign send?" %}</h2>
+        <p class="step-description">{% trans "You can change the schedule later." %}</p>
+        <div class="em-type-cards">
+          <label class="em-type-card selected">
+            <input type="radio" name="campaign_type" value="broadcast" checked>
+            <span class="em-type-icon"><i class="fas fa-bullhorn"></i></span>
+            <span class="em-type-name">{% trans "Broadcast" %}</span>
+            <span class="em-type-desc">{% trans "A one-off send — now or scheduled for a single time. Announcements, sales, newsletters." %}</span>
+          </label>
+          <label class="em-type-card">
+            <input type="radio" name="campaign_type" value="recurring">
+            <span class="em-type-icon"><i class="fas fa-arrows-rotate"></i></span>
+            <span class="em-type-name">{% trans "Recurring" %}</span>
+            <span class="em-type-desc">{% trans "Sends on a repeating schedule (weekly, monthly). Great for a regular newsletter or digest." %}</span>
+          </label>
+          <a class="em-type-card em-type-card--link" href="{% url 'admin:email_marketing_journey_add' %}">
+            <span class="em-type-icon"><i class="fas fa-diagram-project"></i></span>
+            <span class="em-type-name">{% trans "Journey" %}</span>
+            <span class="em-type-desc">{% trans "An automated series triggered by an event (signup, order). Opens the journey builder." %}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Step 2: Details & audience -->
+      <div class="wizard-step" data-step="2" style="display: none;">
+        <h2 class="step-title"><i class="fas fa-pen"></i> {% trans "Campaign details" %}</h2>
+        <div class="form-section">
+          <div class="form-group">
+            <label for="em-name">{% trans "Name" %} <span class="required">*</span></label>
+            <input type="text" id="em-name" name="name" class="form-control" placeholder="{% trans 'e.g. August Newsletter' %}" required>
+            <p class="help-text">{% trans "For your reference only — customers never see it." %}</p>
+          </div>
+          <div class="form-group">
+            <label for="em-subject">{% trans "Subject line" %}</label>
+            <input type="text" id="em-subject" name="subject" class="form-control" placeholder="{% trans 'What recipients see in their inbox' %}">
+          </div>
+          <div class="form-group">
+            <label for="em-preview">{% trans "Preview text" %}</label>
+            <input type="text" id="em-preview" name="preview_text" class="form-control" placeholder="{% trans 'The preheader shown after the subject' %}">
+          </div>
+          <div class="form-group">
+            <label for="em-audience">{% trans "Audience" %}</label>
+            <select id="em-audience" name="segment" class="form-control">
+              <option value="">{% blocktrans with n=total_subscribers %}All active subscribers ({{ n }}){% endblocktrans %}</option>
+              {% for s in segments %}
+              <option value="{{ s.id }}">{{ s.name }} ({{ s.cached_count }})</option>
+              {% endfor %}
+            </select>
+            <p class="help-text">{% trans "Who receives this campaign. Consent is always checked at send time." %}</p>
+          </div>
+          <div class="form-group">
+            <label for="em-message-type">{% trans "Consent category" %}</label>
+            <select id="em-message-type" name="message_type" class="form-control">
+              {% for value, label in message_types %}
+              <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <p class="help-text">{% trans "The marketing category recipients opted into." %}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Review -->
+      <div class="wizard-step" data-step="3" style="display: none;">
+        <h2 class="step-title"><i class="fas fa-clipboard-check"></i> {% trans "Review" %}</h2>
+        <p class="step-description">{% trans "We'll create a draft and open the visual builder so you can design the email." %}</p>
+        <div class="info-box">
+          <dl class="em-review">
+            <dt>{% trans "Type" %}</dt><dd id="em-review-type">—</dd>
+            <dt>{% trans "Name" %}</dt><dd id="em-review-name">—</dd>
+            <dt>{% trans "Subject" %}</dt><dd id="em-review-subject">—</dd>
+            <dt>{% trans "Audience" %}</dt><dd id="em-review-audience">—</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-navigation">
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-secondary" id="em-prev" style="display: none;">
+          <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </button>
+        <button type="button" class="btn btn-primary" id="em-next">
+          {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        <button type="submit" class="btn btn-success btn-large" id="em-create" style="display: none;">
+          <i class="fas fa-wand-magic-sparkles"></i> {% trans "Create & design" %}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script src="{% static 'email_marketing/js/wizard.js' %}" defer></script>
+{% endblock %}

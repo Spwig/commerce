@@ -1,0 +1,91 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Recipients" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'email_marketing/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'email_marketing/js/recipients.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="em-dash">
+
+  <div class="em-dash-header">
+    <div>
+      <h1><i class="fas fa-list-ul"></i> {% trans "Recipients" %}</h1>
+      <p class="subtitle">{{ campaign.name }}</p>
+    </div>
+    <div class="em-dash-actions">
+      <a class="button" href="{% url 'email_marketing_admin:campaign_report' campaign.pk %}">
+        <i class="fas fa-arrow-left"></i> {% trans "Back to report" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="filters-panel" id="filters-panel">
+    <div class="filters-panel-header">
+      <h3 class="filters-panel-title"><i class="fas fa-filter"></i> {% trans "Filters" %}</h3>
+      <button type="button" class="filters-toggle" data-action="toggle-filters"><i class="fas fa-chevron-down"></i></button>
+    </div>
+    <div class="filters-panel-fields" id="filters-panel-fields">
+      <div class="filter-field">
+        <label for="filter-search"><i class="fas fa-search"></i> {% trans "Search" %}</label>
+        <input type="text" id="filter-search" placeholder="{% trans 'Email address...' %}">
+      </div>
+      <div class="filter-field">
+        <label for="filter-engagement"><i class="fas fa-chart-simple"></i> {% trans "Engagement" %}</label>
+        <select id="filter-engagement">
+          <option value="">{% trans "Everyone" %}</option>
+          <option value="opened">{% trans "Opened" %}</option>
+          <option value="clicked">{% trans "Clicked" %}</option>
+          <option value="not_opened">{% trans "Delivered, not opened" %}</option>
+          <option value="bounced">{% trans "Bounced" %}</option>
+        </select>
+      </div>
+    </div>
+    <div class="filters-panel-footer">
+      <div class="active-filters" id="active-filters"></div>
+      <div class="filters-panel-actions">
+        <button type="button" class="button" data-action="apply-filters"><i class="fas fa-check"></i> {% trans "Apply" %}</button>
+        <button type="button" class="button secondary" data-action="clear-filters"><i class="fas fa-times"></i> {% trans "Clear" %}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <h2>{% trans "Recipients" %}</h2>
+    <span class="results-count" id="results-count-info"><i class="fas fa-users"></i> <span id="results-count">0</span> {% trans "entries" %}</span>
+  </div>
+
+  <div id="recipient-results">
+    <div class="list-row-cards"><div class="list-row-card loading-state"><i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i><p class="m-0">{% trans "Loading recipients..." %}</p></div></div>
+  </div>
+
+  <div id="list-filter-config"
+       data-filter-url="{% url 'email_marketing_admin:filter_campaign_sends' %}"
+       data-filter-extra-params="campaign={{ campaign.id }}"
+       data-results-container="recipient-results"
+       data-results-count="results-count"
+       data-auto-load="true"
+       hidden></div>
+
+  <div class="admin-modal-overlay" id="em-activity-modal">
+    <div class="admin-modal admin-modal--md">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title"><i class="fas fa-timeline"></i> {% trans "Recipient activity" %}</h2>
+        <button type="button" class="admin-modal-close" data-modal-close aria-label="{% trans 'Close' %}"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="admin-modal-body" id="em-activity-body"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

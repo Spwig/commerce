@@ -10,6 +10,7 @@ the page content if the banner is removed or hidden.
 """
 
 import logging
+import re
 import uuid
 
 from django.utils.deprecation import MiddlewareMixin
@@ -17,6 +18,11 @@ from django.utils.deprecation import MiddlewareMixin
 from core.license import is_sandbox_mode
 
 logger = logging.getLogger(__name__)
+
+# Matches a single leading language prefix segment (/en, /zh-hans) so it can be
+# normalized before classifying. The market prefix is stripped separately using
+# request.market_prefix, since market slugs are arbitrary (SalesRegion.slug).
+_LOCALE_PREFIX_RE = re.compile(r"^/[a-z]{2}(?:-[a-z]{2,4})?(?=/)", re.IGNORECASE)
 
 # Paths that should NOT get any injection (banner or badge)
 EXCLUDED_PATHS = (
@@ -49,10 +55,21 @@ class SandboxBannerMiddleware(MiddlewareMixin):
 
         path = request.path
 
-        # Strip language prefix (e.g., /en/admin/ -> /admin/)
+        # Strip leading market and language prefixes (e.g. /nz/en/admin/ ->
+        # /admin/, /new-zealand/en/affiliate/merchant/ -> /affiliate/merchant/)
+        # so market URLs and multi-part locale codes still classify correctly.
+        # The market segment is an arbitrary SalesRegion slug, so strip the exact
+        # request.market_prefix rather than trying to pattern-match it, then peel
+        # off a single leading language prefix.
         stripped = path
-        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
-            stripped = path[3:]
+        market_prefix = getattr(request, "market_prefix", "")
+        if market_prefix and (
+            stripped == market_prefix or stripped.startswith(market_prefix + "/")
+        ):
+            stripped = stripped[len(market_prefix) :] or "/"
+        match = _LOCALE_PREFIX_RE.match(stripped)
+        if match:
+            stripped = stripped[match.end() :]
 
         # Skip excluded paths entirely
         for exc in EXCLUDED_PATHS:

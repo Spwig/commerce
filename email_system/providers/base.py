@@ -257,6 +257,32 @@ class EmailProviderBase(ABC):
         """
         return None
 
+    def verify_webhook_signature(self, raw_payload: bytes, signature: str, headers: dict) -> bool:
+        """Verify a delivery-event webhook genuinely came from this provider.
+
+        The webhook endpoint is public and CSRF-exempt, so the provider signature
+        is the only proof a request is authentic. Base returns ``False`` — a
+        provider that PUSHES bounce/complaint webhooks (SES / SendGrid / Mailgun /
+        Postmark …) MUST override this to validate the signature against its
+        account's signing secret. SMTP providers don't push events and leave it.
+        """
+        return False
+
+    def parse_delivery_events(self, payload: dict) -> list[dict]:
+        """Translate a provider webhook payload into normalised delivery events.
+
+        Override to return a list of dicts, one per event, each shaped::
+
+            {"event_id": str, "event_type": "bounced"|"complained"|"delivered",
+             "bounce_type": "hard"|"soft"|None, "reason": str,
+             "email": str, "provider_message_id": str|None}
+
+        The webhook handler matches each event to a sent ``EmailOutbox`` and, when
+        matched, records an ``EmailEvent``; list-hygiene reacts to that. Base
+        returns ``[]`` (no webhook events).
+        """
+        return []
+
     def get_rate_limits(self) -> dict[str, Any]:
         """
         Get current rate limit information.
@@ -298,3 +324,36 @@ class EmailProviderValidationError(EmailProviderError):
     """Email validation errors (invalid address, etc.)"""
 
     pass
+
+
+class EmailRecipientsRefused(EmailProviderError):
+    """The SMTP server refused the recipient(s) at submission — a bounce.
+
+    SMTP providers raise this on ``smtplib.SMTPRecipientsRefused`` so the send
+    path can record an ``EmailEvent(bounced)`` (and suppress a dead address)
+    instead of a generic failure. ``bounce_type`` is "hard" for a 5xx rejection,
+    "soft" for a 4xx one; ``recipients`` is the smtplib ``{addr: (code, msg)}`` map.
+    """
+
+    def __init__(self, message, recipients=None, bounce_type="hard"):
+        super().__init__(message)
+        self.recipients = recipients or {}
+        self.bounce_type = bounce_type
+
+
+def recipients_refused(exc):
+    """Build an ``EmailRecipientsRefused`` from an ``smtplib.SMTPRecipientsRefused``.
+
+    Classifies the bounce: any 5xx recipient code → hard (permanent), otherwise
+    soft/transient.
+    """
+    recipients = getattr(exc, "recipients", None) or {}
+    codes = [
+        v[0]
+        for v in recipients.values()
+        if isinstance(v, (tuple, list)) and v and isinstance(v[0], int)
+    ]
+    bounce_type = "hard" if any(500 <= c < 600 for c in codes) else "soft"
+    return EmailRecipientsRefused(
+        f"Recipients refused: {exc}", recipients=recipients, bounce_type=bounce_type
+    )

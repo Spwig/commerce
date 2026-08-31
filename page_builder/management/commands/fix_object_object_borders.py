@@ -17,7 +17,10 @@ class Command(BaseCommand):
         affected_elements = []
 
         for element in Element.objects.all():
-            if element.content.get("border") == "[object Object]":
+            if (
+                isinstance(element.content, dict)
+                and element.content.get("border") == "[object Object]"
+            ):
                 affected_elements.append(element)
 
         if not affected_elements:

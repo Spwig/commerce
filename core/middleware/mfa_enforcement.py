@@ -125,6 +125,12 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
             # Redirect to MFA verification
             return self._redirect_to_mfa_verification(request)
 
+        # User already has 2FA (and has verified it this session): the
+        # grace-period and setup-enforcement logic below is only for users
+        # WITHOUT 2FA, so there is nothing left to enforce.
+        if user_has_2fa:
+            return None
+
         # Get site settings for enforcement checks
         from core.models import SiteSettings
 

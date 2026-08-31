@@ -2,97 +2,98 @@
 title: Bulk-Bestandshandlungen
 ---
 
-Zusätzlich zu Einzelanpassungen bietet Spwig Ihnen drei Bulk-Aktionen auf der **Bestandselemente**-Liste für die Lagerverwaltungsarbeiten, die gleichzeitig für viele Produkte durchgeführt werden: Verschieben von Lagerbestand zwischen Lagerhallen, Schreiben von beschädigten oder verlorenen Einheiten ab und Abstimmung des Lagerbestands nach einer physischen Zählung. Alle drei Aktionen laufen über dasselbe **Aktionen**-Dropdown-Menü, wenden dieselbe Menge auf jedes ausgewählte Bestandselement an und werden vollständig in der Audit-Liste für Lagerbewegungen protokolliert.
+Zusätzlich zu Einzelanpassungen bietet Spwig Ihnen drei Bulk-Aktionen auf der **Bestandselemente**-Liste für Arbeiten am Lagerbestand, die gleichzeitig für viele Produkte durchgeführt werden: Verschieben des Bestands zwischen Lagerhäusern, Schreiben von beschädigten oder verlorenen Einheiten ab und Abstimmung des Bestands nach einer physischen Zählung. Alle drei Aktionen stammen aus dem gleichen **Aktionen**-Dropdown, wenden Sie den gleichen Betrag auf jedes ausgewählte Bestandselement an und werden vollständig in der Audit-Trail für Bestandsbewegungen protokolliert.
 
-Gehen Sie zu **Produkte > Bestandselemente**, um sie zu verwenden.
+Navigieren Sie zu **Produkte > Bestandselemente**, um sie zu verwenden.
 
 ## Ausführen einer Bulk-Bestandshandlung
 
-1. Auf der **Bestandselemente**-Liste verwenden Sie die Filter oder die Suche, um die Artikel zu finden, die Sie aktualisieren möchten
-2. Klicken Sie das Kästchen neben jedem Bestandselement an, um es einzuschließen (oder verwenden Sie das Kästchen in der Kopfzeile, um alle Elemente auf der Seite auszuwählen)
-3. Wählen Sie eine der drei Aktionen aus dem **Aktionen**-Dropdown-Menü:
-   - **Lagerbestand in Lagerhaus verschieben**
-   - **Beschädigten/verlorenen Lagerbestand protokollieren**
-   - **Lagerbestand neu zählen (physische Zählung)**
+1. Auf der **Bestandselemente**-Liste verwenden Sie die Filter oder die Suche, um die Elemente zu finden, die Sie aktualisieren möchten
+2. Klicken Sie auf das Kästchen neben jedem Bestandselement, um es einzuschließen (oder verwenden Sie das Kästchen in der Überschrift, um alle Elemente auf der Seite auszuwählen)
+3. Wählen Sie eine der drei Aktionen aus dem **Aktionen**-Dropdown:
+   - **Bestand an Lagerhaus verschieben**
+   - **Beschädigten/verlorenen Bestand protokollieren**
+   - **Bestand neu zählen (physische Zählung)**
 4. Auf **Los** klicken
-5. Bestätigungsseite prüfen — sie listet jedes ausgewählte Bestandselement mit seinen aktuellen **vorhandenen**, **zugeordneten** und **verfügbaren** Mengen auf, damit Sie überprüfen können, ob Sie die richtigen Elemente ausgewählt haben
+5. Bestätigungsseite prüfen — sie listet jedes ausgewählte Bestandselement mit seinem aktuellen **vorhandenen**, **zugewiesenen** und **verfügbaren** Bestand auf, damit Sie überprüfen können, ob Sie die richtigen Elemente ausgewählt haben
 6. Die Felder der Aktion ausfüllen (siehe unten) und auf den Absenden-Button klicken, um die Aktion anzuwenden
 
-![Die Liste der Bestandselemente mit dem geoeffneten Bulk-Aktionen-Dropdown, wobei "Lagerbestand in Lagerhaus verschieben", "Beschädigten/verlorenen Lagerbestand protokollieren" und "Lagerbestand neu zählen (physische Zählung)" neben den anderen Aktionen angezeigt werden](/static/core/admin/img/help/stock-bulk-actions/stock-items-actions-dropdown.webp)
+![Die Liste der Bestandselemente mit geöffnetem Bulk-Aktionen-Dropdown, wobei die Optionen "Bestand an Lagerhaus verschieben", "Beschädigten/verlorenen Bestand protokollieren" und "Bestand neu zählen (physische Zählung)" neben den anderen Aktionen angezeigt werden](/static/core/admin/img/help/stock-bulk-actions/stock-items-actions-dropdown.webp)
 
-Der gleiche Wert, den Sie eingeben, wird auf **jedes** ausgewählte Element angewandt — dies ist für das Verschieben, Schreiben ab oder Neu-zählen derselben Anzahl von Einheiten für viele SKUs gleichzeitig gedacht (z. B. Verschieben von 10 Einheiten mehrerer Produkte in eine neue Ladenfiliale). Für ein einzelnes Element mit einer anderen Menge führen Sie die Aktion erneut mit nur diesem Element ausgewählt, oder verwenden Sie stattdessen **Bestandsebenen anpassen**.
+Der gleiche Betrag, den Sie eingeben, wird auf **jedes** ausgewählte Element angewandt — dies ist dafür gedacht, die gleiche Anzahl von Einheiten über viele SKUs hinweg zu verschieben, zu schreiben oder neu zu zählen (z. B. das Verschieben von 10 Einheiten mehrerer Produkte in eine neue Ladenfiliale). Für ein einzelnes Element mit einem anderen Betrag führen Sie die Aktion erneut mit nur diesem Element aus oder verwenden Sie stattdessen **Bestandsebenen anpassen**.
 
-## Lagerbestand in Lagerhaus verschieben
+## Bestand an Lagerhaus verschieben
 
-Verwenden Sie dies, um verfügbaren Bestand aus jedem ausgewählten Elements Lagerhaus in ein anderes Lagerhaus zu verschieben — z. B. Restocken einer neuen Einzelhandelsfiliale aus Ihrem Hauptlager oder Umverteilung des Lagerbestands zwischen regionalen Fulfillment-Centern.
+Verwenden Sie dies, um verfügbaren Bestand aus jedem ausgewählten Elements Lagerhaus in ein anderes Lagerhaus zu verschieben — z. B. um ein neues Einzelhandelsstandort zu restocken, von Ihrem Hauptlager aus, oder um das Lager zwischen regionalen Fulfillment-Centern zu balancieren.
 
-Auf der Bestätigungsseite füllen Sie folgende Felder aus:
+Auf der Bestätigungsseite füllen Sie Folgendes aus:
 
 | Feld | Beschreibung |
 |-------|-------------|
-| **Ziel-Lagerhaus** | Wo der Bestand hingehen sollte. Nur aktive Lagerhäuser werden in dieser Liste angezeigt. |
+| **Ziel-Lagerhaus** | Wohin der Bestand verschoben werden soll. Nur aktive Lagerhäuser werden in dieser Liste angezeigt. |
 | **Menge pro Artikel** | Einheiten, die aus dem aktuellen Lagerhaus jedes ausgewählten Elements herausgenommen werden. |
-| **Grund** | Optionaler Hinweis, z. B. "Restocken der neuen Auckland-Filiale". |
+| **Grund** | Optionaler Hinweis, z. B. "Restocking neues Auckland-Lager". |
 
-Auf **Lagerbestand verschieben** klicken, um anzuwenden.
+Auf **Bestand verschieben** klicken, um anzuwenden.
 
-![Die Seite zur Bestätigung des Lagerbestandsverschiebens: ein Karten-Widget für ausgewählte Lagerbestandselemente mit ihren Werten für "vorhanden", "zugeordnet" und "verfügbar", und ein Formular für die Verschiebungsdaten mit einem Ziel-Lagerhaus, Menge und Grund, der ausgefüllt ist](/static/core/admin/img/help/stock-bulk-actions/transfer-stock-confirmation.webp)
+![Die Seite zur Bestätigungsseite für "Bestand verschieben": ein Karten-Widget mit drei Elementen, die ihre Angaben zu "vorhanden", "zugewiesen" und "verfügbar" aufweisen, und ein Formular "Verschiebungsdetails" mit einem Ziel-Lagerhaus, Menge und Grund, die ausgefüllt sind](/static/core/admin/img/help/stock-bulk-actions/transfer-stock-confirmation.webp)
 
-**Nur unreservierter Bestand kann verschoben werden.** Spwig verschiebt von *verfügbarem* Bestand (vorhanden minus Einheiten, die auf offene Bestellungen zugewiesen wurden) — Einheiten, die bereits einem Kundenbestellvorgang zugeordnet sind, bleiben im Quell-Lagerhaus, damit dieser Bestellvorgang weiterhin erledigt werden kann. Wenn ein ausgewähltes Element nicht genug verfügbaren Bestand hat, um die Menge zu decken, die Sie eingegeben haben, wird dieses Element ausgelassen und ein Fehler erklärt, warum; der Rest der Auswahl wird dennoch übertragen.
+**Nur unreservierter Bestand kann verschoben werden.** Spwig verschiebt von *verfügbarem* Bestand (vorhanden minus Einheiten, die für offene Bestellungen zugewiesen wurden) — Einheiten, die bereits einem Kundenbestellvorgang versprochen wurden, bleiben im Quell-Lager, damit dieser Bestellvorgang weiterhin erfüllt werden kann. Wenn ein ausgewähltes Element nicht genug verfügbaren Bestand hat, um die Menge zu decken, die Sie eingegeben haben, wird dieses Element übersprungen und eine Fehlermeldung erläutert, warum; der Rest der Auswahl wird dennoch übertragen.
 
-Wenn ein ausgewähltes Element bereits im Ziel-Lagerhaus, das Sie gewählt haben, gelagert wird, wird es automatisch ausgelassen (es ist nichts zu übertragen, um sich selbst), und Sie sehen eine Nachricht, die Ihnen mitteilt, wie viele Elemente aus diesem Grund ausgelassen wurden.
+Wenn ein ausgewähltes Element bereits im von Ihnen gewählten Ziel-Lagerhaus gelagert wird, wird es automatisch übersprungen (es ist nichts zu verschieben), und Sie erhalten eine Nachricht, die Ihnen mitteilt, wie viele Elemente aus diesem Grund übersprungen wurden.
 
-Jeder Verschiebung wird ein Paar von Bewegungen in der Audit-Liste geschrieben — eine negative **Lagerhaus-Transfer**-Eintragung am Ursprung und eine entsprechende positive Eintragung am Ziel — sodass die vollständige Liste genau angibt, wo der Bestand herkam und wohin er ging.
+Jeder Verschiebung wird ein Paar von Bewegungen in der Audit-Trail geschrieben — eine negative **Lagerhaus-Übertragung** im Quell-Lager und eine entsprechende positive im Ziel-Lager — sodass die vollständige Trail genau zeigt, wo der Bestand herkam und wohin er ging.
 
-## Beschädigten/verlorenen Lagerbestand protokollieren
+## Beschädigten/verlorenen Bestand protokollieren
 
 Verwenden Sie dies, um Einheiten zu schreiben, die beschädigt, verdorben oder verloren gegangen sind — z. B. nachdem beschädigte Waren in einer Lieferung gefunden oder eine Diskrepanz untersucht wurden.
 
-Auf der Bestätigungsseite füllen Sie folgende Felder aus:
+Auf der Bestätigungsseite füllen Sie Folgendes aus:
 
-| Field | Description |
+| Feld | Beschreibung |
 |-------|-------------|
-| **Quantity to write off (per item)** | Units to remove from on-hand stock for each selected item. |
-| **Reason** | Optional note, e.g. "Water damage during storage". |
+| **Abzuschreibende Menge (pro Artikel)** | Einheiten, die für jeden ausgewählten Artikel vom Lagerbestand entfernt werden. |
+| **Grund** | Optionale Notiz, z. B. "Wasserschaden während der Lagerung". |
 
-Click **Record Write-off** to apply.
+Klicken Sie auf **Abschreibung buchen**, um die Aktion anzuwenden.
 
-**Reserved stock can't be written off.** On-hand stock can never drop below the quantity currently allocated to open orders — Spwig blocks the write-off for any item where the quantity you entered would eat into allocated stock, so you can't accidentally leave a paid order without the stock to fulfill it. If that happens for an item, you'll see an error naming the item and how many unreserved units it actually has available to write off.
+**Reservierter Bestand kann nicht abgeschrieben werden.** Der Lagerbestand kann niemals unter die Menge fallen, die derzeit offenen Bestellungen zugewiesen ist – Spwig blockiert die Abschreibung für jeden Artikel, bei dem die eingegebene Menge in den zugewiesenen Bestand eingreifen würde, damit Sie versehentlich keine bezahlte Bestellung ohne den Bestand zur Erfüllung lassen. Falls dies bei einem Artikel der Fall ist, sehen Sie einen Fehler, der den Artikel benennt und wie viele nicht reservierte Einheiten tatsächlich für die Abschreibung verfügbar sind.
 
-Each write-off is recorded as a **Damaged/Lost** movement on that stock item, with a negative quantity.
+Jede Abschreibung wird als **Beschädigt/Verloren**-Bewegung für diesen Lagerartikel mit einer negativen Menge erfasst.
 
-## Recount stock (physical count)
+## Bestand neu zählen (physische Zählung)
 
-Use this after a physical stock take to correct on-hand quantities to match what you actually counted — the fastest way to reconcile many items after a warehouse audit or cycle count.
+Verwenden Sie dies nach einer physischen Bestandsaufnahme, um die Lagerbestandsmengen so zu korrigieren, dass sie mit dem übereinstimmen, was Sie tatsächlich gezählt haben – der schnellste Weg, um viele Artikel nach einer Lagerprüfung oder Zykluszählung abzugleichen.
 
-On the confirmation page, fill in:
+Füllen Sie auf der Bestätigungsseite Folgendes aus:
 
-| Field | Description |
+| Feld | Beschreibung |
 |-------|-------------|
-| **Counted on-hand quantity (per item)** | The quantity you physically counted. On-hand is set to this exact number for every selected item — not added or subtracted. |
-| **Reason** | Optional note, e.g. "Q3 warehouse stock take". |
+| **Gezählter Lagerbestand (pro Artikel)** | Die Menge, die Sie physisch gezählt haben. Der Lagerbestand wird für jeden ausgewählten Artikel auf genau diese Zahl gesetzt – nicht addiert oder subtrahiert. |
+| **Grund** | Optionale Notiz, z. B. "Q3-Lagerbestandsaufnahme". |
 
-Click **Apply Recount** to apply.
+Klicken Sie auf **Neuzählung anwenden**, um die Aktion anzuwenden.
 
-![The Recount Stock confirmation page: the Selected Stock Items card and a Recount Details form with the counted on-hand quantity and a reason filled in](/static/core/admin/img/help/stock-bulk-actions/recount-stock-confirmation.webp)
+![Die Bestätigungsseite für die Bestandsneuzählung: die Karte "Ausgewählte Lagerartikel" und ein Formular "Neuzählungsdetails" mit der gezählten Lagerbestandsmenge und einem Grund ausgefüllt](/static/core/admin/img/help/stock-bulk-actions/recount-stock-confirmation.webp)
 
-Unlike the other two actions, recount can move stock in either direction — up if you counted more than the system expected, down if you counted less. If the count you enter is lower than the quantity currently allocated to open orders, Spwig still applies it (a count is a fact, not something to argue with), but that item's **Available** figure will show as `0` on the stock list and its status icon will flip to Out of Stock — treat that as a signal to check whether the affected orders can still be fulfilled.
+Im Gegensatz zu den anderen beiden Aktionen kann die Neuzählung den Bestand in beide Richtungen bewegen – nach oben, wenn Sie mehr gezählt haben als das System erwartet hat, nach unten, wenn Sie weniger gezählt haben. Wenn die eingegebene Zählung niedriger ist als die Menge, die derzeit offenen Bestellungen zugewiesen ist, wendet Spwig sie dennoch an (eine Zählung ist eine Tatsache, mit der man nicht streiten kann), aber die **Verfügbar**-Zahl für diesen Artikel wird in der Lagerliste als `0` angezeigt und sein Statussymbol wechselt zu "Ausverkauft" – betrachten Sie dies als Signal, zu prüfen, ob die betroffenen Bestellungen noch erfüllt werden können.
 
-Each recount is recorded as a **Physical Recount** movement, with the quantity showing the correction (positive or negative) between the old and new on-hand figures.
+Jede Neuzählung wird als **Physische Neuzählung**-Bewegung erfasst, wobei die Menge die Korrektur (positiv oder negativ) zwischen den alten und neuen Lagerbestandszahlen zeigt.
 
-## Reviewing what changed
+## Überprüfung der Änderungen
 
-Every transfer, write-off, and recount is logged the same way as any other stock change:
+Jede Übertragung, Abschreibung und Neuzählung wird auf dieselbe Weise protokolliert wie jede andere Lagerbewegung:
 
-- Open a stock item and scroll to the **Stock Movements** section to see its full history
-- Or navigate to **Products > Stock Movements** to browse movements across all items, filterable by type
+- Öffnen Sie einen Lagerartikel und scrollen Sie zum Abschnitt **Lagerbewegungen**, um die vollständige Historie anzuzeigen
+- Oder navigieren Sie zu **Produkte > Lagerbewegungen**, um Bewegungen über alle Artikel hinweg zu durchsuchen, filterbar nach Typ
 
-Each entry records the movement type, the quantity change, the previous and new on-hand figures, who made the change, and the reason you entered (if any) — so a bulk transfer or write-off is just as traceable as a single manual adjustment.
+Jeder Eintrag erfasst den Bewegungstyp, die Mengenänderung, die vorherigen und neuen Lagerbestandszahlen, wer die Änderung vorgenommen hat und den Grund, den Sie eingegeben haben (falls vorhanden) – so ist eine Massenübertragung oder Abschreibung genauso nachvollziehbar wie eine einzelne manuelle Anpassung.
 
-## Tips
+## Tipps
 
-- Run **Recount stock** right after a physical stock take while the counted numbers are fresh — it's easier to catch a typo in the confirmation page than to untangle it later from the movement history.
-- Always fill in **Reason** for write-offs and recounts. Six months from now, "Water damage during storage" is far more useful in the audit trail than a blank field.
-- Before transferring stock, check the **Available** column on the confirmation page — it already accounts for allocated units, so you'll know immediately if a quantity is too high for one of the items you selected.
-- These actions apply the same quantity to every selected item. Group your selection by items that genuinely need the same quantity moved, written off, or recounted, and handle exceptions one item at a time.
-- If you use POS at a retail location, remember that warehouse's stock buffer isn't part of "available" for online orders — but bulk transfers and write-offs still work against the warehouse's real on-hand total.
+- Führen Sie **Bestand neu zählen** direkt nach einer physischen Bestandsaufnahme aus, während die gezählten Zahlen noch frisch sind – es ist einfacher, einen Tippfehler auf der Bestätigungsseite zu erkennen, als ihn später aus der Bewegungshistorie zu entwirren.
+- Füllen Sie für Abschreibungen und Neuzählungen immer das Feld **Grund** aus. In sechs Monaten ist "Wasserschaden während der Lagerung" in der Audit-Trail deutlich nützlicher als ein leeres Feld.
+- Prüfen Sie vor einer Bestandsübertragung die Spalte **Verfügbar** auf der Bestätigungsseite – sie berücksichtigt bereits die zugewiesenen Einheiten, sodass Sie sofort wissen, ob eine Menge für einen der ausgewählten Artikel zu hoch ist.
+
+- Diese Aktionen wenden dieselbe Menge für jeden ausgewählten Artikel an. Gruppieren Sie Ihre Auswahl nach Artikeln, die tatsächlich dieselbe Menge bewegt, abgeschrieben oder neu gezählt werden müssen, und behandeln Sie Ausnahmen Artikel für Artikel.
+- Wenn Sie an einem Einzelhandelsstandort POS verwenden, denken Sie daran, dass der Lagerpuffer des Lagers nicht Teil der "verfügbaren" Menge für Online-Bestellungen ist – aber Massenübertragungen und Abschreibungen funktionieren weiterhin gegen die tatsächliche Lagerbestandsmenge des Lagers.

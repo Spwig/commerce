@@ -24,21 +24,21 @@ La misma cantidad que ingrese se aplica a **todos** los artículos seleccionados
 
 ## Transferir stock a almacén
 
-Use esto para mover el stock disponible de cada artículo seleccionado de su almacén a otro diferente — por ejemplo, reabastecer una nueva ubicación de retail desde su almacén principal, o redistribuir el inventario entre centros de cumplimiento regionales.
+Úselo para mover el stock disponible de cada artículo seleccionado de su almacén a otro almacén — por ejemplo, reabastecer una nueva ubicación de retail desde su almacén principal, o redistribuir el inventario entre centros de cumplimiento regionales.
 
 En la página de confirmación, complete:
 
 | Campo | Descripción |
 |-------|-------------|
 | **Almacén de destino** | Adónde debe moverse el stock. Solo los almacenes activos aparecen en esta lista. |
-| **Cantidad por artículo** | Unidades a mover de cada almacén actual de los artículos seleccionados. |
+| **Cantidad por artículo** | Unidades a mover de cada artículo seleccionado de su almacén actual. |
 | **Motivo** | Nota opcional, por ejemplo, "Reabastecimiento de nueva tienda de Auckland". |
 
 Haga clic en **Transferir stock** para aplicar.
 
 ![Página de confirmación de Transferir stock: un card de Artículos de stock seleccionados que muestra tres artículos con sus figuras de en mano/atribuidas/disponibles, y un formulario de Detalles de transferencia con un almacén de destino, cantidad y motivo completados](/static/core/admin/img/help/stock-bulk-actions/transfer-stock-confirmation.webp)
 
-**Solo el stock no reservado puede moverse.** Spwig transfiere desde el stock *disponible* (en mano menos unidades asignadas a pedidos abiertos) — las unidades ya comprometidas a un pedido de cliente permanecen en el almacén de origen para que ese pedido aún se pueda cumplir. Si un artículo seleccionado no tiene suficiente stock disponible para cubrir la cantidad que ingresó, ese artículo se omite y se explica el motivo con un error; el resto de la selección aún se transfiere.
+**Solo el stock no reservado puede moverse.** Spwig transfiere desde el stock *disponible* (en mano menos unidades asignadas a órdenes abiertas) — las unidades ya comprometidas a un pedido de cliente permanecen en el almacén de origen para que se pueda cumplir el pedido. Si un artículo seleccionado no tiene suficiente stock disponible para cubrir la cantidad que ingresó, ese artículo se omite y se explica el motivo con un error; el resto de la selección aún se transfiere.
 
 Si un artículo seleccionado ya está almacenado en el almacén de destino que eligió, se omite automáticamente (no hay nada que transferir a sí mismo), y verá un mensaje que le indicará cuántos artículos se omitieron por este motivo.
 
@@ -46,14 +46,14 @@ Cada transferencia escribe un conjunto de movimientos emparejados en el registro
 
 ## Registrar stock dañado/perdido
 
-Use esto para anular unidades que estén rotas, dañadas o perdidas — por ejemplo, después de encontrar mercancía dañada en un envío o investigar una discrepancia.
+Úselo para anular unidades que estén rotas, dañadas o perdidas — por ejemplo, después de encontrar mercancía dañada en un envío o investigar una discrepancia.
 
 En la página de confirmación, complete:
 
 | Campo | Descripción |
 |-------|-------------|
 | **Cantidad a escribir (por artículo)** | Unidades a eliminar del stock disponible para cada artículo seleccionado. |
-| **Motivo** | Nota opcional, por ejemplo, "Daño por agua durante el almacenamiento". |
+| **Motivo** | Nota opcional, por ejemplo: "Daño por agua durante el almacenamiento". |
 
 Haga clic en **Registrar escritura** para aplicarla.
 
@@ -70,13 +70,13 @@ En la página de confirmación, complete:
 | Campo | Descripción |
 |-------|-------------|
 | **Cantidad disponible contada (por artículo)** | La cantidad que contó físicamente. El stock disponible se establece en este número exacto para cada artículo seleccionado: no se agrega ni se resta. |
-| **Motivo** | Nota opcional, por ejemplo, "Cuenta de stock del almacén del tercer trimestre". |
+| **Motivo** | Nota opcional, por ejemplo: "Cuenta de stock del almacén del tercer trimestre". |
 
 Haga clic en **Aplicar reconteo** para aplicarlo.
 
-![Página de confirmación de Recontar stock: el panel de artículos de stock seleccionados y un formulario de detalles de reconteo con la cantidad disponible contada y un motivo rellenados](/static/core/admin/img/help/stock-bulk-actions/recount-stock-confirmation.webp)
+![Página de confirmación de Recontar stock: el card de Artículos de stock seleccionados y un formulario de Detalles de reconteo con la cantidad disponible contada y un motivo rellenados](/static/core/admin/img/help/stock-bulk-actions/recount-stock-confirmation.webp)
 
-A diferencia de las otras dos acciones, el reconteo puede mover el stock en cualquier dirección: hacia arriba si contó más de lo que el sistema esperaba, hacia abajo si contó menos. Si el recuento que ingresa es menor que la cantidad actualmente asignada a pedidos abiertos, Spwig aún lo aplica (un recuento es un hecho, no algo con lo que discutir), pero la figura **Disponible** de ese artículo mostrará `0` en la lista de stock y su icono de estado cambiará a Agotado: trátelo como una señal de que debe revisar si los pedidos afectados aún se pueden cumplir.
+A diferencia de las otras dos acciones, el reconteo puede mover el stock en cualquier dirección: hacia arriba si contó más de lo que el sistema esperaba, hacia abajo si contó menos. Si el recuento que ingresa es menor que la cantidad actualmente asignada a pedidos abiertos, Spwig aún lo aplica (un recuento es un hecho, no algo con lo que discutir), pero la figura **Disponible** de ese artículo mostrará como `0` en la lista de stock y su icono de estado cambiará a Agotado: tómelo como una señal de revisar si los pedidos afectados aún se pueden cumplir.
 
 Cada reconteo se registra como un movimiento de **Reconteo físico**, con la cantidad que muestra la corrección (positiva o negativa) entre las figuras antiguas y nuevas de stock disponible.
 
@@ -85,14 +85,14 @@ Cada reconteo se registra como un movimiento de **Reconteo físico**, con la can
 Cada transferencia, escritura y reconteo se registra de la misma manera que cualquier otro cambio de stock:
 
 - Abra un artículo de stock y desplácese hasta la sección **Movimientos de stock** para ver su historial completo
-- O navegue hasta **Productos > Movimientos de stock** para explorar movimientos en todos los artículos, filtrables por tipo
+- O navegue hasta **Productos > Movimientos de stock** para revisar movimientos en todos los artículos, filtrables por tipo
 
-Cada entrada registra el tipo de movimiento, el cambio de cantidad, las figuras antiguas y nuevas de stock disponible, quién realizó el cambio y el motivo que ingresó (si lo hubiera): por lo tanto, una transferencia o escritura por lotes es tan rastreable como un ajuste manual individual.
+Cada entrada registra el tipo de movimiento, el cambio de cantidad, las figuras antiguas y nuevas de stock disponible, quién realizó el cambio y el motivo que ingresó (si lo hubiera): por lo tanto, una transferencia o escritura en masa es tan rastreable como un ajuste manual individual.
 
 ## Consejos
 
-- Ejecute **Recontar el stock** inmediatamente después de una cuenta física del stock, mientras los números contados estén frescos: es más fácil detectar un error en la página de confirmación que desentrañarlo más tarde del historial de movimientos.
-- Siempre complete **Motivo** para escrituras y reconteos. dentro de seis meses, "Daño por agua durante el almacenamiento" es mucho más útil en el registro de auditoría que un campo en blanco.
-- Antes de transferir stock, verifique la columna **Disponible** en la página de confirmación: ya tiene en cuenta las unidades asignadas, por lo que podrá saber de inmediato si una cantidad es demasiado alta para uno de los artículos que seleccionó.
+- Ejecute **Recontar stock** inmediatamente después de una cuenta física del stock, mientras los números contados estén frescos: es más fácil detectar un error de escritura en la página de confirmación que desentrañarlo más tarde del historial de movimientos.
+- Siempre complete **Motivo** para escrituras y reconteos. dentro de seis meses, "Daño por agua durante el almacenamiento" es mucho más útil en el registro de auditoría que un campo vacío.
+- Antes de transferir stock, revise la columna **Disponible** en la página de confirmación: ya tiene en cuenta las unidades asignadas, por lo que podrá saber de inmediato si una cantidad es demasiado alta para uno de los artículos que seleccionó.
 - Estas acciones aplican la misma cantidad a cada artículo seleccionado. Agrupe su selección por artículos que realmente necesiten la misma cantidad movida, escrita o recontada, y maneje las excepciones uno por uno.
-- Si utiliza un POS en una ubicación de venta al por menor, recuerde que el stock del almacén no forma parte de "disponible" para pedidos en línea: pero las transferencias y escrituras por lotes aún funcionan contra el total real de stock disponible del almacén.
+- Si utiliza un POS en una ubicación de venta al por menor, recuerde que el stock del almacén no forma parte de "disponible" para pedidos en línea: pero las transferencias en masa y las escrituras aún funcionan contra el total real de stock disponible del almacén.

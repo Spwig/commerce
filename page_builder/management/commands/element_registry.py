@@ -211,5 +211,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Valid: {valid_count}"))
         if invalid_count > 0:
             self.stdout.write(self.style.ERROR(f"Invalid: {invalid_count}"))
+            raise CommandError(f"Validation failed: {invalid_count} invalid element(s)")
         else:
             self.stdout.write("All elements are valid!")

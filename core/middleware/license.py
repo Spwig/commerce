@@ -11,11 +11,14 @@ Progressive enforcement based on license status and grace period:
 """
 
 import logging
+from datetime import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import gettext as _
 
@@ -98,12 +101,61 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
         return None
 
     def _is_expired_trial(self, license_manager):
-        """Check if the current license is an expired trial."""
+        """Return True only for a genuine trial whose *sole* defect is that its
+        expiration date has already passed.
+
+        ``get_license_data()`` returns unverified file contents, so the
+        ``license_type`` field alone cannot be trusted — a tampered file could
+        claim ``"trial"`` to bypass lockout indefinitely. The trial must
+        therefore have a valid signature and be otherwise active and unrevoked;
+        an unsigned/tampered, inactive, revoked, or malformed-expiry file must
+        never bypass lockout, so each of those cases returns False.
+        """
         license_data = license_manager.get_license_data()
         if not license_data:
             return False
+
+        # Unsigned or tampered files must never be trusted as a trial.
+        if not license_manager.verify_signature(license_data):
+            return False
+
         license_info = license_data.get("license", {})
-        return license_info.get("license_type") == "trial"
+        if license_info.get("license_type") != "trial":
+            return False
+        if not license_info.get("is_active", True):
+            return False
+
+        # A revoked trial past its revocation grace period must still lock out.
+        # Fail closed: if we can't confirm the trial is unrevoked (DB/query
+        # error), deny the sandbox bypass rather than granting a license-bypass
+        # path on error.
+        try:
+            from core.models import LicenseRevocation
+
+            revocation = LicenseRevocation.objects.order_by("-detected_at").first()
+            if revocation and not revocation.is_in_grace_period:
+                return False
+        except Exception:
+            logger.warning(
+                "Could not verify trial revocation status; denying sandbox "
+                "bypass and enforcing lockout.",
+                exc_info=True,
+            )
+            return False
+
+        # The one permissible reason to treat a signed, active trial as
+        # expiring is a correctly parsed expiration timestamp in the past.
+        expires_at = license_info.get("expires_at")
+        if not expires_at:
+            return False
+        try:
+            expiry_date = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+            # A naive timestamp (no offset) parses successfully but cannot be
+            # compared against an aware ``timezone.now()`` — that TypeError is
+            # caught here so a malformed expiry returns False instead of 500ing.
+            return timezone.now() > expiry_date
+        except (AttributeError, TypeError, ValueError):
+            return False
 
     def _attempt_trial_to_dev_conversion(self, license_manager):
         """
@@ -136,15 +188,17 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
         return response
 
     def _strip_language_prefix(self, path):
-        """Strip /en/, /de/ etc. from path."""
-        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
-            return path[3:]
-        # Also handle longer codes like /zh-hans/
-        if len(path) > 4 and path[0] == "/":
-            parts = path.split("/", 2)
-            if len(parts) >= 3 and 2 <= len(parts[1]) <= 7:
-                candidate = "/" + parts[2] if parts[2] else "/"
-                return candidate
+        """Strip a leading language prefix (/en/, /zh-hans/) from the path.
+
+        Only strips when the first path segment is a configured language code,
+        so non-i18n paths such as /api/... or /admin/... are left untouched
+        (matching an arbitrary short/alpha segment would misroute them).
+        """
+        if not path.startswith("/"):
+            return path
+        parts = path.split("/", 2)
+        if len(parts) >= 3 and parts[1] in dict(settings.LANGUAGES):
+            return "/" + parts[2] if parts[2] else "/"
         return path
 
     def _is_always_allowed(self, path, stripped):

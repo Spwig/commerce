@@ -27,8 +27,10 @@ Usage:
 """
 
 import json
+import re
 import zipfile
 from datetime import UTC, datetime
+from fnmatch import fnmatch
 from pathlib import Path
 
 
@@ -141,10 +143,10 @@ class ComponentPackager:
 
         # Validate version format
         if "version" in self.manifest:
-            import re
-
             version = self.manifest["version"]
-            if not re.match(r"^\d+\.\d+\.\d+$", version):
+            if not isinstance(version, str):
+                self.errors.append("Version must be a string in the format MAJOR.MINOR.PATCH")
+            elif not re.match(r"^\d+\.\d+\.\d+$", version):
                 self.warnings.append("Version should use semantic versioning (e.g., 1.0.0)")
 
     def generate_manifest(self, **kwargs) -> dict:
@@ -208,7 +210,16 @@ class ComponentPackager:
 
         Raises:
             ValueError: If structure validation fails
+            NotImplementedError: If ``sign`` is requested (signing is performed
+                on a stored component via ``ComponentSigner.sign_component()``,
+                not on a bare ZIP produced here).
         """
+        if sign:
+            raise NotImplementedError(
+                "Signing during packaging is not supported; sign the stored "
+                "component with ComponentSigner.sign_component() instead."
+            )
+
         # Validate structure first
         is_valid, errors, warnings = self.validate_structure()
         if not is_valid:
@@ -229,14 +240,21 @@ class ComponentPackager:
         package_filename = f"{component_type}-{version}.zip"
         package_path = output_dir / package_filename
 
-        # Create ZIP package
+        # Create ZIP package, excluding the archive itself so it is never
+        # written into itself when output_dir lives inside component_dir.
+        # Resolve a separate path only for the self-exclusion comparison; the
+        # returned path keeps its original (possibly relative) form.
         with zipfile.ZipFile(package_path, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            self._add_directory_to_zip(zip_file, self.component_dir)
+            self._add_directory_to_zip(zip_file, self.component_dir, exclude=package_path.resolve())
 
         return package_path
 
     def _add_directory_to_zip(
-        self, zip_file: zipfile.ZipFile, directory: Path, base_path: Path | None = None
+        self,
+        zip_file: zipfile.ZipFile,
+        directory: Path,
+        base_path: Path | None = None,
+        exclude: Path | None = None,
     ):
         """
         Recursively add directory contents to ZIP file.
@@ -245,24 +263,39 @@ class ComponentPackager:
             zip_file: ZipFile instance
             directory: Directory to add
             base_path: Base path for relative paths in ZIP
+            exclude: Resolved path to skip during traversal (e.g. the output
+                archive itself when it lives inside the component directory)
         """
         if base_path is None:
             base_path = directory
 
         for item in directory.rglob("*"):
-            # Skip excluded patterns
-            if any(item.match(pattern) for pattern in self.EXCLUDE_PATTERNS):
+            # Calculate relative path
+            relative_path = item.relative_to(base_path)
+
+            # Skip excluded patterns, matching any path component (so files
+            # beneath an excluded directory such as .git/ are pruned too)
+            if self._is_excluded(relative_path):
+                continue
+
+            # Skip the output archive itself
+            if exclude is not None and item.resolve() == exclude:
                 continue
 
             # Skip if it's a directory (directories are created automatically)
             if item.is_dir():
                 continue
 
-            # Calculate relative path
-            relative_path = item.relative_to(base_path)
-
             # Add file to ZIP
             zip_file.write(item, arcname=str(relative_path))
+
+    def _is_excluded(self, relative_path: Path) -> bool:
+        """Return True if any component of the path matches an exclusion pattern."""
+        return any(
+            fnmatch(part, pattern)
+            for part in relative_path.parts
+            for pattern in self.EXCLUDE_PATTERNS
+        )
 
     def calculate_package_stats(self) -> dict:
         """

@@ -9,7 +9,7 @@ Admin interface for creating and managing forms with:
 
 from django import forms
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -152,13 +152,19 @@ class FormAdmin(TranslatableAdminMixin, admin.ModelAdmin):
             .get_queryset(request)
             .annotate(
                 _field_count=Count("fields", distinct=True),
-                _response_count=Count("responses", distinct=True),
+                _response_count=Count(
+                    "responses",
+                    filter=Q(responses__status="completed"),
+                    distinct=True,
+                ),
             )
         )
 
     def field_count_display(self, obj):
         """Display field count"""
-        count = getattr(obj, "_field_count", obj.field_count)
+        count = getattr(obj, "_field_count", None)
+        if count is None:
+            count = obj.field_count
         return format_html(
             '<span class="list-row-card-badge"><i class="fas fa-list"></i> {}</span>', count
         )
@@ -168,7 +174,9 @@ class FormAdmin(TranslatableAdminMixin, admin.ModelAdmin):
 
     def response_count_display(self, obj):
         """Display response count with link to responses"""
-        count = getattr(obj, "_response_count", obj.response_count)
+        count = getattr(obj, "_response_count", None)
+        if count is None:
+            count = obj.response_count
         if count > 0:
             url = (
                 reverse("admin:form_builder_formresponse_changelist") + f"?form__id__exact={obj.pk}"
@@ -311,6 +319,7 @@ class FormResponseAdmin(admin.ModelAdmin):
         "time_to_complete_display",
     ]
     list_filter = ["form", "status", "submitted_at"]
+    list_select_related = ["form", "user"]
     search_fields = ["form__name", "user__email", "ip_address"]
     ordering = ["-submitted_at"]
     readonly_fields = [

@@ -116,6 +116,16 @@ class DockerLogService:
     REDIS_GLOBAL_STATS_KEY = "log_stats:global"  # Global counts
     REDIS_POSITION_KEY = "log_stream:position:{container}"  # Last read position
 
+    # Non-ISO timestamp formats emitted by the PostgreSQL, Django, Celery and
+    # nginx log parsers. Tried in order when the value is not ISO 8601.
+    TIMESTAMP_FORMATS = (
+        "%Y-%m-%d %H:%M:%S.%f %Z",  # PostgreSQL: 2024-01-15 10:30:00.123 UTC
+        "%Y-%m-%d %H:%M:%S,%f",  # Django / Celery: 2024-01-15 10:30:00,123
+        "%Y-%m-%d %H:%M:%S.%f",  # generic space + fractional seconds
+        "%Y-%m-%d %H:%M:%S",  # generic space, no fraction
+        "%d/%b/%Y:%H:%M:%S %z",  # nginx: 10/Oct/2023:13:55:36 +0000
+    )
+
     def __init__(self):
         self._docker_client = None
         self._redis_client = None
@@ -501,6 +511,25 @@ class DockerLogService:
         for container in self.CONTAINER_SERVICES:
             redis.delete(self.REDIS_STATS_KEY.format(container=container))
 
+    def _parse_timestamp(self, timestamp_str: str) -> datetime:
+        """Parse a stored log timestamp across every supported log format.
+
+        Handles ISO 8601 / Docker timestamps first, then the PostgreSQL,
+        Django, Celery and nginx formats, falling back to the current time
+        only when none match.
+        """
+        if timestamp_str:
+            try:
+                return datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+            except ValueError:
+                pass
+            for fmt in self.TIMESTAMP_FORMATS:
+                try:
+                    return datetime.strptime(timestamp_str.strip(), fmt)
+                except ValueError:
+                    continue
+        return timezone.now()
+
     def archive_logs_to_db(self, batch_size: int = 100) -> int:
         """
         Archive logs from Redis to PostgreSQL using bulk_create.
@@ -527,14 +556,7 @@ class DockerLogService:
                 try:
                     entry = json.loads(log_json)
 
-                    timestamp_str = entry.get("timestamp", "")
-                    try:
-                        if "T" in timestamp_str:
-                            timestamp = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
-                        else:
-                            timestamp = timezone.now()
-                    except Exception:
-                        timestamp = timezone.now()
+                    timestamp = self._parse_timestamp(entry.get("timestamp", ""))
 
                     if timezone.is_naive(timestamp):
                         timestamp = timezone.make_aware(timestamp)

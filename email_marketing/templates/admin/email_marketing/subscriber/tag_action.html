@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="../">{% trans 'Subscribers' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="">
+  {% csrf_token %}
+
+  {% if add %}
+    <p>{% blocktrans count counter=subscribers.count %}Add a tag to {{ counter }} selected subscriber.{% plural %}Add a tag to {{ counter }} selected subscribers.{% endblocktrans %}</p>
+  {% else %}
+    <p>{% blocktrans count counter=subscribers.count %}Remove a tag from {{ counter }} selected subscriber.{% plural %}Remove a tag from {{ counter }} selected subscribers.{% endblocktrans %}</p>
+  {% endif %}
+
+  {% if tags %}
+    <div class="form-row">
+      <label for="id_tag">{% trans "Tag" %}:</label>
+      <select name="tag" id="id_tag" required>
+        <option value="">{% trans "Choose a tag…" %}</option>
+        {% for t in tags %}<option value="{{ t.pk }}">{{ t.name }}</option>{% endfor %}
+      </select>
+    </div>
+
+    {% for id in selected %}<input type="hidden" name="_selected_action" value="{{ id }}">{% endfor %}
+    <input type="hidden" name="action" value="{{ action }}">
+    <input type="hidden" name="apply_tag" value="1">
+
+    <div class="submit-row">
+      <button type="submit" class="button default">
+        {% if add %}{% trans "Add tag" %}{% else %}{% trans "Remove tag" %}{% endif %}
+      </button>
+      <a href="../" class="button cancel-link">{% trans "Cancel" %}</a>
+    </div>
+  {% else %}
+    <p>{% trans "You haven't created any tags yet. Add one under Subscriber Tags first, then come back." %}</p>
+    <div class="submit-row">
+      <a href="{% url 'admin:email_marketing_subscribertag_add' %}" class="button default">{% trans "Create a tag" %}</a>
+      <a href="../" class="button cancel-link">{% trans "Back to subscribers" %}</a>
+    </div>
+  {% endif %}
+</form>
+{% endblock %}

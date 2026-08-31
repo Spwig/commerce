@@ -70,7 +70,9 @@ class ProviderBrowseView(View):
         for provider in available_from_server:
             slug = provider.get("slug")
             latest_version = provider.get("current_version") or provider.get("version")
-            manifest = provider.get("manifest", {})
+            manifest = provider.get("manifest")
+            if not isinstance(manifest, dict):
+                manifest = {}
 
             # Get capabilities
             capabilities = provider.get("capabilities") or manifest.get("capabilities", {})
@@ -112,6 +114,8 @@ class ProviderBrowseView(View):
                 "rate_limits": manifest.get("rate_limits", {}),
                 "supported_currencies": manifest.get("supported_currencies", []),
                 "pricing": manifest.get("pricing", {}),
+                "regions": manifest.get("regions", {}),
+                "compliance": manifest.get("compliance", {}),
                 "is_installed": is_installed,
                 "current_version": current_version,
                 "latest_version": latest_version,
@@ -129,6 +133,9 @@ class ProviderBrowseView(View):
         crypto_count = sum(1 for p in all_providers if p["capabilities"].get("crypto"))
 
         # Prepare provider data for modal (with all manifest data)
+        from django.urls import reverse
+
+        configure_url = reverse("admin:exchange_rates_exchangerateprovideraccount_changelist")
         providers_for_modal = []
         for provider_data in all_providers:
             modal_data = {
@@ -141,7 +148,7 @@ class ProviderBrowseView(View):
                 "capabilities": provider_data["capabilities"],
                 "regions": provider_data.get("regions", {}),
                 "compliance": provider_data.get("compliance", {}),
-                "pricing_info": provider_data.get("pricing_info", {}),
+                "pricing_info": provider_data.get("pricing", {}),
                 "translations": dict(
                     provider_data.get("translations", {}),
                     default_language=provider_data.get("default_language", "en"),
@@ -150,7 +157,7 @@ class ProviderBrowseView(View):
                 "current_version": provider_data.get("current_version", ""),
                 "latest_version": provider_data.get("latest_version", ""),
                 "has_update": provider_data.get("has_update", False),
-                "configure_url": "/admin/exchange_rates/provideraccount/",
+                "configure_url": configure_url,
             }
             providers_for_modal.append(modal_data)
 

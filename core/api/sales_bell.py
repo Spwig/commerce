@@ -52,11 +52,14 @@ def bell_events(request):
         except (ValueError, TypeError):
             pass
 
+    # Fetch the oldest unseen page in ascending ID order so events are never
+    # skipped when more than 50 exist after `since`; reverse for newest-first display.
     events = list(
-        qs.order_by("-id")[:50].values(
+        qs.order_by("id")[:50].values(
             "id", "event_type", "subtype", "name", "product", "amount", "currency", "created_at"
         )
     )
+    events.reverse()
 
     # Serialize events for JSON
     for event in events:

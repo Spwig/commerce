@@ -62,6 +62,29 @@ def calculate_retry_delay(attempt: int, base_delay: int = 60, max_delay: int = 3
     return min(delay, max_delay)
 
 
+def _unsafe_target_reason(url: str) -> str | None:
+    """Return why ``url`` is an unsafe delivery target, or ``None`` if allowed.
+
+    Re-runs the SSRF guard at delivery time as a DNS-rebinding defence: a
+    hostname that resolved to a public address when the endpoint was configured
+    can be repointed at an internal address (e.g. ``169.254.169.254``) before
+    delivery. Mirrors the sandbox-mode localhost allowance used when queueing
+    deliveries so legitimate local sandbox testing is not blocked.
+    """
+    from core.license import is_sandbox_mode
+
+    from .serializers import check_webhook_target_url
+    from .services import _is_localhost_url
+
+    if is_sandbox_mode() and _is_localhost_url(url):
+        return None
+    try:
+        check_webhook_target_url(url)
+    except ValueError as exc:
+        return str(exc)
+    return None
+
+
 @shared_task(
     bind=True,
     name="webhooks.deliver_webhook",
@@ -111,6 +134,17 @@ def deliver_webhook(self, delivery_id: str):
         )
         delivery.status = WebhookDelivery.Status.FAILED
         delivery.error_message = "Endpoint is disabled due to consecutive failures"
+        delivery.save(update_fields=["status", "error_message"])
+        return
+
+    # Re-validate the target immediately before sending. DNS answers can change
+    # between configuration and delivery (DNS rebinding), and some endpoints may
+    # predate the SSRF guard or have been created through a path that skipped it.
+    blocked_reason = _unsafe_target_reason(endpoint.url)
+    if blocked_reason:
+        logger.warning(f"Webhook {delivery_id} blocked unsafe target: {blocked_reason}")
+        delivery.status = WebhookDelivery.Status.FAILED
+        delivery.error_message = f"Blocked unsafe webhook target: {blocked_reason}"
         delivery.save(update_fields=["status", "error_message"])
         return
 
@@ -332,6 +366,11 @@ def send_test_webhook(endpoint_id: str):
         endpoint = WebhookEndpoint.objects.get(id=endpoint_id)
     except WebhookEndpoint.DoesNotExist:
         return {"success": False, "error": f"Endpoint {endpoint_id} not found"}
+
+    # Apply the same delivery-time SSRF guard as real deliveries.
+    blocked_reason = _unsafe_target_reason(endpoint.url)
+    if blocked_reason:
+        return {"success": False, "error": f"Blocked unsafe webhook target: {blocked_reason}"}
 
     # In sandbox mode only localhost URLs may be contacted, using the same validated policy
     # as the webhook delivery service. This closes the test path that would otherwise POST to

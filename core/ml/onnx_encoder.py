@@ -12,6 +12,7 @@ The model files are located at core/ml/help_search/ and include:
 
 import json
 import logging
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -32,6 +33,7 @@ class OnnxSentenceEncoder:
     _session = None
     _tokenizer = None
     _config = None
+    _lock = threading.Lock()
 
     @classmethod
     def get_instance(cls, model_dir: Path | None = None):
@@ -42,54 +44,64 @@ class OnnxSentenceEncoder:
 
     def __init__(self, model_dir: Path):
         """Initialize and load ONNX model + tokenizer."""
-        if self.__class__._session is not None:
-            return
+        # Treat the singleton as initialized only once every component is
+        # present; a lone session is not proof of a usable instance.
+        with self.__class__._lock:
+            if self.__class__._tokenizer is not None:
+                return
 
-        model_dir = Path(model_dir)
+            model_dir = Path(model_dir)
 
-        # Load config
-        config_path = model_dir / "encoder_config.json"
-        if not config_path.exists():
-            raise FileNotFoundError(
-                f"Encoder config not found: {config_path}. "
-                f"Run 'python scripts/export_model_to_onnx.py' to generate model files."
-            )
+            # Load config
+            config_path = model_dir / "encoder_config.json"
+            if not config_path.exists():
+                raise FileNotFoundError(
+                    f"Encoder config not found: {config_path}. "
+                    f"Run 'python scripts/export_model_to_onnx.py' to generate model files."
+                )
 
-        with open(config_path) as f:
-            self.__class__._config = json.load(f)
+            with open(config_path) as f:
+                config = json.load(f)
 
-        # Load ONNX model
-        onnx_path = model_dir / self._config["onnx_file"]
-        if not onnx_path.exists():
-            raise FileNotFoundError(f"ONNX model not found: {onnx_path}")
+            # Load ONNX model
+            onnx_path = model_dir / config["onnx_file"]
+            if not onnx_path.exists():
+                raise FileNotFoundError(f"ONNX model not found: {onnx_path}")
 
-        try:
-            import onnxruntime as ort
+            try:
+                import onnxruntime as ort
 
-            logger.info(f"Loading ONNX model: {onnx_path.name}")
-            self.__class__._session = ort.InferenceSession(
-                str(onnx_path),
-                providers=["CPUExecutionProvider"],
-            )
-            logger.info("ONNX model loaded successfully")
-        except ImportError:
-            raise ImportError("onnxruntime not installed. Install with: pip install onnxruntime")
+                logger.info(f"Loading ONNX model: {onnx_path.name}")
+                session = ort.InferenceSession(
+                    str(onnx_path),
+                    providers=["CPUExecutionProvider"],
+                )
+                logger.info("ONNX model loaded successfully")
+            except ImportError:
+                raise ImportError(
+                    "onnxruntime not installed. Install with: pip install onnxruntime"
+                )
 
-        # Load tokenizer
-        tokenizer_path = model_dir / "tokenizer.json"
-        if not tokenizer_path.exists():
-            raise FileNotFoundError(f"Tokenizer not found: {tokenizer_path}")
+            # Load tokenizer
+            tokenizer_path = model_dir / "tokenizer.json"
+            if not tokenizer_path.exists():
+                raise FileNotFoundError(f"Tokenizer not found: {tokenizer_path}")
 
-        try:
-            from tokenizers import Tokenizer
+            try:
+                from tokenizers import Tokenizer
 
-            self.__class__._tokenizer = Tokenizer.from_file(str(tokenizer_path))
-            max_length = self._config.get("max_seq_length", 256)
-            self.__class__._tokenizer.enable_truncation(max_length=max_length)
-            self.__class__._tokenizer.enable_padding(length=None)
-            logger.info("Tokenizer loaded successfully")
-        except ImportError:
-            raise ImportError("tokenizers not installed. Install with: pip install tokenizers")
+                tokenizer = Tokenizer.from_file(str(tokenizer_path))
+                max_length = config.get("max_seq_length", 256)
+                tokenizer.enable_truncation(max_length=max_length)
+                tokenizer.enable_padding(length=None)
+                logger.info("Tokenizer loaded successfully")
+            except ImportError:
+                raise ImportError("tokenizers not installed. Install with: pip install tokenizers")
+
+            # Publish atomically only after every component loaded successfully.
+            self.__class__._config = config
+            self.__class__._session = session
+            self.__class__._tokenizer = tokenizer
 
     def encode(self, text: str) -> np.ndarray:
         """

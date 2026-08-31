@@ -27,6 +27,7 @@ url_patterns:
 related:
   - managing-customer-accounts
   - email-configuration
+  - deliverability
 published: true
 ---
 

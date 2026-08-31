@@ -221,10 +221,16 @@ class Theme(models.Model):
             if platform_ver < min_ver:
                 return False
 
-            if self.engine_max_version and not self.engine_max_version.endswith(".x"):
-                max_ver = semver.VersionInfo.parse(self.engine_max_version)
-                if platform_ver > max_ver:
-                    return False
+            if self.engine_max_version:
+                if self.engine_max_version.endswith(".x"):
+                    # Wildcard maximum (e.g. "2.x") caps the major version.
+                    max_major = int(self.engine_max_version.split(".", 1)[0])
+                    if platform_ver.major > max_major:
+                        return False
+                else:
+                    max_ver = semver.VersionInfo.parse(self.engine_max_version)
+                    if platform_ver > max_ver:
+                        return False
 
             return True
         except Exception:

@@ -22,9 +22,9 @@ from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 
-# Match admin paths with or without language prefix
-# e.g. /admin/, /en/admin/, /de/admin/login/
-ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2})?/admin/")
+# Match admin paths with or without language prefix, including locales with a
+# regional/script suffix (e.g. /admin/, /en/admin/, /zh-hans/admin/login/)
+ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2}(-[a-z]+)?)?/admin/")
 
 
 class AdminAccessMiddleware:

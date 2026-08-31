@@ -23,6 +23,7 @@ import re
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
@@ -69,7 +70,9 @@ class AdminReadOnlyMiddleware:
         if request.method not in WRITE_METHODS:
             return self.get_response(request)
 
-        path = request.path
+        # Use path_info (script prefix stripped) so matching and whitelist
+        # checks work when deployed under a URL subpath (FORCE_SCRIPT_NAME).
+        path = request.path_info
         is_admin_panel = bool(ADMIN_PATH_RE.match(path))
         is_admin_api = bool(ADMIN_API_PATH_RE.match(path))
 
@@ -119,7 +122,11 @@ class AdminReadOnlyMiddleware:
             _("Your account has read-only access. This action is not available in read-only mode."),
         )
         referer = request.META.get("HTTP_REFERER", "")
-        if referer and request.get_host() in referer:
+        if referer and url_has_allowed_host_and_scheme(
+            referer,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
             return redirect(referer)
         return redirect(request.path)
 

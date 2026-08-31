@@ -1,0 +1,80 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Segment rule-builder — reuses admin-base variables for a native admin look. */
+.em-rb {
+  margin: 12px 0 20px;
+  padding: 16px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  background: var(--body-bg, #f8f8f8);
+}
+.em-rb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.em-rb-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.em-rb-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--link-fg, #417690);
+  background: color-mix(in srgb, var(--link-fg, #417690) 12%, transparent);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.em-rb-match {
+  font-size: 13px;
+  color: var(--body-quiet-color, #555);
+  margin-bottom: 10px;
+}
+.em-rb-match select {
+  margin: 0 2px;
+}
+.em-rb-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.em-rb-cond {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.em-rb-cond select,
+.em-rb-cond input {
+  padding: 6px 8px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background: var(--body-bg, #fff);
+  color: inherit;
+  font: inherit;
+}
+.em-rb-cond .em-rb-val input,
+.em-rb-cond .em-rb-val select {
+  min-width: 140px;
+}
+.em-rb-remove {
+  margin-left: auto;
+  border: 1px solid var(--border-color, #ccc);
+  background: var(--body-bg, #fff);
+  color: var(--body-quiet-color, #666);
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+.em-rb-remove:hover {
+  border-color: var(--error-fg, #ba2121);
+  color: var(--error-fg, #ba2121);
+}
+.em-rb-add {
+  font-size: 13px;
+}

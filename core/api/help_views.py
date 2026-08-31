@@ -8,7 +8,8 @@ from datetime import UTC, datetime
 
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import F, Q
+from django.db import transaction
+from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
@@ -55,7 +56,9 @@ class HelpCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     admin surface, not something exposed to storefront customers.
     """
 
-    queryset = HelpCategory.objects.all().order_by("order", "name")
+    queryset = HelpCategory.objects.annotate(
+        published_topics_count=Count("topics", filter=Q(topics__is_published=True))
+    ).order_by("order", "name")
     serializer_class = HelpCategorySerializer
     permission_classes = [IsAdminUser]
     lookup_field = "slug"
@@ -71,8 +74,10 @@ class HelpCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     def topics(self, request, slug=None):
         """Get all topics in this category"""
         category = self.get_object()
-        topics = HelpTopic.objects.filter(category=category, is_published=True).order_by(
-            "title_i18n_key"
+        topics = (
+            HelpTopic.objects.filter(category=category, is_published=True)
+            .select_related("category")
+            .order_by("title_i18n_key")
         )
 
         serializer = HelpTopicListSerializer(topics, many=True, context={"request": request})
@@ -149,16 +154,23 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         """Get topic and record view"""
         instance = self.get_object()
 
-        # Increment view count
-        HelpTopic.objects.filter(pk=instance.pk).update(view_count=F("view_count") + 1)
+        # Referer is attacker-controlled and unbounded; truncate to the
+        # context_url column limit so an overlong header can't raise DataError.
+        context_url = request.META.get("HTTP_REFERER", "")[:500]
 
         # Record view for telemetry (anonymous)
         session_id = request.session.session_key or "anonymous"
-        HelpView.objects.create(
-            topic=instance,
-            session_id=session_id,
-            context_url=request.META.get("HTTP_REFERER", ""),
-        )
+
+        # Both writes must land together, so wrap them in one transaction.
+        with transaction.atomic():
+            # Increment view count
+            HelpTopic.objects.filter(pk=instance.pk).update(view_count=F("view_count") + 1)
+
+            HelpView.objects.create(
+                topic=instance,
+                session_id=session_id,
+                context_url=context_url,
+            )
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -179,11 +191,22 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = HelpSearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        query = serializer.validated_data["query"]
-        component = serializer.validated_data.get("component")
-        category = serializer.validated_data.get("category")
-        limit = serializer.validated_data.get("limit", 10)
+        topics = self._keyword_search_topics(
+            query=serializer.validated_data["query"],
+            component=serializer.validated_data.get("component"),
+            category=serializer.validated_data.get("category"),
+            limit=serializer.validated_data.get("limit", 10),
+        )
 
+        result_serializer = HelpTopicListSerializer(topics, many=True, context={"request": request})
+        return Response(result_serializer.data)
+
+    def _keyword_search_topics(self, query, component=None, category=None, limit=10):
+        """Rank published help topics against a keyword query.
+
+        Returns the top ``limit`` topics ordered by relevance. Shared by the
+        keyword ``search`` action and the ``semantic_search`` fallback.
+        """
         # Build base queryset
         queryset = HelpTopic.objects.filter(is_published=True).select_related("category")
 
@@ -235,10 +258,7 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
 
         # Sort by relevance and limit
         results.sort(reverse=True, key=lambda x: x[0])
-        topics = [topic for score, topic in results[:limit]]
-
-        result_serializer = HelpTopicListSerializer(topics, many=True, context={"request": request})
-        return Response(result_serializer.data)
+        return [topic for score, topic in results[:limit]]
 
     @extend_schema(
         summary=_("Semantic search for help topics"),
@@ -261,11 +281,12 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
 
         logger = logging.getLogger(__name__)
 
-        try:
-            # Validate request
-            serializer = HelpSemanticSearchSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
+        # Validate request up front so a validation error returns a proper 400
+        # rather than being swallowed by the keyword-search fallback below.
+        serializer = HelpSemanticSearchSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        try:
             # Perform semantic search
             from core.services.semantic_search import SearchService
 
@@ -290,9 +311,20 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
             )
 
         except Exception as e:
-            # Fallback to keyword search
+            # Fallback to keyword search, preserving the success-path envelope
             logger.error(f"Semantic search failed: {e}, falling back to keyword search")
-            return self.search(request)
+            topics = self._keyword_search_topics(
+                query=serializer.validated_data["query"],
+                component=serializer.validated_data.get("component"),
+                category=serializer.validated_data.get("category"),
+                limit=serializer.validated_data.get("limit", 10),
+            )
+            result_serializer = HelpTopicListSerializer(
+                topics, many=True, context={"request": request}
+            )
+            return Response(
+                {"results": result_serializer.data, "search_type": "keyword", "count": len(topics)}
+            )
 
     @extend_schema(
         summary=_("Get contextual help suggestions"),
@@ -453,11 +485,14 @@ def _check_api_token(request):
         ip_address = request.META.get("REMOTE_ADDR")
 
     # Method 1: Check database tokens (preferred)
+    from core.models import APIToken
     from core.utils.api_tokens import validate_api_token
 
     db_token = validate_api_token(
         token_string,
-        token_type=None,  # Accept any token type for now
+        # Only tokens issued for the help system may read admin metadata;
+        # webhook/integration/other tokens must not reach this endpoint.
+        token_type=APIToken.TOKEN_TYPE_HELP_SYSTEM,
         record_usage=True,
         ip_address=ip_address,
     )

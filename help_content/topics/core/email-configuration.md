@@ -19,6 +19,7 @@ url_patterns:
   - /admin/email-system/templates/
 related:
   - store-settings
+  - deliverability
 published: true
 ---
 

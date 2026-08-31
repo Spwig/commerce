@@ -154,11 +154,9 @@ class SupportedCurrency(models.Model):
         country_code = currency_to_country.get(self.code, "")
         if country_code:
             try:
-                from django_countries import countries
+                from django_countries.fields import Country
 
-                country = countries.countries.get(country_code)
-                if country:
-                    return country.flag
+                return Country(country_code).flag
             except (ImportError, AttributeError):
                 pass
 

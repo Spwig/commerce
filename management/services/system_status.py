@@ -261,9 +261,11 @@ class SystemStatusService:
                 result["domain"] = config.cert_domain or config.domain
                 result["issuer"] = config.cert_issuer
                 result["expiry_date"] = config.cert_expires_at.isoformat()
-                days_remaining = (config.cert_expires_at - datetime.now(UTC)).days
+                days_remaining, is_valid = cls._cert_days_and_validity(
+                    config.cert_expires_at, datetime.now(UTC)
+                )
                 result["days_remaining"] = days_remaining
-                result["valid"] = days_remaining > 0
+                result["valid"] = is_valid
                 return result
 
             # Fallback: try reading local cert files
@@ -322,10 +324,11 @@ class SystemStatusService:
                         clean_date = date_str.replace(" GMT", "").replace(" UTC", "")
                         expiry = datetime.strptime(clean_date, "%b %d %H:%M:%S %Y")
                         result["expiry_date"] = expiry.isoformat()
-                        result["days_remaining"] = (
-                            expiry - datetime.now(UTC).replace(tzinfo=None)
-                        ).days
-                        result["valid"] = result["days_remaining"] > 0
+                        days_remaining, is_valid = cls._cert_days_and_validity(
+                            expiry, datetime.now(UTC).replace(tzinfo=None)
+                        )
+                        result["days_remaining"] = days_remaining
+                        result["valid"] = is_valid
             except Exception as e:
                 result["error"] = f"Failed to parse certificate: {e}"
 
@@ -436,13 +439,14 @@ class SystemStatusService:
         }
 
         try:
-            # Check cache for maintenance mode flag
-            maintenance = cache.get("maintenance_mode", {})
-            if isinstance(maintenance, dict):
-                result["enabled"] = maintenance.get("enabled", False)
-                result["reason"] = maintenance.get("reason", "")
-            elif maintenance:
-                result["enabled"] = True
+            # Read the authoritative state from SiteSettings (the field the
+            # maintenance middleware and toggle_maintenance_mode both write).
+            from core.models import SiteSettings
+
+            site_settings = SiteSettings.objects.first()
+            if site_settings:
+                result["enabled"] = site_settings.maintenance_mode
+                result["reason"] = site_settings.maintenance_message or ""
 
             # Also check environment variable
             if os.environ.get("MAINTENANCE_MODE", "").lower() in ("true", "1", "yes"):
@@ -513,7 +517,9 @@ class SystemStatusService:
                         ssl_data["expiry_date"].replace("Z", "+00:00")
                     )
                 except Exception:
-                    pass
+                    obj.ssl_expiry_date = None
+            else:
+                obj.ssl_expiry_date = None
             obj.ssl_days_remaining = ssl_data.get("days_remaining")
 
             # Version
@@ -536,8 +542,19 @@ class SystemStatusService:
 
             obj.save()
 
-        except Exception as e:
-            logger.error(f"Failed to update SystemStatus model: {e}")
+        except Exception:
+            logger.exception("Failed to update SystemStatus model")
+            raise
+
+    @staticmethod
+    def _cert_days_and_validity(expiry: datetime, now: datetime) -> tuple[int, bool]:
+        """Return (days_remaining_for_display, is_valid) for a certificate.
+
+        Validity is decided by comparing the expiry timestamp directly with
+        ``now`` so a certificate expiring in under a day still reads as valid;
+        the day count is retained only for display.
+        """
+        return (expiry - now).days, expiry > now
 
     @staticmethod
     def _format_bytes(size: int) -> str:

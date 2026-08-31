@@ -5,13 +5,75 @@ This module provides serializers for converting model instances
 into webhook payload data.
 """
 
+import ipaddress
 import logging
+import socket
+from urllib.parse import urlparse
 
 from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
+
+
+def check_webhook_target_url(value):
+    """Return ``value`` if it is a safe webhook target, else raise ``ValueError``.
+
+    Framework-neutral SSRF guard shared by configuration-time validation (the
+    API serializers and the admin creation wizard) and delivery-time
+    re-resolution. Enforces HTTPS outside ``DEBUG`` and then resolves the
+    hostname, rejecting any URL whose resolved address is loopback, private,
+    link-local, multicast, reserved, or unspecified (this covers cloud-metadata
+    endpoints such as ``169.254.169.254``). Delivery-time code re-runs this
+    check because DNS answers can change between validation and delivery (DNS
+    rebinding), and because an endpoint may have been stored before this guard
+    existed.
+    """
+    from django.conf import settings
+
+    # Developers routinely point webhooks at localhost while testing, so the
+    # SSRF guard only applies to real (non-DEBUG) installs.
+    if settings.DEBUG:
+        return value
+
+    if not value.startswith("https://"):
+        raise ValueError("Webhook URLs must use HTTPS in production")
+
+    hostname = urlparse(value).hostname
+    if not hostname:
+        raise ValueError("Webhook URL must include a valid host")
+
+    try:
+        addrinfo = socket.getaddrinfo(hostname, None)
+    except OSError as exc:
+        raise ValueError("Webhook URL host could not be resolved") from exc
+
+    for *_meta, sockaddr in addrinfo:
+        ip = ipaddress.ip_address(sockaddr[0])
+        if (
+            ip.is_loopback
+            or ip.is_private
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        ):
+            raise ValueError("Webhook URL must not target internal or reserved addresses")
+
+    return value
+
+
+def validate_webhook_target_url(value):
+    """DRF field validator wrapping :func:`check_webhook_target_url`.
+
+    Re-raises the guard's ``ValueError`` as a DRF ``ValidationError`` so it can
+    be used directly as a serializer field validator.
+    """
+    try:
+        return check_webhook_target_url(value)
+    except ValueError as exc:
+        raise serializers.ValidationError(str(exc)) from exc
 
 
 # =============================================================================
@@ -69,11 +131,7 @@ class WebhookEndpointCreateSerializer(serializers.Serializer):
 
     def validate_url(self, value):
         """Validate webhook URL."""
-        from django.conf import settings
-
-        if not settings.DEBUG and not value.startswith("https://"):
-            raise serializers.ValidationError("Webhook URLs must use HTTPS in production")
-        return value
+        return validate_webhook_target_url(value)
 
     def validate_events(self, value):
         """Validate event types."""
@@ -105,11 +163,7 @@ class WebhookEndpointUpdateSerializer(serializers.Serializer):
     is_active = serializers.BooleanField(required=False)
 
     def validate_url(self, value):
-        from django.conf import settings
-
-        if not settings.DEBUG and not value.startswith("https://"):
-            raise serializers.ValidationError("Webhook URLs must use HTTPS in production")
-        return value
+        return validate_webhook_target_url(value)
 
     def validate_events(self, value):
         from .events import validate_events
@@ -177,10 +231,10 @@ class OrderWebhookPayloadSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     order_number = serializers.CharField()
     status = serializers.CharField()
-    total = serializers.DecimalField(max_digits=12, decimal_places=2)
-    currency = serializers.CharField()
-    customer_email = serializers.EmailField(source="customer.email", allow_null=True)
-    customer_id = serializers.IntegerField(source="customer.id", allow_null=True)
+    total = serializers.DecimalField(max_digits=12, decimal_places=2, source="total_amount.amount")
+    currency = serializers.CharField(source="total_amount.currency")
+    customer_email = serializers.EmailField(source="email", allow_null=True)
+    customer_id = serializers.IntegerField(source="user.id", allow_null=True)
     items_count = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
@@ -197,22 +251,33 @@ class ProductWebhookPayloadSerializer(serializers.Serializer):
     name = serializers.CharField()
     slug = serializers.CharField()
     status = serializers.CharField()
-    price = serializers.DecimalField(max_digits=12, decimal_places=2, allow_null=True)
-    sale_price = serializers.DecimalField(max_digits=12, decimal_places=2, allow_null=True)
-    stock_quantity = serializers.IntegerField(allow_null=True)
-    is_published = serializers.BooleanField()
+    price = serializers.DecimalField(
+        max_digits=12, decimal_places=2, source="price.amount", allow_null=True
+    )
+    currency = serializers.CharField(source="price.currency")
+    sale_price = serializers.SerializerMethodField()
+    stock_quantity = serializers.IntegerField(source="total_stock", allow_null=True)
+    is_published = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
+
+    def get_sale_price(self, obj):
+        """Current sale price amount, or null when the product is not on sale."""
+        return obj.calculate_sale_price()
+
+    def get_is_published(self, obj):
+        """Whether the product is publicly published."""
+        return obj.status == "published"
 
 
 class CustomerWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for customer webhook payloads."""
 
     id = serializers.IntegerField()
-    email = serializers.EmailField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    created_at = serializers.DateTimeField(source="date_joined")
+    email = serializers.EmailField(source="user.email")
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+    created_at = serializers.DateTimeField(source="user.date_joined")
 
 
 class ShipmentWebhookPayloadSerializer(serializers.Serializer):
@@ -327,15 +392,14 @@ def get_payload_for_event(event_type: str, instance: Model) -> dict:
     """
     serializer_class = get_serializer_for_event(event_type)
 
-    if serializer_class:
-        try:
-            serializer = serializer_class(instance)
-            return serializer.data
-        except Exception as e:
-            logger.warning(f"Failed to serialize {event_type} payload: {e}")
-            # Fall through to generic serialization
+    if serializer_class is not None:
+        # A serializer was selected for a known event: serialize with it and let
+        # any failure propagate so the delivery fails visibly rather than being
+        # queued with a silently incomplete generic payload.
+        serializer = serializer_class(instance)
+        return serializer.data
 
-    # Generic serialization as fallback
+    # No event-specific serializer registered — fall back to generic data.
     return _generic_serialize(instance)
 
 

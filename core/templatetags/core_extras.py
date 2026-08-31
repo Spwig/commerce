@@ -1,4 +1,5 @@
 from django import template
+from django.urls import reverse
 
 from ..models import SiteSettings
 
@@ -263,7 +264,7 @@ def get_admin_sso_context():
         "admin_password_login_enabled": site_settings.admin_password_login_enabled,
         "sso_configured": False,
         "sso_provider_name": "SSO",
-        "sso_login_url": "/oidc/authenticate/",
+        "sso_login_url": reverse("oidc_authentication_init"),
     }
 
     if site_settings.admin_sso_enabled:

@@ -11,7 +11,9 @@ Provides views for:
 """
 
 from django.contrib.syndication.views import Feed
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
@@ -95,6 +97,10 @@ def blog_list(request):
         hero_count = int(template_options.get("featured_count", 1))
         if featured_posts:
             magazine_hero_posts = list(featured_posts[:hero_count])
+            hero_pks = {post.pk for post in magazine_hero_posts}
+            magazine_remaining_posts = [
+                post for post in magazine_remaining_posts if post.pk not in hero_pks
+            ]
         elif magazine_remaining_posts:
             magazine_hero_posts = magazine_remaining_posts[:hero_count]
             magazine_remaining_posts = magazine_remaining_posts[hero_count:]
@@ -133,8 +139,14 @@ def post_detail(request, slug):
         published_at__lte=timezone.now(),
     )
 
-    # Increment view count (consider adding session check for unique views)
-    BlogPost.objects.filter(pk=post.pk).update(view_count=models.F("view_count") + 1)
+    # Increment view count once per unique visit (tracked in the session) and
+    # keep the loaded instance in sync so the rendered count is accurate.
+    viewed_posts = request.session.get("viewed_blog_posts", [])
+    if post.pk not in viewed_posts:
+        BlogPost.objects.filter(pk=post.pk).update(view_count=models.F("view_count") + 1)
+        post.view_count += 1
+        viewed_posts.append(post.pk)
+        request.session["viewed_blog_posts"] = viewed_posts
 
     settings = BlogSettings.get_settings()
 
@@ -249,6 +261,18 @@ def subscribe(request):
 
     if not email:
         return JsonResponse({"success": False, "error": "Email is required."}, status=400)
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse(
+            {"success": False, "error": "Please enter a valid email address."}, status=400
+        )
+
+    if frequency not in dict(BlogSubscriber.FREQUENCY_CHOICES):
+        return JsonResponse(
+            {"success": False, "error": "Invalid notification frequency."}, status=400
+        )
 
     # Check if already subscribed
     existing = BlogSubscriber.objects.filter(email=email).first()
@@ -365,7 +389,14 @@ def subscription_preferences(request, token):
         # Handle category preferences
         category_ids = request.POST.getlist("categories")
         if category_ids:
-            subscriber.subscribed_categories.set(category_ids)
+            try:
+                category_ids = [int(cid) for cid in category_ids]
+            except (TypeError, ValueError):
+                return JsonResponse(
+                    {"success": False, "error": "Invalid category selection."}, status=400
+                )
+            categories = BlogCategory.objects.filter(pk__in=category_ids, is_active=True)
+            subscriber.subscribed_categories.set(categories)
         else:
             subscriber.subscribed_categories.clear()
 
@@ -404,7 +435,7 @@ class BlogRSSFeedGenerator(Rss201rev2Feed):
                 "enclosure",
                 attrs={
                     "url": item["featured_image_url"],
-                    "type": "image/jpeg",
+                    "type": item.get("featured_image_type") or "image/jpeg",
                     "length": "0",
                 },
             )
@@ -448,7 +479,11 @@ class BlogRSSFeed(Feed):
     def items(self, obj):
         if not obj.rss_enabled:
             return []
-        return BlogPost.published()[: obj.rss_posts_count]
+        return (
+            BlogPost.published()
+            .select_related("created_by", "category", "og_image", "featured_image")
+            .prefetch_related("tags")[: obj.rss_posts_count]
+        )
 
     def item_title(self, item):
         return item.title
@@ -486,6 +521,8 @@ class BlogRSSFeed(Feed):
             if not image_url.startswith("http"):
                 image_url = self.request.build_absolute_uri(image_url)
             extra["featured_image_url"] = image_url
+            asset = item.og_image or item.featured_image
+            extra["featured_image_type"] = getattr(asset, "mime_type", None)
         return extra
 
 

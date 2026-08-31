@@ -61,9 +61,9 @@ def get_form_data(context, form_slug):
             field_data["min_length"] = field.min_length
         if field.max_length:
             field_data["max_length"] = field.max_length
-        if field.min_value:
+        if field.min_value is not None:
             field_data["min_value"] = float(field.min_value)
-        if field.max_value:
+        if field.max_value is not None:
             field_data["max_value"] = float(field.max_value)
         if field.validation_regex:
             field_data["pattern"] = field.validation_regex

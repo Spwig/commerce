@@ -602,7 +602,7 @@ class MediaFolderViewSet(viewsets.ModelViewSet):
     ViewSet for managing media folders
     """
 
-    queryset = MediaFolder.objects.all()
+    queryset = MediaFolder.objects.annotate(asset_count=Count("assets"))
     serializer_class = MediaFolderSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -615,7 +615,11 @@ class MediaFolderViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def tree(self, request):
         """Get folder tree structure"""
-        folders = MediaFolder.objects.select_related("parent").prefetch_related("children")
+        folders = (
+            MediaFolder.objects.select_related("parent")
+            .prefetch_related("children")
+            .annotate(asset_count=Count("assets"))
+        )
 
         # Build tree structure
         tree = []
@@ -654,7 +658,7 @@ class TagViewSet(viewsets.ModelViewSet):
     ViewSet for managing tags
     """
 
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.annotate(asset_count=Count("assets"))
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -667,9 +671,9 @@ class TagViewSet(viewsets.ModelViewSet):
         limit = int(request.query_params.get("limit", 20))
 
         tags = (
-            Tag.objects.annotate(usage_count=Count("assets"))
-            .filter(usage_count__gt=0)
-            .order_by("-usage_count")[:limit]
+            Tag.objects.annotate(asset_count=Count("assets"))
+            .filter(asset_count__gt=0)
+            .order_by("-asset_count")[:limit]
         )
 
         return Response(TagSerializer(tags, many=True).data)

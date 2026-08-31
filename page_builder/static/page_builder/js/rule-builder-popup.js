@@ -347,5 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     config = window.RuleBuilderPopupConfig || {};
   }
+  const treeEl = document.getElementById('rule-builder-popup-tree');
+  config.initialRulesTree = treeEl ? JSON.parse(treeEl.textContent) : [];
   window.ruleBuilderPopup = new RuleBuilderPopup(config);
 });

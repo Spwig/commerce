@@ -516,6 +516,24 @@ def send_back_in_stock_notifications(stock_item_id):
         | models.Q(preferred_warehouse=stock_item.warehouse)
     )
 
+    # If the merchant has built a back-in-stock *journey*, defer to it: the journey
+    # owns the notification (a richer, merchant-designed sequence) instead of the
+    # one-off transactional email, so restocked requesters aren't emailed twice.
+    # Any failure to enroll falls back to the one-off email below, so an explicitly
+    # requested alert is never dropped. Guarded import: catalog must not hard-depend
+    # on email_marketing.
+    route_to_journey = False
+    enroll_back_in_stock = None
+    try:
+        from email_marketing.services.journeys import (
+            back_in_stock_journey_active,
+            enroll_back_in_stock,
+        )
+
+        route_to_journey = back_in_stock_journey_active()
+    except Exception:  # noqa: BLE001 — no journey layer / import error → plain email path
+        route_to_journey = False
+
     sent = 0
     for notif_id in list(pending.values_list("pk", flat=True)):
         with transaction.atomic():
@@ -530,7 +548,13 @@ def send_back_in_stock_notifications(stock_item_id):
             )
             if notif is None:
                 continue  # already claimed by a concurrent run
-            _send_back_in_stock_email(notif, stock_item)
+            routed = False
+            if route_to_journey and enroll_back_in_stock is not None:
+                routed = enroll_back_in_stock(
+                    notif.email, product=notif.product, variant=notif.variant
+                )
+            if not routed:
+                _send_back_in_stock_email(notif, stock_item)
             notif.notified_at = timezone.now()
             notif.save(update_fields=["notified_at"])
             sent += 1

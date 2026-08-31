@@ -19,6 +19,7 @@ from email_system.providers.base import (
     EmailProviderBase,
     EmailProviderError,
     SendResult,
+    recipients_refused,
 )
 
 logger = logging.getLogger(__name__)
@@ -145,6 +146,14 @@ class BuiltinSMTPProvider(EmailProviderBase):
 
         if message.get("headers"):
             for key, value in message["headers"].items():
+                # Defense-in-depth: never let a header carry CRLF (header injection),
+                # matching the hosted provider's guard. Values on this path are not
+                # user-controlled today, but this keeps any future caller safe.
+                if "\r" in str(key) or "\n" in str(key):
+                    continue
+                if "\r" in str(value) or "\n" in str(value):
+                    logger.warning("Dropping header with CRLF: %s", key)
+                    continue
                 msg[key] = value
 
         return msg
@@ -225,6 +234,12 @@ class BuiltinSMTPProvider(EmailProviderBase):
         except smtplib.SMTPAuthenticationError as e:
             logger.error(f"SMTP authentication error: {e}")
             raise EmailProviderAuthError(f"Authentication failed: {e}")
+
+        except smtplib.SMTPRecipientsRefused as e:
+            # A per-recipient rejection at submission is a bounce, not a generic
+            # failure — surface it so the send path can suppress a dead address.
+            logger.warning(f"Recipients refused: {e}")
+            raise recipients_refused(e) from e
 
         except smtplib.SMTPException as e:
             logger.error(f"SMTP error sending email: {e}")

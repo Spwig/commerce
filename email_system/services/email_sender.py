@@ -7,11 +7,12 @@ Handles email sending through provider accounts with queue management.
 import logging
 from typing import Any
 
+from django.db import transaction
 from django.utils import timezone
 
 from core.license import is_sandbox_mode
 from email_system.models import EmailAccount, EmailOutbox
-from email_system.providers.base import EmailMessage, SendResult
+from email_system.providers.base import EmailMessage, EmailRecipientsRefused, SendResult
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,7 @@ class EmailSendingService:
         account: EmailAccount | None = None,
         site=None,
         priority: int = 5,
+        attribution_campaign: str = "",
     ) -> EmailOutbox:
         """
         Queue an email for sending.
@@ -91,6 +93,8 @@ class EmailSendingService:
             account: Specific EmailAccount to use (uses default if None)
             site: Site instance (uses current site if None)
             priority: Priority (1-10, lower is higher priority)
+            attribution_campaign: utm_campaign slug for revenue attribution
+                (blank for transactional mail; stamped on tracked links)
 
         Returns:
             Created EmailOutbox instance
@@ -232,6 +236,7 @@ class EmailSendingService:
                 html_body=html_body,
                 text_body=text_body or "",
                 template_type=template_type or "",
+                attribution_campaign=attribution_campaign or "",
                 status="sandbox_logged",
                 priority=priority,
                 queued_at=timezone.now(),
@@ -272,6 +277,7 @@ class EmailSendingService:
             tags=tags or [],
             attachments=attachments or [],
             template_type=template_type or "",
+            attribution_campaign=attribution_campaign or "",
             status=outbox_status,
             priority=priority,
             queued_at=timezone.now(),
@@ -290,6 +296,13 @@ class EmailSendingService:
     def send_email(outbox_id: str) -> bool:
         """
         Send a queued email.
+
+        IMPORTANT: call this in autocommit, NOT inside an open ``transaction.atomic()``
+        block. The claim (queued -> sending) must commit before the slow SMTP call so
+        peers see it; if it is held open and the surrounding transaction rolls back
+        after the provider accepted the message, the row reverts to "queued" and the
+        sweep re-sends it (double-send). The transactional flows dispatch via
+        ``on_commit`` -> a separate task, which is safe.
 
         Args:
             outbox_id: EmailOutbox UUID
@@ -319,9 +332,66 @@ class EmailSendingService:
                 outbox.save()
                 return False
 
-            # Mark as sending
+            # Honour the merchant's delivery-mode kill switch on ALREADY-queued rows,
+            # not just at queue time: flipping to paused / log_only mid-blast must stop
+            # in-flight mail too (the async dispatch, the sweep, and the campaign
+            # drainer all pass through here). Move a queued row to held/logged rather
+            # than delivering it. (Mirrors the queue-time check in send_template_email.)
+            from core.models import SiteSettings
+
+            delivery_mode = SiteSettings.get_settings().email_delivery_mode
+            if delivery_mode != "live":
+                new_status = "held" if delivery_mode == "paused" else "logged"
+                EmailOutbox.objects.filter(id=outbox_id, status__in=("queued", "failed")).update(
+                    status=new_status, updated_at=timezone.now()
+                )
+                logger.info(
+                    f"Email {outbox_id} not sent: delivery mode is '{delivery_mode}' "
+                    f"(-> {new_status})"
+                )
+                return False
+
+            # Atomically claim the row (queued/failed -> sending). This is the ONE
+            # guard against two concurrent workers both delivering the same message
+            # to a customer: exactly one UPDATE matches, the loser backs off. The
+            # claim commits immediately (short/autocommit) so peers see "sending"
+            # before the slow SMTP call. All send paths funnel through here (the async
+            # task, the pending sweep, the campaign drainer, the inline callers, and
+            # retry_failed_emails), so this single claim protects every one of them.
+            # "failed" is claimable so the retry path can re-send (the retry-exhausted
+            # guard above already turns away rows with no attempts left); "bounced"/
+            # "skipped"/"held"/"logged" are intentionally excluded.
+            claimed = EmailOutbox.objects.filter(
+                id=outbox_id, status__in=("queued", "failed")
+            ).update(status="sending", updated_at=timezone.now())
+            if claimed != 1:
+                outbox.refresh_from_db()
+                if outbox.status == "sent":
+                    return True
+                logger.info(f"Email {outbox_id} not claimable (status={outbox.status}); skipping")
+                return False
+            # Remember the pre-claim status so a budget defer can restore it exactly
+            # (a retry claims a "failed" row; reverting it to "queued" would lose that).
+            pre_claim_status = outbox.status
+            # Reflect the claim on the in-memory instance for the rest of this call.
             outbox.status = "sending"
-            outbox.save()
+
+            # Marketing throughput gate (single chokepoint for EVERY send path): a
+            # marketing-band row may only send while the account's per-minute budget
+            # has marketing headroom; otherwise DEFER — revert the claim to its prior
+            # state and let it retry on a later tick. try_marketing_send only consumes
+            # budget when it allows, so a defer costs nothing. Reserving here (post-claim)
+            # means only the claim winner reserves, so a re-dispatch can't double-consume.
+            # Transactional rows are never gated (they always send and are counted below).
+            if outbox.priority >= EmailOutbox.PRIORITY_MARKETING:
+                from email_system.services import send_budget
+
+                if not send_budget.try_marketing_send(outbox.account_id):
+                    EmailOutbox.objects.filter(id=outbox_id, status="sending").update(
+                        status=pre_claim_status, updated_at=timezone.now()
+                    )
+                    logger.info(f"Email {outbox_id} deferred by send budget (marketing)")
+                    return False
 
             # Get provider instance
             try:
@@ -370,6 +440,15 @@ class EmailSendingService:
                     outbox.error_message = ""
                     outbox.save()
 
+                    # Count transactional sends against the per-account budget so
+                    # marketing (which reserves against the same counter) yields more
+                    # headroom when transactional is busy. Marketing sends are counted
+                    # at their reserve point (try_marketing_send), so don't double-count.
+                    if outbox.priority < EmailOutbox.PRIORITY_MARKETING:
+                        from email_system.services import send_budget
+
+                        send_budget.note_transactional_send(outbox.account_id)
+
                     logger.info(f"Successfully sent email {outbox_id}")
                     return True
                 else:
@@ -382,6 +461,34 @@ class EmailSendingService:
 
                     logger.error(f"Provider rejected email {outbox_id}: {result.get('error')}")
                     return False
+
+            except EmailRecipientsRefused as e:
+                # A per-recipient rejection at submission. Classify on THIS outbox's
+                # recipient, not the message-level aggregate: a multi-recipient message
+                # could pair a soft 4xx for one address with a hard 5xx for another, and
+                # the aggregate verdict would wrongly bounce+suppress a merely-deferred
+                # address. 5xx → permanent bounce (record + don't retry); 4xx → transient
+                # (greylisting): keep the failed+retry path so legitimate mail isn't
+                # silently dropped.
+                bounce_type = getattr(e, "bounce_type", "hard")
+                rcpt = (getattr(e, "recipients", None) or {}).get(outbox.to_email)
+                if rcpt and isinstance(rcpt[0], int):
+                    bounce_type = "hard" if 500 <= rcpt[0] < 600 else "soft"
+                outbox.failed_at = timezone.now()
+                outbox.error_message = str(e)[:500]
+                if bounce_type == "hard":
+                    outbox.status = "bounced"
+                else:
+                    outbox.status = "failed"
+                    outbox.retry_count += 1
+                outbox.save()
+                # Record the event either way (observability + soft-bounce threshold);
+                # the rollup only suppresses on a HARD bounce.
+                EmailSendingService._record_bounce_event(
+                    outbox, bounce_type=bounce_type, reason=str(e)
+                )
+                logger.warning(f"Recipient refused ({bounce_type}) for {outbox_id}: {e}")
+                return False
 
             except Exception as e:
                 # Sending error
@@ -402,6 +509,57 @@ class EmailSendingService:
         except Exception as e:
             logger.error(f"Unexpected error sending email {outbox_id}: {e}", exc_info=True)
             return False
+
+    @staticmethod
+    def _dispatch_send(outbox_id) -> None:
+        """Schedule async delivery of a queued outbox after the current txn commits.
+
+        Best-effort: a broker outage must never propagate to the caller (e.g. order
+        creation). The pending-outbox sweep re-delivers anything a lost dispatch
+        dropped. Gated by ``EMAIL_AUTO_DISPATCH`` so delivery can be turned off
+        without a code change.
+        """
+        from django.conf import settings as dj_settings
+
+        if not getattr(dj_settings, "EMAIL_AUTO_DISPATCH", True):
+            return
+
+        oid = str(outbox_id)
+
+        def _fire():
+            try:
+                from email_system.tasks import send_outbox_email
+
+                send_outbox_email.delay(oid)
+            except Exception:  # noqa: BLE001 — broker hiccup must not break the caller
+                logger.warning(
+                    "Async email dispatch failed for %s; the pending sweep will recover it",
+                    oid,
+                    exc_info=True,
+                )
+
+        transaction.on_commit(_fire)
+
+    @staticmethod
+    def _record_bounce_event(outbox, bounce_type="hard", reason=""):
+        """Record a bounce ``EmailEvent`` so list-hygiene can suppress the address.
+
+        ``email_system`` stays unaware of suppression — an ``email_marketing``
+        signal receiver reacts to the event. Best-effort: a recording failure must
+        never break the send path.
+        """
+        from email_system.models import EmailEvent
+
+        try:
+            EmailEvent.objects.create(
+                email=outbox,
+                event_type="bounced",
+                bounce_type=bounce_type,
+                bounce_reason=(reason or "")[:2000],
+                event_data={"source": "smtp_reject"},
+            )
+        except Exception:  # noqa: BLE001 — event recording is best-effort
+            logger.warning("Failed to record bounce event for %s", outbox.id, exc_info=True)
 
     @staticmethod
     def send_immediate(
@@ -479,6 +637,7 @@ class EmailSendingService:
         from_email: str | None = None,
         account: EmailAccount | None = None,
         enable_tracking: bool = True,
+        dispatch: bool = True,
         **kwargs,
     ) -> EmailOutbox:
         """
@@ -580,6 +739,9 @@ class EmailSendingService:
             from_email=from_email or account.from_email,
             from_name=account.from_name or "",
             template_type=template_type,
+            # send_template_email is the transactional API — stamp high priority so it
+            # is never throttled behind marketing on a shared SMTP account.
+            priority=EmailOutbox.PRIORITY_TRANSACTIONAL,
             status="pending",
         )
 
@@ -675,6 +837,15 @@ class EmailSendingService:
                     f"(outbox_id={outbox.id})"
                 )
 
+            # Transactional fast lane: once the surrounding transaction commits,
+            # deliver this row asynchronously (seconds latency, off the request
+            # thread). Only send_template_email — the transactional API — auto-
+            # dispatches; campaigns/journeys go through queue_email + the throttled
+            # drainer and must NOT. A broker hiccup can never break the caller; the
+            # pending sweep is the recovery path.
+            if dispatch and outbox.status == "queued":
+                EmailSendingService._dispatch_send(outbox.id)
+
             return outbox
 
         except Exception as e:
@@ -709,11 +880,26 @@ class EmailSendingService:
             )
             return {"attempted": 0, "succeeded": 0, "failed": 0}
 
-        # Get failed emails that can be retried
+        # Get failed emails that can be retried, but only ones that have waited out
+        # the backoff since their last attempt — so running this on a schedule can't
+        # hammer a flaky/greylisting recipient every tick.
+        from datetime import timedelta
+
+        from django.conf import settings as dj_settings
         from django.db.models import F
 
+        backoff_minutes = int(getattr(dj_settings, "EMAIL_RETRY_BACKOFF_MINUTES", 15))
+        cutoff = timezone.now() - timedelta(minutes=backoff_minutes)
+        # Transactional rows only. Marketing (campaign) failures are owned by the
+        # campaign drainer + its CampaignSend bookkeeping; re-sending a failed campaign
+        # outbox here would deliver the email while its CampaignSend stays FAILED (no
+        # outbox->CampaignSend sync), desyncing per-campaign metrics — and a budget
+        # defer would flap it forever without progressing retry_count.
         failed_emails = EmailOutbox.objects.filter(
-            status="failed", retry_count__lt=F("max_retries")
+            status="failed",
+            retry_count__lt=F("max_retries"),
+            failed_at__lte=cutoff,
+            priority__lt=EmailOutbox.PRIORITY_MARKETING,
         ).order_by("failed_at")[:max_emails]
 
         attempted = 0

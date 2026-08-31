@@ -25,6 +25,7 @@ Examples:
 """
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 
 from design.component_signer import get_component_signer
 from design.models import ComponentStore
@@ -153,8 +154,8 @@ class Command(BaseCommand):
             self.stdout.write(f"🔍 Found {components.count()} approved components")
         else:
             components = ComponentStore.objects.filter(
+                Q(signature="") | Q(checksum_sha256=""),
                 review_status="approved",
-                signature="",
             )
             self.stdout.write(f"🔍 Found {components.count()} unsigned approved components")
 

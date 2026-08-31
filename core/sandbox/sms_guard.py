@@ -20,6 +20,18 @@ logger = logging.getLogger(__name__)
 MAX_WHITELIST_SIZE = 5
 
 
+def _normalize_phone_number(value):
+    """
+    Normalize a candidate phone number for whitelist comparison.
+
+    Returns the stripped string, or None if the value is not a non-empty string.
+    """
+    if not isinstance(value, str):
+        return None
+    stripped = value.strip()
+    return stripped or None
+
+
 def get_sms_whitelist():
     """
     Get the sandbox SMS whitelist from SiteSettings.
@@ -38,13 +50,18 @@ def get_sms_whitelist():
 
         if ss.sandbox_sms_whitelist:
             for number in ss.sandbox_sms_whitelist:
-                if isinstance(number, str) and number.strip():
-                    # Normalize: strip whitespace
-                    whitelist.add(number.strip())
+                normalized = _normalize_phone_number(number)
+                if normalized:
+                    whitelist.add(normalized)
 
         return whitelist
 
     except Exception:
+        # Any failure — import error, app registry not ready
+        # (AppRegistryNotReady), DB error, unexpected field type, etc. Fail
+        # closed to an empty whitelist so no SMS is silently delivered, but
+        # surface the underlying error instead of swallowing it.
+        logger.exception("Failed to load sandbox SMS whitelist; failing closed to empty set")
         return set()
 
 
@@ -124,7 +141,7 @@ def sandbox_filter_sms_recipient(phone_number):
 
     whitelist = get_sms_whitelist()
 
-    if phone_number and phone_number.strip() in whitelist:
+    if _normalize_phone_number(phone_number) in whitelist:
         logger.info(f"[SANDBOX] SMS to {phone_number} — whitelisted, will deliver")
         return "send", phone_number
     else:

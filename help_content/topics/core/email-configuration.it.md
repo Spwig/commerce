@@ -1,143 +1,161 @@
 ---
-title: Email Configuration
+title: Configurazione Email
 ---
 
-La configurazione email controlla come il tuo negozio invia le email transazionali — conferma ordine, notifiche di spedizione, reimpostazione password, e altro. Spwig include un server SMTP integrato e supporta i fornitori di email esterni per una maggiore consegna.
+La configurazione email controlla come il tuo negozio invia le email transazionali: conferme d'ordine, notifiche di spedizione, reset della password e altro ancora. Spwig include un server SMTP integrato e supporta provider email esterni per una maggiore consegnabilità.
 
-![Email accounts](/static/core/admin/img/help/email-configuration/email-accounts.webp)
+![Account email](/static/core/admin/img/help/email-configuration/email-accounts.webp)
 
-## Available Providers
+## Provider Disponibili
 
-| Provider | Description |
+| Provider | Descrizione |
 |----------|-------------|
-| **Built-in SMTP** | Server email gratuito, auto-hosted incluso con Spwig. Firma automatica DKIM. |
+| **SMTP Integrato** | Server email gratuito e self-hosted incluso con Spwig. Firma DKIM automatica. |
 | **Gmail API** | Invia tramite il tuo account Gmail o Google Workspace utilizzando l'autenticazione OAuth. |
-| **Generic SMTP** | Connetti qualsiasi server SMTP (SendGrid, Mailgun, Amazon SES, o il tuo proprio server di posta). |
+| **SMTP Generico** | Collega qualsiasi server SMTP (SendGrid, Mailgun, Amazon SES o il tuo server di posta). |
 
-## Setting Up Email
+## Configurazione Email
 
-Navigate to **Settings > Email Accounts** and click **Add Email Account** to launch the setup wizard.
+Vai a **Impostazioni > Account Email** e fai clic su **Aggiungi Account Email** per avviare la procedura guidata di configurazione.
 
-### Step 1: Select Provider
+### Passaggio 1: Seleziona il Provider
 
-Choose your email provider. The built-in SMTP server is the simplest option to get started — it requires no external accounts.
+Scegli il tuo provider email. Il server SMTP integrato è l'opzione più semplice per iniziare: non richiede account esterni.
 
-### Step 2: Configure Credentials
+### Passaggio 2: Configura le Credenziali
 
-Enter the credentials for your chosen provider:
+Inserisci le credenziali per il provider scelto:
 
-- **Built-in SMTP** — No credentials needed. The server runs on your Spwig installation.
-- **Gmail API** — Authenticate via Google OAuth. You'll be redirected to sign in with your Google account.
-- **Generic SMTP** — Enter the SMTP server address, port, username, and password.
+- **SMTP Integrato** — Non sono necessarie credenziali. Il server viene eseguito sulla tua installazione di Spwig.
+- **Gmail API** — Autenticati tramite Google OAuth. Verrai reindirizzato per accedere con il tuo account Google.
+- **SMTP Generico** — Inserisci l'indirizzo del server SMTP, la porta, il nome utente e la password.
 
-### Step 3: Sender Configuration
+### Passaggio 3: Configurazione del Mittente
 
-Set the sender identity for outgoing emails:
+Imposta l'identità del mittente per le email in uscita:
 
-- **From Email** — The email address that appears in the "From" field (e.g., orders@yourstore.com)
-- **From Name** — The display name next to the email address (e.g., "Your Store Name")
-- **Reply-To Email** — Where customer replies are directed (can differ from the From address)
+- **Email del Mittente** — L'indirizzo email che appare nel campo "Da" (es. ordini@tuonnegozio.com)
+- **Nome del Mittente** — Il nome visualizzato accanto all'indirizzo email (es. "Nome del Tuo Negozio")
+- **Email di Risposta** — Dove vengono indirizzate le risposte dei clienti (può differire dall'indirizzo Da)
 
-### Step 4: DNS Validation
+### Passaggio 4: Validazione DNS
 
-Verify your domain's email authentication records. The wizard checks three DNS records:
+Verifica i record di autenticazione email del tuo dominio. La procedura guidata controlla tre record DNS:
 
-| Record | Purpose |
+| Record | Scopo |
 |--------|---------|
-| **SPF** | Authorizes your server to send email on behalf of your domain |
-| **DKIM** | Digitally signs emails to prove they haven't been tampered with |
-| **DMARC** | Tells receiving servers what to do with emails that fail SPF/DKIM checks |
+| **SPF** | Autorizza il tuo server a inviare email a nome del tuo dominio |
+| **DKIM** | Firma digitalmente le email per dimostrare che non sono state manomesse |
+| **DMARC** | Indica ai server riceventi cosa fare con le email che non superano i controlli SPF/DKIM |
 
-For each record, the wizard shows:
-- **Current status** — Whether the record is correctly configured
-- **Required value** — The exact DNS record to add at your domain registrar
-- **Propagation status** — Whether recent changes have taken effect (DNS changes can take up to 48 hours)
+Per ogni record, la procedura guidata mostra:
+- **Stato attuale** — Se il record è configurato correttamente
+- **Valore richiesto** — Il record DNS esatto da aggiungere presso il tuo registrar di dominio
+- **Stato di propagazione** — Se le modifiche recenti sono state applicate (le modifiche DNS possono richiedere fino a 48 ore)
 
-The built-in SMTP server automatically generates DKIM keys for your domain.
+Il server SMTP integrato genera automaticamente le chiavi DKIM per il tuo dominio.
 
-### Step 5: Send Test Email
+### Passaggio 5: Invia Email di Test
 
-Send a test email to verify everything works:
-1. Enter a recipient email address
-2. Click **Send Test**
-3. Check your inbox for the test message
-4. Verify the email arrives without spam warnings
+Invia un'email di test per verificare che tutto funzioni:
+1. Inserisci un indirizzo email del destinatario
+2. Fai clic su **Invia Test**
+3. Controlla la tua casella di posta in arrivo per il messaggio di test
+4. Verifica che l'email arrivi senza avvisi di spam
 
-### Step 6: Save and Activate
+### Passaggio 6: Salva e Attiva
 
-Save the configuration and set the account as active. Mark it as **Default** if it should be the primary email account.
+Salva la configurazione e imposta l'account come attivo. Segnalalo come **Predefinito** se deve essere l'account email principale.
 
-## Email Templates
+## Modelli Email
 
-Spwig includes 30+ email templates for every transactional event. Navigate to **Settings > Email Templates** to manage them.
+Spwig include oltre 30 modelli email per ogni evento transazionale. Vai a **Impostazioni > Modelli Email** per gestirli.
 
-### Template Types
+### Tipi di Modelli
 
-Templates cover all store events including:
-- **Order Lifecycle** — Confirmation, processing, shipped, delivered, cancelled
-- **Payment** — Receipt, refund confirmation, failed payment
-- **Customer Account** — Welcome, password reset, email verification
-- **Gift Cards** — Delivery, balance notification
-- **Shipping** — Tracking updates, delivery confirmation
-- **Digital Products** — Download links, license keys
-- **Marketing** — Abandoned cart recovery, review requests
+I modelli coprono tutti gli eventi del negozio, tra cui:
+- **Ciclo di Vita dell'Ordine** — Conferma, elaborazione, spedito, consegnato, annullato
+- **Pagamento** — Ricevuta, conferma di rimborso, pagamento non riuscito
+- **Account Cliente** — Benvenuto, reset password, verifica email
+- **Biglietti Regalo** — Consegna, notifica di saldo
+- **Spedizione** — Aggiornamenti di tracciamento, conferma di consegna
+- **Prodotti Digitali** — Link di download, chiavi di licenza
+- **Marketing** — Recupero carrello abbandonato, richieste di recensione
 
-### Customizing Templates
+### Personalizzazione dei Modelli
 
-1. Navigate to the template list
-2. Click a template to edit
-3. Modify the subject line, header, body content, and footer
-4. Use template variables (e.g., `{{ order.number }}`, `{{ customer.name }}`) for dynamic content
-5. Preview the email before saving
+1. Vai all'elenco dei modelli
+2. Fai clic su un modello per modificarlo
+3. Modifica la riga dell'oggetto, l'intestazione, il contenuto del corpo e il piè di pagina
+4. Usa le variabili del modello (es. `{{ order.number }}`, `{{ customer.name }}`) per il contenuto dinamico
+5. Anteprima l'email prima di salvare
 
-### Multi-Language Support
+### Supporto Multi-Lingua
 
-Email templates support multiple languages:
-- Each template can have translations for all your store's active languages
-- The system sends emails in the customer's preferred language
-- **Language fallback chain** — If a translation isn't available, the system falls back to the store's default language
-- Use the **AI Translation** feature to automatically translate templates into other languages
+I modelli di email supportano più lingue:
+- Ogni modello può avere traduzioni per tutte le lingue attive del tuo negozio
+- Il sistema invia le email nella lingua preferita del cliente
+- **Catena di fallback della lingua** — Se una traduzione non è disponibile, il sistema ricorre alla lingua predefinita del negozio
+- Utilizza la funzione **Traduzione AI** per tradurre automaticamente i modelli in altre lingue
 
-### Cloning Templates
+### Clonazione dei modelli
 
-To create a customized version of a system template:
-1. Open the template you want to modify
-2. Click **Clone Template**
-3. Edit the cloned version
-4. The clone takes priority over the original system template
+Per creare una versione personalizzata di un modello di sistema:
+1. Apri il modello che desideri modificare
+2. Clicca su **Clona modello**
+3. Modifica la versione clonata
+4. Il clone ha la priorità rispetto al modello di sistema originale
 
-## Email Queue
+## Coda delle email
 
-Monitor outgoing emails at **Settings > Email Queue**:
+Monitora le email in uscita in **Impostazioni > Coda email**:
 
-- **Queued** — Emails waiting to be sent
-- **Sending** — Currently being transmitted
-- **Sent** — Successfully delivered
-- **Failed** — Could not be delivered (with error details)
-- **Bounced** — Rejected by the recipient's mail server
+- **In coda** — Email in attesa di invio
+- **Invio in corso** — Attualmente in trasmissione
+- **Inviato** — Consegnato con successo
+- **Fallito** — Non è stato possibile consegnare (con dettagli dell'errore)
+- **Rimbalzato** — Rifiutato dal server di posta del destinatario
 
-Click any email to view its full details including recipient, subject, send time, and delivery status.
+Clicca su qualsiasi email per visualizzarne tutti i dettagli, inclusi destinatario, oggetto, ora di invio e stato di consegna.
 
-## Delivery Tracking
+## Tracciamento della consegna
 
-Track email engagement:
-- **Opens** — How many recipients opened the email
-- **Clicks** — Link clicks within the email
-- **Bounces** — Hard and soft bounce tracking
-- **Complaints** — Spam reports from recipients
+Traccia l'interazione con le email:
+- **Aperture** — Numero di destinatari che hanno aperto l'email
+- **Clic** — Clic sui link all'interno dell'email
+- **Rimbalzi** — Tracciamento dei rimbalzi hard e soft
+- **Segnalazioni** — Segnalazioni di spam da parte dei destinatari
 
-## Multiple Accounts
+## Multipli account
 
-You can configure multiple email accounts:
-- **Default Account** — Used for all outgoing emails unless overridden
-- **Fallback** — If the default account fails, emails queue for retry
-- Use different accounts for different purposes (e.g., one for transactional emails, another for marketing)
+Puoi configurare più account email:
+- **Account predefinito** — Utilizzato per tutte le email in uscita a meno che non venga sovrascritto
+- **Fallback** — Se l'account predefinito fallisce, le email vengono messe in coda per il nuovo tentativo
+- Utilizza account diversi per scopi diversi (ad esempio, uno per le email transazionali, un altro per il marketing)
 
-## Tips
+## Modalità di consegna delle email
 
-- Start with the **Built-in SMTP** server for quick setup, then switch to an external provider if you need higher sending volumes or better deliverability.
-- Always configure **SPF, DKIM, and DMARC** records — without them, emails are much more likely to land in spam folders.
-- Send a **test email** after any configuration change to verify delivery works.
-- Monitor the email queue regularly for **failed** or **bounced** emails — these indicate deliverability issues.
-- Use a **professional sender address** (e.g., orders@yourstore.com) rather than a free email address for better trust and deliverability.
-- Keep your templates concise — transactional emails should deliver information quickly, not be marketing newsletters.
+Vai a **Impostazioni > Impostazioni negozio** per controllare come il tuo negozio gestisce le email in uscita. Queste impostazioni sono utili durante lo sviluppo e i test.
+
+| Modalità | Descrizione |
+|------|-------------|
+| **Live** | Le email vengono consegnate normalmente ai destinatari reali |
+| **In pausa** | Le email vengono trattenute nella coda e non vengono inviate finché non si torna alla modalità Live |
+| **Solo log** | Le email vengono registrate nella casella di uscita ma non vengono mai consegnate |
+
+### Email di reindirizzamento di test
+
+Imposta un indirizzo **Email di reindirizzamento di test** per intercettare tutte le email in uscita e reindirizzarle a un unico indirizzo. Quando impostato, ogni email — indipendentemente dal destinatario reale — viene inviata a quell'indirizzo. Questo è utile per testare i modelli di email senza inviare accidentalmente a clienti reali. Lascia vuoto per inviare le email ai destinatari effettivi.
+
+### Whitelist email sandbox
+
+In modalità sandbox o di sviluppo, puoi limitare la consegna delle email a una whitelist di indirizzi approvati. Verranno consegnate solo le email destinate agli indirizzi presenti nella whitelist. Tutte le altre email vengono registrate ma non inviate. L'email di amministrazione è sempre inclusa automaticamente. Puoi aggiungere fino a 10 indirizzi.
+
+## Suggerimenti
+
+- Inizia con il server **SMTP integrato** per una configurazione rapida, quindi passa a un provider esterno se hai bisogno di volumi di invio più elevati o di una migliore consegnabilità.
+- Configura sempre i record **SPF, DKIM e DMARC** — senza di essi, le email hanno molte più probabilità di finire nelle cartelle spam.
+- Invia un'**email di test** dopo ogni modifica alle impostazioni per verificare che la consegna funzioni.
+- Monitora regolarmente la coda delle email per le email **fallite** o **rimbalzate** — queste indicano problemi di consegnabilità.
+- Utilizza un **indirizzo mittente professionale** (ad esempio, ordini@tuonegozio.com) anziché un indirizzo email gratuito per una migliore fiducia e consegnabilità.
+- Mantieni i tuoi modelli concisi — le email transazionali dovrebbero fornire informazioni rapidamente, non essere newsletter di marketing.

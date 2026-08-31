@@ -114,11 +114,14 @@ class FuzzyService:
         if self.rapidfuzz_available:
             from rapidfuzz import fuzz, process
 
-            # Use rapidfuzz for efficient matching
+            # Use rapidfuzz for efficient matching. The lowercase processor keeps
+            # matching case-insensitive (as the fallback path does) while the
+            # original candidate values are preserved in the results.
             results = process.extract(
                 query,
                 candidates,
                 scorer=fuzz.ratio,
+                processor=str.lower,
                 limit=max_results * 2,  # Get more to filter by threshold
             )
             # Filter by threshold and convert score to 0-1

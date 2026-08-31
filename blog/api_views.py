@@ -10,7 +10,7 @@ Provides customer-facing and staff endpoints for:
 
 """
 
-from django.db.models import F, Prefetch
+from django.db.models import Count, F, Prefetch, Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -181,6 +181,8 @@ class BlogPostViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         instance = self.get_object()
         # Increment view count atomically (same as frontend view)
         BlogPost.objects.filter(pk=instance.pk).update(view_count=F("view_count") + 1)
+        # Refresh so serializer reports the post-increment value, not the stale in-memory one.
+        instance.refresh_from_db(fields=["view_count"])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -330,8 +332,12 @@ class BlogCategoryViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
     ordering = ["sort_order", "name"]
 
     def get_queryset(self):
-        base = BlogCategory.objects.prefetch_related(
-            Prefetch("children", queryset=BlogCategory.objects.filter(is_active=True))
+        base = (
+            BlogCategory.objects.select_related("image_asset")
+            .prefetch_related(
+                Prefetch("children", queryset=BlogCategory.objects.filter(is_active=True))
+            )
+            .annotate(published_post_count=Count("posts", filter=Q(posts__status="published")))
         )
         if self.request.user and self.request.user.is_staff:
             return base.all()

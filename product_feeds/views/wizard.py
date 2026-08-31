@@ -4,6 +4,7 @@ Pattern follows exchange_rates/views/wizard.py architecture.
 """
 
 import json
+import shutil
 from pathlib import Path
 
 from django.contrib import messages
@@ -32,6 +33,36 @@ def load_provider_manifest(provider_path: Path) -> dict:
         with open(manifest_file) as f:
             return json.load(f)
     return None
+
+
+def _point_current_symlink(provider_slug: str, version: str) -> None:
+    """Point a provider's 'current' symlink at its v{version} directory."""
+    base_path = INTEGRATIONS_DIR / "product_feed_provider" / provider_slug
+    version_dir = version if version.startswith("v") else f"v{version}"
+    current_link = base_path / "current"
+    if current_link.exists() or current_link.is_symlink():
+        current_link.unlink()
+    current_link.symlink_to(version_dir)
+
+
+def _activate_provider_version(provider_slug: str, version: str) -> None:
+    """Activate an installed provider version and reload the registry.
+
+    Points the 'current' symlink at the given version and reloads the provider
+    registry so it becomes loadable. Raises on failure so callers can roll back.
+    """
+    _point_current_symlink(provider_slug, version)
+    ProviderRegistry.reload_providers()
+
+
+def _remove_provider_version_files(provider_slug: str, version: str) -> None:
+    """Best-effort removal of an installed provider version's files and symlink."""
+    base_path = INTEGRATIONS_DIR / "product_feed_provider" / provider_slug
+    version_dir = version if version.startswith("v") else f"v{version}"
+    current_link = base_path / "current"
+    if current_link.exists() or current_link.is_symlink():
+        current_link.unlink(missing_ok=True)
+    shutil.rmtree(base_path / version_dir, ignore_errors=True)
 
 
 class WizardSessionMixin:
@@ -153,6 +184,51 @@ class ProviderBrowseView(View):
             }
 
             all_providers.append(provider_data)
+
+        # Fall back to locally installed providers when the update server is
+        # unreachable or returned nothing, so installed providers still appear.
+        if not available_from_server:
+            installed_components = ComponentRegistry.objects.filter(
+                component_type="product_feed_provider"
+            ).order_by("name")
+            for component in installed_components:
+                version = component.current_version or "v1.0.0"
+                version_dir = version if version.startswith("v") else f"v{version}"
+                provider_dir = (
+                    INTEGRATIONS_DIR / "product_feed_provider" / component.slug / version_dir
+                )
+                manifest = (
+                    load_provider_manifest(provider_dir) if provider_dir.exists() else None
+                ) or {}
+
+                capabilities = manifest.get("capabilities", {})
+
+                # Apply capability filters
+                if has_push_feed and not capabilities.get("push_feed"):
+                    continue
+                if has_hosted_feed and not capabilities.get("hosted_feed"):
+                    continue
+                if has_api_sync and not capabilities.get("api_sync"):
+                    continue
+
+                all_providers.append(
+                    {
+                        "slug": component.slug,
+                        "name": component.name,
+                        "description": component.description,
+                        "version": component.current_version,
+                        "thumbnail_url": "",
+                        "homepage_url": manifest.get("homepage_url", ""),
+                        "documentation_url": manifest.get("documentation_url", ""),
+                        "capabilities": capabilities,
+                        "feed_formats": manifest.get("feed_formats", []),
+                        "category": manifest.get("category", ""),
+                        "is_installed": True,
+                        "current_version": component.current_version,
+                        "latest_version": component.current_version,
+                        "has_update": False,
+                    }
+                )
 
         # Count providers
         total_count = len(all_providers)
@@ -687,6 +763,9 @@ class WizardStep4View(WizardSessionMixin, View):
 @staff_member_required
 def sync_feed_ajax(request, account_id):
     """AJAX endpoint to trigger feed sync"""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "POST required"}, status=405)
+
     get_object_or_404(FeedProviderAccount, id=account_id)
 
     try:
@@ -756,9 +835,14 @@ def toggle_account_ajax(request, account_id):
 
     try:
         data = json.loads(request.body)
-        is_active = data.get("is_active", not account.is_active)
     except (json.JSONDecodeError, TypeError):
-        is_active = not account.is_active
+        data = {}
+
+    is_active = data.get("is_active", not account.is_active)
+    if not isinstance(is_active, bool):
+        return JsonResponse(
+            {"success": False, "message": "is_active must be a boolean"}, status=400
+        )
 
     account.is_active = is_active
     account.save(update_fields=["is_active", "updated_at"])
@@ -971,26 +1055,21 @@ def install_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Create 'current' symlink to the installed version
+            # Activate the installed version (symlink + registry reload). If this
+            # fails the provider is not loadable, so roll back the installed
+            # files and the registry entry instead of reporting success.
             try:
-                provider_base_dir = INTEGRATIONS_DIR / "product_feed_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
-                )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the new provider available
-                ProviderRegistry.reload_providers()
+                _activate_provider_version(provider_slug, latest_version)
             except Exception as e:
-                # Don't fail the installation if symlink creation fails, just log it
-                print(f"Warning: Could not create symlink for {provider_slug}: {e}")
+                _remove_provider_version_files(provider_slug, latest_version)
+                component.delete()  # Rollback component creation
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate provider: %(error)s") % {"error": str(e)},
+                    },
+                    status=500,
+                )
 
         return JsonResponse(
             {
@@ -1104,26 +1183,23 @@ def update_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Update the 'current' symlink to point to the new version
+            # Activate the new version (symlink + registry reload). Only advance
+            # the stored version once activation succeeds; otherwise restore the
+            # previous version so runtime keeps using the working provider.
             try:
-                provider_base_dir = INTEGRATIONS_DIR / "product_feed_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
-                )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the updated provider available
-                ProviderRegistry.reload_providers()
+                _activate_provider_version(provider_slug, latest_version)
             except Exception as e:
-                # Don't fail the update if symlink creation fails, just log it
-                print(f"Warning: Could not update symlink for {provider_slug}: {e}")
+                try:
+                    _activate_provider_version(provider_slug, current_version)
+                except Exception:
+                    pass
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate update: %(error)s") % {"error": str(e)},
+                    },
+                    status=500,
+                )
 
             # Update component version
             component.current_version = latest_version
@@ -1180,7 +1256,11 @@ def filter_sync_logs(request):
 
     # Apply account filter
     if account:
-        logs = logs.filter(account_id=account)
+        try:
+            account_id = int(account)
+        except (TypeError, ValueError):
+            return JsonResponse({"error": "Invalid account"}, status=400)
+        logs = logs.filter(account_id=account_id)
 
     # Order by most recent
     logs = logs.order_by("-started_at")

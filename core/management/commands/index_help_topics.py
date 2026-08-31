@@ -34,7 +34,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         language = options.get("language")
         topic_slug = options.get("topic")
-        options.get("force")
+        force = options.get("force")
 
         # Determine which languages to index
         if language:
@@ -65,7 +65,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f"Language: {language}")
 
-            stats = IndexingService.index_topic(topic.id, languages=languages)
+            stats = IndexingService.index_topic(topic.id, languages=languages, force=force)
 
             self.stdout.write(
                 self.style.SUCCESS(
@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
             # Use tqdm for progress bar
             for topic in tqdm(topics, desc="Indexing topics", unit="topic"):
-                stats = IndexingService.index_topic(topic.id, languages=languages)
+                stats = IndexingService.index_topic(topic.id, languages=languages, force=force)
                 total_topics_indexed += stats["topics_indexed"]
                 total_chunks += stats["total_chunks"]
 

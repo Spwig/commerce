@@ -11,7 +11,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from django.db.models import Avg, Count, Q
-from django.db.models.functions import TruncDate, TruncHour
+from django.db.models.functions import ExtractHour, TruncDate
 from django.utils import timezone
 
 
@@ -322,7 +322,7 @@ class AnalyticsService:
 
         return list(
             SearchQuery.objects.filter(created_at__gte=start_date)
-            .annotate(hour=TruncHour("created_at"))
+            .annotate(hour=ExtractHour("created_at"))
             .values("hour")
             .annotate(count=Count("id"))
             .order_by("hour")

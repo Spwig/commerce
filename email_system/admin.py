@@ -232,22 +232,25 @@ class EmailAccountAdmin(admin.ModelAdmin):
                 manifest_path = provider_dir / "manifest.json"
 
                 if manifest_path.exists():
-                    with open(manifest_path) as f:
-                        manifest = json.load(f)
+                    try:
+                        with open(manifest_path) as f:
+                            manifest = json.load(f)
+                    except (OSError, json.JSONDecodeError):
+                        manifest = {}
 
-                        # Get logo URL - handle both dict and string formats
-                        logo_file = manifest.get("logo", {})
-                        if isinstance(logo_file, dict):
-                            logo_filename = logo_file.get("file", "")
-                        else:
-                            logo_filename = logo_file if logo_file else ""
+                    # Get logo URL - handle both dict and string formats
+                    logo_file = manifest.get("logo", {})
+                    if isinstance(logo_file, dict):
+                        logo_filename = logo_file.get("file", "")
+                    else:
+                        logo_filename = logo_file if logo_file else ""
 
-                        if logo_filename:
-                            logo_path = provider_dir / logo_filename
-                            if logo_path.exists():
-                                logo_url = static(
-                                    f"email_provider/{account.component.slug}/current/{logo_filename}"
-                                )
+                    if logo_filename:
+                        logo_path = provider_dir / logo_filename
+                        if logo_path.exists():
+                            logo_url = static(
+                                f"email_provider/{account.component.slug}/current/{logo_filename}"
+                            )
 
             account.logo_url = logo_url
 
@@ -260,7 +263,7 @@ class EmailAccountAdmin(admin.ModelAdmin):
             connection_status="connected"
         ).count()
         extra_context["error_count"] = all_accounts.filter(connection_status="error").count()
-        extra_context["pending_count"] = all_accounts.filter(connection_status="pending").count()
+        extra_context["pending_count"] = all_accounts.filter(connection_status="unknown").count()
 
         # Default account
         try:
@@ -339,22 +342,25 @@ class EmailAccountAdmin(admin.ModelAdmin):
                     manifest_path = provider_dir / "manifest.json"
 
                     if manifest_path.exists():
-                        with open(manifest_path) as f:
-                            manifest = json.load(f)
+                        try:
+                            with open(manifest_path) as f:
+                                manifest = json.load(f)
+                        except (OSError, json.JSONDecodeError):
+                            manifest = {}
 
-                            # Get logo URL - handle both dict and string formats
-                            logo_file = manifest.get("logo", {})
-                            if isinstance(logo_file, dict):
-                                logo_filename = logo_file.get("file", "")
-                            else:
-                                logo_filename = logo_file if logo_file else ""
+                        # Get logo URL - handle both dict and string formats
+                        logo_file = manifest.get("logo", {})
+                        if isinstance(logo_file, dict):
+                            logo_filename = logo_file.get("file", "")
+                        else:
+                            logo_filename = logo_file if logo_file else ""
 
-                            if logo_filename:
-                                logo_path = provider_dir / logo_filename
-                                if logo_path.exists():
-                                    logo_url = static(
-                                        f"email_provider/{account.component.slug}/current/{logo_filename}"
-                                    )
+                        if logo_filename:
+                            logo_path = provider_dir / logo_filename
+                            if logo_path.exists():
+                                logo_url = static(
+                                    f"email_provider/{account.component.slug}/current/{logo_filename}"
+                                )
 
                 account.logo_url = logo_url
 
@@ -850,6 +856,9 @@ class EmailEventAdmin(admin.ModelAdmin):
         (_("Tracking"), {"fields": ("user_agent", "ip_address"), "classes": ("collapse",)}),
         (_("Timestamps"), {"fields": ("created_at",), "classes": ("collapse",)}),
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("email")
 
     def event_type_badge(self, obj):
         """Display event type with color coding"""

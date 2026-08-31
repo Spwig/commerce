@@ -6,6 +6,7 @@ Implements OAuth 2.0 flow for connecting social media accounts.
 import logging
 import secrets
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 import requests
 from django.conf import settings
@@ -351,13 +352,9 @@ class WizardStep2View(WizardSessionMixin, View):
             if component.slug == "facebook_page":
                 # Facebook requires config_id for business logins or display parameter
                 params["display"] = "popup"
-            elif component.slug == "linkedin_company":
-                # LinkedIn uses different parameter names
-                params["scope"] = scope.replace(" ", "%20")
 
-            # Build URL with query parameters
-            auth_url = f"{authorize_url}?"
-            auth_url += "&".join(f"{k}={v}" for k, v in params.items())
+            # Build URL with properly URL-encoded query parameters
+            auth_url = f"{authorize_url}?{urlencode(params, quote_via=quote)}"
 
             logger.info(f"Redirecting to OAuth: {auth_url[:100]}...")
             return HttpResponseRedirect(auth_url)

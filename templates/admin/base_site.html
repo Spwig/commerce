@@ -425,6 +425,42 @@
                     <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
                     <span class="menu-text">{% trans "Vouchers" %}</span>
                 </a>
+                {% if can_marketing %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'email_marketing_admin:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="campaign-studio" data-tooltip="{% trans 'Design and send email campaigns' %}">
+                            <span class="menu-icon"><i class="fas fa-envelope-open-text"></i></span>
+                            <span class="menu-text">{% trans "Campaign Studio" %}</span>
+                            <span class="menu-badge menu-badge-info">{% trans "Beta" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle campaign studio submenu" aria-expanded="false" aria-controls="submenu-campaign-studio">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-campaign-studio">
+                        <a href="{% url 'email_marketing_admin:dashboard' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Campaign Studio dashboard and analytics' %}">
+                            <span class="menu-icon"><i class="fas fa-gauge-high"></i></span>
+                            <span class="menu-text">{% trans "Dashboard" %}</span>
+                        </a>
+                        <a href="{% url 'admin:email_marketing_campaign_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Create, schedule and send email campaigns' %}">
+                            <span class="menu-icon"><i class="fas fa-paper-plane"></i></span>
+                            <span class="menu-text">{% trans "Campaigns" %}</span>
+                        </a>
+                        <a href="{% url 'admin:email_marketing_segment_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Build targeted audience segments' %}">
+                            <span class="menu-icon"><i class="fas fa-filter"></i></span>
+                            <span class="menu-text">{% trans "Segments" %}</span>
+                        </a>
+                        <a href="{% url 'admin:email_marketing_subscriber_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage newsletter subscribers' %}">
+                            <span class="menu-icon"><i class="fas fa-address-book"></i></span>
+                            <span class="menu-text">{% trans "Subscribers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:email_marketing_journey_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Automated triggered email journeys' %}">
+                            <span class="menu-icon"><i class="fas fa-diagram-project"></i></span>
+                            <span class="menu-text">{% trans "Journeys" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="menu-item-group">
                     <div class="menu-item-parent">
                         <a href="{% url 'affiliate:merchant_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="affiliate" data-tooltip="{% trans 'Manage affiliate partners' %}">

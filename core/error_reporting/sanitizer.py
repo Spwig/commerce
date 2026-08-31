@@ -34,20 +34,20 @@ class DataSanitizer:
         r"/srv/[^/\s:]+/|/root/)"
     )
 
-    # Key=value patterns in tracebacks/logs
+    # Key=value patterns in tracebacks/logs. The value alternatives are
+    # quote-aware so a quoted value containing whitespace is matched whole,
+    # with a trailing fallback that still masks a malformed (unterminated)
+    # quoted value so a secret can never leak through an unbalanced quote.
     KEY_VALUE_PATTERN = re.compile(
         r"(?i)(password|passwd|secret|token|api_key|auth_key|access_key|"
-        r'db_pass|database_url|dsn)\s*[=:]\s*[\'"]?([^\s\'"]+)[\'"]?'
+        r"db_pass|database_url|dsn)\s*[=:]\s*"
+        r"(?:\"[^\"]*\"|'[^']*'|[\"'][^\s]*|[^\s'\"]+)"
     )
 
     @classmethod
     def sanitize_traceback(cls, tb_string):
         """Sanitize a Python traceback string."""
-        result = cls._mask_key_values(tb_string)
-        result = cls._mask_emails(result)
-        result = cls._mask_ips(result)
-        result = cls._normalize_paths(result)
-        return result
+        return cls._sanitize_value(tb_string)
 
     @classmethod
     def sanitize_dict(cls, data):
@@ -60,11 +60,8 @@ class DataSanitizer:
                 sanitized[key] = "[REDACTED]"
             elif isinstance(value, dict):
                 sanitized[key] = cls.sanitize_dict(value)
-            elif isinstance(value, list):
-                sanitized[key] = [
-                    cls.sanitize_dict(item) if isinstance(item, dict) else cls._sanitize_value(item)
-                    for item in value
-                ]
+            elif isinstance(value, (list, tuple)):
+                sanitized[key] = cls._sanitize_sequence(value)
             elif isinstance(value, str):
                 sanitized[key] = cls._sanitize_value(value)
             else:
@@ -85,7 +82,7 @@ class DataSanitizer:
         }
         url_keys = {"referer", "origin"}
         for key, value in headers.items():
-            lower_key = key.lower()
+            lower_key = cls._normalize_header_key(key)
             if lower_key in skip_keys:
                 safe_headers[key] = "[REDACTED]"
             elif lower_key in url_keys:
@@ -106,11 +103,44 @@ class DataSanitizer:
                 if cls.SENSITIVE_KEYS.search(key):
                     safe_params[key] = ["[REDACTED]"]
                 else:
-                    safe_params[key] = [cls._mask_emails(v) for v in values]
+                    safe_params[key] = [cls._sanitize_value(v) for v in values]
             clean_url = urlunparse(parsed._replace(query=urlencode(safe_params, doseq=True)))
             return cls._mask_emails(clean_url)
         except Exception:
             return "[URL_PARSE_ERROR]"
+
+    @classmethod
+    def _sanitize_sequence(cls, items):
+        """Deep-sanitize a list/tuple, recursing and preserving the type.
+
+        Named tuples are reconstructed positionally so their type survives;
+        plain lists and tuples are rebuilt from the sanitized iterable.
+        """
+        sanitized = [cls._sanitize_item(item) for item in items]
+        if isinstance(items, tuple) and hasattr(items, "_fields"):
+            return type(items)(*sanitized)
+        return type(items)(sanitized)
+
+    @classmethod
+    def _sanitize_item(cls, item):
+        """Sanitize a single container item, dispatching on its type."""
+        if isinstance(item, dict):
+            return cls.sanitize_dict(item)
+        if isinstance(item, (list, tuple)):
+            return cls._sanitize_sequence(item)
+        return cls._sanitize_value(item)
+
+    @classmethod
+    def _normalize_header_key(cls, key):
+        """Normalize a header name so Django request.META keys match plain ones.
+
+        ``HTTP_X_API_KEY`` becomes ``x-api-key`` so it compares equal to the
+        canonical lowercase, hyphenated header names used in the skip lists.
+        """
+        lower_key = str(key).lower()
+        if lower_key.startswith("http_"):
+            lower_key = lower_key[len("http_") :]
+        return lower_key.replace("_", "-")
 
     @classmethod
     def _sanitize_value(cls, value):

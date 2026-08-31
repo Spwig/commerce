@@ -3,7 +3,7 @@ Management command to regenerate theme CSS
 """
 
 from django.core.cache import cache
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from design.theme_models import ThemeBranding
 
@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
             # Display info
             self.stdout.write("\nCSS Information:")
-            self.stdout.write(f"  Size: {len(css_content)} bytes")
+            self.stdout.write(f"  Size: {len(css_content.encode('utf-8'))} bytes")
             self.stdout.write(f"  Old hash: {old_hash or 'None'}")
             self.stdout.write(f"  New hash: {new_hash}")
             self.stdout.write(f"  URL: {branding.get_css_url()}")
@@ -68,3 +68,4 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"✗ Failed to regenerate CSS: {str(e)}"))
+            raise CommandError(f"Failed to regenerate CSS: {e}") from e

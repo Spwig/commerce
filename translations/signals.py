@@ -78,3 +78,25 @@ def handle_site_language_change(sender, instance, created, **kwargs):
     # Invalidate any cached UI overrides for this language
     cache_key = f"ui_trans_overrides:{instance.code}"
     cache.delete(cache_key)
+
+    invalidate_site_language_caches()
+
+
+@receiver(post_delete, sender="translations.SiteLanguage")
+def handle_site_language_delete(sender, instance, **kwargs):
+    """Invalidate cached language metadata when a SiteLanguage is removed."""
+    invalidate_site_language_caches()
+
+
+def invalidate_site_language_caches():
+    """
+    Clear caches derived from active SiteLanguage records.
+
+    Call this directly from bulk ``QuerySet.update()`` paths — they bypass the
+    post_save/post_delete signals above, so the caches would otherwise serve
+    stale flag/native-name/direction metadata until the TTL expires.
+    """
+    from core.language_metadata import SITE_LANGUAGE_METADATA_CACHE_KEY
+
+    cache.delete(SITE_LANGUAGE_METADATA_CACHE_KEY)
+    cache.delete("active_site_languages")

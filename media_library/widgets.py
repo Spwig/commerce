@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms.renderers import get_default_renderer
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -121,7 +122,7 @@ class MediaLibrarySelectWidget(forms.Widget):
                         image_url = media_asset.webp_file.url
                     elif media_asset.original_file:
                         image_url = media_asset.original_file.url
-                except MediaAsset.DoesNotExist:
+                except (MediaAsset.DoesNotExist, ValidationError):
                     pass
 
         # Build auto-save configuration from attrs if provided

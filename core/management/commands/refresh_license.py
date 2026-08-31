@@ -12,7 +12,7 @@ Usage:
     python manage.py refresh_license --status
 """
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -90,20 +90,18 @@ class Command(BaseCommand):
             manager = UpdateManager()
             result = manager.refresh_license(force_write=force)
         except Exception as e:
-            self.stderr.write(self.style.ERROR(f"Refresh failed: {e}"))
-            return
+            raise CommandError(f"Refresh failed: {e}") from e
 
         if result.get("error"):
             error = result["error"]
-            if error in ("license_revoked", "license_expired"):
-                self.stderr.write(self.style.ERROR(f"License {error}: {result.get('message', '')}"))
-            elif error == "sandbox_mode":
+            if error == "sandbox_mode":
                 self.stdout.write(self.style.WARNING("Sandbox mode — skipped."))
-            elif error.startswith("auth_failed"):
-                self.stderr.write(self.style.ERROR(f"Authentication failed: {error}"))
-            else:
-                self.stderr.write(self.style.WARNING(f"Refresh issue: {error}"))
-            return
+                return
+            if error in ("license_revoked", "license_expired"):
+                raise CommandError(f"License {error}: {result.get('message', '')}")
+            if error.startswith("auth_failed"):
+                raise CommandError(f"Authentication failed: {error}")
+            raise CommandError(f"Refresh issue: {error}")
 
         if result.get("refreshed"):
             changes = result.get("changes", [])

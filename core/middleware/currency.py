@@ -183,7 +183,7 @@ class CurrencyMiddleware(MiddlewareMixin):
             logger.debug(f"Currency set from URL parameter: {url_currency}")
 
         # 2. Check cookie (user's persistent preference)
-        elif "selected_currency" in request.COOKIES:
+        if not detected_currency and "selected_currency" in request.COOKIES:
             cookie_currency = request.COOKIES.get("selected_currency", "").upper()
             if self._is_valid_currency(cookie_currency, settings):
                 detected_currency = cookie_currency
@@ -191,14 +191,14 @@ class CurrencyMiddleware(MiddlewareMixin):
                 logger.debug(f"Currency set from cookie: {cookie_currency}")
 
         # 3. Check session (current session preference)
-        elif "currency" in request.session:
+        if not detected_currency and "currency" in request.session:
             session_currency = request.session.get("currency", "").upper()
             if self._is_valid_currency(session_currency, settings):
                 detected_currency = session_currency
                 logger.debug(f"Currency set from session: {session_currency}")
 
         # 4. GeoIP detection (automatic based on location)
-        elif settings.currency_selection_mode in ["auto_geoip", "both"]:
+        if not detected_currency and settings.currency_selection_mode in ["auto", "both"]:
             geoip_currency = self._detect_currency_from_geoip(request, settings)
             if geoip_currency:
                 detected_currency = geoip_currency
@@ -206,7 +206,7 @@ class CurrencyMiddleware(MiddlewareMixin):
                 logger.info(f"Currency auto-detected from GeoIP: {geoip_currency}")
 
         # 5. Browser locale detection (Accept-Language header)
-        if not detected_currency:
+        if not detected_currency and settings.currency_selection_mode in ("auto", "both"):
             browser_currency = self._detect_currency_from_locale(request, settings)
             if browser_currency:
                 detected_currency = browser_currency
@@ -232,8 +232,9 @@ class CurrencyMiddleware(MiddlewareMixin):
             logger.warning(f"Invalid currency code: {currency_code}")
             return False
 
-        # Check if currency is in supported currencies list
-        if currency_code not in settings.supported_currencies:
+        # Check if currency is in supported currencies list.
+        # An empty list means "support all currencies" (see field help text).
+        if settings.supported_currencies and currency_code not in settings.supported_currencies:
             logger.warning(f"Currency not supported: {currency_code}")
             return False
 

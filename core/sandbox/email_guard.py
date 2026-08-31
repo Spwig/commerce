@@ -9,8 +9,11 @@ This module is under core/ and will be Cython-compiled in production builds,
 making it harder to patch out.
 """
 
+import json
 import logging
 import re
+
+from django.db import DatabaseError
 
 from core.license import is_sandbox_mode
 
@@ -49,7 +52,11 @@ def get_email_whitelist():
 
         return whitelist
 
-    except Exception:
+    except (DatabaseError, json.JSONDecodeError, ValueError, TypeError):
+        # Fail closed: on an expected configuration/database error, treat the
+        # whitelist as empty so no mail leaks, but surface the failure instead
+        # of hiding it. Unexpected exceptions are allowed to propagate.
+        logger.exception("[SANDBOX] Failed to load email whitelist; failing closed")
         return set()
 
 

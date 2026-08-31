@@ -5,6 +5,7 @@ Template tags for visibility rules
 import json
 
 from django import template
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from visibility.evaluator import ContextCollector
@@ -168,7 +169,7 @@ def visibility_context_info(request):
     html += 'font-size: 11px; font-family: monospace;">'
     html += '<h4 style="margin: 0 0 10px 0; color: #17a2b8;">Current Context</h4>'
     html += '<pre style="margin: 0; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">'
-    html += json.dumps(context, indent=2, default=str)
+    html += escape(json.dumps(context, indent=2, default=str))
     html += "</pre></div>"
 
     return mark_safe(html)

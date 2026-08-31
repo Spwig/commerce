@@ -14,7 +14,7 @@ used by `seed_page_elements.py` to apply pre-baked translations during seeding.
 import json
 import os
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
@@ -55,38 +55,69 @@ class Command(BaseCommand):
                 "_element_translations.py",
             )
 
+        metadata = data.get("metadata", {})
+        target_languages = metadata.get("target_languages", [])
+
         # Build translations dict
         translations = {}
         stats = {
             "pages": 0,
             "elements": 0,
             "languages": set(),
-            "missing_translations": 0,
         }
+        validation_errors = []
 
         pages = data.get("pages", {})
         for page_slug, page_data in pages.items():
             stats["pages"] += 1
             for element in page_data.get("elements", []):
                 element_name = element.get("element_name", "")
+                element_fields = element.get("fields", {})
                 element_translations = element.get("translations", {})
-
-                if not element_translations:
-                    stats["missing_translations"] += 1
-                    self.stderr.write(f"  Warning: No translations for {page_slug}:{element_name}")
-                    continue
-
                 key = f"{page_slug}:{element_name}"
+
+                # Validate full language and field coverage against metadata.
+                missing_languages = []
+                missing_fields = []
+                for lang in target_languages:
+                    lang_translation = element_translations.get(lang)
+                    if not lang_translation:
+                        missing_languages.append(lang)
+                        continue
+                    for field in element_fields:
+                        if field not in lang_translation:
+                            missing_fields.append(f"{lang}.{field}")
+
+                if missing_languages:
+                    validation_errors.append(
+                        f"{key}: missing languages: {', '.join(sorted(missing_languages))}"
+                    )
+                if missing_fields:
+                    validation_errors.append(
+                        f"{key}: missing translated fields: {', '.join(sorted(missing_fields))}"
+                    )
+
                 translations[key] = element_translations
                 stats["elements"] += 1
                 stats["languages"].update(element_translations.keys())
 
         if options["dry_run"]:
             self.stdout.write(f"Pages: {stats['pages']}")
-            self.stdout.write(f"Elements with translations: {stats['elements']}")
-            self.stdout.write(f"Elements missing translations: {stats['missing_translations']}")
+            self.stdout.write(f"Elements: {stats['elements']}")
             self.stdout.write(f"Languages: {', '.join(sorted(stats['languages']))}")
+            if validation_errors:
+                self.stdout.write(
+                    self.style.WARNING(f"Validation errors: {len(validation_errors)}")
+                )
+                for error in validation_errors:
+                    self.stdout.write(f"  {error}")
             return
+
+        if validation_errors:
+            raise CommandError(
+                "Incomplete translations detected; aborting without writing:\n"
+                + "\n".join(f"  {error}" for error in validation_errors)
+            )
 
         # Generate Python file
         self._write_python_file(output_path, translations)
@@ -97,10 +128,6 @@ class Command(BaseCommand):
                 f"in {len(stats['languages'])} languages"
             )
         )
-        if stats["missing_translations"]:
-            self.stdout.write(
-                self.style.WARNING(f"{stats['missing_translations']} elements had no translations")
-            )
 
     def _write_python_file(self, output_path, translations):
         """Write the _element_translations.py file."""

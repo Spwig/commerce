@@ -158,6 +158,29 @@ def template_config_view(request):
     return render(request, "design/template_config.html", context)
 
 
+def _validate_template_options(options, schema):
+    """Validate submitted template options against their registry schema.
+
+    Whitelists keys to the schema, requires booleans for ``bool`` options and
+    membership in ``definition["options"]`` for ``select`` options. Returns the
+    validated dict or raises ``ValueError`` describing the first invalid entry.
+    """
+    validated = {}
+    for key, value in options.items():
+        definition = schema.get(key)
+        if definition is None:
+            raise ValueError(f"Unknown option '{key}'.")
+        option_type = definition.get("type")
+        if option_type == "bool":
+            if not isinstance(value, bool):
+                raise ValueError(f"Option '{key}' must be a boolean.")
+        elif option_type == "select":
+            if value not in definition["options"]:
+                raise ValueError(f"Option '{key}' has an invalid value.")
+        validated[key] = value
+    return validated
+
+
 @staff_member_required
 @require_POST
 def template_config_save(request):
@@ -167,47 +190,45 @@ def template_config_save(request):
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"success": False, "message": "Invalid JSON."}, status=400)
 
+    if not isinstance(data, dict):
+        return JsonResponse(
+            {"success": False, "message": "Request body must be a JSON object."}, status=400
+        )
+
     config = PageTemplateConfig.get_config()
 
-    checkout_template = data.get("checkout_template")
-    if checkout_template and checkout_template in CHECKOUT_TEMPLATE_META:
-        config.checkout_template = checkout_template
+    # (attribute prefix, template META registry, option schema registry)
+    template_kinds = (
+        ("checkout", CHECKOUT_TEMPLATE_META, CHECKOUT_TEMPLATE_OPTIONS),
+        ("product", PRODUCT_TEMPLATE_META, PRODUCT_TEMPLATE_OPTIONS),
+        ("category", CATEGORY_TEMPLATE_META, CATEGORY_TEMPLATE_OPTIONS),
+        ("blog_post", BLOG_POST_TEMPLATE_META, BLOG_POST_TEMPLATE_OPTIONS),
+        ("blog_list", BLOG_LIST_TEMPLATE_META, BLOG_LIST_TEMPLATE_OPTIONS),
+    )
 
-    checkout_options = data.get("checkout_options")
-    if checkout_options is not None and isinstance(checkout_options, dict):
-        config.checkout_options = checkout_options
+    for prefix, meta, option_schema in template_kinds:
+        template_value = data.get(f"{prefix}_template")
+        if template_value and template_value in meta:
+            setattr(config, f"{prefix}_template", template_value)
 
-    product_template = data.get("product_template")
-    if product_template and product_template in PRODUCT_TEMPLATE_META:
-        config.product_template = product_template
-
-    product_options = data.get("product_options")
-    if product_options is not None and isinstance(product_options, dict):
-        config.product_options = product_options
-
-    category_template = data.get("category_template")
-    if category_template and category_template in CATEGORY_TEMPLATE_META:
-        config.category_template = category_template
-
-    category_options = data.get("category_options")
-    if category_options is not None and isinstance(category_options, dict):
-        config.category_options = category_options
-
-    blog_post_template = data.get("blog_post_template")
-    if blog_post_template and blog_post_template in BLOG_POST_TEMPLATE_META:
-        config.blog_post_template = blog_post_template
-
-    blog_post_options = data.get("blog_post_options")
-    if blog_post_options is not None and isinstance(blog_post_options, dict):
-        config.blog_post_options = blog_post_options
-
-    blog_list_template = data.get("blog_list_template")
-    if blog_list_template and blog_list_template in BLOG_LIST_TEMPLATE_META:
-        config.blog_list_template = blog_list_template
-
-    blog_list_options = data.get("blog_list_options")
-    if blog_list_options is not None and isinstance(blog_list_options, dict):
-        config.blog_list_options = blog_list_options
+        options_value = data.get(f"{prefix}_options")
+        if options_value is None:
+            continue
+        if not isinstance(options_value, dict):
+            return JsonResponse(
+                {"success": False, "message": f"{prefix}_options must be an object."}, status=400
+            )
+        active_template = getattr(config, f"{prefix}_template")
+        # "default" is a backward-compatibility alias for the "grid" category schema.
+        if prefix == "category" and active_template == "default":
+            active_template = "grid"
+        try:
+            validated = _validate_template_options(
+                options_value, option_schema.get(active_template, {})
+            )
+        except ValueError as exc:
+            return JsonResponse({"success": False, "message": str(exc)}, status=400)
+        setattr(config, f"{prefix}_options", validated)
 
     # Trust badges: list of {icon, text} dicts, max 6
     def _validate_badges(raw):

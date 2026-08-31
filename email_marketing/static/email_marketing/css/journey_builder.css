@@ -1,0 +1,607 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/*
+ * Journey Builder canvas. The one bespoke stylesheet in Campaign Studio — a
+ * node/flowchart editor has no reusable admin analogue. Scoped to .jb-*, built
+ * on the admin theme custom properties so it tracks light/dark automatically.
+ */
+
+.jb-body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--body-bg);
+  color: var(--body-fg);
+}
+
+/* ---- toolbar ------------------------------------------------------------ */
+.jb-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--body-bg);
+  flex: 0 0 auto;
+}
+.jb-toolbar-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.jb-toolbar-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jb-trigger-summary {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.jb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--darkened-bg);
+  border: 1px solid var(--border-color);
+}
+.jb-chip i {
+  opacity: 0.7;
+}
+.jb-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+.jb-save-status {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ---- workspace ---------------------------------------------------------- */
+.jb-workspace {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+.jb-palette {
+  flex: 0 0 210px;
+  border-right: 1px solid var(--border-color);
+  padding: 14px;
+  overflow-y: auto;
+  background: var(--body-bg);
+}
+.jb-palette-heading {
+  margin: 0 0 2px;
+  font-size: 0.9rem;
+}
+.jb-palette-hint {
+  margin: 0 0 14px;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+.jb-palette-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.jb-palette-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--darkened-bg);
+  color: var(--body-fg);
+  cursor: grab;
+  transition:
+    border-color 0.15s,
+    transform 0.05s;
+}
+.jb-palette-item:hover {
+  border-color: var(--accent);
+}
+.jb-palette-item:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+.jb-palette-item i {
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+.jb-palette-item-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.jb-palette-item-desc {
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
+/* ---- canvas ------------------------------------------------------------- */
+.jb-canvas-wrap {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--darkened-bg);
+  background-image: radial-gradient(circle, var(--border-color) 1px, transparent 1px);
+  background-size: 22px 22px;
+  cursor: grab;
+  touch-action: none;
+}
+.jb-canvas-wrap:active {
+  cursor: grabbing;
+}
+.jb-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.jb-edges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5000px;
+  height: 4000px;
+  overflow: visible;
+  pointer-events: none;
+}
+.jb-nodes {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.jb-edge {
+  fill: none;
+  stroke: var(--body-fg);
+  stroke-width: 2;
+  opacity: 0.55;
+}
+.jb-edge--yes {
+  stroke: #16a34a;
+  opacity: 0.9;
+}
+.jb-edge--no {
+  stroke: #dc2626;
+  opacity: 0.9;
+}
+.jb-edge--temp {
+  stroke: var(--accent);
+  stroke-dasharray: 5 4;
+  opacity: 0.9;
+}
+.jb-edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 16;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+.jb-edge-label {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #fff;
+  paint-order: stroke;
+  stroke-width: 3;
+}
+.jb-edge-label--yes {
+  stroke: #16a34a;
+}
+.jb-edge-label--no {
+  stroke: #dc2626;
+}
+
+/* ---- nodes -------------------------------------------------------------- */
+.jb-node {
+  position: absolute;
+  width: 210px;
+  box-sizing: border-box;
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  cursor: grab;
+  user-select: none;
+}
+.jb-node.is-dragging {
+  cursor: grabbing;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+.jb-node.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.jb-node-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.jb-node-head i {
+  color: var(--accent);
+}
+.jb-node--entry .jb-node-head i {
+  color: #16a34a;
+}
+.jb-node--exit .jb-node-head i {
+  color: #dc2626;
+}
+.jb-node--branch .jb-node-head i {
+  color: #d97706;
+}
+.jb-node-summary {
+  margin-top: 6px;
+  font-size: 0.76rem;
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* connector ports */
+.jb-port {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--body-bg);
+  border: 2px solid var(--accent);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.jb-port--in {
+  top: -7px;
+}
+.jb-port--out {
+  bottom: -7px;
+  cursor: crosshair;
+}
+.jb-node--branch .jb-port--yes {
+  left: 30%;
+  border-color: #16a34a;
+}
+.jb-node--branch .jb-port--no {
+  left: 70%;
+  border-color: #dc2626;
+}
+
+/* A class-level display would otherwise beat the [hidden] UA rule, so restore it. */
+.jb-canvas-empty[hidden],
+.jb-config-empty[hidden] {
+  display: none;
+}
+
+.jb-canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+  opacity: 0.55;
+  text-align: center;
+}
+.jb-canvas-empty i {
+  font-size: 2.5rem;
+}
+
+/* ---- config panel ------------------------------------------------------- */
+.jb-config {
+  flex: 0 0 300px;
+  border-left: 1px solid var(--border-color);
+  padding: 16px;
+  overflow-y: auto;
+  background: var(--body-bg);
+}
+.jb-config-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  opacity: 0.55;
+  text-align: center;
+}
+.jb-config-empty i {
+  font-size: 1.8rem;
+}
+.jb-config-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 1rem;
+}
+.jb-config-note {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+.jb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.jb-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.jb-select,
+.jb-input {
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--body-bg);
+  color: var(--body-fg);
+  font-size: 0.85rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.jb-inline-group {
+  display: flex;
+  gap: 8px;
+}
+.jb-inline-group .jb-input {
+  flex: 1 1 40%;
+}
+.jb-inline-group .jb-select {
+  flex: 1 1 60%;
+}
+.jb-delete-node {
+  margin-top: 8px;
+  color: var(--delete-button-bg, #dc2626);
+  border-color: var(--border-color);
+}
+.jb-delete-node:hover {
+  background: var(--delete-button-bg, #dc2626);
+  color: #fff;
+}
+
+.jb-empty-cta {
+  pointer-events: auto;
+  margin-top: 6px;
+}
+
+/* ---- template picker ---------------------------------------------------- */
+.jb-template-intro {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+.jb-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.jb-template-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 4px;
+  text-align: left;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--body-bg);
+  color: var(--body-fg);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    transform 0.05s;
+}
+.jb-template-card:hover {
+  border-color: var(--accent);
+}
+.jb-template-card:active {
+  transform: scale(0.99);
+}
+.jb-template-card i {
+  grid-row: 1 / span 2;
+  align-self: start;
+  font-size: 1.3rem;
+  color: var(--accent);
+  margin-top: 2px;
+}
+.jb-template-card-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.jb-template-card-desc {
+  font-size: 0.76rem;
+  opacity: 0.7;
+  line-height: 1.35;
+}
+
+/* ---- status pill + activate button -------------------------------------- */
+.jb-status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+}
+.jb-status-pill--active {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+.jb-status-pill--paused {
+  background: var(--banner-warning-bg, #fef3c7);
+  color: #92400e;
+}
+.jb-status-pill--draft {
+  opacity: 0.7;
+}
+.jb-status-btn.btn-success {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+/* ---- live enrollment count badge ---------------------------------------- */
+.jb-node-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text, #fff);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+/* ---- invalid node (failed validation) ----------------------------------- */
+.jb-node.is-invalid {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px #dc2626;
+}
+
+/* ---- validation issues banner ------------------------------------------- */
+.jb-issues {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--banner-warning-bg, #fef3c7);
+  color: var(--body-fg);
+  max-height: 30vh;
+  overflow-y: auto;
+}
+.jb-issues-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.jb-issues-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 0.95rem;
+}
+.jb-issues-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.jb-issue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.jb-issue--error i {
+  color: #dc2626;
+}
+.jb-issue--warning i {
+  color: #d97706;
+}
+.jb-issue--clickable {
+  cursor: pointer;
+}
+.jb-issue--clickable:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ---- narrow screens ----------------------------------------------------- */
+@media (max-width: 900px) {
+  .jb-palette {
+    flex-basis: 150px;
+  }
+  .jb-config {
+    flex-basis: 240px;
+  }
+  .jb-palette-item-desc {
+    display: none;
+  }
+}
+
+/* A/B send step: variant rows + live per-variant results */
+.jb-variant-row {
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.jb-variant-tag {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--darkened-bg);
+  border: 1px solid var(--border-color);
+  color: var(--body-fg);
+  font-size: 12px;
+  font-weight: 600;
+}
+.jb-add-variant {
+  margin-bottom: 12px;
+}
+.jb-ab-stats {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+.jb-ab-stat-row {
+  font-size: 13px;
+  color: var(--body-fg);
+  padding: 3px 0;
+}
+.jb-ab-stat-row.is-winner {
+  color: var(--success-fg, #22c55e);
+  font-weight: 600;
+}
+.jb-ab-verdict {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--accent);
+}

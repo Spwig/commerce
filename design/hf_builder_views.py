@@ -15,6 +15,24 @@ from .theme_models import ThemeBranding
 from .theme_utils import get_active_theme
 
 
+def _get_or_create_default_template(model, *, slug, user, **defaults):
+    """Return an active default template for ``slug``, reusing any existing row.
+
+    Reactivates and promotes an existing template that already claims this
+    unique slug instead of attempting a duplicate insert, which would raise an
+    ``IntegrityError`` when an inactive, non-default template holds the slug.
+    """
+    template, created = model.objects.get_or_create(
+        slug=slug,
+        defaults={**defaults, "is_default": True, "is_active": True, "created_by": user},
+    )
+    if not created and not (template.is_default and template.is_active):
+        template.is_default = True
+        template.is_active = True
+        template.save(update_fields=["is_default", "is_active"])
+    return template
+
+
 @method_decorator(staff_member_required, name="dispatch")
 class HeaderBuilderView(View):
     """Visual builder for header templates"""
@@ -28,13 +46,12 @@ class HeaderBuilderView(View):
 
             if not header:
                 # Create a default header if none exists
-                header = HeaderTemplate.objects.create(
-                    name="Default Header",
+                header = _get_or_create_default_template(
+                    HeaderTemplate,
                     slug="default-header",
+                    user=request.user,
+                    name="Default Header",
                     layout_type="classic",
-                    is_default=True,
-                    is_active=True,
-                    created_by=request.user,
                 )
 
             # Redirect to builder with the header ID
@@ -85,14 +102,13 @@ class FooterBuilderView(View):
 
             if not footer:
                 # Create a default footer if none exists
-                footer = FooterTemplate.objects.create(
-                    name="Default Footer",
+                footer = _get_or_create_default_template(
+                    FooterTemplate,
                     slug="default-footer",
+                    user=request.user,
+                    name="Default Footer",
                     layout_type="columns",
                     column_count=4,
-                    is_default=True,
-                    is_active=True,
-                    created_by=request.user,
                 )
 
             # Redirect to builder with the footer ID

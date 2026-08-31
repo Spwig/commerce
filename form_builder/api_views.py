@@ -4,6 +4,7 @@ Form Builder API Views
 API endpoints for public form submission.
 """
 
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -23,6 +24,21 @@ from core.api.api_descriptions import (
 from core.api.authentication import HeadlessAPIMixin
 
 from .models import Form, FormField, FormResponse
+
+
+def _login_required_response(form, request):
+    """Return a 401 response when the form requires login and the requester is anonymous."""
+    if form.require_login and not request.user.is_authenticated:
+        return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+    return None
+
+
+def _coerce_int(value):
+    """Return ``value`` as an int, or ``None`` when it cannot be interpreted as one."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 class FormListForSelectorView(APIView):
@@ -54,7 +70,14 @@ class FormListForSelectorView(APIView):
         },
     )
     def get(self, request):
-        forms = Form.objects.filter(is_active=True).order_by("name")
+        forms = (
+            Form.objects.filter(is_active=True)
+            .annotate(
+                num_fields=Count("fields", distinct=True),
+                num_steps=Count("steps", distinct=True),
+            )
+            .order_by("name")
+        )
 
         forms_data = []
         for form in forms:
@@ -65,8 +88,8 @@ class FormListForSelectorView(APIView):
                     "name": form.name,
                     "title": form.title,
                     "is_multi_step": form.is_multi_step,
-                    "field_count": form.field_count,
-                    "step_count": form.step_count,
+                    "field_count": form.num_fields,
+                    "step_count": form.num_steps if form.is_multi_step else 1,
                 }
             )
 
@@ -118,10 +141,8 @@ class FormDetailView(HeadlessAPIMixin, APIView):
         form = get_object_or_404(Form, slug=slug, is_active=True)
 
         # Check login requirement
-        if form.require_login and not request.user.is_authenticated:
-            return Response(
-                {"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+        if (login_required := _login_required_response(form, request)) is not None:
+            return login_required
 
         # Build form structure
         fields_data = []
@@ -144,9 +165,9 @@ class FormDetailView(HeadlessAPIMixin, APIView):
                 field_data["min_length"] = field.min_length
             if field.max_length:
                 field_data["max_length"] = field.max_length
-            if field.min_value:
+            if field.min_value is not None:
                 field_data["min_value"] = float(field.min_value)
-            if field.max_value:
+            if field.max_value is not None:
                 field_data["max_value"] = float(field.max_value)
             if field.validation_regex:
                 field_data["pattern"] = field.validation_regex
@@ -286,10 +307,8 @@ class FormSubmitView(HeadlessAPIMixin, APIView):
         form = get_object_or_404(Form, slug=slug, is_active=True)
 
         # Check login requirement
-        if form.require_login and not request.user.is_authenticated:
-            return Response(
-                {"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+        if (login_required := _login_required_response(form, request)) is not None:
+            return login_required
 
         from .validation import check_spam, validate_submission
 
@@ -317,8 +336,13 @@ class FormSubmitView(HeadlessAPIMixin, APIView):
             for key in raw:
                 vals = raw.getlist(key)
                 submitted[key] = vals if len(vals) > 1 else raw.get(key)
-        else:
+        elif isinstance(raw, dict):
             submitted = dict(raw)
+        else:
+            return Response(
+                {"errors": {"__all__": _("Invalid request body.")}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         clean_data, errors = validate_submission(form, submitted)
         if errors:
@@ -407,6 +431,10 @@ class SavePartialView(HeadlessAPIMixin, APIView):
     def post(self, request, slug):
         form = get_object_or_404(Form, slug=slug, is_active=True)
 
+        # Check login requirement
+        if (login_required := _login_required_response(form, request)) is not None:
+            return login_required
+
         if not form.save_partial_responses:
             return Response(
                 {"error": "Partial responses not enabled for this form"},
@@ -414,7 +442,17 @@ class SavePartialView(HeadlessAPIMixin, APIView):
             )
 
         response_id = request.data.get("response_id")
-        current_step = request.data.get("current_step", 1)
+
+        # Validate current_step: reject non-integers, negatives, and steps that
+        # fall outside the form's available steps before it reaches the DB.
+        current_step = _coerce_int(request.data.get("current_step", 1))
+        max_step = form.steps.count() if form.is_multi_step else 1
+        if current_step is None or current_step < 1 or (max_step and current_step > max_step):
+            return Response(
+                {"errors": {"current_step": "Invalid step"}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         data = request.data.get("data", {})
         if not isinstance(data, dict):
             return Response(
@@ -431,9 +469,14 @@ class SavePartialView(HeadlessAPIMixin, APIView):
         session_key = request.session.session_key or ""
 
         if response_id:
+            # Coerce to int up front so a non-numeric id yields a handled 404
+            # rather than an unhandled ValueError from the pk lookup.
+            response_pk = _coerce_int(response_id)
+            if response_pk is None or response_pk < 1:
+                return Response({"error": "Response not found"}, status=status.HTTP_404_NOT_FOUND)
             # Scope the draft to its owner (authenticated user, else session) so a
             # sequential id can't be used to overwrite another user's draft (IDOR).
-            lookup = {"pk": response_id, "form": form, "status": "draft"}
+            lookup = {"pk": response_pk, "form": form, "status": "draft"}
             if request.user.is_authenticated:
                 lookup["user"] = request.user
             else:
@@ -524,6 +567,10 @@ class FileUploadView(HeadlessAPIMixin, APIView):
     )
     def post(self, request, slug):
         form = get_object_or_404(Form, slug=slug, is_active=True)
+
+        # Check login requirement
+        if (login_required := _login_required_response(form, request)) is not None:
+            return login_required
 
         field_name = request.data.get("field_name")
         file = request.FILES.get("file")

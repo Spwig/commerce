@@ -2,13 +2,40 @@
 Models for header and footer builder with widget support
 """
 
+import copy
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
+
+
+def _validate_widget_references(zones, existing_placement_ids):
+    """Ensure every widget referenced by a new placement exists.
+
+    Raises a ``ValidationError`` naming any ``widget_id`` that would create a new
+    placement but points at a Widget that no longer exists, so publishing fails
+    loudly instead of silently dropping the entry.
+    """
+    referenced_ids = {
+        widget_data["widget_id"]
+        for widgets in zones.values()
+        for widget_data in widgets
+        if widget_data.get("widget_id") and widget_data.get("id") not in existing_placement_ids
+    }
+    if not referenced_ids:
+        return
+    existing_ids = set(Widget.objects.filter(pk__in=referenced_ids).values_list("pk", flat=True))
+    missing_ids = sorted(referenced_ids - existing_ids)
+    if missing_ids:
+        raise ValidationError(
+            _("Cannot publish: referenced widget(s) do not exist: %(ids)s")
+            % {"ids": ", ".join(str(widget_id) for widget_id in missing_ids)}
+        )
 
 
 class HeaderTemplate(models.Model):
@@ -282,7 +309,14 @@ class HeaderTemplate(models.Model):
 
     def publish(self, user=None):
         """Copy draft_data to published_data and sync to widget_placements"""
-        self.published_data = self.draft_data.copy() if self.draft_data else {}
+        draft_data = self.draft_data or {}
+        # Validate referenced widgets before changing publish state so a stale
+        # widget_id fails loudly instead of being silently dropped during sync.
+        _validate_widget_references(
+            draft_data.get("zones", {}),
+            set(self.widget_placements.values_list("id", flat=True)),
+        )
+        self.published_data = draft_data.copy() if self.draft_data else {}
         self.published_at = timezone.now()
         self.has_unpublished_changes = False
         self.save()
@@ -318,19 +352,15 @@ class HeaderTemplate(models.Model):
                         placement.save()
                         updated_ids.add(placement_id)
                     elif widget_id:
-                        # Create new placement
-                        try:
-                            widget = Widget.objects.get(pk=widget_id)
-                            WidgetPlacement.objects.create(
-                                widget=widget,
-                                header=self,
-                                zone=zone_name,
-                                order=idx,
-                                override_config=widget_data.get("config", {}),
-                                is_active=True,
-                            )
-                        except Widget.DoesNotExist:
-                            pass
+                        # Create new placement (widget existence validated in publish)
+                        WidgetPlacement.objects.create(
+                            widget=Widget.objects.get(pk=widget_id),
+                            header=self,
+                            zone=zone_name,
+                            order=idx,
+                            override_config=widget_data.get("config", {}),
+                            is_active=True,
+                        )
 
             # Deactivate placements that are no longer in published_data
             for placement_id, placement in existing_placements.items():
@@ -470,7 +500,14 @@ class FooterTemplate(models.Model):
 
     def publish(self, user=None):
         """Copy draft_data to published_data and sync to widget_placements"""
-        self.published_data = self.draft_data.copy() if self.draft_data else {}
+        draft_data = self.draft_data or {}
+        # Validate referenced widgets before changing publish state so a stale
+        # widget_id fails loudly instead of being silently dropped during sync.
+        _validate_widget_references(
+            draft_data.get("zones", {}),
+            set(self.widget_placements.values_list("id", flat=True)),
+        )
+        self.published_data = draft_data.copy() if self.draft_data else {}
         self.published_at = timezone.now()
         self.has_unpublished_changes = False
         self.save()
@@ -506,19 +543,15 @@ class FooterTemplate(models.Model):
                         placement.save()
                         updated_ids.add(placement_id)
                     elif widget_id:
-                        # Create new placement
-                        try:
-                            widget = Widget.objects.get(pk=widget_id)
-                            WidgetPlacement.objects.create(
-                                widget=widget,
-                                footer=self,
-                                zone=zone_name,
-                                order=idx,
-                                override_config=widget_data.get("config", {}),
-                                is_active=True,
-                            )
-                        except Widget.DoesNotExist:
-                            pass
+                        # Create new placement (widget existence validated in publish)
+                        WidgetPlacement.objects.create(
+                            widget=Widget.objects.get(pk=widget_id),
+                            footer=self,
+                            zone=zone_name,
+                            order=idx,
+                            override_config=widget_data.get("config", {}),
+                            is_active=True,
+                        )
 
             # Deactivate placements that are no longer in published_data
             for placement_id, placement in existing_placements.items():
@@ -645,7 +678,7 @@ class Widget(models.Model):
 
     def get_translated_config(self, language_code, base_config=None):
         """Overlay translated config values onto the given config dict."""
-        config = (base_config or self.config or {}).copy()
+        config = copy.deepcopy(base_config if base_config is not None else self.config or {})
         if not self.translations or not language_code:
             return config
         lang_data = self.translations.get(language_code)
@@ -903,9 +936,14 @@ class Menu(models.Model):
 
     def get_all_items_tree(self):
         """Get all items as a nested tree structure for the builder"""
+        # Load every item once with the relations get_resolved_* needs, then
+        # group by parent in memory to avoid an N+1 query explosion.
+        items = self.items.select_related("page_reference", "category_reference").order_by("order")
+        children_by_parent = {}
+        for item in items:
+            children_by_parent.setdefault(item.parent_id, []).append(item)
 
-        def build_tree(parent=None):
-            items = self.items.filter(parent=parent).order_by("order")
+        def build_tree(parent_id=None):
             return [
                 {
                     "id": item.id,
@@ -923,10 +961,10 @@ class Menu(models.Model):
                     "visibility_rules": item.visibility_rules,
                     "css_classes": item.css_classes,
                     "is_active": item.is_active,
-                    "children": build_tree(item),
-                    "has_children": item.has_children(),
+                    "children": build_tree(item.id),
+                    "has_children": bool(children_by_parent.get(item.id)),
                 }
-                for item in items
+                for item in children_by_parent.get(parent_id, [])
             ]
 
         return build_tree()
@@ -1139,7 +1177,7 @@ class MenuItem(models.Model):
         if sort_by == "-name":
             order_by = "-name"
         elif sort_by == "order":
-            order_by = "order"
+            order_by = "sort_order"
         elif sort_by == "product_count":
             order_by = "-product_count"
         else:

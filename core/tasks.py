@@ -476,7 +476,10 @@ def index_help_topic_async(self, topic_id, languages=None):
 
     try:
         logger.info(f"Indexing help topic ID {topic_id}")
-        stats = IndexingService.index_topic(topic_id, languages=languages)
+        # Force re-indexing: this task runs after a HelpTopic is saved, so the
+        # topic is almost always already indexed and we must replace the stale
+        # chunks rather than skip them.
+        stats = IndexingService.index_topic(topic_id, languages=languages, force=True)
         logger.info(
             f"Successfully indexed topic {topic_id}: "
             f"{stats['total_chunks']} chunks in {len(stats['languages'])} language(s)"

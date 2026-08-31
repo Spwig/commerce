@@ -296,6 +296,9 @@ class PageSchemaRegistry:
             return False, [f"Page type '{page_type}' not found"]
 
         # Validate structure
+        if not isinstance(layout_data, dict):
+            return False, ["Layout data must be a dictionary"]
+
         if "regions" not in layout_data:
             return False, ["Layout data must contain 'regions' key"]
 

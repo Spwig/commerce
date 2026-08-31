@@ -1,48 +1,48 @@
 ---
-title: Mengatur Pengaturan Toko
+title: Mengonfigurasi Pengaturan Toko
 ---
 
-Pengaturan Toko adalah tempat pusat untuk mengatur identitas, lokalitas, merek, dan preferensi operasional toko Anda. Navigasi ke **Pengaturan > Pengaturan Toko** untuk memulai.
+Pengaturan Toko adalah tempat pusat untuk mengonfigurasi identitas, lokalisasi, branding, dan preferensi operasional toko Anda. Navigasi ke **Pengaturan > Pengaturan Toko** untuk memulai.
 
 ![Tab umum pengaturan toko](/static/core/admin/img/help/store-settings/store-settings-general.webp)
 
 ## Tab Umum
 
-Tab **Umum** menyimpan pengaturan inti identitas toko Anda.
+Tab **Umum** menyimpan pengaturan identitas inti toko Anda.
 
 ### Identitas Toko
 
-- **Nama Toko** — nama tampilan yang ditampilkan di judul halaman, email, dan header admin.
-- **Tagline** — deskripsi singkat toko Anda, digunakan dalam SEO dan berbagi media sosial.
-- **URL Situs** — alamat web publik toko Anda. Digunakan dalam email, pembuatan peta situs, dan pembuatan tautan.
+- **Nama Toko** — Nama tampilan yang ditampilkan di judul halaman, email, dan header admin.
+- **Tagline** — Deskripsi singkat tentang toko Anda, digunakan dalam SEO dan berbagi media sosial.
+- **URL Situs** — Alamat web publik toko Anda. Ini digunakan dalam email, pembuatan sitemap, dan pembangunan tautan.
 
 ### Informasi Kontak
 
-- **Email Kontak** — menerima pemberitahuan pesanan dan ditampilkan dalam komunikasi pelanggan.
-- **Nomor Telepon** — nomor telepon pendukung opsional yang ditampilkan di bagian bawah halaman dan email.
+- **Email Kontak** — Menerima notifikasi pesanan dan ditampilkan dalam komunikasi pelanggan.
+- **Nomor Telepon** — Nomor telepon dukungan opsional yang ditampilkan di footer dan email.
 
 ### Alamat Bisnis
 
-Masukkan alamat lengkap Anda (jalan, kota, propinsi, kode pos, negara). Ini digunakan untuk:
-- perhitungan asal pengiriman
-- perhitungan pajak
-- kebutuhan hukum dan faktur
+Masukkan alamat lengkap Anda (jalan, kota, provinsi, kode pos, negara). Ini digunakan untuk:
+- Perhitungan asal pengiriman
+- Perhitungan pajak
+- Persyaratan hukum dan faktur
 
 ## Branding
 
 ### Logo
 
-Unggah logo toko Anda (PNG atau SVG direkomendasikan, ~200x50px dengan latar belakang transparan). Logo muncul di:
-- bagian header toko
-- template email
-- panel admin
+Unggah logo toko Anda (PNG atau SVG disarankan, ~200x50px dengan latar belakang transparan). Logo muncul di:
+- Header storefront
+- Template email
+- Panel admin
 
 ### Favicon
 
 Unggah favicon persegi (ICO atau PNG, 32x32px). Muncul sebagai:
-- ikon tab browser
-- ikon tanda bookmark
-- ikon layar utama ponsel
+- Ikon tab browser
+- Ikon bookmark
+- Ikon layar utama mobile
 
 ## Lokalisasi
 
@@ -52,227 +52,193 @@ Pilih bahasa utama toko Anda dari 10 opsi yang didukung:
 
 | Bahasa | Kode |
 |----------|------|
-| Inggris | en |
-| Spanyol | es |
-| Prancis | fr |
-| Jerman | de |
-| Portugis | pt |
-| Jepang | ja |
-| Cina Sederhana | zh-hans |
-| Cina Tradisional | zh-hant |
-| Rusia | ru |
-| Arab | ar |
+| English | en |
+| Spanish | es |
+| French | fr |
+| German | de |
+| Portuguese | pt |
+| Japanese | ja |
+| Chinese Simplified | zh-hans |
+| Chinese Traditional | zh-hant |
+| Russian | ru |
+| Arabic | ar |
 
-Bahasa default mengontrol bahasa antarmuka admin dan cadangan untuk konten toko.
+Bahasa default mengontrol bahasa antarmuka admin dan fallback untuk konten storefront.
 
 ### Zona Waktu
 
-Pilih zona waktu toko Anda untuk jam waktu pesanan yang akurat, promosi yang dijadwalkan, dan pelaporan.
+Pilih zona waktu toko Anda untuk timestamp pesanan yang akurat, promosi terjadwal, dan pelaporan.
 
 ### Mata Uang
 
-- **Mata Uang Default** — mata uang utama untuk harga dan akuntansi.
-- **Banyak Mata Uang** — aktifkan untuk memungkinkan pelanggan melihat harga dalam mata uang yang disukai dengan konversi otomatis menggunakan tingkat pertukaran real-time.
+- **Mata Uang Default** — Mata uang utama untuk harga dan akuntansi.
+- **Multi-Mata Uang** — Aktifkan untuk memungkinkan pelanggan melihat harga dalam mata uang pilihan mereka dengan konversi otomatis menggunakan kurs real-time.
 
-Atur mata uang tambahan di **Pengaturan > Pengaturan Toko > Mata Uang**.
+Konfigurasi mata uang tambahan di **Pengaturan > Pengaturan Toko > Mata Uang**.
 
 ## Pengaturan E-Commerce
 
-### Pemesanan Langsung
+### Checkout Tamu
 
-izinkan pembelian tanpa membuat akun:
-- alur checkout yang lebih cepat
-- fraksi yang lebih rendah untuk pembeli pertama kali
-- mengumpulkan data pelanggan yang lebih sedikit
+Izinkan pembelian tanpa membuat akun:
+- Alur checkout lebih cepat
+- Hambatan lebih rendah untuk pembeli pertama
+- Mengumpulkan data pelanggan lebih sedikit
 
 ### Waktu Pembuatan Akun
 
-Atur kapan pelanggan diminta untuk membuat akun:
+Kontrol kapan pelanggan diminta untuk membuat akun:
 
 | Opsi | Deskripsi |
 |--------|-------------|
-| **Setelah Pembelian (Rekomendasikan)** | Minta pembuatan akun setelah pesanan berhasil — memanfaatkan kebaikan setelah pembelian untuk konversi terbaik |
+| **Setelah Pembelian (Disarankan)** | Minta pembuatan akun setelah pesanan berhasil — memanfaatkan goodwill pasca-pembelian untuk konversi terbaik |
 | **Selama Checkout** | Buat akun sebelum pembayaran diproses |
-| **Sebelum Checkout** | Wajibkan akun sebelum berbelanja (tidak direkomendasikan — mengurangi konversi) |
+| **Sebelum Checkout** | Wajibkan akun sebelum berbelanja (tidak disarankan — mengurangi konversi) |
 
-Anda juga dapat menyetel pesan **Pembuatan Akun** kustom untuk menjelaskan manfaat pendaftaran.
+Anda juga dapat mengatur **Pesan Pembuatan Akun** kustom untuk menjelaskan manfaat pendaftaran.
 
-### Pengaturan Inventaris
+### Default Inventaris
 
-- **Lacak Inventaris** — aktifkan pelacakan stok secara keseluruhan
-- **Ambang Batas Stok Rendah** — tingkat stok di mana pemberitahuan stok rendah dikirim ke email admin (default: 10 unit)
+- **Lacak Inventaris** — Aktifkan pelacakan stok secara global
+- **Ambang Stok Rendah** — Tingkat stok di mana peringatan stok rendah dikirim ke email admin (default: 10 unit)
 
-## Intelegensi Inventaris
+### Kecerdasan Inventaris
 
-![Kartu Intelegensi Inventaris yang menunjukkan bidang Waktu Pemesanan Default dan Multiplier Stok Aman](/static/core/admin/img/help/store-settings/ecommerce-inventory-intelligence.webp)
+![Kartu Kecerdasan Inventaris yang menunjukkan field Default Reorder Lead Time, Safety Stock Multiplier, Velocity Calculation Window, Allow Backorders by Default, dan Low Stock Alert Frequency](/static/core/admin/img/help/store-settings/ecommerce-inventory-intelligence.webp)
 
-Pengaturan ini menyetel perhitungan penyetoran ulang otomatis, stok aman, dan kecepatan penjualan, serta mengontrol bagaimana situasi kehabisan stok dan stok rendah ditangani.
+Pengaturan ini menyesuaikan perhitungan reorder otomatis, stok pengaman, dan kecepatan penjualan, serta mengontrol bagaimana situasi stok habis dan stok rendah ditangani.
 
-- **Waktu Pemesanan Default (Hari)** — berapa hari biasanya dibutuhkan untuk menerima stok kembali dari pemasok Anda setelah Anda memesan (default: 14).
+- **Default Reorder Lead Time (Hari)** — Berapa hari yang biasanya dibutuhkan untuk menerima restock dari pemasok Anda setelah Anda melakukan pesanan (default: 14).
 
-Peramalan menggunakan ini untuk menandai produk yang perlu dipesan *sekarang* untuk menghindari kehabisan stok sebelum stok baru tiba.
-- **Multiplier Stok Aman** — buffer yang diterapkan di atas permintaan yang diharapkan untuk menyerap lonjakan penjualan atau keterlambatan pemasok.
+Peramalan menggunakan ini untuk menandai produk yang perlu dipesan ulang *sekarang* untuk menghindari kekosongan stok sebelum stok baru tiba.
+- **Pengali Stok Pengaman** — Bantalan yang diterapkan di atas permintaan yang diharapkan untuk menyerap lonjakan penjualan atau keterlambatan pemasok.
 
-Contoh, faktor pengali `1.5` membangun buffer 50% di atas persediaan aman yang dihitung; `2.0` menggandakannya.
+Sebagai contoh, pengali `1.5` membangun bantalan 50% di atas stok pengaman yang dihitung; `2.0` menggandakannya.
 
-Tingkatkan ini untuk produk di mana kehabisan stok menjadi mahal (produk best seller, barang musiman); turunkan untuk stok yang tidak laku cepat yang tidak ingin Anda pesan berlebihan.
-- **Jendela Perhitungan Kecepatan (Hari)** — Jangka waktu pengembalian yang digunakan Spwig untuk menghitung kecepatan penjualan setiap produk, yang pada gilirannya memengaruhi saran penyesuaian ulang dan angka hari persediaan (default: 30).
+Naikkan ini untuk produk di mana kekosongan stok sangat merugikan (penjual terbaik, item musiman); turunkan untuk stok yang bergerak lambat yang tidak ingin Anda pesan berlebihan.
+- **Jendela Perhitungan Kecepatan (Hari)** — Jendela tinjauan ke belakang yang digunakan Spwig untuk menghitung kecepatan penjualan setiap produk, yang pada gilirannya mendorong saran pemesanan ulang dan angka hari persediaan (default: 30).
 
-Jendela yang lebih pendek bereaksi lebih cepat terhadap perubahan permintaan terbaru; jendela yang lebih panjang meratakan lonjakan musiman sehingga satu minggu sibuk tidak mengacaukan prediksi.
-- **Izinkan Pesanan Tunda Secara Default** — Pengaturan pesanan tunda awal yang diterapkan pada produk yang baru dibuat (mati secara default).
+Jendela yang lebih pendek bereaksi lebih cepat terhadap pergeseran permintaan terbaru; jendela yang lebih panjang meratakan lonjakan musiman sehingga satu minggu yang sibuk tidak akan mengacaukan peramalan.
+- **Izinkan Pesanan Tertunda Secara Default** — Pengaturan pesanan tertunda awal yang diterapkan pada produk yang baru dibuat (nonaktif secara default).
 
-Setiap produk tetap dapat menggantinya secara individual di halaman produknya sendiri, dan produk yang sudah ada tetap memiliki pengaturan apa pun yang sudah mereka miliki — mengubah ini hanya mengubah default produk baru yang dimulai, tidak memperbarui katalog Anda secara retroaktif.
-- **Frekuensi Pemberitahuan Stok Rendah** — Seberapa sering aplikasi seluler Spwig menerima pemberitahuan tentang stok rendah: **Real-time** mengirim notifikasi dorong segera ketika produk melewati ambang batas stok rendah; **Ringkasan Harian** dan **Ringkasan Mingguan** mengirimkan satu notifikasi dorong yang merangkum semua produk dengan stok rendah saat ini pada jadwal tersebut.
+Setiap produk masih dapat menimpanya secara individual di halaman produknya sendiri, dan produk yang sudah ada tetap mempertahankan pengaturan apa pun yang sudah mereka miliki — mengubah ini hanya mengubah default yang digunakan produk baru, tidak memperbarui katalog Anda secara retroaktif.
+- **Frekuensi Peringatan Stok Rendah** — Seberapa sering aplikasi seluler Spwig Anda diberi tahu tentang stok rendah: **Waktu Nyata** mengirim notifikasi push sesaat setelah produk melampaui ambang batas stok rendahnya; **Ringkasan Harian** dan **Ringkasan Mingguan** sebaliknya mengirim satu notifikasi push yang merangkum semua produk stok rendah saat ini pada jadwal tersebut.
 
-Pengaturan ini hanya berlaku saat **Pemberitahuan Stok Rendah** (Pengaturan Email, di bawah) diaktifkan — dengan notifikasi dimatikan, tidak ada notifikasi yang dikeluarkan pada frekuensi apa pun.
+Pengaturan ini hanya berlaku saat **Peringatan Stok Rendah** (Pengaturan Email, di bawah) diaktifkan — dengan peringatan nonaktif, tidak ada notifikasi yang dikirim pada frekuensi apa pun.
 
-### Dokumen & Tagihan
+### Dokumen & Penagihan
 
-![Kartu Dokumen & Tagihan menunjukkan bidang Tax ID / Nomor PPN, Teks Kaki Tagihan, dan Teks Kaki Surat Jalan yang diisi dengan nilai contoh](/static/core/admin/img/help/store-settings/ecommerce-documents-invoicing.webp)
+![Kartu Dokumen & Penagihan yang menunjukkan Nomor ID Pajak / PPN, Teks Footer Faktur, Teks Footer Slip Pengiriman, dan Lebar Logo Dokumen yang diisi dengan nilai contoh](/static/core/admin/img/help/store-settings/ecommerce-documents-invoicing.webp)
 
-Bidang-bidang ini mengisi faktur dan surat jalan yang Spwig buat untuk pesanan — misalnya ketika seorang penjual mengunduh atau mengirimkan faktur PDF melalui email, atau mencetak surat jalan untuk pengiriman.
+Bidang-bidang ini mengisi faktur dan slip pengiriman yang dihasilkan Spwig untuk pesanan — misalnya ketika pedagang mengunduh atau mengirim email faktur PDF, atau mencetak slip pengiriman untuk pengiriman.
 
-- **Nomor ID Pajak / PPN** — Nomor identifikasi pajak usaha Anda. Cetak pada faktur yang dibuat sehingga memenuhi persyaratan dokumentasi pajak setempat.
-- **Teks Kaki Faktur** — Teks bebas yang ditampilkan di bagian bawah setiap faktur yang dibuat. Penggunaan umum: ketentuan pembayaran ("Pembayaran jatuh tempo dalam 30 hari"), pesan terima kasih, atau detail transfer bank.
-- **Teks Kaki Surat Jalan** — Teks bebas yang ditampilkan di bagian bawah setiap surat jalan yang dibuat. Penggunaan umum: instruksi pengembalian atau catatan untuk tim gudang/pengiriman.
-- **Lebar Logo Dokumen (px)** — Lebar logo toko Anda seperti yang terlihat pada faktur dan surat jalan PDF yang dibuat (default: 200px). Tinggi secara otomatis menyesuaikan untuk mencocokkan, sehingga proporsi logo Anda dipertahankan. Gambar logo itu sendiri berasal dari **Logo** (Branding, di atas) — logo SVG tidak digambar pada dokumen PDF, jadi unggah versi PNG atau JPG dari logo Anda jika Anda menggunakan seni vektor di toko Anda.
+- **Nomor ID Pajak / PPN** — Nomor identifikasi pajak bisnis Anda. Dicetak pada faktur yang dihasilkan agar memenuhi persyaratan dokumentasi pajak lokal.
+- **Teks Footer Faktur** — Teks bebas yang ditampilkan di bagian bawah setiap faktur yang dihasilkan. Penggunaan umum: syarat pembayaran ("Pembayaran jatuh tempo dalam 30 hari"), pesan terima kasih, atau detail transfer bank.
+- **Teks Footer Slip Pengiriman** — Teks bebas yang ditampilkan di bagian bawah setiap slip pengiriman yang dihasilkan. Penggunaan umum: instruksi pengembalian atau catatan untuk tim gudang/penyelenggaraan.
+- **Lebar Logo Dokumen (px)** — Lebar logo toko Anda seperti yang muncul pada faktur PDF dan slip pengiriman yang dihasilkan (default: 200px). Tinggi diskalakan secara otomatis untuk menyesuaikan, sehingga proporsi logo Anda dipertahankan. Gambar logo itu sendiri berasal dari **Logo** Anda (Branding, di atas) — logo SVG tidak digambar pada dokumen PDF, jadi unggah versi PNG atau JPG dari logo Anda jika Anda menggunakan seni vektor di storefront.
 
 ## Pengaturan Email
 
-Atur pengaturan pengiriman email di **Pengaturan > Akun Email** dan **Pengaturan > Template Email**. Lihat [Konfigurasi Email](/help/email-configuration) untuk detail lengkap.
+Konfigurasi pengaturan pengiriman email di **Settings > Email Accounts** dan **Settings > Email Templates**. Lihat [Konfigurasi Email](/help/email-configuration) untuk detail lengkap.
 
-Pengaturan email kunci yang tersedia di Pengaturan Toko:
+Pengaturan email utama yang tersedia di Pengaturan Toko:
 
 - **Email Konfirmasi Pesanan** — Aktifkan atau nonaktifkan email konfirmasi otomatis
-- **Email Pemberitahuan Pengiriman** — Aktifkan atau nonaktifkan pemberitahuan pembaruan pengiriman
-- **Pemberitahuan Stok Rendah** — Kirim pemberitahuan ke email admin ketika stok turun di bawah ambang batas
-- **Mode Pengiriman Email** — Live (pengiriman normal), Paused (menahan semua email), atau Log Only (mencatat tetapi tidak pernah mengirimkan)
-- **Email Redirect Uji Coba** — Mengarahkan semua email yang keluar ke satu alamat untuk pengujian
+- **Email Notifikasi Pengiriman** — Aktifkan atau nonaktifkan notifikasi pembaruan pengiriman
+- **Peringatan Stok Rendah** — Kirim peringatan ke email admin ketika stok turun di bawah ambang batas
+- **Mode Pengiriman Email** — Live (pengiriman normal), Paused (tahan semua email), atau Log Only (catat tetapi tidak pernah kirim)
+- **Email Pengalihan Uji** — Alihkan semua email keluar ke satu alamat untuk pengujian
 
 ## Pengaturan Keamanan
 
-### Otonisasi Dua Faktor (2FA)
+### Autentikasi Dua Faktor (2FA)
 
-Atur apakah staf diwajibkan menggunakan otonisasi dua faktor:
+Kendalikan apakah staf diwajibkan menggunakan autentikasi dua faktor:
 
-| Pengaturan | Keterangan |
-|---------|-------------|
-| **Opsional** | Staf dapat memilih untuk mengaktifkan 2FA tetapi tidak diwajibkan |
-| **Rekomendasi** | Staf melihat pesan yang mendorong mereka untuk mendaftarkan 2FA |
-| **Wajib** | Staf tidak dapat mengakses admin hingga 2FA diaktifkan |
 
-Simpan semua format markdown, jalur gambar, blok kode, dan istilah teknis.
-
-- **Masa Tenang (Hari)** — Berapa hari staf memiliki waktu untuk menyiapkan 2FA setelah penerapan diaktifkan
-- **Izinkan Perangkat Tepercaya** — Izinkan staf melewatkan verifikasi 2FA pada perangkat yang dikenali selama jumlah hari yang ditentukan
-
-## Persetujuan Cookie
-
-Atur banner persetujuan cookie yang ditampilkan kepada pengunjung toko:
-
-- **Persetujuan Cookie Diaktifkan** — Tampilkan atau sembunyikan banner cookie
-- **Posisi Banner** — Di mana banner muncul di layar (bilah bawah, popup sudut, dll.)
-- **Mode Persetujuan** — Pemberitahuan sederhana, opt-in, atau opt-out
-- **Judul dan Teks Banner** — Judul dan deskripsi yang dapat disesuaikan yang ditampilkan kepada pengunjung
-- **Deskripsi Kategori** — Deskripsi terpisah untuk cookie analitik, pemasaran, dan fungsional
-
-Semua bidang teks banner mendukung terjemahan untuk toko berbahasa ganda.
-
-## Komunikasi
-
-Tab **Komunikasi** mengontrol bagaimana toko Anda memperoleh, memverifikasi, dan memungkinkan pelanggan mengelola persetujuan untuk email pemasaran dan SMS. Pengaturan ini membentuk posisi kepatuhan hukum Anda (GDPR untuk email, TCPA untuk SMS), jadi tinjau dengan penasihat hukum Anda sebelum peluncuran — Spwig menyediakan kontrolnya, bukan nasihatnya.
-
-![Tab Komunikasi yang menunjukkan Kartu Persetujuan Email Pemasaran, Preferensi & Pembatalan Langganan, dan Kartu Persetujuan SMS](/static/core/admin/img/help/store-settings/communications-tab.webp)
-
-### Persetujuan Email Pemasaran
-
-- **Aktifkan Double Opt-In untuk Email Pemasaran** — Ketika diaktifkan, pelanggan yang berlangganan email pemasaran akan menerima email konfirmasi dan harus mengklik tautan di dalamnya sebelum Spwig mengirimkan pesan pemasaran apa pun kepada mereka. Ketika dimatikan, mencantumkan kotak centang penerimaan pemasaran sudah cukup. Secara default diaktifkan, sesuai dengan praktik terbaik GDPR.
-- **Status Penerimaan Pemasaran Default** — Status penerimaan pemasaran awal yang diterapkan pada akun pelanggan yang baru dibuat. Secara default dimatikan (GDPR opt-out), jadi pelanggan baru mulai tidak berlangganan email pemasaran hingga mereka secara aktif berlangganan.
-
-Saat double opt-in diaktifkan, pendaftaran berlangganan memicu email konfirmasi dengan tautan verifikasi. Sebelum pelanggan mengkliknya, mereka dicatat sebagai berlangganan tetapi belum diverifikasi, dan pengiriman pemasaran melewatinya — email transaksional (konfirmasi pesanan, pembaruan pengiriman, reset kata sandi) tidak pernah terpengaruh oleh pengaturan ini.
-
-### Preferensi & Pembatalan Langganan
-
-- **Aktifkan Pusat Preferensi Pelanggan** — Ketika diaktifkan, pelanggan dapat mengelola preferensi email dan SMS mereka dari halaman layanan mandiri yang terhubung dari dashboard akun mereka. Ketika dimatikan, halaman tersebut dan API pendukungnya akan tidak tersedia dan tautan dashboard-nya disembunyikan. Tautan pembatalan langganan satu-klik di email Anda tetap berjalan baik — celah ini diperlukan untuk kepatuhan dan tidak terpengaruh oleh pengaturan ini.
-- **Kumpulkan Alasan Pembatalan Langganan** — Ketika diaktifkan, halaman pembatalan langganan satu-klik meminta pelanggan untuk memberikan alasan singkat sebelum mengonfirmasi: *Saya menerima terlalu banyak email*, *Isinya tidak relevan bagi saya*, *Saya tidak pernah mendaftar untuk ini*, *Saya tidak lagi tertarik*, atau *Lainnya*. Alasan yang dipilih pelanggan dicatat ke jejak audit persetujuan sehingga Anda dapat meninjau pola pembatalan langganan seiring waktu.
-
-### Persetujuan SMS
-
-- **Wajibkan Verifikasi SMS** — Ketika diaktifkan (default), pelanggan harus memverifikasi nomor ponsel mereka dengan kode satu kali sebelum Spwig mengirimkan SMS apa pun, termasuk pesan pemasaran. Ketika dimatikan, mencantumkan kotak centang penerimaan SMS sudah cukup untuk memulai pengiriman. Default ini diubah menjadi **diaktifkan** untuk keamanan TCPA — nonaktifkan hanya jika Anda memiliki langkah verifikasi lain dalam alur pendaftaran Anda.
-
-## Mode Perawatan
-
-Aktifkan mode perawatan untuk menonaktifkan toko Anda sementara:
+{
+  "Setting": "Penjelasan",
+  "---------": "-------------",
+  "**Optional**": "Staf dapat memilih untuk mengaktifkan 2FA tetapi tidak wajib",
+  "**Recommended**": "Staf melihat pesan yang mendorong mereka untuk menyiapkan 2FA",
+  "**Required**": "Staf tidak dapat mengakses admin hingga 2FA diaktifkan",
+  "- **Grace Period (Days)**": "Jumlah hari staf memiliki waktu untuk menyiapkan 2FA setelah penerapan diaktifkan",
+  "- **Allow Trusted Devices**": "Izinkan staf melewatkan verifikasi 2FA pada perangkat yang dikenali selama jumlah hari tertentu",
+  "\n## Cookie Consent\n\nAtur banner persetujuan cookie yang ditampilkan kepada pengunjung toko:",
+  "- **Cookie Consent Enabled**": "Tampilkan atau sembunyikan banner cookie",
+  "- **Banner Position**": "Di mana banner muncul di layar (bagian bawah, kotak pop-up sudut, dll.)",
+  "- **Consent Mode**": "Pernyataan sederhana, opt-in, atau opt-out",
+  "- **Banner Title and Text**": "Judul dan deskripsi yang dapat disesuaikan ditampilkan kepada pengunjung",
+  "- **Category Descriptions**": "Deskripsi terpisah untuk cookie analitik, pemasaran, dan fungsional",
+  "\nSemua bidang teks banner mendukung terjemahan untuk toko berbahasa ganda.\n\n## Communications\n\nTab **Communications** mengontrol bagaimana toko Anda memperoleh, memverifikasi, dan memungkinkan pelanggan mengelola persetujuan untuk email pemasaran dan SMS. Pengaturan ini membentuk posisi kepatuhan hukum Anda (GDPR untuk email, TCPA untuk SMS), jadi tinjau dengan penasihat hukum Anda sebelum peluncuran — Spwig menyediakan kontrolnya, bukan nasihatnya.\n\n![Tab Communications menunjukkan Kartu Persetujuan Email Pemasaran, Preferensi & Unsubscribe, dan Persetujuan SMS](/static/core/admin/img/help/store-settings/communications-tab.webp)\n\n### Persetujuan Email Pemasaran\n\n- **Aktifkan Double Opt-In untuk Email Pemasaran** - Ketika aktif, pelanggan yang berlangganan email pemasaran akan menerima email konfirmasi dan harus mengklik tautannya sebelum Spwig mengirimkan pesan pemasaran apa pun kepada mereka. Ketika dimatikan, mencantumkan kotak opt-in pemasaran cukup cukup. Secara default diaktifkan, sesuai dengan praktik terbaik GDPR.
+- **Status Opt-In Pemasaran Default** - Status awal opt-in pemasaran yang diterapkan pada akun pelanggan yang baru dibuat. Secara default dimatikan (GDPR opt-out), jadi pelanggan baru mulai tidak berlangganan email pemasaran hingga mereka secara aktif berlangganan.
+\nKetika double opt-in diaktifkan, pilihan masuk memicu email konfirmasi dengan tautan verifikasi. Sebelum pelanggan mengkliknya, mereka dicatat sebagai berlangganan tetapi belum diverifikasi, dan pengiriman pemasaran melewatinya — email transaksional (konfirmasi pesanan, pembaruan pengiriman, reset kata sandi) tidak pernah terpengaruh oleh pengaturan ini.
+\n### Preferensi & Unsubscribe\n\n- **Aktifkan Pusat Preferensi Pelanggan** - Ketika diaktifkan, pelanggan dapat mengelola preferensi email dan SMS mereka dari halaman layanan mandiri yang terhubung dari dashboard akun mereka. Ketika dimatikan, halaman tersebut dan API pendukungnya mengembalikan tidak tersedia dan tautan dashboard dihilangkan. Tautan unsubscribe satu klik dalam email Anda tetap berjalan baik — celah ini diperlukan untuk kepatuhan dan tidak terpengaruh oleh pengaturan ini.
+- **Kumpulkan Alasan Unsubscribe** - Ketika diaktifkan, halaman unsubscribe satu klik meminta pelanggan untuk memberikan alasan singkat sebelum mengonfirmasi: *Saya menerima terlalu banyak email*, *Isinya tidak relevan bagi saya*, *Saya tidak pernah mendaftar untuk ini*, *Saya tidak lagi tertarik*, atau *Lainnya*. Alasan yang dipilih pelanggan dicatat ke jejak audit persetujuan sehingga Anda dapat meninjau pola unsubscribe seiring waktu.
+\n### Persetujuan SMS\n\n- **Wajibkan Verifikasi SMS** - Ketika diaktifkan (default), pelanggan harus memverifikasi nomor telepon mereka dengan kode satu kali sebelum Spwig mengirimkan SMS apa pun, termasuk teks pemasaran. Ketika dimatikan, mencantumkan kotak opt-in SMS cukup cukup. Default ini diubah menjadi **on** untuk keamanan TCPA — nonaktifkan hanya jika Anda memiliki langkah verifikasi lain dalam alur pendaftaran Anda.
+\n## Mode Perawatan\n\nAktifkan mode perawatan untuk mengambil toko Anda keluar sementara:
 - Menampilkan pesan perawatan kustom kepada pengunjung
-- Anda dapat menghubungkan halaman **Mode Perawatan** yang dibuat di Page Builder untuk pengalaman merek penuh
+- Anda dapat menghubungkan halaman **Mode Perawatan** yang dibuat di Page Builder untuk pengalaman perawatan yang sepenuhnya bermerk
 - Membatasi akses hanya untuk pengguna admin
 - Berguna selama pembaruan besar atau migrasi
+}
 
-## Media Sosial
 
-Hubungkan profil media sosial toko Anda. Mereka muncul di bagian bawah dan template email:
+# Media Sosial
+
+Hubungkan profil media sosial toko Anda. Tampilkan di bagian bawah halaman dan template email:
 
 - **URL Facebook**
 - **URL Twitter**
 - **URL Instagram**
 - **URL LinkedIn**
 
-## Default SEO
+## Pengaturan SEO Default
 
-Jaga semua format markdown, jalur gambar, blok kode, dan istilah teknis.
-
-Atur tag meta default yang digunakan ketika halaman tidak memiliki pengaturan SEO mereka sendiri:
+Atur tag meta default yang digunakan ketika halaman tidak memiliki pengaturan SEO sendiri:
 
 - **Judul Meta** — Judul halaman default (maksimal 60 karakter)
-- **Deskripsi Meta** — Deskripsi default yang ditampilkan dalam hasil pencarian (maksimal 160 karakter)
-- **Kata Kunci Meta** — Kata kunci yang ditentukan secara terpisah oleh koma
+- **Deskripsi Meta** — Deskripsi default yang ditampilkan di hasil pencarian (maksimal 160 karakter)
+- **Kata Kunci Meta** — Kata kunci terpisah koma default
 
 ## Pengaturan Pajak
 
 Atur pengumpulan pajak di **Pengaturan > Pengaturan Pajak**:
 
 1. **Metode Perhitungan** — Berdasarkan alamat pengiriman, alamat tagihan, atau lokasi toko
-2. **Tarif Pajak** — Tentukan tarif berdasarkan wilayah dan kelas pajak produk
-3. **Tampilan Pajak** — Tampilkan harga dengan pajak, tanpa pajak, atau keduanya
+2. **Tarif Pajak** — Tetapkan tarif berdasarkan wilayah dan kelas pajak produk
+3. **Tampilan Harga Pajak** — Tampilkan harga termasuk pajak, tanpa pajak, atau keduanya
 
 ## Tips
 
-- Atur zona waktu Anda dengan benar sebelum memproses pesanan apa pun — ini memengaruhi semua timestamp dan laporan.
+- Atur zona waktu dengan benar sebelum memproses pesanan apa pun — hal ini memengaruhi semua timestamp dan laporan.
 - Aktifkan checkout sebagai tamu untuk meningkatkan tingkat konversi.
 - Isi alamat bisnis Anda untuk perhitungan pengiriman dan pajak yang akurat.
 - Unggah logo dan favicon untuk pengalaman yang profesional dan bermerk.
-- Gunakan **Waktu Pendaftaran Akun Setelah Pembelian** untuk tingkat pendaftaran terbaik.
+- Gunakan **Waktu Pembuatan Akun Setelah Pembelian** untuk tingkat pendaftaran terbaik.
 - Aktifkan pemeriksaan dua faktor untuk staf agar melindungi admin toko Anda.
 - Uji alur email menggunakan pengaturan **Email Redirect Uji Coba** sebelum diluncurkan.
-- Atur **Waktu Pemesanan Ulang Standar** untuk mencocokkan pemasok terlambat tercepat Anda — peramalan pemesanan mengaplikasikan nilai tunggal ini di seluruh katalog Anda, jadi lebih baik mengambil produk dengan waktu terpanjang.
-- Isi **ID Pajak / Nomor PPN** dan teks footer sebelum invoice nyata pertama Anda pergi ke pelanggan — kedua bidang ini kosong secara default.
-- Biarkan **Aktifkan Opt-In Ganda untuk Email Pemasaran** aktif kecuali Anda memiliki alasan khusus untuk menonaktifkannya — ini adalah default yang lebih aman untuk GDPR dan melindungi reputasi pengirim Anda dengan menjaga alamat yang tidak diverifikasi dari email pemasaran Anda.
-- Biarkan **Status Opt-In Pemasaran Standar** dimatikan. Pemeriksaan pra-persetujuan untuk konsesi pemasaran merusak persyaratan opt-in GDPR bahkan jika pelanggan bisa secara teknis menonaktifkannya.
-- Jangan nonaktifkan **Aktifkan Pusat Preferensi Pelanggan** hanya untuk menyederhanakan antarmuka akun Anda — tanpa itu, pelanggan tetap bisa berhenti berlangganan dari satu jenis pesan, tetapi mereka kehilangan kemampuan untuk menyetel preferensi secara rinci (misalnya, tetapkan pembaruan pengiriman tetapi hapus surat kabar).
-- Pertahankan **Wajib Verifikasi SMS** aktif kecuali alur pendaftaran Anda sudah memverifikasi nomor telepon dengan cara lain (misalnya, login berbasis SMS) — pengaturan ini ada secara khusus untuk menjaga Anda tetap dalam aturan TCPA.
+- Atur **Waktu Lead Pemesanan Default** sesuai dengan pemasok terlambat tercepat Anda — peramalan pemesanan menerapkan nilai tunggal ini di seluruh katalog Anda, jadi lebih baik mengambil produk dengan waktu terpanjang.
+- Perpendek **Jendela Perhitungan Kecepatan** jika Anda sering melakukan promosi atau restok dan ingin peramalan merespons cepat terhadap penjualan beberapa hari terakhir; perpanjang jika Anda menginginkan pandangan yang stabil dan tidak mudah mengalami lonjakan permintaan.
+- Jika Anda mengaktifkan **Izinkan Pesanan Tunda Secara Default**, ingat bahwa ini hanya menetapkan titik awal untuk produk yang dibuat *setelah* perubahan — kembalilah pada produk yang ada secara individual jika Anda ingin pesanan tunda diaktifkan di seluruh katalog Anda saat ini juga.
+- Sesuaikan **Frekuensi Pemberitahuan Stok Rendah** sesuai seberapa aktif Anda mengelola stok: **Real-time** untuk katalog yang bergerak cepat di mana setiap risiko kehabisan stok perlu ditangani segera, **Ringkasan Harian** atau **Ringkasan Mingguan** untuk menghindari kelelahan pemberitahuan pada katalog yang lebih besar.
+- Isi **ID Pajak / Nomor PPN** dan teks bagian bawah sebelum invoice pertama Anda yang sebenarnya dikirim ke pelanggan — kedua bidang ini kosong secara default.
+- Jika **Logo** Anda berupa SVG, unggah versi PNG atau JPG juga — **Lebar Logo Dokumen** tidak berdampak pada PDF karena Spwig tidak dapat menggambar karya seni SVG pada faktur dan formulir pengiriman yang dibuat.
+- Biarkan **Aktifkan Opt-In Ganda untuk Email Pemasaran** dalam keadaan aktif kecuali Anda memiliki alasan khusus untuk menonaktifkannya — ini adalah default yang lebih aman untuk GDPR dan melindungi reputasi pengirim Anda dengan menjaga alamat yang belum diverifikasi tetap di luar pengiriman pemasaran.
+- Biarkan **Status Opt-In Pemasaran Default** dalam keadaan non-aktif. Mencentang opsi persetujuan pemasaran untuk akun baru melanggar persyaratan opt-in GDPR bahkan jika pelanggan bisa secara teknis menonaktifkannya.
+- Jangan nonaktifkan **Aktifkan Pusat Preferensi Pelanggan** hanya untuk menyederhanakan antarmuka akun Anda — tanpa itu, pelanggan tetap bisa berhenti menerima satu jenis pesan, tetapi mereka kehilangan kemampuan untuk menyetel preferensi secara rinci (misalnya, tetap menerima pembaruan pengiriman tetapi menghilangkan surat kabar).
+- Pertahankan **Wajib Verifikasi SMS** dalam keadaan aktif kecuali alur pendaftaran Anda sudah memverifikasi nomor telepon dengan cara lain (misalnya, login berbasis SMS) — pengaturan ini secara khusus dibuat untuk menjaga agar Anda tetap dalam aturan TCPA.
 
-## Pemecahan Masalah
+**Pertukaran mata uang tidak berfungsi:**
+- Pastikan penyedia tingkat pertukaran Anda terhubung
+- Periksa kredensial API di pengaturan tingkat pertukaran
+- Coba perbarui tingkat pertukaran secara manual
 
-**Perubahan tidak muncul di toko:**
-- Bersihkan cache browser Anda
-- Jalankan pembersihan cache dari panel admin
-- Periksa apakah mode perawatan secara tidak sengaja diaktifkan
-
-**Email tidak terkirim:**
-- Pastikan pengaturan penyedia email Anda di Email Configuration
-- Pastikan **Mode Pengiriman Email** diatur ke **Hidup**
-- Pastikan **Email Redirect Uji Coba** kosong jika Anda ingin email dikirim ke penerima nyata
-
-**Konversi mata uang tidak berfungsi:**
-- Pastikan penyedia tingkat tukar Anda terhubung
-- Periksa kredensial API di pengaturan tingkat tukar
-- Coba perbarui tingkat tukar secara manual
-
-**Email pemasaran tidak sampai pada pelanggan yang sudah menyetujui:**
-- Periksa apakah **Aktifkan Opt-In Ganda untuk Email Pemasaran** aktif — jika ya, pelanggan harus mengklik tautan konfirmasi dalam email verifikasi sebelum pengiriman pemasaran dilanjutkan
-- Minta pelanggan memeriksa spam/junk untuk email verifikasi
-- Pastikan preferensi opt-in pemasaran pelanggan masih aktif — klik berhenti berlangganan mengembalikan keadaan mati
+**Email pemasaran tidak sampai pada pelanggan yang berlangganan:**
+- Pastikan apakah **Aktifkan Opsi Dua untuk Email Pemasaran** diaktifkan — jika ya, pelanggan harus mengklik tautan konfirmasi dalam email verifikasi sebelum pemasaran dilanjutkan
+- Minta pelanggan memeriksa email sampah/junk untuk email konfirmasi
+- Pastikan preferensi pelanggan untuk berlangganan pemasaran tetap aktif — klik langganan ulang akan mengaktifkan kembali
 
 **Pelanggan mengatakan mereka tidak dapat menemukan pusat preferensi:**
-- Pastikan **Aktifkan Pusat Preferensi Pelanggan** aktif — ketika dimatikan, tautan antarmuka pengguna disembunyikan dan halaman tidak tersedia secara desain
-- Tautan berhenti berlangganan dalam email pemasaran apa pun selalu berfungsi terlepasai dari pengaturan ini, jadi tunjukkan pelanggan ke sana sebagai cadangan
+- Pastikan apakah **Aktifkan Pusat Preferensi Pelanggan** diaktifkan — ketika dimatikan, tautan dashboard disembunyikan dan halaman tidak tersedia secara desain
+- Tautan berhenti berlangganan dalam email pemasaran selalu berfungsi terlepasai dari pengaturan ini, jadi tunjukkan pelanggan ke sana sebagai cadangan

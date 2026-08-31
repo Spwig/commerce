@@ -144,7 +144,19 @@ class Command(BaseCommand):
         for theme in Theme.objects.all():
             if DesignToken.objects.filter(source="theme", theme=theme).count() == 0:
                 # Check if theme has tokens in manifest
+                if theme.manifest and not isinstance(theme.manifest, dict):
+                    self.stdout.write(
+                        self.style.WARNING(f"  Skipping {theme.name}: manifest is not an object")
+                    )
+                    continue
                 tokens = theme.manifest.get("tokens", {}) if theme.manifest else {}
+                if not isinstance(tokens, dict):
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"  Skipping {theme.name}: manifest 'tokens' is not an object"
+                        )
+                    )
+                    continue
                 if tokens:
                     themes_needing_sync.append(theme)
 

@@ -1,0 +1,46 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+{% if journeys %}
+<div class="list-row-cards">
+  {% for j in journeys %}
+  <div class="list-row-card">
+    {% include "admin/includes/action_checkbox.html" with pk=j.pk %}
+    <div class="list-row-card-icon"><i class="fas fa-diagram-project"></i></div>
+    <div class="list-row-card-content">
+      <h3 class="list-row-card-title">
+        <a href="{% url 'admin:email_marketing_journey_change' j.pk %}">{{ j.name }}</a>
+      </h3>
+      <p class="list-row-card-subtitle">{{ j.get_trigger_event_display }}</p>
+      <div class="list-row-card-badges">
+        {% if j.status == "active" %}
+        <span class="list-row-card-badge list-row-card-badge-success"><i class="fas fa-play-circle"></i> {{ j.get_status_display }}</span>
+        {% elif j.status == "paused" %}
+        <span class="list-row-card-badge list-row-card-badge-warning"><i class="fas fa-pause-circle"></i> {{ j.get_status_display }}</span>
+        {% else %}
+        <span class="list-row-card-badge"><i class="fas fa-pen"></i> {{ j.get_status_display }}</span>
+        {% endif %}
+        <span class="list-row-card-badge list-row-card-badge-primary"><i class="fas fa-bolt"></i> {{ j.get_trigger_event_display }}</span>
+      </div>
+      <div class="list-row-card-meta">
+        <span class="list-row-card-meta-item"><i class="fas fa-envelope"></i> {{ j.step_count }} {% trans "emails" %}</span>
+        <span class="list-row-card-meta-item"><i class="fas fa-user-plus"></i> {{ j.enrolled_count }} {% trans "enrolled" %}</span>
+        <span class="list-row-card-meta-item"><i class="fas fa-flag-checkered"></i> {{ j.completed_count }} {% trans "completed" %}</span>
+      </div>
+    </div>
+    <div class="list-row-card-actions">
+      <a href="{% url 'email_marketing_admin:journey_report' j.pk %}" class="list-row-card-action" title="{% trans 'Report' %}"><i class="fas fa-chart-column"></i></a>
+      <a href="{% url 'email_marketing_admin:journey_builder' j.pk %}" class="list-row-card-action" title="{% trans 'Design journey' %}"><i class="fas fa-diagram-project"></i></a>
+      <a href="{% url 'admin:email_marketing_journey_change' j.pk %}" class="list-row-card-action" title="{% trans 'Settings' %}"><i class="fas fa-gear"></i></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+  <div class="list-row-card card-empty-state">
+    <div class="card-empty-state-icon opacity-50"><i class="fas fa-diagram-project"></i></div>
+    <p class="card-empty-state-title">{% trans "No journeys found." %}</p>
+    <p class="card-empty-state-subtitle">{% trans "Try adjusting your filters, or build a new journey." %}</p>
+  </div>
+</div>
+{% endif %}

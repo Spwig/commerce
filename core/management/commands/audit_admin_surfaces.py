@@ -201,8 +201,7 @@ class Command(BaseCommand):
                         except Exception:  # noqa: BLE001
                             prefix = None
                         if prefix is None or not any(
-                            p == prefix or p.startswith(prefix + "-") or p.startswith(prefix)
-                            for p in present
+                            p == prefix or p.startswith(prefix + "-") for p in present
                         ):
                             record(
                                 label,

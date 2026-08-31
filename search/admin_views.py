@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
-from .models import SearchEngine, SearchQuery, SearchRedirect, Synonym
+from .models import SearchClick, SearchEngine, SearchQuery, SearchRedirect, Synonym
 from .services import AnalyticsService
 
 
@@ -67,7 +67,7 @@ def filter_search_queries(request):
     if search:
         queryset = queryset.filter(query_normalized__icontains=search.lower())
 
-    # Aggregate by normalized query
+    # Aggregate by normalized query.
     aggregated = (
         queryset.values("query_normalized")
         .annotate(
@@ -79,17 +79,30 @@ def filter_search_queries(request):
         .order_by("-search_count")[:50]
     )
 
+    # Count, per normalized query, how many searches had at least one click.
+    # Doing this as a single grouped aggregation (instead of one query per
+    # aggregated term) avoids an N+1 pattern while staying PostgreSQL-valid:
+    # the pk membership test lives in a WHERE clause, not inside a filtered
+    # Count that would reference an ungrouped column. Restrict the GROUP BY to
+    # the <=50 terms actually displayed so a high-cardinality term space can't
+    # make this query substantially more expensive than the capped aggregation
+    # above. (Evaluating `aggregated` here also caches it for the loop below.)
+    top_terms = [item["query_normalized"] for item in aggregated]
+    with_clicks_by_query = dict(
+        queryset.filter(
+            query_normalized__in=top_terms,
+            pk__in=SearchClick.objects.values("search_query"),
+        )
+        .values("query_normalized")
+        .annotate(clicked_count=Count("id"))
+        .values_list("query_normalized", "clicked_count")
+    )
+
     # Calculate CTR for each query
     queries_data = []
     for item in aggregated:
-        query_ids = queryset.filter(query_normalized=item["query_normalized"]).values_list(
-            "id", flat=True
-        )
-
         total = item["search_count"]
-        with_clicks = (
-            SearchQuery.objects.filter(id__in=query_ids, clicks__isnull=False).distinct().count()
-        )
+        with_clicks = with_clicks_by_query.get(item["query_normalized"], 0)
 
         ctr = (with_clicks / total * 100) if total > 0 else 0
 
@@ -291,18 +304,14 @@ def filter_engines(request):
     elif active == "false":
         queryset = queryset.filter(is_active=False)
 
-    # Annotate with counts for display
-    engines = queryset.order_by("name")[:50]
-
-    # Add annotation for excluded counts
-    engines_with_counts = []
-    for engine in engines:
-        engine.excluded_categories_count = engine.excluded_categories.count()
-        engine.excluded_brands_count = engine.excluded_brands.count()
-        engines_with_counts.append(engine)
+    # Annotate with excluded counts for display
+    engines = queryset.annotate(
+        excluded_categories_count=Count("excluded_categories", distinct=True),
+        excluded_brands_count=Count("excluded_brands", distinct=True),
+    ).order_by("name")[:50]
 
     html = render_to_string(
-        "admin/search/partials/engine_cards.html", {"engines": engines_with_counts}, request=request
+        "admin/search/partials/engine_cards.html", {"engines": engines}, request=request
     )
 
     return JsonResponse(

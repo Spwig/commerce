@@ -52,6 +52,37 @@ def _check_not_hosted(request):
     return None
 
 
+def _safe_int(value, default, *, minimum=None, maximum=None):
+    """Parse an int from untrusted input, clamping to bounds and falling back on error."""
+    try:
+        result = int(value)
+    except (TypeError, ValueError):
+        return default
+    if minimum is not None:
+        result = max(minimum, result)
+    if maximum is not None:
+        result = min(maximum, result)
+    return result
+
+
+def _require_perm(request, perm):
+    """Return an HttpResponseForbidden when the user lacks ``perm``, else None.
+
+    ``@staff_member_required`` (via ``admin_view``) only proves admin-site access;
+    mutating operational endpoints must additionally gate on an explicit permission.
+    """
+    if not request.user.has_perm(perm):
+        return HttpResponseForbidden(_("You do not have permission to perform this action."))
+    return None
+
+
+def _neutralize_csv_value(value):
+    """Prefix formula-leading strings so spreadsheets don't execute exported cells."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+        return "'" + value
+    return value
+
+
 @admin.register(DatabaseBackup)
 class DatabaseBackupAdmin(admin.ModelAdmin):
     list_display = [
@@ -114,10 +145,18 @@ class DatabaseBackupAdmin(admin.ModelAdmin):
 
     def create_backup_view(self, request):
         if request.method == "POST":
-            name = request.POST.get("name")
+            denied = _require_perm(request, "management.add_databasebackup")
+            if denied:
+                return denied
+
+            name = (request.POST.get("name") or "").strip()
             description = request.POST.get("description", "")
             backup_type = request.POST.get("backup_type", "full")
             compression = request.POST.get("compression", "gzip")
+
+            if not name:
+                messages.error(request, _("Backup name is required."))
+                return redirect("admin:management_backup_create")
 
             # Create backup
             result = DatabaseManager.create_backup(name, backup_type, compression)
@@ -344,7 +383,7 @@ class QueryHistoryAdmin(admin.ModelAdmin):
 
         safe_name = connection.ops.quote_name(table_name)
 
-        page = int(request.GET.get("page", 1))
+        page = _safe_int(request.GET.get("page", 1), 1, minimum=1)
         limit = 50
         offset = (page - 1) * limit
 
@@ -789,6 +828,9 @@ class SystemMetricsAdmin(admin.ModelAdmin):
         hosted = _check_not_hosted(request)
         if hosted:
             return hosted
+        denied = _require_perm(request, "management.add_systemmetrics")
+        if denied:
+            return denied
         metrics = SystemMonitor.get_system_metrics()
         SystemMetrics.objects.create(**metrics)
         return JsonResponse({"success": True, "message": _("Metrics collected")})
@@ -841,6 +883,10 @@ class SystemMetricsAdmin(admin.ModelAdmin):
         if request.method != "POST":
             return JsonResponse({"success": False, "error": "POST method required"}, status=405)
 
+        denied = _require_perm(request, "management.change_systemstatus")
+        if denied:
+            return denied
+
         try:
             data = json.loads(request.body) if request.body else {}
             enabled = data.get("enabled", False)
@@ -871,6 +917,10 @@ class SystemMetricsAdmin(admin.ModelAdmin):
         from .tasks import run_full_backup
 
         if request.method == "POST":
+            denied = _require_perm(request, "management.add_deploymentbackup")
+            if denied:
+                return denied
+
             backup_type = request.POST.get("backup_type", "full")
             encrypt = request.POST.get("encrypt") == "on"
 
@@ -952,7 +1002,9 @@ class SystemMetricsAdmin(admin.ModelAdmin):
             schedule.is_enabled = request.POST.get("is_enabled") == "on"
             schedule.frequency = request.POST.get("frequency", "daily")
             schedule.backup_type = request.POST.get("backup_type", "full")
-            schedule.retention_days = int(request.POST.get("retention_days", 30))
+            schedule.retention_days = _safe_int(
+                request.POST.get("retention_days", 30), 30, minimum=1
+            )
 
             # Time
             time_str = request.POST.get("time_of_day", "03:00")
@@ -966,9 +1018,13 @@ class SystemMetricsAdmin(admin.ModelAdmin):
 
             # Weekly/Monthly settings
             if schedule.frequency == "weekly":
-                schedule.day_of_week = int(request.POST.get("day_of_week", 0))
+                schedule.day_of_week = _safe_int(
+                    request.POST.get("day_of_week", 0), 0, minimum=0, maximum=6
+                )
             elif schedule.frequency == "monthly":
-                schedule.day_of_month = int(request.POST.get("day_of_month", 1))
+                schedule.day_of_month = _safe_int(
+                    request.POST.get("day_of_month", 1), 1, minimum=1, maximum=31
+                )
 
             # Encryption
             schedule.encrypt = request.POST.get("encrypt") == "on"
@@ -1046,6 +1102,10 @@ class SystemMetricsAdmin(admin.ModelAdmin):
             return hosted
         if request.method != "POST":
             return JsonResponse({"success": False, "error": "POST method required"}, status=405)
+
+        denied = _require_perm(request, "management.add_systemrestore")
+        if denied:
+            return denied
 
         from .tasks import run_restore
 
@@ -1169,6 +1229,10 @@ class SystemMetricsAdmin(admin.ModelAdmin):
         if request.method != "POST":
             return JsonResponse({"error": "POST method required"}, status=405)
 
+        denied = _require_perm(request, "management.add_systemupgrade")
+        if denied:
+            return denied
+
         import json
 
         from .tasks import run_upgrade
@@ -1210,6 +1274,10 @@ class SystemMetricsAdmin(admin.ModelAdmin):
             return JsonResponse({"error": "Use hosted upgrade page"}, status=403)
         if request.method != "POST":
             return JsonResponse({"error": "POST method required"}, status=405)
+
+        denied = _require_perm(request, "management.add_systemupgrade")
+        if denied:
+            return denied
 
         from .tasks import run_upgrade
 
@@ -1264,6 +1332,7 @@ class SystemMetricsAdmin(admin.ModelAdmin):
 @admin.register(AccessLog)
 class AccessLogAdmin(admin.ModelAdmin):
     list_display = ["user_display", "ip_address", "method", "path", "status_code", "timestamp"]
+    list_select_related = ["user"]
     list_filter = ["method", "status_code", "timestamp", "action"]
     search_fields = ["user__username", "ip_address", "path", "action"]
     readonly_fields = [field.name for field in AccessLog._meta.fields]
@@ -1422,6 +1491,10 @@ class FileOperationAdmin(admin.ModelAdmin):
         if request.method != "POST":
             return JsonResponse({"success": False, "error": "POST method required"}, status=405)
 
+        denied = _require_perm(request, "management.add_fileoperation")
+        if denied:
+            return denied
+
         if not request.FILES.get("file"):
             return JsonResponse({"success": False, "error": _("No file uploaded")})
 
@@ -1433,7 +1506,11 @@ class FileOperationAdmin(admin.ModelAdmin):
 
         try:
             uploaded_file = request.FILES["file"]
-            file_path = os.path.join(safe_path, uploaded_file.name)
+            # Strip any directory components from the client-supplied name and
+            # re-validate the final path to prevent traversal outside MEDIA_ROOT.
+            file_path = os.path.join(safe_path, os.path.basename(uploaded_file.name))
+            if not FileManager.safe_path(settings.MEDIA_ROOT, file_path):
+                return JsonResponse({"success": False, "error": _("Invalid file name")})
 
             with open(file_path, "wb") as f:
                 for chunk in uploaded_file.chunks():
@@ -1466,6 +1543,10 @@ class FileOperationAdmin(admin.ModelAdmin):
             return hosted
         if request.method != "POST":
             return JsonResponse({"success": False, "error": "POST method required"}, status=405)
+
+        denied = _require_perm(request, "management.delete_fileoperation")
+        if denied:
+            return denied
 
         file_path = request.POST.get("file_path")
         if not file_path:
@@ -1636,14 +1717,18 @@ class LogEntryAdmin(admin.ModelAdmin):
         level = request.GET.get("level", "")
         search = request.GET.get("search", "")
         source = request.GET.get("source", "redis")  # 'redis' or 'db'
-        limit = min(int(request.GET.get("limit", 50)), 200)
-        offset = int(request.GET.get("offset", 0))
+        limit = _safe_int(request.GET.get("limit", 50), 50, minimum=1, maximum=200)
+        offset = _safe_int(request.GET.get("offset", 0), 0, minimum=0)
 
         if source == "redis":
-            # Fetch from Redis (recent logs)
+            # Fetch from Redis (recent logs). Fetch enough rows to cover the offset
+            # before slicing, otherwise any page past the first is always empty.
             service = DockerLogService()
             logs = service.get_recent_logs(
-                container=container or None, level=level or None, search=search or None, limit=limit
+                container=container or None,
+                level=level or None,
+                search=search or None,
+                limit=offset + limit,
             )
             # Apply offset manually for Redis
             logs = logs[offset : offset + limit]
@@ -1787,11 +1872,11 @@ class LogEntryAdmin(admin.ModelAdmin):
             for log in logs:
                 writer.writerow(
                     [
-                        log.get("timestamp", ""),
-                        log.get("container", ""),
-                        log.get("level", ""),
-                        log.get("message", ""),
-                        log.get("source", ""),
+                        _neutralize_csv_value(log.get("timestamp", "")),
+                        _neutralize_csv_value(log.get("container", "")),
+                        _neutralize_csv_value(log.get("level", "")),
+                        _neutralize_csv_value(log.get("message", "")),
+                        _neutralize_csv_value(log.get("source", "")),
                     ]
                 )
             return response

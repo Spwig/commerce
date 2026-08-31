@@ -165,13 +165,16 @@ class ManualExchangeRateViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
+            # Capture the pre-change pair: serializer.save() mutates `instance`
+            # in place, so after saving instance already holds the new values.
+            old_base = instance.base_currency
+            old_target = instance.target_currency
             serializer.save()
-            self._invalidate_rate_cache(instance.base_currency, instance.target_currency)
-            # Also invalidate new pair if currencies changed
-            new_base = serializer.validated_data.get("base_currency", instance.base_currency)
-            new_target = serializer.validated_data.get("target_currency", instance.target_currency)
-            if new_base != instance.base_currency or new_target != instance.target_currency:
-                self._invalidate_rate_cache(new_base, new_target)
+            # Invalidate the old pair's stale cache entry.
+            self._invalidate_rate_cache(old_base, old_target)
+            # Also invalidate the new pair if the currencies changed.
+            if instance.base_currency != old_base or instance.target_currency != old_target:
+                self._invalidate_rate_cache(instance.base_currency, instance.target_currency)
             return Response(
                 {
                     "success": True,

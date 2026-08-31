@@ -552,11 +552,21 @@ class DesignDashboardView(View):
             active_templates = EmailTemplate.objects.filter(is_active=True).count()
             total_translations = EmailTemplateTranslation.objects.count()
 
-            # Calculate translation coverage (6 languages excluding English)
+            # Calculate translation coverage. Derive the number of target
+            # languages from the model's choices (all supported languages
+            # except English) instead of hardcoding a count that drifts when
+            # languages are added.
             system_templates = EmailTemplate.objects.filter(
                 is_system=True, language_code="en"
             ).count()
-            max_translations = system_templates * 6 if system_templates > 0 else 0
+            target_language_count = sum(
+                1
+                for code, _label in EmailTemplateTranslation._meta.get_field(
+                    "language_code"
+                ).choices
+                if code != "en"
+            )
+            max_translations = system_templates * target_language_count
             coverage_percentage = (
                 (total_translations / max_translations * 100) if max_translations > 0 else 0
             )

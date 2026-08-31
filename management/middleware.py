@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.translation import get_language_from_path
 
 from .models import AccessLog
 
@@ -21,10 +22,28 @@ class ManagementAccessMiddleware(MiddlewareMixin):
         return None
 
     def process_response(self, request, response):
-        # Only log management tool access
-        if request.path.startswith("/admin/management/"):
+        # Only log management tool access. The admin is registered inside
+        # i18n_patterns (prefix_default_language=True), so request paths carry a
+        # locale prefix (e.g. /en/admin/management/...) that a fixed
+        # "/admin/management/" check would miss.
+        if self.is_management_request(request):
             self.log_access(request, response)
         return response
+
+    def is_management_request(self, request):
+        """Return True for management admin requests, regardless of locale prefix.
+
+        Matches on the request path (with any locale prefix stripped) so that
+        unresolved/404 probes under /admin/management/ are still logged, not
+        only successfully resolved management views.
+        """
+        path = request.path
+        # Strip a leading locale prefix (e.g. /en, /zh-hans) if one is present.
+        # get_language_from_path only returns a language for a genuine locale
+        # segment, so /admin/... is never mistaken for a locale prefix.
+        if get_language_from_path(path):
+            path = "/" + path.split("/", 2)[-1]
+        return path.startswith("/admin/management/")
 
     def log_access(self, request, response):
         """Log access attempt to management tools"""
@@ -40,7 +59,7 @@ class ManagementAccessMiddleware(MiddlewareMixin):
                 user=request.user if request.user.is_authenticated else None,
                 ip_address=ip_address,
                 user_agent=request.META.get("HTTP_USER_AGENT", "")[:500],
-                path=request.path,
+                path=request.path[:500],
                 method=request.method,
                 status_code=response.status_code,
                 response_time=response_time,

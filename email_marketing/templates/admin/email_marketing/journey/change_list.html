@@ -1,0 +1,85 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Journeys" %} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="change-list-header">
+    <div>
+      <h1><i class="fas fa-diagram-project"></i> {% trans "Journeys" %}</h1>
+      <p class="subtitle">{% trans "Automated, triggered email series" %}</p>
+    </div>
+    <div class="change-list-header-actions">
+      <a class="button" href="{% url 'admin:email_marketing_journey_add' %}"><i class="fas fa-plus"></i> {% trans "New Journey" %}</a>
+    </div>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="dashboard-stats-grid">
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-diagram-project"></i></div><div class="value">{{ total_journeys|default:"0" }}</div><div class="label">{% trans "Total" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-play-circle"></i></div><div class="value">{{ active_journeys|default:"0" }}</div><div class="label">{% trans "Active" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-user-plus"></i></div><div class="value">{{ total_enrolled|default:"0" }}</div><div class="label">{% trans "Enrolled" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-flag-checkered"></i></div><div class="value">{{ total_completed|default:"0" }}</div><div class="label">{% trans "Completed" %}</div></div>
+    </div>
+  </div>
+
+  <div class="filters-panel" id="filters-panel">
+    <div class="filters-panel-header">
+      <h3 class="filters-panel-title"><i class="fas fa-filter"></i> {% trans "Filters" %}</h3>
+      <button type="button" class="filters-toggle" data-action="toggle-filters"><i class="fas fa-chevron-down"></i></button>
+    </div>
+    <div class="filters-panel-fields" id="filters-panel-fields">
+      <div class="filter-field">
+        <label for="filter-search"><i class="fas fa-search"></i> {% trans "Search" %}</label>
+        <input type="text" id="filter-search" placeholder="{% trans 'Journey name...' %}">
+      </div>
+      <div class="filter-field">
+        <label for="filter-status"><i class="fas fa-flag"></i> {% trans "Status" %}</label>
+        <select id="filter-status">
+          <option value="">{% trans "All statuses" %}</option>
+          {% for value, label in status_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="filter-trigger_event"><i class="fas fa-bolt"></i> {% trans "Trigger" %}</label>
+        <select id="filter-trigger_event">
+          <option value="">{% trans "All triggers" %}</option>
+          {% for value, label in trigger_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="filters-panel-footer">
+      <div class="active-filters" id="active-filters"></div>
+      <div class="filters-panel-actions">
+        <button type="button" class="button" data-action="apply-filters"><i class="fas fa-check"></i> {% trans "Apply" %}</button>
+        <button type="button" class="button secondary" data-action="clear-filters"><i class="fas fa-times"></i> {% trans "Clear" %}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <h2>{% trans "Journeys" %}</h2>
+    <span class="results-count" id="results-count-info"><i class="fas fa-diagram-project"></i> <span id="results-count">{{ total_journeys }}</span> {% trans "entries" %}</span>
+  </div>
+
+  {% include "admin/includes/bulk_actions_open.html" %}
+  <div id="journey-results">
+    <div class="list-row-cards"><div class="list-row-card loading-state"><i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i><p class="m-0">{% trans "Loading journeys..." %}</p></div></div>
+  </div>
+  {% include "admin/includes/bulk_actions_close.html" %}
+
+  <div id="list-filter-config"
+       data-filter-url="{% url 'email_marketing_admin:filter_journeys' %}"
+       data-results-container="journey-results"
+       data-results-count="results-count"
+       data-auto-load="true"
+       class="email-hidden"></div>
+</div>
+{% endblock %}

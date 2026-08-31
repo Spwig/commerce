@@ -1,0 +1,94 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Campaigns" %} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="change-list-header">
+    <div>
+      <h1><i class="fas fa-paper-plane"></i> {% trans "Campaigns" %}</h1>
+      <p class="subtitle">{% trans "Broadcasts and recurring sends" %}</p>
+    </div>
+    <div class="change-list-header-actions">
+      <a class="button" href="{% url 'email_marketing_admin:campaign_wizard' %}">
+        <i class="fas fa-plus"></i> {% trans "New Campaign" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="dashboard-stats-grid">
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-paper-plane"></i></div><div class="value">{{ total_campaigns|default:"0" }}</div><div class="label">{% trans "Total" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-check"></i></div><div class="value">{{ sent_campaigns|default:"0" }}</div><div class="label">{% trans "Sent" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-clock"></i></div><div class="value">{{ scheduled_campaigns|default:"0" }}</div><div class="label">{% trans "Scheduled" %}</div></div>
+      <div class="dashboard-stat-card"><div class="icon"><i class="fas fa-pen"></i></div><div class="value">{{ draft_campaigns|default:"0" }}</div><div class="label">{% trans "Drafts" %}</div></div>
+    </div>
+  </div>
+
+  <div class="filters-panel" id="filters-panel">
+    <div class="filters-panel-header">
+      <h3 class="filters-panel-title"><i class="fas fa-filter"></i> {% trans "Filters" %}</h3>
+      <button type="button" class="filters-toggle" data-action="toggle-filters"><i class="fas fa-chevron-down"></i></button>
+    </div>
+    <div class="filters-panel-fields" id="filters-panel-fields">
+      <div class="filter-field">
+        <label for="filter-search"><i class="fas fa-search"></i> {% trans "Search" %}</label>
+        <input type="text" id="filter-search" placeholder="{% trans 'Name or subject...' %}">
+      </div>
+      <div class="filter-field">
+        <label for="filter-status"><i class="fas fa-flag"></i> {% trans "Status" %}</label>
+        <select id="filter-status">
+          <option value="">{% trans "All statuses" %}</option>
+          {% for value, label in status_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="filter-campaign_type"><i class="fas fa-layer-group"></i> {% trans "Type" %}</label>
+        <select id="filter-campaign_type">
+          <option value="">{% trans "All types" %}</option>
+          {% for value, label in type_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="filter-message_type"><i class="fas fa-tag"></i> {% trans "Consent category" %}</label>
+        <select id="filter-message_type">
+          <option value="">{% trans "All categories" %}</option>
+          {% for value, label in message_type_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="filters-panel-footer">
+      <div class="active-filters" id="active-filters"></div>
+      <div class="filters-panel-actions">
+        <button type="button" class="button" data-action="apply-filters"><i class="fas fa-check"></i> {% trans "Apply" %}</button>
+        <button type="button" class="button secondary" data-action="clear-filters"><i class="fas fa-times"></i> {% trans "Clear" %}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <h2>{% trans "Campaigns" %}</h2>
+    <span class="results-count" id="results-count-info"><i class="fas fa-paper-plane"></i> <span id="results-count">{{ total_campaigns }}</span> {% trans "entries" %}</span>
+  </div>
+
+  {% include "admin/includes/bulk_actions_open.html" %}
+  <div id="campaign-results">
+    <div class="list-row-cards"><div class="list-row-card loading-state"><i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i><p class="m-0">{% trans "Loading campaigns..." %}</p></div></div>
+  </div>
+  {% include "admin/includes/bulk_actions_close.html" %}
+
+  <div id="list-filter-config"
+       data-filter-url="{% url 'email_marketing_admin:filter_campaigns' %}"
+       data-results-container="campaign-results"
+       data-results-count="results-count"
+       data-auto-load="true"
+       class="email-hidden"></div>
+</div>
+{% endblock %}

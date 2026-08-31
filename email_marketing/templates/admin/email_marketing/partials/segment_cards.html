@@ -1,0 +1,41 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+{% if segments %}
+<div class="list-row-cards">
+  {% for seg in segments %}
+  <div class="list-row-card">
+    {% include "admin/includes/action_checkbox.html" with pk=seg.pk %}
+    <div class="list-row-card-icon"><i class="fas fa-filter"></i></div>
+    <div class="list-row-card-content">
+      <h3 class="list-row-card-title">
+        <a href="{% url 'admin:email_marketing_segment_change' seg.pk %}">{{ seg.name }}</a>
+      </h3>
+      <p class="list-row-card-subtitle">{{ seg.get_kind_display }}</p>
+      <div class="list-row-card-badges">
+        {% if seg.is_active %}
+        <span class="list-row-card-badge list-row-card-badge-success"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+        {% else %}
+        <span class="list-row-card-badge"><i class="fas fa-pause-circle"></i> {% trans "Inactive" %}</span>
+        {% endif %}
+        <span class="list-row-card-badge list-row-card-badge-primary">{{ seg.get_kind_display }}</span>
+      </div>
+      <div class="list-row-card-meta">
+        <span class="list-row-card-meta-item"><i class="fas fa-users"></i> {{ seg.cached_count }} {% trans "members" %}</span>
+        {% if seg.last_built_at %}<span class="list-row-card-meta-item"><i class="fas fa-sync"></i> {% trans "Built" %}: {{ seg.last_built_at|date:"M d, Y" }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="list-row-card-actions">
+      <a href="{% url 'admin:email_marketing_segment_change' seg.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}"><i class="fas fa-pen"></i></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+  <div class="list-row-card card-empty-state">
+    <div class="card-empty-state-icon opacity-50"><i class="fas fa-filter"></i></div>
+    <p class="card-empty-state-title">{% trans "No segments found." %}</p>
+    <p class="card-empty-state-subtitle">{% trans "Try adjusting your filters, or create a new segment." %}</p>
+  </div>
+</div>
+{% endif %}

@@ -700,6 +700,12 @@ def _deactivate_site_language(language_code: str):
     from translations.models import SiteLanguage
 
     SiteLanguage.objects.filter(code=language_code).update(is_active=False)
+
+    # Bulk .update() bypasses the SiteLanguage signals, so clear the
+    # language-metadata caches explicitly.
+    from translations.signals import invalidate_site_language_caches
+
+    invalidate_site_language_caches()
     logger.info(f"  SiteLanguage '{language_code}' deactivated")
 
 

@@ -1,0 +1,119 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ campaign.name }} | {% trans "Campaign Studio" %} | Spwig</title>
+  <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+  <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+  <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+  {% for css_file in utility_css_files %}
+  <link rel="stylesheet" href="{% static css_file %}">
+  {% endfor %}
+  <link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+  <link rel="stylesheet" href="{% static 'email_marketing/css/builder.css' %}">
+</head>
+<body class="em-builder-body" data-theme="{{ admin_theme|default:'light' }}">
+
+  <form id="em-csrf" hidden>{% csrf_token %}</form>
+
+
+  <header class="em-toolbar">
+    <a class="button em-back" href="{% url 'admin:email_marketing_campaign_change' campaign.id %}">
+      <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <h1 class="em-toolbar-title">{{ campaign.name }}</h1>
+    <div class="em-toolbar-actions">
+      <span class="em-save-status" id="em-save-status"></span>
+      {% if campaign.ab_test %}
+      <a class="button" href="{% url 'email_marketing_admin:ab_test_detail' campaign.ab_test.id %}">
+        <i class="fas fa-flask-vial"></i> {% trans "A/B test" %}
+      </a>
+      {% elif campaign.ab_variant %}
+      {# This campaign is an A/B variant — its test lives on the parent container. #}
+      <a class="button" href="{% url 'email_marketing_admin:ab_test_detail' campaign.ab_variant.ab_test.id %}">
+        <i class="fas fa-flask-vial"></i> {% trans "Back to A/B test" %}
+      </a>
+      {% else %}
+      <a class="button" href="{% url 'email_marketing_admin:ab_test_setup' campaign.id %}">
+        <i class="fas fa-flask-vial"></i> {% trans "A/B test" %}
+      </a>
+      {% endif %}
+      <button type="button" class="button" data-action="preview">
+        <i class="fas fa-eye"></i> {% trans "Preview" %}
+      </button>
+      <button type="button" class="button" data-action="save">
+        <i class="fas fa-floppy-disk"></i> {% trans "Save" %}
+      </button>
+    </div>
+  </header>
+
+  <div class="em-builder">
+
+    <aside class="em-palette" aria-label="{% trans 'Blocks' %}">
+      {% for group in palette %}
+        <div class="em-palette-group">
+          <h2 class="em-palette-heading">{{ group.label }}</h2>
+          <div class="em-palette-items">
+            {% for block in group.blocks %}
+              <button type="button" class="em-palette-item" draggable="true"
+                      data-block-type="{{ block.block_type }}" title="{{ block.description }}">
+                <i class="{{ block.icon }}"></i>
+                <span>{{ block.name }}</span>
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </aside>
+
+    <main class="em-canvas-wrap">
+      <div class="em-canvas-frame">
+        <!-- builder.js attaches a Shadow DOM here and builds the canvas inside,
+             loading the shop's theme CSS so blocks render with real branding. -->
+        <div class="em-canvas" id="em-canvas"></div>
+      </div>
+    </main>
+
+    <aside class="em-props" id="em-props" aria-label="{% trans 'Properties' %}">
+      <div class="em-props-empty" id="em-props-empty">
+        <i class="fas fa-sliders"></i>
+        <p>{% trans "Select a block to edit it." %}</p>
+      </div>
+      <div class="em-props-form" id="em-props-form" hidden></div>
+    </aside>
+
+  </div>
+
+  <!-- Preview modal (reuses the shared admin-modal component styles) -->
+  <div class="admin-modal-overlay" id="em-preview-overlay" role="dialog" aria-modal="true" aria-label="{% trans 'Email preview' %}">
+    <div class="admin-modal admin-modal--lg">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title"><i class="fas fa-eye"></i> {% trans "Preview" %}</h2>
+        <button type="button" class="admin-modal-close" data-action="close-preview" aria-label="{% trans 'Close' %}">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="em-preview-frame"><div id="em-preview-host"></div></div>
+      </div>
+    </div>
+  </div>
+
+  {{ blocks_data|json_script:"em-blocks-data" }}
+  {{ schemas_data|json_script:"em-schemas-data" }}
+  {{ theme_tokens_data|json_script:"em-theme-tokens" }}
+  {{ merge_fields_data|json_script:"em-merge-fields" }}
+  {{ builder_assets|json_script:"em-assets" }}
+  {{ builder_config|json_script:"em-config" }}
+
+  <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+  {% for js_file in utility_js_files %}
+  <script src="{% static js_file %}"></script>
+  {% endfor %}
+  <!-- Global media-library modal — provides window.selectImageFromLibrary for the image picker. -->
+  <script src="{% static 'media_library/js/media-library.js' %}"></script>
+  <script src="{% static 'email_marketing/js/builder.js' %}" defer></script>
+</body>
+</html>

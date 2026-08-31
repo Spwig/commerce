@@ -1,391 +1,371 @@
 ---
-title: Kommunikationspräferenzen
+title: Kommunikationseinstellungen
 ---
 
-Kommunikationspräferenzen ermöglichen es Kunden, zu bestimmen, welche E-Mails und SMS-Nachrichten sie von Ihrem Geschäft erhalten möchten. Dieses System stellt die Einhaltung der DSGVO sicher und hilft Ihnen dabei, die Kommunikationspräferenzen der Kunden über alle Kanäle hinweg zu respektieren.
+Mit den Kommunikationseinstellungen können Kunden steuern, welche E-Mails und SMS-Nachrichten sie von Ihrem Shop erhalten. Dieses System stellt die DSGVO-Konformität sicher und hilft Ihnen, die Kommunikationspräferenzen der Kunden über alle Kanäle hinweg zu respektieren.
 
-Navigieren Sie zu **Kunden > Kommunikationspräferenzen** in der Seitenleiste des Admin-Bereichs, um die Kommunikationspräferenzen der Kunden zu verwalten.
+Navigieren Sie in der Admin-Leiste zu **Kunden > Kommunikationseinstellungen**, um die Kommunikationspräferenzen der Kunden zu verwalten.
 
-## Kommunikationspräferenzen verstehen
+## Verständnis der Kommunikationseinstellungen
 
-Das Kommunikationspräferenzsystem gibt Kunden die feine Kontrolle über die Nachrichten, die sie erhalten. Dazu gehören:
+Das System für Kommunikationseinstellungen gibt Kunden eine detaillierte Kontrolle über die empfangenen Nachrichten. Dies umfasst:
 
-- **Transaktionale E-Mails** — Wichtige Bestätigungen, Versandupdates, Sicherheits-E-Mails für Konten (immer aktiviert)
-- **Marketing-E-Mails** — Newslettern, Promotionen, Produktvorschläge (erfordert Einwilligung)
-- **App-spezifische Benachrichtigungen** — Blogbeiträge, Treuepunkte, Empfehlungsbelohnungen, Affiliate-Kommissionen
-- **SMS-Benachrichtigungen** — Textnachrichten (erfordert explizite Einwilligung gemäß TCPA)
+- **Transaktionale E-Mails** — Wesentliche Bestellbestätigungen, Versandupdates, Kontosicherheits-E-Mails (immer aktiviert)
+- **Marketing-E-Mails** — Newsletter, Aktionen, Produktempfehlungen (erfordert Opt-in)
+- **App-spezifische Benachrichtigungen** — Blogbeiträge, Treuepunkte, Empfehlungsprämien, Affiliate-Provisionen
+- **SMS-Benachrichtigungen** — Textnachrichten-Benachrichtigungen (erfordert explizites Opt-in gemäß TCPA)
 
-Alle Marketingkommunikation erfordert die Einwilligung des Kunden und eine E-Mail-Bestätigung, um die Einhaltung der DSGVO sicherzustellen.
+Alle Marketing-Kommunikationen erfordern die Zustimmung des Kunden und die E-Mail-Verifizierung, um die DSGVO-Konformität sicherzustellen.
 
 ## Erklärung der Präferenztypen
 
-### Transaktionale Kommunikation (immer aktiviert)
+### Transaktionale Kommunikation (Immer aktiviert)
 
-Transaktionale Nachrichten sind für das Kundenkonto und Bestellungen unerlässlich. Diese **können nicht von Kunden deaktiviert werden**:
+Transaktionale Nachrichten sind für das Konto und die Bestellungen Ihrer Kunden unerlässlich. Diese **können von Kunden nicht deaktiviert** werden:
 
 | Typ | Beschreibung | Beispiele |
 |------|-------------|----------|
-| **Bestätigungen für Bestellungen** | Bestätigung, wenn eine Bestellung aufgegeben wird | Bestellung #12345 wurde empfangen |
-| **Versandupdates** | Benachrichtigungen, wenn sich der Bestellstatus ändert | Ihre Bestellung wurde versandt |
-| **Zahlungsbestätigungen** | Zahlung erhalten, Rückerstattung verarbeitet | Zahlung von $49,99 bestätigt |
-| **Konten-Sicherheit** | Passwort-Reset, E-Mail-Bestätigung | Passwort zurücksetzen |
+| **Bestellbestätigungen** | Bestätigung, wenn eine Bestellung aufgegeben wird | Bestellung #12345 wurde erhalten |
+| **Versandupdates** | Benachrichtigungen bei Änderung des Bestellstatus | Ihre Bestellung wurde versendet |
+| **Zahlungsbestätigungen** | Zahlung erhalten, Rückerstattung bearbeitet | Zahlung von 49,99 $ bestätigt |
+| **Kontosicherheit** | Passwort-Reset, E-Mail-Verifizierung | Setzen Sie Ihr Passwort zurück |
 
-### Marketingkommunikation (erforderliche Einwilligung)
+### Marketing-Kommunikation (Opt-in erforderlich)
 
-Marketingnachrichten erfordern die Einwilligung des Kunden und eine E-Mail-Bestätigung:
+Marketing-Nachrichten erfordern die Zustimmung des Kunden und die E-Mail-Verifizierung:
 
 | Typ | Beschreibung | Standard |
 |------|-------------|---------|
-| **Newsletter** | Allgemeine Newsletter und Updates | Abmeldung |
-| **Promotionale Angebote** | Verkaufsangebote, Rabatte, Sonderangebote | Abmeldung |
-| **Produktvorschläge** | Personalisierte Produktvorschläge | Abmeldung |
-| **Wieder auf Lager** | Benachrichtigungen, wenn Produkte zurückkehren | Abmeldung |
+| **Newsletter** | Allgemeine Newsletter und Updates | Opt-out |
+| **Aktionen** | Sales, Rabatte, Sonderangebote | Opt-out |
+| **Produktempfehlungen** | Personalisierte Produktempfehlungen | Opt-out |
+| **Wieder verfügbar** | Benachrichtigungen, wenn Produkte wieder verfügbar sind | Opt-out |
 
-Kunden müssen ihre **E-Mail-Adresse bestätigen**, bevor sie Marketing-E-Mails erhalten (DSGVO-Doppelbestätigung erforderlich).
+Kunden müssen ihre **E-Mail-Adresse verifizieren**, bevor sie Marketing-E-Mails erhalten (DSGVO-Doppel-Opt-in-Anforderung).
 
-### App-spezifische Präferenzen
+### App-spezifische Einstellungen
 
-Kunden können Benachrichtigungen von bestimmten Features steuern:
+Kunden können Benachrichtigungen von bestimmten Funktionen steuern:
 
 **Blog-Benachrichtigungen**
-- Neuer Blogbeitrag veröffentlicht (sofortig, wöchentliche Zusammenfassung oder monatliche Zusammenfassung)
-- Abonnements für spezifische Kategorien
-- Frequenzpräferenzen
+- Neuer Blogbeitrag veröffentlicht (sofort, wöchentliches Digest oder monatliches Digest)
+- Kategorie-spezifische Abonnements
+- Frequenzeinstellungen
 
 **Treueprogramm**
 - Benachrichtigungen über erhaltene Punkte
-- Stufenaufstiege
+- Stufen-Upgrades
 - Freigeschaltete Belohnungen
 - Bald ablaufende Punkte
 - Geburtstagsboni
 - Kampagnenangebote
 
 **Empfehlungsprogramm**
-- Belohnung ausgestellt (für Empfehler und Empfänger)
+- Ausgegebene Belohnung (Empfehler und Empfohlener)
 - Erfolgreiche Registrierung durch Empfehlung
 - Bald ablaufende Belohnung
-- Empfehlungsaufforderungen
+- Empfehlungs-Einladungen
 
 **Affiliate-Programm**
-- Erhaltene Provisionen
-- Genehmigte oder abgelehnte Provisionen
-- Verarbeitete, abgeschlossene oder fehlgeschlagene Auszahlung
+- Erzielte Provision
+- Freigegebene oder abgelehnte Provision
+- Auszahlung bearbeitet, abgeschlossen oder fehlgeschlagen
 - Monatliche Leistungsberichte
 
-### SMS-Benachrichtigungen (explizite Einwilligung erforderlich)
+### SMS-Benachrichtigungen (Explizites Opt-in erforderlich)
 
-Alle SMS-Benachrichtigungen erfordern **explizite Einwilligung** gemäß TCPA-Regelungen. Kunden müssen aktiv das SMS-Einwilligungsfeld ankreuzen:
+Alle SMS-Benachrichtigungen erfordern ein **explizites Opt-in** gemäß den TCPA-Regelungen. Kunden müssen das SMS-Opt-in-Kästchen aktiv ankreuzen:
 
-- **Transaktionale SMS** — Bestellung versandt, geliefert (Einwilligung erforderlich)
-- **Marketing-SMS** — Promotionen, Sonderangebote (separate Einwilligung erforderlich)
+- **Transaktionale SMS** — Bestellung versendet, zugestellt (Opt-in erforderlich)
+- **Marketing-SMS** — Aktionen, Sonderangebote (separates Opt-in erforderlich)
 
-Auch transaktionale SMS erfordert Einwilligung, da das Versenden unerwünschter Textnachrichten strenger reguliert ist als E-Mails.
+Selbst transaktionale SMS erfordern ein Opt-in, da der Versand ungewollter Textnachrichten strenger reguliert ist als der Versand von E-Mails.
 
-## Verwalten von Kundenpräferenzen im Admin-Bereich
+## Verwaltung der Kundeneinstellungen im Adminbereich
 
-### Alle Präferenzen ansehen
+### Alle Einstellungen anzeigen
 
-Navigieren Sie zu **Kunden > Kommunikationspräferenzen**, um alle Kundenpräferenzen anzuzeigen:
+Navigieren Sie zu **Kunden > Kommunikationseinstellungen**, um alle Kundeneinstellungen anzuzeigen:
 
-| Spalte | Beschreibung |
-|--------|-------------|
-| **E-Mail-Adresse des Benutzers** | E-Mail-Adresse des Kunden (Link zum Benutzer-Admin) |
-| **E-Mail-Status** | Grün ✓, wenn E-Mails aktiviert sind, Grau ○, wenn deaktiviert |
-| **SMS-Status** | Grün ✓, wenn SMS aktiviert sind, Grau ○, wenn deaktiviert |
-| **Marketing-Status** | Abzeichen "Opted In" oder "Opted Out" |
-| **Bestätigungsstatus** | 📧✓, wenn E-Mail bestätigt ist, 📱✓, wenn SMS bestätigt ist |
-| **Einwilligungsquelle** | Wo der Kunde seine Einwilligung erteilt hat (Registrierung, Checkout, Präferenzcenter) |
-| **Aktualisiert am** | Letzter Zeitpunkt, zu dem die Präferenzen geändert wurden |
-
-### Präferenzen filtern
-
-Verwenden Sie die Filterseitenleiste, um Kunden zu finden:
-
-- **E-Mail aktiviert** — Ja/Nein
-- **SMS aktiviert** — Ja/Nein
-- **E-Mail-Marketing** — Ja/Nein (für Marketing eingerichtet)
-- **SMS-Marketing** — Ja/Nein (für SMS-Marketing eingerichtet)
-- **E-Mail bestätigt** — Ja/Nein (E-Mail-Adresse bestätigt)
-- **SMS bestätigt** — Ja/Nein (Telefonnummer bestätigt)
-- **Einwilligungsquelle** — Registrierung, Checkout, Präferenzcenter, API, Migration
-- **Sprachcode** — bevorzugte Sprache für Kommunikation
-
-### Präferenzen durchsuchen
-
-Suchen Sie nach Kunden anhand von:
-- E-Mail-Adresse des Benutzers
-- Benutzername
-- Vorname
-- Nachname
-- Abmelde-Token
-
-### Massenaktionen
-
-Wählen Sie mehrere Kunden aus und wenden Sie Massenaktionen an:
-
-**✓ E-Mail als bestätigt markieren**
-- Bestätige manuell die E-Mail-Adressen der Kunden
-- Nützlich, wenn Kunden aus einem anderen System importiert werden
-- Überprüft den Präferenz-Cache, um Änderungen sofort anzuwenden
-
-**🚫 Von allen Marketing-Präferenzen abmelden**
-- Deaktiviert alle Marketingkommunikation (E-Mail, SMS, alle Apps)
-- Behält transaktionale E-Mails aktiviert
-- Verwenden Sie dies für Kunden, die sich vollständig abmelden möchten
-- Respektiert das DSGVO-Recht auf Widerruf der Einwilligung
-
-**📥 Präferenzen als CSV exportieren**
-- Exportieren Sie Kundenpräferenzen in eine Tabellenkalkulation
-- Enthält alle Präferenzfelder und App-spezifische Einstellungen
-- Nützlich für Compliance-Prüfungen und Analysen
-- Format: CSV mit Überschriften
-
-## Kunden-Selbstbedienungs-Präferenzcenter
-
-Kunden können ihre eigenen Präferenzen bei `/accounts/preferences/` verwalten, wenn sie angemeldet sind.
-
-### Merkmale des Präferenzcenters
-
-**Schnelle Aktionen**
-- **Alle Marketing-E-Mails abonnieren** — Aktiviert alle Marketingkommunikation mit einem Klick
-- **Von allem abmelden** — Deaktiviert alle Marketingkommunikation (transaktionale E-Mails bleiben aktiviert)
-
-**Präferenzkarten**
-- **Transaktionale E-Mails** — Nur Lesen (immer aktiviert, als "Erforderlich" markiert)
-- **Marketingkommunikation** — Ein/Aus-Schalter mit Bestätigungsabzeichen
-- **Blog-Präferenzen** — Aktivieren/Deaktivieren, Frequenz auswählen (sofortig, wöchentlich, monatlich)
-- **Treueprogramm** — Individuelle Benachrichtigungen aktivieren/deaktivieren
-- **Empfehlungsprogramm** — Belohnungsbenachrichtigungen aktivieren/deaktivieren
-- **Affiliate-Programm** — Provision und Auszahlungsbenachrichtigungen aktivieren/deaktivieren
-- **SMS-Benachrichtigungen** — Ein/Aus für SMS (zeigt Bestätigungsstatus an)
-
-**Echtzeit-Updates**
-- Änderungen werden sofort über AJAX gespeichert
-- Keine Seitenneuladung erforderlich
-- Visuelle Rückmeldung beim Speichern
-
-### E-Mail-Bestätigungsprozess
-
-Wenn ein Kunde Marketing-E-Mails aktiviert:
-
-1. Der Kunde schaltet "Marketing-E-Mails" auf AN
-2. Das System sendet eine Bestätigungs-E-Mail mit einem eindeutigen Link
-3. Der Kunde klickt auf den Bestätigungslink
-4. Die E-Mail wird als bestätigt markiert (das Abzeichen 📧✓ erscheint)
-5. Marketing-E-Mails werden nun gesendet
-
-**Unbestätigte Kunden erhalten KEINE Marketing-E-Mails**, auch wenn der Schalter auf AN steht. Dies stellt die DSGVO-Doppelbestätigung einher ein.
-
-## Ein-Klick-Abmeldung
-
-Alle Marketing-E-Mails enthalten einen Link zur Abmeldung im Fußbereich. Das Klicken auf diesen Link:
-
-1. Leitet den Kunden zu `/accounts/unsubscribe/<token>/` (keine Anmeldung erforderlich)
-2. Zeigt an, von was der Kunde sich abmeldet
-3. Ermöglicht optionalen Rückmeldung (Grund für die Abmeldung)
-4. Deaktiviert Marketingkommunikation
-5. Behält transaktionale E-Mails aktiviert
-6. Bietet einen Link zum vollständigen Präferenzcenter
-
-Kunden können sich jederzeit über das Präferenzcenter erneut anmelden.
-
-## Compliance und rechtliche Vorgaben
-
-### Einhaltung von Artikel 7 der DSGVO
-
-Das System stellt die volle Einhaltung von Artikel 7 der DSGVO sicher:
+{
+  "Table": {
+    "Column": "Spaltenname",
+    "Description": "Beschreibung"
+  },
+  "TableRows": {
+    "User Email": "E-Mail-Adresse des Kunden (verknüpft mit dem Benutzer-Admin)",
+    "Email Status": "Grün ✓, wenn E-Mails aktiviert sind, grau ○, wenn deaktiviert",
+    "SMS Status": "Grün ✓, wenn SMS aktiviert sind, grau ○, wenn deaktiviert",
+    "Marketing Status": "Schild 'Einhellig' oder 'Abgemeldet'",
+    "Verification Status": "📧✓, wenn E-Mail verifiziert, 📱✓, wenn SMS verifiziert",
+    "Consent Source": "Wo der Kunde seine Zustimmung gegeben hat (Registrierung, Checkout, Einstellungen-Bereich)",
+    "Updated At": "Letzte Änderungszeit der Präferenzen"
+  },
+  "Filtering Preferences": {
+    "Title": "Präferenzen filtern",
+    "Description": "Verwenden Sie die Sidebar-Filter, um Kunden zu finden:"
+  },
+  "FilterOptions": {
+    "Email Enabled": "Ja/Nein",
+    "SMS Enabled": "Ja/Nein",
+    "Email Marketing": "Ja/Nein (Marketing-Einwilligung)",
+    "SMS Marketing": "Ja/Nein (Einwilligung für SMS-Marketing)",
+    "Email Verified": "Ja/Nein (E-Mail-Adresse verifiziert)",
+    "SMS Verified": "Ja/Nein (Handynummer verifiziert)",
+    "Consent Source": "Registrierung, Checkout, Einstellungen-Bereich, API, Migration",
+    "Language Code": "Bevorzugte Sprache für Kommunikationen"
+  },
+  "Searching Preferences": {
+    "Title": "Präferenzen suchen",
+    "Description": "Suche nach Kunden anhand von:"
+  },
+  "SearchOptions": {
+    "User email": "Benutzer-E-Mail",
+    "Username": "Benutzername",
+    "First name": "Vorname",
+    "Last name": "Nachname",
+    "Unsubscribe token": "Unsubscribe-Token"
+  },
+  "Bulk Actions": {
+    "Title": "Massenaktionen",
+    "Description": "Wählen Sie mehrere Kunden aus und wenden Sie Massenaktionen an:"
+  },
+  "BulkActionOptions": {
+    "✓ Mark Email as Verified": "E-Mail des Kunden manuell verifizieren\nNützlich, wenn Kunden aus einem anderen System importiert werden\nInvalidiert den Präferenz-Cache, um Änderungen sofort anzuwenden",
+    "🚫 Unsubscribe from All Marketing": "Alle Marketingkommunikationen deaktivieren (E-Mail, SMS, alle Apps)\nBehält Transaktions-E-Mails bei\nVerwenden Sie dies für Kunden, die sich vollständig abmelden möchten\nRespektiert das GDPR-Recht, die Zustimmung zurückzuziehen",
+    "📥 Export Preferences to CSV": "Präferenzen des Kunden in CSV-Datei exportieren\nEnthält alle Präferenzfelder und app-spezifische Einstellungen\nNützlich für Compliance-Prüfungen und Analyse\nFormat: CSV mit Kopfzeile"
+  },
+  "Customer Self-Service Preference Center": {
+    "Title": "Kunden-Selbstbedienungs-Einstellungen-Bereich",
+    "Description": "Kunden können ihre eigenen Einstellungen unter /accounts/preferences/ verwalten, wenn sie angemeldet sind."
+  },
+  "Preference Center Features": {
+    "Title": "Einstellungen-Bereich-Funktionen",
+    "Quick Actions": {
+      "Subscribe to All Marketing": "Alle Marketingkommunikationen in einem Klick aktivieren",
+      "Unsubscribe from All": "Alle Marketingkommunikationen deaktivieren (Transaktions-E-Mails sind weiterhin aktiv)"
+    },
+    "Preference Cards": {
+      "Transactional Emails": "Nur zum Lesen (immer aktiv, als \"Erforderlich\" markiert)",
+      "Marketing Communications": "Ein-/Ausschalten mit Verifizierungs-Schild",
+      "Blog Preferences": "Ein-/Ausschalten, Frequenz auswählen (sofort, wöchentlich, monatlich)",
+      "Loyalty Program": "Ein-/Ausschalten einzelner Benachrichtigungstypen",
+      "Referral Program": "Ein-/Ausschalten Belohnungs-Benachrichtigungen",
+      "Affiliate Program": "Ein-/Ausschalten Kommission- und Auszahlungs-Benachrichtigungen",
+      "SMS Notifications": "Ein-/Ausschalten von SMS (zeigt Verifizierungsstatus an)"
+    },
+    "Real-Time Updates": {
+      "Description": "Änderungen werden per AJAX sofort gespeichert\nKein Seiten-Reload erforderlich\nVisuelle Rückmeldung beim Speichern"
+    }
+  },
+  "Email Verification Process": {
+    "Title": "E-Mail-Verifizierungsprozess",
+    "Description": "Wenn ein Kunde Marketing-E-Mails aktiviert:\n\n1. Kunde schaltet \"Marketing-E-Mails\" auf AN\n2. System sendet Verifizierungsemail mit eindeutigem Link\n3. Kunde klickt auf Verifizierungslin\n4. E-Mail wird als verifiziert markiert (Schild 📧✓ wird angezeigt)\n5. Marketing-E-Mails werden nun gesendet\n\n\nNicht verifizierte Kunden erhalten keine Marketing-E-Mails, auch wenn der Schalter auf AN steht. Dies stellt die Einhaltung der Doppel-Opt-in-Vorschriften der GDPR sicher."
+  },
+  "One-Click Unsubscribe": {
+    "Title": "Einfache Abmeldung",
+    "Description": "Alle Marketing-E-Mails enthalten einen Abmeldelink in der Fußzeile. Klicken Sie auf diesen Link:\n\n1. Leitet den Kunden zu /accounts/unsubscribe/<token>/ (keine Anmeldung erforderlich)\n2. Zeigt an, was sie abgemeldet haben\n3. Erlaubt optionale Rückmeldung (Grund für die Abmeldung)\n4. Deaktiviert Marketingkommunikation\n5. Behält Transaktions-E-Mails bei\n6. Bietet Link zu vollständigem Einstellungen-Bereich\n\nKunden können jederzeit erneut abonnieren, über den Einstellungen-Bereich."
+  },
+  "Compliance & Legal Requirements": {
+    "Title": "Einhaltung und rechtliche Anforderungen",
+    "GDPR Article 7 Compliance": {
+      "Description": "Das System stellt die Einhaltung der GDPR Artikel 7 sicher:\n\nPreserve all markdown formatting, image paths, code blocks, and technical terms."
+    }
+  }
+}
 
 **✅ Nachweis der Einwilligung**
-- Zeitstempel, zu dem die Einwilligung erteilt wurde
-- Quelle der Einwilligung (Registrierung, Checkout, Präferenzcenter)
+- Zeitstempel, wann die Einwilligung erteilt wurde
+- Quelle der Einwilligung (Registrierung, Kasse, Präferenzcenter)
 - IP-Adresse der Einwilligung
-- User-Agent (Browserinformationen)
+- User-Agent (Browser-Informationen)
 
-**✅ Separate Einwilligung**
-- Marketing- und transaktionale E-Mails sind separate Schalter
-- Jede App (Blog, Treueprogramm usw.) erfordert individuelle Einwilligung
+**✅ Getrennte Einwilligung**
+- Marketing- und Transaktions-E-Mails sind separate Umschalter
+- Jede App (Blog, Loyalität usw.) erfordert eine individuelle Einwilligung
 
-**✅ Einfacher Widerruf**
-- Ein-Klick-Abmeldung in allen Marketing-E-Mails
-- Präferenzcenter ist für alle angemeldeten Kunden verfügbar
-- Die Abmeldung wirkt sofort
+**✅ Einfache Widerrufung**
+- Abmeldung mit einem Klick in allen Marketing-E-Mails
+- Präferenzcenter für alle angemeldeten Kunden verfügbar
+- Abmeldung wird sofort wirksam
 
-**✅ Freiwillige Einwilligung**
-- Standard ist Abmeldung für Marketing (DSGVO-Best Practice)
-- Keine vorab markierten Felder (Kunden müssen aktiv einwilligen)
+**✅ Freiwillig erteilte Einwilligung**
+- Standard ist Opt-Out für Marketing (GDPR-Best-Practice)
+- Keine vorausgewählten Kästchen (Kunden müssen aktiv opt-in)
 
-**✅ Spezifische und informierte Einwilligung**
-- Klare Beschreibungen dafür, was jede Präferenz steuert
-- Feine Einstellungen auf App-Ebene (nicht alles oder nichts)
+**✅ Bestimmte und informierte Einwilligung**
+- Klare Beschreibungen, was jede Präferenz steuert
+- Granulare App-Ebene Präferenzen (nicht alles-oder-nichts)
 
-**✅ Verifizierbare Einwilligung**
-- Doppelbestätigung für Marketing-E-Mails
-- Audit-Trail über den EmailOutbox-Statusverfolgung
+**✅ Überprüfbare Einwilligung**
+- Double Opt-In für Marketing-E-Mails
+- Audit-Trail über die Statusverfolgung von EmailOutbox
 
-### Einhaltung der TCPA-Vorschriften (US-amerikanische SMS-Regelungen)
+### TCPA-Konformität (US-SMS-Regelungen)
 
-Alle SMS-Benachrichtigungen erfordern **explizite Einwilligung**:
+Alle SMS-Benachrichtigungen erfordern eine **explizite Opt-In-Einwilligung**:
 
-- Kunden müssen aktiv das SMS-Einwilligungsfeld ankreuzen
-- Keine vorab markierten Felder erlaubt
-- Klare Beschreibung dafür, was sie einwilligen
-- Einfache Abmeldung über das Präferenzcenter
-- Alle SMS-Versand werden für die Einhaltungsprüfung protokolliert
+- Kunden müssen das SMS-Opt-In-Kästchen aktiv ankreuzen
+- Vorausgewählte Kästchen sind nicht erlaubt
+- Klare Beschreibung, worauf sie sich einlassen
+- Einfache Opt-Out-Möglichkeit über das Präferenzcenter
+- Alle SMS-Versende werden für Compliance-Audits protokolliert
 
-### Einhaltung der CAN-SPAM-Vorschriften (US-amerikanische E-Mail-Regelungen)
+### CAN-SPAM-Konformität (US-E-Mail-Regelungen)
 
-Das System stellt die Einhaltung von CAN-SPAM sicher:
+Das System stellt die CAN-SPAM-Konformität sicher:
 
-- Abmelde-Link in jeder Marketing-E-Mail
-- Abmeldung wird sofort verarbeitet (innerhalb von 10 Geschäftstagen erforderlich, wir tun es sofort)
-- Klare "Von"-Name (Ihr Shop-Name)
-- Physische Adresse im E-Mail-Fußbereich
-- Keine täuschenden Betreffzeilen
+- Abmeldelink in jeder Marketing-E-Mail
+- Abmeldung wird sofort verarbeitet (innerhalb von 10 Arbeitstagen erforderlich, wir machen es sofort)
+- Klare "Von"-Bezeichnung (Ihr Shopname)
+- Physische Adresse im E-Mail-Fußzeile
+- Keine irreführenden Betreffzeilen
 
-## Verständnis des E-Mail-Status in EmailOutbox
+## Verständnis der E-Mail-Status in EmailOutbox
 
-Wenn Sie **E-Mail-System > E-Mail-Abgang** ansehen, sehen Sie, wie Präferenzen den E-Mail-Versand beeinflussen:
+Wenn Sie **E-Mail-System > E-Mail-Outbox** anzeigen, sehen Sie, wie Präferenzen die E-Mail-Zustellung beeinflussen:
 
 | Status | Bedeutung | Grund |
-|--------|---------|--------|
-| **Ausstehend** | E-Mail in der Warteschlange für den Versand | Präferenzen erlauben diesen E-Mail-Versand |
-| **In Warteschlange** | In der Versandwarteschlange | Präferenzen erlauben diesen E-Mail-Versand |
-| **Übersprungen** | E-Mail nicht gesendet | Kundenpräferenzen deaktiviert |
-| **Gesendet** | Erfolgreich zugestellt | E-Mail wurde normal gesendet |
+|--------|-----------|-------|
+| **Ausstehend** | E-Mail in der Warteschlange zum Versand | Präferenzen erlauben diese E-Mail |
+| **In Warteschlange** | In der Versand-Warteschlange | Präferenzen erlauben diese E-Mail |
+| **Übersprungen** | E-Mail nicht gesendet | Kundenpräferenz deaktiviert |
+| **Gesendet** | Erfolgreich zugestellt | E-Mail normal gesendet |
 
-Wenn eine E-Mail **übersprungen** wird, zeigt das Feld `skip_reason` an, warum:
+Wenn eine E-Mail **übersprungen** wird, zeigt das Feld `skip_reason` den Grund an:
 
-- **user_preference_disabled** — Der Kunde hat diesen E-Mail-Typ in den Präferenzen deaktiviert
-- **email_not_verified** — Der Kunde hat seine E-Mail-Adresse noch nicht bestätigt
-- **email_disabled** — Der Kunde hat alle E-Mails deaktiviert (Master-Schalter)
+- **user_preference_disabled** — Kunde hat diesen E-Mail-Typ in den Präferenzen deaktiviert
+- **email_not_verified** — Kunde hat seine E-Mail-Adresse nicht verifiziert
+- **email_disabled** — Kunde hat alle E-Mails deaktiviert (Hauptumschalter)
 
-Dieser Audit-Trail ist wichtig für die DSGVO-Einhaltung — Sie können beweisen, dass Sie die Präferenzen der Kunden beachtet haben.
+Dieser Audit-Trail ist wichtig für die GDPR-Konformität — Sie können nachweisen, dass Sie die Kundenpräferenzen respektiert haben.
 
-## Einstellungen für Präferenzen auf der Website
+## Seiteneinstellungen für Präferenzen
 
-Navigieren Sie zu **Einstellungen > Website-Einstellungen**, um globale Präferenzstandardwerte zu konfigurieren:
+Navigieren Sie zu **Einstellungen > Seiteneinstellungen**, um globale Standardpräferenzen zu konfigurieren:
 
-**Doppelbestätigung für Marketing-E-Mails aktivieren** (Standard: Ja)
-- Erfordert E-Mail-Bestätigung vor dem Versand von Marketing-E-Mails
-- DSGVO-Best Practice
-- Empfohlen: Lassen Sie dies aktiviert
+**Double Opt-In für Marketing-E-Mails aktivieren** (Standard: Ja)
+- Erfordert E-Mail-Verifizierung vor dem Versand von Marketing-E-Mails
+- GDPR-Best-Practice
+- Empfehlung: Aktiviert lassen
 
-**Standardzustand für Marketing-Einwilligung** (Standard: Nein - Abmeldung)
+**Standard-Marketing-Opt-In-Zustand** (Standard: Nein - Opt-Out)
 - Standardzustand, wenn neue Kunden sich registrieren
-- DSGVO erfordert Abmeldung als Standard
-- Empfohlen: Lassen Sie dies als Abmeldung (Falsch) bestehen
+- GDPR erfordert standardmäßig Opt-Out
+- Empfehlung: Als Opt-Out (False) belassen
 
-**Präferenzcenter aktivieren** (Standard: Ja)
-- Ermöglicht Kunden, ihre eigenen Präferenzen zu verwalten
-- Erforderlich für das DSGVO-Recht auf Widerruf der Einwilligung
-- Empfohlen: Lassen Sie dies aktiviert
+**Präferenzcenter aktiviert** (Standard: Ja)
+- Ermöglicht es Kunden, ihre eigenen Präferenzen zu verwalten
+- Erforderlich für das GDPR-Recht auf Widerruf der Einwilligung
+- Empfehlung: Aktiviert lassen
 
-**SMS-Bestätigung erforderlich** (Standard: Nein)
-- Erfordert Bestätigung der Telefonnummer für SMS-Benachrichtigungen
-- Optional, aber empfohlen für Anbieter mit hohem SMS-Volumen
-- Kann aktiviert werden, wenn Sie eine Doppelbestätigung für SMS wünschen
+**SMS-Verifizierung erforderlich** (Standard: Nein)
+- Erfordert die Verifizierung der Telefonnummer für SMS-Benachrichtigungen
+- Optional, aber für Hochvolumen-SMS-Versender empfohlen
+- Kann aktiviert werden, wenn Sie Double Opt-In für SMS wünschen
 
-**Gründe für Abmeldung anzeigen** (Standard: Ja)
-- Sammelt optionalen Feedback, wenn Kunden sich abmelden
-- Hilft dabei, zu verstehen, warum Kunden sich abmelden
-- Empfohlen: Lassen Sie dies aktiviert, um Erkenntnisse zu gewinnen
+**Abmeldegründe anzeigen** (Standard: Ja)
+- Sammelt optionales Feedback, wenn Kunden sich abmelden
+- Hilft zu verstehen, warum Kunden sich abmelden
+- Empfehlung: Aktiviert lassen für Einblicke
 
 ## Best Practices
 
-### 1. Standardmäßig auf Abmeldung für Marketing setzen
+### 1. Standardmäßig Opt-Out für Marketing
 
-Setzen Sie Marketingkommunikation immer auf **Abmeldung** (nicht aktiviert):
-- Einhaltung der DSGVO
-- Baut Vertrauen mit Kunden auf
-- Reduziert Beschwerden über Spam
+Setzen Sie Marketing-Kommunikation immer standardmäßig auf **Opt-Out** (nicht angekreuzt):
+- Erfüllt die GDPR
+- Baut Vertrauen bei Kunden auf
+- Reduziert Spam-Beschwerden
 - Senden Sie nur an engagierte Kunden
 
-### 2. E-Mail-Bestätigung erforderlich
+### 2. E-Mail-Verifizierung erforderlich
 
-Behalten Sie **Doppelbestätigung** aktiviert:
+Halten Sie **Double Opt-In** aktiviert:
 - Stellt sicher, dass E-Mail-Adressen gültig sind
-- Bestätigt, dass der Kunde tatsächlich Marketing-E-Mails erhalten möchte
-- Reduziert den Rücklauf
-- Erforderlich für die Einhaltung der DSGVO
+- Bestätigt, dass der Kunde tatsächlich Marketing-E-Mails möchte
+- Reduziert die Bounce-Rate
+- Erforderlich für die GDPR-Konformität
 
-### 3. Präferenzen sofort beachten
+### 3. Präferenzen sofort respektieren
 
-Wenn ein Kunde Präferenzen ändert:
-- Änderungen wirken sofort
-- Präferenz-Cache wird ungültig
-- Als nächstes werden die aktualisierten Präferenzen überprüft
-- Keine Verzögerung bei der Einhaltung von Abmeldungen
+Bewahren Sie alle Markdown-Formatierungen, Bildpfade, Codeblöcke und technischen Begriffe bei.
 
-### 4. Übersprungene E-Mails überwachen
+Wenn ein Kunde seine Einstellungen ändert:
+- Änderungen werden sofort wirksam
+- Der Einstellungscache wird ungültig gemacht
+- Beim nächsten E-Mail-Versand werden die aktualisierten Einstellungen überprüft
+- Keine Verzögerung bei der Berücksichtigung von Abmeldewünschen
 
-Überprüfen Sie regelmäßig den **E-Mail-Abgang**, um übersprungene E-Mails zu finden:
-- Hoher Übersprungswert deutet darauf hin, dass Kunden sich abmelden
-- Vielleicht signalisiert es, dass der Inhalt der E-Mails verbessert werden muss
-- Hilft bei der Identifizierung von Präferenzproblemen
+### 4. Überwachte übersprungene E-Mails
 
-### 5. Regelmäßige Compliance-Prüfungen
+Prüfen Sie regelmäßig den **E-Mail-Versand** auf übersprungene E-Mails:
+- Eine hohe Überspringrate deutet darauf hin, dass sich Kunden abmelden
+- Kann ein Hinweis darauf sein, dass der E-Mail-Inhalt verbessert werden muss
+- Hilft bei der Identifizierung von Einstellungskonflikten
 
-Exportieren Sie Präferenzen regelmäßig für die Einhaltung:
-1. Navigieren Sie zu **Kommunikationspräferenzen**
+### 5. Regelmäßige Compliance-Audits
+
+Exportieren Sie Einstellungen regelmäßig zu Compliance-Zwecken:
+1. Navigieren Sie zu **Kommunikationseinstellungen**
 2. Wählen Sie alle Kunden aus
-3. Wählen Sie **Präferenzen als CSV exportieren** aus
-4. Speichern Sie es für den DSGVO-Audit-Trail
+3. Wählen Sie **Einstellungen als CSV exportieren**
+4. Speichern Sie für die DSGVO-Audit-Trail
 
-Speichern Sie die Exporte **mindestens 3 Jahre** lang, um die DSGVO-Datenspeicherungsvorgaben zu erfüllen.
+Bewahren Sie Exporte **mindestens 3 Jahre** auf, um die DSGVO-Datenaufbewahrungsvorgaben einzuhalten.
 
 ### 6. Klare Kommunikation
 
-Bei der Erfassung der Einwilligung:
-- Verwenden Sie klare Sprache, nicht rechtliche Fachbegriffe
-- Erklären Sie, was Kunden erhalten werden
+Bei der Einholung der Einwilligung:
+- Verwenden Sie einfache Sprache, keine juristische Fachsprache
+- Erklären Sie, was die Kunden erhalten werden
 - Zeigen Sie die Frequenz an (täglich, wöchentlich, monatlich)
-- Machen Sie die Einwilligungsfelder sichtbar, aber nicht vorausgewählt
+- Machen Sie die Opt-in-Boxen prominent, aber nicht vorausgewählt
 
-### 7. Segmentierung nach Präferenzen
+### 7. Segmentierung nach Einstellungen
 
-Bei der Sendung von Marketingkampagnen:
-- Senden Sie nur an bestätigte, eingerichtete Kunden
-- Respektieren Sie App-spezifische Präferenzen (senden Sie keine Blog-E-Mails an Kunden, die Blog-Präferenzen deaktiviert haben)
-- Verwenden Sie Frequenzpräferenzen (senden Sie keine sofortigen E-Mails an Kunden, die wöchentliche Zusammenfassungen erhalten)
+Beim Versand von Marketing-Kampagnen:
+- Senden Sie nur an verifizierte, eingetragene Kunden
+- Beachten Sie app-spezifische Einstellungen (keine Blog-E-Mails an Kunden, die den Blog deaktiviert haben)
+- Verwenden Sie Frequenzeinstellungen (keine sofortigen E-Mails an Abonnenten des wöchentlichen Digests)
 
 ## Tipps
 
-**💡 Präferenzen vor dem Senden prüfen**
+**💡 Einstellungen vor dem Versand prüfen**
 
-Das System prüft automatisch die Präferenzen, wenn Sie E-Mails mit `EmailSendingService.send_template_email()` senden. Stellen Sie sicher, dass alle E-Mail-Versand über diesen Dienst erfolgen und nicht über direkte SMTP-Aufrufe.
+Das System überprüft automatisch die Einstellungen, wenn Sie E-Mails mit `EmailSendingService.send_template_email()` senden. Stellen Sie sicher, dass alle E-Mail-Versände diesen Dienst verwenden und keine direkten SMTP-Aufrufe.
 
 **💡 Übersprungener Status ist normal**
 
-Seien Sie nicht alarmiert, wenn E-Mails im Ausgangsstatus übersprungen werden — dies bedeutet, dass das System richtig funktioniert und die Präferenzen der Kunden beachtet. Es ist besser, unerwünschte E-Mails zu überspringen, als das Risiko von DSGVO-Strafen oder Spam-Beschwerden einzugehen.
+Seien Sie nicht beunruhigt von übersprungenen E-Mails im Versand – dies bedeutet, dass das System korrekt funktioniert und die Kundeneinstellungen respektiert. Es ist besser, unerwünschte E-Mails zu überspringen, als das Risiko von DSGVO-Geldstrafen oder Spam-Beschwerden einzugehen.
 
-**💡 Präferenz-Cache beträgt 5 Minuten**
+**💡 Einstellungscache beträgt 5 Minuten**
 
-Präferenz-Prüfungen werden für 5 Minuten zwischengespeichert, um die Leistung zu optimieren. Wenn Kunden Präferenzen über das Präferenzcenter oder Admin-Aktionen ändern, wird der Cache sofort ungültig, damit Änderungen sofort wirksam werden.
+Einstellungsprüfungen werden aus Leistungsgründen für 5 Minuten gecacht. Wenn Kunden ihre Einstellungen über das Einstellungszentrum oder Administratoraktionen ändern, wird der Cache sofort ungültig gemacht, damit die Änderungen sofort wirksam werden.
 
-**💡 Gastkunden überspringen Prüfungen**
+**💡 Gastkunden umgehen Prüfungen**
 
-Kunden, die über den Gast-Checkout einkaufen (kein Konto) erhalten alle E-Mails normal, da sie keine Präferenzdaten haben. Dies ist beabsichtigt — sie haben durch die Angabe ihrer E-Mail-Adresse beim Checkout eingewilligt.
+Gastbesteller (ohne Konto) erhalten alle E-Mails wie gewöhnlich, da sie keinen Einstellungseintrag haben. Dies ist beabsichtigt – sie haben sich durch die Angabe ihrer E-Mail-Adresse beim Checkout eingetragen.
 
 **💡 Transaktionale E-Mails werden immer gesendet**
 
-Bestätigungen für Bestellungen, Versandupdates und Sicherheits-E-Mails für Konten **werden immer gesendet**, unabhängig von den Präferenzen. Dies stellt sicher, dass Kunden wichtige Informationen über ihre Bestellungen und Konten erhalten.
+Bestätigungen, Versandupdates und Kontosicherheitse-Mails werden **immer gesendet**, unabhängig von den Einstellungen. Dies stellt sicher, dass Kunden wichtige Informationen über ihre Bestellungen und Konten erhalten.
 
-**💡 Massenaktionen sorgfältig verwenden**
+**💡 Bulk-Aktionen vorsichtig verwenden**
 
-Die Massenaktion "Von allem Marketing abmelden" wirkt sich auf **alle Apps** (Blog, Treueprogramm, Empfehlungen, Affiliate) aus. Verwenden Sie dies nur für Kunden, die explizit um eine vollständige Abmeldung gebeten haben. Für spezifische Präferenzen bearbeiten Sie die Einzelkundenakten.
+Die Bulk-Aktion "Von allen Marketing-E-Mails abmelden" betrifft **alle Apps** (Blog, Loyalität, Empfehlungen, Affiliate). Verwenden Sie dies nur für Kunden, die ausdrücklich eine vollständige Abmeldung angefordert haben. Für spezifische Einstellungen bearbeiten Sie einzelne Kundendatensätze.
 
-**💡 Audit-Trail für Einhaltung**
+**💡 Audit-Trail für Compliance**
 
-Das System protokolliert:
+Das System erfasst:
 - Zeitstempel und Quelle der Einwilligung
 - IP-Adresse und User-Agent
-- Zeitstempel der E-Mail-Bestätigung
-- Jede Präferenzänderung über den Status der übersprungenen E-Mails in EmailOutbox
+- Zeitstempel der E-Mail-Verifizierung
+- Jede Einstellungsänderung über den übersprungenen Status der EmailOutbox
 
-Dieser Audit-Trail beweist die DSGVO-Einhaltung, wenn Behörden nach Nachweisen der Einwilligung fragen.
+Dieser Audit-Trail beweist die DSGVO-Compliance, falls Behörden jemals Beweise für die Einwilligung anfordern.
 
 ## Verwandte Themen
 
-- [Kundenkonten verwalten](/help/managing-customer-accounts) — Kundenprofilverwaltung
-- [E-Mail-Konfiguration](/help/email-configuration) — SMTP-Setup und E-Mail-Vorlagen
-
+- [Verwaltung von Kundenkonten](/help/managing-customer-accounts) — Verwaltung von Kundenprofilen
+- [E-Mail-Konfiguration](/help/email-configuration) — SMTP-Einrichtung und E-Mail-Vorlagen

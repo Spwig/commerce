@@ -146,7 +146,7 @@ def get_current_currency(request):
             "SA": "SAR",
             "AE": "AED",
             "ZA": "ZAR",
-            "IL": "IL",
+            "IL": "ILS",
             "RU": "RUB",
             "UA": "UAH",
             "PL": "PLN",

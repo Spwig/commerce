@@ -99,6 +99,7 @@ def check_hosted_service_quotas(self):
     snapshot = refresh_usage_snapshot()
 
     triggered = []
+    sent_keys = []
     for key in ("geoip", "geocoder", "push"):
         svc = snapshot.get(key)
         if not svc or not svc.get("primary_window"):
@@ -112,22 +113,32 @@ def check_hosted_service_quotas(self):
         if cache.get(sent_key):
             continue
         triggered.append(svc)
-        # Cache for 45 days so it covers the calendar-month boundary
-        cache.set(sent_key, True, timeout=45 * 24 * 3600)
+        sent_keys.append(sent_key)
 
     if not triggered:
         return
 
     upgrade_url = snapshot.get("upgrade_url", "https://updates.spwig.com/upgrade/")
-    _send_quota_email(admin_email, triggered, upgrade_url)
+    if not _send_quota_email(admin_email, triggered, upgrade_url):
+        # The email never went out; leave the per-service flags unset so a
+        # later run retries rather than silently suppressing the alert.
+        return
+
+    # Only suppress further alerts once the email has actually been delivered.
+    # Cache for 45 days so it covers the calendar-month boundary.
+    for sent_key in sent_keys:
+        cache.set(sent_key, True, timeout=45 * 24 * 3600)
 
 
-def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
+def _send_quota_email(to: str, services: list, upgrade_url: str) -> bool:
     """
     Send the quota-warning email via the platform email sender.
 
     Uses ``email_system.services.email_sender`` if available; falls back to
     Django's ``send_mail`` if the email system isn't wired up (e.g. tests).
+
+    Returns ``True`` only when the email was actually delivered, so callers can
+    avoid setting the once-per-month suppression flag on a failed send.
     """
     subject_lines = ", ".join(
         f"{s['service']}: {s['primary_window']['pct']}% used" for s in services
@@ -165,25 +176,35 @@ def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
         from email_system.services.email_sender import EmailSendingService
 
         service = EmailSendingService()
-        service.send_email(
+        sent = service.send_email(
             to_email=to,
             subject=subject,
             body_text=body,
             body_html=None,
         )
-        logger.info("Sent quota-warning email to %s for %d service(s)", to, len(services))
+        if sent:
+            logger.info("Sent quota-warning email to %s for %d service(s)", to, len(services))
+            return True
+        # send_email reports a non-exception failure (e.g. held/logged/sandbox
+        # or retry limit) by returning False; don't claim delivery.
+        logger.warning("Quota-warning email to %s was not delivered by the email sender", to)
+        return False
     except Exception as e:
         logger.debug("Email sender path failed (%s); falling back to send_mail", e)
         try:
             from django.core.mail import send_mail
 
-            send_mail(
+            sent = send_mail(
                 subject=subject,
                 message=body,
                 from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
                 recipient_list=[to],
                 fail_silently=True,
             )
-            logger.info("Sent quota-warning email to %s via send_mail fallback", to)
+            if sent:
+                logger.info("Sent quota-warning email to %s via send_mail fallback", to)
+                return True
+            logger.warning("Quota-warning email to %s was not delivered", to)
         except Exception as e2:
             logger.warning("Quota-warning email failed for %s: %s", to, e2)
+    return False

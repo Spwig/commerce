@@ -2,8 +2,10 @@
 Management command to extract all theme packages to static directories
 """
 
+from pathlib import Path
+
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from design.theme_models import Theme
 
@@ -83,11 +85,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"✗ Failed: {failed_count}"))
         self.stdout.write("=" * 50 + "\n")
 
-        # Show STATIC_ROOT info
-        if settings.STATIC_ROOT:
-            self.stdout.write(f"\nℹ️  Themes extracted to: {settings.STATIC_ROOT}/themes/")
-        else:
-            self.stdout.write(
-                f"\nℹ️  Themes extracted to: {settings.MEDIA_ROOT}/static_themes/themes/\n"
-                f"⚠️  STATIC_ROOT not configured - using media fallback"
-            )
+        # Show the directory extraction actually writes to
+        extract_dir = Path(settings.BASE_DIR) / "components_data" / "static" / "design" / "themes"
+        self.stdout.write(f"\nℹ️  Themes extracted to: {extract_dir}")
+
+        if failed_count > 0:
+            raise CommandError(f"{failed_count} theme extraction(s) failed")

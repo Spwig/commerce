@@ -72,34 +72,34 @@ def validate_api_token(token_string, token_type=None, record_usage=True, ip_addr
     if not token_string:
         return None
 
-    try:
-        # Build query
-        query = APIToken.objects.filter(token=token_string, is_active=True)
+    # Build query
+    query = APIToken.objects.filter(token=token_string, is_active=True)
 
-        if token_type:
-            query = query.filter(token_type=token_type)
+    if token_type:
+        query = query.filter(token_type=token_type)
 
-        api_token = query.first()
+    api_token = query.first()
 
-        if not api_token:
-            return None
-
-        # Check if expired
-        if api_token.is_expired:
-            return None
-
-        # Check IP restrictions if configured
-        if api_token.allowed_ips and ip_address and ip_address not in api_token.allowed_ips:
-            return None
-
-        # Record usage
-        if record_usage:
-            api_token.record_usage(ip_address=ip_address)
-
-        return api_token
-
-    except Exception:
+    if not api_token:
         return None
+
+    # Check if expired
+    if api_token.is_expired:
+        return None
+
+    # Check IP restrictions if configured. Fail closed: if the token is
+    # restricted to specific IPs, a missing or non-matching client IP is
+    # never allowed to bypass the restriction.
+    if api_token.allowed_ips and ip_address not in api_token.allowed_ips:
+        return None
+
+    # Record usage only after the token is confirmed valid. A usage-write
+    # failure is an operational error and must propagate rather than reject
+    # an otherwise-valid token.
+    if record_usage:
+        api_token.record_usage(ip_address=ip_address)
+
+    return api_token
 
 
 def revoke_token(token_id):

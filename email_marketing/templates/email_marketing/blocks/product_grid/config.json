@@ -1,0 +1,31 @@
+{
+  "block_type": "product_grid",
+  "name": "Product Grid",
+  "icon": "fas fa-table-cells",
+  "category": "commerce",
+  "description": "An auto-curated row of products (new, best sellers, or on sale).",
+  "properties": {
+    "mode": {
+      "type": "select",
+      "label": "Show",
+      "default": "new",
+      "options": [
+        { "value": "new", "label": "New arrivals" },
+        { "value": "new_since_send", "label": "New since last send" },
+        { "value": "bestsellers", "label": "Best sellers" },
+        { "value": "sale", "label": "On sale" }
+      ]
+    },
+    "count": {
+      "type": "select",
+      "label": "Products",
+      "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ]
+    }
+  },
+  "defaults": { "mode": "new", "count": "3" }
+}

@@ -3,6 +3,7 @@ import os
 import tempfile
 
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from media_library.models import MediaAsset
 from media_library.video_services import VideoProcessor
@@ -50,7 +51,7 @@ class Command(BaseCommand):
         elif options["all"]:
             assets = MediaAsset.objects.filter(mime_type__startswith="video/")
             if not options["force"]:
-                assets = assets.filter(converted_video="")
+                assets = assets.filter(Q(converted_video="") | Q(converted_video__isnull=True))
         else:
             self.stdout.write(self.style.ERROR("Please specify --asset-id or --all"))
             return
