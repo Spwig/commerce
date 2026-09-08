@@ -49,6 +49,14 @@
             </label>
             <p class="help-text">{% trans "The default account will be used for all outgoing transactional emails unless specified otherwise" %}</p>
         </div>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="purpose_marketing" id="purpose_marketing"{% if marketing_prefill %} checked{% endif %}>
+                <span>{% trans "Marketing-only sending account" %}</span>
+            </label>
+            <p class="help-text">{% trans "Send campaigns and newsletters from this account only, keeping their sending reputation separate from transactional email like order confirmations and password resets. Leave unchecked for an account that sends both." %}</p>
+        </div>
     </form>
 
     <div class="next-steps">

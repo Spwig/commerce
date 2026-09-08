@@ -25,6 +25,7 @@ url_patterns:
   - /admin/campaigns/dashboard/
   - /admin/email_marketing/suppressionentry/
 related:
+  - marketing-sending-domain
   - email-configuration
   - list-hygiene
   - campaign-reports
@@ -32,24 +33,6 @@ related:
   - audiences
 published: true
 ---
-
-<!-- screenshots-needed:
-- url: /admin/email_system/emailaccount/add/
-  filename: wizard-dns-step.webp
-  description: Step 4 (DNS Configuration) of the email account setup wizard for the built-in SMTP provider, showing the SPF/DKIM/DMARC validation one-liners and the DNS provider tabs (Cloudflare/GoDaddy/Namecheap/Route 53/Other) with at least one record's "Details" panel expanded so a copyable TXT record is visible.
-  save-to: core/static/core/admin/img/help/deliverability/
-  viewport: 1440x900
-- url: /admin/email_system/emailaccount/{account_id}/change/
-  filename: dkim-dns-record.webp
-  description: An existing built-in SMTP EmailAccount's change form scrolled to the "DKIM keys configured" panel, showing the DNS TXT record Name/Value and the Copy DNS Record button.
-  save-to: core/static/core/admin/img/help/deliverability/
-  viewport: 1440x900
-- url: /admin/campaigns/dashboard/
-  filename: suppressed-addresses-card.webp
-  description: The Campaign Studio dashboard's Suppressed addresses stat card, for the "monitor" section of this runbook.
-  save-to: core/static/core/admin/img/help/deliverability/
-  viewport: 1440x900
--->
 
 Getting an email *sent* is easy. Getting it into the inbox instead of the spam folder is the actual job — and mailbox providers like Gmail and Yahoo now enforce hard technical requirements before they'll even consider it. This runbook walks through what to configure, in what order, so your order confirmations and campaigns land where customers can see them.
 
@@ -74,6 +57,10 @@ SPF, DKIM, and DMARC are DNS TXT records that prove to receiving mail servers th
 | **Built-in SMTP** (Spwig's own email server) | Spwig generates a DKIM key pair for your domain automatically. Add an email account, and **Step 4** of the setup wizard shows your SPF, DKIM, and DMARC status plus the exact record to add, with copy-to-clipboard and provider-specific instructions for Cloudflare, GoDaddy, Namecheap, and AWS Route 53. The same DKIM DNS record is also shown on the account's own admin page later, under **DKIM keys configured**, if you need to find it again. |
 | **Generic SMTP** (a bring-your-own provider like SendGrid, Mailgun, Amazon SES, or Google Workspace, connected via SMTP credentials) | Authentication happens partly in that provider's own dashboard. The setup wizard's DNS step includes tabbed instructions for Gmail, Outlook, SendGrid, Mailgun, and Amazon SES specifically — each explains what to configure in the provider's console (e.g. verifying a sending domain in SendGrid) and which resulting DNS records to add at your DNS host. |
 | **Spwig-hosted mail gateway** | Available on Spwig-hosted plans as a managed sending option. It signs outgoing mail with DKIM automatically and defaults to sending from an address on Spwig's own verified domain, so it works with zero setup. If you want to send from your own domain through the gateway, talk to your hosting provider about verifying it — this is a managed service, not a self-serve DNS flow. |
+
+![Step 4 of the email account setup wizard, showing SPF/DKIM/DMARC validation, DNS provider tabs, and an expanded DKIM record ready to copy](/static/core/admin/img/help/deliverability/wizard-dns-step.webp)
+
+![An existing built-in SMTP email account's DKIM keys configured panel, with the DNS TXT record and a Copy DNS Record button](/static/core/admin/img/help/deliverability/dkim-dns-record.webp)
 
 Whichever mode you use, **adding the DNS record itself is always an external step** — you do it at your domain registrar or DNS host (Cloudflare, GoDaddy, Namecheap, Route 53, or wherever your domain's nameservers point), not inside Spwig. Spwig can tell you exactly what to add and validate that it's live, but it can't reach into your registrar and add it for you.
 
@@ -123,6 +110,8 @@ Open a campaign's [Report](campaign-reports) after each send and watch:
 | **Open rate / click-to-open rate** | A sudden, unexplained drop across sends to the same list (not just one campaign) can be an early sign that mail is landing in spam rather than the inbox, even before bounce or complaint numbers move. |
 
 Also check the Campaign Studio dashboard's **Suppressed addresses** card periodically — a steady trickle is normal list decay, but a sudden spike is worth investigating before your next send (see [List Hygiene](list-hygiene)).
+
+![The Suppressed addresses stat card on the Campaign Studio dashboard](/static/core/admin/img/help/deliverability/suppressed-addresses-card.webp)
 
 If something spikes: pause and check your DNS records are still valid first (a lapsed domain renewal or an accidental DNS change can silently break SPF/DKIM), then look at what changed about the content or audience of the send that triggered it.
 

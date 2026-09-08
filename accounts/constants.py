@@ -51,6 +51,9 @@ MARKETING_EMAIL_TYPES = [
     "promotional_offers",
     "product_recommendations",
     "back_in_stock",
+    # Cart-recovery is marketing: it must require marketing consent and send on the
+    # marketing identity (was previously unclassified → treated as transactional).
+    "abandoned_cart_recovery",
 ]
 
 # App-specific email types (user-controllable per app)

@@ -15,6 +15,12 @@ from ..models import Wishlist, WishlistItem
 class WishlistService:
     """Service class for wishlist operations"""
 
+    # Stable, language-independent identity for each user's default wishlist.
+    # Using a translated string as the lookup key would let one user receive a
+    # different default wishlist under each active language; only the displayed
+    # label should be translated.
+    DEFAULT_WISHLIST_NAME = "My Wishlist"
+
     @staticmethod
     def get_or_create_default_wishlist(user) -> Wishlist:
         """
@@ -26,8 +32,8 @@ class WishlistService:
         Returns:
             Wishlist instance
         """
-        wishlist, created = Wishlist.objects.get_or_create(
-            user=user, name=_("My Wishlist"), defaults={"name": _("My Wishlist")}
+        wishlist, _created = Wishlist.objects.get_or_create(
+            user=user, name=WishlistService.DEFAULT_WISHLIST_NAME
         )
         return wishlist
 
@@ -68,6 +74,13 @@ class WishlistService:
                 variant = ProductVariant.objects.get(id=variant_id, product=product)
             except ProductVariant.DoesNotExist:
                 return False, _("Product variant not found"), None
+
+        # Lock the wishlist row so concurrent adds for the same
+        # wishlist/product/variant are serialized. Without this the
+        # existence-check/create below races: a null variant produces
+        # duplicate rows (NULLs compare distinct in the unique constraint)
+        # and a non-null variant raises an unhandled IntegrityError.
+        wishlist = Wishlist.objects.select_for_update().get(pk=wishlist.pk)
 
         # Check if item already exists
         existing_item = WishlistItem.objects.filter(
@@ -141,6 +154,14 @@ class WishlistService:
         if quantity < 1:
             return False, _("Quantity must be at least 1")
 
+        # Lock the item inside the transaction so two concurrent moves can't
+        # both add it to the cart before either deletes it, which would double
+        # the requested cart quantity while both calls report success.
+        try:
+            wishlist_item = WishlistItem.objects.select_for_update().get(pk=wishlist_item.pk)
+        except WishlistItem.DoesNotExist:
+            return False, _("Wishlist item not found")
+
         success, message, cart_item = CartService.add_item(
             cart=cart,
             product_id=wishlist_item.product.id,
@@ -184,11 +205,15 @@ class WishlistService:
         Returns:
             Tuple of (success: bool, message: str, wishlist: Wishlist)
         """
-        # Check if wishlist with same name already exists
-        if Wishlist.objects.filter(user=user, name=name).exists():
+        # Create atomically: a separate exists()/create pair races two
+        # concurrent calls past the check, and the unique (user, name)
+        # constraint then raises an unhandled IntegrityError instead of the
+        # documented duplicate-name failure tuple.
+        wishlist, created = Wishlist.objects.get_or_create(
+            user=user, name=name, defaults={"is_public": is_public}
+        )
+        if not created:
             return False, _("Wishlist with this name already exists"), None
-
-        wishlist = Wishlist.objects.create(user=user, name=name, is_public=is_public)
 
         # Generate share slug if public
         if is_public:

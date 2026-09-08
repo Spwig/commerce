@@ -25,6 +25,11 @@
             </p>
         </div>
         <div class="change-list-header-actions">
+            {% if not license_status.is_hosted %}
+            <a href="{% url 'email_system:wizard_step1' %}?provider=builtin_smtp&amp;purpose=marketing" class="button change-list-action-button" title="{% trans 'Send campaigns from a separate domain so their reputation stays apart from transactional email' %}">
+                <i class="fas fa-paper-plane"></i> {% trans "Marketing sending domain" %}
+            </a>
+            {% endif %}
             <a href="{% url 'email_system:provider_browse' %}" class="button primary change-list-action-button">
                 <i class="fas fa-store"></i> {% trans "Browse Providers" %}
             </a>

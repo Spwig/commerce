@@ -232,7 +232,9 @@ def generate_seo(request, model_type: str, object_id: int):
             try:
                 body = json.loads(request.body)
             except json.JSONDecodeError:
-                pass
+                return JsonResponse(
+                    {"success": False, "error": _("Invalid request body.")}, status=400
+                )
 
         provider_key = body.get("provider") or None
         language = body.get("language")

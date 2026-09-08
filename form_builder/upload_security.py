@@ -157,6 +157,13 @@ def validate_upload(file, allowed_types: list[str] | None) -> str:
         sniffed = magic.from_buffer(head, mime=True) or ""
         if "html" in sniffed or sniffed in ("application/x-dosexec", "text/x-shellscript"):
             raise UploadRejected("File content is not permitted.")
+        # SVG/XML can carry active content (scripts); reject it even though its
+        # sniffed MIME (image/svg+xml) satisfies the image/ prefix check below.
+        # Match the active XML/SVG MIME types explicitly — a substring test would
+        # also catch inert OpenXML documents (…openxmlformats…) such as
+        # DOCX/XLSX/PPTX, which are allowed.
+        if sniffed in ("image/svg+xml", "text/xml", "application/xml"):
+            raise UploadRejected("File content is not permitted.")
         expected = _MIME_PREFIX_BY_EXT.get(ext)
         if expected and not sniffed.startswith(expected):
             raise UploadRejected("File content does not match its extension.")

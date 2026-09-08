@@ -1,6 +1,7 @@
 import uuid
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.functions import Upper
 from django.utils import timezone
@@ -17,6 +18,18 @@ class EmailAccount(models.Model):
     Stores encrypted credentials and configuration for email sending.
     Pattern follows exchange_rates/models.py ExchangeRateProviderAccount.
     """
+
+    # Sending purpose — lets a store separate marketing (bulk) reputation from
+    # transactional so a bad campaign can't spam-folder order confirmations /
+    # password resets. "both" (the default) preserves single-account behaviour.
+    PURPOSE_TRANSACTIONAL = "transactional"
+    PURPOSE_MARKETING = "marketing"
+    PURPOSE_BOTH = "both"
+    PURPOSE_CHOICES = [
+        (PURPOSE_TRANSACTIONAL, _("Transactional only")),
+        (PURPOSE_MARKETING, _("Marketing only")),
+        (PURPOSE_BOTH, _("Transactional & marketing")),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -83,6 +96,19 @@ class EmailAccount(models.Model):
         default=False,
         verbose_name=_("default account"),
         help_text=_("Use this account as default for sending emails"),
+    )
+
+    purpose = models.CharField(
+        max_length=16,
+        choices=PURPOSE_CHOICES,
+        default=PURPOSE_BOTH,
+        db_index=True,
+        verbose_name=_("sending purpose"),
+        help_text=_(
+            "Which mail this account sends. Configure a separate marketing account to keep "
+            "campaign sending reputation from affecting transactional email such as order "
+            "confirmations and password resets."
+        ),
     )
 
     # Provider-specific settings
@@ -172,6 +198,45 @@ class EmailAccount(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.from_email})"
+
+    NO_TRANSACTIONAL_ACCOUNT_ERROR = _(
+        "At least one active email account must be able to send transactional email "
+        "(order confirmations, password resets). Keep an active 'Transactional' or "
+        "'Transactional & marketing' account before making this change."
+    )
+
+    def would_orphan_transactional(self) -> bool:
+        """Whether this account's current (in-memory) is_active/purpose would leave the
+        site with no active transactional-capable ('transactional'/'both') account.
+
+        Shared by ``clean()`` and the admin toggle/bulk-disable actions (which mutate via
+        ``save(update_fields=…)`` / ``QuerySet.update()`` and so bypass ``clean()``).
+        """
+        if self.is_active and self.purpose in (self.PURPOSE_TRANSACTIONAL, self.PURPOSE_BOTH):
+            return False
+        return not (
+            EmailAccount.objects.filter(
+                site_id=self.site_id,
+                is_active=True,
+                purpose__in=[self.PURPOSE_TRANSACTIONAL, self.PURPOSE_BOTH],
+            )
+            .exclude(pk=self.pk)
+            .exists()
+        )
+
+    def clean(self):
+        """Guard against a store having no transactional-capable sending identity.
+
+        Marketing routing lets a merchant point a separate account at marketing mail,
+        but transactional email (order confirmations, password resets) must always have
+        somewhere to go. Refuse any change that would leave the site with no active
+        ``transactional``/``both`` account — whether by setting this account to
+        "Marketing only" or by deactivating the last transactional-capable one —
+        otherwise a single admin change would silently break transactional deliverability.
+        """
+        super().clean()
+        if self.would_orphan_transactional():
+            raise ValidationError(self.NO_TRANSACTIONAL_ACCOUNT_ERROR)
 
     def save(self, *args, **kwargs):
         """

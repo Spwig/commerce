@@ -82,26 +82,26 @@ def connect_content_signals():
         from blog.models import BlogPost
         from catalog.models import Brand, Category, Product
 
-        @receiver(post_save, sender=Product)
-        @receiver(post_delete, sender=Product)
+        @receiver(post_save, sender=Product, weak=False)
+        @receiver(post_delete, sender=Product, weak=False)
         def on_product_change(sender, instance, **kwargs):
             invalidate_autocomplete_cache()
             invalidate_results_cache()
 
-        @receiver(post_save, sender=Category)
-        @receiver(post_delete, sender=Category)
+        @receiver(post_save, sender=Category, weak=False)
+        @receiver(post_delete, sender=Category, weak=False)
         def on_category_change(sender, instance, **kwargs):
             invalidate_autocomplete_cache()
             invalidate_results_cache()
 
-        @receiver(post_save, sender=Brand)
-        @receiver(post_delete, sender=Brand)
+        @receiver(post_save, sender=Brand, weak=False)
+        @receiver(post_delete, sender=Brand, weak=False)
         def on_brand_change(sender, instance, **kwargs):
             invalidate_autocomplete_cache()
             invalidate_results_cache()
 
-        @receiver(post_save, sender=BlogPost)
-        @receiver(post_delete, sender=BlogPost)
+        @receiver(post_save, sender=BlogPost, weak=False)
+        @receiver(post_delete, sender=BlogPost, weak=False)
         def on_blog_post_change(sender, instance, **kwargs):
             invalidate_autocomplete_cache()
             invalidate_results_cache()

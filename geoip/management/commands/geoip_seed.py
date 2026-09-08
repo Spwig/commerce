@@ -12,11 +12,25 @@ class Command(SeedCommand):
     seed_version = 1
     dependencies = ["country_mappings"]
 
+    def _create_provider_if_missing(self, *, provider_type: str, defaults: dict) -> bool:
+        """Create a GeoIP provider only when none of that type exists yet.
+
+        Returns True if a new provider row was created. Safely tolerates
+        pre-existing duplicate rows for the same provider_type.
+        """
+        if GeoIPProvider.objects.filter(provider_type=provider_type).exists():
+            return False
+        GeoIPProvider.objects.create(provider_type=provider_type, **defaults)
+        return True
+
     def seed(self) -> int:
         count = 0
 
         # --- Seed built-in GeoIP providers ---
-        _, created = GeoIPProvider.objects.get_or_create(
+        # provider_type is not uniquely constrained, so get_or_create would raise
+        # MultipleObjectsReturned if duplicate rows exist. Skip creation whenever
+        # at least one matching provider is already present.
+        if self._create_provider_if_missing(
             provider_type="spwig",
             defaults={
                 "name": "Spwig GeoIP",
@@ -24,11 +38,10 @@ class Command(SeedCommand):
                 "priority": 0,
                 "config": {},
             },
-        )
-        if created:
+        ):
             count += 1
 
-        _, created = GeoIPProvider.objects.get_or_create(
+        if self._create_provider_if_missing(
             provider_type="edge_header",
             defaults={
                 "name": "Edge Headers",
@@ -36,8 +49,7 @@ class Command(SeedCommand):
                 "priority": 100,
                 "config": {},
             },
-        )
-        if created:
+        ):
             count += 1
 
         # --- Enrich priority country mappings with business data ---

@@ -536,7 +536,7 @@ class SavedMethodDetailView(HeadlessAPIMixin, APIView):
         try:
             provider = token.provider_account.get_provider_instance()
             if hasattr(provider, "delete_payment_method"):
-                provider.delete_payment_method(token.token_id)
+                provider.delete_payment_method(token.gateway_token_id)
         except Exception as e:
             logger.warning(f"Failed to delete payment method from provider: {e}")
 

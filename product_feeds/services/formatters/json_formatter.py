@@ -267,6 +267,13 @@ class JSONFeedFormatter(BaseFeedFormatter):
         """
         metadata = metadata or {}
 
+        # Select the item mapping for the configured output format so streaming
+        # honours the Meta layout instead of always using the Google mapping.
+        if self.output_format == "meta":
+            item_to_dict = self._item_to_meta_dict
+        else:
+            item_to_dict = self._item_to_dict
+
         # For streaming, use JSON Lines format (one JSON object per line)
         # First yield metadata if enabled
         if self.include_metadata:
@@ -279,6 +286,6 @@ class JSONFeedFormatter(BaseFeedFormatter):
 
         # Yield each item on its own line
         for item in items:
-            item_dict = self._item_to_dict(item)
+            item_dict = item_to_dict(item)
             item_dict["type"] = "item"
             yield json.dumps(item_dict, ensure_ascii=False) + "\n"

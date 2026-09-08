@@ -2,9 +2,15 @@
 Serializers for Payment Providers
 """
 
+import logging
+
 from rest_framework import serializers
 
+from core.sandbox.payment_guard import SandboxPaymentError
+
 from .models import PaymentProviderAccount
+
+logger = logging.getLogger(__name__)
 
 
 class PaymentProviderAccountSerializer(serializers.ModelSerializer):
@@ -68,9 +74,13 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
         customer_country = self.context.get("customer_country")
 
         if customer_country:
-            # Get enabled methods for specific country
+            # Intersect merchant-enabled methods with the methods the provider
+            # currently makes available for this country, so a method the
+            # provider dropped in its last sync is no longer offered at
+            # checkout. Preserve the merchant's enabled display order.
             enabled_methods = obj.get_enabled_methods_for_country(customer_country)
-            return enabled_methods
+            available_methods = set(obj.get_available_methods_for_country(customer_country))
+            return [method for method in enabled_methods if method in available_methods]
 
         # Return all enabled methods across all countries
         all_methods = set()
@@ -102,9 +112,18 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
             return None
         # The provider selects its own publishable key from its credentials
         # (Stripe's publishable key, Revolut's public key). Providers with no
-        # publishable-style credential return None. Any failure returns None so a
-        # stub error never bricks checkout.
+        # publishable-style credential return None. Expected credential/config
+        # failures return None (logged) so a stub error never bricks checkout;
+        # unexpected failures propagate rather than being silently swallowed.
         try:
             return obj.get_provider_instance().get_client_publishable_key()
-        except Exception:
+        except (ValueError, SandboxPaymentError):
+            # Expected credential/configuration failures (unknown provider,
+            # corrupt/undecryptable credentials, sandbox guard) resolve to no
+            # publishable key, but are logged so the failure is diagnosable
+            # instead of silently bricking the provider's browser checkout.
+            logger.exception(
+                "Could not resolve publishable key for payment provider account %s",
+                obj.pk,
+            )
             return None

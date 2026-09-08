@@ -545,6 +545,9 @@ class TestEmailAccountAJAXEndpoints:
 
     def test_toggle_active(self, staff_client, email_account):
         """Toggle account active/inactive."""
+        # Keep another active transactional-capable account so the guard permits
+        # disabling this one (a store must retain a transactional sender).
+        EmailAccountFactory(site=email_account.site)
         url = f"/en/admin/email-system/accounts/{email_account.pk}/toggle-active/"
         resp = self._ajax_post(staff_client, url)
         assert resp.status_code == 200
@@ -555,6 +558,9 @@ class TestEmailAccountAJAXEndpoints:
 
     def test_toggle_active_twice(self, staff_client, email_account):
         """Toggling twice restores original state."""
+        # Keep another transactional-capable account so the first (disable)
+        # toggle is permitted and the round-trip is genuinely exercised.
+        EmailAccountFactory(site=email_account.site)
         url = f"/en/admin/email-system/accounts/{email_account.pk}/toggle-active/"
         self._ajax_post(staff_client, url)
         self._ajax_post(staff_client, url)
@@ -598,6 +604,9 @@ class TestEmailAccountAJAXEndpoints:
         """Delete a non-default account."""
         from email_system.models import EmailAccount
 
+        # Keep another active transactional-capable account so deleting this one
+        # doesn't strand the store without a transactional sender.
+        EmailAccountFactory(site=email_account.site)
         pk = email_account.pk
         url = f"/en/admin/email-system/accounts/{pk}/delete/"
         resp = self._ajax_post(staff_client, url)
@@ -642,6 +651,9 @@ class TestEmailAccountAJAXEndpoints:
         """Bulk disable action deactivates multiple accounts."""
         a1 = EmailAccountFactory(site=django_site)
         a2 = EmailAccountFactory(site=django_site)
+        # Keep a transactional-capable account outside the selection so the guard
+        # allows disabling a1 and a2.
+        EmailAccountFactory(site=django_site)
         url = "/en/admin/email-system/accounts/bulk-action/"
         resp = self._ajax_post(
             staff_client,

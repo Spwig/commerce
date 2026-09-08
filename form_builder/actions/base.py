@@ -3,8 +3,12 @@ Base action executor for form builder actions.
 """
 
 import logging
+import re
 
 logger = logging.getLogger(__name__)
+
+# Matches a single ``{{key}}`` placeholder in a template string.
+_PLACEHOLDER_RE = re.compile(r"\{\{([^{}]+)\}\}")
 
 
 class BaseAction:
@@ -52,7 +56,13 @@ class BaseAction:
         """Render a template string with context variables using simple substitution."""
         if not template_str:
             return ""
-        result = template_str
-        for key, value in context.items():
-            result = result.replace(f"{{{{{key}}}}}", str(value))
-        return result
+
+        # Single pass over the original template so a submitted value that itself
+        # contains ``{{other_field}}`` is inserted literally, not re-substituted.
+        def _resolve(match):
+            key = match.group(1)
+            if key in context:
+                return str(context[key])
+            return match.group(0)
+
+        return _PLACEHOLDER_RE.sub(_resolve, template_str)

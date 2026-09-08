@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Spwig eCommerce API Documentation
-  version: 1.8.0
+  version: 1.8.1
   description: |-
     ## Spwig API Documentation
 
@@ -21590,13 +21590,9 @@ paths:
     post:
       operationId: api_return_requests_create
       description: |-
-        ViewSet for return request operations
-
-        Endpoints:
-        - GET /return-requests/ - List user's return requests
-        - GET /return-requests/{id}/ - Get return request details
-        - POST /return-requests/create-for-order/{order_number}/ - Create return request for an order
-        - GET /return-requests/{id}/return-label/ - Get return shipping label
+        Disabled: order/user are read-only, so the generic create cannot
+        populate the required foreign keys. Create return requests through
+        the create-for-order action instead.
       tags:
       - Returns
       requestBody:
@@ -30700,9 +30696,7 @@ components:
           type: string
           readOnly: true
         applied_vouchers:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartAppliedVoucher'
+          type: string
           readOnly: true
         total_items:
           type: string
@@ -30769,37 +30763,6 @@ components:
       - updated_at
       - user
       - voucher_discount_amount
-    CartAppliedVoucher:
-      type: object
-      description: Serializer for vouchers applied to cart
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        code:
-          type: string
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-        description:
-          type: string
-          readOnly: true
-        discount_type:
-          type: string
-          readOnly: true
-        discount_amount:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
-          readOnly: true
-      required:
-      - code
-      - description
-      - discount_amount
-      - discount_type
-      - id
-      - name
     CartErrorResponse:
       type: object
       description: Serializer for cart error responses.

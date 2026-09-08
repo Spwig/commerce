@@ -7,7 +7,10 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
@@ -33,6 +36,7 @@ from core.api.throttling import PublicWriteThrottle
 logger = logging.getLogger(__name__)
 
 from orders.models import Address
+from orders.services.address_service import AddressService
 
 from .models import CustomerProfile
 from .serializers import (
@@ -203,10 +207,12 @@ def user_logout(request):
     User logout
     POST /api/accounts/logout/
     """
-    # Delete the token
+    # Delete the token. Only the "no token exists" case is benign; any other
+    # deletion failure must surface as an error rather than falsely reporting a
+    # revoked token that in fact still authenticates.
     try:
         request.user.auth_token.delete()
-    except Exception:
+    except Token.DoesNotExist:
         pass
 
     # Logout
@@ -325,9 +331,12 @@ def password_reset_confirm(request, uidb64, token):
     serializer = PasswordResetConfirmSerializer(data=request.data, context={"user": user})
 
     if serializer.is_valid():
-        # Set new password
-        user.set_password(serializer.validated_data["new_password"])
-        user.save()
+        # Set new password and revoke any existing DRF token atomically so a
+        # previously stolen token cannot keep authenticating after recovery.
+        with transaction.atomic():
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+            Token.objects.filter(user=user).delete()
 
         return Response(
             {"success": True, "message": _("Password has been reset successfully.")},
@@ -518,8 +527,15 @@ class AddressViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         return AddressSerializer
 
     def get_queryset(self):
-        """Return only current user's addresses"""
-        return Address.objects.filter(user=self.request.user).order_by("-is_default", "-created_at")
+        """Return only current user's active addresses.
+
+        Superseded (``is_active=False``) versions produced by the audit-
+        versioning workflow are hidden so they can't be listed, retrieved,
+        edited, deleted, or set as default through this API.
+        """
+        return Address.objects.filter(user=self.request.user, is_active=True).order_by(
+            "-is_default", "-created_at"
+        )
 
     def create(self, request, *args, **kwargs):
         """Create new address"""
@@ -553,13 +569,24 @@ class AddressViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
 
         if serializer.is_valid():
-            serializer.save()
+            # Route through the service so its transaction + audit-versioning
+            # workflow runs: updating an address referenced by an order creates a
+            # new active version instead of overwriting the historical row.
+            success, message, address = AddressService.update_address(
+                instance, request.user, **serializer.validated_data
+            )
+
+            if not success:
+                return Response(
+                    {"success": False, "message": message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             return Response(
                 {
                     "success": True,
                     "message": _("Address updated successfully."),
-                    "data": serializer.data,
+                    "data": self.get_serializer(address).data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -654,7 +681,7 @@ def available_social_providers(request):
             {
                 "provider": provider_setting.provider,
                 "display_name": provider_setting.display_name,
-                "login_url": f"/{provider_setting.provider}/login/",
+                "login_url": f"/accounts/{provider_setting.provider}/login/",
             }
         )
 
@@ -723,10 +750,14 @@ def convert_guest_to_account(request):
             {"success": False, "error": "Password required"}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Validate password length
-    if len(password) < 8:
+    # Run the configured Django password validators (length, common-password,
+    # numeric-only, etc.) so guest conversion enforces the same policy as
+    # registration and password reset.
+    try:
+        validate_password(password, user=user)
+    except ValidationError as e:
         return Response(
-            {"success": False, "error": "Password must be at least 8 characters"},
+            {"success": False, "error": e.messages},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

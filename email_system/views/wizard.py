@@ -47,6 +47,11 @@ class WizardSessionMixin:
     """Mixin for managing wizard session data"""
 
     SESSION_KEY = "email_wizard_data"
+    # The sending purpose (e.g. a marketing sending domain) is held in its OWN session key,
+    # separate from SESSION_KEY, so it survives Step 1's wizard-data reset and every internal
+    # redirect back to Step 1. It is set by the ?purpose entry links, cleared when a provider
+    # is freshly selected without one, and consumed+cleared when the account is created.
+    PURPOSE_KEY = "email_wizard_purpose"
 
     def get_wizard_data(self):
         """Get wizard data from session"""
@@ -287,6 +292,15 @@ class ProviderWizardStep1View(WizardSessionMixin, View):
         """Display provider selection"""
         # Clear any existing wizard data when starting fresh
         self.clear_wizard_data()
+
+        # A marketing-domain entry link (?purpose=…) records the intended sending purpose
+        # in its own session key (see WizardSessionMixin). It is used only to PRE-TICK the
+        # Step 6 "Marketing-only account" checkbox — the account's purpose is taken from
+        # that submitted checkbox, not from here — so it survives any navigation without
+        # ever silently creating the wrong purpose. Popped when the wizard completes.
+        purpose = request.GET.get("purpose")
+        if purpose in dict(EmailAccount.PURPOSE_CHOICES):
+            request.session[self.PURPOSE_KEY] = purpose
 
         # Auto-skip if provider pre-selected from browse page
         provider_slug = request.GET.get("provider")
@@ -1621,6 +1635,12 @@ class ProviderWizardStep6View(WizardSessionMixin, View):
                 "wizard_data": wizard_data,
                 "component": component,
                 "is_builtin": is_builtin,
+                # Pre-tick the "Marketing-only account" box when the merchant arrived via a
+                # marketing-domain entry link. This is only a hint — the purpose is taken
+                # from the submitted checkbox at Step 6 (post), so navigation can never
+                # silently create the wrong purpose.
+                "marketing_prefill": request.session.get(self.PURPOSE_KEY)
+                == EmailAccount.PURPOSE_MARKETING,
             }
 
             return render(request, self.template_name, context)
@@ -1702,6 +1722,34 @@ class ProviderWizardStep6View(WizardSessionMixin, View):
                         logger.warning(f"No credentials found in wizard session for {provider_key}")
                         credentials = {}
 
+                # Sending purpose comes from the explicit Step 6 checkbox (the source of
+                # truth — immune to how the merchant navigated here); defaults to "both" so
+                # ordinary setups are unchanged. Never create a marketing-only account when
+                # the store has no other active transactional sender — that would strand
+                # order confirmations / password resets (create() bypasses
+                # EmailAccount.clean()). Fall back to "both" so it serves everything.
+                purpose = (
+                    EmailAccount.PURPOSE_MARKETING
+                    if request.POST.get("purpose_marketing") == "on"
+                    else EmailAccount.PURPOSE_BOTH
+                )
+                if (
+                    purpose == EmailAccount.PURPOSE_MARKETING
+                    and not EmailAccount.objects.filter(
+                        site=site,
+                        is_active=True,
+                        purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+                    ).exists()
+                ):
+                    purpose = EmailAccount.PURPOSE_BOTH
+                    messages.info(
+                        request,
+                        _(
+                            "This is now your main sending account. Add a separate "
+                            "transactional account later to fully isolate marketing sending."
+                        ),
+                    )
+
                 # Create email account
                 account = EmailAccount.objects.create(
                     site=site,
@@ -1716,6 +1764,7 @@ class ProviderWizardStep6View(WizardSessionMixin, View):
                     connection_status="unknown",
                     credentials=encrypt_credentials(credentials),
                     dns_domain=wizard_data.get("dns_domain") or wizard_data.get("dkim_domain", ""),
+                    purpose=purpose,
                     created_by=request.user,
                 )
 
@@ -1808,8 +1857,9 @@ class ProviderWizardStep6View(WizardSessionMixin, View):
                         % {"name": account.name},
                     )
 
-                # Clear wizard data
+                # Clear wizard data (including the carried sending purpose)
                 self.clear_wizard_data()
+                request.session.pop(self.PURPOSE_KEY, None)
 
                 # Redirect to email accounts list
                 return redirect("admin:email_system_emailaccount_changelist")

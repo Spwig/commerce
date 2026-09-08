@@ -115,13 +115,19 @@ def get_available_express_methods(
             active_providers = PaymentProviderAccount.objects.filter(
                 is_active=True, connection_status="connected"
             ).select_related("component")
-            provider_methods = [
-                (
-                    provider,
-                    provider.get_enabled_methods_for_country(PaymentProviderAccount.GLOBAL_KEY),
+            provider_methods = []
+            for provider in active_providers:
+                # Intersect enabled with available for the global scope: a
+                # method can linger in the global enabled list after sync
+                # removes it from the global available list, which would
+                # surface a button the provider can't process.
+                available = set(
+                    provider.get_available_methods_for_country(PaymentProviderAccount.GLOBAL_KEY)
                 )
-                for provider in active_providers
-            ]
+                enabled = provider.get_enabled_methods_for_country(
+                    PaymentProviderAccount.GLOBAL_KEY
+                )
+                provider_methods.append((provider, [m for m in enabled if m in available]))
 
         for provider, enabled_methods in provider_methods:
             # Filter for express checkout methods only

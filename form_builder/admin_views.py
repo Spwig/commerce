@@ -69,7 +69,12 @@ def form_recycle_bin(request):
 
     if request.method == "POST":
         action = request.POST.get("action")
-        form_ids = request.POST.getlist("form_ids")
+        form_ids = []
+        for i in request.POST.getlist("form_ids"):
+            try:
+                form_ids.append(int(i))
+            except (TypeError, ValueError):
+                continue
 
         if action == "restore":
             forms = Form.all_objects.filter(id__in=form_ids, is_deleted=True)

@@ -156,6 +156,7 @@ class AutoReplyAction(BaseAction):
                 template_type="form_submission_auto_response",
                 context=template_context,
                 enable_tracking=False,
+                language=self.form_response.language or None,
             )
 
             logger.info(

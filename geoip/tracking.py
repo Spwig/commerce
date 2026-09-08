@@ -9,6 +9,7 @@ import logging
 import re
 from urllib.parse import urlparse
 
+from django.db.models import F
 from user_agents import parse as parse_user_agent
 
 from .models import PageView, VisitorLocation
@@ -106,8 +107,8 @@ def normalize_url_path(url: str) -> str:
         /pricing                       →  /pricing
         /                              →  /
     """
-    # Strip query params
-    path = urlparse(url).path if "?" in url or "#" in url else url
+    # Strip query params and fragment
+    path = urlparse(url).path or "/"
 
     # Strip locale prefix
     stripped = _LOCALE_PREFIX_RE.sub("/", path)
@@ -200,7 +201,7 @@ def track_page_view(request, page_url: str, source: str = "middleware"):
                 updated_fields.append("resolved_city")
 
         if not created:
-            visitor.page_views += 1
+            visitor.page_views = F("page_views") + 1
             updated_fields.extend(["page_views", "last_seen"])
             if visitor.ip_address != ip:
                 visitor.ip_address = ip
@@ -221,7 +222,7 @@ def track_page_view(request, page_url: str, source: str = "middleware"):
             visitor=visitor,
             session_key=session_key,
             url=page_url[:2048],
-            url_path=url_path,
+            url_path=url_path[:500],
             referrer=referrer[:2048] if referrer else "",
             is_entry_page=is_entry,
             is_bot=is_bot,

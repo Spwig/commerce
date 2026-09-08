@@ -89,7 +89,7 @@ class ExchangeRateService:
 
         return round_money(converted, to_currency)
 
-    def get_rate(self, from_currency: str, to_currency: str) -> Decimal:
+    def get_rate(self, from_currency: str, to_currency: str, force: bool = False) -> Decimal:
         """
         Get exchange rate between two currencies.
         Uses caching and provider fallback chain.
@@ -103,6 +103,9 @@ class ExchangeRateService:
         Args:
             from_currency: Source currency code
             to_currency: Target currency code
+            force: Bypass the Redis and database caches and fetch a fresh
+                rate directly from the providers (merchant-defined manual
+                rates still take precedence).
 
         Returns:
             Exchange rate as Decimal (e.g., 0.85 means 1 USD = 0.85 EUR)
@@ -113,12 +116,14 @@ class ExchangeRateService:
         if from_currency == to_currency:
             return Decimal("1.0")
 
-        # Try Redis cache first (fastest)
         cache_key = f"exchange_rate:{from_currency}:{to_currency}"
-        cached_rate = cache.get(cache_key)
-        if cached_rate:
-            logger.debug(f"Rate {from_currency}/{to_currency} from Redis cache")
-            return Decimal(str(cached_rate))
+
+        # Try Redis cache first (fastest)
+        if not force:
+            cached_rate = cache.get(cache_key)
+            if cached_rate:
+                logger.debug(f"Rate {from_currency}/{to_currency} from Redis cache")
+                return Decimal(str(cached_rate))
 
         # Try manual exchange rates (merchant-defined, take precedence)
         manual_rate = self._get_manual_rate(from_currency, to_currency)
@@ -126,44 +131,46 @@ class ExchangeRateService:
             cache.set(cache_key, str(manual_rate), self._get_cache_ttl())
             return manual_rate
 
-        # Try database cache (if not stale)
+        # Try database cache (if not stale). A forced refresh skips this so a
+        # stored (non-stale) rate cannot short-circuit the provider fetch.
         # Use rate selection strategy to determine which provider's rate to use
-        try:
-            # Build query based on selection strategy
-            rate_query = ExchangeRate.objects.filter(
-                base_currency=from_currency,
-                target_currency=to_currency,
-                provider_account__is_active=True,
-            )
-
-            # Apply strategy
-            if self.settings.exchange_rate_selection_strategy == "primary":
-                # Try primary provider first
-                db_rate = (
-                    rate_query.filter(provider_account__is_primary=True)
-                    .order_by("-fetched_at")
-                    .first()
+        if not force:
+            try:
+                # Build query based on selection strategy
+                rate_query = ExchangeRate.objects.filter(
+                    base_currency=from_currency,
+                    target_currency=to_currency,
+                    provider_account__is_active=True,
                 )
 
-                # Fallback to latest from any provider if primary has no rate
-                if not db_rate or db_rate.is_stale:
-                    logger.debug(
-                        f"Primary provider has no fresh rate for {from_currency}/{to_currency}, falling back to latest"
+                # Apply strategy
+                if self.settings.exchange_rate_selection_strategy == "primary":
+                    # Try primary provider first
+                    db_rate = (
+                        rate_query.filter(provider_account__is_primary=True)
+                        .order_by("-fetched_at")
+                        .first()
                     )
+
+                    # Fallback to latest from any provider if primary has no rate
+                    if not db_rate or db_rate.is_stale:
+                        logger.debug(
+                            f"Primary provider has no fresh rate for {from_currency}/{to_currency}, falling back to latest"
+                        )
+                        db_rate = rate_query.order_by("-fetched_at").first()
+                else:
+                    # 'latest' strategy - use most recently synced rate from any provider
                     db_rate = rate_query.order_by("-fetched_at").first()
-            else:
-                # 'latest' strategy - use most recently synced rate from any provider
-                db_rate = rate_query.order_by("-fetched_at").first()
 
-            if db_rate and not db_rate.is_stale:
-                logger.debug(
-                    f"Rate {from_currency}/{to_currency} from database cache (provider: {db_rate.provider_account.name}, strategy: {self.settings.exchange_rate_selection_strategy})"
-                )
-                cache.set(cache_key, str(db_rate.rate), self._get_cache_ttl())
-                return db_rate.rate
+                if db_rate and not db_rate.is_stale:
+                    logger.debug(
+                        f"Rate {from_currency}/{to_currency} from database cache (provider: {db_rate.provider_account.name}, strategy: {self.settings.exchange_rate_selection_strategy})"
+                    )
+                    cache.set(cache_key, str(db_rate.rate), self._get_cache_ttl())
+                    return db_rate.rate
 
-        except Exception as e:
-            logger.warning(f"Database cache lookup failed: {e}")
+            except Exception as e:
+                logger.warning(f"Database cache lookup failed: {e}")
 
         # Fetch from provider with fallback chain
         logger.info(f"Fetching rate {from_currency}/{to_currency} from providers")
@@ -440,8 +447,8 @@ class ExchangeRateService:
                 rate_query.filter(provider_account__is_primary=True).order_by("-fetched_at").first()
             )
 
-            # Fallback to latest if primary not available
-            if not db_rate:
+            # Fallback to latest if primary is absent or stale (matches get_rate)
+            if not db_rate or db_rate.is_stale:
                 db_rate = rate_query.order_by("-fetched_at").first()
         else:
             # 'latest' strategy

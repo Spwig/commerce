@@ -7,6 +7,7 @@ import hashlib
 import json
 import logging
 from datetime import UTC, datetime, timedelta
+from email.utils import parsedate_to_datetime
 from typing import Any
 from urllib.parse import urljoin
 
@@ -16,6 +17,35 @@ from django.conf import settings
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
+
+# Fallback back-off window (seconds) for a missing or malformed Retry-After.
+DEFAULT_RETRY_AFTER = 60
+
+
+def parse_retry_after(value: str | None, default: int = DEFAULT_RETRY_AFTER) -> int:
+    """Parse an HTTP ``Retry-After`` header into a delay in seconds.
+
+    Accepts both RFC 7231 forms — delay-seconds and an HTTP date — and honours
+    whatever back-off the server asks for. Falls back to ``default`` for
+    missing or malformed values so a valid header can never raise. A date in
+    the past yields ``0`` (retry now); the result is never negative.
+    """
+    if not value:
+        return default
+    value = value.strip()
+    try:
+        seconds = int(value)
+    except ValueError:
+        try:
+            retry_date = parsedate_to_datetime(value)
+        except (TypeError, ValueError):
+            return default
+        if retry_date is None:
+            return default
+        if retry_date.tzinfo is None:
+            retry_date = retry_date.replace(tzinfo=UTC)
+        seconds = int((retry_date - datetime.now(UTC)).total_seconds())
+    return max(0, seconds)
 
 
 class GeoIPClient:
@@ -193,7 +223,7 @@ class GeoIPClient:
             elif response.status_code == 429:
                 # Community/paid tier hit its quota — cache the over-limit
                 # state so we short-circuit subsequent calls until reset.
-                retry_after = int(response.headers.get("Retry-After", 60))
+                retry_after = parse_retry_after(response.headers.get("Retry-After"))
                 cache.set(over_limit_key, True, timeout=retry_after)
                 # Log at DEBUG (not ERROR) — this is expected behaviour for
                 # Community merchants approaching the tier cap.
@@ -249,7 +279,7 @@ class GeoIPClient:
                 return result
 
             elif response.status_code == 429:
-                retry_after = int(response.headers.get("Retry-After", 60))
+                retry_after = parse_retry_after(response.headers.get("Retry-After"))
                 cache.set(over_limit_key, True, timeout=retry_after)
                 logger.debug("GeoIP over tier limit on bulk; retry after %ds", retry_after)
                 return {}

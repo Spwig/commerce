@@ -12,6 +12,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Max
 from django.http import HttpResponse, JsonResponse
@@ -23,6 +24,35 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import Form, FormAction, FormConditionalRule, FormField, FormStep
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_optional_decimal(value):
+    """Coerce an optional numeric bound to float.
+
+    Preserves a legitimate 0 and treats only ``None`` / empty string as
+    "unset". A plain truthiness check would discard a submitted 0.
+    """
+    if value is None or value == "":
+        return None
+    return float(value)
+
+
+def _unique_form_slug(base):
+    """Return a unique slug derived from ``base`` that fits Form.slug's length.
+
+    Truncates to the SlugField's ``max_length`` and appends an incrementing
+    suffix until the slug is unused, avoiding both DataError (too long) and
+    IntegrityError (collision) on duplication.
+    """
+    max_length = Form._meta.get_field("slug").max_length
+    base = base[:max_length]
+    candidate = base
+    counter = 1
+    while Form.objects.filter(slug=candidate).exists():
+        suffix = f"-{counter}"
+        candidate = f"{base[: max_length - len(suffix)]}{suffix}"
+        counter += 1
+    return candidate
 
 
 @staff_member_required
@@ -50,7 +80,7 @@ def duplicate_form(request, pk):
     # Create new form
     new_form = Form.objects.create(
         name=f"{original_form.name} (Copy)",
-        slug=f"{original_form.slug}-copy-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        slug=_unique_form_slug(f"{original_form.slug}-copy"),
         title=original_form.title,
         description=original_form.description,
         submit_button_text=original_form.submit_button_text,
@@ -61,6 +91,8 @@ def duplicate_form(request, pk):
         require_login=original_form.require_login,
         save_partial_responses=original_form.save_partial_responses,
         spam_protection=original_form.spam_protection,
+        recaptcha_site_key=original_form.recaptcha_site_key,
+        recaptcha_secret_key=original_form.recaptcha_secret_key,
         translations=original_form.translations,
     )
 
@@ -79,9 +111,10 @@ def duplicate_form(request, pk):
         step_mapping[step.pk] = new_step
 
     # Duplicate fields
+    field_mapping = {}
     for field in original_form.fields.all():
         new_step = step_mapping.get(field.step_id) if field.step_id else None
-        new_form.fields.create(
+        new_field = new_form.fields.create(
             step=new_step,
             field_name=field.field_name,
             field_type=field.field_type,
@@ -104,6 +137,32 @@ def duplicate_form(request, pk):
             width=field.width,
             css_class=field.css_class,
             translations=field.translations,
+        )
+        field_mapping[field.pk] = new_field
+
+    # Duplicate conditional rules, remapping source/target references
+    for rule in original_form.rules.all():
+        new_form.rules.create(
+            name=rule.name,
+            is_active=rule.is_active,
+            source_field=field_mapping.get(rule.source_field_id),
+            operator=rule.operator,
+            value=rule.value,
+            action=rule.action,
+            target_field=field_mapping.get(rule.target_field_id) if rule.target_field_id else None,
+            target_step=step_mapping.get(rule.target_step_id) if rule.target_step_id else None,
+            action_value=rule.action_value,
+            priority=rule.priority,
+        )
+
+    # Duplicate form actions (notifications, auto-replies, webhooks)
+    for action in original_form.actions.all():
+        new_form.actions.create(
+            action_type=action.action_type,
+            name=action.name,
+            is_active=action.is_active,
+            config=action.config,
+            order=action.order,
         )
 
     messages.success(
@@ -150,7 +209,9 @@ def csv_safe_cell(value):
 def export_responses(request, form_pk):
     """Export form responses to CSV"""
     form = get_object_or_404(Form, pk=form_pk)
-    responses = form.responses.filter(status="completed").order_by("-submitted_at")
+    responses = (
+        form.responses.filter(status="completed").select_related("user").order_by("-submitted_at")
+    )
 
     # Create CSV response
     response = HttpResponse(content_type="text/csv")
@@ -477,11 +538,9 @@ def save_form_builder(request, pk):
                 field.min_length = field_data.get("min_length")
                 field.max_length = field_data.get("max_length")
 
-                # Handle decimal values
-                min_val = field_data.get("min_value")
-                max_val = field_data.get("max_value")
-                field.min_value = float(min_val) if min_val else None
-                field.max_value = float(max_val) if max_val else None
+                # Handle decimal values (0 is a valid bound, so guard on None/"")
+                field.min_value = _parse_optional_decimal(field_data.get("min_value"))
+                field.max_value = _parse_optional_decimal(field_data.get("max_value"))
 
                 field.validation_regex = field_data.get("validation_regex", "")
                 field.validation_message = field_data.get("validation_message", "")
@@ -693,9 +752,9 @@ def update_field(request, pk, field_id):
         if "max_length" in data:
             field.max_length = data["max_length"]
         if "min_value" in data:
-            field.min_value = float(data["min_value"]) if data["min_value"] else None
+            field.min_value = _parse_optional_decimal(data["min_value"])
         if "max_value" in data:
-            field.max_value = float(data["max_value"]) if data["max_value"] else None
+            field.max_value = _parse_optional_decimal(data["max_value"])
         if "validation_regex" in data:
             field.validation_regex = data["validation_regex"]
         if "validation_message" in data:
@@ -1001,8 +1060,10 @@ def add_rule(request, pk):
             except FormStep.DoesNotExist:
                 return JsonResponse({"error": "Target step not found"}, status=404)
 
-        # Create the rule
-        rule = FormConditionalRule.objects.create(
+        # Build and validate the rule before persisting. Model.objects.create()
+        # skips clean(), so an action without its required target would be saved
+        # as an unusable rule; full_clean() enforces that invariant.
+        rule = FormConditionalRule(
             form=form,
             name=data.get("name", ""),
             is_active=data.get("is_active", True),
@@ -1015,6 +1076,13 @@ def add_rule(request, pk):
             action_value=data.get("action_value", {}),
             priority=data.get("priority", 0),
         )
+        try:
+            rule.full_clean()
+        except ValidationError as e:
+            return JsonResponse(
+                {"error": "Validation failed", "details": e.message_dict}, status=400
+            )
+        rule.save()
 
         logger.info(f"[ADD_RULE] Rule created: id={rule.pk}")
 

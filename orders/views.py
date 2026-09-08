@@ -483,7 +483,7 @@ class AddressViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         serializer = self.get_serializer(address)
         return Response(serializer.data)
 
-    def update(self, request, pk=None):
+    def update(self, request, pk=None, *args, **kwargs):
         """Update address"""
         address = get_object_or_404(Address, pk=pk, user=request.user)
 
@@ -603,6 +603,18 @@ class ReturnRequestViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             return CreateReturnRequestSerializer
         return ReturnRequestSerializer
 
+    def create(self, request, *args, **kwargs):
+        """Disabled: order/user are read-only, so the generic create cannot
+        populate the required foreign keys. Create return requests through
+        the create-for-order action instead."""
+        return Response(
+            {
+                "success": False,
+                "message": _("Create a return request via the create-for-order endpoint."),
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
     def list(self, request):
         """List user's return requests"""
         queryset = self.get_queryset()
@@ -674,14 +686,21 @@ class ReturnRequestViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         serializer = CreateReturnRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Validate items belong to this order
+        # Validate items belong to this order, aggregating quantities per
+        # order item so repeated ids can't collectively exceed the quantity
+        # purchased.
         validated_items = []
+        requested_quantities = {}
         for item_data in serializer.validated_data["items"]:
             try:
                 order_item = order.items.get(id=item_data["order_item_id"])
 
-                # Validate quantity
-                if item_data["quantity"] > order_item.quantity:
+                requested_quantities[order_item.id] = (
+                    requested_quantities.get(order_item.id, 0) + item_data["quantity"]
+                )
+
+                # Validate quantity (cumulative across duplicate entries)
+                if requested_quantities[order_item.id] > order_item.quantity:
                     return Response(
                         {
                             "success": False,
@@ -1317,8 +1336,17 @@ def order_manual_discount_apply_view(request, order_id):
         order.discount_amount = discount_money
         order.save()
 
-        # Recalculate totals
-        recalculate_order_totals(order)
+        # Recalculate totals. recalculate_order_totals() derives
+        # discount_amount from applied vouchers only, so re-apply the manual
+        # discount on top of the voucher discount and adjust the total before
+        # saving — otherwise the recalculation would wipe out the manual
+        # discount we just set.
+        order = recalculate_order_totals(order)
+        order.discount_amount = order.discount_amount + discount_money
+        order.total_amount = order.total_amount - discount_money
+        if order.total_amount.amount < 0:
+            order.total_amount = Money(0, order.total_amount.currency)
+        order.save()
 
         # Render updated discounts section and totals
         discounts_html = render_to_string(
@@ -1511,24 +1539,38 @@ def order_customer_update_view(request, order_id):
 
                 # Try to get default shipping address, fallback to most recent
                 shipping_address = Address.objects.filter(
-                    user=new_user, address_type__in=["shipping", "both"], is_default=True
+                    user=new_user,
+                    address_type__in=["shipping", "both"],
+                    is_default=True,
+                    is_active=True,
                 ).first()
 
                 if not shipping_address:
                     shipping_address = (
-                        Address.objects.filter(user=new_user, address_type__in=["shipping", "both"])
+                        Address.objects.filter(
+                            user=new_user,
+                            address_type__in=["shipping", "both"],
+                            is_active=True,
+                        )
                         .order_by("-updated_at")
                         .first()
                     )
 
                 # Try to get default billing address, fallback to most recent
                 billing_address = Address.objects.filter(
-                    user=new_user, address_type__in=["billing", "both"], is_default=True
+                    user=new_user,
+                    address_type__in=["billing", "both"],
+                    is_default=True,
+                    is_active=True,
                 ).first()
 
                 if not billing_address:
                     billing_address = (
-                        Address.objects.filter(user=new_user, address_type__in=["billing", "both"])
+                        Address.objects.filter(
+                            user=new_user,
+                            address_type__in=["billing", "both"],
+                            is_active=True,
+                        )
                         .order_by("-updated_at")
                         .first()
                     )
@@ -1890,16 +1932,20 @@ def product_search_api_view(request):
 
     results = []
     for product in products:
+        # Use the prefetched caches to avoid extra per-product queries (N+1).
+        images = list(product.images.all())
+        variants = list(product.variants.all())
+
         # Get product thumbnail
         product_thumbnail = None
-        if product.images.exists():
-            first_image = product.images.first()
+        if images:
+            first_image = images[0]
             if first_image and hasattr(first_image, "thumbnail_small"):
                 product_thumbnail = first_image.thumbnail_small
 
         # If product has variants, include them
-        if product.variants.exists():
-            for variant in product.variants.all():
+        if variants:
+            for variant in variants:
                 # For variants, prefer variant image over product image
                 variant_thumbnail = product_thumbnail  # Default to product thumbnail
                 if hasattr(variant, "image") and variant.image:

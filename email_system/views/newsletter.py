@@ -225,11 +225,12 @@ def newsletter_send(request, newsletter_id):
                     )
                     return redirect("email_system:newsletter_send", newsletter.id)
 
-                # Queue emails for sending
-                from email_system.models import EmailAccount
+                # Queue emails for sending. Route newsletters (marketing) to the dedicated
+                # marketing sending account when one is configured, so newsletter reputation
+                # stays separate from transactional email; falls back to the default account.
+                from email_system.services.email_sender import EmailSendingService
 
-                # Get default email account (or first active account)
-                email_account = EmailAccount.objects.filter(site=site, is_active=True).first()
+                email_account = EmailSendingService.get_account_for(site=site, marketing=True)
 
                 if not email_account:
                     messages.error(

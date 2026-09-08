@@ -39,6 +39,7 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
         "created_at",
     ]
     list_filter = ["is_active", "is_default", "connection_status", "checkout_mode", "created_at"]
+    list_select_related = ["component", "user"]
     search_fields = ["display_name", "component__name", "user__username", "user__email"]
     readonly_fields = [
         "component",
@@ -319,6 +320,26 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
+    def _permission_guard(self, request, account, *, delete=False):
+        """Enforce model-level authorization for a custom AJAX admin endpoint.
+
+        ``admin_view`` only proves the caller is active staff; it does not
+        prove they may change or delete this account. Return a 403
+        ``JsonResponse`` when the required permission is missing, otherwise
+        ``None`` so the caller can proceed. Both ``message`` and ``error``
+        keys are set because the AJAX endpoints in this admin differ on which
+        one they surface to the client.
+        """
+        allowed = (
+            self.has_delete_permission(request, account)
+            if delete
+            else self.has_change_permission(request, account)
+        )
+        if allowed:
+            return None
+        msg = str(_("Permission denied"))
+        return JsonResponse({"success": False, "message": msg, "error": msg}, status=403)
+
     def test_connection_view(self, request, account_id):
         """AJAX endpoint to test provider connection"""
         try:
@@ -346,10 +367,19 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
 
     def set_default_view(self, request, account_id):
         """AJAX endpoint to set provider as default"""
+        if request.method != "POST":
+            return JsonResponse(
+                {"success": False, "message": str(_("Method not allowed"))}, status=405
+            )
         try:
             account = PaymentProviderAccount.objects.get(id=account_id)
-            # Clear other defaults
-            PaymentProviderAccount.objects.filter(is_default=True).update(is_default=False)
+            denied = self._permission_guard(request, account)
+            if denied:
+                return denied
+            # Clear this user's other defaults (defaults are per user)
+            PaymentProviderAccount.objects.filter(user=account.user, is_default=True).update(
+                is_default=False
+            )
             # Set this as default
             account.is_default = True
             account.save()
@@ -367,6 +397,9 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
             )
         try:
             account = PaymentProviderAccount.objects.get(id=account_id)
+            denied = self._permission_guard(request, account)
+            if denied:
+                return denied
             account.is_active = not account.is_active
             account.save(update_fields=["is_active"])
             return JsonResponse(
@@ -390,6 +423,9 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
 
         try:
             account = PaymentProviderAccount.objects.get(id=account_id)
+            denied = self._permission_guard(request, account)
+            if denied:
+                return denied
 
             # Check if provider supports payment method sync
             try:
@@ -577,6 +613,14 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
                 )
 
             account = PaymentProviderAccount.objects.get(id=account_id)
+            denied = self._permission_guard(request, account)
+            if denied:
+                return denied
+
+            # Normalize to uppercase ISO code (matches remove_country_override_view
+            # and the uppercase shipping-country keys the configure view compares against)
+            if country_code != "_global":
+                country_code = country_code.upper()
 
             if enabled:
                 account.enable_payment_method(country_code, method_slug)
@@ -597,10 +641,10 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
             return JsonResponse(
                 {"success": False, "error": _("Provider account not found")}, status=404
             )
-        except ValueError as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
         except json_module.JSONDecodeError:
             return JsonResponse({"success": False, "error": _("Invalid request body")}, status=400)
+        except ValueError as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
         except Exception:
             import logging
 
@@ -628,6 +672,9 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
 
             country_code = country_code.upper()
             account = PaymentProviderAccount.objects.get(id=account_id)
+            denied = self._permission_guard(request, account)
+            if denied:
+                return denied
 
             if country_code in account.enabled_payment_methods:
                 del account.enabled_payment_methods[country_code]
@@ -666,6 +713,9 @@ class PaymentProviderAccountAdmin(admin.ModelAdmin):
 
         try:
             account = PaymentProviderAccount.objects.get(id=account_id)
+            denied = self._permission_guard(request, account, delete=True)
+            if denied:
+                return denied
             # Prevent deletion if transactions exist
             if account.transactions.exists():
                 return JsonResponse(
@@ -774,6 +824,19 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
         return _("No response data")
 
     provider_response_display.short_description = _("Provider Response")
+
+    def get_queryset(self, request):
+        """Prefetch the provider account and its component/user for the list.
+
+        Rendering each row's provider account calls its ``__str__``, which
+        reads ``component`` and ``user``; without this the changelist issues
+        several extra queries per row.
+        """
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("provider_account__component", "provider_account__user")
+        )
 
     def changelist_view(self, request, extra_context=None):
         """Add custom context data for the transaction list view"""
@@ -984,6 +1047,19 @@ class PaymentIntentAdmin(admin.ModelAdmin):
         ),
         (_("Timestamps"), {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
     )
+
+    def get_queryset(self, request):
+        """Prefetch the provider account (with component/user) and order.
+
+        The list dereferences each intent's provider account and order per
+        row, and the provider account's ``__str__`` also reads component and
+        user; this collapses that N+1 pattern into one query.
+        """
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("provider_account__component", "provider_account__user", "order")
+        )
 
     def has_add_permission(self, request):
         return False

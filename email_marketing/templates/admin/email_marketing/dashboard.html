@@ -36,6 +36,19 @@
     </div>
   </div>
 
+  {% if needs_marketing_domain %}
+  <div class="update-notice-banner">
+    <div class="update-banner-icon"><i class="fas fa-shield-halved"></i></div>
+    <div class="update-banner-content">
+      <strong>{% trans "Protect your transactional email:" %}</strong>
+      {% trans "Your campaigns share the same sending reputation as order confirmations and password resets, so one bad campaign could send those to spam. Set up a separate marketing sending domain to keep them apart." %}
+    </div>
+    <a class="update-banner-action" href="{% url 'email_system:wizard_step1' %}?provider=builtin_smtp&amp;purpose=marketing">
+      <i class="fas fa-paper-plane"></i> {% trans "Set up marketing domain" %}
+    </a>
+  </div>
+  {% endif %}
+
   <div class="dashboard-stats-grid">
     <a class="dashboard-stat-card em-dash-link" href="{% url 'admin:email_marketing_subscriber_changelist' %}">
       <div class="icon"><i class="fas fa-users"></i></div>

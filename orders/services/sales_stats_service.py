@@ -15,15 +15,15 @@ def update_product_sales_counts(order):
     (excludes bundle components), and is idempotent via order.metadata flag
     protected by a row lock to prevent TOCTOU races.
     """
-    # Skip test/sandbox orders
-    if order.is_test_order:
-        return
-
     from orders.models import Order
 
     with transaction.atomic():
         # Re-fetch with row lock to prevent concurrent double-counting
         order = Order.objects.select_for_update().get(pk=order.pk)
+
+        # Skip test/sandbox orders (evaluated on the locked, freshly fetched row)
+        if order.is_test_order:
+            return
 
         if order.metadata and order.metadata.get("sales_count_updated"):
             logger.info(f"Sales counts already updated for order {order.order_number}")

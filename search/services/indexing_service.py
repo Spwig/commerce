@@ -96,8 +96,8 @@ class IndexingService:
 
         # Variant attributes
         for variant in product.variants.all():
-            if hasattr(variant, "attribute_values"):
-                for attr_value in variant.attribute_values.all():
+            if hasattr(variant, "selected_attributes"):
+                for attr_value in variant.selected_attributes.all():
                     if attr_value.value and str(attr_value.value) not in attributes:
                         attributes.append(str(attr_value.value))
 

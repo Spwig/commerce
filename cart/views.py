@@ -2,6 +2,9 @@
 API Views for Cart, Wishlist, and Checkout
 """
 
+import uuid
+
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import (
@@ -283,10 +286,9 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
         from subscriptions.provider_base import is_subscription_supported
 
         try:
-            token = PaymentToken.objects.get(
-                token_id=payment_token_id, user=request.user, is_active=True
-            )
-        except PaymentToken.DoesNotExist:
+            token_id = uuid.UUID(str(payment_token_id))
+            token = PaymentToken.objects.get(token_id=token_id, user=request.user, is_active=True)
+        except (PaymentToken.DoesNotExist, ValueError):
             return Response(
                 {"success": False, "message": str(_("Invalid or inactive payment token."))},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -557,7 +559,12 @@ class WishlistViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Get wishlists for current user"""
-        return Wishlist.objects.filter(user=self.request.user).prefetch_related("items__product")
+        return Wishlist.objects.filter(user=self.request.user).prefetch_related(
+            Prefetch(
+                "items",
+                queryset=WishlistItem.objects.select_related("product", "variant"),
+            )
+        )
 
     def perform_create(self, serializer):
         """Create wishlist for current user"""
@@ -1530,7 +1537,10 @@ def filter_carts(request):
         return JsonResponse({"error": "Invalid request"}, status=400)
 
     # Start with all carts
-    carts = Cart.objects.select_related("user", "shipping_method").prefetch_related("items")
+    carts = Cart.objects.select_related("user", "shipping_method").prefetch_related(
+        Prefetch("items", queryset=CartItem.objects.select_related("product")),
+        "applied_vouchers",
+    )
 
     # Search filter
     search = request.GET.get("search", "").strip()
@@ -1583,14 +1593,14 @@ def filter_carts(request):
             # Filter using annotated total - will need to compute in Python
             # For now, we'll fetch all and filter after
         except ValueError:
-            pass
+            min_value = None
 
     max_value = request.GET.get("max_value", "")
     if max_value:
         try:
             max_value = float(max_value)
         except ValueError:
-            pass
+            max_value = None
 
     # Date range filters
     date_from = request.GET.get("date_from", "")

@@ -17,6 +17,19 @@ from core.models import SiteSettings
 
 from ..services.analytics_service import PaymentAnalyticsService
 
+# Escapes for embedding JSON inside an HTML <script> element, mirroring Django's
+# json_script filter so database-controlled strings can't break out of the tag.
+_JSON_SCRIPT_ESCAPES = {
+    ord(">"): "\\u003e",
+    ord("<"): "\\u003c",
+    ord("&"): "\\u0026",
+}
+
+
+def _json_for_script(value):
+    """Serialize a value to JSON safe for embedding in an HTML <script> element."""
+    return json.dumps(value).translate(_JSON_SCRIPT_ESCAPES)
+
 
 @staff_member_required
 def payment_dashboard_view(request):
@@ -45,8 +58,12 @@ def payment_dashboard_view(request):
         try:
             if custom_start_str:
                 custom_start = datetime.fromisoformat(custom_start_str)
+                if timezone.is_naive(custom_start):
+                    custom_start = timezone.make_aware(custom_start)
             if custom_end_str:
                 custom_end = datetime.fromisoformat(custom_end_str)
+                if timezone.is_naive(custom_end):
+                    custom_end = timezone.make_aware(custom_end)
         except ValueError:
             # Fall back to current month if custom dates are malformed
             custom_start = None
@@ -112,12 +129,12 @@ def payment_dashboard_view(request):
         "payment_performance": payment_performance,
         "provider_performance": provider_performance,
         "revenue_over_time": revenue_over_time,
-        "revenue_over_time_json": json.dumps(decimal_to_float(revenue_over_time)),
+        "revenue_over_time_json": _json_for_script(decimal_to_float(revenue_over_time)),
         "transaction_by_status": transaction_by_status,
-        "transaction_by_status_json": json.dumps(decimal_to_float(transaction_by_status)),
+        "transaction_by_status_json": _json_for_script(decimal_to_float(transaction_by_status)),
         "recent_transactions": recent_transactions,
         "payment_methods_distribution": payment_methods_distribution,
-        "payment_methods_json": json.dumps(decimal_to_float(payment_methods_distribution)),
+        "payment_methods_json": _json_for_script(decimal_to_float(payment_methods_distribution)),
         "webhook_stats": webhook_stats,
         "refund_metrics": refund_metrics,
         "current_grouping": revenue_over_time.get("grouping", "day"),

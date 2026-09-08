@@ -69,10 +69,16 @@ def _auto_generate_seo(sender, instance, **kwargs):
         content = extract_content_from_object(instance, model_type)
         result = provider.generate_seo(content)
 
+        # Only update fields that are currently empty, preserving any
+        # existing custom content in the other field.
+        update_values = {}
+        if not instance.meta_title:
+            update_values["meta_title"] = result["meta_title"]
+        if not instance.meta_description:
+            update_values["meta_description"] = result["meta_description"]
+
         # Use QuerySet.update() to avoid triggering post_save again
-        type(instance).objects.filter(pk=instance.pk).update(
-            meta_title=result["meta_title"], meta_description=result["meta_description"]
-        )
+        type(instance).objects.filter(pk=instance.pk).update(**update_values)
 
         # Invalidate coverage cache
         from seo_generator.services.coverage_service import invalidate_seo_coverage_cache

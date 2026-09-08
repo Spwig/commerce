@@ -79,13 +79,19 @@ class BuiltinSMTPHandler:
             # Get the default EmailAccount for built-in server
             account = self._get_builtin_account()
 
-            # Sign with DKIM
+            # Sign with DKIM. Every outgoing message must be signed, so a
+            # returned-unsigned result (missing key or signing error) is a hard
+            # failure rather than a silent pass-through.
             dkim_handler = DKIMHandler(domain=domain)
             signed_message = dkim_handler.sign_message(message_bytes, account)
 
-            if signed_message != message_bytes:
-                self.stats["signed"] += 1
-                logger.debug(f"Message signed with DKIM for domain: {domain}")
+            if signed_message == message_bytes:
+                logger.error(f"DKIM signing failed for domain {domain}; refusing to relay")
+                self.stats["failed"] += 1
+                return "451 Unable to sign message"
+
+            self.stats["signed"] += 1
+            logger.debug(f"Message signed with DKIM for domain: {domain}")
 
             # Forward to Postfix or log in dev mode
             if self.dev_mode:

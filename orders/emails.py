@@ -305,6 +305,8 @@ def send_order_status_update(order, old_status):
                 "page_builder:order_confirmation",
                 kwargs={"order_number": order.order_number},
             )
+            old_status_display = str(status_display_map.get(old_status, old_status))
+            new_status_display = str(status_display_map.get(order.status, order.status))
 
         EmailSendingService.send_template_email(
             to_email=order.email,
@@ -312,8 +314,8 @@ def send_order_status_update(order, old_status):
             context={
                 "customer_name": order.shipping_name,
                 "order_number": order.order_number,
-                "old_status_display": str(status_display_map.get(old_status, old_status)),
-                "new_status_display": str(status_display_map.get(order.status, order.status)),
+                "old_status_display": old_status_display,
+                "new_status_display": new_status_display,
                 "order_url": f"{site_url}{order_path}",
             },
             language=email_language,

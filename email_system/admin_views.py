@@ -10,8 +10,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST
+
+from staff_roles.decorators import requires_permission
 
 from .models import EmailAccount, EmailOutbox
 
@@ -70,12 +73,34 @@ def filter_email_outbox(request):
 
 
 @staff_member_required
+@requires_permission("email_system.change_emailaccount", ajax=True)
 @require_POST
 def toggle_account_active(request, account_id):
     """Toggle email account active/inactive status."""
     try:
         account = EmailAccount.objects.get(id=account_id)
+
+        if account.is_active and account.is_default:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": _(
+                        "Cannot deactivate the default email account. "
+                        "Set another account as default first."
+                    ),
+                },
+                status=400,
+            )
+
         account.is_active = not account.is_active
+        # Don't let disabling this account strand the store without a transactional
+        # sending identity (order confirmations / password resets). clean() enforces the
+        # same rule on the change form; this path saves directly, so check explicitly.
+        if account.would_orphan_transactional():
+            return JsonResponse(
+                {"success": False, "message": EmailAccount.NO_TRANSACTIONAL_ACCOUNT_ERROR},
+                status=400,
+            )
         account.save(update_fields=["is_active", "updated_at"])
 
         return JsonResponse(
@@ -93,6 +118,7 @@ def toggle_account_active(request, account_id):
 
 
 @staff_member_required
+@requires_permission("email_system.change_emailaccount", ajax=True)
 @require_POST
 def set_account_default(request, account_id):
     """Set an email account as the default sender."""
@@ -133,11 +159,10 @@ def set_account_default(request, account_id):
 
 
 @staff_member_required
+@requires_permission("email_system.change_emailaccount", ajax=True)
 @require_POST
 def test_account_connection(request, account_id):
     """Test email account connection via provider healthcheck."""
-    from django.utils import timezone
-
     try:
         account = EmailAccount.objects.get(id=account_id)
         provider = account.get_provider_instance()
@@ -173,6 +198,7 @@ def test_account_connection(request, account_id):
 
 
 @staff_member_required
+@requires_permission("email_system.delete_emailaccount", ajax=True)
 @require_POST
 def delete_account(request, account_id):
     """Delete an email account."""
@@ -188,6 +214,22 @@ def delete_account(request, account_id):
                         "Cannot delete the default email account. Set another account as default first."
                     ),
                 },
+                status=400,
+            )
+
+        # Don't delete the last active transactional-capable account (deletion bypasses
+        # clean()): transactional mail must keep a sending identity.
+        remaining_transactional = (
+            EmailAccount.objects.filter(
+                is_active=True,
+                purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+            )
+            .exclude(id=account_id)
+            .exists()
+        )
+        if not remaining_transactional:
+            return JsonResponse(
+                {"success": False, "message": EmailAccount.NO_TRANSACTIONAL_ACCOUNT_ERROR},
                 status=400,
             )
 
@@ -207,11 +249,16 @@ def delete_account(request, account_id):
 
 
 @staff_member_required
+@requires_permission("email_system.change_emailaccount", ajax=True)
 @require_POST
 def bulk_account_action(request):
     """Handle bulk actions on email accounts."""
     try:
         data = json.loads(request.body)
+        if not isinstance(data, dict):
+            return JsonResponse(
+                {"success": False, "message": _("Invalid request data")}, status=400
+            )
         action = data.get("action")
         account_ids = data.get("account_ids", [])
 
@@ -237,15 +284,39 @@ def bulk_account_action(request):
             )
 
         if action == "enable":
-            accounts.update(is_active=True)
+            accounts.update(is_active=True, updated_at=timezone.now())
             message = _("%(count)d account(s) enabled") % {"count": count}
         elif action == "disable":
-            accounts.update(is_active=False)
+            if accounts.filter(is_default=True).exists():
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": _(
+                            "Cannot disable the default email account. Remove it from "
+                            "selection or set another account as default first."
+                        ),
+                    },
+                    status=400,
+                )
+            # Refuse if disabling the selection would leave no active transactional-capable
+            # account (order confirmations / password resets would then have nowhere to go).
+            remaining_transactional = (
+                EmailAccount.objects.filter(
+                    is_active=True,
+                    purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+                )
+                .exclude(id__in=account_ids)
+                .exists()
+            )
+            if not remaining_transactional:
+                return JsonResponse(
+                    {"success": False, "message": EmailAccount.NO_TRANSACTIONAL_ACCOUNT_ERROR},
+                    status=400,
+                )
+            accounts.update(is_active=False, updated_at=timezone.now())
             message = _("%(count)d account(s) disabled") % {"count": count}
         elif action == "test_connection":
             # Test each account individually
-            from django.utils import timezone
-
             success_count = 0
             for account in accounts:
                 try:
@@ -267,14 +338,31 @@ def bulk_account_action(request):
                             "updated_at",
                         ]
                     )
-                except Exception:
+                except Exception as exc:
+                    logger.warning(
+                        "Connection test failed for account %s: %s",
+                        account.id,
+                        exc,
+                        exc_info=True,
+                    )
                     account.connection_status = "error"
-                    account.save(update_fields=["connection_status", "updated_at"])
+                    account.connection_error = str(exc) or _("Connection test failed")
+                    account.last_tested_at = timezone.now()
+                    account.save(
+                        update_fields=[
+                            "connection_status",
+                            "connection_error",
+                            "last_tested_at",
+                            "updated_at",
+                        ]
+                    )
             message = _("%(success)d of %(total)d connection tests passed") % {
                 "success": success_count,
                 "total": count,
             }
         elif action == "delete":
+            if not request.user.has_perm("email_system.delete_emailaccount"):
+                return JsonResponse({"error": "forbidden"}, status=403)
             # Don't allow deleting default account
             default_in_selection = accounts.filter(is_default=True).exists()
             if default_in_selection:
@@ -285,6 +373,19 @@ def bulk_account_action(request):
                             "Cannot delete the default email account. Remove it from selection or change the default first."
                         ),
                     },
+                    status=400,
+                )
+            remaining_transactional = (
+                EmailAccount.objects.filter(
+                    is_active=True,
+                    purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+                )
+                .exclude(id__in=account_ids)
+                .exists()
+            )
+            if not remaining_transactional:
+                return JsonResponse(
+                    {"success": False, "message": EmailAccount.NO_TRANSACTIONAL_ACCOUNT_ERROR},
                     status=400,
                 )
             accounts.delete()

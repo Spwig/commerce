@@ -122,7 +122,8 @@ class ProviderWizardStep1View(WizardSessionMixin, View):
                             logo_path = provider_dir / logo_filename
                             if logo_path.exists():
                                 logo_url = static(
-                                    f"seo_generator/{component.slug}/{version}/{logo_filename}"
+                                    f"seo_generator_provider/{component.slug}"
+                                    f"/current/{logo_filename}"
                                 )
 
                         component.thumbnail_url = logo_url
@@ -345,7 +346,7 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
         """Display test connection page."""
         wizard_data = self.get_wizard_data()
 
-        if not wizard_data.get("component_id") or not wizard_data.get("credentials"):
+        if not wizard_data.get("component_id") or "credentials" not in wizard_data:
             messages.warning(request, _("Please complete previous steps first."))
             return redirect("seo_generator:wizard_step1")
 
@@ -376,7 +377,7 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
         credentials = wizard_data.get("credentials", {})
         provider_name = wizard_data.get("provider_name", "")
 
-        if not component_id or not credentials:
+        if not component_id or "credentials" not in wizard_data:
             return JsonResponse({"success": False, "error": _("Missing data.")}, status=400)
 
         try:
@@ -435,11 +436,17 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
 
                     encrypted_credentials = encrypt_credentials(credentials)
 
-                    is_first_provider = not SEOProviderAccount.objects.exists()
-
                     with transaction.atomic():
+                        # Lock the current Site row so the first-provider
+                        # decision is serialized: without this, concurrent
+                        # initial saves could both observe no accounts, both
+                        # set is_primary=True, and violate
+                        # unique_primary_seo_provider.
+                        locked_site = Site.objects.select_for_update().get(pk=site.pk)
+                        is_first_provider = not SEOProviderAccount.objects.exists()
+
                         provider_account = SEOProviderAccount.objects.create(
-                            site=site,
+                            site=locked_site,
                             component=component,
                             name=provider_name or component.name,
                             credentials=encrypted_credentials,

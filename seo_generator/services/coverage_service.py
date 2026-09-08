@@ -61,21 +61,22 @@ class SEOCoverageService:
         grand_desc_too_long = 0
 
         for model_type, (app_label, model_name) in MODEL_MAP.items():
-            try:
-                model_class = apps.get_model(app_label, model_name)
-                result = self._calculate_model_coverage(model_type, model_class)
-                if result:
-                    content_types.append(result)
-                    grand_total += result["total"]
-                    grand_with_title += result["with_title"]
-                    grand_with_description += result["with_description"]
-                    grand_with_both += result["with_both"]
-                    grand_title_too_short += result["quality"]["title_too_short"]
-                    grand_title_too_long += result["quality"]["title_too_long"]
-                    grand_desc_too_short += result["quality"]["desc_too_short"]
-                    grand_desc_too_long += result["quality"]["desc_too_long"]
-            except Exception as e:
-                logger.warning("SEO coverage calc failed for %s: %s", model_type, e)
+            model_class = self._resolve_model(app_label, model_name)
+            if model_class is None:
+                continue
+            # Let calculation/query failures propagate so callers surface an
+            # error instead of caching a silently incomplete result.
+            result = self._calculate_model_coverage(model_type, model_class)
+            if result:
+                content_types.append(result)
+                grand_total += result["total"]
+                grand_with_title += result["with_title"]
+                grand_with_description += result["with_description"]
+                grand_with_both += result["with_both"]
+                grand_title_too_short += result["quality"]["title_too_short"]
+                grand_title_too_long += result["quality"]["title_too_long"]
+                grand_desc_too_short += result["quality"]["desc_too_short"]
+                grand_desc_too_long += result["quality"]["desc_too_long"]
 
         overall_pct = round((grand_with_both / grand_total * 100), 1) if grand_total > 0 else 0
 
@@ -115,29 +116,43 @@ class SEOCoverageService:
         """
         items = []
         for model_type, (app_label, model_name) in MODEL_MAP.items():
-            try:
-                model_class = apps.get_model(app_label, model_name)
-                if not hasattr(model_class, "meta_title"):
-                    continue
+            model_class = self._resolve_model(app_label, model_name)
+            if model_class is None:
+                continue
+            if not hasattr(model_class, "meta_title"):
+                continue
 
-                missing = model_class.objects.filter(
-                    Q(meta_title="")
-                    | Q(meta_title__isnull=True)
-                    | Q(meta_description="")
-                    | Q(meta_description__isnull=True)
-                ).values_list("pk", flat=True)
+            # Let query failures propagate rather than returning a silently
+            # truncated list the caller would treat as exhaustive.
+            missing = model_class.objects.filter(
+                Q(meta_title="")
+                | Q(meta_title__isnull=True)
+                | Q(meta_description="")
+                | Q(meta_description__isnull=True)
+            ).values_list("pk", flat=True)
 
-                for pk in missing:
-                    items.append(
-                        {
-                            "model_type": model_type,
-                            "object_id": pk,
-                        }
-                    )
-            except Exception as e:
-                logger.warning("Failed to get missing items for %s: %s", model_type, e)
+            for pk in missing:
+                items.append(
+                    {
+                        "model_type": model_type,
+                        "object_id": pk,
+                    }
+                )
 
         return items
+
+    @staticmethod
+    def _resolve_model(app_label, model_name):
+        """Resolve a mapped model, or None if its app/model isn't installed.
+
+        Only a missing app/model is skipped; real query failures are left to
+        propagate so partial coverage results are never reported or cached.
+        """
+        try:
+            return apps.get_model(app_label, model_name)
+        except LookupError:
+            logger.debug("SEO coverage: model %s.%s not installed; skipping", app_label, model_name)
+            return None
 
     def _calculate_model_coverage(self, model_type, model_class):
         """Calculate SEO coverage for a single model type."""

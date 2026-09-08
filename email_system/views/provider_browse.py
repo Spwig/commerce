@@ -75,7 +75,7 @@ class ProviderBrowseView(View):
                 "description": manifest.get("description", ""),
                 "version": manifest.get("version", "1.0.0"),
                 "thumbnail_url": static(logo_path)
-                if Path(settings.BASE_DIR / "email_system" / "static" / logo_path).exists()
+                if (Path(settings.BASE_DIR) / "email_system" / "static" / logo_path).exists()
                 else "",
                 "homepage_url": "",
                 "documentation_url": "",
@@ -232,6 +232,9 @@ class ProviderBrowseView(View):
                 or manifest.get("api_docs_url", ""),
                 "capabilities": capabilities,
                 "setup": setup_info,
+                "regions": provider.get("regions") or manifest.get("regions", {}),
+                "compliance": provider.get("compliance") or manifest.get("compliance", {}),
+                "pricing_info": provider.get("pricing_info") or manifest.get("pricing_info", {}),
                 "is_installed": is_installed,
                 "current_version": current_version,
                 "latest_version": latest_version,
@@ -291,6 +294,9 @@ class ProviderBrowseView(View):
                 or manifest.get("api_docs_url", ""),
                 "capabilities": capabilities,
                 "setup": setup_info,
+                "regions": manifest.get("regions", {}),
+                "compliance": manifest.get("compliance", {}),
+                "pricing_info": manifest.get("pricing_info", {}),
                 "is_installed": True,
                 "current_version": current_version,
                 "latest_version": current_version,
@@ -309,6 +315,9 @@ class ProviderBrowseView(View):
         webhooks_count = sum(1 for p in all_providers if p["capabilities"].get("webhooks"))
 
         # Prepare provider data for modal (with all manifest data)
+        from django.urls import reverse
+
+        configure_url = reverse("admin:email_system_emailaccount_changelist")
         providers_for_modal = []
         for provider_data in all_providers:
             modal_data = {
@@ -330,7 +339,7 @@ class ProviderBrowseView(View):
                 "current_version": provider_data.get("current_version", ""),
                 "latest_version": provider_data.get("latest_version", ""),
                 "has_update": provider_data.get("has_update", False),
-                "configure_url": "/admin/email_system/emailaccount/",
+                "configure_url": configure_url,
             }
             providers_for_modal.append(modal_data)
 
@@ -349,6 +358,28 @@ class ProviderBrowseView(View):
         }
 
         return render(request, self.template_name, context)
+
+
+def _activate_provider_version(provider_slug, version):
+    """Point a provider's ``current`` symlink at a version and reload the registry.
+
+    Raises on any filesystem or reload failure so callers can roll back, rather
+    than leaving the provider marked installed but unreachable through ``current``.
+    """
+    from component_updates.integration_paths import INTEGRATIONS_DIR
+    from email_system.providers.registry import ProviderRegistry
+
+    provider_base_dir = INTEGRATIONS_DIR / "email_provider" / provider_slug
+    current_link = provider_base_dir / "current"
+    version_dir = f"v{version}" if not version.startswith("v") else version
+
+    # Remove existing symlink if it exists
+    if current_link.exists() or current_link.is_symlink():
+        current_link.unlink()
+
+    # Create new symlink and reload so the version becomes available
+    current_link.symlink_to(version_dir)
+    ProviderRegistry.reload_providers()
 
 
 @staff_member_required
@@ -456,30 +487,28 @@ def install_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Create 'current' symlink to the installed version
+            # Activate the installed version. Symlink activation is part of the
+            # installation: without a working 'current' link the loader cannot
+            # reach the provider, so a failure aborts the operation and rolls
+            # back the installed files and registry entry.
             try:
+                _activate_provider_version(provider_slug, latest_version)
+            except Exception as e:
+                import shutil
+
                 from component_updates.integration_paths import INTEGRATIONS_DIR
 
-                provider_base_dir = INTEGRATIONS_DIR / "email_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
+                shutil.rmtree(
+                    INTEGRATIONS_DIR / "email_provider" / provider_slug, ignore_errors=True
                 )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the new provider available
-                from email_system.providers.registry import ProviderRegistry
-
-                ProviderRegistry.reload_providers()
-            except Exception as e:
-                # Don't fail the installation if symlink creation fails, just log it
-                print(f"Warning: Could not create symlink for {provider_slug}: {e}")
+                component.delete()  # Rollback registry entry
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate provider: %(error)s") % {"error": str(e)},
+                    },
+                    status=500,
+                )
 
         return JsonResponse(
             {
@@ -593,30 +622,23 @@ def update_provider_ajax(request, provider_slug):
                     status=500,
                 )
 
-            # Update the 'current' symlink to point to the new version
+            # Switch the 'current' symlink to the new version. Record the new
+            # version only once activation and reload succeed; on failure restore
+            # the previous link so the provider stays reachable and report an error.
             try:
-                from component_updates.integration_paths import INTEGRATIONS_DIR
-
-                provider_base_dir = INTEGRATIONS_DIR / "email_provider" / provider_slug
-                current_link = provider_base_dir / "current"
-                version_dir = (
-                    f"v{latest_version}" if not latest_version.startswith("v") else latest_version
-                )
-
-                # Remove existing symlink if it exists
-                if current_link.exists() or current_link.is_symlink():
-                    current_link.unlink()
-
-                # Create new symlink
-                current_link.symlink_to(version_dir)
-
-                # Reload providers to make the updated provider available
-                from email_system.providers.registry import ProviderRegistry
-
-                ProviderRegistry.reload_providers()
+                _activate_provider_version(provider_slug, latest_version)
             except Exception as e:
-                # Don't fail the update if symlink creation fails, just log it
-                print(f"Warning: Could not update symlink for {provider_slug}: {e}")
+                try:
+                    _activate_provider_version(provider_slug, current_version)
+                except Exception:
+                    pass
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": _("Failed to activate update: %(error)s") % {"error": str(e)},
+                    },
+                    status=500,
+                )
 
             # Update component version
             component.current_version = latest_version

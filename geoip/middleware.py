@@ -413,10 +413,21 @@ class GeoIPMiddleware:
                 rules = list(BusinessRule.objects.filter(is_active=True).order_by("priority"))
                 cache.set(cache_key, rules, timeout=60)
 
+            # BusinessRule.evaluate reads the short ``country`` / ``region`` keys,
+            # but fresh resolutions carry ``country_code`` / ``region_code``.
+            # Map them across so rules fire identically on fresh and DB-cached
+            # results.
+            rule_context = dict(location)
+            rule_context.setdefault("country", location.get("country_code"))
+            rule_context.setdefault("region", location.get("region_code"))
+
             request.geo_rules = []
             for rule in rules:
-                if rule.evaluate(location):
-                    request.geo_rules.append(rule.actions)
+                if rule.evaluate(rule_context):
+                    # Match the resolve view's fallback shape ({name, actions}) so
+                    # the business_rules response is identical whether or not the
+                    # geo middleware pre-evaluated the rules.
+                    request.geo_rules.append({"name": rule.name, "actions": rule.actions})
                     # Update tracking
                     rule.times_triggered += 1
                     rule.last_triggered = timezone.now()

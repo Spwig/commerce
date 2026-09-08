@@ -17,6 +17,7 @@ carts (user set) are never adopted.
 import logging
 
 from django.contrib.auth.signals import user_logged_in
+from django.db import transaction
 from django.dispatch import receiver
 
 from .models import Cart
@@ -29,10 +30,11 @@ def merge_guest_cart_on_login(sender, request, user, **kwargs):
     cart_id = request.session.pop("guest_cart_id", None)
     if not cart_id:
         return
-    cart = Cart.objects.filter(id=cart_id, user__isnull=True).first()
-    if cart is None or not cart.items.exists():
-        return
-    cart.user = user
-    cart.session_key = None
-    cart.save(update_fields=["user", "session_key"])
+    with transaction.atomic():
+        cart = Cart.objects.select_for_update().filter(id=cart_id, user__isnull=True).first()
+        if cart is None or not cart.items.exists():
+            return
+        cart.user = user
+        cart.session_key = None
+        cart.save(update_fields=["user", "session_key"])
     logger.info("Adopted guest cart %s for user %s at login", cart_id, user.pk)
