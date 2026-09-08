@@ -33,6 +33,23 @@ class SmartDefaultsService:
     WEIGHT_CUSTOMER_TIER = 20
     WEIGHT_EMAIL_ENGAGEMENT = 10
 
+    # Orders that reflect recent customer activity (frequency/recency signals).
+    # "delivered" is the terminal fulfilled status on Order; "completed" is not
+    # a real Order status.
+    ACTIVE_ORDER_STATUSES = ("delivered", "processing", "shipped")
+    # Orders whose revenue is recognised for tier/spend calculations.
+    REVENUE_ORDER_STATUSES = ("delivered",)
+
+    @staticmethod
+    def _base_currency() -> str:
+        """Return the store's configured base currency code (falls back to USD)."""
+        try:
+            from core.models import SiteSettings
+
+            return SiteSettings.get_settings().default_currency or "USD"
+        except Exception:
+            return "USD"
+
     @classmethod
     def calculate_engagement_score(cls, user) -> dict:
         """
@@ -54,7 +71,7 @@ class SmartDefaultsService:
         order_count_90d = Order.objects.filter(
             user=user,
             created_at__gte=ninety_days_ago,
-            status__in=["completed", "processing", "shipped"],
+            status__in=cls.ACTIVE_ORDER_STATUSES,
         ).count()
 
         if order_count_90d >= 3:  # ≥1 order/month
@@ -72,7 +89,7 @@ class SmartDefaultsService:
 
         # 2. Recency (30 points max)
         last_order = Order.objects.filter(
-            user=user, status__in=["completed", "processing", "shipped"]
+            user=user, status__in=cls.ACTIVE_ORDER_STATUSES
         ).aggregate(Max("created_at"))["created_at__max"]
 
         if last_order:
@@ -101,14 +118,12 @@ class SmartDefaultsService:
         score += recency_score
 
         # 3. Customer Tier (20 points max)
-        total_spent_agg = Order.objects.filter(user=user, status="completed").aggregate(
-            Sum("total_amount")
-        )["total_amount__sum"]
-        # Aggregate returns Money when rows exist, None when empty. Unwrap to
-        # Decimal so plain-number comparisons and float() work.
-        total_spent = (
-            total_spent_agg.amount if hasattr(total_spent_agg, "amount") else (total_spent_agg or 0)
-        )
+        # Sum the base-currency totals so orders placed in different customer
+        # currencies are compared against the base-currency thresholds below.
+        total_spent_agg = Order.objects.filter(
+            user=user, status__in=cls.REVENUE_ORDER_STATUSES
+        ).aggregate(Sum("total_amount_base"))["total_amount_base__sum"]
+        total_spent = total_spent_agg or 0
 
         if total_spent >= 1000:  # VIP
             tier_score = cls.WEIGHT_CUSTOMER_TIER
@@ -207,15 +222,18 @@ class SmartDefaultsService:
 
         recommendations = {}
 
-        # Get order stats
-        total_orders = Order.objects.filter(user=user, status="completed").count()
+        # Get order stats. Spend is summed in the store's base currency so that
+        # orders placed in different customer currencies are comparable.
+        currency = cls._base_currency()
 
-        total_spent_agg = Order.objects.filter(user=user, status="completed").aggregate(
-            Sum("total_amount")
-        )["total_amount__sum"]
-        total_spent = (
-            total_spent_agg.amount if hasattr(total_spent_agg, "amount") else (total_spent_agg or 0)
-        )
+        total_orders = Order.objects.filter(
+            user=user, status__in=cls.REVENUE_ORDER_STATUSES
+        ).count()
+
+        total_spent_agg = Order.objects.filter(
+            user=user, status__in=cls.REVENUE_ORDER_STATUSES
+        ).aggregate(Sum("total_amount_base"))["total_amount_base__sum"]
+        total_spent = total_spent_agg or 0
 
         # Blog: Recommend if ≥2 orders (engaged customer)
         recommendations["blog"] = {
@@ -225,12 +243,12 @@ class SmartDefaultsService:
             else "Build more order history first",
         }
 
-        # Loyalty: Recommend if ≥$100 spent
+        # Loyalty: Recommend if ≥100 (base currency) spent
         recommendations["loyalty"] = {
             "recommended": total_spent >= 100,
-            "reason": f"Spent ${total_spent:.2f} - loyalty rewards would add value"
+            "reason": f"Spent {total_spent:.2f} {currency} - loyalty rewards would add value"
             if total_spent >= 100
-            else f"Spend threshold not met (${total_spent:.2f} < $100)",
+            else f"Spend threshold not met ({total_spent:.2f} {currency} < 100 {currency})",
         }
 
         # Referrals: Always recommend (win-win program)

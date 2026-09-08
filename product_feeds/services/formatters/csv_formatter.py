@@ -185,11 +185,15 @@ class CSVFeedFormatter(BaseFeedFormatter):
 
         return row
 
+    # Characters that make a spreadsheet treat a cell as a formula
+    FORMULA_MARKERS = ("=", "+", "-", "@")
+
     def escape_text(self, text: str) -> str:
         """
         Escape text for CSV content.
 
-        CSV library handles most escaping, but we clean up newlines.
+        CSV library handles most escaping, but we clean up newlines and
+        neutralise CSV formula injection.
 
         Args:
             text: Text to escape
@@ -200,7 +204,13 @@ class CSVFeedFormatter(BaseFeedFormatter):
         if not text:
             return ""
         # Replace newlines with spaces for CSV compatibility
-        return text.replace("\n", " ").replace("\r", " ")
+        text = text.replace("\n", " ").replace("\r", " ")
+        # Prefix a single quote when the first non-whitespace character is a
+        # formula marker, so spreadsheets treat the cell as text (CSV injection).
+        stripped = text.lstrip()
+        if stripped and stripped[0] in self.FORMULA_MARKERS:
+            text = "'" + text
+        return text
 
     def stream_feed(
         self, items: Iterator[ProductFeedItem], metadata: dict[str, Any] | None = None

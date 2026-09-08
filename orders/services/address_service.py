@@ -14,6 +14,50 @@ from ..models import Address
 class AddressService:
     """Service class for address operations"""
 
+    # String fields subject to model length limits. Checked centrally so create,
+    # update and validation all reject values the database would refuse.
+    _LENGTH_CHECKED_FIELDS = [
+        "name",
+        "company",
+        "address1",
+        "address2",
+        "city",
+        "state",
+        "postal_code",
+        "country",
+        "phone",
+    ]
+
+    @staticmethod
+    def _validate_field_values(data: dict[str, Any]) -> list:
+        """Validate address field values against the model's constraints.
+
+        Checks the address type against the allowed choices and every supplied
+        string field against its model ``max_length``. Returns a list of error
+        messages (empty when the data is valid).
+        """
+        errors = []
+
+        address_type = data.get("address_type")
+        if address_type:
+            valid_types = [t[0] for t in Address.ADDRESS_TYPES]
+            if address_type not in valid_types:
+                errors.append(_("Invalid address type"))
+
+        for field in AddressService._LENGTH_CHECKED_FIELDS:
+            value = data.get(field)
+            if value:
+                max_length = Address._meta.get_field(field).max_length
+                if max_length and len(value) > max_length:
+                    errors.append(
+                        _("{field} is too long (maximum {max_length} characters)").format(
+                            field=field.replace("_", " ").title(),
+                            max_length=max_length,
+                        )
+                    )
+
+        return errors
+
     @staticmethod
     def get_user_addresses(
         user, address_type: str | None = None, active_only: bool = True
@@ -149,6 +193,12 @@ class AddressService:
 
         if not update_data:
             return False, _("No valid fields to update"), None
+
+        # Validate supplied values against model constraints (address type and
+        # string length limits) before modifying or versioning the address.
+        validation_errors = AddressService._validate_field_values(update_data)
+        if validation_errors:
+            return False, validation_errors[0], None
 
         if used_in_orders:
             # Address has been used - create new version for audit trail
@@ -342,21 +392,9 @@ class AddressService:
                     _("{field} is required").format(field=field.replace("_", " ").title())
                 )
 
-        # Validate address type
-        if address_data.get("address_type"):
-            valid_types = [t[0] for t in Address.ADDRESS_TYPES]
-            if address_data["address_type"] not in valid_types:
-                errors.append(_("Invalid address type"))
-
-        # Validate postal code format (basic validation)
-        postal_code = address_data.get("postal_code", "")
-        if postal_code and len(postal_code) > 20:
-            errors.append(_("Postal code is too long"))
-
-        # Validate phone format (basic validation)
-        phone = address_data.get("phone", "")
-        if phone and len(phone) > 20:
-            errors.append(_("Phone number is too long"))
+        # Validate address type and every supplied string field against the
+        # model's constraints (length limits and allowed choices).
+        errors.extend(AddressService._validate_field_values(address_data))
 
         return len(errors) == 0, errors
 

@@ -5,6 +5,66 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2026-09-08
+
+A follow-up to the Campaign Studio launch. Its headline is an **email
+deliverability** improvement — keeping a bad marketing campaign from ever putting
+your critical transactional mail (order confirmations, password resets) at risk —
+bundled with a broad **platform-wide correctness and security hardening** sweep
+across payments, orders, cart, accounts and more, the great majority surfaced by
+Spwig's continuous automated code review and validated by the full test suite.
+
+**Upgrading.** Applies one small database migration automatically (an email-account
+field); no manual steps and no breaking changes. Existing single-account stores are
+completely unaffected — the new routing only activates once you configure a separate
+marketing account.
+
+### Added
+
+- **Separate marketing and transactional sending reputation.** Email accounts now have
+  a **sending purpose** (transactional / marketing / both). Configure a dedicated
+  marketing account and Spwig automatically routes campaigns, journeys, newsletters,
+  cart-recovery and other consent-based mail through it, while order confirmations,
+  password resets and verification stay on your transactional identity — so campaign
+  complaints or bounces can't drag your must-deliver mail into spam. Self-hosted stores
+  get a guided **"Marketing sending domain"** setup (a second sender on its own
+  subdomain with its own DKIM key) reachable from the email-account list and a Campaign
+  Studio dashboard nudge. A built-in safeguard refuses any change that would leave the
+  store with no transactional-capable sending account.
+
+### Changed
+
+- Cart-recovery emails are now correctly classified as marketing, so they respect the
+  recipient's marketing opt-in (and carry the standard unsubscribe footer) rather than
+  sending as transactional mail.
+
+### Fixed
+
+- The email-account admin's **DKIM DNS-record** panel now renders the record correctly
+  (it previously failed silently and showed an error placeholder).
+
+- **Platform-wide correctness and security hardening.** This release also rolls up a number of fixes across the platform validated by the test suite — including two **critical** ones, in the payment
+  API/webhook handling and the built-in email server. Hardened areas include:
+
+  - **Payments** — webhook and API-view handling, provider loading/reloading, the setup
+    wizard, the payment dashboard, serializers, admin, and country-based method
+    availability.
+  - **Email** — the built-in SMTP server (critical), plus admin account actions (now
+    permission-gated) and related endpoints.
+  - **GeoIP** — request tracking, daily-stats backfill, browser-hint detection, and the
+    client and views.
+  - **Orders** — status-label translation, address handling, test-order detection, and
+    the order views and admin.
+  - **Cart** — cart views and serializers, the wishlist, product recommendations, and
+    guest-cart ownership handling.
+  - **Form builder** — form rendering and admin, plus tighter upload validation
+    (rejecting active-content SVGs).
+  - **Product feeds** — CSV formula-injection protection and provider-credential
+    validation.
+  - **Accounts** and **SEO generation** — assorted correctness and validation fixes.
+
+  Under the hood, the OpenAPI schema (`api-schema.yml`) was regenerated to match the code.
+
 ## [1.8.0] - 2026-08-31
 
 The biggest Spwig release yet. Its centrepiece is **Campaign Studio** — a

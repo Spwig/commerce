@@ -11,7 +11,7 @@ Provides personalized recommendations based on:
 
 from typing import Any
 
-from django.db.models import Exists, F, OuterRef, Q, Sum
+from django.db.models import F, Q, Sum
 from django.urls import reverse
 
 from cart.models import RecentlyViewed
@@ -27,48 +27,43 @@ class CartRecommendationService:
     """
 
     @staticmethod
-    def _get_in_stock_filter():
+    def _in_stock_product_ids():
         """
-        Returns a Q filter for products that are in stock.
-        Products are considered in stock if:
-        - track_inventory is False (unlimited), OR
-        - track_inventory is True AND has StockItem with on_hand > allocated
-        """
-        # Subquery to check if product has available stock
-        has_available_stock = (
-            StockItem.objects.filter(
-                product_id=OuterRef("pk"),
-                variant_id__isnull=True,  # Product-level stock (not variant-specific)
-            )
-            .annotate(available=F("on_hand") - F("allocated"))
-            .filter(available__gt=0)
-        )
+        Return a subquery of product IDs that currently have available stock.
 
-        return Q(track_inventory=False) | Q(
-            track_inventory=True, pk__in=Exists(has_available_stock)
-        )
-
-    @staticmethod
-    def _filter_in_stock(queryset):
+        Aggregates every StockItem row for a product — simple products keep
+        stock in product-level rows (variant_id is null) while variable
+        products keep it in variant-level rows, so both are included — and
+        keeps only products where total on_hand exceeds total allocated.
         """
-        Filter a queryset to only include products that are in stock.
-        """
-        # Products with track_inventory=False are always in stock
-        # Products with track_inventory=True need positive stock
-        has_stock_subquery = (
-            # Aggregate all StockItem rows for the product: simple products keep
-            # stock in product-level rows (variant_id is null) while variable
-            # products keep it in variant-level rows, so include both.
-            StockItem.objects.filter(product_id=OuterRef("pk"))
-            .values("product_id")
+        return (
+            StockItem.objects.values("product_id")
             .annotate(total_available=Sum(F("on_hand") - F("allocated")))
             .filter(total_available__gt=0)
             .values("product_id")
         )
 
-        return queryset.filter(
-            Q(track_inventory=False) | Q(track_inventory=True, pk__in=has_stock_subquery)
+    @staticmethod
+    def _in_stock_q(prefix: str = "") -> Q:
+        """
+        Return a Q matching in-stock products, optionally across a relation.
+
+        Products with track_inventory=False are always in stock; tracked
+        products need at least one StockItem row with positive availability.
+        ``prefix`` (e.g. ``"product__"``) lets the same guard apply from a
+        related model such as RecentlyViewed.
+        """
+        in_stock_ids = CartRecommendationService._in_stock_product_ids()
+        return Q(**{f"{prefix}track_inventory": False}) | Q(
+            **{f"{prefix}track_inventory": True, f"{prefix}pk__in": in_stock_ids}
         )
+
+    @staticmethod
+    def _filter_in_stock(queryset):
+        """
+        Filter a Product queryset to only include products that are in stock.
+        """
+        return queryset.filter(CartRecommendationService._in_stock_q())
 
     @staticmethod
     def get_empty_cart_recommendations(request, limit: int = 6) -> dict[str, Any]:
@@ -182,39 +177,33 @@ class CartRecommendationService:
         exclude_ids = exclude_ids or set()
 
         if request.user.is_authenticated:
-            queryset = RecentlyViewed.objects.filter(user=request.user).select_related(
-                "product", "product__category"
-            )
+            queryset = RecentlyViewed.objects.filter(user=request.user)
         else:
             session_key = request.session.session_key
             if not session_key:
                 return []
-            queryset = RecentlyViewed.objects.filter(session_key=session_key).select_related(
-                "product", "product__category"
-            )
+            queryset = RecentlyViewed.objects.filter(session_key=session_key)
 
-        # Filter to active, in-stock products, exclude already used
+        # Apply publication, exclusion, and stock filters in the queryset so
+        # slicing happens over eligible rows only, then order by recency.
+        queryset = (
+            queryset.filter(product__status="published")
+            .exclude(product_id__in=exclude_ids)
+            .filter(CartRecommendationService._in_stock_q(prefix="product__"))
+            .select_related("product", "product__category")
+            .prefetch_related("product__images__media_asset")
+            .order_by("-viewed_at")
+        )
+
+        # A product can have multiple RecentlyViewed rows (e.g. differing
+        # session_key), so deduplicate before filling recommendation slots.
         products = []
-        for rv in queryset.order_by("-viewed_at")[
-            : limit * 4
-        ]:  # Get extra in case some excluded/out-of-stock
+        seen_ids: set[int] = set()
+        for rv in queryset:
             product = rv.product
-            if product.id in exclude_ids:
+            if product.id in seen_ids:
                 continue
-            if product.status != "published":
-                continue
-            # Check stock availability
-            if product.track_inventory:
-                # Check if product has stock
-                has_stock = (
-                    StockItem.objects.filter(product_id=product.id, variant_id__isnull=True)
-                    .annotate(available=F("on_hand") - F("allocated"))
-                    .filter(available__gt=0)
-                    .exists()
-                )
-                if not has_stock:
-                    continue
-
+            seen_ids.add(product.id)
             products.append(CartRecommendationService._format_product(product))
             if len(products) >= limit:
                 break
@@ -245,6 +234,7 @@ class CartRecommendationService:
             Product.objects.filter(category_id__in=category_ids, status="published")
             .exclude(id__in=exclude_ids)
             .select_related("category")
+            .prefetch_related("images__media_asset")
         )
         related = CartRecommendationService._filter_in_stock(related)
         related = related.order_by("-views_count")[:limit]
@@ -275,6 +265,7 @@ class CartRecommendationService:
             .filter(Q(sale_end_date__isnull=True) | Q(sale_end_date__gte=now))
             .exclude(id__in=exclude_ids)
             .select_related("category")
+            .prefetch_related("images__media_asset")
         )
         on_sale = CartRecommendationService._filter_in_stock(on_sale)
         on_sale = on_sale.order_by("-views_count")[:limit]
@@ -294,6 +285,7 @@ class CartRecommendationService:
             Product.objects.filter(status="published")
             .exclude(id__in=exclude_ids)
             .select_related("category")
+            .prefetch_related("images__media_asset")
         )
         trending = CartRecommendationService._filter_in_stock(trending)
         trending = trending.order_by("-views_count", "-sales_count")[:limit]
@@ -313,6 +305,7 @@ class CartRecommendationService:
             Product.objects.filter(status="published", is_featured=True)
             .exclude(id__in=exclude_ids)
             .select_related("category")
+            .prefetch_related("images__media_asset")
         )
         featured = CartRecommendationService._filter_in_stock(featured)
         featured = featured.order_by("-created_at")[:limit]
@@ -323,6 +316,7 @@ class CartRecommendationService:
                 Product.objects.filter(status="published")
                 .exclude(id__in=exclude_ids.union(set(featured.values_list("id", flat=True))))
                 .select_related("category")
+                .prefetch_related("images__media_asset")
             )
             newest = CartRecommendationService._filter_in_stock(newest)
             newest = newest.order_by("-created_at")[: limit - featured.count()]
@@ -332,6 +326,24 @@ class CartRecommendationService:
             ]
 
         return [CartRecommendationService._format_product(p) for p in featured]
+
+    @staticmethod
+    def _get_primary_asset(product: Product):
+        """
+        Return the primary media asset from the product's prefetched images.
+
+        Mirrors Product.primary_image but reads the prefetched ``images``
+        collection instead of issuing fresh reverse-relation queries, so
+        formatting a recommendation list stays free of N+1 image lookups.
+        """
+        images = list(product.images.all())
+        if not images:
+            return None
+        primary = next((img for img in images if img.is_primary), None)
+        if primary and primary.media_asset:
+            return primary.media_asset
+        first_image = images[0]
+        return first_image.media_asset or None
 
     @staticmethod
     def _format_product(product: Product, show_sale: bool = False) -> dict[str, Any]:
@@ -344,17 +356,15 @@ class CartRecommendationService:
         except Exception:
             url = f"/products/{product.slug}/"
 
-        # Get image URL
+        # Get image URL from the prefetched images (see _get_primary_asset),
+        # resolving the primary asset once to avoid extra per-product queries.
         image_url = None
         image_sources = None
-        primary_image_url = getattr(product, "primary_image_url", None)
-        if primary_image_url:
-            image_url = primary_image_url
-        elif hasattr(product, "get_primary_image"):
-            image_url = product.get_primary_image()
-        primary_asset = getattr(product, "primary_image", None)
-        if primary_asset and hasattr(primary_asset, "get_picture_sources"):
-            image_sources = primary_asset.get_picture_sources()
+        primary_asset = CartRecommendationService._get_primary_asset(product)
+        if primary_asset:
+            image_url = primary_asset.get_display_url()
+            if hasattr(primary_asset, "get_picture_sources"):
+                image_sources = primary_asset.get_picture_sources()
 
         # Get prices
         price = product.price

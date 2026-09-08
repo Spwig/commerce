@@ -80,6 +80,7 @@ class WebhookService:
         headers: dict[str, str],
         raw_payload: bytes,
         signature: str | None = None,
+        provider_account: PaymentProviderAccount | None = None,
     ) -> tuple[bool, str]:
         """
         Process incoming webhook from payment provider
@@ -90,37 +91,41 @@ class WebhookService:
             headers: Request headers
             raw_payload: Raw request body
             signature: Webhook signature (if provided)
+            provider_account: The account whose secret already verified the
+                signature upstream. When given it is used as-is so processing
+                runs against the same credentials/context that verified the
+                request instead of an arbitrary first active account.
 
         Returns:
             Tuple of (success: bool, message: str)
         """
-        # Extract event information
-        event_id = payload.get("id", str(uuid.uuid4()))
+        # Extract event information. Providers put the stable event identifier
+        # under different keys, so try each in turn. A random-UUID fallback would
+        # defeat idempotency: the same delivery would be assigned a fresh id every
+        # time and re-apply its payment mutations. Reject events with no stable id
+        # instead of inventing one.
+        event_id = payload.get("id") or payload.get("event_id") or payload.get("txn_id")
+        if not event_id:
+            logger.error(f"Webhook from {provider_slug} has no stable event identifier")
+            return False, _("Webhook missing a stable event identifier")
+
         event_type = payload.get("type", payload.get("event_type", "unknown"))
-
-        # Check for duplicate webhook (idempotency)
         idempotency_key = f"{provider_slug}:{event_id}"
-        existing_webhook = PaymentWebhook.objects.filter(
-            provider_slug=provider_slug, event_id=event_id
-        ).first()
 
-        if existing_webhook and existing_webhook.processed:
-            logger.info(f"Duplicate webhook ignored: {event_id}")
-            return True, _("Webhook already processed")
+        # Prefer the account the caller already verified the signature against.
+        # Falling back to the first active account here would process an event
+        # with different credentials than the ones that authenticated it.
+        if provider_account is None:
+            provider_accounts = PaymentProviderAccount.objects.filter(
+                component__slug=provider_slug, is_active=True
+            )
 
-        # Find provider account
-        # Note: This is simplified - in production you may need to extract provider account
-        # from webhook payload or use a token/identifier in the webhook URL
-        provider_accounts = PaymentProviderAccount.objects.filter(
-            component__slug=provider_slug, is_active=True
-        )
+            if not provider_accounts.exists():
+                logger.error(f"No active provider account found for: {provider_slug}")
+                return False, _("Provider account not found")
 
-        if not provider_accounts.exists():
-            logger.error(f"No active provider account found for: {provider_slug}")
-            return False, _("Provider account not found")
-
-        # Use first active account (in production, you'd identify the specific account)
-        provider_account = provider_accounts.first()
+            # Use first active account (in production, you'd identify the specific account)
+            provider_account = provider_accounts.first()
 
         # Verify signature if provided
         signature_verified = False
@@ -137,18 +142,32 @@ class WebhookService:
                 # Continue processing but log the verification failure
                 # Some providers send test webhooks without valid signatures
 
-        # Create webhook record
-        webhook = PaymentWebhook.objects.create(
-            provider_account=provider_account,
+        # Idempotent, retry-safe persistence. retry_failed_webhook() re-invokes
+        # this method with the same (provider_slug, event_id) after a failure left
+        # processed=False; a plain create() would hit the unique constraint and
+        # raise IntegrityError, so the failed event could never be retried. Use
+        # get_or_create() to reuse the existing row (tolerating a concurrent
+        # insert), then lock it so two simultaneous deliveries of the same event
+        # can't both apply its mutations.
+        webhook, created = PaymentWebhook.objects.get_or_create(
             provider_slug=provider_slug,
             event_id=event_id,
-            event_type=event_type,
-            payload=payload,
-            headers=headers,
-            signature_verified=signature_verified,
-            idempotency_key=idempotency_key,
-            processed=False,
+            defaults={
+                "provider_account": provider_account,
+                "event_type": event_type,
+                "payload": payload,
+                "headers": headers,
+                "signature_verified": signature_verified,
+                "idempotency_key": idempotency_key,
+                "processed": False,
+            },
         )
+
+        if not created:
+            webhook = PaymentWebhook.objects.select_for_update().get(pk=webhook.pk)
+            if webhook.processed:
+                logger.info(f"Duplicate webhook ignored: {event_id}")
+                return True, _("Webhook already processed")
 
         try:
             # Get provider instance
@@ -172,6 +191,7 @@ class WebhookService:
             provider_intent_id = processing_result.get("payment_intent_id")
             if provider_intent_id and event_type.startswith("payment_intent."):
                 intent_handled = WebhookService._handle_payment_intent_event(
+                    provider_account=provider_account,
                     provider_intent_id=provider_intent_id,
                     event_type=event_type,
                     event_data=processing_result,
@@ -275,8 +295,15 @@ class WebhookService:
                 transaction.completed_at = timezone.now()
 
                 # Update order
-                if transaction.order:
-                    order = transaction.order
+                if transaction.order_id:
+                    # Lock the order row for the read-modify-write on amount_paid.
+                    # Without it, two completed transactions for the same order can
+                    # read the same amount_paid and overwrite each other's
+                    # increment. The lock is held until process_webhook (which is
+                    # @transaction.atomic) commits.
+                    from orders.models import Order
+
+                    order = Order.objects.select_for_update().get(pk=transaction.order_id)
                     order.payment_status = "paid"
                     # ACCUMULATE, do not assign.
                     #
@@ -287,12 +314,40 @@ class WebhookService:
                     # RefundService caps refunds on it, silently blocking
                     # refunds of money the customer really handed over (I2).
                     #
+                    # Credit from settlement_amount — the tender's value in the
+                    # ORDER's currency — never from `amount`, which is denominated
+                    # in the tender's own currency (a EUR gift card against a GBP
+                    # order keeps EUR there). The model invariant is explicit
+                    # (PaymentTransaction.settlement_amount: "incremented from this
+                    # field, never from `amount`"), and the settle path skips
+                    # null-settlement rows rather than falling back to `amount`
+                    # (catalog/signals.py). A row with no settlement_amount cannot
+                    # be credited, so reject it and let the webhook fail loudly
+                    # rather than record a wrong or foreign-currency figure.
+                    #
                     # Guarded against replay: a webhook redelivery for a
                     # transaction already marked completed must not add twice.
                     if not already_completed:
-                        order.amount_paid = (order.amount_paid or 0) + transaction.amount
+                        settlement = transaction.settlement_amount
+                        if settlement is None:
+                            raise ValueError(
+                                f"Transaction {transaction.transaction_id} has no "
+                                f"settlement_amount; refusing to credit amount_paid "
+                                f"from the tender-currency amount"
+                            )
+                        order.amount_paid = (order.amount_paid or 0) + settlement
                     order.paid_at = order.paid_at or timezone.now()
-                    order.save(update_fields=["payment_status", "amount_paid", "paid_at"])
+                    # amount_paid_currency is a separate column; omitting it from
+                    # update_fields would persist the new figure under the old
+                    # currency label.
+                    order.save(
+                        update_fields=[
+                            "payment_status",
+                            "amount_paid",
+                            "amount_paid_currency",
+                            "paid_at",
+                        ]
+                    )
 
             elif event_type in ["payment_intent.payment_failed", "charge.failed", "payment.failed"]:
                 transaction.status = "failed"
@@ -335,11 +390,19 @@ class WebhookService:
             )
 
         except Exception as e:
+            # Re-raise so the failure propagates to process_webhook: the webhook
+            # stays processed=False (retryable) instead of being acked despite a
+            # missing or partially applied payment mutation, and the enclosing
+            # atomic transaction is not committed with partial state.
             logger.error(f"Error updating transaction from webhook: {str(e)}", exc_info=True)
+            raise
 
     @staticmethod
     def _handle_payment_intent_event(
-        provider_intent_id: str, event_type: str, event_data: dict[str, Any]
+        provider_account: PaymentProviderAccount,
+        provider_intent_id: str,
+        event_type: str,
+        event_data: dict[str, Any],
     ) -> bool:
         """
         Handle payment intent webhook events for the orchestration flow.
@@ -348,6 +411,9 @@ class WebhookService:
         actions in the PaymentOrchestrationService.
 
         Args:
+            provider_account: The verified account that owns this intent. Scoping
+                the lookup to it is required because provider_intent_id is not
+                unique across accounts/providers.
             provider_intent_id: Provider's payment intent ID
             event_type: Webhook event type (e.g., 'payment_intent.succeeded')
             event_data: Processed event data from provider
@@ -356,9 +422,14 @@ class WebhookService:
             True if intent was found and updated, False otherwise
         """
         try:
-            # Find the PaymentIntent by provider intent ID
+            # Find the PaymentIntent by provider intent ID, scoped to the verified
+            # account. provider_intent_id is only unique per account, so filtering
+            # on it alone could update an arbitrary intent — and a different
+            # customer's order — when two accounts issue the same identifier.
             intent = (
-                PaymentIntent.objects.filter(provider_intent_id=provider_intent_id)
+                PaymentIntent.objects.filter(
+                    provider_account=provider_account, provider_intent_id=provider_intent_id
+                )
                 .select_related("order", "provider_account", "checkout_session")
                 .first()
             )
@@ -459,7 +530,9 @@ class WebhookService:
 
     @staticmethod
     def handle_payment_intent_succeeded(
-        provider_slug: str, provider_intent_id: str, event_data: dict[str, Any]
+        provider_account: PaymentProviderAccount,
+        provider_intent_id: str,
+        event_data: dict[str, Any],
     ) -> bool:
         """
         Handle a successful payment intent.
@@ -468,7 +541,8 @@ class WebhookService:
         without going through the full webhook processing flow.
 
         Args:
-            provider_slug: Provider identifier
+            provider_account: The account that owns this intent (scopes the
+                non-unique provider_intent_id to the right customer's order)
             provider_intent_id: Provider's payment intent ID
             event_data: Event data from provider
 
@@ -476,6 +550,7 @@ class WebhookService:
             True if handled successfully
         """
         return WebhookService._handle_payment_intent_event(
+            provider_account=provider_account,
             provider_intent_id=provider_intent_id,
             event_type="payment_intent.succeeded",
             event_data=event_data,
@@ -483,13 +558,16 @@ class WebhookService:
 
     @staticmethod
     def handle_payment_intent_failed(
-        provider_slug: str, provider_intent_id: str, error_data: dict[str, Any]
+        provider_account: PaymentProviderAccount,
+        provider_intent_id: str,
+        error_data: dict[str, Any],
     ) -> bool:
         """
         Handle a failed payment intent.
 
         Args:
-            provider_slug: Provider identifier
+            provider_account: The account that owns this intent (scopes the
+                non-unique provider_intent_id to the right customer's order)
             provider_intent_id: Provider's payment intent ID
             error_data: Error data from provider
 
@@ -497,6 +575,7 @@ class WebhookService:
             True if handled successfully
         """
         return WebhookService._handle_payment_intent_event(
+            provider_account=provider_account,
             provider_intent_id=provider_intent_id,
             event_type="payment_intent.failed",
             event_data={"error": error_data},
@@ -552,13 +631,16 @@ class WebhookService:
             if webhook.processed:
                 return False, _("Webhook already processed successfully")
 
-            # Retry processing
+            # Retry processing. Reuse the account the original delivery verified
+            # against (stored on the row) so the retry runs with the same
+            # credentials instead of falling back to the first active account.
             success, message = WebhookService.process_webhook(
                 provider_slug=webhook.provider_slug,
                 payload=webhook.payload,
                 headers=webhook.headers,
                 raw_payload=json.dumps(webhook.payload).encode("utf-8"),
                 signature=None,  # Signature already verified
+                provider_account=webhook.provider_account,
             )
 
             return success, message

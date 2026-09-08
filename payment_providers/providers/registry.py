@@ -292,6 +292,7 @@ class ProviderRegistry:
         Useful during development or after installing new provider components.
         """
         cls._providers.clear()
+        cls._slug_to_key.clear()
         cls._discovered = False
         cls.discover_providers()
 

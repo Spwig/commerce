@@ -28,6 +28,12 @@ def notify_merchant_sdk_failure(
     Rate limiting is handled by the calling view (cache-based, 1 per provider per hour).
     This task only runs when the rate limit allows it.
     """
+    if not isinstance(provider_key, str) or not provider_key.strip():
+        logger.warning(
+            "Rejecting SDK failure notification - invalid provider_key: %r", provider_key
+        )
+        return {"status": "rejected", "reason": "invalid_provider_key"}
+
     try:
         from core.models import SiteSettings
         from email_system.services.email_sender import EmailSendingService

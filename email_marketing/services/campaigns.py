@@ -236,7 +236,9 @@ def send_campaign_to_subscriber(campaign, subscriber, subject_override=None, eve
     if not subscriber.is_emailable(campaign.message_type):
         return {"queued": False, "reason": "not_emailable"}
 
-    account = campaign.from_account or EmailSendingService.get_default_account(site=campaign.site)
+    account = campaign.from_account or EmailSendingService.get_account_for(
+        site=campaign.site, marketing=True
+    )
     if not account:
         return {"queued": False, "reason": "no_account"}
 
@@ -286,7 +288,9 @@ def send_campaign(campaign, recipients=None, variant_label=""):
         return {"error": "invalid_status", "status": campaign.status}
     campaign.status = campaign.STATUS_SENDING
 
-    account = campaign.from_account or EmailSendingService.get_default_account(site=campaign.site)
+    account = campaign.from_account or EmailSendingService.get_account_for(
+        site=campaign.site, marketing=True
+    )
     if not account:
         campaign.status = campaign.STATUS_FAILED
         campaign.save(update_fields=["status", "updated_at"])

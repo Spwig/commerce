@@ -1,6 +1,8 @@
 import logging
 
 from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count, Q, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
@@ -10,6 +12,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.utils import get_default_currency, get_shipping_origin_country
+from core.utils.currency_helpers import format_money
 from custom_fields.mixins import CustomFieldsAdminMixin
 
 from .models import Address, Order, OrderItem, OrderNote, Refund, ReturnRequest
@@ -68,6 +71,12 @@ class OrderItemInline(admin.TabularInline):
             value = customization_data.get("value", "")
             price = customization_data.get("calculated_price", "0")
 
+            # Stored JSON may hold null or a non-numeric string; coerce safely.
+            try:
+                price_val = float(price or 0)
+            except (TypeError, ValueError):
+                price_val = 0
+
             # Try to get the option name
             try:
                 from catalog.models import CustomizationOption
@@ -83,10 +92,11 @@ class OrderItemInline(admin.TabularInline):
             else:
                 display_value = escape(str(value))
 
-            # Add price if non-zero
+            # Add price if non-zero, formatted in the order item's own currency.
             price_display = (
-                f' <span class="admin-text-success">+${escape(str(price))}</span>'
-                if float(price) > 0
+                f' <span class="admin-text-success">'
+                f"+{escape(format_money(price_val, str(obj.unit_price.currency)))}</span>"
+                if price_val > 0
                 else ""
             )
 
@@ -180,6 +190,7 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         "total_amount",
         "created_at",
     ]
+    list_select_related = ["user"]
     list_filter = [
         "status",
         "payment_status",
@@ -903,8 +914,14 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         if request.method != "POST":
             return HttpResponseRedirect(reverse("admin:orders_order_change", args=[object_id]))
 
+        order = self.get_object(request, object_id)
+        if order is None:
+            messages.error(request, _("Order not found"))
+            return HttpResponseRedirect(reverse("admin:orders_order_change", args=[object_id]))
+        if not self.has_change_permission(request, order):
+            raise PermissionDenied
+
         try:
-            order = Order.objects.get(pk=object_id)
             from shipping.models import CarrierPreset, Shipment
 
             carrier_id = request.POST.get("carrier")
@@ -935,8 +952,6 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
                 request, _(f"Tracking number {tracking_number} added via {carrier.name}")
             )
 
-        except Order.DoesNotExist:
-            messages.error(request, _("Order not found"))
         except Exception as e:
             messages.error(request, _(f"Error adding tracking: {str(e)}"))
 
@@ -1000,6 +1015,8 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         if request.method == "POST" and "action" in request.POST:
             try:
                 order = Order.objects.get(pk=object_id)
+                if not self.has_change_permission(request, order):
+                    raise PermissionDenied
                 action = request.POST.get("action")
 
                 if action == "mark_as_processing":
@@ -1060,37 +1077,49 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
 
                     if new_status and new_status in valid_statuses and new_status != order.status:
                         old_status_display = order.get_status_display()
-                        order.status = new_status
-                        order.save()
+                        gc_count = 0
+                        try:
+                            # Keep the status change and gift-card refund in one
+                            # unit: if the refund fails, the order must not remain
+                            # marked as refunded with balances left unrestored.
+                            with transaction.atomic():
+                                order.status = new_status
+                                order.save()
 
-                        # Process gift card refunds when order is refunded
-                        if new_status == "refunded":
-                            try:
-                                from catalog.services.gift_card_service import GiftCardService
+                                # Process gift card refunds when order is refunded
+                                if new_status == "refunded":
+                                    from catalog.services.gift_card_service import GiftCardService
 
-                                gc_count = GiftCardService.process_gift_card_refund(order)
-                                if gc_count > 0:
-                                    messages.info(
-                                        request,
-                                        _("%(count)d gift card(s) processed for refund")
-                                        % {"count": gc_count},
-                                    )
-                            except Exception as e:
-                                logger.error(
-                                    f"Gift card refund processing failed for order {order.order_number}: {e}"
+                                    gc_count = GiftCardService.process_gift_card_refund(order)
+
+                                # Create system note for audit trail
+                                OrderNote.objects.create(
+                                    order=order,
+                                    author=request.user,
+                                    note=f'Order status changed from "{old_status_display}" to "{order.get_status_display()}"',
+                                    is_customer_note=False,
                                 )
-
-                        # Create system note for audit trail
-                        OrderNote.objects.create(
-                            order=order,
-                            author=request.user,
-                            note=f'Order status changed from "{old_status_display}" to "{order.get_status_display()}"',
-                            is_customer_note=False,
-                        )
-
-                        messages.success(
-                            request, _(f"Order status changed to {order.get_status_display()}")
-                        )
+                        except Exception as e:
+                            logger.error(
+                                f"Status change failed for order {order.order_number}: {e}"
+                            )
+                            messages.error(
+                                request,
+                                _(
+                                    "Failed to change order status; gift card refunds "
+                                    "could not be processed and no changes were saved."
+                                ),
+                            )
+                        else:
+                            if gc_count > 0:
+                                messages.info(
+                                    request,
+                                    _("%(count)d gift card(s) processed for refund")
+                                    % {"count": gc_count},
+                                )
+                            messages.success(
+                                request, _(f"Order status changed to {order.get_status_display()}")
+                            )
                     elif new_status == order.status:
                         messages.info(request, _("Order is already in this status"))
                     else:
@@ -1343,7 +1372,10 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
         queue = request.GET.get("queue", "")
         date_range = request.GET.get("date", "")
         search_query = request.GET.get("q", "")
-        page = int(request.GET.get("page", 1))
+        try:
+            page = max(1, int(request.GET.get("page", 1)))
+        except (TypeError, ValueError):
+            page = 1
         per_page = 25
 
         # Row rendering needs: total top-level quantity + the first few
@@ -1476,6 +1508,7 @@ class CustomizationValueInline(admin.TabularInline):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ["order", "product_name", "quantity", "unit_price", "total_price"]
+    list_select_related = ["order"]
     list_filter = ["order__status", "created_at"]
     search_fields = ["order__order_number", "product_name", "sku"]
     inlines = [CustomizationValueInline]
@@ -1558,7 +1591,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     def usage_count(self, obj):
         """Display order usage count"""
-        count = obj.get_order_count()
+        count = obj.order_usage_count
         if count > 0:
             return format_html(
                 '<a href="{}?shipping_address_ref={}" class="admin-text-bold">{} {}</a>',
@@ -1594,8 +1627,16 @@ class AddressAdmin(admin.ModelAdmin):
     order_usage.short_description = _("Order Usage")
 
     def get_queryset(self, request):
-        """Optimize queryset with select_related"""
-        return super().get_queryset(request).select_related("user", "original_address")
+        """Optimize queryset with select_related and annotate order usage."""
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("user", "original_address")
+            .annotate(
+                order_usage_count=Count("orders_as_shipping", distinct=True)
+                + Count("orders_as_billing", distinct=True)
+            )
+        )
 
 
 @admin.register(OrderNote)

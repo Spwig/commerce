@@ -161,7 +161,10 @@ class ProviderWizardStep1View(WizardSessionMixin, View):
             component = ComponentRegistry.objects.get(
                 id=component_id, component_type="payment_provider"
             )
-        except ComponentRegistry.DoesNotExist:
+        except (ComponentRegistry.DoesNotExist, ValueError, TypeError):
+            # A non-numeric component_id (e.g. "abc") makes the integer PK lookup
+            # raise ValueError/TypeError rather than DoesNotExist; treat it as an
+            # invalid selection instead of surfacing an unhandled 500.
             messages.error(request, _("Invalid provider selected."))
             return redirect("payment_providers:wizard_step1")
 
@@ -329,8 +332,19 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
         display_name = request.POST.get("display_name", "").strip()
         checkout_mode = request.POST.get("checkout_mode", "hosted")
 
+        # Validate checkout_mode against the model's declared choices. Model.objects
+        # .create() skips choice validation, so without this an invalid value would
+        # persist an account that is neither "hosted" nor "integrated".
+        valid_checkout_modes = {
+            value
+            for value, _label in PaymentProviderAccount._meta.get_field("checkout_mode").choices
+        }
+
         if not display_name:
             errors.append(_("Display name is required."))
+
+        if checkout_mode not in valid_checkout_modes:
+            errors.append(_("Please select a valid checkout mode."))
 
         if errors:
             for error in errors:
@@ -575,18 +589,35 @@ class ProviderWizardStep5View(WizardSessionMixin, View):
             )
             return redirect("payment_providers:wizard_step5")
 
-        # Collect advanced settings
+        # Collect advanced settings. Iterate the manifest settings_schema rather
+        # than the POST keys: browsers omit unchecked checkboxes from the
+        # submission, so a boolean setting (particularly one whose manifest
+        # default is true) could never be explicitly disabled. Driving off the
+        # schema lets us record every declared field and convert it to its
+        # declared type.
         settings = {}
-        for key in request.POST:
-            if key.startswith("setting_"):
-                setting_name = key.replace("setting_", "")
+        for setting_name, setting_config in settings_schema.items():
+            field_type = setting_config.get("type")
+            post_key = f"setting_{setting_name}"
 
-                # Check if this is a multiselect field
-                setting_config = settings_schema.get(setting_name, {})
-                if setting_config.get("type") == "multiselect":
-                    settings[setting_name] = request.POST.getlist(key)
+            if field_type == "boolean":
+                settings[setting_name] = request.POST.get(post_key) == "on"
+            elif field_type == "multiselect":
+                settings[setting_name] = request.POST.getlist(post_key)
+            elif field_type == "number":
+                raw_value = request.POST.get(post_key)
+                if raw_value in (None, ""):
+                    settings[setting_name] = None
                 else:
-                    settings[setting_name] = request.POST.get(key)
+                    try:
+                        settings[setting_name] = int(raw_value)
+                    except ValueError:
+                        try:
+                            settings[setting_name] = float(raw_value)
+                        except ValueError:
+                            settings[setting_name] = raw_value
+            else:
+                settings[setting_name] = request.POST.get(post_key)
 
         try:
             from django.utils import timezone

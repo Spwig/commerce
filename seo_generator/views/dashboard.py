@@ -169,7 +169,7 @@ def seo_items_api(request, content_type):
         admin_url_name = f"admin:{app_label}_{model_name.lower()}_change"
 
         items = []
-        for obj in qs[:500]:  # Cap at 500 items
+        for obj in qs:
             obj_name = getattr(obj, name_field, "") or ""
             meta_title = obj.meta_title or ""
             meta_description = obj.meta_description or ""

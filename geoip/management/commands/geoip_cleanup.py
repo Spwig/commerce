@@ -6,6 +6,7 @@ from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 from django.db import models
+from django.db.models.functions import RowNumber
 from django.utils import timezone
 
 from geoip.models import GeoLocation
@@ -36,19 +37,40 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
         days = options["days"]
-        options["keep_recent"]
+        keep_recent = options["keep_recent"]
 
         now = timezone.now()
 
+        # Protect the N most recent entries per IP prefix from deletion.
+        # Rank each prefix's entries by recency with a window function and keep
+        # the top `keep_recent` primary keys out of every deletion queryset.
+        protected_pks = set()
+        if keep_recent > 0:
+            ranked = GeoLocation.objects.annotate(
+                _row=models.Window(
+                    expression=RowNumber(),
+                    partition_by=[models.F("ip_prefix")],
+                    order_by=models.F("resolved_at").desc(),
+                )
+            ).values_list("pk", "_row")
+            protected_pks = {pk for pk, row in ranked if row <= keep_recent}
+
         # Count expired entries
-        expired_qs = GeoLocation.objects.filter(expires_at__lt=now)
+        expired_qs = GeoLocation.objects.filter(expires_at__lt=now).exclude(pk__in=protected_pks)
         expired_count = expired_qs.count()
 
-        # Count old entries if days specified
+        # Count old entries if days specified. Exclude rows already covered by
+        # the expired queryset so they are neither double-counted nor
+        # double-deleted.
+        old_qs = GeoLocation.objects.none()
         old_count = 0
         if days > 0:
             cutoff_date = now - timedelta(days=days)
-            old_qs = GeoLocation.objects.filter(resolved_at__lt=cutoff_date)
+            old_qs = (
+                GeoLocation.objects.filter(resolved_at__lt=cutoff_date)
+                .exclude(expires_at__lt=now)
+                .exclude(pk__in=protected_pks)
+            )
             old_count = old_qs.count()
 
         self.stdout.write(f"Found {expired_count} expired entries")
@@ -72,19 +94,22 @@ class Command(BaseCommand):
                     self.stdout.write(
                         f"  - {entry.ip_address} ({entry.country_code}) from {entry.resolved_at}"
                     )
-        else:
+
+        total_deleted = 0
+        if not dry_run:
             # Delete expired entries
             if expired_count > 0:
-                expired_qs.delete()
-                self.stdout.write(self.style.SUCCESS(f"✓ Deleted {expired_count} expired entries"))
+                deleted, _ = expired_qs.delete()
+                total_deleted += deleted
+                self.stdout.write(self.style.SUCCESS(f"✓ Deleted {deleted} expired entries"))
 
             # Delete old entries if specified
             if days > 0 and old_count > 0:
-                old_qs.delete()
-                self.stdout.write(self.style.SUCCESS(f"✓ Deleted {old_count} old entries"))
+                deleted, _ = old_qs.delete()
+                total_deleted += deleted
+                self.stdout.write(self.style.SUCCESS(f"✓ Deleted {deleted} old entries"))
 
         # Vacuum/optimize if significant deletions
-        total_deleted = expired_count + (old_count if days > 0 else 0)
         if total_deleted > 1000 and not dry_run:
             self.stdout.write("Optimizing database...")
             from django.db import connection

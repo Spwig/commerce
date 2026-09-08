@@ -149,8 +149,10 @@ class Command(BaseCommand):
             # Random page views
             page_views = random.randint(1, 15)
 
-            # Create visitor record
-            VisitorLocation.objects.create(
+            # Create visitor record. first_seen/last_seen use auto_now_add/auto_now,
+            # so they are set with a follow-up update() that bypasses those hooks and
+            # preserves the randomized timestamps.
+            visitor = VisitorLocation.objects.create(
                 session_key=session_key,
                 ip_address=ip_address,
                 resolved_country=country["code"],
@@ -165,6 +167,8 @@ class Command(BaseCommand):
                 utm_content=utm_data["content"] if utm_data else "",
                 user_agent=self._generate_user_agent(device_type),
                 page_views=page_views,
+            )
+            VisitorLocation.objects.filter(pk=visitor.pk).update(
                 first_seen=timestamp,
                 last_seen=timestamp + timedelta(minutes=random.randint(1, 30)),
             )

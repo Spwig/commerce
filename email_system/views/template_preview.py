@@ -353,6 +353,11 @@ def send_test_email(request, template_id):
     except (json.JSONDecodeError, ValueError):
         # Fall back to POST data for form submissions
         data = request.POST
+    else:
+        # Valid JSON that is not an object (null, list, string, number) has no
+        # .get() — reject it rather than raising a 500 later.
+        if not isinstance(data, dict):
+            return JsonResponse({"success": False, "error": _("Invalid request body")}, status=400)
 
     recipient_email = data.get("email")
     language = data.get("language", "en")

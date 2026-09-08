@@ -12,7 +12,7 @@ Usage:
 
 from datetime import timedelta
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count, Q
 from django.utils import timezone
 
@@ -32,9 +32,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         days = options["days"]
+        if days < 1:
+            raise CommandError("--days must be a positive integer.")
         now = timezone.now()
-        start_date = (now - timedelta(days=days)).date()
         end_date = now.date()
+        start_date = end_date - timedelta(days=days - 1)
 
         total_pageviews = PageView.objects.filter(
             timestamp__date__gte=start_date,
@@ -89,12 +91,15 @@ class Command(BaseCommand):
                 ).count()
                 returning_visitors = unique_visitors - new_visitors
 
-                device_counts = (
-                    VisitorLocation.objects.filter(session_key__in=visitor_sessions)
-                    .values("device_type")
-                    .annotate(count=Count("id"))
+                session_devices = dict(
+                    VisitorLocation.objects.filter(session_key__in=visitor_sessions).values_list(
+                        "session_key", "device_type"
+                    )
                 )
-                devices = {row["device_type"]: row["count"] for row in device_counts}
+                devices = {}
+                for row in human_qs.values("session_key").annotate(views=Count("id")):
+                    device_type = session_devices.get(row["session_key"], "unknown")
+                    devices[device_type] = devices.get(device_type, 0) + row["views"]
 
                 DailyTrafficStats.objects.update_or_create(
                     date=current,

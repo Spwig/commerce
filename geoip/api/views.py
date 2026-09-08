@@ -94,14 +94,19 @@ def resolve_location(request):
     if page:
         track_page_view(request, page, source="headless")
 
-    # Get client IP for cache key
+    # Get client IP for cache key. Resolution can return None when there is no
+    # valid forwarded header and no valid REMOTE_ADDR. The geo cache is keyed
+    # per IP, so without one we skip the cache entirely rather than collapsing
+    # every IP-less request onto a shared key (which would serve the first
+    # such request's location to all the others).
     ip = get_client_ip(request)
-    cache_key = _get_location_cache_key(ip)
+    cache_key = _get_location_cache_key(ip) if ip else None
 
     # Check cache first
-    cached_location = cache.get(cache_key)
-    if cached_location:
-        return Response(cached_location)
+    if cache_key is not None:
+        cached_location = cache.get(cache_key)
+        if cached_location:
+            return Response(cached_location)
 
     # Get location from middleware
     location = getattr(request, "geo_location", {})
@@ -161,8 +166,10 @@ def resolve_location(request):
         if applicable_rules:
             location["business_rules"] = applicable_rules
 
-    # Cache result for 5 minutes (per IP)
-    cache.set(cache_key, location, timeout=300)
+    # Cache result for 5 minutes (per IP). Skip when we have no IP, since there
+    # is no per-client key to store it under.
+    if cache_key is not None:
+        cache.set(cache_key, location, timeout=300)
 
     return Response(location)
 

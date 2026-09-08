@@ -396,11 +396,6 @@ class PaymentOrchestrationService:
                 return {"status": intent.status, "synced": False, "error": remote.get("error")}
 
             remote_status = remote.get("status", "")
-            provider_slug = (
-                intent.provider_account.component.slug
-                if intent.provider_account and intent.provider_account.component
-                else "unknown"
-            )
 
             if remote_status == "succeeded" and intent.status != "succeeded":
                 logger.info(
@@ -410,7 +405,7 @@ class PaymentOrchestrationService:
                 from payment_providers.services.webhook_service import WebhookService
 
                 WebhookService.handle_payment_intent_succeeded(
-                    provider_slug=provider_slug,
+                    provider_account=intent.provider_account,
                     provider_intent_id=intent.provider_intent_id,
                     event_data=remote.get("provider_data", {}),
                 )
@@ -422,7 +417,7 @@ class PaymentOrchestrationService:
                 from payment_providers.services.webhook_service import WebhookService
 
                 WebhookService.handle_payment_intent_failed(
-                    provider_slug=provider_slug,
+                    provider_account=intent.provider_account,
                     provider_intent_id=intent.provider_intent_id,
                     error_data=remote.get("provider_data", {}),
                 )

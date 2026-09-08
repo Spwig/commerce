@@ -52,9 +52,8 @@ class FeedProviderBase(ABC):
         self.credentials = credentials
         self.config = config or {}
 
-        # Validate credentials against schema (only if credentials provided)
-        if credentials:
-            self.validate_credentials(credentials)
+        # Validate credentials against schema
+        self.validate_credentials(credentials)
 
     @property
     @abstractmethod

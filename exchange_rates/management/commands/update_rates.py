@@ -13,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandError
 
 from core.models import SiteSettings
+from core.utils.currency_helpers import validate_currency_code
 from exchange_rates.models import ExchangeRateProviderAccount
 from exchange_rates.services.exchange_service import ExchangeRateService
 
@@ -81,8 +82,11 @@ class Command(BaseCommand):
         # Initialize service
         service = ExchangeRateService(site=site)
 
-        # Determine base currency
-        base_currency = options.get("base") or settings.default_currency
+        # Determine base currency (normalise so cache/DB/provider lookups and
+        # target exclusion all use the same canonical, upper-cased code)
+        base_currency = (options.get("base") or settings.default_currency).strip().upper()
+        if not validate_currency_code(base_currency):
+            raise CommandError(f"Invalid base currency code: {base_currency}")
         self.stdout.write(f"Base currency: {base_currency}")
 
         # Determine target currencies
@@ -116,14 +120,10 @@ class Command(BaseCommand):
 
         for target_currency in target_currencies:
             try:
-                # Clear cache if force flag is set
-                if options["force"]:
-                    from django.core.cache import cache
-
-                    cache_key = f"exchange_rate:{base_currency}:{target_currency}"
-                    cache.delete(cache_key)
-
-                rate = service.get_rate(base_currency, target_currency)
+                # With --force, bypass both the Redis and database caches so a
+                # fresh rate is fetched and persisted from a provider rather than
+                # returning a stored (non-stale) value.
+                rate = service.get_rate(base_currency, target_currency, force=options["force"])
 
                 self.stdout.write(
                     self.style.SUCCESS(f"  ✓ {base_currency}/{target_currency}: {rate}")

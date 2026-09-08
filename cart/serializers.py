@@ -5,6 +5,7 @@ Serializers for Cart, Wishlist, Checkout, and Shipping models
 import logging
 from datetime import timedelta
 
+from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
@@ -237,10 +238,19 @@ class CartItemSerializer(serializers.ModelSerializer):
         """Best-effort thumbnail URL for SDK mini-cart consumers."""
         if not obj.product_id:
             return None
-        img = (
-            obj.product.images.filter(is_primary=True, show_in_listing=True).first()
-            or obj.product.images.filter(show_in_listing=True).first()
-        )
+        # Prefer the collection prefetched by CartSerializer.get_items (filtered
+        # to show_in_listing=True with media_asset joined) to avoid an N+1; fall
+        # back to querying when this serializer is used without that prefetch.
+        listing_images = getattr(obj.product, "listing_images", None)
+        if listing_images is not None:
+            img = next((i for i in listing_images if i.is_primary), None) or (
+                listing_images[0] if listing_images else None
+            )
+        else:
+            img = (
+                obj.product.images.filter(is_primary=True, show_in_listing=True).first()
+                or obj.product.images.filter(show_in_listing=True).first()
+            )
         if img and img.media_asset:
             if hasattr(img.media_asset, "get_thumbnail"):
                 return img.media_asset.get_thumbnail("small")
@@ -405,7 +415,7 @@ class CartSerializer(serializers.ModelSerializer):
     """Comprehensive cart serializer with all calculations"""
 
     items = serializers.SerializerMethodField()
-    applied_vouchers = CartAppliedVoucherSerializer(many=True, read_only=True)
+    applied_vouchers = serializers.SerializerMethodField()
 
     # No applied_gift_cards here. Gift cards are a payment tender held against
     # a CheckoutSession, not cart state — see /api/checkout/tenders/.
@@ -452,12 +462,26 @@ class CartSerializer(serializers.ModelSerializer):
 
     def get_items(self, obj):
         """Only return parent/top-level items; children are nested via bundle_components."""
+        from catalog.models import ProductImage
+
+        listing_images = ProductImage.objects.filter(show_in_listing=True).select_related(
+            "media_asset"
+        )
         parent_items = (
             obj.items.filter(parent_bundle__isnull=True)
             .select_related("product", "variant")
-            .prefetch_related("component_items__product", "component_items__variant")
+            .prefetch_related(
+                "component_items__product",
+                "component_items__variant",
+                Prefetch("product__images", queryset=listing_images, to_attr="listing_images"),
+            )
         )
         return CartItemSerializer(parent_items, many=True).data
+
+    def get_applied_vouchers(self, obj):
+        """Serialize applied vouchers, preloading each `voucher` to avoid an N+1."""
+        applied = obj.applied_vouchers.select_related("voucher")
+        return CartAppliedVoucherSerializer(applied, many=True).data
 
     def get_grand_total(self, obj):
         """Extract decimal from Money object"""
@@ -772,9 +796,14 @@ class AddToCartSerializer(serializers.Serializer):
 
     def validate_variant_selections(self, value):
         """Convert string keys to integers if needed (JSON may send string keys)"""
-        if value:
+        if not value:
+            return value
+        try:
             return {int(k): int(v) for k, v in value.items()}
-        return value
+        except (TypeError, ValueError):
+            raise serializers.ValidationError(
+                _("Bundle variant selections must map integer item IDs to integer variant IDs.")
+            )
 
     def validate(self, data):
         """Validate subscription-related fields"""

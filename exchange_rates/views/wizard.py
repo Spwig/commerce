@@ -465,11 +465,18 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                     # Encrypt credentials
                     encrypted_credentials = encrypt_credentials(credentials)
 
-                    # Check if this is the first provider
-                    is_first_provider = not ExchangeRateProviderAccount.objects.exists()
-
-                    # Create provider account
+                    # Create provider account. Lock a stable per-site row (the
+                    # current Site) so the first-provider check and creation are
+                    # serialized: concurrent saves can't both observe an empty
+                    # table and both set is_primary=True.
                     with transaction.atomic():
+                        Site.objects.select_for_update().get(pk=site.pk)
+
+                        # Check if this is the first provider for this site
+                        is_first_provider = not ExchangeRateProviderAccount.objects.filter(
+                            site=site
+                        ).exists()
+
                         provider_account = ExchangeRateProviderAccount.objects.create(
                             site=site,
                             component=component,

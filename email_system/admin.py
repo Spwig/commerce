@@ -11,6 +11,52 @@ from email_system.models import EmailAccount, EmailEvent, EmailOutbox, EmailTemp
 class EmailAccountAdmin(admin.ModelAdmin):
     """Admin for email provider accounts"""
 
+    def has_delete_permission(self, request, obj=None):
+        """Block deleting the last active transactional-capable account.
+
+        Django admin deletion (the change-page Delete button and the ``delete_selected``
+        bulk action, via ``get_deleted_objects``) bypasses ``EmailAccount.clean()``, so
+        gate it here: refuse when ``obj`` is the site's only active transactional/both
+        account, otherwise transactional mail (order confirmations, password resets) would
+        lose its sending identity. This covers both the single and bulk admin delete paths.
+        """
+        allowed = super().has_delete_permission(request, obj)
+        if allowed and obj is not None:
+            remaining = (
+                EmailAccount.objects.filter(
+                    site_id=obj.site_id,
+                    is_active=True,
+                    purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+                )
+                .exclude(pk=obj.pk)
+                .exists()
+            )
+            if not remaining:
+                return False
+        return allowed
+
+    def delete_queryset(self, request, queryset):
+        """Authoritative guard for the bulk ``delete_selected`` action.
+
+        ``has_delete_permission`` is per-object, so selecting several transactional
+        accounts lets each pass (it counts the others as "remaining"). Validate the whole
+        selection together here: refuse if deleting all of it would leave the site with no
+        active transactional-capable account.
+        """
+        from django.core.exceptions import PermissionDenied
+
+        remaining = (
+            EmailAccount.objects.filter(
+                is_active=True,
+                purpose__in=[EmailAccount.PURPOSE_TRANSACTIONAL, EmailAccount.PURPOSE_BOTH],
+            )
+            .exclude(pk__in=queryset.values_list("pk", flat=True))
+            .exists()
+        )
+        if not remaining:
+            raise PermissionDenied(str(EmailAccount.NO_TRANSACTIONAL_ACCOUNT_ERROR))
+        super().delete_queryset(request, queryset)
+
     # Use custom change_list template for modern card view
     change_list_template = "email_system/admin/emailaccount_changelist.html"
 
@@ -26,7 +72,7 @@ class EmailAccountAdmin(admin.ModelAdmin):
         "last_tested_at",
         "created_at",
     ]
-    list_filter = ["is_active", "is_default", "connection_status", "created_at"]
+    list_filter = ["is_active", "is_default", "purpose", "connection_status", "created_at"]
     search_fields = [
         "from_email",
         "from_name",
@@ -75,8 +121,12 @@ class EmailAccountAdmin(admin.ModelAdmin):
         (
             _("Configuration"),
             {
-                "fields": ("is_active", "is_default", "settings"),
+                "fields": ("is_active", "is_default", "purpose", "settings"),
                 "classes": ("tab-config",),
+                "description": _(
+                    "Set a separate account's purpose to 'Marketing only' to keep campaign "
+                    "sending reputation from affecting transactional email."
+                ),
             },
         ),
         (
@@ -442,7 +492,7 @@ class EmailAccountAdmin(admin.ModelAdmin):
             from email_system.smtp_server.dkim_handler import DKIMHandler
 
             handler = DKIMHandler(domain=domain, selector=dkim_selector)
-            dns_record = handler.get_dns_record(dkim_public_key)
+            dns_record = handler.get_dns_record(obj)
 
             return format_html(
                 '<div class="dkim-key-info">'

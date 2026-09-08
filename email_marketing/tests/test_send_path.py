@@ -71,6 +71,30 @@ class SendCampaignTests(MarketingTestCase):
         self.assertIsNotNone(cs.outbox_id)
         self.assertEqual(cs.outbox.status, "queued")
 
+    def test_campaign_without_from_account_routes_to_the_marketing_account(self):
+        """End-to-end: a campaign with no explicit from_account sends from the dedicated
+        marketing account (keeping campaign reputation off the transactional identity)."""
+        from email_system.models import EmailAccount
+
+        mkt = EmailAccount.objects.create(
+            site=self.site,
+            name="Marketing",
+            from_email="news@news.example.com",
+            from_name="News",
+            provider_key="builtin_smtp",
+            credentials=self.account.credentials,
+            is_active=True,
+            is_default=False,
+            purpose=EmailAccount.PURPOSE_MARKETING,
+        )
+        sub = self.make_anon_emailable("lead@example.com")
+        campaign = self._make_campaign(from_account=None)  # self.account (default) is "both"
+
+        send_campaign(campaign)
+
+        cs = CampaignSend.objects.get(campaign=campaign, subscriber=sub)
+        self.assertEqual(cs.outbox.account_id, mkt.id)
+
     def test_body_merge_field_resolves_per_recipient(self):
         sub = self.make_anon_emailable("lead@example.com")
         self.render_mock.return_value = "<html><body>Hi [[email]]</body></html>"

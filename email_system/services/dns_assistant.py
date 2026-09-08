@@ -72,6 +72,20 @@ class DNSAssistant:
             "overall": {},
         }
 
+    def _cache_key(self, record_type: str, *parts: str) -> str:
+        """
+        Build a cache key namespaced by a per-domain version.
+
+        Input-dependent parts (e.g. server_ip, mx_hostname, spf_include) are
+        folded into the key so that checks with different validation
+        requirements never reuse each other's cached results. clear_cache()
+        bumps the version to invalidate every variant for a domain at once.
+        """
+        version = cache.get(f"dns_cache_version_{self.domain}", 1)
+        segments = [f"dns_{record_type}", self.domain, f"v{version}"]
+        segments.extend(str(part) for part in parts if part)
+        return "_".join(segments)
+
     def check_all(self) -> dict:
         """
         Run all DNS checks (SPF, DKIM, DMARC, MX) and return results.
@@ -115,7 +129,7 @@ class DNSAssistant:
         Returns:
             Dictionary with status, records, and recommendations
         """
-        cache_key = f"dns_mx_{self.domain}"
+        cache_key = self._cache_key("mx", self.server_ip or "", self.mx_hostname)
         cached = cache.get(cache_key)
         if cached:
             logger.debug(f"MX cache hit for {self.domain}")
@@ -246,7 +260,7 @@ class DNSAssistant:
         Returns:
             Dictionary with status, record, errors, propagation info
         """
-        cache_key = f"dns_spf_{self.domain}"
+        cache_key = self._cache_key("spf", self.spf_include or "builtin")
         cached = cache.get(cache_key)
         if cached:
             logger.debug(f"SPF cache hit for {self.domain}")
@@ -362,7 +376,7 @@ class DNSAssistant:
             dkim_hostname = f"{self.dkim_selector}.{self.domain}"
         else:
             dkim_hostname = f"{self.dkim_selector}._domainkey.{self.domain}"
-        cache_key = f"dns_dkim_{dkim_hostname}"
+        cache_key = self._cache_key("dkim", dkim_hostname)
         cached = cache.get(cache_key)
         if cached:
             logger.debug(f"DKIM cache hit for {dkim_hostname}")
@@ -465,7 +479,7 @@ class DNSAssistant:
             Dictionary with status, record, errors, propagation info
         """
         dmarc_hostname = f"_dmarc.{self.domain}"
-        cache_key = f"dns_dmarc_{dmarc_hostname}"
+        cache_key = self._cache_key("dmarc")
         cached = cache.get(cache_key)
         if cached:
             logger.debug(f"DMARC cache hit for {dmarc_hostname}")
@@ -593,31 +607,23 @@ class DNSAssistant:
                 error_count += 1
 
         total_resolvers = len(records_by_resolver)
-        success_count = len(successful_records)
 
-        # Check for consensus (2 out of 3 = majority)
-        majority_threshold = (total_resolvers + 1) // 2  # Ceiling division
-
-        if success_count >= majority_threshold:
-            # Majority have the record
-            # Find most common record value
-            from collections import Counter
-
-            if successful_records:
-                most_common = Counter(successful_records).most_common(1)[0][0]
-                if success_count == total_resolvers:
-                    return {"status": "full", "record": most_common}
-                else:
-                    return {"status": "partial", "record": most_common}
-
-        # No consensus or minority have record
-        if success_count > 0:
-            return {
-                "status": "partial",
-                "record": successful_records[0] if successful_records else "",
-            }
-        else:
+        if not successful_records:
             return {"status": "none", "record": ""}
+
+        # Consensus is based on how many resolvers returned the SAME value,
+        # not merely on how many returned some record.
+        from collections import Counter
+
+        most_common_value, most_common_count = Counter(successful_records).most_common(1)[0]
+
+        # Full propagation requires every resolver to agree on one value.
+        if most_common_count == total_resolvers:
+            return {"status": "full", "record": most_common_value}
+
+        # Otherwise the record is only partially propagated; the consensus
+        # record is the most-common value rather than an arbitrary first hit.
+        return {"status": "partial", "record": most_common_value}
 
     def _validate_spf_syntax(self, spf_record: str) -> dict:
         """
@@ -661,9 +667,17 @@ class DNSAssistant:
             if mech_name.lower() in lookup_mechanisms:
                 lookup_count += 1
 
-        # Check for common issues
-        if "+all" in spf_record or "?all" in spf_record:
-            errors.append(_('SPF record should end with "~all" or "-all" for better security'))
+        # Validate the terminal "all" mechanism. An unqualified "all" is
+        # equivalent to "+all" and authorizes every sender, as do "+all" and
+        # "?all". Only "~all" (softfail) or "-all" (hardfail) are acceptable.
+        for token in tokens:
+            if token.lstrip("+-~?").lower() == "all":
+                qualifier = token[:-3]  # '', '+', '-', '~', or '?'
+                if qualifier not in ("~", "-"):
+                    errors.append(
+                        _('SPF record should end with "~all" or "-all" for better security')
+                    )
+                break
 
         # Check DNS lookup limit (max 10 lookups per RFC 7208)
         if lookup_count > 10:
@@ -747,16 +761,28 @@ class DNSAssistant:
         if not dmarc_record.startswith("v=DMARC1"):
             errors.append(_('DMARC record must start with "v=DMARC1"'))
 
-        # Check for required policy
-        if "p=" not in dmarc_record:
+        # Parse semicolon-delimited tags into exact keys so substrings such as
+        # "sp=reject" cannot masquerade as the mandatory "p" tag.
+        tags = {}
+        for part in dmarc_record.split(";"):
+            part = part.strip()
+            if "=" in part:
+                key, value = part.split("=", 1)
+                tags[key.strip().lower()] = value.strip()
+
+        # Check for required policy - "p" must be present with a valid value.
+        policy = tags.get("p")
+        if policy is None:
             errors.append(_("DMARC record must have a policy (p=none/quarantine/reject)"))
+        elif policy.lower() not in ("none", "quarantine", "reject"):
+            errors.append(_("DMARC policy (p=) must be one of none, quarantine, or reject"))
 
         # Check for reporting address (important for monitoring)
         if "rua=" not in dmarc_record:
             warnings.append(_("DMARC record should include aggregate report address (rua=)"))
 
         # Check policy strictness (informational)
-        if "p=none" in dmarc_record:
+        if policy is not None and policy.lower() == "none":
             info.append(
                 _(
                     'DMARC policy is set to "none" - consider using "quarantine" or "reject" for better security'
@@ -1135,31 +1161,22 @@ class DNSAssistant:
         """
         Clear cached DNS results for a domain.
 
+        Uses a per-domain version namespace: bumping the version invalidates
+        every cached variant at once - all record types and every
+        provider/server-specific key variant (spf_include, server_ip, etc.) -
+        without needing to enumerate them.
+
         Args:
             domain: Domain to clear cache for
-            dkim_selector: Specific DKIM selector to clear (optional)
+            dkim_selector: Accepted for backwards compatibility; no longer
+                required because bumping the version clears every variant.
         """
-        cache.delete(f"dns_mx_{domain}")
-        cache.delete(f"dns_spf_{domain}")
-        # Clear specific selector if provided
-        if dkim_selector:
-            # Handle both formats: with and without ._domainkey
-            if "._domainkey" in dkim_selector:
-                cache.delete(f"dns_dkim_{dkim_selector}.{domain}")
-            else:
-                cache.delete(f"dns_dkim_{dkim_selector}._domainkey.{domain}")
-        # Also clear common selectors used by known providers
-        for selector in [
-            "mail",
-            "default",
-            "google",
-            "k1",
-            "selector1",
-            "selector2",
-            "s1",
-            "s2",
-            "mailo",
-        ]:
-            cache.delete(f"dns_dkim_{selector}._domainkey.{domain}")
-        cache.delete(f"dns_dmarc__dmarc.{domain}")
+        domain = domain.lower().strip()
+        version_key = f"dns_cache_version_{domain}"
+        try:
+            cache.incr(version_key)
+        except ValueError:
+            # Version key not set yet - start at 2 so any entries written
+            # under the implicit v1 are no longer matched.
+            cache.set(version_key, 2, None)
         logger.info(f"Cleared DNS cache for {domain}")

@@ -7,6 +7,7 @@ Also includes admin API endpoints for provider management.
 
 import json
 import logging
+import uuid
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, JsonResponse
@@ -31,17 +32,18 @@ def _load_verified_webhook(request, provider_slug: str):
     payment state is touched — is what stops unauthenticated callers from
     spoofing events or mutating orders.
 
-    Returns a ``(payload, raw_payload, headers, signature)`` tuple when the
-    request is a well-formed JSON object carrying a valid provider signature, or
-    an :class:`~django.http.HttpResponse` (HTTP 400) that the caller should
+    Returns a ``(payload, raw_payload, headers, signature, provider_account)``
+    tuple when the request is a well-formed JSON object carrying a valid provider
+    signature — ``provider_account`` being the exact account whose secret verified
+    it — or an :class:`~django.http.HttpResponse` (HTTP 400) that the caller should
     return directly when the request is malformed or fails verification.
     """
     raw_payload = request.body
 
     try:
         payload = json.loads(raw_payload.decode("utf-8"))
-    except json.JSONDecodeError:
-        logger.error(f"Invalid JSON in webhook from {provider_slug}")
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        logger.error(f"Malformed webhook body from {provider_slug}")
         return HttpResponse(status=400)
 
     if not isinstance(payload, dict):
@@ -67,20 +69,26 @@ def _load_verified_webhook(request, provider_slug: str):
     # or multiple merchant accounts), each with its own signing secret. The
     # request is authentic if it verifies against ANY of them — checking only
     # the first would reject webhooks legitimately signed by another account.
-    signature_valid = any(
-        WebhookService.verify_webhook_signature(
-            provider_account=provider_account,
-            payload=raw_payload,
-            signature=signature,
-            headers=headers,
-        )
-        for provider_account in provider_accounts
+    # Capture the specific account that verified so processing runs against the
+    # SAME credentials/context, not a different account that happens to be first.
+    verifying_account = next(
+        (
+            provider_account
+            for provider_account in provider_accounts
+            if WebhookService.verify_webhook_signature(
+                provider_account=provider_account,
+                payload=raw_payload,
+                signature=signature,
+                headers=headers,
+            )
+        ),
+        None,
     )
-    if not signature_valid:
+    if verifying_account is None:
         logger.warning(f"Webhook signature verification failed from {provider_slug}")
         return HttpResponse(status=400)
 
-    return payload, raw_payload, headers, signature
+    return payload, raw_payload, headers, signature, verifying_account
 
 
 # =============================================================================
@@ -101,21 +109,32 @@ def webhook_handler(request, provider_slug):
     verified = _load_verified_webhook(request, provider_slug)
     if isinstance(verified, HttpResponse):
         return verified
-    payload, _raw_payload, headers, _signature = verified
+    payload, _raw_payload, headers, _signature, provider_account = verified
 
     try:
         # Extract event information (varies by provider)
         event_id = payload.get("id") or payload.get("event_id") or payload.get("txn_id")
         event_type = payload.get("type") or payload.get("event_type") or payload.get("txn_type")
 
-        # Store webhook for processing (provider_account will be determined later)
-        PaymentWebhook.objects.create(
+        # Fall back to a unique id when the provider sends no event identifier —
+        # a shared "unknown" would collide on (provider_slug, event_id) after the
+        # first such delivery.
+        if not event_id:
+            event_id = f"unknown-{uuid.uuid4()}"
+
+        # Idempotent persistence: a provider retry with the same (provider_slug,
+        # event_id) must acknowledge the existing record rather than hit the
+        # unique constraint and 500.
+        PaymentWebhook.objects.get_or_create(
             provider_slug=provider_slug,
-            event_id=event_id or "unknown",
-            event_type=event_type or "unknown",
-            payload=payload,
-            headers=headers,
-            signature_verified=True,
+            event_id=event_id,
+            defaults={
+                "provider_account": provider_account,
+                "event_type": event_type or "unknown",
+                "payload": payload,
+                "headers": headers,
+                "signature_verified": True,
+            },
         )
 
         logger.info(f"Received webhook from {provider_slug}: {event_type} (ID: {event_id})")
@@ -210,7 +229,7 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
     verified = _load_verified_webhook(request, provider_slug)
     if isinstance(verified, HttpResponse):
         return verified
-    payload, raw_payload, headers, signature = verified
+    payload, raw_payload, headers, signature, provider_account = verified
 
     try:
         # Log webhook receipt
@@ -225,6 +244,7 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
             headers=headers,
             raw_payload=raw_payload,
             signature=signature,
+            provider_account=provider_account,
         )
 
         if success:
@@ -296,7 +316,11 @@ def _manifest_signature_header(provider_slug: str) -> str | None:
     try:
         from component_updates.models import ComponentRegistry
 
-        component = ComponentRegistry.objects.filter(slug=provider_slug).first()
+        # Slug is only unique per component_type, so a utility/theme sharing the
+        # slug could otherwise be read here instead of the real payment provider.
+        component = ComponentRegistry.objects.filter(
+            slug=provider_slug, component_type="payment_provider"
+        ).first()
         if not component:
             return None
         webhooks = (component.get_manifest() or {}).get("webhooks") or {}

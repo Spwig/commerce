@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 from orders.models import Address
 
-from .models import CustomerProfile
+from .models import CommunicationPreference, CustomerProfile
 
 User = get_user_model()
 
@@ -219,14 +219,14 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     def get_email_marketing(self, obj):
         try:
             return obj.user.communication_preferences.email_marketing
-        except Exception:
+        except CommunicationPreference.DoesNotExist:
             return False
 
     @extend_schema_field(serializers.BooleanField())
     def get_email_transactional(self, obj):
         try:
             return obj.user.communication_preferences.email_transactional
-        except Exception:
+        except CommunicationPreference.DoesNotExist:
             return True
 
     @extend_schema_field(serializers.BooleanField())
@@ -234,7 +234,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
         try:
             prefs = obj.user.communication_preferences
             return prefs.app_preferences.get("blog", {}).get("enabled", False)
-        except Exception:
+        except CommunicationPreference.DoesNotExist:
             return False
 
     def update(self, instance, validated_data):

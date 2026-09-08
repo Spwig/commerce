@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -19,6 +19,40 @@ from django.views.decorators.http import require_GET
 from accounts.models import CommunicationPreference, PreferenceChangeLog
 from accounts.services.preference_analytics_service import PreferenceAnalyticsService
 from staff_roles.decorators import requires_permission
+
+# Periods accepted by PreferenceAnalyticsService.get_date_range_for_period;
+# anything else makes that service raise ValueError.
+VALID_PERIODS = {
+    "today",
+    "last_7_days",
+    "last_30_days",
+    "this_month",
+    "last_quarter",
+    "this_year",
+    "custom",
+}
+
+
+def _parse_range_boundary(value: str | None, *, is_end: bool) -> datetime | None:
+    """Parse an ISO date/datetime query value into a timezone-aware datetime.
+
+    Returns None when the value is missing or malformed. A date-only end
+    boundary is expanded to the final instant of that day so downstream
+    ``__lte`` filters still include the whole selected day.
+    """
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    # A date-only value parses to midnight; for an end boundary that would
+    # drop almost the entire final day under a ``__lte`` comparison.
+    if is_end and "T" not in value and " " not in value:
+        parsed = parsed.replace(hour=23, minute=59, second=59, microsecond=999999)
+    if timezone.is_naive(parsed):
+        parsed = timezone.make_aware(parsed)
+    return parsed
 
 
 @staff_member_required
@@ -33,17 +67,25 @@ def preference_analytics_dashboard(request):
     compare = request.GET.get("compare") == "true"
 
     # Custom date range
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
+    raw_start = request.GET.get("start_date")
+    raw_end = request.GET.get("end_date")
+    if raw_start and raw_end:
+        period = "custom"
 
-    if start_date and end_date:
-        try:
-            start_date = datetime.fromisoformat(start_date)
-            end_date = datetime.fromisoformat(end_date)
-            period = "custom"
-        except ValueError:
-            start_date = None
-            end_date = None
+    if period not in VALID_PERIODS:
+        return HttpResponseBadRequest("Invalid period.")
+
+    start_date = None
+    end_date = None
+    if period == "custom":
+        start_date = _parse_range_boundary(raw_start, is_end=False)
+        end_date = _parse_range_boundary(raw_end, is_end=True)
+        if start_date is None or end_date is None:
+            return HttpResponseBadRequest(
+                "A valid start_date and end_date are required for a custom range."
+            )
+        if start_date > end_date:
+            return HttpResponseBadRequest("start_date must not be later than end_date.")
 
     # Get date range
     date_range = PreferenceAnalyticsService.get_date_range_for_period(

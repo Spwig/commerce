@@ -54,6 +54,62 @@ class EmailSendingService:
         return account
 
     @staticmethod
+    def get_account_for(site=None, *, marketing: bool = False) -> EmailAccount | None:
+        """Resolve the sending account for a message class (transactional vs marketing).
+
+        A marketing-class message is routed to a dedicated marketing account when one
+        is configured, so campaign sending reputation stays separate from transactional
+        mail (order confirmations, password resets). When no purpose-specific account
+        exists this falls back to the default account, so a store with a single
+        ``both`` account behaves exactly as before.
+        """
+        # Always scope to a single site. When the caller omits it (e.g. blog digest tasks
+        # call queue_email without a site), resolve the current site rather than searching
+        # every site's accounts, so routing can never pick another tenant's sending identity.
+        if site is None:
+            from django.contrib.sites.models import Site
+
+            site = Site.objects.get_current()
+        qs = EmailAccount.objects.filter(is_active=True, site=site)
+
+        exact = EmailAccount.PURPOSE_MARKETING if marketing else EmailAccount.PURPOSE_TRANSACTIONAL
+        # Prefer a purpose-specific account, then a shared "both" account; most-default first.
+        account = (
+            qs.filter(purpose=exact).order_by("-is_default", "name").first()
+            or qs.filter(purpose=EmailAccount.PURPOSE_BOTH).order_by("-is_default", "name").first()
+        )
+        if account:
+            return account
+
+        # No purpose-specific or shared ("both") account for this class.
+        if marketing:
+            # Graceful: a marketing send with only a transactional/undesignated account
+            # still goes out (don't fail a whole campaign) via the default account.
+            return EmailSendingService.get_default_account(site=site)
+        # Transactional: never fall back to a marketing-only identity — that is exactly
+        # the reputation we protect. Return None so the caller fails loudly; a store must
+        # keep at least one transactional-capable active account (enforced by
+        # EmailAccount.clean()).
+        return None
+
+    @staticmethod
+    def _is_marketing_class(template_type) -> bool:
+        """Whether a message should send on the marketing sending identity.
+
+        Transactional-critical mail (order confirmations, password resets, email
+        verification — and any unknown type, the safe default) stays on the transactional
+        identity. Marketing and app-specific consent mail (newsletters, promotions, cart
+        recovery, blog digests, loyalty) route to the marketing identity when one is
+        configured. Uses the canonical classifier so it stays in step with consent.
+        """
+        if not template_type:
+            return False
+        from accounts.constants import get_message_type_category
+
+        category, _ = get_message_type_category(template_type)
+        return category != "transactional"
+
+    @staticmethod
     def queue_email(
         to_email: str,
         subject: str,
@@ -156,9 +212,15 @@ class EmailSendingService:
                         text_body, to_email, template_type
                     )
 
-        # Get account
+        # Get account. Route marketing / consent mail (newsletters, cart recovery, blog
+        # digests, …) to a dedicated marketing account when one is configured, so their
+        # sending reputation stays separate from transactional email. Classify by message
+        # type (not priority) so it matches the unsubscribe-footer/consent boundary above.
+        # Single-account stores are unaffected (get_account_for falls back to the default).
         if not account:
-            account = EmailSendingService.get_default_account(site=site)
+            account = EmailSendingService.get_account_for(
+                site=site, marketing=EmailSendingService._is_marketing_class(template_type)
+            )
 
         if not account:
             raise ValueError("No active email account available")
@@ -725,9 +787,13 @@ class EmailSendingService:
             # Guest user - continue with sending
             pass
 
-        # Get account
+        # Get account. Prefer the transactional sending identity so order confirmations /
+        # password resets don't inherit marketing reputation; a marketing template_type
+        # sent through this path still routes to the marketing identity for consistency.
         if not account:
-            account = EmailSendingService.get_default_account()
+            account = EmailSendingService.get_account_for(
+                site=site, marketing=EmailSendingService._is_marketing_class(template_type)
+            )
 
         if not account:
             raise ValueError("No active email account available")

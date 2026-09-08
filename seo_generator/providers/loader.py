@@ -22,6 +22,11 @@ class ProviderLoader:
     COMPONENT_TYPE = "seo_generator_provider"
 
     _providers: dict[str, type[BaseSEOProvider]] = {}
+    # Alias keys (e.g. a manifest provider_key that differs from the installed
+    # ComponentRegistry slug) mapped to their canonical key in _providers. Kept
+    # separate so aliases resolve in get_provider() without duplicating entries
+    # in list_providers()/dashboard counts.
+    _aliases: dict[str, str] = {}
     _loaded = False
     _last_loaded_at: float = 0
 
@@ -99,8 +104,17 @@ class ProviderLoader:
                     logger.error(f"{class_name} does not inherit from BaseSEOProvider")
                     continue
 
-                cls._providers[provider_key] = provider_class
-                logger.info(f"Loaded SEO provider: {provider_key} ({class_name})")
+                # Register under the installed ComponentRegistry slug
+                # (provider_dir.name), since component-backed accounts resolve
+                # providers via component.slug. Also alias the manifest's
+                # provider_key when it differs so builtin-style lookups work,
+                # keeping the alias in a separate map so list_providers() does
+                # not emit the provider twice.
+                registry_slug = provider_dir.name
+                cls._providers[registry_slug] = provider_class
+                if provider_key != registry_slug:
+                    cls._aliases[provider_key] = registry_slug
+                logger.info(f"Loaded SEO provider: {registry_slug} ({class_name})")
 
             except Exception as e:
                 logger.error(f"Failed to load provider {provider_dir.name}: {e}")
@@ -153,7 +167,12 @@ class ProviderLoader:
             logger.info("Cache marker detected — reloading SEO providers from disk")
             cls.reload_providers()
 
-        return cls._providers.get(provider_key)
+        if provider_key in cls._providers:
+            return cls._providers[provider_key]
+        canonical_key = cls._aliases.get(provider_key)
+        if canonical_key is not None:
+            return cls._providers.get(canonical_key)
+        return None
 
     @classmethod
     def list_providers(cls) -> list[dict]:
@@ -203,6 +222,7 @@ class ProviderLoader:
 
         # Clear our provider cache
         cls._providers = {}
+        cls._aliases = {}
         cls._loaded = False
 
         # Clear Python's module cache for SEO provider modules

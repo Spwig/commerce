@@ -219,6 +219,12 @@ class TrackingService:
             if "/track/click/" in original_url:
                 return match.group(0)
 
+            # Skip unsubscribe / opt-out links: clicking one only opts the
+            # recipient out, so wrapping it would record a spurious "clicked"
+            # event and inflate click analytics.
+            if self._is_unsubscribe_url(original_url):
+                return match.group(0)
+
             # Attribution-tag internal marketing links (no-op otherwise).
             original_url = self._append_attribution_utm(original_url, utm_campaign, site_host)
 
@@ -242,6 +248,20 @@ class TrackingService:
             return urlparse(self._get_absolute_url("/")).hostname or ""
         except Exception:
             return ""
+
+    # Path segment shared by the account, blog and Campaign Studio unsubscribe
+    # routes (e.g. /account/unsubscribe/<token>/, /blog/unsubscribe/<token>/,
+    # /marketing/unsubscribe/<token>/). Matching the segment keeps every
+    # opt-out route classified the same way without hardcoding each prefix.
+    _UNSUBSCRIBE_PATH_SEGMENT = "/unsubscribe/"
+
+    def _is_unsubscribe_url(self, url: str) -> bool:
+        """True if the URL points at an unsubscribe / opt-out route."""
+        try:
+            path = urlparse(url).path
+        except Exception:
+            path = url
+        return self._UNSUBSCRIBE_PATH_SEGMENT in path
 
     def _is_internal_url(self, url: str, site_host: str) -> bool:
         """Relative URLs, or absolute URLs on the store's own host, are internal."""

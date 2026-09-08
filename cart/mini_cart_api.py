@@ -184,7 +184,7 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
                 "component_items",
                 queryset=CartItem.objects.select_related(
                     "product", "variant", "variant__image_asset"
-                ),
+                ).prefetch_related("product__images", "product__images__media_asset"),
             ),
         )
     )
@@ -285,8 +285,10 @@ def format_cart_for_minicart(cart, just_added_item_id=None):
                 child_asset = None
                 if child.variant and child.variant.image_asset:
                     child_asset = child.variant.image_asset
-                elif hasattr(child.product, "primary_image"):
-                    child_asset = child.product.primary_image
+                else:
+                    # Read from the prefetched images collection to avoid a query
+                    # per component line (see _primary_image_asset).
+                    child_asset = _primary_image_asset(child.product)
                 if child_asset:
                     child_image_url = (
                         child_asset.get_thumbnail("small")

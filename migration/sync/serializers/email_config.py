@@ -28,6 +28,7 @@ EMAIL_ACCOUNT_FIELDS = [
     "reply_to",
     "is_active",
     "is_default",
+    "purpose",
     "settings",
     "dns_validated",
     "dns_domain",

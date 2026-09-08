@@ -143,8 +143,11 @@ class Command(BaseCommand):
         ]
 
         for min_conf, max_conf, label in confidence_ranges:
+            upper_bound = (
+                {"confidence__lte": max_conf} if max_conf >= 1.0 else {"confidence__lt": max_conf}
+            )
             count = GeoLocation.objects.filter(
-                resolved_at__gte=since, confidence__gte=min_conf, confidence__lt=max_conf
+                resolved_at__gte=since, confidence__gte=min_conf, **upper_bound
             ).count()
 
             if recent_cached > 0:

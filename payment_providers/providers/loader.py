@@ -160,6 +160,7 @@ def check_dependencies(manifest: dict[str, Any]) -> list[str]:
             specifier = SpecifierSet(dep_version)
         except InvalidSpecifier:
             logger.error(f"Invalid version specifier for {dep_name}: {dep_version}")
+            missing.append(f"{dep_name} {dep_version} (invalid specifier)")
             continue
 
         if not specifier:

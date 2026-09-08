@@ -189,12 +189,19 @@ class TestIssuanceIsActuallyWired:
     """
 
     def test_the_issuance_receiver_is_registered_for_order_post_save(self):
+        import weakref
+
         from django.db.models.signals import post_save
 
         found = set()
         for entry in post_save.receivers:
             ref = entry[1]
-            fn = ref() if callable(ref) else ref
+            # Weak receivers are stored as a weakref; strong receivers
+            # (registered with weak=False, e.g. search's on_product_change)
+            # are stored as the function itself. Only dereference the former —
+            # a plain function is also callable, so calling it here would FIRE
+            # the receiver with no args instead of resolving its name.
+            fn = ref() if isinstance(ref, weakref.ReferenceType) else ref
             if fn is not None:
                 found.add(getattr(fn, "__name__", ""))
 

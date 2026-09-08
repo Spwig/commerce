@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Q
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -123,13 +122,5 @@ class SEOProviderAccountAdmin(admin.ModelAdmin):
         is_primary = request.GET.get("is_primary")
         if is_primary:
             qs = qs.filter(is_primary=(is_primary == "1"))
-
-        search = request.GET.get("q")
-        if search:
-            qs = qs.filter(
-                Q(name__icontains=search)
-                | Q(provider_key__icontains=search)
-                | Q(component__name__icontains=search)
-            )
 
         return qs

@@ -2,12 +2,20 @@
 Edge Header Provider - Reads location from CDN headers
 """
 
+import ipaddress
 import logging
 from typing import Any
+
+from django.conf import settings
 
 from .base import GeoIPProviderBase
 
 logger = logging.getLogger(__name__)
+
+# Cloudflare emits CF-IPCountry: T1 to flag Tor exit nodes. It is not an ISO
+# 3166-1 country code, so it must be treated only as a Tor indicator and never
+# stored as a geographic country.
+TOR_COUNTRY_MARKER = "T1"
 
 
 class EdgeHeaderProvider(GeoIPProviderBase):
@@ -42,8 +50,13 @@ class EdgeHeaderProvider(GeoIPProviderBase):
     def __init__(self, config: dict[str, Any] = None):
         super().__init__(config)
         self.request = None  # Will be set by middleware
-        self.trusted_headers = (
-            config.get("trusted_headers", self.COUNTRY_HEADERS) if config else self.COUNTRY_HEADERS
+        config = config or {}
+        self.trusted_headers = config.get("trusted_headers", self.COUNTRY_HEADERS)
+        # Only requests whose immediate peer matches one of these proxy/CDN
+        # ranges may have their edge headers trusted. Entries may be single
+        # addresses or CIDR ranges; defaults to settings.TRUSTED_PROXIES.
+        self.trusted_proxies = self._parse_networks(
+            config.get("trusted_proxies", getattr(settings, "TRUSTED_PROXIES", ()))
         )
 
     def initialize(self) -> bool:
@@ -82,11 +95,19 @@ class EdgeHeaderProvider(GeoIPProviderBase):
             logger.debug("No request object available for header lookup")
             return None
 
+        # A direct client can forge CDN headers, so only trust them when the
+        # immediate peer is a configured trusted proxy/CDN.
+        if not self._is_trusted_peer():
+            logger.debug("Request peer is not a trusted proxy; ignoring edge headers")
+            return None
+
         result = {}
 
-        # Try to get country from headers
-        country = self._get_header_value(self.COUNTRY_HEADERS)
-        if country:
+        # Try to get country from configured trusted headers. The Tor marker
+        # (T1) is not a real country code, so it is excluded here and handled
+        # solely as the Tor indicator below.
+        country = self._get_header_value(self.trusted_headers)
+        if country and country != TOR_COUNTRY_MARKER:
             result["country_code"] = country
 
         # Try to get region
@@ -100,7 +121,7 @@ class EdgeHeaderProvider(GeoIPProviderBase):
             result["city_name"] = city
 
         # Check for IP type headers
-        if self._get_header_value(["CF-IPCountry"]) == "T1":
+        if self._get_header_value(["CF-IPCountry"]) == TOR_COUNTRY_MARKER:
             result["is_tor"] = True
 
         # Check for mobile headers
@@ -117,6 +138,40 @@ class EdgeHeaderProvider(GeoIPProviderBase):
 
         logger.debug(f"Edge header lookup result: {result}")
         return self.format_response(result)
+
+    @staticmethod
+    def _parse_networks(values) -> list:
+        """
+        Parse trusted proxy/CDN entries into ip_network objects
+
+        Args:
+            values: Iterable of address or CIDR strings
+
+        Returns:
+            List of ip_network objects (invalid entries are skipped)
+        """
+        networks = []
+        for value in values or ():
+            try:
+                networks.append(ipaddress.ip_network(value, strict=False))
+            except ValueError:
+                logger.warning("Ignoring invalid trusted proxy entry: %r", value)
+        return networks
+
+    def _is_trusted_peer(self) -> bool:
+        """
+        Check whether the immediate request peer is a trusted proxy/CDN
+
+        Returns:
+            True only when REMOTE_ADDR falls within a configured trusted range
+        """
+        if not self.request or not self.trusted_proxies:
+            return False
+        try:
+            peer = ipaddress.ip_address(self.request.META.get("REMOTE_ADDR", ""))
+        except ValueError:
+            return False
+        return any(peer in network for network in self.trusted_proxies)
 
     def _get_header_value(self, headers: list) -> str | None:
         """

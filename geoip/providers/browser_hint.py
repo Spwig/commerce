@@ -171,11 +171,13 @@ class BrowserHintProvider(GeoIPProviderBase):
         if not result:
             return None
 
-        # This is a low-confidence provider
-        result["source"] = "browser_hint"
-        result["confidence"] = min(confidence, 0.5)  # Cap at 0.5
+        # Format first, then apply this provider's own source and
+        # confidence, which format_response would otherwise overwrite.
+        formatted = self.format_response(result)
+        formatted["source"] = "browser_hint"
+        formatted["confidence"] = min(confidence, 0.5)  # Cap at 0.5
 
-        return self.format_response(result)
+        return formatted
 
     def _parse_accept_language(self, header: str) -> str | None:
         """

@@ -65,13 +65,13 @@ class Command(BaseCommand):
         provider_key = options["provider"]
         language = options["language"]
 
+        if batch_size < 1:
+            raise CommandError(_("--batch-size must be a positive integer"))
+
         # Get default language if not specified
         if not language:
-            try:
-                site_settings = SiteSettings.objects.get(pk=1)
-                language = site_settings.default_language
-            except SiteSettings.DoesNotExist:
-                language = "en"
+            site_settings = SiteSettings.objects.first()
+            language = site_settings.default_language if site_settings else "en"
 
         self.stdout.write(_("Using language: %(lang)s") % {"lang": language})
 
@@ -123,8 +123,9 @@ class Command(BaseCommand):
         app_label, model_name = MODEL_MAP[model_type]
         model_class = apps.get_model(app_label, model_name)
 
-        # Get queryset
-        queryset = model_class.objects.all()
+        # Get queryset with a stable ordering so batched LIMIT/OFFSET
+        # pagination stays consistent while rows are being mutated.
+        queryset = model_class.objects.order_by("pk")
         if auto_only:
             # Some SEO-tracked models (e.g. Collection) don't carry the
             # seo_auto_generated flag; they have no auto-generated items to

@@ -249,6 +249,22 @@ def campaign_studio_dashboard(request):
     except Exception:  # noqa: BLE001
         logger.debug("dashboard: attributed email revenue unavailable", exc_info=True)
 
+    # Nudge self-hosted merchants to separate marketing sending reputation from
+    # transactional (so a bad campaign can't spam-folder order confirmations / password
+    # resets). Only when no marketing account exists yet, and only on self-hosted installs
+    # — the guided built-in-SMTP subdomain flow doesn't apply to Spwig-hosted stores.
+    needs_marketing_domain = False
+    try:
+        from core.license import get_license_manager
+        from email_system.models import EmailAccount
+
+        if not get_license_manager().is_spwig_hosted():
+            needs_marketing_domain = not EmailAccount.objects.filter(
+                site=site, is_active=True, purpose=EmailAccount.PURPOSE_MARKETING
+            ).exists()
+    except Exception:  # noqa: BLE001 — the nudge must never break the dashboard
+        needs_marketing_domain = False
+
     context = {
         **admin_site_context(request),
         **_dashboard_ab_summary(site, since),
@@ -265,6 +281,7 @@ def campaign_studio_dashboard(request):
         "suppressed_total": suppressed_total,
         "suppressed_new": suppressed_new,
         "email_revenue_display": email_revenue_display,
+        "needs_marketing_domain": needs_marketing_domain,
         "recent_campaigns": recent_campaigns,
         "active_journey_list": active_journey_list,
         "window_days": window_days,

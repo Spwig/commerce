@@ -206,13 +206,16 @@ class XMLFeedFormatter(BaseFeedFormatter):
         """Add a standard element if text is not empty."""
         if text:
             elem = SubElement(parent, tag)
-            elem.text = self.escape_text(text)
+            # ElementTree escapes text once on serialization; pre-escaping here
+            # would double-escape the output.
+            elem.text = str(text)
 
     def _add_g_element(self, parent: Element, tag: str, text: str) -> None:
         """Add a Google namespace element if text is not empty."""
         if text:
             elem = SubElement(parent, f"g:{tag}")
-            elem.text = self.escape_text(text)
+            # See _add_element: ElementTree performs the single required escaping.
+            elem.text = str(text)
 
     def escape_text(self, text: str) -> str:
         """
