@@ -186,7 +186,7 @@ def _compute_badges():
         logger.debug("Badge computation failed for forms_submitted", exc_info=True)
 
     try:
-        from django.db.models import F
+        from django.db.models import Case, F, IntegerField, When
 
         from catalog.models import StockItem
 
@@ -196,8 +196,15 @@ def _compute_badges():
                 product__is_deleted=False,
                 warehouse__is_active=True,
                 on_hand__gt=F("allocated"),
-                on_hand__lte=F("allocated") + F("product__low_stock_threshold"),
             )
+            .annotate(
+                _effective_low_stock_threshold=Case(
+                    When(low_stock_threshold__gt=0, then=F("low_stock_threshold")),
+                    default=F("product__low_stock_threshold"),
+                    output_field=IntegerField(),
+                )
+            )
+            .filter(on_hand__lte=F("allocated") + F("_effective_low_stock_threshold"))
             .values("product")
             .distinct()
             .count()

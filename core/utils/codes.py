@@ -46,6 +46,8 @@ def random_string(length: int, alphabet: str = ALPHANUMERIC_ALPHABET) -> str:
     """Return a cryptographically secure random string of ``length``."""
     if length < 1:
         raise ValueError("length must be >= 1")
+    if not alphabet:
+        raise ValueError("alphabet must be non-empty")
     return "".join(secrets.choice(alphabet) for _ in range(length))
 
 

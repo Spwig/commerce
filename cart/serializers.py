@@ -9,6 +9,7 @@ from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
@@ -460,6 +461,7 @@ class CartSerializer(serializers.ModelSerializer):
         amount = obj.final_amount
         return str(amount.amount) if hasattr(amount, "amount") else str(amount)
 
+    @extend_schema_field(CartItemSerializer(many=True))
     def get_items(self, obj):
         """Only return parent/top-level items; children are nested via bundle_components."""
         from catalog.models import ProductImage
@@ -478,6 +480,7 @@ class CartSerializer(serializers.ModelSerializer):
         )
         return CartItemSerializer(parent_items, many=True).data
 
+    @extend_schema_field(CartAppliedVoucherSerializer(many=True))
     def get_applied_vouchers(self, obj):
         """Serialize applied vouchers, preloading each `voucher` to avoid an N+1."""
         applied = obj.applied_vouchers.select_related("voucher")

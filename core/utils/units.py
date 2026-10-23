@@ -255,7 +255,7 @@ class UnitConverter:
             >>> UnitConverter.convert_area(Decimal('1'), 'sq_m', 'sq_ft')
             Decimal('10.764')
         """
-        if value is None or value == 0:
+        if value is None:
             return None
 
         # Get full unit names

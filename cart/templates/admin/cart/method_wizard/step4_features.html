@@ -32,7 +32,7 @@
                     <label>{% trans "Available Locations" %}</label>
                     <select id="available-locations" class="dual-select" multiple size="8">
                         {% for location in all_pickup_locations %}
-                            {% if location.id not in method_data.pickup_locations %}
+                            {% if location.id|stringformat:"s" not in method_data.pickup_locations %}
                                 <option value="{{ location.id }}">
                                     {{ location.name }} - {{ location.address }}
                                 </option>
@@ -61,7 +61,7 @@
                     <select id="selected-locations" name="pickup_locations" class="dual-select" multiple size="8">
                         {% for location_id in method_data.pickup_locations %}
                             {% for location in all_pickup_locations %}
-                                {% if location.id == location_id %}
+                                {% if location.id|stringformat:"s" == location_id %}
                                     <option value="{{ location.id }}">
                                         {{ location.name }} - {{ location.address }}
                                     </option>

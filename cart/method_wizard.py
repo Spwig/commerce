@@ -213,12 +213,11 @@ class MethodWizardStep4View(TemplateView):
         # Store step 4 data in session
         wizard_data = request.session.get("method_wizard_data", {})
 
-        # Pickup locations (for local_pickup)
+        # Pickup locations (for local_pickup). Location's primary key is a UUID,
+        # so keep the raw string PKs — .set() accepts them directly.
         if wizard_data.get("method_type") == "local_pickup":
             pickup_locations = request.POST.getlist("pickup_locations")
-            wizard_data["pickup_locations"] = (
-                [int(loc_id) for loc_id in pickup_locations] if pickup_locations else []
-            )
+            wizard_data["pickup_locations"] = pickup_locations if pickup_locations else []
 
         # Delivery time (for non-local-pickup methods)
         if wizard_data.get("method_type") != "local_pickup":

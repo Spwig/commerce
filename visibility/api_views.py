@@ -12,6 +12,8 @@ persistence path instead of threading M2M writes through each builder's own save
 import logging
 
 from django.apps import apps
+from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
@@ -79,6 +81,15 @@ def _group_summary(group):
     }
 
 
+@extend_schema(
+    tags=["Design"],
+    summary=_("List visibility rule groups"),
+    description=_(
+        "Lists active, top-level RuleGroups for the shared visibility editor's "
+        "rule-group picker. Session-authenticated admin UI endpoint used by the "
+        "page, menu, and header/footer builders."
+    ),
+)
 class RuleGroupOptionsView(APIView):
     """GET: list active, top-level RuleGroups for the editor's picker."""
 
@@ -94,6 +105,16 @@ class RuleGroupOptionsView(APIView):
         return Response({"success": True, "rule_groups": [_group_summary(g) for g in groups]})
 
 
+@extend_schema(
+    tags=["Design"],
+    summary=_("Read or set attached rule groups"),
+    description=_(
+        "Reads (GET) or fully replaces (POST) the visibility RuleGroups attached "
+        "to a target object (a page element, menu item, or widget placement). "
+        "Enforces the per-target change permission — being staff is not enough. "
+        "Session-authenticated admin UI endpoint."
+    ),
+)
 class VisibilityAttachView(APIView):
     """Read or set the RuleGroups attached to a target object.
 
@@ -141,6 +162,16 @@ class VisibilityAttachView(APIView):
         return Response({"success": True, "rule_group_ids": valid_ids})
 
 
+@extend_schema(
+    tags=["Design"],
+    summary=_("Quick-create a rule group"),
+    description=_(
+        "Creates a single-rule RuleGroup in one call for the visibility editor's "
+        "'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup "
+        "so the engine evaluates it like any admin-authored group. Session-"
+        "authenticated admin UI endpoint."
+    ),
+)
 class QuickRuleGroupView(APIView):
     """POST: create a single-rule RuleGroup in one call, for the editor's
     'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup so the

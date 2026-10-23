@@ -5,6 +5,57 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.2] - 2026-10-23
+
+A maintenance release: a refreshed dependency stack plus a batch of correctness
+and permission fixes, the majority surfaced by Spwig's continuous automated code
+review and validated by the full test suite.
+
+**Upgrading.** No database migration and no manual steps — this upgrade is a
+straight image swap. Nothing is renamed or removed.
+
+### Security
+
+- **Admin notification badges now fail closed.** The counters in the admin sidebar
+  (new orders, low stock, available platform updates and the rest) are filtered
+  against each staff member's permission categories. A badge key that was missing
+  from that map used to be shown to *every* staff member regardless of role. In
+  practice one key was unmapped — the available platform version — so staff without
+  system access could see it. The map now covers every badge Spwig emits, and any
+  future unmapped key is withheld by default instead of exposed.
+- Dependency refresh, each bump validated by the full test suite: cryptography
+  50.0.1 (signing and secure integrations), redis 8.1.0 and django-redis 7.0.0
+  (cache and session layer), gunicorn 26.2.0 (production application server),
+  dj-rest-auth 7.2.0 (REST authentication), dnspython 2.9.0 (email-deliverability
+  DNS lookups) and google-api-python-client 2.201.0 (Gmail sending).
+
+### Fixed
+
+- **Low-stock badge honours per-location thresholds.** The low-stock counter now
+  uses each stock item's own low-stock threshold where one is set, falling back to
+  the product's threshold otherwise. It previously always used the product-level
+  value, so per-warehouse thresholds were ignored and the badge could under- or
+  over-report.
+- **Pickup locations save correctly in the shipping-method wizard.** Choosing
+  pickup points for a local-pickup shipping method now works. The wizard was
+  converting location IDs to numbers, but locations are identified by UUID, so the
+  selection was discarded. The picker now stores and redisplays the chosen
+  locations.
+- **Zero-size area conversions.** Converting an area of exactly zero between units
+  now returns zero rather than an empty value.
+- **Clearer failure for an empty character set.** Internal code generation now
+  reports a descriptive error when handed an empty character set, instead of
+  failing with an opaque index error.
+
+### Changed
+
+- **Complete API reference.** Every operation in the published OpenAPI contract
+  (`api-schema.yml` / `api-schema.json`) now carries a declared tag and
+  description, so the admin, agentic-commerce, bookings and visibility endpoints
+  are grouped and documented alongside the rest instead of appearing untagged.
+  Cart response typing was corrected at the same time. This affects generated SDK
+  clients and the API documentation only — no endpoint behaviour changed.
+
 ## [1.8.1] - 2026-09-08
 
 A follow-up to the Campaign Studio launch. Its headline is an **email
