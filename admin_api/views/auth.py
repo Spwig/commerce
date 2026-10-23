@@ -948,7 +948,7 @@ User = get_user_model()
 
 
 @extend_schema(
-    tags=["Admin Auth"],
+    tags=["Admin - Auth"],
     summary=_("Request staff password reset"),
     description=_(
         "Request a password reset email for a staff account. Always returns success to prevent email enumeration. Rate limited to 5 requests per minute."
@@ -1045,7 +1045,7 @@ def staff_password_reset_request(request):
 
 
 @extend_schema(
-    tags=["Admin Auth"],
+    tags=["Admin - Auth"],
     summary=_("Confirm staff password reset"),
     description=_("Complete staff password reset using the uid and token from the reset email."),
     request=StaffPasswordResetConfirmSerializer,

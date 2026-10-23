@@ -25,6 +25,7 @@ BADGE_PERMISSION_MAP = {
     "design_updates": "settings",
     "component_updates": "system",
     "platform_update": "system",
+    "platform_update_version": "system",
     "hotfix_available": "system",
     "backup_status": "system",
     "bookings_pending": "orders",
@@ -47,7 +48,7 @@ def _filter_badges_for_user(badges, user):
     filtered = {}
     for key, value in badges.items():
         category = BADGE_PERMISSION_MAP.get(key)
-        if category is None or has_category_access(user, category):
+        if category is not None and has_category_access(user, category):
             filtered[key] = value
     return filtered
 

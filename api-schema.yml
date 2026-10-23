@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Spwig eCommerce API Documentation
-  version: 1.8.1
+  version: 1.8.2
   description: |-
     ## Spwig API Documentation
 
@@ -1260,7 +1260,7 @@ paths:
         description: Start date (YYYY-MM-DD)
         required: true
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1310,7 +1310,7 @@ paths:
         description: Start date (YYYY-MM-DD)
         required: true
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1370,7 +1370,7 @@ paths:
           type: string
         description: Current period start date (YYYY-MM-DD)
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1433,7 +1433,7 @@ paths:
         description: Start date (YYYY-MM-DD)
         required: true
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1565,7 +1565,7 @@ paths:
         description: Start date (YYYY-MM-DD)
         required: true
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1641,7 +1641,7 @@ paths:
         description: Start date (YYYY-MM-DD)
         required: true
       tags:
-      - Admin Analytics
+      - Admin - Analytics
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2118,7 +2118,7 @@ paths:
         success to prevent email enumeration. Rate limited to 5 requests per minute.
       summary: Request staff password reset
       tags:
-      - Admin Auth
+      - Admin - Auth
       requestBody:
         content:
           application/json:
@@ -2149,7 +2149,7 @@ paths:
         reset email.
       summary: Confirm staff password reset
       tags:
-      - Admin Auth
+      - Admin - Auth
       requestBody:
         content:
           application/json:
@@ -7375,6 +7375,9 @@ paths:
   /api/agentic/ucp/checkout-sessions/{checkout_id}/:
     get:
       operationId: agentic_ucp_checkout_get
+      description: Fetch an existing agentic checkout session by id, returned in UCP
+        shape with computed totals and current status. Requires a verified agent signature
+        unless the merchant allows unverified checkout.
       summary: Get UCP checkout session
       parameters:
       - in: path
@@ -12007,15 +12010,14 @@ paths:
   /api/checkout/contact/:
     post:
       operationId: api_checkout_contact_create
-      description: |-
-        Persist the customer's contact details, and — when a password is
-        supplied (opt-in account creation) — create a real account and sign
-        them into this session. The password is used immediately and never
-        stored on the session or returned. Guests without a password are still
-        materialised as a guest user at order time; here we just record their
-        email/name so order creation and the confirmation flow have them.
+      description: 'Persists the customer''s email (and optional name) on the checkout
+        session so order creation and the confirmation flow have them. When a password
+        is supplied the customer opts into account creation: a real account is created
+        and signed into this session. The password is used immediately and never stored
+        on the session or returned.'
+      summary: Set contact details
       tags:
-      - api
+      - Checkout
       requestBody:
         content:
           application/json:
@@ -24437,13 +24439,13 @@ paths:
   /api/visibility/attach/:
     get:
       operationId: api_visibility_attach_retrieve
-      description: |-
-        Read or set the RuleGroups attached to a target object.
-
-        GET  ?target_type=&target_id=            -> {rule_group_ids: [...]}
-        POST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).
+      description: Reads (GET) or fully replaces (POST) the visibility RuleGroups
+        attached to a target object (a page element, menu item, or widget placement).
+        Enforces the per-target change permission — being staff is not enough. Session-authenticated
+        admin UI endpoint.
+      summary: Read or set attached rule groups
       tags:
-      - api
+      - Design
       security:
       - cookieAuth: []
       responses:
@@ -24451,13 +24453,13 @@ paths:
           description: No response body
     post:
       operationId: api_visibility_attach_create
-      description: |-
-        Read or set the RuleGroups attached to a target object.
-
-        GET  ?target_type=&target_id=            -> {rule_group_ids: [...]}
-        POST {target_type, target_id, rule_group_ids} -> sets the M2M (full replace).
+      description: Reads (GET) or fully replaces (POST) the visibility RuleGroups
+        attached to a target object (a page element, menu item, or widget placement).
+        Enforces the per-target change permission — being staff is not enough. Session-authenticated
+        admin UI endpoint.
+      summary: Read or set attached rule groups
       tags:
-      - api
+      - Design
       security:
       - cookieAuth: []
       responses:
@@ -24466,12 +24468,13 @@ paths:
   /api/visibility/quick-rule/:
     post:
       operationId: api_visibility_quick_rule_create
-      description: |-
-        POST: create a single-rule RuleGroup in one call, for the editor's
-        'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup so the
-        engine evaluates it like any admin-authored group (never a throwaway JSON).
+      description: Creates a single-rule RuleGroup in one call for the visibility
+        editor's 'quick create' shortcut. Materialises a real VisibilityRule + RuleGroup
+        so the engine evaluates it like any admin-authored group. Session-authenticated
+        admin UI endpoint.
+      summary: Quick-create a rule group
       tags:
-      - api
+      - Design
       security:
       - cookieAuth: []
       responses:
@@ -24480,9 +24483,12 @@ paths:
   /api/visibility/rule-groups/:
     get:
       operationId: api_visibility_rule_groups_retrieve
-      description: 'GET: list active, top-level RuleGroups for the editor''s picker.'
+      description: Lists active, top-level RuleGroups for the shared visibility editor's
+        rule-group picker. Session-authenticated admin UI endpoint used by the page,
+        menu, and header/footer builders.
+      summary: List visibility rule groups
       tags:
-      - api
+      - Design
       security:
       - cookieAuth: []
       responses:
@@ -30693,10 +30699,14 @@ components:
         shipping_notes:
           type: string
         items:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
           readOnly: true
         applied_vouchers:
-          type: string
+          type: array
+          items:
+            $ref: '#/components/schemas/CartAppliedVoucher'
           readOnly: true
         total_items:
           type: string
@@ -30763,6 +30773,37 @@ components:
       - updated_at
       - user
       - voucher_discount_amount
+    CartAppliedVoucher:
+      type: object
+      description: Serializer for vouchers applied to cart
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        discount_type:
+          type: string
+          readOnly: true
+        discount_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+      required:
+      - code
+      - description
+      - discount_amount
+      - discount_type
+      - id
+      - name
     CartErrorResponse:
       type: object
       description: Serializer for cart error responses.
@@ -30778,50 +30819,154 @@ components:
       - message
     CartItem:
       type: object
-      description: Serializer for cart item in mini-cart response.
+      description: Serializer for cart items with product details
       properties:
         id:
           type: integer
-          description: Cart item ID
-        product_id:
-          type: integer
-          description: Product ID
-        name:
-          type: string
-          description: Product name
-        variant_name:
-          type: string
-          nullable: true
-          description: Variant name (e.g., 'Large / Blue')
+          readOnly: true
+        product:
+          allOf:
+          - $ref: '#/components/schemas/ProductList'
+          readOnly: true
+        variant:
+          allOf:
+          - $ref: '#/components/schemas/ProductVariant'
+          readOnly: true
         quantity:
           type: integer
-          description: Item quantity
-        price:
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
           type: string
-          description: Unit price as string
-        price_formatted:
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        customization_price:
           type: string
-          description: Formatted price (e.g., '$29.99')
-        image_url:
+          readOnly: true
+          description: Total customization price (per unit)
+        total_price:
           type: string
-          nullable: true
-          description: Product/variant image URL
-        url:
+          readOnly: true
+        savings:
           type: string
-          description: Product detail page URL
-        just_added:
+          readOnly: true
+        is_on_sale:
+          type: string
+          readOnly: true
+        regular_total:
+          type: string
+          readOnly: true
+        customizations:
+          description: 'Product customizations with calculated prices: {customization_option_id:
+            {''value'': ''...'', ''calculated_price'': ''10.00''}}'
+        notes:
+          type: string
+          description: Customer notes for this item
+        requires_shipping:
           type: boolean
-          description: Whether this item was just added (for highlighting)
+          readOnly: true
+        item_weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        delivery_type:
+          type: string
+          readOnly: true
+          description: '''instant'' for digital items, ''shipping'' for physical items'
+        is_bundle_component:
+          type: string
+          readOnly: true
+          description: True if this item is a component of a bundle
+        parent_bundle_id:
+          type: string
+          readOnly: true
+          description: ID of parent bundle CartItem if this is a component
+        bundle_components:
+          type: string
+          readOnly: true
+          description: Child items if this is a bundle parent
+        is_subscription:
+          type: boolean
+          description: Whether this item will be purchased as a subscription
+        subscription_plan_details:
+          allOf:
+          - $ref: '#/components/schemas/SubscriptionPlan'
+          readOnly: true
+        pricing_tier_details:
+          allOf:
+          - $ref: '#/components/schemas/PlanPricingTier'
+          readOnly: true
+        subscription_billing_display:
+          type: string
+          readOnly: true
+          description: Human-readable billing cadence, e.g. 'Monthly' or 'Every 3
+            months'
+        subscription_unit_price:
+          type: string
+          readOnly: true
+          description: Recurring per-cycle unit price as a decimal string (subscription
+            lines only)
+        product_id:
+          type: integer
+        variant_id:
+          type: integer
+          nullable: true
+        product_name:
+          type: string
+          readOnly: true
+        product_slug:
+          type: string
+          readOnly: true
+        product_image:
+          type: string
+          readOnly: true
+        variant_name:
+          type: string
+          readOnly: true
+        sku:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
       required:
+      - bundle_components
+      - created_at
+      - currency
+      - customization_price
+      - delivery_type
       - id
-      - image_url
-      - just_added
-      - name
-      - price
-      - price_formatted
+      - is_bundle_component
+      - is_on_sale
+      - item_weight
+      - parent_bundle_id
+      - pricing_tier_details
+      - product
       - product_id
-      - quantity
-      - url
+      - product_image
+      - product_name
+      - product_slug
+      - regular_total
+      - requires_shipping
+      - savings
+      - sku
+      - subscription_billing_display
+      - subscription_plan_details
+      - subscription_unit_price
+      - total_price
+      - unit_price
+      - updated_at
+      - variant
       - variant_name
     CartLayoutEnum:
       enum:
@@ -53410,28 +53555,74 @@ tags:
   description: User authentication and profiles
 - name: Admin
   description: Admin API for merchant mobile app
+- name: Admin - Analytics
+  description: Admin sales and store analytics
+- name: Admin - Attributes
+  description: Admin product attribute management
+- name: Admin - Auth
+  description: Admin authentication (password reset, invitations)
+- name: Admin - Branding
+  description: Admin store branding management
+- name: Admin - Brands
+  description: Admin product brand management
+- name: Admin - Bulk Operations
+  description: Admin bulk create/update/delete operations
+- name: Admin - Categories
+  description: Admin category management
+- name: Admin - Documents
+  description: Admin document management
+- name: Admin - Inventory
+  description: Admin stock and inventory management
+- name: Admin - Products
+  description: Admin product management
+- name: Admin - Roles
+  description: Admin staff role management
+- name: Admin - SSO
+  description: Admin single sign-on configuration
+- name: Admin - Staff
+  description: Admin staff account management
+- name: Admin - Variants
+  description: Admin product variant management
 - name: Affiliate
   description: Affiliate marketing program
+- name: Agentic Commerce
+  description: UCP discovery and catalog for AI shopping agents
 - name: Announcements
   description: Store announcements for headers and footers
 - name: Blog
   description: Blog posts, categories, tags, and subscriptions
-- name: Design
-  description: Header/footer builder and design system APIs
+- name: Bookings - Customer
+  description: Customer-facing bookings
 - name: Cart
   description: Shopping cart operations
 - name: Catalog
   description: Product catalog management
 - name: Checkout
   description: Checkout process and sessions
+- name: Communication Preferences
+  description: Customer communication and consent preferences
 - name: Custom Fields
   description: Custom field definitions and metadata
 - name: Customers
   description: Customer analytics and insights
+- name: Design
+  description: Header/footer builder and design system APIs
+- name: Element Builder
+  description: Page element builder APIs
 - name: Exchange Rates
   description: Multi-currency support
+- name: Form Builder
+  description: Custom form builder APIs
+- name: GeoIP
+  description: IP geolocation lookups
+- name: Gift Cards
+  description: Gift card issuance and redemption
 - name: Help System
   description: Help documentation and admin metadata
+- name: Licenses
+  description: Customer-facing license management
+- name: Licenses - Admin
+  description: Admin license management
 - name: Loyalty
   description: Customer loyalty program and rewards
 - name: Marketplace
@@ -53442,22 +53633,54 @@ tags:
   description: Customer messages and contact form
 - name: Orders
   description: Order management
-- name: Store
-  description: Store information and settings
 - name: Page Builder
   description: Content management and pages
-- name: Payments
+- name: Payment Methods
   description: Payment methods and processing
+- name: POS - Authentication
+  description: Point-of-sale authentication
+- name: POS - Cart
+  description: Point-of-sale cart operations
+- name: POS - Catalog
+  description: Point-of-sale catalog lookups
+- name: POS - Checkout
+  description: Point-of-sale checkout
+- name: POS - Customers
+  description: Point-of-sale customer lookups
+- name: POS - Inventory
+  description: Point-of-sale inventory
+- name: POS - Orders
+  description: Point-of-sale orders
+- name: POS - Reports
+  description: Point-of-sale reporting
+- name: POS - Sync
+  description: Point-of-sale offline sync
+- name: POS - Terminal
+  description: Point-of-sale terminal management
+- name: POS - WebAuthn
+  description: Point-of-sale WebAuthn credentials
 - name: Referrals
   description: Customer referral program
+- name: Returns
+  description: Order returns and RMA requests
 - name: Reviews
   description: Product reviews and ratings
+- name: Search
+  description: Storefront and catalog search
 - name: Shipping
   description: Shipping and fulfillment
-- name: Tax
-  description: Tax rate management and calculation
+- name: SMS Verification
+  description: SMS phone-number verification
 - name: Social Sharing
   description: Social media integration
+- name: Store
+  description: Store information and settings
+- name: Subscriptions
+  description: Recurring subscription plans and billing
+- name: Tax
+  description: Tax rate management and calculation
+- name: Theme Development
+  description: Theme development and preview APIs
 - name: Translations
   description: Translation service endpoints
 - name: Vouchers
@@ -53466,5 +53689,7 @@ tags:
   description: Customer store credit wallet
 - name: Webhooks
   description: Outbound webhook management
-- name: Agentic Commerce
-  description: UCP discovery and catalog for AI shopping agents
+- name: Webhooks - Documentation
+  description: Webhook event catalog and documentation
+- name: Wishlist
+  description: Customer wishlists

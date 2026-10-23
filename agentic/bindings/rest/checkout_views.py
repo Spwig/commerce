@@ -153,6 +153,11 @@ def checkout_create(request):
     tags=[_TAG],
     operation_id="agentic_ucp_checkout_get",
     summary="Get UCP checkout session",
+    description=(
+        "Fetch an existing agentic checkout session by id, returned in UCP shape "
+        "with computed totals and current status. Requires a verified agent "
+        "signature unless the merchant allows unverified checkout."
+    ),
     responses={
         200: OpenApiResponse(
             response=UCPCheckoutSessionSerializer, description="The UCP checkout session."

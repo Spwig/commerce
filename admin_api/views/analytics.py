@@ -486,7 +486,7 @@ def hourly_sales(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Product analytics"),
     description=_("""
     Get product-level performance analytics for a date range.
@@ -663,7 +663,7 @@ def product_analytics(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Customer analytics"),
     description=_("""
     Get customer analytics for a date range.
@@ -813,7 +813,7 @@ def customer_analytics(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Category analytics"),
     description=_("""
     Get revenue and sales breakdown per category for a date range.
@@ -918,7 +918,7 @@ def category_analytics(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Brand analytics"),
     description=_("""
     Get revenue and sales breakdown per brand for a date range.
@@ -1023,7 +1023,7 @@ def brand_analytics(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Enhanced sales comparison"),
     description=_("""
     Get sales comparison between two date ranges with daily breakdown for charts.
@@ -1132,7 +1132,7 @@ def analytics_comparison(request):
 
 
 @extend_schema(
-    tags=["Admin Analytics"],
+    tags=["Admin - Analytics"],
     summary=_("Export analytics report"),
     description=_("""
     Export analytics data as CSV or PDF.

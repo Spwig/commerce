@@ -700,6 +700,17 @@ class WishlistViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(tags=["Checkout"], summary=_("Get checkout session")),
+    contact=extend_schema(
+        tags=["Checkout"],
+        summary=_("Set contact details"),
+        description=_(
+            "Persists the customer's email (and optional name) on the checkout "
+            "session so order creation and the confirmation flow have them. When "
+            "a password is supplied the customer opts into account creation: a "
+            "real account is created and signed into this session. The password "
+            "is used immediately and never stored on the session or returned."
+        ),
+    ),
     set_shipping_address=extend_schema(tags=["Checkout"], summary=_("Set shipping address")),
     set_billing_address=extend_schema(tags=["Checkout"], summary=_("Set billing address")),
     get_shipping_methods=extend_schema(
