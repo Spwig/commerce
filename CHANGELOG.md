@@ -5,6 +5,30 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.3] - 2026-11-22
+
+A dependency-maintenance release: the platform's Python dependency stack is
+refreshed to current patched versions, each bump validated by the full test
+suite. No application-behaviour changes.
+
+**Upgrading.** No database migration and no manual steps — a straight image
+swap. Nothing is renamed or removed.
+
+### Security
+
+- Dependency refresh, each bump validated by the full test suite: **gunicorn
+  27.0.1** (production application server — adds RFC 9112 request-smuggling
+  hardening), **Django REST framework 3.18.3**, **celery 5.6.3**,
+  **channels-redis 4.3.0**, **dnspython 2.9.2** (email-deliverability DNS
+  lookups), **google-api-python-client 2.202.0** (Gmail), **django-cors-headers
+  4.9.0**, **django-compressor 4.6.0**, **django-environ 0.14.0**, and
+  **Brotli 1.2.1** (pre-compressed static assets).
+
+### Fixed
+
+- The in-app changelog renderer now keeps a wrapped bullet's continuation lines
+  with the bullet, instead of splitting them into separate paragraphs.
+
 ## [1.8.2] - 2026-10-23
 
 A maintenance release: a refreshed dependency stack plus a batch of correctness
