@@ -137,6 +137,7 @@ def render_changelog_html(markdown_text: str) -> str:
 
     parts: list[str] = []
     para: list[str] = []
+    item: list[str] = []
     in_list = False
 
     def close_para() -> None:
@@ -145,8 +146,15 @@ def render_changelog_html(markdown_text: str) -> str:
             parts.append("<p>" + " ".join(_inline(p) for p in para) + "</p>")
             para = []
 
+    def close_item() -> None:
+        nonlocal item
+        if item:
+            parts.append("<li>" + " ".join(_inline(p) for p in item) + "</li>")
+            item = []
+
     def close_list() -> None:
         nonlocal in_list
+        close_item()
         if in_list:
             parts.append("</ul>")
             in_list = False
@@ -171,15 +179,18 @@ def render_changelog_html(markdown_text: str) -> str:
         bullet = re.match(r"^[-*]\s+(.*)$", stripped)
         if bullet:
             close_para()
+            close_item()
             if not in_list:
                 parts.append("<ul>")
                 in_list = True
-            parts.append(f"<li>{_inline(bullet.group(1))}</li>")
+            item.append(bullet.group(1))
             continue
 
-        # Prose line.
-        close_list()
-        para.append(stripped)
+        # Prose line: a continuation of the open bullet, else a paragraph.
+        if in_list:
+            item.append(stripped)
+        else:
+            para.append(stripped)
 
     close_para()
     close_list()
